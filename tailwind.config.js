@@ -48,6 +48,10 @@ module.exports = {
           main: "#262261",
           mainhover: "#141052"
         },
+        easywork: {
+          main: "#262261",
+          mainhover: "#141052"
+        },
         tremor: {
           brand: {
             faint: colors.blue[50],

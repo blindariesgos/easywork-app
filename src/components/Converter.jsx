@@ -1,8 +1,10 @@
 // components/PdfToImage.js
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 const Global = require('pdfjs-dist/build/pdf');
 
 const Converter = () => {
+  const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageData, setImageData] = useState(null);
 
@@ -12,7 +14,7 @@ const Converter = () => {
 
     if (file) {
       setSelectedFile(file);
-      console.log('PDF attached:', file.name);
+      console.log(t('common:file:pdf'), file.name);
     }
   };
 
@@ -61,18 +63,18 @@ const Converter = () => {
   return (
     <div>
       <label>
-        Attach your document in PDF:
+        {t('common:file:attach')}:
         <input type="file" accept=".pdf" onChange={handleFileUpload} />
       </label>
       {selectedFile && (
         <div>
           <p>Selected PDF: {selectedFile.name}</p>
-          <button onClick={() => convertPdfToImages(selectedFile)}>Convert to Image</button>
+          <button onClick={() => convertPdfToImages(selectedFile)}>{t('common:file:convert')}</button>
         </div>
       )}
       {imageData && (
         <div>
-          <p>Generated Image:</p>
+          <p>{t('common:file:generated')}:</p>
           <img src={imageData} alt="Generated Image" style={{ maxWidth: '100%' }} />
         </div>
       )}

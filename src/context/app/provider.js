@@ -1,9 +1,11 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import { AppContext } from "..";
-import { calendarViews, contactDetailTabs, driveViews } from "@/lib/common";
+import { contactDetailTabs, driveViews } from "@/lib/common";
+import { useCommon } from "@/hooks/useCommon";
 
 export default function AppContextProvider({ children }) {
+  const { calendarViews } = useCommon()
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);

@@ -11,6 +11,7 @@ import {
   MagnifyingGlassIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
+import { useTranslation } from "react-i18next";
 
 const people = [
   {
@@ -38,6 +39,7 @@ function classNames(...classes) {
 }
 
 export default function SearchBox() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [selectedPerson, setSelectedPerson] = useState(null);
 
@@ -78,22 +80,22 @@ export default function SearchBox() {
   }
 
   return (
-    <form className="relative flex lg:min-w-96" action="#" method="GET">
+    <form className="relative flex lg:min-w-96 " action="#" method="GET">
       <label htmlFor="search-field" className="sr-only">
         Search
       </label>
-      <MagnifyingGlassIcon
-        className="pointer-events-none absolute inset-y-0 left-2 h-full w-5 text-gray-400"
-        aria-hidden="true"
-      />
-
       <input
         id="search-field"
-        className=" w-full h-8 my-auto rounded-xl border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-        placeholder="Buscar personas, documentos y mas..."
+        className=" w-full h-8 my-auto rounded-xl border-0 py-0 pl-2 pr-8 text-black placeholder:text-primary focus:ring-0 sm:text-sm bg-gray-200 font-medium"
+        placeholder={t('common:header:placeholder-search')}
         type="search"
         name="search"
       />
+      <MagnifyingGlassIcon
+        className="pointer-events-none absolute inset-y-0 right-2 h-full w-5 text-primary"
+        aria-hidden="true"
+      />
+
     </form>
   );
 }

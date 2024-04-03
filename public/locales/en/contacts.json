@@ -1,0 +1,109 @@
+{
+    "header": {
+        "contact": "Contact",
+        "search": "Search",
+        "create": "Create",
+        "mine": "Mine",
+        "elements": "My Elements",
+        "planned": "Planned",
+        "invitation": "Invitations",
+        "others": "Others",
+        "expired": "Expired",
+        "comments": "Comments",
+        "mark-all": "Mark all as read"
+    },
+    "table": {
+        "not-data": "No contacts available",
+        "contact": "Contact",
+        "birthday": "Birthday",
+        "responsible": "Responsible",
+        "email": "Email",
+        "phone": "Phone",
+        "created": "Created on",
+        "origin": "Origin",
+        "activities": "Activities"
+    },
+    "create": {
+        "msg": "Contact created!",
+        "error": "Error creating contact!",
+        "save": "Saving...",
+        "client": "New client",
+        "data": "Contractor's information",
+        "name": "First Name",
+        "placeholder-name": "e.g. Luis",
+        "lastName": "Last Name",
+        "placeholder-lastname": "e.g. Herrera",
+        "charge": "Position",
+        "curp": "CURP",
+        "phone": "Phone",
+        "email": "Email",
+        "born-date": "Date of Birth",
+        "born": "Birth",
+        "sex": "Sex: ",
+        "rfc": "RFC",
+        "zip-code": "Zip Code",
+        "address": "Address",
+        "placeholder-address": "Enter client's address.",
+        "contact-type": "Contact Type",
+        "responsible": "Responsible",
+        "sub-agent": "Sub-Agent",
+        "agent": "Agent",
+        "origen": "Origin",
+        "passport": "INE, RFC or Passport IDs",
+        "upload-file": "Upload a file",
+        "png": "PNG, JPG, PDF up to 5MB",
+        "drap-drop": "or drag and drop",
+        "select": "Select",
+        "change-photo": "Change photo",
+        "jpg": "JPG, GIF or PNG. 1MB max.",
+        "select-page": "Select a tab",
+        "tabs": {
+            "general": "General",
+            "policies": "Policies",
+            "activities": "Activities",
+            "reports": "Reports",
+            "documents": "Documents"
+        },
+        "activities": {
+            "email": "Email",
+            "tasks": "Tasks",
+            "whatsapp": "WhatsApp",
+            "comment": "Comment",
+            "appointments": "Appointments",
+            "todo-tasks": "To-Do Tasks"
+        }
+    },
+    "edit": {
+        "not-contact": "No contact",
+        "updated-contact": "Contact Updated!",
+        "error": "Error creating contact!",
+        "name": "Edit",
+        "policies": {
+            "exists": "Policy already exists",
+            "error-file": "Error uploading file",
+            "created": "Policy created!",
+            "general": "General",
+            "documents": "Documents",
+            "add": "Add",
+            "upload": "Upload policy from PDF file",
+            "select": "Select PDF file",
+            "insurance": "Insurance Company",
+            "policy-type": "Policy Type",
+            "table": {
+                "empty": {
+                    "not-policies": "No registered policies",
+                    "register": "Register a new policy for the contact.",
+                    "new": "New Policy"
+                },
+                "policy": "Policy",
+                "product": "Product",
+                "company": "Company",
+                "status": "Status",
+                "start": "Start",
+                "expiration": "Expiration",
+                "amount": "Amount",
+                "branch": "Branch"
+            }
+        }
+    }
+}

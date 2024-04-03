@@ -13,28 +13,30 @@ import React, { Fragment } from "react";
 import SearchBox from "../SearchBox";
 import Clock from "./Clock";
 import Status from "./Status";
+import { useTranslation } from "react-i18next";
 
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Header() {
+  const { t } = useTranslation();
   const { setSidebarOpen } = useAppContext();
+  const userNavigation = [
+    { name: t('common:header:profile'), href: "#" },
+    { name: t('common:header:signout'), href: "#" },
+  ];
+  
 
   return (
-    <div className="lg:pl-72 h-20">
-      <div className="sticky top-2 max-w-7xl rounded-2xl mx-auto z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-zinc-300 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+    <div className="h-20">
+      <div className="rounded-2xl mx-auto z-10 flex h-16 shrink-0 items-center gap-x-4 bg-white opacity-90 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
         <button
           type="button"
           className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
           onClick={() => setSidebarOpen(true)}
         >
-          <span className="sr-only">Open sidebar</span>
           <Bars3Icon className="h-6 w-6" aria-hidden="true" />
         </button>
 
@@ -75,7 +77,7 @@ export default function Header() {
                 />
                 <span className="hidden lg:flex lg:items-center">
                   <span
-                    className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                    className="ml-4 text-sm font-semibold leading-6 text-black"
                     aria-hidden="true"
                   >
                     Rosmer Campos
@@ -103,7 +105,7 @@ export default function Header() {
                           href={item.href}
                           className={classNames(
                             active ? "bg-gray-50" : "",
-                            "block px-3 py-1 text-sm leading-6 text-gray-900"
+                            "block px-3 py-1 text-sm leading-6 text-black"
                           )}
                         >
                           {item.name}

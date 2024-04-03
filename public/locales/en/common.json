@@ -1,0 +1,91 @@
+{
+    "loading": "Loading...",
+    "save": "Successfully saved!",
+    "link": "Anyone with a link can now view this file.",
+    "buttons": {
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "save": "Save",
+        "uploading": "Uploading...",
+        "upload": "Upload",
+        "edit": "Edit",
+        "delete": "Delete",
+        "close": "Close"
+    },
+    "menu": {
+        "tools": {
+            "name": "Tools",
+            "drive": "Drive - Documents",
+            "tasks": "Tasks",
+            "email": "Email",
+            "calendar": "Calendar"
+        },
+        "sales": {
+            "name": "Sales",
+            "crm": {
+                "name": "CRM",
+                "contacts": "Contacts",
+                "prospects": "Prospects"
+            },
+            "reports": {
+                "name": "Reports",
+                "activities": "Activities",
+                "history": "History",
+                "reports": "Reports",
+                "agent": "Agent Performance"
+            },
+            "marketing": {
+                "name": "Marketing"
+            },
+            "control": {
+                "name": "Portfolio Control"
+            }
+        },
+        "services": {
+            "name": "Services",
+            "automations": "Automations",
+            "funnels": "Funnels",
+            "soport": "Customer Support - Chats",
+            "trash": "Trash",
+            "logs": "Logs",
+            "academy": "Academy"
+        },
+        "agent-management": {
+            "name": "Agent Management",
+            "recruitement": "Recruitment and Selection",
+            "capacitations": "Trainings",
+            "conections": "Connections",
+            "development-agents": "Agent Development",
+            "learning": "E-Learning (Coming Soon)"
+        },
+        "companies": {
+            "name": "Companies",
+            "gnp": "GNP (Coming Soon)",
+            "axxa": "AXXA (Coming Soon)",
+            "banorte": "Banorte (Coming Soon)",
+            "atlas": "Atlas (Coming Soon)",
+            "zurich": "Zurich (Coming Soon)",
+            "qualitas": "Qualitas (Coming Soon)",
+            "afirme": "Afirme (Coming Soon)",
+            "others": "Others (Coming Soon)"
+        },
+        "settings": {
+            "name": "Settings and Configurations",
+            "permissions": "User Permissions and Access",
+            "others": "Others",
+            "password": "Change Password"
+        }
+    },
+    "header": {
+        "working": "Working",
+        "profile": "Your Profile",
+        "signout": "Sign Out",
+        "placeholder-search": "Search people, documents, and more"
+    },
+    "file": {
+        "pdf": "Attached PDF:",
+        "attach": "Attach your document in PDF",
+        "convert": "Convert to image",
+        "generated": "Generated Image"
+    }
+}

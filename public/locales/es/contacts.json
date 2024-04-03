@@ -1,0 +1,109 @@
+{
+    "header": {
+        "contact": "Contacto",
+        "search": "Buscar",
+        "create": "Crear",
+        "mine": "Míos",
+        "elements": "Mis Elementos",
+        "planned": "Planteados",
+        "invitation": "Invitaciones",
+        "others": "Otros",
+        "expired": "Vencida",
+        "comments": "Comentarios",
+        "mark-all": "Marcar todo como leído"
+    },
+    "table": {
+        "not-data": "No hay contactos",
+        "contact": "Contacto",
+        "birthday": "Cumpleaños",
+        "responsible": "Responsable",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "created": "Creado el",
+        "origin": "Origen",
+        "activities":"Actividades"
+    },
+    "create": {
+        "msg": "¡Contacto creado!",
+        "error": "Error al crear el contacto!",
+        "save": "Guardando...",
+        "client": "Nuevo cliente",
+        "data": "Datos del contratante",
+        "name": "Nombres",
+        "placeholder-name": "Ej.: Luis",
+        "lastName": "Apellidos",
+        "placeholder-lastname": "Ej.: Herrera",
+        "charge" : "Cargo",
+        "curp": "CURP",
+        "phone" : "Teléfono",
+        "email" : "Correo electrónico",
+        "born-date" : "Fecha de nacimiento",
+        "born": "Nacimiento",
+        "sex" : "Sexo: ",
+        "rfc" : "RFC",
+        "zip-code" : "Código postal",
+        "address" : "Dirección",
+        "placeholder-address": "Escriba la dirección del cliente.",
+        "contact-type" : "Tipo de contacto",
+        "responsible" : "Responsable",
+        "sub-agent" : "Sub-Agente",
+        "agent": "Agente",
+        "origen" : "Orígen",
+        "passport": "Identificaciones INE, RFC o Pasaporte",
+        "upload-file" : "Subir un archivo",
+        "png": "PNG, JPG, PDF hasta 5MB",
+        "drap-drop" : "o arrastrar y soltar",
+        "select" : "Seleccionar",
+        "change-photo": "Cambiar foto",
+        "jpg": "JPG, GIF or PNG. 1MB max.",
+        "select-page": "Seleccione una pestaña",
+        "tabs": {
+            "general" : "General",
+            "policies" : "Pólizas",
+            "activities" : "Actividades",
+            "reports" : "Reportes",
+            "documents" : "Documentos"
+        },
+        "activities":{
+            "email": "Correo",
+            "tasks" : "Tareas",
+            "whatsapp" : "WhatsApp",
+            "comment" : "Comentario",
+            "appointments" : "Citas",
+            "todo-tasks" : "Tareas por hacer"
+        }
+    },
+    "edit": {
+        "not-contact": "Sin contacto",
+        "updated-contact": "¡Contacto Actualizado!",
+        "error": "Error al crear el contacto!",
+        "name": "Editar",
+        "policies": {
+            "exists": "Poliza ya existe",
+            "error-file": "Error al subir el archivo",
+            "created": "Póliza creada!",
+            "general" : "General",
+            "documents" : "Documentos",
+            "add": "Agregar",
+            "upload" : "Subir póliza desde archivo PDF",
+            "select": "Seleccionar archivo PDF",
+            "insurance": "Aseguradora",
+            "policy-type": "Tipo de Póliza",
+            "table": {
+                "empty": {
+                    "not-policies": "No hay pólizas registradas",
+                    "register": "Registra una nueva póliza para el contacto.",
+                    "new": "Nueva Póliza"
+                },
+                "policy": "Póliza",
+                "product": "Producto",
+                "company": "Compañia",
+                "status": "Estado",
+                "start": "Inicio",
+                "expiration": "Vencimiento",
+                "amount": "Importe",
+                "branch": "Ramo"
+            }
+        }
+    }
+}

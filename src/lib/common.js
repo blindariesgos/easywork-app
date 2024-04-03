@@ -1,13 +1,14 @@
 import {
+  ArrowLeftIcon,
   CalendarIcon,
   ChartPieIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
   UsersIcon,
 } from "@heroicons/react/20/solid";
-
-export const calendarViews = ["día", "semana", "mes", "programar"];
 
 export const contactSubmenuOptions = [
   "míos",
@@ -49,7 +50,7 @@ export const sidebarNavigation = [
   {
     name: "Herramientas",
     href: "#",
-    icon: HomeIcon,
+    icon: ChevronRightIcon,
     current: true,
     children: [
       { name: "Drive-Documentos", href: "/tools/drive" },
@@ -60,7 +61,7 @@ export const sidebarNavigation = [
   },
   {
     name: "Ventas",
-    icon: UsersIcon,
+    icon: ChevronRightIcon,
     current: false,
     children: [
       {
@@ -71,14 +72,32 @@ export const sidebarNavigation = [
           { name: "Prospectos", href: "/sales/crm/leads" },
         ],
       },
-      { name: "Reportes", href: "#" },
+      { 
+        name: "Reportes",
+        href: "#",
+        children: [
+          { name: "Actividades", href: "/sales/report/activities" },
+          { name: "Historial", href: "/sales/report/history" },
+          { name: "Informes", href: "/sales/report/reports" },
+          { 
+            name: "Rendimiento del agente", 
+            href: "#",
+            children: [
+              {
+                name: "Embudo de ventas sin conversión",
+                href: "/sales/report/agentperformance/noconv"
+              }
+            ]
+          },
+        ],
+      },
       { name: "Marketing", href: "#" },
       { name: "Control de cartera", href: "#" },
     ],
   },
   {
     name: "Servicios",
-    icon: FolderIcon,
+    icon: ChevronRightIcon,
     current: false,
     children: [
       { name: "Automatizaciones", href: "#" },
@@ -92,7 +111,7 @@ export const sidebarNavigation = [
   {
     name: "Gestión de agentes",
     href: "#",
-    icon: CalendarIcon,
+    icon: ChevronRightIcon,
     current: false,
     children: [
       { name: "Reclutamiento y selección", href: "#" },
@@ -105,7 +124,7 @@ export const sidebarNavigation = [
   {
     name: "Compañías",
     href: "#",
-    icon: DocumentDuplicateIcon,
+    icon: ChevronRightIcon,
     current: false,
     children: [
       { name: "AFIRME", href: "#" },
@@ -121,7 +140,7 @@ export const sidebarNavigation = [
   {
     name: "Ajustes y configuración",
     href: "#",
-    icon: ChartPieIcon,
+    icon: ChevronRightIcon,
     current: false,
     children: [
       { name: "Permisos y accesos usuarios", href: "#" },

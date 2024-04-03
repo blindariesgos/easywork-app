@@ -1,0 +1,91 @@
+{
+    "loading": "Cargando...",
+    "save": "¡Salvado con éxito!",
+    "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
+    "buttons": {
+        "saving" : "Guardando...",
+        "cancel" : "Cancelar",
+        "save"   : "Guardar",
+        "uploading" : "Subiendo...",
+        "upload": "Subir",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "close": "Cerrar"
+    },
+    "menu": {
+        "tools": {
+            "name" : "Herramientas",
+            "drive": "Drive -  Documentos",
+            "tasks": "Tareas",
+            "email": "Correo",
+            "calendar": "Calendario"
+        },
+        "sales": {
+            "name": "Ventas",
+            "crm": {
+                "name" : "CRM",
+                "contacts" : "Contactos",
+                "prospects" : "Prospectos"
+            },
+            "reports": {
+                "name" : "Reportes",
+                "activities": "Actividades",
+                "history": "Historial",
+                "reports": "Informes",
+                "agent": "Rendimiento de agente"
+            },
+            "marketing": {
+                "name" : "Marketing"
+            },
+            "control": {
+                "name" : "Control de cartera"
+            }
+        },
+        "services": {
+            "name" : "Servicios",
+            "automations" : "Automatizaciones",
+            "funnels": "Embudos",
+            "soport": "Soporte a clientes - chats",
+            "trash": "Papelera",
+            "logs": "Logs",
+            "academy" : "Academia"
+        },
+        "agent-management": {
+            "name" : "Gestión de agentes",
+            "recruitement" : "Reclutamiento y selección",
+            "capacitations" : "Capacitaciones",
+            "conections" : "Conexiones",
+            "development-agents": "Desarrollo de agentes",
+            "learning": "E-Learning (Próximamente)"
+        },
+        "companies": {
+            "name" : "Compañías",
+            "gnp" : "GNP (Próximamente)",
+            "axxa" : "AXXA (Próximamente)",
+            "banorte" : "Banorte (Próximamente)",
+            "atlas" : "Atlas (Próximamente)",
+            "zurich" : "Zurich (Próximamente)",
+            "qualitas" : "Qualitas (Próximamente)",
+            "afirme" : "Afirme (Próximamente)",
+            "others": "Otras (Próximamente)"
+        },
+        "settings": {
+            "name" : "Ajustes y Configuraciones",
+            "permissions": "Permisos y accesos a usuarios",
+            "others": "Otros",
+            "password": "Cambio de contraseña"
+        }
+    },
+    "header": {
+        "working": "Trabajando",
+        "profile": "Tu perfil",
+        "signout": "Cerrar sesión",
+        "placeholder-search": "Buscar personas, documentos y más"
+    },
+    "file": {
+        "pdf": "PDF adjunto:",
+        "attach": "Adjunte su documento en PDF",
+        "convert" : "Convertir a imagen",
+        "generated" : "Imagen generada"
+    }
+}

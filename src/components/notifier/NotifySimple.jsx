@@ -3,8 +3,10 @@ import { Fragment } from 'react'
 import { Transition } from '@headlessui/react'
 import { CheckCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
+import { useTranslation } from 'react-i18next'
 
 export default function NotifySimple({show, setShow}) {
+  const { t } = useTranslation();
 
   return (
     <>
@@ -32,8 +34,8 @@ export default function NotifySimple({show, setShow}) {
                     <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">Successfully saved!</p>
-                    <p className="mt-1 text-sm text-gray-500">Anyone with a link can now view this file.</p>
+                    <p className="text-sm font-medium text-gray-900">{t('common:save')}</p>
+                    <p className="mt-1 text-sm text-gray-500">{t('common:link')}</p>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
                     <button
@@ -43,7 +45,7 @@ export default function NotifySimple({show, setShow}) {
                         setShow(false)
                       }}
                     >
-                      <span className="sr-only">Close</span>
+                      <span className="sr-only">{t('common:buttons:close')}</span>
                       <XMarkIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </div>

@@ -9,7 +9,7 @@ export default function Loading() {
     <div role="status" className="inset-0 bg-black/10 w-full h-full absolute flex items-center z-50">
       <svg
         aria-hidden="true"
-        class="w-10 h-10 text-gray-200 animate-spin dark:text-gray-200 fill-indigo-600 m-auto"
+        className="w-10 h-10 text-gray-200 animate-spin dark:text-gray-200 fill-indigo-600 m-auto"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@ export default function Loading() {
           fill="currentFill"
         />
       </svg>
-      <span class="sr-only">{t("common:loading")}</span>
+      <span className="sr-only">{t("common:loading")}</span>
     </div>
   );
 }

@@ -17,17 +17,17 @@ export default function CheckUser() {
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <div class="mb-2">
+            <div className="mb-2">
                 <Image
                     width={156.75}
                     height={118.84}
                     src={"/img/logo.svg"}
                 />
             </div>
-            <div class="mb-4 text-xl">
+            <div className="mb-4 text-xl">
                 <h1>¡Valida tu usuario!</h1>
             </div>
-            <div style={{width:320}} class="text-md text-center my-4 w-1/4">
+            <div style={{width:320}} className="text-md text-center my-4 w-1/4">
                 <h4>Introducir los 6 dígitos recibidos por mensaje de texto al número <br /> +58 412*****85</h4>
             </div>
             <div className='p-4 bg-slate-50 rounded-xl'>
@@ -37,7 +37,7 @@ export default function CheckUser() {
                             key={index}
                             type="text"
                             maxLength="1"
-                            class="w-10 h-10 text-center bg-slate-50 !important"
+                            className="w-10 h-10 text-center bg-slate-50 !important"
                             value={value}
                             style={{
                                 borderBottom: "2px solid #262261",
@@ -51,11 +51,11 @@ export default function CheckUser() {
                     ))}
                 </div>
             </div>
-            <div class="mt-4 w-full flex justify-evenly">
-                <button class="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md">
+            <div className="mt-4 w-full flex justify-evenly">
+                <button className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md">
                     Aceptar
                 </button>
-                <button class="hover:bg-gray-700 bg-gray-500 text-white font-bold py-2 px-4 rounded-md">
+                <button className="hover:bg-gray-700 bg-gray-500 text-white font-bold py-2 px-4 rounded-md">
                     Cancelar
                 </button>
             </div>

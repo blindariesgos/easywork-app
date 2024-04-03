@@ -21,7 +21,7 @@ export default function Login() {
                         <UserIcon className="h-5 w-5 text-easywork-main" />
                     </button>
                 </span>
-                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Usuario" autocomplete="off" />
+                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Usuario" autoComplete="off" />
             </div>
             {/* Contraseña */}
             <div className="relative text-gray-600 focus-within:text-gray-400 mt-2">
@@ -30,7 +30,7 @@ export default function Login() {
                         <LockClosedIcon className="h-5 w-5 text-easywork-main" />
                     </button>
                 </span>
-                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Contraseña" autocomplete="off" />
+                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Contraseña" autoComplete="off" />
             </div>
             {/* Recordar contraseña */}
             <div className="flex justify-between my-4 text-sm">

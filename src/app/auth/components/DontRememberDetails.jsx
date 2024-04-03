@@ -24,7 +24,7 @@ export default function DontRememberDetails() {
                         <UserIcon className="h-5 w-5 text-easywork-main" />
                     </button>
                 </span>
-                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="N° de telefono/E-mail" autocomplete="off" />
+                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="N° de telefono/E-mail" autoComplete="off" />
             </div>
             {/* Video guia */}
             <div className="mt-4 w-full flex justify-evenly">

@@ -22,7 +22,7 @@ export default function changePassword() {
                         <LockClosedIcon className="h-5 w-5 text-easywork-main" />
                     </button>
                 </span>
-                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Contraseña nueva" autocomplete="off" />
+                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Contraseña nueva" autoComplete="off" />
             </div>
             {/* E-mail */}
             <div className="relative text-gray-600 focus-within:text-gray-400 mt-2">
@@ -31,7 +31,7 @@ export default function changePassword() {
                         <LockClosedIcon className="h-5 w-5 text-easywork-main" />
                     </button>
                 </span>
-                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Repetir contraseña" autocomplete="off" />
+                <input style={{ border: 'none' }} type="search" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Repetir contraseña" autoComplete="off" />
             </div>
             {/* info */}
             <div style={{width:320}} className="text-xs my-4 w-1/4">

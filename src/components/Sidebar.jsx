@@ -7,6 +7,7 @@ import Image from "next/image";
 import useAppContext from "@/context/app";
 import Link from "next/link";
 import { sidebarNavigation } from "@/lib/common";
+import { useTranslation } from "react-i18next";
 
 const teams = [
   { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
@@ -20,6 +21,7 @@ function classNames(...classes) {
 
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useAppContext();
+  const { t } = useTranslation();
 
   return (
     <>

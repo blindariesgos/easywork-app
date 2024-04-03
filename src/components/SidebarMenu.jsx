@@ -24,7 +24,7 @@ const SidebarMenu = () => {
                                         href={item.href}
                                         className={classNames(
                                             item.current
-                                            ? "bg-easy-500 text-white"
+                                            ? "bg-primary text-white"
                                             : "text-slate-50 hover:text-white hover:bg-easy-800",
                                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                         )}
@@ -42,7 +42,7 @@ const SidebarMenu = () => {
                                         <Disclosure.Button
                                             className={classNames(
                                             item.ref === pathname
-                                                ? "bg-easy-500 text-white"
+                                                ? "bg-primary text-white"
                                                 : "text-slate-50 hover:text-white hover:bg-easy-300",
                                             "flex items-center w-full text-left rounded-md p-2 gap-x-3 text-sm leading-6 font-semibold uppercase"
                                             )}
@@ -66,7 +66,7 @@ const SidebarMenu = () => {
                                                             href={subItem.href}
                                                             className={classNames(
                                                             subItem.href === pathname
-                                                                ? "bg-easy-600 text-white"
+                                                                ? "bg-primary text-white"
                                                                 : "text-slate-50 hover:text-white hover:bg-easy-300",
                                                             "block rounded-md py-2 pr-2 pl-9 text-sm leading-6"
                                                             )}
@@ -80,7 +80,7 @@ const SidebarMenu = () => {
                                                                 <Disclosure.Button
                                                                     className={classNames(
                                                                         subItem.href === pathname
-                                                                        ? "bg-easy-500 text-white"
+                                                                        ? "bg-primary text-white"
                                                                         : "text-slate-50 hover:text-white hover:bg-easy-300",
                                                                         "flex items-center w-full text-left rounded-md p-2  pl-9 gap-x-3 text-sm leading-6 font-semibold uppercase"
                                                                     )}
@@ -107,7 +107,7 @@ const SidebarMenu = () => {
                                                                                 href={subSubItem.href}
                                                                                 className={classNames(
                                                                                     subSubItem.href === pathname
-                                                                                    ? "bg-easy-500 text-white"
+                                                                                    ? "bg-primary text-white"
                                                                                     : "text-slate-50 hover:text-white hover:bg-easy-300",
                                                                                     "block rounded-md py-2 pr-2 pl-9 text-sm leading-6 ml-6"
                                                                                 )}

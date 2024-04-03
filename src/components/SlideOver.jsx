@@ -1,14 +1,17 @@
 "use client";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useTranslation } from "react-i18next";
+import Tag from "./Tag";
 
 export default function SlideOver({ openModal, setOpenModal, children }) {
+  const { t } = useTranslation();
 
   return (
     <Transition.Root show={openModal} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpenModal}>
+      <Dialog as="div" className="relative z-50" onClose={() => {}}>
         <div className="fixed inset-0" />
-
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0' sm:pl-16">
@@ -22,7 +25,14 @@ export default function SlideOver({ openModal, setOpenModal, children }) {
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen w-max-full md:max-w-4xl lg:max-w-4xl xl:max-w-7xl">
-                  {children}
+                  <div className="flex">
+                    <Tag
+                      title={t('contacts:header:contact')}
+                      onclick={() => setOpenModal(false)} 
+                      className="bg-yellow-100"
+                    />
+                    {children}
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import AppointmentMenu from "./AppointmentMenu";
 
 export default function ActivityHeader() {
   const { t } = useTranslation();
@@ -9,7 +10,7 @@ export default function ActivityHeader() {
     { name: t('contacts:create:activities:tasks'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:whatsapp'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:comment'), href: "#", current: false, disabled: true },
-    { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true },
+    { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true, children: [{ name: t('contacts:create:activities:zoom')},{ name: t('contacts:create:activities:call')}] },
   ];
   
   return (
@@ -34,35 +35,43 @@ export default function ActivityHeader() {
           </div>
           <div className="hidden sm:block">
             <div className="border-b border-gray-200">
-              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+              <nav className="flex space-x-4 flex-wrap" aria-label="Tabs">
                 {tabs.map((tab) => (
-                  <a
-                    key={tab.name}
-                    href={tab.href}
-                    className={clsx(
-                      tab.current
-                        ? "border-indigo-500 text-indigo-600"
-                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                      "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+                  <>
+                    {tab.children ? (
+                      <div key={tab.name} className="py-4 -mt-[3px]">
+                        <AppointmentMenu
+                          options={tab.children}
+                          label={tab.name}
+                        />
+                      </div>
+                    ) : (
+                      <a
+                        key={tab.name}
+                        href={tab.href}
+                        className={clsx(
+                          tab.current
+                            ? "border-primary text-primary"
+                            : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
+                          "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium uppercase"
+                        )}
+                        aria-current={tab.current ? "page" : undefined}
+                      >
+                        {tab.name}
+                      </a>
                     )}
-                    aria-current={tab.current ? "page" : undefined}
-                  >
-                    {tab.name}
-                  </a>
+                  </>
                 ))}
               </nav>
             </div>
           </div>
         </div>
         <div className="py-2">
-          <label htmlFor="todo" className="sr-only">
-            Email
-          </label>
           <input
             type="text"
             name="todo"
             id="todo"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm bg-gray-200 placeholder:text-gray-400 outline-none focus:outline-none focus:border focus:border-primary sm:text-sm sm:leading-6"
             placeholder={t('contacts:create:activities:todo-tasks')}
           />
         </div>

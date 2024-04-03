@@ -57,6 +57,9 @@
         "change-photo": "Cambiar foto",
         "jpg": "JPG, GIF or PNG. 1MB max.",
         "select-page": "Seleccione una pestaña",
+        "add": "Agregar",
+        "print" : "Imprimir",
+        "download" : "Descargar",
         "tabs": {
             "general" : "General",
             "policies" : "Pólizas",
@@ -70,7 +73,9 @@
             "whatsapp" : "WhatsApp",
             "comment" : "Comentario",
             "appointments" : "Citas",
-            "todo-tasks" : "Tareas por hacer"
+            "todo-tasks" : "Tareas por hacer",
+            "zoom" : "Zoom",
+            "call" : "Llamada"
         }
     },
     "edit": {

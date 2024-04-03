@@ -20,9 +20,9 @@ export default function Button({label, type, icon, onclick, buttonStyle, disable
       type={type}
       onClick={onclick}
       disabled={disabled}
-      className={`flex rounded-md px-3 py-2 text-sm font-semiboldshadow-sm hover:bg-easy-500 outline-none focus:outline-none ${buttonStyle && ButtonStyleFC(buttonStyle)}`}
+      className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold shadow-sm hover:bg-easy-500 outline-none focus:outline-none ${buttonStyle && ButtonStyleFC(buttonStyle)}`}
     >
-      { label }
+      {label}
       {icon}      
     </button>
   );

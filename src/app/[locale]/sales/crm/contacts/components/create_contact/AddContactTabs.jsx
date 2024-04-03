@@ -1,9 +1,12 @@
 "use client"
+import Button from "@/components/form/Button";
 import useAppContext from "@/context/app";
 import { contactDetailTabs } from "@/lib/common";
+import { ArrowDownTrayIcon, DocumentTextIcon, PlusIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import SettingsButton from "../SettingsButton";
 
 export default function AddContactTabs() {
   const { t } = useTranslation();
@@ -15,6 +18,21 @@ export default function AddContactTabs() {
     { name: t("contacts:create:tabs:reports"), value: 3 },
     { name: t("contacts:create:tabs:documents"), value: 4 },
   ];
+
+  const settings = [
+    {
+      value: 0,
+      name: t("contacts:create:download"),
+      onclick: () => {},
+      icon: ArrowDownTrayIcon
+    },
+    {
+      value: 0,
+      name: t("contacts:create:print"),
+      onclick: () => {},
+      icon: DocumentTextIcon
+    }
+  ]
 
   return (
     <div className="bg-white px-4 w-full rounded-lg">
@@ -30,31 +48,39 @@ export default function AddContactTabs() {
           defaultValue={tabs.find((tab) => tab.value).name}
         >
           {tabs.map((tab) => (
-            <option key={tab.name}>{tab.name}</option>
+            <option className="text-gray-400" key={tab.name}>{tab.name}</option>
           ))}
         </select>
       </div>
       <div className="hidden sm:block">
-        <div>
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+        <div className="flex justify-between items-center">
+          <nav className="-mb-px flex space-x-8 p-2" aria-label="Tabs">
             {tabs.map((tab) => (
               <div
                 key={tab.name}
                 onClick={() => setContactDetailTab(contactDetailTabs[tab.value])}
                 className={clsx(
                   tab.value === contactDetailTabs.indexOf(contactDetailTab)
-                    ? "border-indigo-500 text-indigo-600"
+                    ? "border-indigo-500 text-white bg-blue-100 rounded-md"
                     : tab.disabled
                     ? "border-transparent text-gray-300 cursor-default"
-                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                  "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium cursor-pointer"
+                    : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
+                  "whitespace-nowrap p-2 text-sm font-medium cursor-pointer"
                 )}
                 aria-current={tab.current ? "page" : undefined}
               >
                 {tab.name}
               </div>
             ))}
+            <Button
+              label={t("contacts:create:add")}
+              buttonStyle="primary"
+              icon={<PlusIcon className="h-4 w-4 text-white"/>}
+            />
           </nav>
+          <div>
+            <SettingsButton options={settings}/>
+          </div>
         </div>
       </div>
     </div>

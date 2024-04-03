@@ -19,7 +19,7 @@ export default async function RootLayout({ children, params: { locale } }) {
   
   const { resources } = await initTranslations(locale, i18nNamespaces);
   return (
-    <html lang={locale} className="h-full light">
+    <html lang={locale} className="h-full">
       <body className={inter.className}>        
         <TranslationsProvider
           namespaces={i18nNamespaces}

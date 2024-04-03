@@ -20,10 +20,8 @@ export default function ContactsHeader() {
           label={t('contacts:header:create')}
           type="button"
           onclick={() => setOpenModal(true)}
-          icon={<ChevronDownIcon
-            className="ml-2 h-5 w-5 text-white"
-            aria-hidden="true"
-          />}
+          buttonStyle={"primary"}
+          icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white"/>}
         />
         <div className="flex-grow">
           <label htmlFor="search" className="sr-only">

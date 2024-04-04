@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Transition } from "@headlessui/react";
 import Login from "./components/Login";
 import GetPassword from "./components/GetPassword";
 import ChangePassword from "./components/ChangePassword";
@@ -8,12 +9,15 @@ import CheckUser from "./components/CheckUser";
 
 export default function Page() {
   return (
-    <div style={{ backgroundColor: "#DFE3E6", borderRadius: "20px" }} className="w-auto py-7 px-6">
+    <div
+      className="w-auto py-7 px-6"
+      style={{ backgroundColor: "#DFE3E6", borderRadius: "20px" }}
+    >
       <Login />
-      {/* <GetPassword /> */}
-      {/* <ChangePassword /> */}
-      {/* <DontRememberDetails /> */}
-      {/* <CheckUser /> */}
-    </div >
-  )
+      <GetPassword />
+      <ChangePassword />
+      <DontRememberDetails />
+      <CheckUser />
+    </div>
+  );
 }

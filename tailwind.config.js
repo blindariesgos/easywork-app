@@ -22,6 +22,7 @@ module.exports = {
       colors: {
         // light mode
         primary: "#241F61",
+        primaryhover: "#141052",
         "easy": {
           50: "#EEEDF8",
           100: "#DCDAF1",
@@ -43,10 +44,6 @@ module.exports = {
           300: "#DFE3E6",
           400: "#54585B",
           500: "#D2D2D2"
-        },
-        easywork: {
-          main: "#262261",
-          mainhover: "#141052"
         },
         easywork: {
           main: "#262261",

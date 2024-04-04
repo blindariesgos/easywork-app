@@ -171,7 +171,7 @@ export default function Page() {
                   >
                     <td className="relative px-7 sm:w-12 sm:px-6">
                       {selectedTasks.includes(task) && (
-                        <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
+                        <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                       )}
                       <input
                         type="checkbox"

@@ -149,7 +149,7 @@ export default function WeekView() {
             <div className="ml-6 h-6 w-px bg-gray-300" />
             <button
               type="button"
-              className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="ml-6 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Add event
             </button>
@@ -307,7 +307,7 @@ export default function WeekView() {
                 className="flex flex-col items-center pb-3 pt-2"
               >
                 W{" "}
-                <span className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+                <span className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-white">
                   12
                 </span>
               </button>
@@ -370,7 +370,7 @@ export default function WeekView() {
               <div className="flex items-center justify-center py-3">
                 <span className="flex items-baseline">
                   Wed{" "}
-                  <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+                  <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-white">
                     12
                   </span>
                 </span>

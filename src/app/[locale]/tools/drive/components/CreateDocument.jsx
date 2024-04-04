@@ -26,7 +26,7 @@ export default function CreateDocumentButton() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10">
+        <Menu.Button className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10">
           {t('tools:drive:add:name')}
           <ChevronDownIcon
             className="-mr-1 h-5 w-5 text-white"

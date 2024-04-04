@@ -27,7 +27,7 @@ export default function ViewsOptions() {
                 classNames(
                   active ? "" : "",
                   checked
-                    ? "bg-indigo-600 text-white hover:bg-indigo-500"
+                    ? "bg-primary text-white hover:bg-indigo-500"
                     : "ring-1 ring-inset ring-transparent bg-transparent text-gray-900 hover:bg-indigo-200",
                   "flex items-center justify-center rounded-full font-medium py-2 px-3 text-sm capitalize sm:flex-1 cursor-pointer"
                 )

@@ -122,7 +122,7 @@ export default function Page() {
                     !day.isToday &&
                     !day.isCurrentMonth &&
                     "text-gray-400",
-                  day.isSelected && day.isToday && "bg-indigo-600",
+                  day.isSelected && day.isToday && "bg-primary",
                   day.isSelected && !day.isToday && "bg-gray-900",
                   !day.isSelected && "hover:bg-gray-200",
                   (day.isSelected || day.isToday) && "font-semibold",

@@ -74,7 +74,7 @@ export default function DayView() {
             className="flex flex-col items-center pb-1.5 pt-3"
           >
             <span>W</span>
-            {/* Default: "text-gray-900", Selected: "bg-gray-900 text-white", Today (Not Selected): "text-indigo-600", Today (Selected): "bg-indigo-600 text-white" */}
+            {/* Default: "text-gray-900", Selected: "bg-gray-900 text-white", Today (Not Selected): "text-indigo-600", Today (Selected): "bg-primary text-white" */}
             <span className="mt-3 flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold text-gray-900">
               19
             </span>
@@ -410,7 +410,7 @@ export default function DayView() {
                 dateTime={day.date}
                 className={clsx(
                   "mx-auto flex h-7 w-7 items-center justify-center rounded-full",
-                  day.isSelected && day.isToday && "bg-indigo-600",
+                  day.isSelected && day.isToday && "bg-primary",
                   day.isSelected && !day.isToday && "bg-gray-900"
                 )}
               >

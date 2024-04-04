@@ -13,7 +13,6 @@ import AddContactTabs from "./AddContactTabs";
 import ProfileImageInput from "./ProfileImageInput";
 import TextInputLocal from "./TextInputLocal";
 import TextArea from "./TextArea";
-import SelectInput from "./SelectInput";
 import { useFormState } from "react-dom";
 import { createContact } from "@/lib/api";
 import useCrmContext from "@/context/crm";
@@ -25,9 +24,11 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "next/navigation";
 import Button from "@/components/form/Button";
 import TextInput from "@/components/form/TextInput";
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { contactSchema } from "@/lib/schemas";
+import * as Yup from "yup"
+import InputPhone from "@/components/form/InputPhone";
+import SelectInput from "@/components/form/SelectInput";
 
 const contactSources = [
   { id: 1, name: "Correo electrónico" },
@@ -112,6 +113,35 @@ export default function CreateContact() {
   const [state, formAction] = useFormState(createContact, initialState);
   const [loading, setLoading] = useState(false);
 
+  const schema = Yup.object().shape({
+    email: Yup
+      .string()
+      .required(t('common:validations:required'))
+      .email(t('common:validations:email'))
+      .min(5,  t('common:validations:min', {min: 5})),
+    name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
+    charge: Yup.string().required(t('common:validations:required')),
+    phone: Yup.string().required(t('common:validations:required')),
+    rfc: Yup.string().required(t('common:validations:required')),
+    cua: Yup.string().required(t('common:validations:required')),
+    typeContact: Yup.string().required(t('common:validations:required')),
+    origin: Yup.string().required(t('common:validations:required')),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    setValue,
+    formState: { isValid, errors },
+  } = useForm({
+      defaultValues: {
+      },
+      mode: "onChange",
+      resolver: yupResolver(schema),
+  });
+  
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
 
@@ -131,20 +161,6 @@ export default function CreateContact() {
     const formattedDate = value ? date?.toISOString().split("T")[0] : "";
     setBirthday(formattedDate);
   }, []);
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    formState: { isValid, errors },
-  } = useForm({
-      defaultValues: {
-      },
-      mode: "onChange",
-      resolver: yupResolver(contactSchema),
-  });
   
   const handleFormSubmit = async (data) => {
     console.log("data", data)
@@ -221,7 +237,7 @@ export default function CreateContact() {
                   onChange={handleProfileImageChange}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:max-w-xl lg:px-12 mx-auto">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:max-w-xl lg:px-12 mx-auto mb-10 mt-8">
                 <TextInput
                   type="text"
                   label={t('contacts:create:name')}
@@ -231,11 +247,27 @@ export default function CreateContact() {
                   name="name"
                 />
                 <TextInput
-                  label={t('contacts:create:lastName')}
-                  placeholder={t('contacts:create:placeholder-lastname')}
-                  error={errors.lastname}
+                  label={t('contacts:create:charge')}
+                  placeholder={t('contacts:create:charge')}
+                  error={errors.charge}
                   register={register}
-                  name="lastname"
+                  name="charge"
+                />
+                <Controller
+                    render={({ field: { ref, ...field } }) => {
+                        return (
+                          <InputPhone
+                              name="phone"
+                              field={field}
+                              error={errors.phone}
+                              label={t('contacts:create:phone')}
+                              defaultValue={field.value}
+                          />
+                        );
+                    }}
+                    name="phone"
+                    control={control}
+                    defaultValue=""
                 />
                 <TextInput
                   label={t('contacts:create:email')}
@@ -243,6 +275,42 @@ export default function CreateContact() {
                   error={errors.email}
                   register={register}
                   name="email"
+                />
+                <TextInput
+                  label={t('contacts:create:rfc')}
+                  placeholder="XEXX010101000"
+                  error={errors.rfc}
+                  register={register}
+                  name="rfc"
+                />
+                <TextInput
+                  label={t('contacts:create:cua')}
+                  placeholder={t('contacts:create:placeholder-name')}
+                  error={errors.cua}
+                  register={register}
+                  name="cua"
+                />
+                <SelectInput
+                  label={t('contacts:create:contact-type')}
+                  options={filteredContactTypes}
+                  selectedOption={contactType}
+                  setSelectedOption={setContactType}
+                  onChangeInput={setQuery}
+                  // query={query}
+                  name="typeContact"
+                  error={errors.typeContact}
+                  register={register}
+                />
+                <SelectInput
+                  label={t('contacts:create:origen')}
+                  name="origin"
+                  options={filteredContactSources}
+                  selectedOption={contactSource}
+                  setSelectedOption={setContactSource}
+                  onChangeInput={setQuerySource}
+                  className="pb-4"
+                  error={errors.origin}
+                  register={register}
                 />
                 {/* <TextInputLocal label={t('contacts:create:charge')} id="position" placeholder={t('contacts:create:charge')} />
                 <TextInputLocal

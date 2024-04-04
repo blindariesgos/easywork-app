@@ -2,6 +2,11 @@
     "loading": "Cargando...",
     "save": "¡Salvado con éxito!",
     "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
+    "validations": {
+        "required": "El campo es requerido",
+        "min": "El campo debe tener al menos {{min}} caracteres",
+        "email": "Debe ser un correo valido"
+    },
     "buttons": {
         "saving" : "Guardando...",
         "cancel" : "Cancelar",

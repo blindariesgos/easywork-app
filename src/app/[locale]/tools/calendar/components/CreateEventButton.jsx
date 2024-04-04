@@ -20,13 +20,13 @@ export default function CreateEventButton() {
     <div className="md:inline-flex rounded-md shadow-sm hidden">
       <Link
         href="/tools/calendar/event"
-        className="relative inline-flex items-center rounded-l-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
+        className="relative inline-flex items-center rounded-l-md bg-primary px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
       >
         {t('tools:calendar:create')}
       </Link>
 
       <Menu as="div" className="relative -ml-px block">
-        <Menu.Button className="relative inline-flex items-center rounded-r-md bg-indigo-600 px-2 py-2 text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10">
+        <Menu.Button className="relative inline-flex items-center rounded-r-md bg-primary px-2 py-2 text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10">
           <span className="sr-only">{t('tools:calendar:open')}</span>
           <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
         </Menu.Button>

@@ -29,7 +29,7 @@
         "save": "Guardando...",
         "client": "Nuevo cliente",
         "data": "Datos del contratante",
-        "name": "Nombres",
+        "name": "Nombre y Apellido",
         "placeholder-name": "Ej.: Luis",
         "lastName": "Apellidos",
         "placeholder-lastname": "Ej.: Herrera",
@@ -60,6 +60,7 @@
         "add": "Agregar",
         "print" : "Imprimir",
         "download" : "Descargar",
+        "cua": "Código CUA",
         "tabs": {
             "general" : "General",
             "policies" : "Pólizas",

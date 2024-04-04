@@ -1,6 +1,7 @@
 "use client";
 import useAppContext from "@/context/app";
 import {
+  DocumentTextIcon,
   PhotoIcon,
   UserIcon,
   VideoCameraIcon,
@@ -112,6 +113,7 @@ export default function CreateContact() {
   const [contactSource, setContactSource] = useState(null);
   const [contactResponsible, setContactResponsible] = useState(null);
   const [contactSexo, setContactSexo] = useState(null);
+  const [files, setFiles] = useState([]);
 
   // const [errors, setErrors] = useState({});
 
@@ -122,20 +124,43 @@ export default function CreateContact() {
   const [loading, setLoading] = useState(false);
 
   const schema = Yup.object().shape({
-    email: Yup
-      .string()
-      .required(t('common:validations:required'))
-      .email(t('common:validations:email'))
-      .min(5,  t('common:validations:min', {min: 5})),
-    name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
-    charge: Yup.string().required(t('common:validations:required')),
-    phone: Yup.string().required(t('common:validations:required')),
-    rfc: Yup.string().required(t('common:validations:required')),
-    cua: Yup.string().required(t('common:validations:required')),
-    typeContact: Yup.string().required(t('common:validations:required')),
-    origin: Yup.string().required(t('common:validations:required')),
-    address: Yup.string().required(t('common:validations:required')),
-    responsible: Yup.string().required(t('common:validations:required')),
+    // email: Yup
+    //   .string()
+    //   .required(t('common:validations:required'))
+    //   .email(t('common:validations:email'))
+    //   .min(5,  t('common:validations:min', {min: 5})),
+    // name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
+    // charge: Yup.string().required(t('common:validations:required')),
+    // phone: Yup.string().required(t('common:validations:required')),
+    // rfc: Yup.string().required(t('common:validations:required')),
+    // cua: Yup.string().required(t('common:validations:required')),
+    // typeContact: Yup.string().required(t('common:validations:required')),
+    // origin: Yup.string().required(t('common:validations:required')),
+    // address: Yup.string().required(t('common:validations:required')),
+    // responsible: Yup.string().required(t('common:validations:required')),
+    
+    // files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
+    // files: Yup
+    // .array()
+    // .min(1, 'Debe seleccionar al menos un archivo')
+    // .required('Debe seleccionar al menos un archivo'),
+    
+    // files:Yup.mixed()
+    //   .required("You need to provide a file")
+    //   .test("fileSize", "File Size is too large", (value) => {
+    //     return value[0].size <= 5242880;
+    //   })
+      // .test("fileType", "Unsupported File Format", (value) =>
+      //   ["image/jpeg", "image/png", "image/jpg"].includes(value.type)
+      // ),
+      // files: Yup.array().of(
+      //   Yup.mixed().test('fileSize', 'El tamaño del archivo es demasiado grande', (value) => {
+      //     // Realiza la validación del tamaño del archivo aquí
+      //     // Devuelve true si el tamaño es válido, de lo contrario, devuelve false
+      //     return value && value[0].size <= 1024 * 1024; // Ejemplo: tamaño máximo de 1MB
+      //   })
+      // ),
+      // files: Yup.array().required('Debe seleccionar al menos un archivo.'),
   });
 
   const {
@@ -165,6 +190,34 @@ export default function CreateContact() {
       reader.readAsDataURL(file);
     }
   }, []);
+
+  const handleFilesUpload = (event, drop) => {
+    let uploadedImages = [...files];
+    const fileList = drop ? event.dataTransfer.files : event.target.files;
+    
+    if (fileList) {
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error(t('common:validations:size', {size: 5}));
+          return;
+        } else {
+          const reader = new FileReader();
+    
+          reader.onload = (e) => {
+            setTimeout(() => { 
+              const existFile = uploadedImages.some((item) => item.name === file.name);
+              if (!existFile){
+                uploadedImages = [...uploadedImages, { base64: reader.result, type: file.type.split('/')[0], name: file.name}];
+                setFiles(uploadedImages)
+              }
+            }, 500);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+  };
 
   const handleBirthdayChange = useCallback((value) => {
     const date = new Date(value);
@@ -248,7 +301,7 @@ export default function CreateContact() {
                   onChange={handleProfileImageChange}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 mx-auto mb-10 mt-8">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 px-2 mb-10 mt-8">
                 <TextInput
                   type="text"
                   label={t('contacts:create:name')}
@@ -336,7 +389,11 @@ export default function CreateContact() {
                   name="cua"
                   // placeholder={t('contacts:create:placeholder-address')}
                 />
-                <DocumentSelector />
+                <DocumentSelector 
+                  name="files"
+                  onChange={handleFilesUpload}
+                  files={files}
+                />
                 {/* <TextInputLocal label={t('contacts:create:charge')} id="position" placeholder={t('contacts:create:charge')} />
                 <TextInputLocal
                   label={t('contacts:create:curp')}
@@ -465,8 +522,14 @@ export default function CreateContact() {
   );
 }
 
-function DocumentSelector() {
+function DocumentSelector({ onChange, files, ...props}) {
   const { t } = useTranslation();
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    onChange(event, true);
+  };
+
   return (
     <div className="col-span-full">
       <label
@@ -475,23 +538,40 @@ function DocumentSelector() {
       >
         {t('contacts:create:passport')}
       </label>
-      <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+      <div className="mt-2  rounded-lg border border-dashed border-gray-900/25 py-6 px-2 relative" onDrop={handleDrop} onDragOver={(event) => event.preventDefault()}>
+        <div>
+          <div className="grid grid-cols-3 gap-x-2">
+            {files.length > 0 && files.map((file, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <DocumentTextIcon className="h-10 w-10 text-primary"/>
+                <p className="text-[10px]">{file.name}</p>
+              </div>
+            ))}
+          </div>
+          {files.length === 0 && (
+            <div className="">            
+              <PhotoIcon
+                className="mx-auto h-12 w-12 text-gray-300"
+                aria-hidden="true"
+              />
+            </div>
+          )}
+        </div>
         <div className="text-center">
-          <PhotoIcon
-            className="mx-auto h-12 w-12 text-gray-300"
-            aria-hidden="true"
-          />
-          <div className="mt-4 flex text-sm leading-6 text-gray-600">
+          <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
             <label
               htmlFor="file-upload"
-              className="relative cursor-pointer rounded-md bg-zinc-100 font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+              className="relative cursor-pointer rounded-md bg-zinc-100 font-semibold text-primary focus-within:outline-none  focus-within:ring-primary  hover:text-indigo-600 outline-none focus:ring-0 focus-within:ring-0"
             >
               <span>{t('contacts:create:upload-file')}</span>
               <input
+                type="file" 
+                accept="image/*,application/pdf"
+                onChange={(event) => onChange(event)}
                 id="file-upload"
-                name="file-upload"
-                type="file"
-                className="sr-only"
+                className="sr-only outline-none focus:ring-0"
+                multiple
+                {...props}
               />
             </label>
             <p className="pl-1">{t('contacts:create:drap-drop')}</p>
@@ -501,6 +581,7 @@ function DocumentSelector() {
           </p>
         </div>
       </div>
+      {files.length === 0 && <p className="mt-1 text-xs text-red-600">{t('common:validations:file')}</p>}
     </div>
   );
 }

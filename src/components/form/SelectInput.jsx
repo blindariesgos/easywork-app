@@ -41,7 +41,7 @@ function SelectInput({
             <Combobox.Input
               {...register(name)}
               className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
-              displayValue={(person) => person.name}
+              displayValue={(person) => person?.name}
               onChange={(event) => {
                   onChangeInput(event.target.value);
                 }

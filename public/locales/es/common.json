@@ -5,7 +5,9 @@
     "validations": {
         "required": "El campo es requerido",
         "min": "El campo debe tener al menos {{min}} caracteres",
-        "email": "Debe ser un correo valido"
+        "email": "Debe ser un correo valido",
+        "file": "Debe cargar los documentos",
+        "size": "El archivo es mayor de {{size}} MB"
     },
     "buttons": {
         "saving" : "Guardando...",

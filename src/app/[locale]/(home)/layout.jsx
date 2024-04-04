@@ -8,12 +8,16 @@ export const metadata = {
 
 export default function HomeLayout({ children }) {
   return (
-    <div className="h-screen overflow-auto">
-      <Sidebar />
-      <Header />
-      <main className="lg:pl-72">
-        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-      </main>
-    </div>
+    <div className="w-full h-screen">
+      <div className="flex">
+        <Sidebar />
+        <main className="h-screen overflow-auto w-full p-4">
+          <div className="bg-gray-100 h-full p-2 rounded-xl">
+            <Header />
+            <div className="">{children}</div>
+          </div>
+        </main>
+      </div>
+  </div>
   );
 }

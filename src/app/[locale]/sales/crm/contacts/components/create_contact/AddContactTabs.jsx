@@ -2,11 +2,11 @@
 import Button from "@/components/form/Button";
 import useAppContext from "@/context/app";
 import { contactDetailTabs } from "@/lib/common";
-import { ArrowDownTrayIcon, DocumentTextIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { ArrowDownTrayIcon, Cog8ToothIcon, DocumentTextIcon, PlusIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import SettingsButton from "../SettingsButton";
+import IconDropdown from "../SettingsButton";
 
 export default function AddContactTabs() {
   const { t } = useTranslation();
@@ -79,7 +79,11 @@ export default function AddContactTabs() {
             />
           </nav>
           <div>
-            <SettingsButton options={settings}/>
+            <IconDropdown
+              icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true"/>}
+              options={settings} 
+              width="w-44" 
+            />
           </div>
         </div>
       </div>

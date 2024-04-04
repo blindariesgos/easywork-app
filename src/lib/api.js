@@ -1,7 +1,6 @@
 "use server";
 import { revalidateTag } from "next/cache";
 import fetchAPI from "./fetcher";
-import { contactSchema } from "./schemas";
 
 const addContactFields = [
   "email",
@@ -33,45 +32,45 @@ export async function getContacts() {
 
 export async function createContact(prevState, formData) {
   // Validation
-  const validatedFields = contactSchema.safeParse({
-    email: formData.get("email"),
-    nombre: formData.get("nombre"),
-    apellidos: formData.get("apellidos"),
-  });
+  // const validatedFields = contactSchema.safeParse({
+  //   email: formData.get("email"),
+  //   nombre: formData.get("nombre"),
+  //   apellidos: formData.get("apellidos"),
+  // });
 
-  if (!validatedFields.success) {
-    return {
-      success: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
-  }
+  // if (!validatedFields.success) {
+  //   return {
+  //     success: false,
+  //     errors: validatedFields.error.flatten().fieldErrors,
+  //   };
+  // }
 
-  // keep only the fields found in the addContactFields array
-  const filteredFormData = new FormData();
-  for (const field of addContactFields) {
-    if (formData.get(field)) {
-      // Si el campo profilePhoto no tiene archivo adjunto, no lo incluye
-      if (field === "profilePhoto" && formData.get(field).size === 0) {
-        continue;
-      }
-      filteredFormData.append(field, formData.get(field));
-    }
-  }
+  // // keep only the fields found in the addContactFields array
+  // const filteredFormData = new FormData();
+  // for (const field of addContactFields) {
+  //   if (formData.get(field)) {
+  //     // Si el campo profilePhoto no tiene archivo adjunto, no lo incluye
+  //     if (field === "profilePhoto" && formData.get(field).size === 0) {
+  //       continue;
+  //     }
+  //     filteredFormData.append(field, formData.get(field));
+  //   }
+  // }
 
-  // Mutate Data
-  const result = await fetchAPI(
-    "/crm/contact",
-    "addContact",
-    "POST",
-    filteredFormData,
-    {}
-  );
+  // // Mutate Data
+  // const result = await fetchAPI(
+  //   "/crm/contact",
+  //   "addContact",
+  //   "POST",
+  //   filteredFormData,
+  //   {}
+  // );
 
-  console.log(result);
+  // console.log(result);
 
-  // Revalidate Cache
-  revalidateTag("contacts");
-  return { success: true };
+  // // Revalidate Cache
+  // revalidateTag("contacts");
+  // return { success: true };
 }
 
 export async function updateContact(prevState, formData) {

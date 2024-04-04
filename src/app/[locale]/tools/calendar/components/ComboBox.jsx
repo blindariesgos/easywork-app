@@ -50,7 +50,7 @@ export default function ComboBox({ label, data, selected, setSelected }) {
                 className={({ active }) =>
                   classNames(
                     "relative cursor-default select-none py-2 pl-3 pr-9",
-                    active ? "bg-indigo-600 text-white" : "text-gray-900"
+                    active ? "bg-primary text-white" : "text-gray-900"
                   )
                 }
               >
@@ -128,7 +128,7 @@ export function ComboBoxWithElement({ label, data, selected, setSelected }) {
                 className={({ active }) =>
                   classNames(
                     "relative cursor-default select-none py-2 pl-3 pr-9",
-                    active ? "bg-indigo-600 text-white" : "text-gray-900"
+                    active ? "bg-primary text-white" : "text-gray-900"
                   )
                 }
               >

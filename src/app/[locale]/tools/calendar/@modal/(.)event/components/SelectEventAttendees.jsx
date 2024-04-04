@@ -24,7 +24,7 @@ export default function SelectEventAttendees({ eventAttendees }) {
           <p className="text-xs text-zinc-700 ml-1 truncate">{attendee.name}</p>
           <button
             type="button"
-            className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-indigo-600/20"
+            className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-primary/20"
           >
             <span className="sr-only">{t('tools:calendar:new-event:remove')}</span>
             <svg

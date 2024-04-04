@@ -13,6 +13,7 @@ import useCrmContext from "@/context/crm";
 import { getURLContactPhoto } from "@/lib/common";
 import useAppContext from "@/context/app";
 import { useTranslation } from "react-i18next";
+import { Pagination } from "@/components/pagination/Pagination";
 
 export default function Page() {
   const { t } = useTranslation();
@@ -22,6 +23,7 @@ export default function Page() {
   const [selectedContacts, setSelectedContacts] = useState([]);
   const { setShowContact } = useAppContext();
   const { contacts: AppContacts, setCurrentContactID } = useCrmContext();
+  const [pagActual, setPageActual] = useState(0);
 
   useLayoutEffect(() => {
     if (checkbox.current) {
@@ -199,7 +201,7 @@ export default function Page() {
                   >
                     <td className="relative px-7 sm:w-12 sm:px-6">
                       {selectedContacts.includes(contact) && (
-                        <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
+                        <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                       )}
                       <input
                         type="checkbox"
@@ -309,6 +311,14 @@ export default function Page() {
             </table>
           </div>
         </div>
+      </div>
+      <div className="">
+        <Pagination
+          takeCount={5}
+          total={50}
+          pagActual={pagActual}
+          setPagActual={setPageActual}
+        />
       </div>
     </div>
   );

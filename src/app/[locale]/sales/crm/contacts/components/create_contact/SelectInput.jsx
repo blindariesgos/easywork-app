@@ -42,7 +42,7 @@ function SelectInput({
                   className={({ active }) =>
                     clsx(
                       "relative cursor-default select-none py-2 pl-8 pr-4",
-                      active ? "bg-indigo-600 text-white" : "text-gray-900"
+                      active ? "bg-primary text-white" : "text-gray-900"
                     )
                   }
                 >

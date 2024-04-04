@@ -1,14 +1,95 @@
 'use client';
 import React from "react";
-import { ChevronDownIcon, Cog8ToothIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, Cog8ToothIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import ContactSubMenu from "./ContactSubMenu";
 import { useTranslation } from "react-i18next";
 import Button from "@/components/form/Button";
 import useAppContext from "@/context/app";
+import IconDropdown from "./SettingsButton";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export default function ContactsHeader() {
   const { t } = useTranslation();
   const { setOpenModal } = useAppContext();
+
+  const settings = [
+    {
+      value: 0,
+      name: t("contacts:header:settings:vcard"),
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: t("contacts:header:settings:gmail"),
+      onclick: () => {},
+    },
+    {
+      value: 2,
+      name: t("contacts:header:settings:outlook"),
+      onclick: () => {},
+    },
+    {
+      value: 3,
+      name: t("contacts:header:settings:yahoo"),
+      onclick: () => {},
+    },
+    {
+      value: 4,
+      name: t("contacts:header:settings:import"),
+      onclick: () => {},
+    },
+    {
+      value: 5,
+      name: t("contacts:header:settings:crm"),
+      onclick: () => {},
+    },
+    {
+      value: 6,
+      name: t("contacts:header:settings:csv"),
+      onclick: () => {},
+    },
+    {
+      value: 7,
+      name: t("contacts:header:settings:excel"),
+      onclick: () => {},
+    },
+    {
+      value: 8,
+      name: t("contacts:header:settings:export"),
+      onclick: () => {},
+    },
+    {
+      value: 9,
+      name: t("contacts:header:settings:control"),
+      onclick: () => {},
+    },
+    {
+      value: 10,
+      name: t("contacts:header:settings:search"),
+      onclick: () => {},
+    },
+    {
+      value: 11,
+      name: t("contacts:header:settings:entity"),
+      onclick: () => {},
+    },
+  ]
+
+  const trash = [
+    {
+      value: 0,
+      name: t("contacts:header:delete:remove"),
+      icon: XMarkIcon,
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      icon: TrashIcon,
+      name: t("contacts:header:delete:trash"),
+      onclick: () => {},
+    },
+
+  ]
 
   return (
     <header className="flex flex-col">
@@ -35,12 +116,17 @@ export default function ContactsHeader() {
             placeholder={t('contacts:header:search')}
           />
         </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-        </button>
+        
+        <IconDropdown 
+          icon={<TrashIcon className="h-8 w-8 text-primary" aria-hidden="true"/>}
+          options={trash} 
+          width="w-72"
+        />
+        <IconDropdown 
+          icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true"/>}
+          options={settings} 
+          width="w-[340px]"
+        />
       </div>
       <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
         <ContactSubMenu />

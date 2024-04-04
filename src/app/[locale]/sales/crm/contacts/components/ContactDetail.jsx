@@ -100,7 +100,7 @@ export default function ContactDetail({ children }) {
           <div className="flex justify-start px-4 py-4 sticky bottom-0 bg-zinc-200">
             <button
               type="submit"
-              className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
               {t("common:buttons:save")}
             </button>

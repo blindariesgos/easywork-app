@@ -12,7 +12,68 @@ export default function ActivityHeader() {
     { name: t('contacts:create:activities:comment'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true, children: [{ name: t('contacts:create:activities:zoom')},{ name: t('contacts:create:activities:call')}] },
   ];
-  
+  const settings = [
+    {
+      value: 0,
+      name: t("contacts:header:settings:vcard"),
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: t("contacts:header:settings:gmail"),
+      onclick: () => {},
+    },
+    {
+      value: 2,
+      name: t("contacts:header:settings:outlook"),
+      onclick: () => {},
+    },
+    {
+      value: 3,
+      name: t("contacts:header:settings:yahoo"),
+      onclick: () => {},
+    },
+    {
+      value: 4,
+      name: t("contacts:header:settings:import"),
+      onclick: () => {},
+    },
+    {
+      value: 5,
+      name: t("contacts:header:settings:crm"),
+      onclick: () => {},
+    },
+    {
+      value: 6,
+      name: t("contacts:header:settings:csv"),
+      onclick: () => {},
+    },
+    {
+      value: 7,
+      name: t("contacts:header:settings:excel"),
+      onclick: () => {},
+    },
+    {
+      value: 8,
+      name: t("contacts:header:settings:export"),
+      onclick: () => {},
+    },
+    {
+      value: 9,
+      name: t("contacts:header:settings:control"),
+      onclick: () => {},
+    },
+    {
+      value: 10,
+      name: t("contacts:header:settings:search"),
+      onclick: () => {},
+    },
+    {
+      value: 11,
+      name: t("contacts:header:settings:entity"),
+      onclick: () => {},
+    },
+  ]
   return (
     <>
       <div className="bg-white px-2 rounded-md w-full shadow-sm">

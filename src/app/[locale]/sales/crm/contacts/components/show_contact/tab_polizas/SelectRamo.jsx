@@ -45,7 +45,7 @@ export default function SelectRamo() {
                     key={person.id}
                     className={({ active }) =>
                       classNames(
-                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                        active ? 'bg-primary text-white' : 'text-gray-900',
                         'relative cursor-default select-none py-2 pl-3 pr-9'
                       )
                     }

@@ -63,7 +63,7 @@ export default function WeekView() {
               className="flex flex-col items-center pb-3 pt-2"
             >
               {t('tools:calendar:week-day:w')}{" "}
-              <span className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+              <span className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-white">
                 12
               </span>
             </button>
@@ -126,7 +126,7 @@ export default function WeekView() {
             <div className="flex items-center justify-center py-3">
               <span className="flex items-baseline">
               {t('tools:calendar:week-day:mie')}{" "}
-                <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+                <span className="ml-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary font-semibold text-white">
                   12
                 </span>
               </span>

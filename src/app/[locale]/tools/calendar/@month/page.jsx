@@ -174,7 +174,7 @@ export default function MonthView() {
                   dateTime={day.date}
                   className={
                     day.isToday
-                      ? "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
+                      ? "flex h-6 w-6 items-center justify-center rounded-full bg-primary font-semibold text-white"
                       : undefined
                   }
                 >
@@ -233,7 +233,7 @@ export default function MonthView() {
                   className={clsx(
                     day.isSelected &&
                       "flex h-6 w-6 items-center justify-center rounded-full",
-                    day.isSelected && day.isToday && "bg-indigo-600",
+                    day.isSelected && day.isToday && "bg-primary",
                     day.isSelected && !day.isToday && "bg-gray-900",
                     "ml-auto"
                   )}

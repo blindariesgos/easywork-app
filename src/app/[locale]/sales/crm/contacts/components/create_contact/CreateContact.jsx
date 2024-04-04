@@ -29,6 +29,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as Yup from "yup"
 import InputPhone from "@/components/form/InputPhone";
 import SelectInput from "@/components/form/SelectInput";
+import SelectDropdown from "./SelectDropdown";
 
 const contactSources = [
   { id: 1, name: "Correo electrónico" },
@@ -45,6 +46,13 @@ const contactSources = [
   { id: 12, name: "Teléfono" },
   { id: 13, name: "WhatsApp" },
 ];
+
+const responsible = [
+  { id: 1, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+  { id: 2, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+  { id: 3, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+  { id: 4, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+]
 
 const timeline = [
   {
@@ -126,6 +134,8 @@ export default function CreateContact() {
     cua: Yup.string().required(t('common:validations:required')),
     typeContact: Yup.string().required(t('common:validations:required')),
     origin: Yup.string().required(t('common:validations:required')),
+    address: Yup.string().required(t('common:validations:required')),
+    responsible: Yup.string().required(t('common:validations:required')),
   });
 
   const {
@@ -192,7 +202,8 @@ export default function CreateContact() {
 
   const filteredContactTypes = filterOptions(query, contactTypes);
   const filteredContactSources = filterOptions(querySource, contactSources);
-  const filteredContactResponsible = filterOptions(queryResponsible, crmUsers);
+  // const filteredContactResponsible = filterOptions(queryResponsible, crmUsers);
+  const filteredContactResponsible = filterOptions(queryResponsible, responsible);
   const filteredSexoOptions = filterOptions(querySexo, sexoOptions);
 
   return (
@@ -237,7 +248,7 @@ export default function CreateContact() {
                   onChange={handleProfileImageChange}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:max-w-xl lg:px-12 mx-auto mb-10 mt-8">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 mx-auto mb-10 mt-8">
                 <TextInput
                   type="text"
                   label={t('contacts:create:name')}
@@ -283,35 +294,49 @@ export default function CreateContact() {
                   register={register}
                   name="rfc"
                 />
-                <TextInput
-                  label={t('contacts:create:cua')}
-                  placeholder={t('contacts:create:placeholder-name')}
-                  error={errors.cua}
-                  register={register}
-                  name="cua"
-                />
                 <SelectInput
                   label={t('contacts:create:contact-type')}
                   options={filteredContactTypes}
                   selectedOption={contactType}
-                  setSelectedOption={setContactType}
                   onChangeInput={setQuery}
                   // query={query}
                   name="typeContact"
                   error={errors.typeContact}
                   register={register}
                 />
+                <TextInput
+                  label={t('contacts:create:address')}
+                  error={errors.address}
+                  register={register}
+                  name="address"
+                  placeholder={t('contacts:create:placeholder-address')}
+                />
                 <SelectInput
                   label={t('contacts:create:origen')}
                   name="origin"
                   options={filteredContactSources}
                   selectedOption={contactSource}
-                  setSelectedOption={setContactSource}
                   onChangeInput={setQuerySource}
-                  className="pb-4"
                   error={errors.origin}
                   register={register}
                 />
+                <SelectDropdown
+                  label={t('contacts:create:responsible')}
+                  name="responsible"
+                  options={filteredContactResponsible}
+                  selectedOption={contactResponsible}
+                  onChangeInput={setQueryResponsible}
+                  error={errors.responsible}
+                  register={register}
+                />
+                <TextInput
+                  label={t('contacts:create:cua')}
+                  error={errors.cua}
+                  register={register}
+                  name="cua"
+                  // placeholder={t('contacts:create:placeholder-address')}
+                />
+                <DocumentSelector />
                 {/* <TextInputLocal label={t('contacts:create:charge')} id="position" placeholder={t('contacts:create:charge')} />
                 <TextInputLocal
                   label={t('contacts:create:curp')}
@@ -374,7 +399,6 @@ export default function CreateContact() {
                   hidden
                   type="text"
                 />
-                <DocumentSelector />
                 <TextArea
                   label={t('contacts:create:address')}
                   id="direccion"

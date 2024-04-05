@@ -6,28 +6,34 @@ import {
 } from "react-i18next";
 
 export const useSidebar = () => {
-    const { t } = useTranslation();
+    const {
+        t
+    } = useTranslation();
 
     const sidebarNavigation = [{
             name: t("common:menu:tools:name"),
-            href: "#",
+            href: "/tools",
             icon: ChevronRightIcon,
             current: true,
             children: [{
                     name: t("common:menu:tools:drive"),
-                    href: "/tools/drive"
+                    href: "/tools/drive",
+                    image: '/img/herramientas/drive.png'
                 },
                 {
                     name: t("common:menu:tools:tasks"),
-                    href: "/tools/task"
+                    href: "/tools/task",
+                    image: '/img/herramientas/tareas.png'
                 },
                 {
                     name: t("common:menu:tools:email"),
-                    href: "/tools/webmail"
+                    href: "/tools/webmail",
+                    image: '/img/herramientas/correo.png'
                 },
                 {
                     name: t("common:menu:tools:calendar"),
-                    href: "/tools/calendar"
+                    href: "/tools/calendar",
+                    image: '/img/herramientas/calendario.png'
                 },
             ],
         },
@@ -35,22 +41,27 @@ export const useSidebar = () => {
             name: t("common:menu:sales:name"),
             icon: ChevronRightIcon,
             current: false,
+            href: "/sales",
             children: [{
                     name: t("common:menu:sales:crm:name"),
-                    href: "#",
+                    href: "/sales/crm",
+                    image: '/img/ventas/crm.png',
                     children: [{
                             name: t("common:menu:sales:crm:contacts"),
-                            href: "/sales/crm/contacts"
+                            href: "/sales/crm/contacts",
+                            image: '/img/crm/contacto.png'
                         },
                         {
                             name: t("common:menu:sales:crm:prospects"),
-                            href: "/sales/crm/leads"
+                            href: "/sales/crm/leads",
+                            image: '/img/crm/prospecto.png'
                         },
                     ],
                 },
                 {
                     name: t("common:menu:sales:reports:name"),
-                    href: "#",
+                    href: "/sales/report",
+                    image: '/img/ventas/reportes.png',
                     children: [{
                             name: t("common:menu:sales:reports:activities"),
                             href: "/sales/report/activities"
@@ -75,11 +86,13 @@ export const useSidebar = () => {
                 },
                 {
                     name: t("common:menu:sales:marketing:name"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/ventas/marketing.png',
                 },
                 {
                     name: t("common:menu:sales:control:name"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/ventas/cobranza.png',
                 },
             ],
         },
@@ -87,35 +100,42 @@ export const useSidebar = () => {
             name: t("common:menu:services:name"),
             icon: ChevronRightIcon,
             current: false,
+            href: "/services",
             children: [{
                     name: t("common:menu:services:automations"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/services/automatizaciones.png'
                 },
                 {
                     name: t("common:menu:services:funnels"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/services/embudos.png'
                 },
                 {
                     name: t("common:menu:services:soport"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/services/soporte.png'
                 },
                 {
                     name: t("common:menu:services:trash"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/services/papelera.png'
                 },
                 {
                     name: t("common:menu:services:logs"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/services/logs.png'
                 },
                 {
                     name: t("common:menu:services:academy"),
-                    href: "#"
+                    href: "#",
+                    image: '/img/services/academia.png'
                 },
             ],
         },
         {
             name: t("common:menu:agent-management:name"),
-            href: "#",
+            href: "/",
             icon: ChevronRightIcon,
             current: false,
             children: [{
@@ -142,7 +162,7 @@ export const useSidebar = () => {
         },
         {
             name: t("common:menu:companies:name"),
-            href: "#",
+            href: "/",
             icon: ChevronRightIcon,
             current: false,
             children: [{
@@ -181,7 +201,7 @@ export const useSidebar = () => {
         },
         {
             name: t("common:menu:settings:name"),
-            href: "#",
+            href: "/",
             icon: ChevronRightIcon,
             current: false,
             children: [{
@@ -206,7 +226,106 @@ export const useSidebar = () => {
 }
 
 export const useCommon = () => {
-    const { t } = useTranslation();
+    const {
+        t
+    } = useTranslation();
     const calendarViews = [t('tools:calendar:day'), t('tools:calendar:week'), t('tools:calendar:month'), t('tools:calendar:program')];
-    return { calendarViews}
+    const createdDate = [
+
+        {
+            id: 1,
+            name: t('contacts:filters:date:yesterday')
+        },
+        {
+            id: 2,
+            name: t('contacts:filters:date:today')
+        },
+        {
+            id: 3,
+            name: t('contacts:filters:date:tomorrow')
+        },
+        {
+            id: 4,
+            name: t('contacts:filters:date:thisWeek')
+        },
+        {
+            id: 5,
+            name: t('contacts:filters:date:thisMonth')
+        },
+        {
+            id: 6,
+            name: t('contacts:filters:date:currentQuarter')
+        },
+        {
+            id: 7,
+            name: t('contacts:filters:date:last7Days')
+        },
+        {
+            id: 8,
+            name: t('contacts:filters:date:last30Days')
+        },
+        {
+            id: 9,
+            name: t('contacts:filters:date:last60Days')
+        },
+        {
+            id: 10,
+            name: t('contacts:filters:date:last90Days')
+        },
+        {
+            id: 11,
+            name: t('contacts:filters:date:lastNDays'),
+            date: "input"
+        },
+        {
+            id: 12,
+            name: t('contacts:filters:date:nextNDays'),
+            date: "input"
+        },
+        {
+            id: 13,
+            name: t('contacts:filters:date:month'),
+            date: "month"
+        },
+        {
+            id: 14,
+            name: t('contacts:filters:date:quarter'),
+            date: "quarter"
+        }, 
+        {
+            id: 15,
+            name: t('contacts:filters:date:year'),
+            date: "year"
+        },
+        {
+            id: 16,
+            name: t('contacts:filters:date:exactDate'),            
+            date: "exactDate"
+        },
+        {
+            id: 17,
+            name: t('contacts:filters:date:lastWeek')
+        },
+        {
+            id: 18,
+            name: t('contacts:filters:date:lastMonth')
+        },
+        {
+            id: 19,
+            name: t('contacts:filters:date:dateRange'),      
+            date: "range"
+        },
+        {
+            id: 20,
+            name: t('contacts:filters:date:nextWeek')
+        },
+        {
+            id: 21,
+            name: t('contacts:filters:date:nextMonth')
+        }
+    ];
+    return {
+        calendarViews,
+        createdDate
+    }
 }

@@ -40,7 +40,9 @@ module.exports = {
         },
         "gray": {
           50: "#808080",
+          60: "#6B6B6B",
           100: "#F2F6F7",
+          150: "#F6F6F6",
           200: "#D9D9D9",
           300: "#DFE3E6",
           400: "#54585B",
@@ -51,6 +53,7 @@ module.exports = {
           100: "#FFEB04"
         },
         "blue":{
+          50: "#FCFDFF",
           100: "#86BEDF"
         },
         easywork: {

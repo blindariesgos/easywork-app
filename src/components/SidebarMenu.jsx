@@ -39,25 +39,27 @@ const SidebarMenu = () => {
                                     <Disclosure as="div">
                                     {({ open }) => (
                                         <>
-                                        <Disclosure.Button
-                                            className={classNames(
-                                            item.ref === pathname
-                                                ? "bg-primary text-white"
-                                                : "text-slate-50 hover:text-white hover:bg-easy-300",
-                                            "flex items-center w-full text-left rounded-md p-2 gap-x-3 text-sm leading-6 font-semibold uppercase"
-                                            )}
-                                        >
-                                            <item.icon
-                                            className={classNames(
-                                                open
-                                                ? "rotate-90 text-slate-50"
-                                                : "text-slate-50",
-                                                "h-7 w-7"
-                                            )}
-                                            aria-hidden="true"
-                                            />
-                                            {item.name}
-                                        </Disclosure.Button>
+                                        <Link href={item.href}>
+                                            <Disclosure.Button
+                                                className={classNames(
+                                                item.ref === pathname
+                                                    ? "bg-primary text-white"
+                                                    : "text-slate-50 hover:text-white hover:bg-easy-300",
+                                                "flex items-center w-full text-left rounded-md p-2 gap-x-3 text-sm leading-6 font-semibold uppercase"
+                                                )}
+                                            >
+                                                <item.icon
+                                                className={classNames(
+                                                    open
+                                                    ? "rotate-90 text-slate-50"
+                                                    : "text-slate-50",
+                                                    "h-7 w-7"
+                                                )}
+                                                aria-hidden="true"
+                                                />
+                                                {item.name}
+                                            </Disclosure.Button>
+                                        </Link>
                                         <Disclosure.Panel as="ul" className="mt-1 px-2">
                                             {item.children.map((subItem) => (
                                                 <li key={subItem.name}>
@@ -77,25 +79,27 @@ const SidebarMenu = () => {
                                                     <Disclosure as={"div"}>
                                                         {({ open }) => (
                                                             <>
-                                                                <Disclosure.Button
-                                                                    className={classNames(
-                                                                        subItem.href === pathname
-                                                                        ? "bg-primary text-white"
-                                                                        : "text-slate-50 hover:text-white hover:bg-easy-300",
-                                                                        "flex items-center w-full text-left rounded-md p-2  pl-9 gap-x-3 text-sm leading-6 font-semibold uppercase"
-                                                                    )}
-                                                                >
-                                                                    <ChevronRightIcon
+                                                                <Link href={subItem.href}>
+                                                                    <Disclosure.Button
                                                                         className={classNames(
-                                                                        open
-                                                                            ? "rotate-90 text-slate-50"
-                                                                            : "text-slate-50",
-                                                                        "h-5 w-5 shrink-0"
+                                                                            subItem.href === pathname
+                                                                            ? "bg-primary text-white"
+                                                                            : "text-slate-50 hover:text-white hover:bg-easy-300",
+                                                                            "flex items-center w-full text-left rounded-md p-2  pl-9 gap-x-3 text-sm leading-6 font-semibold uppercase"
                                                                         )}
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    {subItem.name}
-                                                                </Disclosure.Button>
+                                                                    >
+                                                                            <ChevronRightIcon
+                                                                                className={classNames(
+                                                                                open
+                                                                                    ? "rotate-90 text-slate-50"
+                                                                                    : "text-slate-50",
+                                                                                "h-5 w-5 shrink-0"
+                                                                                )}
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                            {subItem.name}
+                                                                    </Disclosure.Button>
+                                                                </Link>                                                                
                                                                 <Disclosure.Panel
                                                                     as="ul"
                                                                     className="mt-1 px-2"

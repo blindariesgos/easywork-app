@@ -1,15 +1,16 @@
 "use client"
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import React from "react";
 
-export default function Button({label, type, icon, onclick, buttonStyle, disabled}) {
+export default function Button({label, type, iconLeft, icon, onclick, buttonStyle, disabled, className}) {
 
   const ButtonStyleFC = (ButtonStyleType) => {
     switch (ButtonStyleType) {
       case "primary":
-        return "bg-primary hover:bg-easy-500 text-white disabled:opacity-50";
+        return "bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm text-sm";
       case "secondary":
-        return "text-primary bg-gray-500";
+        return "text-primary bg-gray-500 shadow-sm text-sm";
+      case "text":
+        return "text-gray-60 bg-transparent text-xs";
       default:
         break;
     }
@@ -20,8 +21,9 @@ export default function Button({label, type, icon, onclick, buttonStyle, disable
       type={type}
       onClick={onclick}
       disabled={disabled}
-      className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold shadow-sm hover:bg-easy-500 outline-none focus:outline-none ${buttonStyle && ButtonStyleFC(buttonStyle)}`}
+      className={`flex items-center gap-x-2 rounded-md ${className} font-semibold outline-none focus:outline-none ${buttonStyle && ButtonStyleFC(buttonStyle)}`}
     >
+      {iconLeft} 
       {label}
       {icon}      
     </button>

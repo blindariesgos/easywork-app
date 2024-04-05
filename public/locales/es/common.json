@@ -2,6 +2,7 @@
     "loading": "Cargando...",
     "save": "¡Salvado con éxito!",
     "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
+    "select": "Seleccione",
     "validations": {
         "required": "El campo es requerido",
         "min": "El campo debe tener al menos {{min}} caracteres",
@@ -45,7 +46,7 @@
                 "name" : "Marketing"
             },
             "control": {
-                "name" : "Control de cartera"
+                "name" : "Cobranza"
             }
         },
         "services": {

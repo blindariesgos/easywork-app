@@ -9,6 +9,7 @@ import {
   HomeIcon,
   UsersIcon,
 } from "@heroicons/react/20/solid";
+import { useTranslation } from "react-i18next";
 
 export const contactSubmenuOptions = [
   "míos",
@@ -46,109 +47,12 @@ export const driveMimeTypes = [
   "folder",
 ];
 
-export const sidebarNavigation = [
-  {
-    name: "Herramientas",
-    href: "#",
-    icon: ChevronRightIcon,
-    current: true,
-    children: [
-      { name: "Drive-Documentos", href: "/tools/drive" },
-      { name: "Tareas", href: "/tools/task" },
-      { name: "Correo", href: "/tools/webmail" },
-      { name: "Calendario", href: "/tools/calendar" },
-    ],
-  },
-  {
-    name: "Ventas",
-    icon: ChevronRightIcon,
-    current: false,
-    children: [
-      {
-        name: "CRM",
-        href: "#",
-        children: [
-          { name: "Contactos", href: "/sales/crm/contacts" },
-          { name: "Prospectos", href: "/sales/crm/leads" },
-        ],
-      },
-      { 
-        name: "Reportes",
-        href: "#",
-        children: [
-          { name: "Actividades", href: "/sales/report/activities" },
-          { name: "Historial", href: "/sales/report/history" },
-          { name: "Informes", href: "/sales/report/reports" },
-          { 
-            name: "Rendimiento del agente", 
-            href: "#",
-            children: [
-              {
-                name: "Embudo de ventas sin conversión",
-                href: "/sales/report/agentperformance/noconv"
-              }
-            ]
-          },
-        ],
-      },
-      { name: "Marketing", href: "#" },
-      { name: "Control de cartera", href: "#" },
-    ],
-  },
-  {
-    name: "Servicios",
-    icon: ChevronRightIcon,
-    current: false,
-    children: [
-      { name: "Automatizaciones", href: "#" },
-      { name: "Embudos", href: "#" },
-      { name: "Soporte a clientes - chats", href: "#" },
-      { name: "Papelera", href: "#" },
-      { name: "Logs", href: "#" },
-      { name: "Academia", href: "#" },
-    ],
-  },
-  {
-    name: "Gestión de agentes",
-    href: "#",
-    icon: ChevronRightIcon,
-    current: false,
-    children: [
-      { name: "Reclutamiento y selección", href: "#" },
-      { name: "Capacitaciones", href: "#" },
-      { name: "Conexiones", href: "#" },
-      { name: "Desarrollo de agentes", href: "#" },
-      { name: "E-Learning", href: "#" },
-    ],
-  },
-  {
-    name: "Compañías",
-    href: "#",
-    icon: ChevronRightIcon,
-    current: false,
-    children: [
-      { name: "AFIRME", href: "#" },
-      { name: "ATLAS", href: "#" },
-      { name: "AXXA", href: "#" },
-      { name: "BANORTE", href: "#" },
-      { name: "GNP", href: "#" },
-      { name: "QUALITAS", href: "#" },
-      { name: "ZURICH", href: "#" },
-      { name: "OTRAS", href: "#" },
-    ],
-  },
-  {
-    name: "Ajustes y configuración",
-    href: "#",
-    icon: ChevronRightIcon,
-    current: false,
-    children: [
-      { name: "Permisos y accesos usuarios", href: "#" },
-      { name: "Cambio de contraseña", href: "#" },
-      { name: "Otros", href: "#" },
-    ],
-  },
-];
+export const responsible = [
+  { id: 1, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+  { id: 2, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+  { id: 3, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"},
+  { id: 4, name: "Nathaly Polin", phone: "+528354120", email: "Naty@gmail.com", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+]
 
 export const contactTypes = [
   { id: 1, name: "Agente" },

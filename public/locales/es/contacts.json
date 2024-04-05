@@ -1,7 +1,7 @@
 {
     "header": {
         "contact": "Contacto",
-        "search": "Buscar",
+        "search": "Búsqueda",
         "create": "Crear",
         "mine": "Míos",
         "elements": "Mis Elementos",
@@ -128,6 +128,43 @@
                 "amount": "Importe",
                 "branch": "Ramo"
             }
+        }
+    },
+    "filters": {
+        "name" : "Filtros",
+        "my-contact" : "Mis Contactos",
+        "all-contact" : "Todos los Contactos",
+        "save" : "Guardar Filtro",
+        "responsible" : "Persona Responsable",
+        "created" : "Creado el",
+        "origin" : "Origen",
+        "created-by": "Creado por",
+        "add-field" : "Agregar campo",
+        "restore" : "Restaurar campos predeterminados",
+        "search" : "Buscar",
+        "restart" : "Reiniciar",
+        "date": {
+            "yesterday": "Ayer",
+            "today": "Hoy",
+            "tomorrow": "Mañana",
+            "thisWeek": "Esta semana",
+            "thisMonth": "Este mes",
+            "currentQuarter": "Trimestre actual",
+            "last7Days": "Últimos 7 días",
+            "last30Days": "Últimos 30 días",
+            "last60Days": "Últimos 60 días",
+            "last90Days": "Últimos 90 días",
+            "lastNDays": "Últimos N días",
+            "nextNDays": "Próximos N días",
+            "month": "Mes",
+            "quarter": "Trimestre",
+            "year": "Año",
+            "exactDate": "Fecha exacta",
+            "lastWeek": "La semana pasada",
+            "lastMonth": "El mes pasado",
+            "dateRange": "Rango de fecha",
+            "nextWeek": "La próxima semana",
+            "nextMonth": "El próximo mes"
         }
     }
 }

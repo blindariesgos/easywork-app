@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import Image from "next/image";
 import {

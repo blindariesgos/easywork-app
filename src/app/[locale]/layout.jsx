@@ -15,7 +15,7 @@ export const metadata = {
 };
 
 const i18nNamespaces = ['contacts', 'common', 'tools', 'auth'];
-export default async function RootLayout({ children, params: { locale } }) {
+export default async function RootLayout({ children, params: { locale }}) {
   
   const { resources } = await initTranslations(locale, i18nNamespaces);
   return (
@@ -27,7 +27,9 @@ export default async function RootLayout({ children, params: { locale } }) {
           resources={resources}
         >
           <AppContextProvider>
-            <CrmContextProvider>{children}</CrmContextProvider>
+            <CrmContextProvider>
+              {children}
+              </CrmContextProvider>
             <ToastContainer />
           </AppContextProvider>
         </TranslationsProvider>

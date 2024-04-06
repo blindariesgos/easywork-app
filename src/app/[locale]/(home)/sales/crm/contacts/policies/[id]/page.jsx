@@ -4,6 +4,7 @@ import ContactDetail from "../../components/ContactDetail";
 import { getContact } from "@/lib/api";
 import CreateContact from "../../components/create_contact/CreateContact";
 import useAppContext from "@/context/app";
+import ContactPoliza from "../../components/show_contact/tab_polizas/ContactPoliza";
 
 async function useContact({ contactID }) {
   const response = await getContact(contactID);
@@ -11,10 +12,10 @@ async function useContact({ contactID }) {
 }
 
 export default async function Page({ params: { id } }) {
-  const contactInfo = await useContact({ contactID: id });
+//   const contactInfo = await useContact({ contactID: id });
 
   return (
-    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
+    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="policy">
       <Suspense
         fallback={
           <div className="flex flex-col h-screen">
@@ -23,7 +24,7 @@ export default async function Page({ params: { id } }) {
           </div>
         }
       >
-        <CreateContact edit id={id}/>
+        <ContactPoliza contactID={id} />
       </Suspense>
     </SlideOver>
   );

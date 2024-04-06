@@ -8,20 +8,22 @@ import ContactDetail from "../ContactDetail";
 import ContactGeneral from "./ContactGeneral";
 import { contactDetailTabs } from "@/lib/common";
 import ContactPoliza from "./tab_polizas/ContactPoliza";
+import CreateContact from "../create_contact/CreateContact";
 
 export default function ShowContactModal() {
   const { showContact, setShowContact, contactDetailTab } = useAppContext();
   const { currentContactID } = useCrmContext();
 
   return (
-    <SlideOver openModal={showContact} setOpenModal={setShowContact}>
+    <SlideOver openModal={showContact} setOpenModal={setShowContact} colorTag="bg-green-primary" labelTag="contact">
       <WrapperContact contactID={currentContactID}>
-        <ContactDetail>
+        {/* <ContactDetail>
           {contactDetailTab === contactDetailTabs[0] && <ContactGeneral />}
           {contactDetailTab === contactDetailTabs[1] && (
             <ContactPoliza contactID={currentContactID} />
           )}
-        </ContactDetail>
+        </ContactDetail> */}
+        <CreateContact edit/>
       </WrapperContact>
       {/* <ShowContact contactID={currentContact} /> */}
     </SlideOver>

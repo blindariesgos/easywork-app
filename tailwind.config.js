@@ -56,6 +56,10 @@ module.exports = {
           50: "#FCFDFF",
           100: "#86BEDF"
         },
+        "green": {
+          primary: "#A9EA44",
+          100: "#74BF00",
+        },
         easywork: {
           main: "#262261",
           mainhover: "#141052"

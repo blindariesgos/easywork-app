@@ -15,7 +15,7 @@ export default function ShowContactModal() {
   const { currentContactID } = useCrmContext();
 
   return (
-    <SlideOver openModal={showContact} setOpenModal={setShowContact}>
+    <SlideOver openModal={showContact} setOpenModal={setShowContact} colorTag="bg-green-primary" labelTag="policy">
       <WrapperPoliza>
         
       </WrapperPoliza>

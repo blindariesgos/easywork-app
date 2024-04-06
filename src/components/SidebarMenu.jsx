@@ -4,7 +4,7 @@ import React from 'react'
 import { Disclosure, } from "@headlessui/react";
 import Link from 'next/link';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
-import { useSidebar } from '@/hooks/useCommon';
+import { useSidebar } from '../hooks/useCommon';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");

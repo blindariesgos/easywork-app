@@ -14,6 +14,7 @@ import { getURLContactPhoto } from "@/lib/common";
 import useAppContext from "@/context/app";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "@/components/pagination/Pagination";
+import Link from "next/link"
 
 export default function Page() {
   const { t } = useTranslation();
@@ -205,7 +206,7 @@ export default function Page() {
                       )}
                       <input
                         type="checkbox"
-                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
                         value={contact.id}
                         checked={selectedContacts.includes(contact)}
                         onChange={(e) =>
@@ -226,11 +227,11 @@ export default function Page() {
                       )}
                     >
                       <div className="flex items-center">
-                        <div className="h-9 w-9 flex-shrink-0">
+                        <div className="h-8 w-8 flex-shrink-0">
                           <Image
-                            className="h-9 w-9 rounded-full bg-zinc-200"
-                            width={36}
-                            height={36}
+                            className="h-8 w-8 rounded-full bg-zinc-200"
+                            width={30}
+                            height={30}
                             src={
                               getURLContactPhoto(contact) ?? "/img/avatar.svg"
                             }
@@ -238,50 +239,51 @@ export default function Page() {
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="font-medium text-gray-400">
-                            <button
+                          <div className="font-medium text-sm text-black">
+                            {/* <button
                               onClick={() => {
                                 setCurrentContactID(contact.id);
                                 console.log(contact.id);
                                 setShowContact(true);
                               }}
-                            >
-                              {contact.nombre} {contact.apellidos}
-                            </button>
+                            > */}
+                            <Link href={`/sales/crm/contacts/contact/${contact.id}`}>{contact.nombre} {contact.apellidos}</Link>
+                              
+                            {/* </button> */}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 bg-indigo-100/30">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {contact.birthday ?? "05/02/1991"}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {contact?.responsibleUser?.name ?? "N/A"}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {contact.email}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {contact.telefono}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {new Date(contact.createdAt).toLocaleDateString() ??
                         "05/02/1991"}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {contact.source}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       <div className="flex gap-2">
                         <button
                           type="button"
-                          className="rounded-full bg-green-600 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
                         </button>
                         <button
                           type="button"
-                          className="rounded-full bg-indigo-800 p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           <EnvelopeIcon
                             className="h-4 w-4"
@@ -290,7 +292,7 @@ export default function Page() {
                         </button>
                         <button
                           type="button"
-                          className="rounded-full bg-indigo-800 p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           <ChatBubbleBottomCenterIcon
                             className="h-4 w-4"
@@ -299,7 +301,7 @@ export default function Page() {
                         </button>
                         <button
                           type="button"
-                          className="rounded-full bg-indigo-800 p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           <PhoneIcon className="h-4 w-4" aria-hidden="true" />
                         </button>

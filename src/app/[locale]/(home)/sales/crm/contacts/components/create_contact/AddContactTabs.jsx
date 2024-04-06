@@ -7,13 +7,14 @@ import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import IconDropdown from "../SettingsButton";
+import Link from "next/link"
 
-export default function AddContactTabs() {
+export default function AddContactTabs({ id }) {
   const { t } = useTranslation();
   const {setContactDetailTab, contactDetailTab} = useAppContext();
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0 },
-    { name: t("contacts:create:tabs:policies"), value: 1 },
+    { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/policies/${id}` },
     { name: t("contacts:create:tabs:activities"), value: 2 },
     { name: t("contacts:create:tabs:reports"), value: 3 },
     { name: t("contacts:create:tabs:documents"), value: 4 },
@@ -56,26 +57,33 @@ export default function AddContactTabs() {
         <div className="flex justify-between items-center">
           <nav className="-mb-px flex space-x-8 p-2" aria-label="Tabs">
             {tabs.map((tab) => (
-              <div
+              <Link
                 key={tab.name}
-                onClick={() => setContactDetailTab(contactDetailTabs[tab.value])}
-                className={clsx(
-                  tab.value === contactDetailTabs.indexOf(contactDetailTab)
-                    ? "border-indigo-500 text-white bg-blue-100 rounded-md"
-                    : tab.disabled
-                    ? "border-transparent text-gray-300 cursor-default"
-                    : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
-                  "whitespace-nowrap p-2 text-sm font-medium cursor-pointer"
-                )}
-                aria-current={tab.current ? "page" : undefined}
+                href={tab.link || ""}
+                className="ring-0"
               >
-                {tab.name}
-              </div>
+                <div
+                  onClick={() => setContactDetailTab(contactDetailTabs[tab.value])}
+                  className={clsx(tab.value === 0 && "border-indigo-500 text-white bg-blue-100 rounded-md",
+                    // tab.value === contactDetailTabs.indexOf(contactDetailTab)
+                    //   ? "border-indigo-500 text-white bg-blue-100 rounded-md"
+                    //   : 
+                      tab.disabled
+                      ? "border-transparent text-gray-300 cursor-default"
+                      : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
+                    "whitespace-nowrap p-2 text-sm font-medium cursor-pointer"
+                  )}
+                  aria-current={tab.current ? "page" : undefined}
+                >
+                  {tab.name}
+                </div>
+              </Link>
             ))}
             <Button
               label={t("contacts:create:add")}
               buttonStyle="primary"
               icon={<PlusIcon className="h-4 w-4 text-white"/>}
+              className="py-2 px-3"
             />
           </nav>
           <div>

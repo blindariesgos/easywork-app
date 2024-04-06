@@ -22,7 +22,7 @@ export const revalidate = 3600;
 const timeline = [
   {
     id: 1,
-    child: ActivityHeader,
+    child: CardTask,
     content: "Applied to",
     target: "Front End Developer",
     href: "#",

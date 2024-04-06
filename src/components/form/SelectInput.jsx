@@ -75,7 +75,7 @@ function SelectInput({
                   Nothing found.
                 </div>
               ) : (
-                options.map((person) => (
+                options && options.map((person) => (
                   <Combobox.Option
                     disabled={disabled}
                     key={person.id}

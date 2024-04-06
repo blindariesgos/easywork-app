@@ -39,11 +39,11 @@ export default function ContactLayout({ children, table, modal }) {
             </div>
           }
         >
-          {modal}
           <CreateContactModal/>
           <ShowContactModal />
           {table}
           {children}
+          {modal}
         </Suspense>
       </div>    
     </div>

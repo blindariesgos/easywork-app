@@ -33,7 +33,7 @@ export default function PolizasTab() {
   }, [currentContact]);
 
   const mapContactPolizasToCategories = (polizas) => {
-    return polizas.reduce((acc, poliza) => {
+    return polizas?.reduce((acc, poliza) => {
       const category = poliza.tipoPoliza;
       if (!acc[category]) {
         acc[category] = [];
@@ -83,7 +83,7 @@ export default function PolizasTab() {
               )}
             >
               {console.log(polizas, "Polizas")}
-              <ContactPolizaTable polizas={polizas[category]} />
+              <ContactPolizaTable polizas={polizas ? polizas[category] : []} />
             </Tab.Panel>
           ))}
         </Tab.Panels>

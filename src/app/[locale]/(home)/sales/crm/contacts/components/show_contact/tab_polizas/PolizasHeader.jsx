@@ -1,3 +1,4 @@
+'use client'
 import { Dialog, DialogPanel } from "@tremor/react";
 import React from "react";
 import SelectRamo from "./SelectRamo";

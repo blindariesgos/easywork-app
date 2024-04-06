@@ -4,7 +4,7 @@ import PolizasTab from "./PolizasTab";
 
 export default function ContactPoliza({contactID}) {
   return (
-    <div className="w-full px-5">
+    <div className="w-full h-screen flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
       <PolizasHeader contactID={contactID} />
       <PolizasTab />
     </div>

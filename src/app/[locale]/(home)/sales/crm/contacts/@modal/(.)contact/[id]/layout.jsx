@@ -23,18 +23,9 @@ export default async function ContactLayout({
   const contactInfo = await useContact({ contactID: id });
 
   return (
-    <SlideOver>
-      <Suspense fallback={<div>Loading...</div>}>
-      <WrapperContext
-        general={general}
-        polizas={polizas}
-        actividades={actividades}
-        reportes={reportes}
-        documentos={documentos}
-        contactInfo={contactInfo}
-      />
-      </Suspense>
+    <div>
+      {children}
     
-    </SlideOver>
+    </div>
   );
 }

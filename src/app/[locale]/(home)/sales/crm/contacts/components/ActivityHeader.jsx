@@ -101,10 +101,10 @@ export default function ActivityHeader() {
                   <>
                     {tab.children ? (
                       <div key={tab.name} className="py-4 -mt-[3px]">
-                        <AppointmentMenu
+                        {/* <AppointmentMenu
                           options={tab.children}
                           label={tab.name}
-                        />
+                        /> */}
                       </div>
                     ) : (
                       <a

@@ -5,6 +5,10 @@ const API = {
         email, password
     });
     return response.data;
+  },
+  createContact: async (data) => {
+    const response = await axios.post('/sales/crm/contacts', data);
+    return response.message
   }
 };
 

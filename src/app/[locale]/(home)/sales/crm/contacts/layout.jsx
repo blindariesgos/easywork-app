@@ -43,7 +43,8 @@ export default function ContactLayout({ children, table, modal }) {
           <ShowContactModal />
           {table}
           {children}
-          {modal}
+          {/* {modal} */}
+          
         </Suspense>
       </div>    
     </div>

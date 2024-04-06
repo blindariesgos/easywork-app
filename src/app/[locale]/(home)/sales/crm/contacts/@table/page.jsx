@@ -239,7 +239,7 @@ export default function Page() {
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="font-medium text-sm text-black">
+                          <div className="font-medium text-sm text-black hover:text-indigo-600">
                             {/* <button
                               onClick={() => {
                                 setCurrentContactID(contact.id);

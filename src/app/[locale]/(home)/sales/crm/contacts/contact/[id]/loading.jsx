@@ -12,12 +12,14 @@ export default function Loading() {
   // useEffect(() => {
   //   dialogRef.current?.showModal()
   // }, [])
-console.log("entre aqui")
   return (
-    <div className="fixed inset-0 ">
-        <div
-    className={cn("animate-pulse rounded-md bg-muted", "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-32")}/>
-    cvxvxbv x
+    <div className="">
+        {/* <div
+    className={cn("animate-pulse rounded-md bg-muted", "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-32")}/> */}
+    cvxvxbv xxcb xcv xcv
+
+
+    FFFFFFFFFFFFF
       {/* <Skeleton className="" /> */}
 
     </div>

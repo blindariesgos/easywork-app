@@ -55,10 +55,10 @@ export default function CheckUser() {
                     </div>
                 </div>
                 <div className="mt-4 w-full flex justify-evenly">
-                    <button className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md">
+                    <button onClick={() => setContextData(0)} className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md">
                         Aceptar
                     </button>
-                    <button onClick={() => setContextData(0)} className="hover:bg-gray-700 bg-gray-600 text-white font-bold py-2 px-4 rounded-md">
+                    <button onClick={() => setContextData(0)} className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md">
                         Cancelar
                     </button>
                 </div>

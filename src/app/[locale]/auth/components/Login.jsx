@@ -3,21 +3,22 @@ import Image from "next/image";
 import { LockClosedIcon, UserIcon } from '@heroicons/react/24/solid';
 import ModalVideo from "./ModalVideo";
 import { useDataContext } from "../context";
-import API from '../../../../lib/apis';
+import { getLogin } from '../../../../lib/apis';
 import { useRouter } from 'next/navigation';
 
 export default function Login() {
     const router = useRouter();
     const { contextData, setContextData } = useDataContext();
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     function sendData() {
-        API.getLogin(username, password)
-        .then(data => {
-          console.log(data);
-          router.push('/');
-        })
+        router.push('/');
+        // getLogin(email, password)
+        // .then(data => {
+        //   console.log(data);
+        //   router.push('/');
+        // })
     }
 
     if (contextData === 0) {
@@ -32,14 +33,14 @@ export default function Login() {
                         alt="easywork"
                     />
                 </div>
-                {/* Usuario */}
+                {/* Email */}
                 <div className="relative text-gray-600 focus-within:text-gray-400">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-2">
                         <button type="submit" className="p-1 focus:outline-none focus:shadow-outline">
                             <UserIcon className="h-5 w-5 text-easywork-main" />
                         </button>
                     </span>
-                    <input style={{ border: 'none' }} type="text" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Usuario" autoComplete="off" onChange={e => setUsername(e.target.value)} />
+                    <input style={{ border: 'none' }} type="text" name="q" className="py-2 text-sm rounded-md pl-10 focus:text-gray-900" placeholder="Email" autoComplete="off" onChange={e => setEmail(e.target.value)} />
                 </div>
                 {/* Contraseña */}
                 <div className="relative text-gray-600 focus-within:text-gray-400 mt-2">

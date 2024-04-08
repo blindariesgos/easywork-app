@@ -113,7 +113,8 @@ export default function CreateContact({ edit, id }) {
 		// phone: Yup.string().required(t('common:validations:required')),
 		// rfc: Yup.string().required(t('common:validations:required')),
 		// cua: Yup.string().required(t('common:validations:required')),
-		// typeContact: Yup.string().required(t('common:validations:required')),
+		typeContact: Yup.string().required(t('common:validations:required')),
+		otherType: Yup.string(),
 		origin: Yup.string().required(t('common:validations:required'))
 		// address: Yup.string().required(t('common:validations:required')),
 		// responsible: Yup.string().required(t('common:validations:required')),
@@ -142,7 +143,7 @@ export default function CreateContact({ edit, id }) {
 		// files: Yup.array().required('Debe seleccionar al menos un archivo.'),
 	});
 
-	const { register, handleSubmit, control, reset, setValue, formState: { isValid, errors } } = useForm({
+	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
 		defaultValues: {},
 		mode: 'onChange',
 		resolver: yupResolver(schema)
@@ -256,124 +257,134 @@ export default function CreateContact({ edit, id }) {
 						<div className="flex items-start flex-col justify-between space-y-3">
 							{!edit && <div className="inset-0 bg-white/75 w-full h-36 z-50 absolute rounded-t-2xl" />}
 							<h1 className="text-2xl">{edit ? 'hola' : t('contacts:create:client')}</h1>
-							<AddContactTabs id={id}/>
+							<AddContactTabs id={id} />
 						</div>
 					</div>
 
 					{/* Panel Principal */}
 
 					{/* {contactDetailTab === contactDetailTabs[0] && ( */}
-						<div className="flex flex-col sm:flex-row h-full pb-[13.5rem] bg-white mx-4 rounded-lg p-4 w-full">
-							{/* Menu Izquierda */}
-							<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
-								<div className="flex justify-between bg-white py-4 px-4 rounded-md">
-									<h1 className="">{t('contacts:create:data')}</h1>
-									<button type="button" disabled={!edit} onClick={() => setOpenButtons(!openButtons)}>
-										<PencilIcon className="h-6 w-6 text-primary" />
-									</button>
-								</div>
-								<div className="flex justify-center">
-									<ProfileImageInput
-										selectedProfileImage={selectedProfileImage}
-										onChange={handleProfileImageChange}
-									/>
-								</div>
-								<div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 px-2 mb-10 mt-8">
-									<TextInput
-										type="text"
-										label={t('contacts:create:name')}
-										placeholder={t('contacts:create:placeholder-name')}
-										error={errors.name}
-										register={register}
-										name="name"
-									/>
-									<TextInput
-										label={t('contacts:create:charge')}
-										placeholder={t('contacts:create:charge')}
-										error={errors.charge}
-										register={register}
-										name="charge"
-									/>
-									<Controller
-										render={({ field: { ref, ...field } }) => {
-											return (
-												<InputPhone
-													name="phone"
-													field={field}
-													error={errors.phone}
-													label={t('contacts:create:phone')}
-													defaultValue={field.value}
-												/>
-											);
-										}}
-										name="phone"
-										control={control}
-										defaultValue=""
-									/>
-									<TextInput
-										label={t('contacts:create:email')}
-										placeholder={t('contacts:create:placeholder-lastname')}
-										error={errors.email}
-										register={register}
-										name="email"
-									/>
-									<TextInput
-										label={t('contacts:create:rfc')}
-										placeholder="XEXX010101000"
-										error={errors.rfc}
-										register={register}
-										name="rfc"
-									/>
-									<SelectInput
-										label={t('contacts:create:contact-type')}
-										options={filteredContactTypes}
-										selectedOption={contactType}
-										onChangeInput={setQuery}
-										// query={query}
-										name="typeContact"
-										error={errors.typeContact}
-										register={register}
-									/>
-									<TextInput
-										label={t('contacts:create:address')}
-										error={errors.address}
-										register={register}
-										name="address"
-										placeholder={t('contacts:create:placeholder-address')}
-									/>
-									<SelectInput
-										label={t('contacts:create:origen')}
-										name="origin"
-										options={filteredContactSources}
-										selectedOption={contactSource}
-										onChangeInput={setQuerySource}
-										error={errors && errors.origin}
-										register={register}
-										setValue={setValue}
-									/>
-									<SelectDropdown
-										label={t('contacts:create:responsible')}
-										name="responsible"
-										options={filteredContactResponsible}
-										selectedOption={contactResponsible}
-										onChangeInput={setQueryResponsible}
-										error={errors.responsible}
-										register={register}
-									/>
-									<TextInput
-										label={t('contacts:create:cua')}
-										error={errors.cua}
-										register={register}
-										name="cua"
-										// placeholder={t('contacts:create:placeholder-address')}
-									/>
-									<DocumentSelector name="files" onChange={handleFilesUpload} files={files} />
-								</div>
+					<div className="flex flex-col sm:flex-row h-full pb-[13.5rem] bg-white mx-4 rounded-lg p-4 w-full">
+						{/* Menu Izquierda */}
+						<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
+							<div className="flex justify-between bg-white py-4 px-4 rounded-md">
+								<h1 className="">{t('contacts:create:data')}</h1>
+								<button type="button" disabled={!edit} onClick={() => setOpenButtons(!openButtons)}>
+									<PencilIcon className="h-6 w-6 text-primary" />
+								</button>
 							</div>
-
-							{/* Menu Derecha */}
-							<ActivityPanel editing={!edit} />
+							<div className="flex justify-center">
+								<ProfileImageInput
+									selectedProfileImage={selectedProfileImage}
+									onChange={handleProfileImageChange}
+								/>
+							</div>
+							<div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 px-2 mb-10 mt-8">
+								<TextInput
+									type="text"
+									label={t('contacts:create:name')}
+									placeholder={t('contacts:create:placeholder-name')}
+									error={errors.name}
+									register={register}
+									name="name"
+								/>
+								<TextInput
+									label={t('contacts:create:charge')}
+									placeholder={t('contacts:create:charge')}
+									error={errors.charge}
+									register={register}
+									name="charge"
+								/>
+								<Controller
+									render={({ field: { ref, ...field } }) => {
+										return (
+											<InputPhone
+												name="phone"
+												field={field}
+												error={errors.phone}
+												label={t('contacts:create:phone')}
+												defaultValue={field.value}
+											/>
+										);
+									}}
+									name="phone"
+									control={control}
+									defaultValue=""
+								/>
+								<TextInput
+									label={t('contacts:create:email')}
+									placeholder={t('contacts:create:placeholder-lastname')}
+									error={errors.email}
+									register={register}
+									name="email"
+								/>
+								<TextInput
+									label={t('contacts:create:rfc')}
+									placeholder="XEXX010101000"
+									error={errors.rfc}
+									register={register}
+									name="rfc"
+								/>
+								<SelectInput
+									label={t('contacts:create:contact-type')}
+									options={filteredContactTypes}
+									selectedOption={contactType}
+									onChangeInput={setQuery}
+									// query={query}
+									name="typeContact"
+									error={!watch('typeContact') && errors.typeContact}
+									register={register}
+									setValue={setValue}
+								/>
+								{watch('typeContact') == 'Otro' ? (
+									<TextInput
+										label={t('contacts:create:otherType')}
+										placeholder=""
+										error={errors.otherType}
+										register={register}
+										name="otherType"
+									/>
+								) : null}
+								<TextInput
+									label={t('contacts:create:address')}
+									error={errors.address}
+									register={register}
+									name="address"
+									placeholder={t('contacts:create:placeholder-address')}
+								/>
+								<SelectInput
+									label={t('contacts:create:origen')}
+									name="origin"
+									options={filteredContactSources}
+									selectedOption={contactSource}
+									onChangeInput={setQuerySource}
+									error={errors && errors.origin}
+									register={register}
+									setValue={setValue}
+								/>
+								<SelectDropdown
+									label={t('contacts:create:responsible')}
+									name="responsible"
+									options={filteredContactResponsible}
+									selectedOption={contactResponsible}
+									onChangeInput={setQueryResponsible}
+									error={errors.responsible}
+									register={register}
+								/>
+								<TextInput
+									label={t('contacts:create:cua')}
+									error={errors.cua}
+									register={register}
+									name="cua"
+									// placeholder={t('contacts:create:placeholder-address')}
+								/>
+								<DocumentSelector name="files" onChange={handleFilesUpload} files={files} />
+							</div>
 						</div>
+
+						{/* Menu Derecha */}
+						<ActivityPanel editing={!edit} />
+					</div>
 					{/* )} */}
 					{/* {contactDetailTab === contactDetailTabs[1] && <ContactPoliza contactID={currentContactID} />} */}
 
@@ -472,26 +483,28 @@ function ActivityPanel({ editing }) {
 			{editing && <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-tr-lg" />}
 			<div className="flow-root bg-gray-300 rounded-lg">
 				<ul role="list" className="p-3">
-					{timeline.map((event, eventIdx) => (
+					{timeline.slice(0, editing ? 1 : timeline.length).map((event, eventIdx) => (
 						<li key={event.id}>
 							<div className="relative pb-4">
-								{eventIdx !== timeline.length - 1 ? (
+								{(eventIdx !== timeline.length - 1) && !editing ? (
 									<span
 										className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-zinc-400"
 										aria-hidden="true"
 									/>
 								) : null}
 								<div className="relative flex space-x-3">
-									<div>
-										<span
-											className={clsx(
-												event.iconBackground,
-												'h-10 w-10 rounded-full flex items-center justify-center'
-											)}
-										>
-											<event.icon className="h-5 w-5 text-white" aria-hidden="true" />
-										</span>
-									</div>
+									{!editing && (
+										<div>
+											<span
+												className={clsx(
+													event.iconBackground,
+													'h-10 w-10 rounded-full flex items-center justify-center'
+												)}
+											>
+												<event.icon className="h-5 w-5 text-white" aria-hidden="true" />
+											</span>
+										</div>
+									)}
 									{<event.child />}
 								</div>
 							</div>

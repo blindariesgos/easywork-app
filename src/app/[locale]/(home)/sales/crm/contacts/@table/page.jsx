@@ -70,7 +70,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flow-root relative h-[70vh]">
+    <div className="flow-root relative sm:h-[60vh] h-full">
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden  sm:rounded-lg">
@@ -190,7 +190,7 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {AppContacts && AppContacts.map((contact) => (
+                {AppContacts && AppContacts.map((contact, index) => (
                   <tr
                     key={contact.id}
                     className={clsx(
@@ -314,7 +314,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0">
+      <div className="sm:absolute bottom-0">
         <Pagination
           takeCount={5}
           total={50}

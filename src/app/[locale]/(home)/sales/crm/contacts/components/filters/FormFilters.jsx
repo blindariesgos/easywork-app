@@ -1,8 +1,8 @@
 import Button from '@/components/form/Button';
 import React, { useEffect, useState } from 'react';
-import MultipleSelect from './Test';
-import SelectDropdown from './create_contact/SelectDropdown';
-import { useForm, Controller } from 'react-hook-form';
+import MultipleSelect from '@/components/form/MultipleSelect';
+import SelectDropdown from '../create_contact/SelectDropdown';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,7 @@ import {
   } from "@heroicons/react/20/solid";
   import DatePicker from "react-datepicker";
   import "react-datepicker/dist/react-datepicker.css";
+import AddFields from './AddFields';
 
 
 const contactSources = [
@@ -57,6 +58,10 @@ const FormFilters = () => {
 		quarter: yup.string(),
 		year: yup.string(),
 		exactDate: yup.string(),
+		fields: yup.array().of(
+		  yup.object().shape({
+		  }),
+		),
 		// range: yup.array().of(yup.string().required()).required().min(2).max(2),
 	});
 	const [dateRange, setDateRange] = useState([null, null]);
@@ -86,7 +91,11 @@ const FormFilters = () => {
 		reset();
 	}, []);
 
-	// console.log("ccf", getValues())
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'fields',
+	});
+	
 	return (
 		<form onSubmit={handleSubmit(handleFormFilters)} className="grid grid-cols-1 gap-2 sm:w-96 w-72 px-2">
 			<SelectDropdown
@@ -232,18 +241,38 @@ const FormFilters = () => {
 				selectedOption={null}
 				setValue={setValue}
 			/>
+			{fields.map((field, index) => {
+				return (
+					<div key={field.id}>
+						{field.type === "input" && (
+							<TextInput
+								label={field.name}
+								type="text"		
+								name={`fields[${index}].value`}
+								register={register}				
+							/>
+						)}
+						{field.type === "select" && (
+							<SelectInput
+								{...field}
+								label={field.name}
+								name={`fields[${index}].value`}
+								options={field.options}
+								register={register}
+								setValue={setValue}
+							/>							
+						)}
+					</div>
+				)
+			})}
 			<div className='my-2 flex gap-2 items-center'>
-				<Button
-					type="button"
-					label={t('contacts:filters:add-field')}
-					buttonStyle="text"
-					iconLeft={<PlusIcon className="h-4 w-4 text-gray-60" />}
-				/>
+				<AddFields append={append} remove={remove} fields={fields}/>
 				<Button
 					type="button"
 					label={t('contacts:filters:restore')}
 					buttonStyle="text"
 					iconLeft={<PlusIcon className="h-4 w-4 text-gray-60" />}
+					onclick={() => { setValue("fields", []); reset() }}
 				/>
 			</div>
 			<div className="flex gap-2 justify-center mt-4">

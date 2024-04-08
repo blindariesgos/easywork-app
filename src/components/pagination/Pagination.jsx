@@ -64,7 +64,7 @@ export const Pagination = ({ takeCount, total, pagActual, setPagActual }) => {
 						>
 							<ChevronLeftIcon className="h-6 w-6" />
 						</div>
-						<div className="flex gap-x-2 items-center">{Pagination.map((pag) => pag)}</div>
+						<div className="flex gap-x-2 items-center">{Pagination.map((pag, index) => (<div key={index}>{pag}</div>))}</div>
 						<div
 							className={clsx(
 								'h-8 w-7 flex justify-center items-center rounded-md text-white',

@@ -5,13 +5,33 @@ import CreateContactModal from "./components/create_contact/CreateContactModal";
 import ShowContactModal from "./components/show_contact/ShowContactModal";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/header/Header";
+import HeaderCrm from "../HeaderCrm";
 
 export default function ContactLayout({ children, table, modal }) {
   const { t } = useTranslation();
+  const options = [
+    {
+      id: 1,
+      name: t("contacts:create:tabs:policies"),
+    },
+    {
+      id: 2,
+      name: t("contacts:create:tabs:activities"),
+    },
+    {
+      id: 3,
+      name: t("contacts:create:tabs:reports"),
+    },
+    {
+      id: 4,
+      name: t("contacts:create:tabs:documents"),
+    }
+  ]
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl">
       <Header />
       <div className="flex flex-col w-full">
+        <HeaderCrm options={options}/>
         <ContactsHeader />
         <Suspense
           fallback={

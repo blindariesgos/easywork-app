@@ -30,7 +30,7 @@ export default function Page() {
           },
         },
         {
-          id: 1,
+          id: 2,
           nombre: "Correo Ventas del mes de septiembre",
           activity: "Enero, 28 10:40 am",
           contact: "No especificado",
@@ -49,7 +49,7 @@ export default function Page() {
           },
         },
         {
-          id: 1,
+          id: 3,
           nombre: "Actualizar póliza de seguro",
           activity: "Enero, 29 09:40 am",
           contact: "No especificado",

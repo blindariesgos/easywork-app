@@ -20,19 +20,19 @@ import AddFields from './AddFields';
 
 
 const contactSources = [
-	{ id: 1, name: 'Correo electrónico' },
-	{ id: 2, name: 'Maratón de llamadas' },
-	{ id: 3, name: 'Formulario de CRM' },
-	{ id: 4, name: 'Formulario de devolución de llamada' },
-	{ id: 5, name: 'Gestión del agente' },
-	{ id: 6, name: 'Red social - LinkedIn' },
-	{ id: 7, name: 'Red social - Instagram' },
-	{ id: 8, name: 'Red social - Facebook' },
-	{ id: 9, name: 'Red social - Otra' },
-	{ id: 10, name: 'Otro CRM' },
-	{ id: 11, name: 'Página de ventas' },
-	{ id: 12, name: 'Teléfono' },
-	{ id: 13, name: 'WhatsApp' }
+  { id: 1, name: "Correo electrónico" },
+  { id: 2, name: "Maratón de llamadas" },
+  { id: 3, name: "Formulario de CRM" },
+  { id: 4, name: "Formulario de devolución de llamada" },
+  { id: 5, name: "Gestión del agente" },
+  { id: 6, name: "Red social - LinkedIn" },
+  { id: 7, name: "Red social - Instagram" },
+  { id: 8, name: "Red social - Facebook" },
+  { id: 9, name: "Red social - Otra" },
+  { id: 10, name: "Otro CRM" },
+  { id: 11, name: "Página de ventas" },
+  { id: 12, name: "Teléfono" },
+  { id: 13, name: "WhatsApp" },
 ];
 
 const FormFilters = () => {
@@ -83,13 +83,13 @@ const FormFilters = () => {
           resolver: yupResolver(schema),
       });
 
-	const handleFormFilters = (data) => {
-		console.log('data', data);
-	};
+  const handleFormFilters = (data) => {
+    console.log("data", data);
+  };
 
-	useEffect(() => {
-		reset();
-	}, []);
+  useEffect(() => {
+    reset();
+  }, []);
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -121,103 +121,99 @@ const FormFilters = () => {
 					/>
 				)}
 			/> */}
-			<div className='flex gap-2 items-end'>
-				<div className={`${watch("date")?.date ? "w-2/5" : "w-full"}`}>
-					<SelectInput
-						label={t('contacts:filters:created')}
-						name="date"
-						options={filteredContactDate}
-						onChangeInput={setQueryDate}
-						setValue={setValue}
-						object={true}
-					/>
-				</div>
-				{watch("date")?.date === "input" && (
-					<div className='w-3/5'>
-						<TextInput
-							type="number"		
-							name="ndays"
-							register={register}				
-						/>
-					</div>
-				)}
-				{watch("date")?.date === "month" && (
-					<div className='w-3/5 flex gap-2'>
-						<DatePicker
-							selected={watch("month")}
-							onChange={(date) => setValue("month", date)}
-							showMonthYearPicker
-							dateFormat="MM/yyyy"
-							className='w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0'
-    					/>
-					</div>
-				)}
-				{watch("date")?.date === "quarter" && (
-					<div className='w-3/5 flex gap-2'>
-						<DatePicker
-							selected={watch("quarter")}
-							onChange={(date) => setValue("quarter", date)}
-							showQuarterYearPicker
-							dateFormat="yyyy, QQQ"
-							className='w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0'
-    					/>
-					</div>
-				)}
-				{watch("date")?.date === "year" && (
-					<div className='w-3/5 flex gap-2'>
-						<DatePicker
-							selected={watch("year")}
-							onChange={(date) => setValue("year", date)}
-							showYearPicker
-							dateFormat="yyyy"
-							className='w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0'
-    					/>
-					</div>
-				)}
-				{watch("date")?.date === "exactDate" && (
-					<div className='w-3/5 flex gap-2'>
-						<DatePicker
-							selected={watch("exactDate")}
-							onChange={(date) => setValue("exactDate", date)}
-							className='w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0'
-    					/>
-					</div>
-				)}
-				{watch("date")?.date === "range" && (
-					<div className='w-3/5 flex gap-2'>
-						<DatePicker
-							selectsRange={true}
-							startDate={startDate}
-							endDate={endDate}
-							onChange={(update) => {
-								setDateRange(update);
-							}}
-							isClearable={true}
-							className='w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0'
-					 	/>
-					</div>
-				)}
-			</div>
-			<Controller
-				name="origin"
-				control={control}
-				defaultValue={""}
-				render={({ field }) => {
-					return (
-						<SelectInput
-							{...field}
-							label={t('contacts:filters:origin')}
-							name="origin"
-							options={filteredContactSources}
-							selectedOption={contactSource}
-							onChangeInput={setQuerySource}
-							error={!field.value && errors.origin}
-							setValue={setValue}
-						/>
-					)
-				}}
-			/>
-			{/* <Controller
+      <div className="flex gap-2 items-end">
+        <div className={`${watch("date")?.date ? "w-2/5" : "w-full"}`}>
+          <SelectInput
+            label={t("contacts:filters:created")}
+            name="date"
+            options={filteredContactDate}
+            onChangeInput={setQueryDate}
+            setValue={setValue}
+            object={true}
+          />
+        </div>
+        {watch("date")?.date === "input" && (
+          <div className="w-3/5">
+            <TextInput type="number" name="ndays" register={register} />
+          </div>
+        )}
+        {watch("date")?.date === "month" && (
+          <div className="w-3/5 flex gap-2">
+            <DatePicker
+              selected={watch("month")}
+              onChange={(date) => setValue("month", date)}
+              showMonthYearPicker
+              dateFormat="MM/yyyy"
+              className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            />
+          </div>
+        )}
+        {watch("date")?.date === "quarter" && (
+          <div className="w-3/5 flex gap-2">
+            <DatePicker
+              selected={watch("quarter")}
+              onChange={(date) => setValue("quarter", date)}
+              showQuarterYearPicker
+              dateFormat="yyyy, QQQ"
+              className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            />
+          </div>
+        )}
+        {watch("date")?.date === "year" && (
+          <div className="w-3/5 flex gap-2">
+            <DatePicker
+              selected={watch("year")}
+              onChange={(date) => setValue("year", date)}
+              showYearPicker
+              dateFormat="yyyy"
+              className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            />
+          </div>
+        )}
+        {watch("date")?.date === "exactDate" && (
+          <div className="w-3/5 flex gap-2">
+            <DatePicker
+              selected={watch("exactDate")}
+              onChange={(date) => setValue("exactDate", date)}
+              className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            />
+          </div>
+        )}
+        {watch("date")?.date === "range" && (
+          <div className="w-3/5 flex gap-2">
+            <DatePicker
+              selectsRange={true}
+              startDate={startDate}
+              endDate={endDate}
+              onChange={(update) => {
+                setDateRange(update);
+              }}
+              isClearable={true}
+              className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            />
+          </div>
+        )}
+      </div>
+      <Controller
+        name="origin"
+        control={control}
+        defaultValue={""}
+        render={({ field }) => {
+          return (
+            <SelectInput
+              {...field}
+              label={t("contacts:filters:origin")}
+              name="origin"
+              options={filteredContactSources}
+              selectedOption={contactSource}
+              onChangeInput={setQuerySource}
+              error={!field.value && errors.origin}
+              setValue={setValue}
+            />
+          );
+        }}
+      />
+      {/* <Controller
 				name="createdby"
 				control={control}
 				defaultValue={[]}

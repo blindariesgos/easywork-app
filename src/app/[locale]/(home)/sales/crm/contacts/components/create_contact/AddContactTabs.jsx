@@ -37,25 +37,24 @@ export default function AddContactTabs({ id }) {
 
   return (
     <div className="bg-white px-4 w-full rounded-lg">
-      <div className="sm:hidden">
+      {/* <div className="sm:hidden">
         <label htmlFor="tabs" className="sr-only">
           {t("contacts:create:select-page")}
         </label>
-        {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
         <select
           id="tabs"
           name="tabs"
           className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          defaultValue={tabs.find((tab) => tab.value).name}
+          // defaultValue={tabs.find((tab) => tab.value).name}
         >
           {tabs.map((tab) => (
             <option className="text-gray-400" key={tab.name}>{tab.name}</option>
           ))}
         </select>
-      </div>
-      <div className="hidden sm:block">
+      </div> */}
+      <div className="">
         <div className="flex justify-between items-center">
-          <nav className="-mb-px flex space-x-8 p-2" aria-label="Tabs">
+          <nav className="-mb-px flex space-x-8 p-2 flex-wrap justify-start" aria-label="Tabs">
             {tabs.map((tab) => (
               <Link
                 key={tab.name}

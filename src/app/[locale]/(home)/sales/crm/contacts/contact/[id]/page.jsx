@@ -4,10 +4,14 @@ import ContactDetail from "../../components/ContactDetail";
 import { getContact } from "@/lib/api";
 import CreateContact from "../../components/create_contact/CreateContact";
 import useAppContext from "@/context/app";
-
+import { getContactId } from "@/lib/apis";
 async function useContact({ contactID }) {
-  const response = await getContact(contactID);
-  return response;
+  try {
+    const response = await getContactId(contactID); 
+    return response;    
+  } catch (error) {
+    throw new Error(JSON.stringify(error?.response?.data));
+  }
 }
 
 export default async function Page({ params: { id } }) {
@@ -23,7 +27,7 @@ export default async function Page({ params: { id } }) {
           </div>
         }
       >
-        <CreateContact edit id={id}/>
+        <CreateContact edit={contactInfo} id={id} />
       </Suspense>
     </SlideOver>
   );

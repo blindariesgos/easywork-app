@@ -14,8 +14,8 @@ import TextInput from '@/components/form/TextInput';
 import {
 	PlusIcon,
   } from "@heroicons/react/20/solid";
-  import DatePicker from "react-datepicker";
-  import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import AddFields from './AddFields';
 
 

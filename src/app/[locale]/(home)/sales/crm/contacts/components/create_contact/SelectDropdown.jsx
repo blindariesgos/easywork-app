@@ -27,7 +27,6 @@ function SelectDropdown({
     }
   
   },  [selectedOption])
-  // console.log("field", field)
   useEffect(() => {
     if (selected) setValue && setValue(name, selected?.name);
   }, [selected, setValue, name])

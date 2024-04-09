@@ -48,7 +48,7 @@ export const useSidebar = () => {
                     image: '/img/ventas/crm.png',
                     children: [{
                             name: t("common:menu:sales:crm:contacts"),
-                            href: "/sales/crm/contacts",
+                            href: "/sales/crm/contacts?page=1",
                             image: '/img/crm/contacto.png'
                         },
                         {

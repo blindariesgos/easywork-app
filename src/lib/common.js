@@ -85,8 +85,6 @@ export function getURLContactPhoto(objeto) {
     }
   }
 
-  // console.log('No se encontró la URL de la foto');
-  // console.log('objeto', objeto);
 
   // Devolver null si no se encuentra la URL de la foto
   return null;

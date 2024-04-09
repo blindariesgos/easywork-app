@@ -59,7 +59,6 @@ export default function ContactDetail({ children }) {
 
       if (!result?.success) {
         if (result?.errors) {
-          console.log(result.errors);
           setErrors(result.errors);
         }
         return;
@@ -73,7 +72,6 @@ export default function ContactDetail({ children }) {
     } finally {
       setLoading(false);
     }
-    console.log("Formulario enviado");
   };
 
   return (

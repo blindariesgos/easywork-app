@@ -17,3 +17,21 @@ export const createContact = async (data) => {
   const response = await axios.post('/sales/crm/contacts', data);
   return response.message
 }
+
+export const getContacts = async (page) => {
+  // try {    
+    const response = await axios.get(`/sales/crm/contacts?limit=6&page=${page}`);  
+    return response;
+  // } catch (error) {
+  //   return error?.response?.data
+  // }
+}
+
+export const getContactId = async (id) => {
+  // try {    
+    const response = await axios.get(`/sales/crm/contacts/${id}`); 
+    return response;
+  // } catch (error) {
+  //   throw new Error(JSON.stringify(error?.response?.data));
+  // }
+}

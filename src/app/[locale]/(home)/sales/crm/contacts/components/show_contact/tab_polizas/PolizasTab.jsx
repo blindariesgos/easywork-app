@@ -82,7 +82,6 @@ export default function PolizasTab() {
                 "ring-white/60 ring-offset-2  focus:outline-none"
               )}
             >
-              {console.log(polizas, "Polizas")}
               <ContactPolizaTable polizas={polizas ? polizas[category] : []} />
             </Tab.Panel>
           ))}

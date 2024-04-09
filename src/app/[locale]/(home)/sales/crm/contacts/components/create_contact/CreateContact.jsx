@@ -1,6 +1,6 @@
 'use client';
 import useAppContext from '@/context/app';
-import { DocumentTextIcon, PhotoIcon, UserIcon, VideoCameraIcon } from '@heroicons/react/20/solid';
+import { DocumentTextIcon, PhotoIcon, UserIcon, VideoCameraIcon, CalendarDaysIcon } from '@heroicons/react/20/solid';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
@@ -13,7 +13,6 @@ import TextArea from './TextArea';
 import { useFormState } from 'react-dom';
 import { createContact } from '@/lib/api';
 import useCrmContext from '@/context/crm';
-import { DatePicker } from '@tremor/react';
 import { es, enUS } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 import { contactDetailTabs, contactTypes, filterOptions, responsible } from '@/lib/common';
@@ -28,6 +27,8 @@ import InputPhone from '@/components/form/InputPhone';
 import SelectInput from '@/components/form/SelectInput';
 import SelectDropdown from './SelectDropdown';
 import ContactPoliza from '../show_contact/tab_polizas/ContactPoliza';
+import InputDate from '@/components/form/InputDate';
+import { FaCalendarDays } from 'react-icons/fa6';
 
 const contactSources = [
 	{ id: 1, name: 'Correo electrónico' },
@@ -115,9 +116,10 @@ export default function CreateContact({ edit, id }) {
 		// cua: Yup.string().required(t('common:validations:required')),
 		typeContact: Yup.string().required(t('common:validations:required')),
 		otherType: Yup.string(),
-		origin: Yup.string().required(t('common:validations:required'))
+		origin: Yup.string().required(t('common:validations:required')),
 		// address: Yup.string().required(t('common:validations:required')),
 		// responsible: Yup.string().required(t('common:validations:required')),
+		birthday: Yup.string().required(t('common:validations:required'))
 
 		// files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
 		// files: Yup
@@ -144,7 +146,17 @@ export default function CreateContact({ edit, id }) {
 	});
 
 	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
-		defaultValues: {},
+		defaultValues: {
+			name: id ? edit?.fullName : "",
+			charge: id ? edit?.charge : "",
+			phone: id ? edit?.phones[0]?.phone?.number : "",
+			email: id ? edit?.emails[0]?.email?.email : "",
+			rfc: id ? edit?.fullName : "",
+			cua: id ? edit?.cua : "",
+			typeContact: id ? edit?.fullName : "",
+			origin: id ? edit?.source : "",
+			birthday: id ? edit?.birthdate : "",
+		},
 		mode: 'onChange',
 		resolver: yupResolver(schema)
 	});
@@ -256,7 +268,7 @@ export default function CreateContact({ edit, id }) {
 					<div className="bg-transparent py-6 mx-4">
 						<div className="flex items-start flex-col justify-between space-y-3">
 							{!edit && <div className="inset-0 bg-white/75 w-full h-36 z-50 absolute rounded-t-2xl" />}
-							<h1 className="text-2xl">{edit ? 'hola' : t('contacts:create:client')}</h1>
+							<h1 className="text-xl">{edit ? edit?.fullName : t('contacts:create:client')}</h1>
 							<AddContactTabs id={id} />
 						</div>
 					</div>
@@ -311,6 +323,23 @@ export default function CreateContact({ edit, id }) {
 									control={control}
 									defaultValue=""
 								/>
+								<Controller
+									render={({ field: { value, onChange, ref, onBlur } }) => {
+										return (
+											<InputDate
+												label={t('contacts:create:born-date')}
+												value={value}
+												onChange={onChange}
+												onBlur={onBlur}
+												icon={<FaCalendarDays className='h-3 w-3 text-primary pr-4'/>}
+												error={errors.birthday}
+											/>
+										);
+									}}
+									name="birthday"
+									control={control}
+									defaultValue=""
+								/>
 								<TextInput
 									label={t('contacts:create:email')}
 									placeholder={t('contacts:create:placeholder-lastname')}
@@ -358,7 +387,7 @@ export default function CreateContact({ edit, id }) {
 									options={filteredContactSources}
 									selectedOption={contactSource}
 									onChangeInput={setQuerySource}
-									error={errors && errors.origin}
+									error={!watch('origin') && errors.origin}
 									register={register}
 									setValue={setValue}
 								/>

@@ -2,25 +2,31 @@ import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export const Pagination = ({ takeCount, total, pagActual, setPagActual }) => {
+export const Pagination = ({ totalPages }) => {
 	const [ Pagination, setPagination ] = useState([]);
+	const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
+	const pathname = usePathname();
+	const { replace } = useRouter();
 	const { t } = useTranslation();
 	useEffect(
 		() => {
+			if (Number(params.get('page')) === 0) handlePathname("1");
 			CreatePagination();
 		},
-		[ total, pagActual ]
+		[ totalPages, params.get('page') ]
 	);
 
 	const CreatePagination = () => {
 		const pagination = [];
-		const totalPages = Math.floor((Number(total) - 1) / Number(takeCount)) + 1;
-		for (let i = 0; i < totalPages; i++) {
-			i <= 4 && pagination.push(getPages(i));
+		const totalPagesPages = Number(totalPages);
+		for (let i = 0; i < totalPagesPages; i++) {
+			i <= 4 && pagination.push(getPages(i + 1));
 		}
-		if (totalPages > 4) pagination.push(<div>....</div>);
-		if (totalPages > 5) pagination.push(getPages(totalPages - 1));
+		if (totalPagesPages > 4) pagination.push(<div>....</div>);
+		if (totalPagesPages > 5) pagination.push(getPages(totalPagesPages));
 		setPagination(pagination);
 	};
 
@@ -30,35 +36,40 @@ export const Pagination = ({ takeCount, total, pagActual, setPagActual }) => {
 				key={i}
 				className={clsx(
 					'px-2 cursor-pointer font-medium text-xs flex items-center justify-center rounded-full w-6 h-6',
-					pagActual === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
+						Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
 				)}
-				onClick={() => setPagActual(i)}
+				onClick={() => {handlePathname(i)}}
 			>
-				{i + 1}
+				{i}
 			</div>
 		);
 	};
+	 const handlePathname = (page) => {
+		params.set('page', page); 
+		replace(`${pathname}?${params.toString()}`);
+	 }
 
-	const totalPag = Math.floor((Number(total) - 1) / Number(takeCount)) + 1;
+	// const totalPagesPag = Math.floor((Number(totalPages) - 1) / Number(takeCount)) + 1;
+	const totalPagesPag = totalPages;
 
 	return (
 		<div>
-			{totalPag >= 1 && (
+			{totalPagesPag >= 1 && (
 				<div className="mt-2 items-center w-fit">
 					<div className="flex flex-row justify-start p-2 border-none rounded-md gap-x-2 bg-white">
 						<div
 							className={clsx(
-								'h-8 w-7 flex justify-center items-center rounded-md text-white',
+								'h-8 w-7 flex justify-center items-center rounded-md text-white cursor-pointer',
 								{
-									'cursor-pointer font-bold bg-gray-200': pagActual === 0
+									'cursor-pointer font-bold bg-gray-200': Number(params.get('page')) === 1
 								},
 								{
-									'cursor-default font-bold bg-easy-1100': pagActual > 0
+									'cursor-default font-bold bg-easy-1100': Number(params.get('page')) > 1
 								}
 							)}
 							onClick={() => {
-								if (pagActual > 0) {
-									setPagActual((prev) => prev - 1);
+								if (Number(params.get('page')) > 1) {
+									handlePathname(Number(params.get('page')) - 1);
 								}
 							}}
 						>
@@ -69,15 +80,15 @@ export const Pagination = ({ takeCount, total, pagActual, setPagActual }) => {
 							className={clsx(
 								'h-8 w-7 flex justify-center items-center rounded-md text-white',
 								{
-									'cursor-pointer font-bold bg-easy-1100': pagActual < totalPag - 1
+									'cursor-pointer font-bold bg-easy-1100': Number(params.get('page')) < totalPagesPag
 								},
 								{
-									'cursor-default font-bold bg-gray-200': pagActual == totalPag - 1
+									'cursor-default font-bold bg-gray-200': Number(params.get('page')) == totalPagesPag
 								}
 							)}
 							onClick={() => {
-								if (pagActual < totalPag - 1) {
-									setPagActual((prev) => prev + 1);
+								if (Number(params.get('page')) < totalPagesPag) {
+									handlePathname(Number(params.get('page')) + 1);
 								}
 							}}
 						>

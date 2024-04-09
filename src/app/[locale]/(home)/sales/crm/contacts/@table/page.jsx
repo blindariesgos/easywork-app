@@ -8,30 +8,41 @@ import {
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useCrmContext from "@/context/crm";
 import { getURLContactPhoto } from "@/lib/common";
 import useAppContext from "@/context/app";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "@/components/pagination/Pagination";
 import Link from "next/link"
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { orderBy, } from "lodash";
+import { Cog8ToothIcon } from '@heroicons/react/20/solid';
 
 export default function Page() {
+  const params = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const currentPage = Number(params?.page) || 1;
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const { setShowContact } = useAppContext();
-  const { contacts: AppContacts, setCurrentContactID } = useCrmContext();
-  const [pagActual, setPageActual] = useState(0);
+  const { contacts: AppContacts, setCurrentContactID, setContacts } = useCrmContext();
+  const [ fieldClicked, setFieldClicked ] = useState({ field: "name", sortDirection: "desc" });
+
+  const sortFieltByColumn = {
+    name: [ "fullName" ],
+  };
 
   useLayoutEffect(() => {
     if (checkbox.current) {
       const isIndeterminate =
         selectedContacts && selectedContacts.length > 0 &&
-        selectedContacts.length < AppContacts.length;
-      setChecked(selectedContacts?.length === AppContacts?.length);
+        selectedContacts.length < AppContacts?.items.length;
+      setChecked(selectedContacts?.length === AppContacts?.items?.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
@@ -39,12 +50,37 @@ export default function Page() {
   }, [selectedContacts]);
 
   function toggleAll() {
-    setSelectedContacts(checked || indeterminate ? [] : AppContacts);
+    setSelectedContacts(checked || indeterminate ? [] : AppContacts?.items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
 
-  if (AppContacts && AppContacts.length === 0) {
+  const capitalizedText = (text) => {
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+
+  const handleSorting = (fieldToSort) => {
+    if (fieldClicked.sortDirection === "asc") {
+        setFieldClicked({ field: fieldToSort, sortDirection: "desc" });
+    }
+    if (fieldClicked.sortDirection === "desc") {
+        setFieldClicked({ field: fieldToSort, sortDirection: "asc" });
+    }
+  };
+    const sortHardwares = () => {
+      const field = sortFieltByColumn[fieldClicked.field] ?? [ fieldClicked.field ];
+      const order = field.map(() => {
+          return fieldClicked.sortDirection;
+      });
+      const newItems = orderBy(AppContacts?.items, field, order);
+      setContacts({ items: newItems, meta: AppContacts?.meta});
+  };
+
+  useEffect(() => {
+      sortHardwares();
+  }, [ fieldClicked ]);
+
+  if (AppContacts?.items && AppContacts?.items.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="flex flex-col items-center space-y-3">
@@ -70,12 +106,12 @@ export default function Page() {
   }
 
   return (
-    <div className="flow-root relative sm:h-[60vh] h-full">
+    <div className="flow-root relative">
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full py-2 align-middle sm:h-[32rem] overflow-y-auto h-full">
           <div className="relative overflow-hidden  sm:rounded-lg">
             {selectedContacts && selectedContacts.length > 0 && (
-              <div className="absolute left-14 top-0 flex h-12 items-center space-x-3 bg-white sm:left-12">
+              <div className="absolute left-16 top-2 flex h-12 items-center space-x-3 bg-white sm:left-16">
                 <button
                   type="button"
                   className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-medium text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
@@ -101,26 +137,31 @@ export default function Page() {
                       checked={checked}
                       onChange={toggleAll}
                     />
+                    <div className="cursor-pointer">
+                      <Cog8ToothIcon className="ml-4 h-5 w-5 text-primary " aria-hidden="true" />
+                    </div>
                   </th>
                   <th
                     scope="col"
-                    className="min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-gray-400"
+                    className="min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("name"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:contact')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "name" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("birthdate"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:birthday')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "birthdate" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>
@@ -137,45 +178,49 @@ export default function Page() {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("emails[0].email.email"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:email')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "emails[0].email.email" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("phones[0].phone.number"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:phone')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "phones[0].phone.number" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("createdAt"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:created')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "createdAt" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("source"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:origin')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "source" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>
@@ -190,7 +235,7 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {AppContacts && AppContacts.map((contact, index) => (
+                {AppContacts?.items && AppContacts?.items.map((contact, index) => (
                   <tr
                     key={contact.id}
                     className={clsx(
@@ -239,15 +284,14 @@ export default function Page() {
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="font-medium text-sm text-black hover:text-indigo-600">
+                          <div className="font-medium text-sm text-black hover:text-indigo-600 capitalize">
                             {/* <button
                               onClick={() => {
                                 setCurrentContactID(contact.id);
-                                console.log(contact.id);
                                 setShowContact(true);
                               }}
                             > */}
-                            <Link href={`/sales/crm/contacts/contact/${contact.id}`}>{contact.nombre} {contact.apellidos}</Link>
+                            <Link href={`/sales/crm/contacts/contact/${contact.id}`} className="">{capitalizedText(contact.fullName)}</Link>
                               
                             {/* </button> */}
                           </div>
@@ -255,16 +299,16 @@ export default function Page() {
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
-                      {contact.birthday ?? "05/02/1991"}
+                      {new Date(contact.birthdate).toLocaleDateString() ?? null}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {contact?.responsibleUser?.name ?? "N/A"}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
-                      {contact.email}
+                      {contact.emails?.length > 0 ? contact.emails[0].email.email : ""}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
-                      {contact.telefono}
+                      {contact.phones?.length > 0 ? `+${contact.phones[0].phone.number}` : ""}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-black">
                       {new Date(contact.createdAt).toLocaleDateString() ??
@@ -314,12 +358,9 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="sm:absolute bottom-0">
+      <div className="">
         <Pagination
-          takeCount={5}
-          total={50}
-          pagActual={pagActual}
-          setPagActual={setPageActual}
+          totalPages={AppContacts?.meta?.totalPages || 0}
         />
       </div>
     </div>

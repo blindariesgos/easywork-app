@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel } from "@tremor/react";
 import React from "react";
 import SelectRamo from "./SelectRamo";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { PlusIcon, Cog8ToothIcon } from "@heroicons/react/20/solid";
 import { BsFileEarmarkPdf } from "react-icons/bs";
 import clsx from "clsx";
 import { subirPolizaPDF } from "@/lib/api";
@@ -11,8 +11,11 @@ import { useFormState } from "react-dom";
 import ComboboxComponent from "@/components/ComboboxComponent";
 import useCrmContext from "@/context/crm";
 import { useTranslation } from "react-i18next";
-import { useCommon } from "@/hooks/useCommon";
+import { useCommon, usePolicies } from "@/hooks/useCommon";
 import Button from "@/components/form/Button";
+import IconDropdown from "../../SettingsButton";
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { useRouter } from "next/navigation";
 
 const initialState = {
   filePdf: "",
@@ -28,9 +31,11 @@ const typePoliza = [
   { id: 3, name: "Vida" },
 ];
 
-export default function PolizasHeader({ contactID }) {
-  const { ramo } = useCommon();
+export default function PolizasHeader({ contactID, selected }) {
+  const { settingsPolicies: settings, trash } = useCommon();
+  const { branches: ramo } = usePolicies(contactID);
   const { t } = useTranslation();
+  const { push } = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [file, setFile] = React.useState(null);
   const [sending, setSending] = React.useState(false);
@@ -47,52 +52,80 @@ export default function PolizasHeader({ contactID }) {
 
     const formData = new FormData(e.target);
 
-    try {
-      const result = await subirPolizaPDF(state, formData);
+    // try {
+    //   const result = await subirPolizaPDF(state, formData);
 
-      if (!result?.id) {
-        if (result?.error) {
-          return toast.error(result.message || t('contacts:edit:policies:exists'));
-        }
-        return toast.error(t('contacts:edit:policies:error-file'));
-      }
+    //   if (!result?.id) {
+    //     if (result?.error) {
+    //       return toast.error(result.message || t('contacts:edit:policies:exists'));
+    //     }
+    //     return toast.error(t('contacts:edit:policies:error-file'));
+    //   }
 
-      setLastContactUpdate(Date.now());
-      toast.success(t('contacts:edit:policies:created'));
-    } catch (error) {
-      toast.error(t('contacts:edit:policies:error-file'));
-    } finally {
-      setIsOpen(false);
-      setFile(null);
-      setSending(false);
-    }
+    //   setLastContactUpdate(Date.now());
+    //   toast.success(t('contacts:edit:policies:created'));
+    // } catch (error) {
+    //   toast.error(t('contacts:edit:policies:error-file'));
+    // } finally {
+    //   setIsOpen(false);
+    //   setFile(null);
+    //   setSending(false);
+    // }
   };
 
-  return (
-    <div className="bg-white w-full p-2 rounded-md flex gap-3">
-      <button
-        type="button"
-        className="rounded-md bg-blue-100 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-0 focus:ring-0"
-      >
-        {t('contacts:edit:policies:general')}
-      </button>
-      <SelectRamo options={ramo}/>
-      <Button
-        type="button"
-        label={t('contacts:edit:policies:documents')}
-        buttonStyle="text"
-        fontSize="text-sm "
-        className="px-3"
-      />
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-x-1.5 rounded-md bg-easy-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-easy-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-easy-600"
-      >
-        <PlusCircleIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />        
-        {t('contacts:edit:policies:add')}
-      </button>
+  const buttonStyle = (type) => {
+    switch (type) {
+      case "general":
+        return "bg-blue-100 text-white hover:bg-blue-100 ring-offset-blue-100"
+        
+      default:
+        break;
+    }
+  }
 
+  return (
+    <div className="bg-white w-full p-2 rounded-md">
+      <div className="flex justify-between">
+        <div className="flex gap-3 items-center">
+          <button
+            type="button"
+            className={`rounded-md px-3 py-2 text-gray-400 text-sm font-medium focus:outline-none focus:ring-0 ${selected && buttonStyle(selected)}`}
+            onClick={() => push(`/sales/crm/contacts/contact/policies/${contactID}`)}
+          >
+            {t('contacts:edit:policies:general')}
+          </button>
+          <SelectRamo options={ramo} selected={selected}/>
+          <Button
+            type="button"
+            label={t('contacts:edit:policies:documents')}
+            buttonStyle="text"
+            fontSize="text-sm "
+            className="px-3"
+          />
+          
+          <Button
+            type="button"
+            label={t("contacts:create:add")}
+            buttonStyle="primary"
+            icon={<PlusIcon className="h-4 w-4 text-white"/>}
+            className="py-2 px-3"
+            onclick={() => setIsOpen(true)}
+          />
+        </div>
+        <div className="flex gap-3">
+          <IconDropdown
+            icon={<TrashIcon className="h-8 w-8 text-primary" aria-hidden="true" />}
+            options={trash}
+            width="w-72"
+          />
+          <IconDropdown
+            icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" />}
+            options={settings}
+            width="w-[340px]"
+            colorIcon="text-green-100"
+          />
+        </div>
+      </div>
       <Dialog
         open={isOpen}
         onClose={(val) => {

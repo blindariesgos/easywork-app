@@ -6,7 +6,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SelectRamo({options}) {
+export default function SelectRamo({options, selected: type}) {
+  options[0].name = "Ramo";
   const [selected, setSelected] = useState(options[0]);
 
   return (
@@ -15,10 +16,10 @@ export default function SelectRamo({options}) {
         <>
           <Listbox.Label className="sr-only  text-sm font-medium leading-6 text-gray-400"></Listbox.Label>
           <div className="relative">
-            <Listbox.Button className="relative w-full cursor-pointer rounded-md bg-white py-2 pl-3 pr-10 text-left border-none text-gray-400 sm:text-sm font-medium">
+            <Listbox.Button className={`relative w-full cursor-pointer rounded-md py-2 pl-3 pr-10 text-left border-none text-gray-400 sm:text-sm font-medium ${type === "branch" && "bg-blue-100 text-white hover:bg-blue-100 ring-offset-blue-100 focus:outline-none focus:ring-0"}`}>
               <span className="block truncate">{selected.name}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronDownIcon className="h-6 w-6 text-primary" aria-hidden="true" />
+                <ChevronDownIcon className={`h-6 w-6 text-primary ${type === "branch" && "-rotate-180 text-white"}`} aria-hidden="true" />
               </span>
             </Listbox.Button>
 
@@ -39,6 +40,7 @@ export default function SelectRamo({options}) {
                         'relative cursor-default select-none py-2 pl-3 pr-9'
                       )
                     }
+                    onClick={person.onclick}
                     value={person}
                   >
                     {({ selected, active }) => (

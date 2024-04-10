@@ -28,6 +28,10 @@
         "delete": {
             "remove": "Eliminar definitivamente",
             "trash" : "Enviar a papelera de reciclaje"
+        },
+        "excel": {
+            "print" : "Imprimir",
+            "export" : "Exportar todas las listas"
         }
     },
     "table": {
@@ -181,6 +185,16 @@
         "health": "Salud",
         "medical-expenses": "Gastos Médicos",
         "damages": "Daños",
-        "various": "Diversos"
+        "various": "Diversos",
+        "branches": {
+            "all": "Todos los ramos",
+            "life" : "Vida",
+            "cars" : "Autos",
+            "medicinal" : "Gastos Médicos",
+            "damages" : "Daños",
+            "various" : "Diversos",
+            "others" : "Otros (próximamente)",
+            "fleets" : "Flotillas (próximamente)"
+        }
     }
 }

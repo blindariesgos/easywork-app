@@ -1,21 +1,15 @@
 "use client";
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
-import useAppContext from "@/context/app";
 import { useRouter } from "next/navigation";
 
 export default function SlideOver({ openModal, setOpenModal, children, colorTag, labelTag }) {
   const { t } = useTranslation();
   const router = useRouter()
-  const { showContact, setShowContact, contactDetailTab } = useAppContext();
   const [label, setLabel] = useState("");
 
-  // useEffect(() => {
-  //   setShowContact(openModal)
-  // }, [openModal, setShowContact])
 
   useEffect(() => {
     switch (labelTag) {
@@ -25,7 +19,21 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
       case "policy":
         setLabel(t('contacts:create:tabs:policies'))
         break;
-      
+      case "life":
+        setLabel(t('contacts:policies:branches:life'))
+        break;
+      case "cars":
+        setLabel(t('contacts:policies:branches:cars'))
+        break;
+      case "medicine":
+        setLabel(t('contacts:policies:branches:medicinal'))
+        break;
+      case "damages":
+        setLabel(t('contacts:policies:branches:damages'))
+        break;
+      case "various":
+        setLabel(t('contacts:policies:branches:various'))
+        break;
     
       default:
         break;

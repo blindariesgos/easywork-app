@@ -1,10 +1,7 @@
 import SlideOver from "@/components/SlideOver";
 import React, { Suspense } from "react";
-import ContactDetail from "../../components/ContactDetail";
 import { getContact } from "@/lib/api";
-import CreateContact from "../../components/create_contact/CreateContact";
-import useAppContext from "@/context/app";
-import ContactPoliza from "../../components/show_contact/tab_polizas/ContactPoliza";
+import ContactPoliza from "../../../components/show_contact/tab_polizas/ContactPoliza";
 
 async function useContact({ contactID }) {
   const response = await getContact(contactID);

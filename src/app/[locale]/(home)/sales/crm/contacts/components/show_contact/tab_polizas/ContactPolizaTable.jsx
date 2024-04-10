@@ -14,7 +14,7 @@ const people = [
 
 export default function ContactPolizaTable({ polizas }) {
   const { t } = useTranslation();
-  if (!polizas || polizas.length === 0) {
+  if (!people || people.length === 0) {
     return <PolizasEmpty/>
   }
   return (
@@ -143,7 +143,7 @@ export default function ContactPolizaTable({ polizas }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {polizas.map((poliza) => (
+                {people.map((poliza) => (
                   <tr key={poliza.email}>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                       {poliza.noPoliza}

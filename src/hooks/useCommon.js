@@ -1,9 +1,13 @@
 import {
-    ChevronRightIcon
+    ChevronRightIcon,
+    XMarkIcon
 } from "@heroicons/react/20/solid";
 import {
     useTranslation
 } from "react-i18next";
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { RiFileExcel2Fill } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 
 export const useSidebar = () => {
     const {
@@ -324,18 +328,164 @@ export const useCommon = () => {
             name: t('contacts:filters:date:nextMonth')
         }
     ];
-    
-    const ramo = [
-        { id: 1, name: t("contacts:policies:ramo") },
-        { id: 2, name: t("contacts:policies:life") },
-        { id: 3, name: t("contacts:policies:health") },
-        { id: 4, name: t("contacts:policies:medical-expenses") },
-        { id: 5, name: t("contacts:policies:damages") },
-        { id: 6, name: t("contacts:policies:various") }
-    ]
+
+    const trash = [
+		{
+			value: 0,
+			name: t('contacts:header:delete:remove'),
+			icon: XMarkIcon,
+			onclick: () => {}
+		},
+		{
+			value: 1,
+			icon: TrashIcon,
+			name: t('contacts:header:delete:trash'),
+			onclick: () => {}
+		}
+	];
+
+	const settingsContact = [
+		{
+			value: 0,
+			name: t('contacts:header:settings:vcard'),
+			onclick: () => {}
+		},
+		{
+			value: 1,
+			name: t('contacts:header:settings:gmail'),
+			onclick: () => {}
+		},
+		{
+			value: 2,
+			name: t('contacts:header:settings:outlook'),
+			onclick: () => {}
+		},
+		{
+			value: 3,
+			name: t('contacts:header:settings:yahoo'),
+			onclick: () => {}
+		},
+		{
+			value: 4,
+			name: t('contacts:header:settings:import'),
+			onclick: () => {}
+		},
+		{
+			value: 5,
+			name: t('contacts:header:settings:crm'),
+			onclick: () => {}
+		},
+		{
+			value: 6,
+			name: t('contacts:header:settings:csv'),
+			onclick: () => {}
+		},
+		{
+			value: 7,
+			name: t('contacts:header:settings:excel'),
+			onclick: () => {}
+		},
+		{
+			value: 8,
+			name: t('contacts:header:settings:export'),
+			onclick: () => {}
+		},
+		{
+			value: 9,
+			name: t('contacts:header:settings:control'),
+			onclick: () => {}
+		},
+		{
+			value: 10,
+			name: t('contacts:header:settings:search'),
+			onclick: () => {}
+		},
+		{
+			value: 11,
+			name: t('contacts:header:settings:entity'),
+			onclick: () => {}
+		}
+	];
+
+    const settingsPolicies = [
+		{
+			value: 0,
+			name: t('contacts:header:excel:export'),
+			icon: RiFileExcel2Fill,
+			onclick: () => {}
+		},
+		{
+			value: 1,
+			icon: RiFileExcel2Fill,
+			name: t('contacts:header:excel:print'),
+			onclick: () => {}
+		}
+	];
+
     return {
         calendarViews,
         createdDate,
-        ramo
+        trash,
+        settingsContact,
+        settingsPolicies,
+    }
+}
+
+export const usePolicies = (contactID, ) => {
+    const { push } = useRouter();
+    const {
+        t
+    } = useTranslation();
+    const branches = [
+		{
+			value: 0,
+			name: t('contacts:policies:branches:all'),
+			onclick: () => push(`/sales/crm/contacts/contact/policies/${contactID}`),
+            route: `/sales/crm/contacts/contact/policies/${contactID}`,
+		},
+		{
+			value: 1,
+			name: t('contacts:policies:branches:life'),
+			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/life/${contactID}`),
+            route: `/sales/crm/contacts/contact/policies/branch/life/${contactID}`,
+		},
+		{
+			value: 2,
+			name: t('contacts:policies:branches:cars'),
+            route: `/sales/crm/contacts/contact/policies/branch/cars/${contactID}`,
+			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/cars/${contactID}`),
+		},
+		{
+			value: 3,
+			name: t('contacts:policies:branches:medicinal'),
+            route: `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}`,
+			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/medicine/${contactID}`),
+		},
+		{
+			value: 4,
+			name: t('contacts:policies:branches:damages'),
+            route: `/sales/crm/contacts/contact/policies/branch/damages/${contactID}`,
+			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/damages/${contactID}`),
+		},
+		{
+			value: 5,
+			name: t('contacts:policies:branches:various'),
+            route: `/sales/crm/contacts/contact/policies/branch/various/${contactID}`,
+			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/various/${contactID}`),
+		},
+		{
+			value: 6,
+			name: t('contacts:policies:branches:fleets'),
+            inactive: true,
+		},
+		{
+			value: 7,
+			name: t('contacts:policies:branches:others'),
+            inactive: true,
+		}
+	];
+
+    return {
+        branches
     }
 }

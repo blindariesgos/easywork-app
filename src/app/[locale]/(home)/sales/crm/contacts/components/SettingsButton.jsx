@@ -1,7 +1,7 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 
-const IconDropdown = ({options, width, icon}) => {
+const IconDropdown = ({options, width, icon, colorIcon = "text-primary"}) => {
     return (
         <Menu as="div" className="relative inline-block text-left mt-1">
             <div>
@@ -28,7 +28,7 @@ const IconDropdown = ({options, width, icon}) => {
                                         active ? ' text-white bg-easy-600' : 'text-primary'
                                         } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm`}
                                     >
-                                        {opt.icon && <opt.icon className={`h-4 w-4 ${active ? "text-white" : "text-primary"}`}/>}
+                                        {opt.icon && <opt.icon className={`h-4 w-4 ${active ? "text-white" : `${colorIcon}`}`}/>}
                                         {opt.name}
                                     </button>
                                 )}

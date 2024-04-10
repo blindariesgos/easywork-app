@@ -60,7 +60,7 @@ export default function ContactLayout({ children, table, modal }) {
           }
         >
             <CreateContactModal/>
-            <ShowContactModal />
+            {/* <ShowContactModal /> */}
             {table}
             {children}
             {/* {modal} */}          

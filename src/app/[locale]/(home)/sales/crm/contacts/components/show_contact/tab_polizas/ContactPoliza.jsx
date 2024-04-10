@@ -8,9 +8,9 @@ export default function ContactPoliza({contactID}) {
       <div className="flex flex-col flex-1 text-black overflow-hidden rounded-t-2xl rounded-bl-2xl relative p-4">
           <div className="flex items-start flex-col justify-between space-y-3">
             <h1 className="text-xl">{contactID}</h1>
-              <PolizasHeader contactID={contactID} />
+              <PolizasHeader contactID={contactID} selected="general"/>
           </div>
-        <PolizasTab />
+        <PolizasTab contactID={contactID} />
       </div>
     </div>
   );

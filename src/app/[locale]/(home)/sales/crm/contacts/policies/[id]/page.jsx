@@ -1,22 +1,21 @@
 import SlideOver from "@/components/SlideOver";
 import React, { Suspense } from "react";
+import ContactDetail from "../../components/ContactDetail";
+import { getContact } from "@/lib/api";
 import CreateContact from "../../components/create_contact/CreateContact";
-import { getContactId } from "@/lib/apis";
+import useAppContext from "@/context/app";
+import ContactPoliza from "../../components/show_contact/tab_polizas/ContactPoliza";
 
 async function useContact({ contactID }) {
-  try {
-    const response = await getContactId(contactID); 
-    return response;    
-  } catch (error) {
-    throw new Error(JSON.stringify(error?.response?.data));
-  }
+  const response = await getContact(contactID);
+  return response;
 }
 
 export default async function Page({ params: { id } }) {
-  const contactInfo = await getContactId(id);
+//   const contactInfo = await useContact({ contactID: id });
 
   return (
-    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
+    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="policy">
       <Suspense
         fallback={
           <div className="flex flex-col h-screen">
@@ -25,7 +24,7 @@ export default async function Page({ params: { id } }) {
           </div>
         }
       >
-        <CreateContact edit={contactInfo} id={id} />
+        <ContactPoliza contactID={id} />
       </Suspense>
     </SlideOver>
   );

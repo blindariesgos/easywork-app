@@ -13,7 +13,6 @@ export default function WrapperContact({ contactID, children }) {
       setCurrentContact(response);
     }
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contactID, lastContactUpdate]);
 
   return <Suspense fallback={<ShowContactSkeleton />}>{children}</Suspense>;

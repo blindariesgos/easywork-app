@@ -66,7 +66,6 @@ export async function createContact(prevState, formData) {
   //   {}
   // );
 
-  // console.log(result);
 
   // // Revalidate Cache
   // revalidateTag("contacts");
@@ -75,7 +74,6 @@ export async function createContact(prevState, formData) {
 
 export async function updateContact(prevState, formData) {
   // Validation
-  console.log(formData);
 
   const fieldsToValidate = {};
   for (const [field, value] of formData.entries()) {
@@ -98,7 +96,6 @@ export async function updateContact(prevState, formData) {
   // Validate only if there are changed fields
   if (Object.keys(fieldsToValidate).length > 0) {
     const validatedFields = contactSchema.safeParse(fieldsToValidate);
-    console.log(fieldsToValidate);
 
     if (!validatedFields.success) {
       return {
@@ -129,7 +126,6 @@ export async function updateContact(prevState, formData) {
     {}
   );
 
-  console.log(result);
 
   // Revalidate Cache
   revalidateTag("contacts");

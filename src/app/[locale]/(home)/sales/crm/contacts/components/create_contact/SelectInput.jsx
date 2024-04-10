@@ -84,7 +84,6 @@ function SelectInput({
           <TextInput
             type={disabled ? "text" : "hidden"}
             value={(selected) => {
-              console.log(selected);
               return selected?.name
             }}
             disabled={true}

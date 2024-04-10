@@ -30,9 +30,9 @@ export default function ContactDetail({ children }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  if (!currentContact) {
-    return <div>{t("contacts:edit:not-contact")}</div>;
-  }
+  // if (!currentContact) {
+  //   return <div>{t("contacts:edit:not-contact")}</div>;
+  // }
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +59,6 @@ export default function ContactDetail({ children }) {
 
       if (!result?.success) {
         if (result?.errors) {
-          console.log(result.errors);
           setErrors(result.errors);
         }
         return;
@@ -73,7 +72,6 @@ export default function ContactDetail({ children }) {
     } finally {
       setLoading(false);
     }
-    console.log("Formulario enviado");
   };
 
   return (
@@ -86,7 +84,7 @@ export default function ContactDetail({ children }) {
         <div className="bg-transparent py-6 mx-4">
           <div className="flex items-start flex-col justify-between space-y-3">
             <h1 className="text-2xl">
-              {currentContact.nombre} {currentContact.apellidos}
+              {/* {currentContact.nombre} {currentContact.apellidos} */}cc
             </h1>
             <AddContactTabs />
             {/* <AddContactTabs /> */}

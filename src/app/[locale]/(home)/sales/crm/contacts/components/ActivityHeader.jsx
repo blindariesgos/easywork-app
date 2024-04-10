@@ -10,7 +10,7 @@ export default function ActivityHeader() {
     { name: t('contacts:create:activities:tasks'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:whatsapp'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:comment'), href: "#", current: false, disabled: true },
-    { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true, children: [{ name: t('contacts:create:activities:zoom')},{ name: t('contacts:create:activities:call')}] },
+    { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true, menu: true, children: [{ name: t('contacts:create:activities:zoom')},{ name: t('contacts:create:activities:call')}] },
   ];
   const settings = [
     {
@@ -78,29 +78,28 @@ export default function ActivityHeader() {
     <>
       <div className="bg-white px-2 rounded-md w-full shadow-sm">
         <div className="bg-white">
-          <div className="sm:hidden">
+          {/* <div className="sm:hidden">
             <label htmlFor="tabs" className="sr-only">
               {t('contacts:create:select')}
             </label>
-            {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
             <select
               id="tabs"
               name="tabs"
-              className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
               defaultValue={tabs.find((tab) => tab.current).name}
             >
-              {tabs.map((tab) => (
-                <option key={tab.name}>{tab.name}</option>
+              {tabs.map((tab, index) => (
+                <option key={index}>{tab.name}</option>
               ))}
             </select>
-          </div>
-          <div className="hidden sm:block">
-            <div className="border-b border-gray-200">
+          </div> */}
+          <div className="">
+            <div className="border-b border-gray-200 mt-4">
               <nav className="flex space-x-4 flex-wrap" aria-label="Tabs">
                 {tabs.map((tab) => (
-                  <>
+                  <div key={tab.name}>
                     {tab.children ? (
-                      <div key={tab.name} className="py-4 -mt-[3px]">
+                      <div key={tab.name} className="py-4 -mt-4">
                         <AppointmentMenu
                           options={tab.children}
                           label={tab.name}
@@ -112,16 +111,16 @@ export default function ActivityHeader() {
                         href={tab.href}
                         className={clsx(
                           tab.current
-                            ? "border-primary text-primary"
+                            ? " text-white bg-blue-100 rounded-md"
                             : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
-                          "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium uppercase"
+                          "whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium uppercase"
                         )}
                         aria-current={tab.current ? "page" : undefined}
                       >
                         {tab.name}
                       </a>
                     )}
-                  </>
+                  </div>
                 ))}
               </nav>
             </div>

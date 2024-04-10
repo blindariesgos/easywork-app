@@ -39,7 +39,7 @@ function SelectInput({
 
   return (
     <div className="">
-      <Combobox as="div" value={selected} onChange={setSelected}>
+      <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
         <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
         </Combobox.Label>
@@ -48,10 +48,10 @@ function SelectInput({
             <Combobox.Input
               {...register && register(name)}
               className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
-              displayValue={(person) => person?.name}
+              displayValue={(person) => person?.name}              
               onChange={(event) => {
                   register && register(name).onChange(event);
-                  onChangeInput(event.target.value);
+                  onChangeInput && onChangeInput(event.target.value);
                 }
               }
             />
@@ -67,7 +67,7 @@ function SelectInput({
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
-            afterLeave={() => onChangeInput('')}
+            afterLeave={() => onChangeInput && onChangeInput('')}
           >
             <Combobox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {options?.length === 0 && query !== '' ? (
@@ -75,9 +75,8 @@ function SelectInput({
                   Nothing found.
                 </div>
               ) : (
-                options.map((person) => (
-                  <Combobox.Option
-                    disabled={disabled}
+                options && options.map((person) => (
+                  <Combobox.Option                    
                     key={person.id}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 px-2 ${
@@ -89,7 +88,7 @@ function SelectInput({
                     {({ selected, active }) => (
                       <>
                         <span
-                          className={`block truncate ${
+                          className={`block truncate pl-6 ${
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
@@ -97,11 +96,11 @@ function SelectInput({
                         </span>
                         {selected ? (
                           <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                            className={`absolute inset-y-0 left-0 flex items-center pl-2 ${
                               active ? 'text-white' : 'text-primary'
                             }`}
                           >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                            <CheckIcon className="h-4 w-4" aria-hidden="true" />
                           </span>
                         ) : null}
                       </>

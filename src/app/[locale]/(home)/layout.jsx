@@ -1,10 +1,6 @@
-'use client';
-import Sidebar from "@/components/Sidebar";
+// 'use client';
 
-// export const metadata = {
-//   title: "Easywork",
-//   description: "All in one",
-// };
+import Sidebar from "../../../components/Sidebar";
 
 export default function HomeLayout({ children }) {
   return (

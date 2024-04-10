@@ -1,18 +1,23 @@
-import Button from "@/components/form/Button";
-import React, { useEffect, useState } from "react";
-import SelectDropdown from "./create_contact/SelectDropdown";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useTranslation } from "react-i18next";
-import { filterOptions, responsible } from "@/lib/common";
-import { FaMagnifyingGlass } from "react-icons/fa6";
-import { useCommon } from "@/hooks/useCommon";
-import SelectInput from "@/components/form/SelectInput";
-import TextInput from "@/components/form/TextInput";
-import { PlusIcon } from "@heroicons/react/20/solid";
+import Button from '@/components/form/Button';
+import React, { useEffect, useState } from 'react';
+import MultipleSelect from '@/components/form/MultipleSelect';
+import SelectDropdown from '../create_contact/SelectDropdown';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import { filterOptions, responsible } from '@/lib/common';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
+import { useCommon } from '@/hooks/useCommon';
+import SelectInput from '@/components/form/SelectInput';
+import TextInput from '@/components/form/TextInput';
+import {
+	PlusIcon,
+  } from "@heroicons/react/20/solid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import AddFields from './AddFields';
+
 
 const contactSources = [
   { id: 1, name: "Correo electrónico" },
@@ -31,51 +36,52 @@ const contactSources = [
 ];
 
 const FormFilters = () => {
-  const { t } = useTranslation();
-  const { createdDate } = useCommon();
-  const [queryResponsible, setQueryResponsible] = useState("");
-  const [queryDate, setQueryDate] = useState("");
-  const [querySource, setQuerySource] = useState("");
-  const [contactSource, setContactSource] = useState(null);
-  const [queryCreated, setQueryCreated] = useState("");
-  const filteredContactResponsible = filterOptions(
-    queryResponsible,
-    responsible
-  );
-  const filteredContactDate = filterOptions(queryDate, createdDate);
-  const filteredContactSources = filterOptions(querySource, contactSources);
-  const filteredContactCreated = filterOptions(queryCreated, responsible);
-  const schema = yup.object().shape({
-    // responsible: yup.array().min(1, 'Al menos una opción debe seleccionarse'),
-    responsible: yup.string(),
-    date: yup.object(),
-    origin: yup.string(),
-    createdBy: yup.string(),
-    ndays: yup.number(),
-    month: yup.string(),
-    quarter: yup.string(),
-    year: yup.string(),
-    exactDate: yup.string(),
-    // range: yup.array().of(yup.string().required()).required().min(2).max(2),
-  });
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    getValues,
-    watch,
-    formState: { isValid, errors },
-  } = useForm({
-    defaultValues: {
-      range: [null, null],
-    },
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
+	const { t } = useTranslation();
+	const { createdDate } = useCommon();
+	const [ queryResponsible, setQueryResponsible ] = useState('');
+	const [ queryDate, setQueryDate ] = useState('');
+	const [ querySource, setQuerySource ] = useState('');
+    const [contactSource, setContactSource] = useState(null);
+	const [ queryCreated, setQueryCreated ] = useState('');
+	const filteredContactResponsible = filterOptions(queryResponsible, responsible);
+	const filteredContactDate = filterOptions(queryDate, createdDate);
+	const filteredContactSources = filterOptions(querySource, contactSources);
+	const filteredContactCreated = filterOptions(queryCreated, responsible);
+	const schema = yup.object().shape({
+		// responsible: yup.array().min(1, 'Al menos una opción debe seleccionarse'),
+		responsible: yup.string(),
+		date: yup.object(),
+        origin: yup.string(),
+		createdBy: yup.string(),
+		ndays: yup.number(),
+		month: yup.string(),
+		quarter: yup.string(),
+		year: yup.string(),
+		exactDate: yup.string(),
+		fields: yup.array().of(
+		  yup.object().shape({
+		  }),
+		),
+		// range: yup.array().of(yup.string().required()).required().min(2).max(2),
+	});
+	const [dateRange, setDateRange] = useState([null, null]);
+	const [startDate, endDate] = dateRange;
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        setValue,
+        getValues,
+		watch,
+        formState: { isValid, errors },
+      } = useForm({
+          defaultValues: {
+			range: [null, null],
+          },
+          mode: "onChange",
+          resolver: yupResolver(schema),
+      });
 
   const handleFormFilters = (data) => {
     console.log("data", data);
@@ -85,20 +91,21 @@ const FormFilters = () => {
     reset();
   }, []);
 
-  // console.log("ccf", getValues())
-  return (
-    <form
-      onSubmit={handleSubmit(handleFormFilters)}
-      className="grid grid-cols-1 gap-2 sm:w-96 w-72 px-2"
-    >
-      <SelectDropdown
-        label={t("contacts:filters:responsible")}
-        name="responsible"
-        options={filteredContactResponsible}
-        onChangeInput={setQueryResponsible}
-        setValue={setValue}
-      />
-      {/* <Controller
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'fields',
+	});
+	
+	return (
+		<form onSubmit={handleSubmit(handleFormFilters)} className="grid grid-cols-1 gap-2 sm:w-96 w-72 px-2">
+			<SelectDropdown
+				label={t('contacts:filters:responsible')}
+				name="responsible"
+				options={filteredContactResponsible}
+				onChangeInput={setQueryResponsible}
+				setValue={setValue}
+			/>
+			{/* <Controller
 				name="responsible"
 				control={control}
 				defaultValue={[]}
@@ -222,45 +229,65 @@ const FormFilters = () => {
 					/>
 				)}
 			/> */}
-      <SelectDropdown
-        label={t("contacts:filters:created-by")}
-        name="createdby"
-        options={filteredContactCreated}
-        onChangeInput={setQueryCreated}
-        selectedOption={null}
-        setValue={setValue}
-      />
-      <div className="my-2 flex gap-2 items-center">
-        <Button
-          type="button"
-          label={t("contacts:filters:add-field")}
-          buttonStyle="text"
-          iconLeft={<PlusIcon className="h-4 w-4 text-gray-60" />}
-        />
-        <Button
-          type="button"
-          label={t("contacts:filters:restore")}
-          buttonStyle="text"
-          iconLeft={<PlusIcon className="h-4 w-4 text-gray-60" />}
-        />
-      </div>
-      <div className="flex gap-2 justify-center mt-4">
-        <Button
-          type="submit"
-          label={t("contacts:filters:search")}
-          buttonStyle="primary"
-          className="py-1 px-3"
-          iconLeft={<FaMagnifyingGlass className="h-4 w-4 text-white" />}
-        />
-        <Button
-          type="button"
-          label={t("contacts:filters:restart")}
-          buttonStyle="secondary"
-          className="py-1 px-3"
-        />
-      </div>
-    </form>
-  );
+			<SelectDropdown
+				label={t('contacts:filters:created-by')}
+				name="createdby"
+				options={filteredContactCreated}
+				onChangeInput={setQueryCreated}
+				selectedOption={null}
+				setValue={setValue}
+			/>
+			{fields.map((field, index) => {
+				return (
+					<div key={field.id}>
+						{field.type === "input" && (
+							<TextInput
+								label={field.name}
+								type="text"		
+								name={`fields[${index}].value`}
+								register={register}				
+							/>
+						)}
+						{field.type === "select" && (
+							<SelectInput
+								{...field}
+								label={field.name}
+								name={`fields[${index}].value`}
+								options={field.options}
+								register={register}
+								setValue={setValue}
+							/>							
+						)}
+					</div>
+				)
+			})}
+			<div className='my-2 flex gap-2 items-center'>
+				<AddFields append={append} remove={remove} fields={fields}/>
+				<Button
+					type="button"
+					label={t('contacts:filters:restore')}
+					buttonStyle="text"
+					iconLeft={<PlusIcon className="h-4 w-4 text-gray-60" />}
+					onclick={() => { setValue("fields", []); reset() }}
+				/>
+			</div>
+			<div className="flex gap-2 justify-center mt-4">
+				<Button
+					type="submit"
+					label={t('contacts:filters:search')}
+					buttonStyle="primary"
+					className="py-1 px-3"
+					iconLeft={<FaMagnifyingGlass className="h-4 w-4 text-white" />}
+				/>
+				<Button
+					type="button"
+					label={t('contacts:filters:restart')}
+					buttonStyle="secondary"
+					className="py-1 px-3"
+				/>
+			</div>
+		</form>
+	);
 };
 
 export default FormFilters;

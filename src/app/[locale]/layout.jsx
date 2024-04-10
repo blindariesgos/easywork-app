@@ -28,9 +28,9 @@ export default async function RootLayout({ children, params: { locale }}) {
         >
           <AppContextProvider>
             <CrmContextProvider>
+              <ToastContainer />
               {children}
               </CrmContextProvider>
-            <ToastContainer />
           </AppContextProvider>
         </TranslationsProvider>
       </body>

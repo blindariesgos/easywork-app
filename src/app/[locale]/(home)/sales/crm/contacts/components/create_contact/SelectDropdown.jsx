@@ -27,14 +27,13 @@ function SelectDropdown({
     }
   
   },  [selectedOption])
-  // console.log("field", field)
   useEffect(() => {
     if (selected) setValue && setValue(name, selected?.name);
   }, [selected, setValue, name])
 
   return (
     <div className="">
-      <Combobox as="div" value={selected} onChange={setSelected}>
+      <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
         <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
         </Combobox.Label>
@@ -70,8 +69,7 @@ function SelectDropdown({
                 </div>
               ) : (
                 options.map((person) => (
-                  <Combobox.Option
-                    disabled={disabled}
+                  <Combobox.Option                    
                     key={person.id}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-6 pr-4 ${

@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import useAppContext from "@/context/app";
+import useAppContext from '../context/app/index';
 import Link from "next/link";
 import SidebarMenu from "./SidebarMenu";
 import { useTranslation } from "react-i18next";

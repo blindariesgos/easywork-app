@@ -14,7 +14,6 @@ const Converter = () => {
 
     if (file) {
       setSelectedFile(file);
-      console.log(t('common:file:pdf'), file.name);
     }
   };
 

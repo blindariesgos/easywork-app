@@ -79,6 +79,7 @@
         "print" : "Imprimir",
         "download" : "Descargar",
         "cua": "Código CUA",
+        "otherType": "Otro",
         "tabs": {
             "general" : "General",
             "policies" : "Pólizas",
@@ -143,6 +144,10 @@
         "restore" : "Restaurar campos predeterminados",
         "search" : "Buscar",
         "restart" : "Reiniciar",
+        "cua": "Código CUA",
+        "fullname": "Nombre y Apellido",
+        "contact-type" : "Tipo de contacto",
+        "rfc" : "RFC",
         "date": {
             "yesterday": "Ayer",
             "today": "Hoy",
@@ -166,5 +171,16 @@
             "nextWeek": "La próxima semana",
             "nextMonth": "El próximo mes"
         }
+    },
+    "delete": {
+        "msg": "Contacto(s) eliminado exitosamente!"
+    },
+    "policies": {
+        "ramo": "Ramo",
+        "life": "Vida",
+        "health": "Salud",
+        "medical-expenses": "Gastos Médicos",
+        "damages": "Daños",
+        "various": "Diversos"
     }
 }

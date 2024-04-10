@@ -46,3 +46,6 @@ body {
   background-color: #241F61;
 }
 
+.react-datepicker-wrapper{
+  width: 100%;
+}

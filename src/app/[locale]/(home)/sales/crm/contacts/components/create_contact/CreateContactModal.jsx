@@ -7,7 +7,7 @@ import useAppContext from "@/context/app";
 export default function CreateContactModal() {
   const { openModal, setOpenModal } = useAppContext();
   return (
-    <SlideOver openModal={openModal} setOpenModal={setOpenModal}>
+    <SlideOver openModal={openModal} setOpenModal={setOpenModal} colorTag="bg-yellow-100" labelTag="contact">
       <CreateContact />
     </SlideOver>
   );

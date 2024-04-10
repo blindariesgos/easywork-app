@@ -64,18 +64,18 @@ export default function ContactGeneral() {
   const [contactName, setContactName] = useState(null);
   const { t } = useTranslation();
 
-  if (!currentContact) {
-    return <div>{t("contacts:edit:not-contact")}</div>;
-  }
+  // if (!currentContact?) {
+  //   return <div>{t("contacts:edit:not-contact")}</div>;
+  // }
 
   const contactNameValue = () => {
     if (contactName) return contactName;
-    return currentContact.nombre;
+    return currentContact?.nombre;
   };
 
   const contactGenderValue = () => {
     if (contactGender) return contactGender;
-    return sexoOptions.find((option) => option.id === currentContact.sexo);
+    return sexoOptions.find((option) => option.id === currentContact?.sexo);
   };
 
 
@@ -115,40 +115,40 @@ export default function ContactGeneral() {
             label={t('contacts:create:lastName')}
             id="apellidos"
             disabled={!contactEditMode}
-            value={currentContact.apellidos}
+            value={currentContact?.apellidos}
           />
           <TextInputLocal
             label={t('contacts:create:charge')}
             id="cargo"
             disabled={!contactEditMode}
-            value={currentContact.cargo}
+            value={currentContact?.cargo}
           />
           <TextInputLocal
             label={t('contacts:create:curp')}
             id="curp"
             disabled={!contactEditMode}
-            value={currentContact.cargo}
+            value={currentContact?.cargo}
             hidden
           />
           <TextInputLocal
             label={t('contacts:create:phone')}
             id="telefono"
             disabled={!contactEditMode}
-            value={currentContact.telefono}
+            value={currentContact?.telefono}
           />
           <TextInputLocal
             label={t('contacts:create:email')}
             id="email"
             type="email"
             disabled={!contactEditMode}
-            value={currentContact.email}
+            value={currentContact?.email}
           />
           <TextInputLocal
             label={t('contacts:create:born-date')}
             id="nacimiento"
             type="date"
             disabled={!contactEditMode}
-            value={currentContact.nacimiento}
+            value={currentContact?.nacimiento}
           />
           <SelectInput
             label={t('contacts:create:sex')}
@@ -158,38 +158,38 @@ export default function ContactGeneral() {
             selectedOption={contactGenderValue()}
             setSelectedOption={setContactGender}
           />
-          <TextInputLocal label={t('contacts:create:rfc')} id="rfc" value={currentContact.rfc} />
+          <TextInputLocal label={t('contacts:create:rfc')} id="rfc" value={currentContact?.rfc} />
           <TextInputLocal
             label={t('contacts:create:zip-code')}
             id="postal"
-            value={currentContact.postal}
+            value={currentContact?.postal}
           />
           <TextareaLabel
             label={t('contacts:create:address')}
             id="direccion"
-            value={currentContact.direccion}
+            value={currentContact?.direccion}
           />
           <SelectInput
             label={t('contacts:create:contact-type')}
             id="contactType"
             options={contactTypes}
             selectedOption={contactTypes.find(
-              (option) => option.id === currentContact.contactType
+              (option) => option.id === currentContact?.contactType
             )}
             setSelectedOption={contactTypes.find(
-              (option) => option.id === currentContact.contactType
+              (option) => option.id === currentContact?.contactType
             )}
           />
           <SelectInput label={t('contacts:create:responsible')} id="responsible" />
           <TextInputLocal
             label={t('contacts:create:agent')} 
             id="agente"
-            value={currentContact.agente}
+            value={currentContact?.agente}
           />
           <TextInputLocal
             label={t('contacts:create:sub-agent')}
             id="subAgente"
-            value={currentContact.subAgente}
+            value={currentContact?.subAgente}
           />
           <SelectInput
             label={t('contacts:create:origen')}

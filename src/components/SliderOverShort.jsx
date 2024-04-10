@@ -1,7 +1,6 @@
 "use client";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
 
@@ -26,10 +25,6 @@ export default function SliderOverShort({ openModal, setOpenModal, children }) {
               >
                 <Dialog.Panel className="pointer-events-auto w-auto">  {/*w-max-full md:max-w-4xl lg:max-w-4xl xl:max-w-7xl*/}
                   <div className="flex b-gray-300">
-                    <Tag
-                      onclick={() => setOpenModal(false)} 
-                      className="bg-green-500"
-                    />
                     {children}
                   </div>
                 </Dialog.Panel>

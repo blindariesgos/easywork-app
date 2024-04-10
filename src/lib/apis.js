@@ -23,13 +23,22 @@ export const getContacts = async (page) => {
     const response = await axios.get(`/sales/crm/contacts?limit=6&page=${page}`);  
     return response;
   // } catch (error) {
-  //   return error?.response?.data
+  //   return error
   // }
 }
 
 export const getContactId = async (id) => {
-  // try {    
+  try {    
     const response = await axios.get(`/sales/crm/contacts/${id}`); 
+    return response;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export const deleteContactId = async (id) => {
+  // try {    
+    const response = await axios.delete(`/sales/crm/contacts/${id}`);
     return response;
   // } catch (error) {
   //   throw new Error(JSON.stringify(error?.response?.data));

@@ -171,5 +171,16 @@
             "nextWeek": "La próxima semana",
             "nextMonth": "El próximo mes"
         }
+    },
+    "delete": {
+        "msg": "Contacto(s) eliminado exitosamente!"
+    },
+    "policies": {
+        "ramo": "Ramo",
+        "life": "Vida",
+        "health": "Salud",
+        "medical-expenses": "Gastos Médicos",
+        "damages": "Daños",
+        "various": "Diversos"
     }
 }

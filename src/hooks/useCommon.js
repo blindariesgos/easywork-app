@@ -324,8 +324,18 @@ export const useCommon = () => {
             name: t('contacts:filters:date:nextMonth')
         }
     ];
+    
+    const ramo = [
+        { id: 1, name: t("contacts:policies:ramo") },
+        { id: 2, name: t("contacts:policies:life") },
+        { id: 3, name: t("contacts:policies:health") },
+        { id: 4, name: t("contacts:policies:medical-expenses") },
+        { id: 5, name: t("contacts:policies:damages") },
+        { id: 6, name: t("contacts:policies:various") }
+    ]
     return {
         calendarViews,
-        createdDate
+        createdDate,
+        ramo
     }
 }

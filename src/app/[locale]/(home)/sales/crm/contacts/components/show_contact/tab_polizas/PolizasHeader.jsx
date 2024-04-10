@@ -11,6 +11,8 @@ import { useFormState } from "react-dom";
 import ComboboxComponent from "@/components/ComboboxComponent";
 import useCrmContext from "@/context/crm";
 import { useTranslation } from "react-i18next";
+import { useCommon } from "@/hooks/useCommon";
+import Button from "@/components/form/Button";
 
 const initialState = {
   filePdf: "",
@@ -27,6 +29,7 @@ const typePoliza = [
 ];
 
 export default function PolizasHeader({ contactID }) {
+  const { ramo } = useCommon();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [file, setFile] = React.useState(null);
@@ -69,17 +72,18 @@ export default function PolizasHeader({ contactID }) {
     <div className="bg-white w-full p-2 rounded-md flex gap-3">
       <button
         type="button"
-        className="rounded-md bg-easy-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-easy-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-easy-600"
+        className="rounded-md bg-blue-100 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:ring-0 focus:ring-0"
       >
         {t('contacts:edit:policies:general')}
       </button>
-      <SelectRamo />
-      <button
+      <SelectRamo options={ramo}/>
+      <Button
         type="button"
-        className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-      >
-        {t('contacts:edit:policies:documents')}
-      </button>
+        label={t('contacts:edit:policies:documents')}
+        buttonStyle="text"
+        fontSize="text-sm "
+        className="px-3"
+      />
       <button
         type="button"
         onClick={() => setIsOpen(true)}

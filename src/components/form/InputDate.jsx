@@ -1,7 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 
-const InputDate = ({ label, value, onChange, icon, error }) => {
+const InputDate = ({ label, value, onChange, icon, error, disabled }) => {
 	return (
 		<div className="flex flex-col gap-y-2 w-full">
 			{label && <label className="text-sm font-medium text-gray-900">{label}</label>}
@@ -14,6 +14,7 @@ const InputDate = ({ label, value, onChange, icon, error }) => {
                     icon={icon ? icon : undefined}
 					className="w-full border-none rounded-md text-sm h-9 shadow-sm focus:ring-0"
                     isClearable
+					disabled={disabled}
 				/>
 			</div>
             {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}

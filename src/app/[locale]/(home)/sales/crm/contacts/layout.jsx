@@ -6,8 +6,6 @@ import ShowContactModal from "./components/show_contact/ShowContactModal";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/header/Header";
 import HeaderCrm from "../HeaderCrm";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import Error from "./error";
 
 export default function ContactLayout({ children, table, modal }) {
   const { t } = useTranslation();
@@ -61,14 +59,11 @@ export default function ContactLayout({ children, table, modal }) {
             </div>
           }
         >
-          {/* <ErrorBoundary fallback={<Error/>}> */}
             <CreateContactModal/>
             <ShowContactModal />
             {table}
             {children}
-            {/* {modal} */}
-          {/* </ErrorBoundary> */}
-          
+            {/* {modal} */}          
         </Suspense>
       </div>    
     </div>

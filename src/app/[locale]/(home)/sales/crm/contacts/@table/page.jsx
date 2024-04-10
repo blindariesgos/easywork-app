@@ -18,11 +18,17 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { orderBy, } from "lodash";
 import { Cog8ToothIcon } from '@heroicons/react/20/solid';
+import Button from "@/components/form/Button";
+import { deleteContactId } from "@/lib/apis";
+import { getApiError } from "@/utils/getApiErrors";
+import { toast } from "react-toastify";
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation'
 
 export default function Page() {
   const params = useSearchParams();
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const router = useRouter();
   const currentPage = Number(params?.page) || 1;
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -80,6 +86,24 @@ export default function Page() {
       sortHardwares();
   }, [ fieldClicked ]);
 
+  const deleteContact = (contact) => {
+    if ( contact.length === 1 ) apiDelete(contact[0].id);
+    if ( contact.length > 1 ) {
+      contact.map((cont) => apiDelete(cont.id));
+    }
+    router.push('/sales/crm/contacts');
+    toast.success(t('contacts:delete:msg'));
+    setSelectedContacts([]);
+  }
+
+  const apiDelete = async(id) => {
+    try{
+      const response = await deleteContactId(id);   
+    }catch(err){
+      getApiError(err.message);
+    }
+  }
+
   if (AppContacts?.items && AppContacts?.items.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -112,18 +136,19 @@ export default function Page() {
           <div className="relative overflow-hidden  sm:rounded-lg">
             {selectedContacts && selectedContacts.length > 0 && (
               <div className="absolute left-16 top-2 flex h-12 items-center space-x-3 bg-white sm:left-16">
-                <button
+                <Button
+                  label={t('common:buttons:delete')}
+                  type="button"
+                  className="px-2 py-2"
+                  buttonStyle="secondary"
+                  onclick={() => deleteContact(selectedContacts)}
+                />
+                
+                {/* <button
                   type="button"
                   className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-medium text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                 >
-                  {t('common:buttons:edit')}
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-medium text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                >
-                  {t('common:buttons:delete')}
-                </button>
+                </button> */}
               </div>
             )}
             <table className="min-w-full divide-y divide-gray-300">
@@ -132,7 +157,7 @@ export default function Page() {
                   <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
                     <input
                       type="checkbox"
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                       ref={checkbox}
                       checked={checked}
                       onChange={toggleAll}
@@ -240,7 +265,7 @@ export default function Page() {
                     key={contact.id}
                     className={clsx(
                       selectedContacts.includes(contact)
-                        ? "bg-gray-50"
+                        ? "bg-gray-200"
                         : undefined,
                       "hover:bg-indigo-100/40 cursor-default"
                     )}
@@ -267,7 +292,7 @@ export default function Page() {
                       className={clsx(
                         "whitespace-nowrap py-4 pr-3 text-sm font-medium",
                         selectedContacts.includes(contact)
-                          ? "text-indigo-600"
+                          ? "text-primary"
                           : "text-gray-400"
                       )}
                     >
@@ -284,7 +309,7 @@ export default function Page() {
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="font-medium text-sm text-black hover:text-indigo-600 capitalize">
+                          <div className="font-medium text-sm text-black hover:text-primary capitalize">
                             {/* <button
                               onClick={() => {
                                 setCurrentContactID(contact.id);
@@ -321,13 +346,13 @@ export default function Page() {
                       <div className="flex gap-2">
                         <button
                           type="button"
-                          className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                           <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
                         </button>
                         <button
                           type="button"
-                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                           <EnvelopeIcon
                             className="h-4 w-4"
@@ -336,7 +361,7 @@ export default function Page() {
                         </button>
                         <button
                           type="button"
-                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                           <ChatBubbleBottomCenterIcon
                             className="h-4 w-4"
@@ -345,7 +370,7 @@ export default function Page() {
                         </button>
                         <button
                           type="button"
-                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         >
                           <PhoneIcon className="h-4 w-4" aria-hidden="true" />
                         </button>

@@ -94,7 +94,7 @@ export default function ActivityHeader() {
             </select>
           </div> */}
           <div className="">
-            <div className="border-b border-gray-200">
+            <div className="border-b border-gray-200 mt-4">
               <nav className="flex space-x-4 flex-wrap" aria-label="Tabs">
                 {tabs.map((tab) => (
                   <div key={tab.name}>

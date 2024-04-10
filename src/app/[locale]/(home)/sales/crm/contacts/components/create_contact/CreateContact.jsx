@@ -1,6 +1,6 @@
 'use client';
 import useAppContext from '@/context/app';
-import { DocumentTextIcon, PhotoIcon, UserIcon, VideoCameraIcon, CalendarDaysIcon } from '@heroicons/react/20/solid';
+import { DocumentTextIcon, PhotoIcon, UserIcon, VideoCameraIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
@@ -104,21 +104,21 @@ export default function CreateContact({ edit, id }) {
 	const [ loading, setLoading ] = useState(false);
 
 	const schema = Yup.object().shape({
-		// email: Yup
-		//   .string()
-		//   .required(t('common:validations:required'))
-		//   .email(t('common:validations:email'))
-		//   .min(5,  t('common:validations:min', {min: 5})),
-		// name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
-		// charge: Yup.string().required(t('common:validations:required')),
-		// phone: Yup.string().required(t('common:validations:required')),
-		// rfc: Yup.string().required(t('common:validations:required')),
-		// cua: Yup.string().required(t('common:validations:required')),
+		email: Yup
+		  .string()
+		  .required(t('common:validations:required'))
+		  .email(t('common:validations:email'))
+		  .min(5,  t('common:validations:min', {min: 5})),
+		name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
+		charge: Yup.string().required(t('common:validations:required')),
+		phone: Yup.string().required(t('common:validations:required')),
+		rfc: Yup.string().required(t('common:validations:required')),
+		cua: Yup.string().required(t('common:validations:required')),
 		typeContact: Yup.string().required(t('common:validations:required')),
 		otherType: Yup.string(),
 		origin: Yup.string().required(t('common:validations:required')),
-		// address: Yup.string().required(t('common:validations:required')),
-		// responsible: Yup.string().required(t('common:validations:required')),
+		address: Yup.string().required(t('common:validations:required')),
+		responsible: Yup.string().required(t('common:validations:required')),
 		birthday: Yup.string().required(t('common:validations:required'))
 
 		// files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
@@ -299,6 +299,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.name}
 									register={register}
 									name="name"
+									disabled={!openButtons}
 								/>
 								<TextInput
 									label={t('contacts:create:charge')}
@@ -306,6 +307,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.charge}
 									register={register}
 									name="charge"
+									disabled={!openButtons}
 								/>
 								<Controller
 									render={({ field: { ref, ...field } }) => {
@@ -316,6 +318,7 @@ export default function CreateContact({ edit, id }) {
 												error={errors.phone}
 												label={t('contacts:create:phone')}
 												defaultValue={field.value}
+												disabled={!openButtons}
 											/>
 										);
 									}}
@@ -333,6 +336,7 @@ export default function CreateContact({ edit, id }) {
 												onBlur={onBlur}
 												icon={<FaCalendarDays className='h-3 w-3 text-primary pr-4'/>}
 												error={errors.birthday}
+												disabled={!openButtons}
 											/>
 										);
 									}}
@@ -346,6 +350,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.email}
 									register={register}
 									name="email"
+									disabled={!openButtons}
 								/>
 								<TextInput
 									label={t('contacts:create:rfc')}
@@ -353,6 +358,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.rfc}
 									register={register}
 									name="rfc"
+									disabled={!openButtons}
 								/>
 								<SelectInput
 									label={t('contacts:create:contact-type')}
@@ -364,6 +370,7 @@ export default function CreateContact({ edit, id }) {
 									error={!watch('typeContact') && errors.typeContact}
 									register={register}
 									setValue={setValue}
+									disabled={!openButtons}
 								/>
 								{watch('typeContact') == 'Otro' ? (
 									<TextInput
@@ -372,6 +379,7 @@ export default function CreateContact({ edit, id }) {
 										error={errors.otherType}
 										register={register}
 										name="otherType"
+										disabled={!openButtons}
 									/>
 								) : null}
 								<TextInput
@@ -380,6 +388,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="address"
 									placeholder={t('contacts:create:placeholder-address')}
+									disabled={!openButtons}
 								/>
 								<SelectInput
 									label={t('contacts:create:origen')}
@@ -390,6 +399,7 @@ export default function CreateContact({ edit, id }) {
 									error={!watch('origin') && errors.origin}
 									register={register}
 									setValue={setValue}
+									disabled={!openButtons}
 								/>
 								<SelectDropdown
 									label={t('contacts:create:responsible')}
@@ -399,15 +409,17 @@ export default function CreateContact({ edit, id }) {
 									onChangeInput={setQueryResponsible}
 									error={errors.responsible}
 									register={register}
+									disabled={!openButtons}
 								/>
 								<TextInput
 									label={t('contacts:create:cua')}
 									error={errors.cua}
 									register={register}
 									name="cua"
+									disabled={!openButtons}
 									// placeholder={t('contacts:create:placeholder-address')}
 								/>
-								<DocumentSelector name="files" onChange={handleFilesUpload} files={files} />
+								<DocumentSelector name="files" onChange={handleFilesUpload} files={files} disabled={!openButtons} setFiles={setFiles}/>
 							</div>
 						</div>
 
@@ -445,7 +457,7 @@ export default function CreateContact({ edit, id }) {
 	);
 }
 
-function DocumentSelector({ onChange, files, ...props }) {
+function DocumentSelector({ onChange, files, disabled, setFiles, ...props }) {
 	const { t } = useTranslation();
 
 	const handleDrop = (event) => {
@@ -453,32 +465,40 @@ function DocumentSelector({ onChange, files, ...props }) {
 		onChange(event, true);
 	};
 
+	const deleteDocument = (indexToDelete) => {
+		const documents = files.filter((item, index) => index !== indexToDelete) ;
+		setFiles(documents);
+	}
+
 	return (
 		<div className="col-span-full">
 			<label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
 				{t('contacts:create:passport')}
 			</label>
 			<div
-				className="mt-2  rounded-lg border border-dashed border-gray-900/25 py-6 px-2 relative"
-				onDrop={handleDrop}
-				onDragOver={(event) => event.preventDefault()}
+				className="mt-2 rounded-lg border border-dashed border-gray-900/25 py-6 px-2 relative w-full"
+				onDrop={!disabled && handleDrop}
+				onDragOver={(event) =>!disabled && event.preventDefault()}
 			>
-				<div>
-					<div className="grid grid-cols-3 gap-x-2">
-						{files.length > 0 &&
-							files.map((file, index) => (
-								<div key={index} className="flex flex-col items-center">
+				<div className="grid grid-cols-3 gap-x-2">
+					{files.length > 0 &&
+						files.map((file, index) => (
+							<div key={index} className="flex flex-col items-center">
+								<div className='flex'>
 									<DocumentTextIcon className="h-10 w-10 text-primary" />
-									<p className="text-[10px]">{file.name}</p>
+									<div onClick={() => deleteDocument(index)} className='cursor-pointer'>										
+										<XCircleIcon className='h-3 w-3 text-primary'/>
+									</div>
 								</div>
-							))}
-					</div>
-					{files.length === 0 && (
-						<div className="">
-							<PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-						</div>
-					)}
+								<p className="text-[10px]">{file.name}</p>
+							</div>
+						))}
 				</div>
+				{files.length === 0 && (
+					<div className="">
+						<PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+					</div>
+				)}
 				<div className="text-center">
 					<div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
 						<label
@@ -493,6 +513,7 @@ function DocumentSelector({ onChange, files, ...props }) {
 								id="file-upload"
 								className="sr-only outline-none focus:ring-0"
 								multiple
+								disabled={disabled}
 								{...props}
 							/>
 						</label>

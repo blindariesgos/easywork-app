@@ -13,7 +13,7 @@ async function useContact({ contactID }) {
 }
 
 export default async function Page({ params: { id } }) {
-  const contactInfo = await getContactId(id);
+  // const contactInfo = await getContactId(id);
 
   return (
     <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
@@ -25,7 +25,7 @@ export default async function Page({ params: { id } }) {
           </div>
         }
       >
-        <CreateContact edit={contactInfo} id={id} />
+        <CreateContact edit={null} id={id} />
       </Suspense>
     </SlideOver>
   );

@@ -61,7 +61,7 @@ export default function ContactLayout({ children, table, modal }) {
             </div>
           }
         >
-            <CreateContactModal/>
+            {/* <CreateContactModal/> */}
             {table}
             {children}
             {/* {modal} */}          

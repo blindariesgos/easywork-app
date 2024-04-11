@@ -267,7 +267,7 @@ export default function CreateContact({ edit, id }) {
 					{/* Encabezado del Formulario */}
 					<div className="bg-transparent py-6 mx-4">
 						<div className="flex items-start flex-col justify-between space-y-3">
-							{!edit && <div className="inset-0 bg-white/75 w-full h-36 z-50 absolute rounded-t-2xl" />}
+							{!id && <div className="inset-0 bg-white/75 w-full h-36 z-50 absolute rounded-t-2xl" />}
 							<h1 className="text-xl">{edit ? edit?.fullName : t('contacts:create:client')}</h1>
 							<AddContactTabs id={id} />
 						</div>
@@ -281,7 +281,7 @@ export default function CreateContact({ edit, id }) {
 						<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
 							<div className="flex justify-between bg-white py-4 px-4 rounded-md">
 								<h1 className="">{t('contacts:create:data')}</h1>
-								<button type="button" disabled={!edit} onClick={() => setOpenButtons(!openButtons)}>
+								<button type="button" disabled={!id} onClick={() => setOpenButtons(!openButtons)}>
 									<PencilIcon className="h-6 w-6 text-primary" />
 								</button>
 							</div>
@@ -424,7 +424,7 @@ export default function CreateContact({ edit, id }) {
 						</div>
 
 						{/* Menu Derecha */}
-						<ActivityPanel editing={!edit} />
+						<ActivityPanel editing={!id} />
 					</div>
 					{/* )} */}
 					{/* {contactDetailTab === contactDetailTabs[1] && <ContactPoliza contactID={currentContactID} />} */}

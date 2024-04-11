@@ -45,10 +45,11 @@ export const Pagination = ({ totalPages, bgColor }) => {
 			</div>
 		);
 	};
-	 const handlePathname = (page) => {
+
+	const handlePathname = (page) => {
 		params.set('page', page); 
 		replace(`${pathname}?${params.toString()}`);
-	 }
+	}
 
 	// const totalPagesPag = Math.floor((Number(totalPages) - 1) / Number(takeCount)) + 1;
 	const totalPagesPag = totalPages;

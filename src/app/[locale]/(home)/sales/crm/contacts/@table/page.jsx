@@ -300,7 +300,7 @@ export default function Page() {
                                 setShowContact(true);
                               }}
                             > */}
-                            <Link href={`/sales/crm/contacts/contact/${contact.id}`} className="">{capitalizedText(contact.fullName)}</Link>
+                            <Link href={`/sales/crm/contacts/contact/${contact.id}?show=true`} className="">{capitalizedText(contact.fullName)}</Link>
                               
                             {/* </button> */}
                           </div>

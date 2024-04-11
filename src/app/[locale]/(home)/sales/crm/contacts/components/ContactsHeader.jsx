@@ -22,8 +22,9 @@ export default function ContactsHeader() {
 	const { replace } = useRouter();
 
 	const handlePathname = () => {
+		params.delete( 'page');
 		params.set('show', true); 
-		replace(`${pathname}?${params.toString()}`);
+		replace(`/sales/crm/contacts/contact?${params.toString()}`);
 	}
 	
 

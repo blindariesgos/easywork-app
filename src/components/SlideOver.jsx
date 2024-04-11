@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
 import Tag from './Tag';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function SlideOver({ openModal, setOpenModal, children, colorTag, labelTag, samePage, previousModalPadding }) {
 	const { t } = useTranslation();
@@ -12,7 +12,8 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
     const [modalWidth, setModalWidth] = useState(0);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
-	console.log("params", params.get("show"))
+	const pathname = usePathname();
+	const { replace } = useRouter();
     const modalRef = useRef(null);
 
 	useEffect(() => {
@@ -30,7 +31,6 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
         };
     }, [modalRef]);
   
-	  console.log("previousModalPadding", previousModalPadding, modalWidth)
 	useEffect(
 		() => {
 			switch (labelTag) {
@@ -63,8 +63,18 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
 		[ labelTag ]
 	);
 
-	return (
-		<Transition.Root show={JSON.parse(params.get("show")) || openModal} as={Fragment}>
+	// if (!params.get("show")) return <div/>;
+
+	// useEffect(() => {
+	// 	if ( !params.get('show') ){
+	// 		params.set('show', true); 
+	// 		replace(`${pathname}?${params.toString()}`);
+	// 	}
+	// }, [])
+	
+
+	if (params.get("show")) return (
+		<Transition.Root show={JSON.parse(params.get("show"))} as={Fragment}>
 			<Dialog as="div" className="relative z-50" onClose={() => {}} >
 				<div className="fixed inset-0" />
 				<div className="fixed inset-0 overflow-hidden">

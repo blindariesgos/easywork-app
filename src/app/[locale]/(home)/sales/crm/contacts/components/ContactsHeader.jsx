@@ -10,13 +10,21 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import FiltersContact from './filters/FiltersContact';
 import { useCommon } from '@/hooks/useCommon';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function ContactsHeader() {
 	const { t } = useTranslation();
 	const { setOpenModal } = useAppContext();
-	const { trash, settingsContact: settings } = useCommon()
+	const { trash, settingsContact: settings } = useCommon();
+	const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
+	const pathname = usePathname();
+	const { replace } = useRouter();
 
-
+	const handlePathname = () => {
+		params.set('show', true); 
+		replace(`${pathname}?${params.toString()}`);
+	}
 	
 
 	return (
@@ -28,7 +36,7 @@ export default function ContactsHeader() {
 				<Button
 					label={t('contacts:header:create')}
 					type="button"
-					onclick={() => setOpenModal(true)}
+					onclick={() => handlePathname()}
 					buttonStyle={'primary'}
 					icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
 					className="px-3 py-2"

@@ -86,11 +86,11 @@ export default function PolizasHeader({ contactID, selected }) {
   return (
     <div className="bg-white w-full p-2 rounded-md">
       <div className="flex justify-between">
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 items-center flex-wrap">
           <button
             type="button"
             className={`rounded-md px-3 py-2 text-gray-400 text-sm font-medium focus:outline-none focus:ring-0 ${selected && buttonStyle(selected)}`}
-            onClick={() => push(`/sales/crm/contacts/contact/policies/${contactID}`)}
+            onClick={() => push(`/sales/crm/contacts/contact/policies/${contactID}?show=true`)}
           >
             {t('contacts:edit:policies:general')}
           </button>

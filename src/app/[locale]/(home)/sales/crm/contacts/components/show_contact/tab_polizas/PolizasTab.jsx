@@ -61,7 +61,7 @@ export default function PolizasTab({ base = 0, contactID }) {
   return (
     <div className="w-full py-2">
       <Tab.Group>
-        <Tab.List className="flex space-x-1 rounded-md w-full p-2 bg-white">
+        <Tab.List className="flex space-x-1 rounded-md w-full p-2 bg-white sm:flex-row flex-col">
           {/* {Object.keys(categories).map((category) => (
             <Tab
               key={category}
@@ -101,12 +101,12 @@ export default function PolizasTab({ base = 0, contactID }) {
           {/* {Object.values(categories).map((category, idx) => ( */}
             <Tab.Panel
               className={classNames(
-                "rounded-xl bg-white p-3",
+                "rounded-xl",
                 "ring-white/60 ring-offset-2  focus:outline-none"
               )}
             >
               {/* <ContactPolizaTable polizas={polizas ? polizas[category] : []} /> */}
-              <ContactPolizaTable polizas={[]} />
+              <ContactPolizaTable polizas={[]} base={base}/>
             </Tab.Panel>
           {/* ))} */}
         </Tab.Panels>

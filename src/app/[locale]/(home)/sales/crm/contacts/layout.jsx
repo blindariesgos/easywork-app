@@ -2,13 +2,15 @@
 import React, { Suspense } from "react";
 import ContactsHeader from "./components/ContactsHeader";
 import CreateContactModal from "./components/create_contact/CreateContactModal";
-import ShowContactModal from "./components/show_contact/ShowContactModal";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/header/Header";
 import HeaderCrm from "../HeaderCrm";
+import { Pagination } from "@/components/pagination/Pagination";
+import useCrmContext from "@/context/crm";
 
 export default function ContactLayout({ children, table, modal }) {
   const { t } = useTranslation();
+  const { contacts } = useCrmContext();
   const options = [
     {
       id: 1,
@@ -28,7 +30,7 @@ export default function ContactLayout({ children, table, modal }) {
     }
   ]
   return (
-    <div className="bg-gray-100 h-full p-2 rounded-xl">
+    <div className="bg-gray-100 h-full p-2 rounded-xl relative">
       <Header />
       <div className="flex flex-col w-full">
         <HeaderCrm options={options}/>
@@ -60,12 +62,17 @@ export default function ContactLayout({ children, table, modal }) {
           }
         >
             <CreateContactModal/>
-            {/* <ShowContactModal /> */}
             {table}
             {children}
             {/* {modal} */}          
         </Suspense>
-      </div>    
+      </div>  
+      
+      <div className="absolute bottom-2">
+        <Pagination
+          totalPages={contacts?.items || 0}
+        />
+      </div>  
     </div>
   );
 }

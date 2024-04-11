@@ -12,7 +12,7 @@ export default async function Page({ params: { id } }) {
 //   const contactInfo = await useContact({ contactID: id });
 
   return (
-    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="policy">
+    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="policy" samePage={`/sales/crm/contacts/contact/${id}`} previousModalPadding>
       <Suspense
         fallback={
           <div className="flex flex-col h-screen">

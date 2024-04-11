@@ -16,7 +16,6 @@ import { useTranslation } from "react-i18next";
 import { Pagination } from "@/components/pagination/Pagination";
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { orderBy, } from "lodash";
 import { Cog8ToothIcon } from '@heroicons/react/20/solid';
 import Button from "@/components/form/Button";
 import { deleteContactId } from "@/lib/apis";
@@ -24,6 +23,7 @@ import { getApiError } from "@/utils/getApiErrors";
 import { toast } from "react-toastify";
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation'
+import { useOrderByColumn } from "@/hooks/useOrderByColumn";
 
 export default function Page() {
   const params = useSearchParams();
@@ -37,11 +37,16 @@ export default function Page() {
   const [selectedContacts, setSelectedContacts] = useState([]);
   const { setShowContact } = useAppContext();
   const { contacts: AppContacts, setCurrentContactID, setContacts } = useCrmContext();
-  const [ fieldClicked, setFieldClicked ] = useState({ field: "name", sortDirection: "desc" });
-
   const sortFieltByColumn = {
     name: [ "fullName" ],
   };
+  const {fieldClicked, handleSorting,orderItems } = useOrderByColumn(sortFieltByColumn, AppContacts?.items);
+
+  useEffect(() => {
+    setContacts({ items: orderItems, meta: AppContacts?.meta});
+  }, [orderItems])
+  
+
 
   useLayoutEffect(() => {
     if (checkbox.current) {
@@ -64,27 +69,6 @@ export default function Page() {
   const capitalizedText = (text) => {
     return text.charAt(0).toUpperCase() + text.slice(1)
   }
-
-  const handleSorting = (fieldToSort) => {
-    if (fieldClicked.sortDirection === "asc") {
-        setFieldClicked({ field: fieldToSort, sortDirection: "desc" });
-    }
-    if (fieldClicked.sortDirection === "desc") {
-        setFieldClicked({ field: fieldToSort, sortDirection: "asc" });
-    }
-  };
-    const sortHardwares = () => {
-      const field = sortFieltByColumn[fieldClicked.field] ?? [ fieldClicked.field ];
-      const order = field.map(() => {
-          return fieldClicked.sortDirection;
-      });
-      const newItems = orderBy(AppContacts?.items, field, order);
-      setContacts({ items: newItems, meta: AppContacts?.meta});
-  };
-
-  useEffect(() => {
-      sortHardwares();
-  }, [ fieldClicked ]);
 
   const deleteContact = (contact) => {
     if ( contact.length === 1 ) apiDelete(contact[0].id);
@@ -383,11 +367,11 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="">
+      {/* <div className="">
         <Pagination
-          totalPages={AppContacts?.meta?.totalPages || 0}
+          totalPages={AppContacts?.meta?.totalPages || 10}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

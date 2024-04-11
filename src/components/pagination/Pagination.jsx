@@ -1,10 +1,11 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export const Pagination = ({ totalPages }) => {
+export const Pagination = ({ totalPages, bgColor }) => {
 	const [ Pagination, setPagination ] = useState([]);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
@@ -56,7 +57,7 @@ export const Pagination = ({ totalPages }) => {
 		<div>
 			{totalPagesPag >= 1 && (
 				<div className="mt-2 items-center w-fit">
-					<div className="flex flex-row justify-start p-2 border-none rounded-md gap-x-2 bg-white">
+					<div className={`flex flex-row justify-start p-2 border-none rounded-md gap-x-2 ${bgColor || "bg-white"}`}>
 						<div
 							className={clsx(
 								'h-8 w-7 flex justify-center items-center rounded-md text-white cursor-pointer',

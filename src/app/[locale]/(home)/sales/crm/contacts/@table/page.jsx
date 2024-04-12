@@ -75,7 +75,7 @@ export default function Page() {
     if ( contact.length > 1 ) {
       contact.map((cont) => apiDelete(cont.id));
     }
-    router.push('/sales/crm/contacts');
+    router.push('/sales/crm/contacts?page=1');
     toast.success(t('contacts:delete:msg'));
     setSelectedContacts([]);
   }

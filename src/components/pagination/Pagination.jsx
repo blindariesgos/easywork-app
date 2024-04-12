@@ -14,7 +14,7 @@ export const Pagination = ({ totalPages, bgColor }) => {
 	const { t } = useTranslation();
 	useEffect(
 		() => {
-			if (Number(params.get('page')) === 0) handlePathname("1");
+			// if (Number(params.get('page')) === 0) handlePathname("1");
 			CreatePagination();
 		},
 		[ totalPages, params.get('page') ]

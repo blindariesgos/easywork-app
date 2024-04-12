@@ -5,32 +5,45 @@ import { useTranslation } from 'react-i18next';
 import Tag from './Tag';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export default function SlideOver({ openModal, setOpenModal, children, colorTag, labelTag, samePage, previousModalPadding }) {
+export default function SlideOver({
+	openModal,
+	setOpenModal,
+	children,
+	colorTag,
+	labelTag,
+	samePage,
+	previousModalPadding,
+	subLabelTag
+}) {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const [ label, setLabel ] = useState('');
-    const [modalWidth, setModalWidth] = useState(0);
+	const [ subLabel, setSubLabel] = useState('');
+	const [ modalWidth, setModalWidth ] = useState(0);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
 	const pathname = usePathname();
 	const { replace } = useRouter();
-    const modalRef = useRef(null);
+	const modalRef = useRef(null);
 
-	useEffect(() => {
-        function handleResize() {
-            if (modalRef.current) {
-                const width = modalRef.current.offsetWidth;
-                setModalWidth(width);
-            }
-        }
+	useEffect(
+		() => {
+			function handleResize() {
+				if (modalRef.current) {
+					const width = modalRef.current.offsetWidth;
+					setModalWidth(width);
+				}
+			}
 
-        window.addEventListener('resize', handleResize);
+			window.addEventListener('resize', handleResize);
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [modalRef]);
-  
+			return () => {
+				window.removeEventListener('resize', handleResize);
+			};
+		},
+		[ modalRef ]
+	);
+
 	useEffect(
 		() => {
 			switch (labelTag) {
@@ -39,6 +52,9 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
 					break;
 				case 'policy':
 					setLabel(t('contacts:create:tabs:policies'));
+					break;
+				case 'consult':
+					setLabel(t('contacts:edit:policies:table:policy'));
 					break;
 				case 'life':
 					setLabel(t('contacts:policies:branches:life'));
@@ -55,6 +71,31 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
 				case 'various':
 					setLabel(t('contacts:policies:branches:various'));
 					break;
+				case 'payments':
+					setLabel(t('contacts:edit:policies:consult:payments'));
+					break;
+				case 'claims':
+					setLabel(t('contacts:edit:policies:consult:claims'));
+					break;
+				case 'refund':
+					setLabel(t('contacts:edit:policies:consult:refund'));
+					break;
+				case 'invoices':
+					setLabel(t('contacts:edit:policies:consult:invoices'));
+					break;
+				case 'versions':
+					setLabel(t('contacts:edit:policies:consult:versions'));
+					break;
+				case 'commissions':
+					setLabel(t('contacts:edit:policies:consult:commissions'));
+					break;
+				case 'quotes':
+					setLabel(t('contacts:edit:policies:consult:quotes'));
+					break;
+				case 'schedules':
+					setLabel(t('contacts:edit:policies:consult:schedules'));
+					break;
+			
 
 				default:
 					break;
@@ -63,54 +104,71 @@ export default function SlideOver({ openModal, setOpenModal, children, colorTag,
 		[ labelTag ]
 	);
 
+	useEffect(
+		() => {
+			switch (subLabelTag) {
+				case 'consult':
+					setSubLabel(t('contacts:edit:policies:consult:name'));
+
+				default:
+					break;
+			}
+		},
+		[ subLabelTag ]
+	);
 	// if (!params.get("show")) return <div/>;
 
 	// useEffect(() => {
 	// 	if ( !params.get('show') ){
-	// 		params.set('show', true); 
+	// 		params.set('show', true);
 	// 		replace(`${pathname}?${params.toString()}`);
 	// 	}
 	// }, [])
-	
-
-	if (params.get("show")) return (
-		<Transition.Root show={JSON.parse(params.get("show"))} as={Fragment}>
-			<Dialog as="div" className="relative z-50" onClose={() => {}} >
-				<div className="fixed inset-0" />
-				<div className="fixed inset-0 overflow-hidden">
-					<div className="absolute inset-0 overflow-hidden">
-						<div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0' sm:pl-16">
-							<Transition.Child
-								as={Fragment}
-								enter="transform transition ease-in-out duration-500 sm:duration-700"
-								enterFrom="translate-x-full"
-								enterTo="translate-x-0"
-								leave="transform transition ease-in-out duration-500 sm:duration-700"
-								leaveFrom="translate-x-0"
-								leaveTo="translate-x-full"
-							>
-								<Dialog.Panel 
-								 	ref={modalRef}
-									className={`pointer-events-auto w-screen ${previousModalPadding && 'pl-20'}`}   
+	if (params.get('show'))
+		return (
+			<Transition.Root show={JSON.parse(params.get('show'))} as={Fragment}>
+				<Dialog as="div" className="relative z-50" onClose={() => {}}>
+					<div className="fixed inset-0" />
+					<div className="fixed inset-0 overflow-hidden">
+						<div className="absolute inset-0 overflow-hidden">
+							<div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0' sm:pl-16">
+								<Transition.Child
+									as={Fragment}
+									enter="transform transition ease-in-out duration-500 sm:duration-700"
+									enterFrom="translate-x-full"
+									enterTo="translate-x-0"
+									leave="transform transition ease-in-out duration-500 sm:duration-700"
+									leaveFrom="translate-x-0"
+									leaveTo="translate-x-full"
 								>
-									<div className="flex">
-										<Tag
-											title={label}
-											onclick={() => {
-												setOpenModal
-													? setOpenModal(false)
-													: samePage ? router.replace(samePage) : router.back();
-											}}
-											className={colorTag}
-										/>
-										{children}
-									</div>
-								</Dialog.Panel>
-							</Transition.Child>
+									<Dialog.Panel
+										ref={modalRef}
+										className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding &&
+											'pl-20'}`}
+									>
+										<div className="flex">
+											<div className='flex flex-col'>
+												<Tag
+													title={label}
+													onclick={() => {
+														setOpenModal
+															? setOpenModal(false)
+															: samePage ? router.replace(samePage) : router.back();
+													}}
+													className={colorTag}
+												/>
+												{subLabelTag && (
+													<Tag title={subLabel} className="bg-green-primary pl-2" closeIcon />
+												)}
+											</div>
+											{children}
+										</div>
+									</Dialog.Panel>
+								</Transition.Child>
+							</div>
 						</div>
 					</div>
-				</div>
-			</Dialog>
-		</Transition.Root>
-	);
+				</Dialog>
+			</Transition.Root>
+		);
 }

@@ -5,7 +5,7 @@ const IconDropdown = ({options, width, icon, colorIcon = "text-primary"}) => {
     return (
         <Menu as="div" className="relative inline-block text-left mt-1">
             <div>
-                <Menu.Button className="inline-flex w-full">
+                <Menu.Button className="inline-flex w-full focus:ring-0 outline-none focus:outline-none">
                     {icon}
                 </Menu.Button>
             </div>

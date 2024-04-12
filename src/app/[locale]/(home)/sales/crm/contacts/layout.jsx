@@ -57,7 +57,7 @@ export default function ContactLayout({ children, table, modal }) {
                   fill="currentFill"
                 />
               </svg>
-              <span className="sr-only">{t('common:loading')}</span>
+              <span className="sr-only">{t('common:loading')}d</span>
             </div>
           }
         >
@@ -70,7 +70,7 @@ export default function ContactLayout({ children, table, modal }) {
       
       <div className="absolute bottom-2">
         <Pagination
-          totalPages={contacts?.items || 0}
+          totalPages={contacts?.meta?.totalPages || 0}
         />
       </div>  
     </div>

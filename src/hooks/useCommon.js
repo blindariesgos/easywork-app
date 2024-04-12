@@ -1,13 +1,21 @@
 import {
+    ArrowDownTrayIcon,
     ChevronRightIcon,
+    DocumentTextIcon,
     XMarkIcon
 } from "@heroicons/react/20/solid";
 import {
     useTranslation
 } from "react-i18next";
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { RiFileExcel2Fill } from "react-icons/ri";
-import { useRouter } from "next/navigation";
+import {
+    TrashIcon
+} from '@heroicons/react/24/outline';
+import {
+    RiFileExcel2Fill
+} from "react-icons/ri";
+import {
+    useRouter
+} from "next/navigation";
 
 export const useSidebar = () => {
     const {
@@ -295,7 +303,7 @@ export const useCommon = () => {
             id: 14,
             name: t('contacts:filters:date:quarter'),
             date: "quarter"
-        }, 
+        },
         {
             id: 15,
             name: t('contacts:filters:date:year'),
@@ -303,7 +311,7 @@ export const useCommon = () => {
         },
         {
             id: 16,
-            name: t('contacts:filters:date:exactDate'),            
+            name: t('contacts:filters:date:exactDate'),
             date: "exactDate"
         },
         {
@@ -316,7 +324,7 @@ export const useCommon = () => {
         },
         {
             id: 19,
-            name: t('contacts:filters:date:dateRange'),      
+            name: t('contacts:filters:date:dateRange'),
             date: "range"
         },
         {
@@ -329,98 +337,124 @@ export const useCommon = () => {
         }
     ];
 
-    const trash = [
-		{
-			value: 0,
-			name: t('contacts:header:delete:remove'),
-			icon: XMarkIcon,
-			onclick: () => {}
-		},
-		{
-			value: 1,
-			icon: TrashIcon,
-			name: t('contacts:header:delete:trash'),
-			onclick: () => {}
-		}
-	];
+    const trash = [{
+            value: 0,
+            name: t('contacts:header:delete:remove'),
+            icon: XMarkIcon,
+            onclick: () => {}
+        },
+        {
+            value: 1,
+            icon: TrashIcon,
+            name: t('contacts:header:delete:trash'),
+            onclick: () => {}
+        }
+    ];
 
-	const settingsContact = [
-		{
-			value: 0,
-			name: t('contacts:header:settings:vcard'),
-			onclick: () => {}
-		},
-		{
-			value: 1,
-			name: t('contacts:header:settings:gmail'),
-			onclick: () => {}
-		},
-		{
-			value: 2,
-			name: t('contacts:header:settings:outlook'),
-			onclick: () => {}
-		},
-		{
-			value: 3,
-			name: t('contacts:header:settings:yahoo'),
-			onclick: () => {}
-		},
-		{
-			value: 4,
-			name: t('contacts:header:settings:import'),
-			onclick: () => {}
-		},
-		{
-			value: 5,
-			name: t('contacts:header:settings:crm'),
-			onclick: () => {}
-		},
-		{
-			value: 6,
-			name: t('contacts:header:settings:csv'),
-			onclick: () => {}
-		},
-		{
-			value: 7,
-			name: t('contacts:header:settings:excel'),
-			onclick: () => {}
-		},
-		{
-			value: 8,
-			name: t('contacts:header:settings:export'),
-			onclick: () => {}
-		},
-		{
-			value: 9,
-			name: t('contacts:header:settings:control'),
-			onclick: () => {}
-		},
-		{
-			value: 10,
-			name: t('contacts:header:settings:search'),
-			onclick: () => {}
-		},
-		{
-			value: 11,
-			name: t('contacts:header:settings:entity'),
-			onclick: () => {}
-		}
-	];
+    const settingsContact = [{
+            value: 0,
+            name: t('contacts:header:settings:vcard'),
+            onclick: () => {}
+        },
+        {
+            value: 1,
+            name: t('contacts:header:settings:gmail'),
+            onclick: () => {}
+        },
+        {
+            value: 2,
+            name: t('contacts:header:settings:outlook'),
+            onclick: () => {}
+        },
+        {
+            value: 3,
+            name: t('contacts:header:settings:yahoo'),
+            onclick: () => {}
+        },
+        {
+            value: 4,
+            name: t('contacts:header:settings:import'),
+            onclick: () => {}
+        },
+        {
+            value: 5,
+            name: t('contacts:header:settings:crm'),
+            onclick: () => {}
+        },
+        {
+            value: 6,
+            name: t('contacts:header:settings:csv'),
+            onclick: () => {}
+        },
+        {
+            value: 7,
+            name: t('contacts:header:settings:excel'),
+            onclick: () => {}
+        },
+        {
+            value: 8,
+            name: t('contacts:header:settings:export'),
+            onclick: () => {}
+        },
+        {
+            value: 9,
+            name: t('contacts:header:settings:control'),
+            onclick: () => {}
+        },
+        {
+            value: 10,
+            name: t('contacts:header:settings:search'),
+            onclick: () => {}
+        },
+        {
+            value: 11,
+            name: t('contacts:header:settings:entity'),
+            onclick: () => {}
+        }
+    ];
 
-    const settingsPolicies = [
-		{
-			value: 0,
-			name: t('contacts:header:excel:export'),
-			icon: RiFileExcel2Fill,
-			onclick: () => {}
-		},
-		{
-			value: 1,
-			icon: RiFileExcel2Fill,
-			name: t('contacts:header:excel:print'),
-			onclick: () => {}
-		}
-	];
+    const settingsPolicies = [{
+            value: 0,
+            name: t('contacts:header:excel:export'),
+            icon: RiFileExcel2Fill,
+            onclick: () => {}
+        },
+        {
+            value: 1,
+            icon: RiFileExcel2Fill,
+            name: t('contacts:header:excel:print'),
+            onclick: () => {}
+        }
+    ];
+
+    const settingsPolicy = [{
+        value: 0,
+        name: t('contacts:edit:policies:consult:settings:download'),
+        icon: ArrowDownTrayIcon,
+        onclick: () => {}
+    },
+    {
+        value: 1,
+        icon: DocumentTextIcon,
+        name: t('contacts:edit:policies:consult:settings:print'),
+        onclick: () => {}
+    }
+];
+
+    const months = [
+        t('common:months:january'),
+        t('common:months:february'),
+        t('common:months:march'),
+        t('common:months:april'),
+        t('common:months:may'),
+        t('common:months:june'),
+        t('common:months:july'),
+        t('common:months:august'),
+        t('common:months:september'),
+        t('common:months:october'),
+        t('common:months:november'),
+        t('common:months:december')
+    ];
 
     return {
         calendarViews,
@@ -428,64 +462,124 @@ export const useCommon = () => {
         trash,
         settingsContact,
         settingsPolicies,
+        months,
+        settingsPolicy
     }
 }
 
 export const usePolicies = (contactID, ) => {
-    const { push } = useRouter();
+    const {
+        push
+    } = useRouter();
     const {
         t
     } = useTranslation();
-    const branches = [
-		{
-			value: 0,
-			name: t('contacts:policies:branches:all'),
-			onclick: () => push(`/sales/crm/contacts/contact/policies/${contactID}?show=true`),
+    const branches = [{
+            value: 0,
+            name: t('contacts:policies:branches:all'),
+            onclick: () => push(`/sales/crm/contacts/contact/policies/${contactID}?show=true`),
             route: `/sales/crm/contacts/contact/policies/${contactID}`,
-		},
-		{
-			value: 1,
-			name: t('contacts:policies:branches:life'),
-			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/life/${contactID}?show=true`),
+        },
+        {
+            value: 1,
+            name: t('contacts:policies:branches:life'),
+            onclick: () => push(`/sales/crm/contacts/contact/policies/branch/life/${contactID}?show=true`),
             route: `/sales/crm/contacts/contact/policies/branch/life/${contactID}`,
-		},
-		{
-			value: 2,
-			name: t('contacts:policies:branches:cars'),
+        },
+        {
+            value: 2,
+            name: t('contacts:policies:branches:cars'),
             route: `/sales/crm/contacts/contact/policies/branch/cars/${contactID}`,
-			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/cars/${contactID}?show=true`),
-		},
-		{
-			value: 3,
-			name: t('contacts:policies:branches:medicinal'),
+            onclick: () => push(`/sales/crm/contacts/contact/policies/branch/cars/${contactID}?show=true`),
+        },
+        {
+            value: 3,
+            name: t('contacts:policies:branches:medicinal'),
             route: `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}`,
-			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/medicine/${contactID}?show=true`),
-		},
-		{
-			value: 4,
-			name: t('contacts:policies:branches:damages'),
+            onclick: () => push(`/sales/crm/contacts/contact/policies/branch/medicine/${contactID}?show=true`),
+        },
+        {
+            value: 4,
+            name: t('contacts:policies:branches:damages'),
             route: `/sales/crm/contacts/contact/policies/branch/damages/${contactID}`,
-			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/damages/${contactID}?show=true`),
-		},
-		{
-			value: 5,
-			name: t('contacts:policies:branches:various'),
+            onclick: () => push(`/sales/crm/contacts/contact/policies/branch/damages/${contactID}?show=true`),
+        },
+        {
+            value: 5,
+            name: t('contacts:policies:branches:various'),
             route: `/sales/crm/contacts/contact/policies/branch/various/${contactID}`,
-			onclick: () => push(`/sales/crm/contacts/contact/policies/branch/various/${contactID}?show=true`),
-		},
-		{
-			value: 6,
-			name: t('contacts:policies:branches:fleets'),
+            onclick: () => push(`/sales/crm/contacts/contact/policies/branch/various/${contactID}?show=true`),
+        },
+        {
+            value: 6,
+            name: t('contacts:policies:branches:fleets'),
             inactive: true,
-		},
-		{
-			value: 7,
-			name: t('contacts:policies:branches:others'),
+        },
+        {
+            value: 7,
+            name: t('contacts:policies:branches:others'),
             inactive: true,
-		}
-	];
+        }
+    ];
+    
+    const policyConsult = [{
+        value: 0,
+        name: t('contacts:edit:policies:consult:name'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/consult/${contactID}`,
+    },
+    {
+        value: 1,
+        name: t('contacts:edit:policies:consult:payments'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/payments/${contactID}`,
+    },
+    {
+        value: 2,
+        name: t('contacts:edit:policies:consult:claims'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/claims/${contactID}`,
+    },
+    {
+        value: 3,
+        name: t('contacts:edit:policies:consult:refund'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/refund/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/refund/${contactID}`,
+    },
+    {
+        value: 4,
+        name: t('contacts:edit:policies:consult:invoices'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/invoices/${contactID}`,
+    },
+    {
+        value: 5,
+        name: t('contacts:edit:policies:consult:versions'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/versions/${contactID}`,
+    },
+    {
+        value: 6,
+        name: t('contacts:edit:policies:consult:commissions'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/commissions/${contactID}`,
+    },
+    {
+        value: 7,
+        name: t('contacts:edit:policies:consult:quotes'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/quotes/${contactID}`,
+    },
+    {
+        value: 8,
+        name: t('contacts:edit:policies:consult:schedules'),
+        onclick: () => push(`/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/schedules/${contactID}`,
+    },
+];
 
     return {
-        branches
+        branches,
+        policyConsult
     }
 }

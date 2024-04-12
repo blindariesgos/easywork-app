@@ -1,4 +1,5 @@
 'use server';
+import { revalidatePath } from 'next/cache';
 import axios from './axios'; 
 
 export const getLogin = async (email, password) => {
@@ -14,8 +15,11 @@ export const getDataPassword = async (email) => {
   return response.data;
 }
 export const createContact = async (data) => {
-  const response = await axios.post('/sales/crm/contacts', data);
-  return response.message
+  console.log("data",data)
+  // const response = await axios.post('/sales/crm/contacts', data);
+  // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  // console.log(response)
+  // return response
 }
 
 export const getContacts = async (page) => {

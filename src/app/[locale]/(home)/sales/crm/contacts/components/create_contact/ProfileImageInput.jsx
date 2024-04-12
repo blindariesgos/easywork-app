@@ -11,7 +11,7 @@ function ProfileImageInput({ selectedProfileImage, onChange }) {
         <Image
           width={96}
           height={96}
-          src={selectedProfileImage || "/img/avatar.svg"}
+          src={selectedProfileImage?.base64 || "/img/avatar.svg"}
           alt="Profile picture"
           className="h-16 w-16 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
           objectFit="fill"

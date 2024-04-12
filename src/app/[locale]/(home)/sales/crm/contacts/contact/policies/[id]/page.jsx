@@ -8,7 +8,12 @@ async function useContact({ contactID }) {
   return response;
 }
 
+const wait3seconds = () => {
+  console.log("entre")
+  return new Promise((resolve) => setTimeout(resolve, 5000))
+}
 export default async function Page({ params: { id } }) {
+  await wait3seconds();
 //   const contactInfo = await useContact({ contactID: id });
 
   return (
@@ -17,7 +22,7 @@ export default async function Page({ params: { id } }) {
         fallback={
           <div className="flex flex-col h-screen">
             <div className="flex flex-col flex-1 bg-zinc-200 opacity-100 shadow-xl text-zinc-800 overflow-hidden rounded-tl-3xl">
-              </div>{" "}
+              </div>{" cvbcbxbcbn"}
           </div>
         }
       >

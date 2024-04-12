@@ -118,6 +118,41 @@
             "select": "Seleccionar archivo PDF",
             "insurance": "Aseguradora",
             "policy-type": "Tipo de Póliza",
+            "consult": {
+                "name": "Consulta",
+                "date" : "Fecha Emisión de póliza",
+                "product" : "Producto",
+                "policy" : "Póliza",
+                "company" : "Compañia",
+                "code" : "Código de cliente",
+                "payments" : "Pagos / Recibos",
+                "claims": "Siniestros",
+                "refund" : "Reembolso",
+                "invoices" : "Facturas",
+                "versions": "Versiones",
+                "commissions" : "Comisiones",
+                "quotes" : "Cotizaciones",
+                "schedules": "Programaciones",
+                "settings": {
+                    "print" : "Imprimir",
+                    "download": "Descargar"
+                },
+                "form": {
+                    "responsible" : "Responsable",
+                    "comments" : "Comentarios",
+                    "status" : "Estado de la póliza",
+                    "prima" : "Prima",
+                    "subBranch" : "Subramo",
+                    "payment" : "Forma de pago actual",
+                    "frecuency" : "Frecuencia del pago",
+                    "date" : "Fecha de inicio de vigencia",
+                    "number": "Número de plazos",
+                    "year"  : "Año de vigencia",
+                    "ot" : "Número de OT",
+                    "beneficiary" : "Beneficiario",
+                    "annotations" : "Annotaciones"
+                }
+            },
             "table": {
                 "empty": {
                     "not-policies": "No hay pólizas registradas",

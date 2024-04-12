@@ -95,7 +95,7 @@ export default function ActivityHeader() {
           </div> */}
           <div className="">
             <div className="border-b border-gray-200 mt-4">
-              <nav className="flex space-x-4 flex-wrap" aria-label="Tabs">
+              <nav className="flex space-x-4 flex-wrap pt-4" aria-label="Tabs">
                 {tabs.map((tab) => (
                   <div key={tab.name}>
                     {tab.children ? (

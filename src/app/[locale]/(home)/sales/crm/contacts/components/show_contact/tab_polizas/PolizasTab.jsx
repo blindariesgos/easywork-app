@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Tab } from "@headlessui/react";
 import useCrmContext from "@/context/crm";
 import ContactPolizaTable from "./ContactPolizaTable";
@@ -99,6 +99,7 @@ export default function PolizasTab({ base = 0, contactID }) {
         </Tab.List>
         <Tab.Panels className="mt-2">
           {/* {Object.values(categories).map((category, idx) => ( */}
+          
             <Tab.Panel
               className={classNames(
                 "rounded-xl",
@@ -106,7 +107,7 @@ export default function PolizasTab({ base = 0, contactID }) {
               )}
             >
               {/* <ContactPolizaTable polizas={polizas ? polizas[category] : []} /> */}
-              <ContactPolizaTable polizas={[]} base={base}/>
+              <ContactPolizaTable polizas={[]} base={base} contactID={contactID}/>
             </Tab.Panel>
           {/* ))} */}
         </Tab.Panels>

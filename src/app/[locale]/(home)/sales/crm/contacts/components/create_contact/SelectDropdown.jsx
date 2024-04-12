@@ -9,8 +9,6 @@ function SelectDropdown({
   label,
   selectedOption,
   options,
-  onChangeInput,
-  query,
   disabled,
   register,
   name,
@@ -19,17 +17,25 @@ function SelectDropdown({
 }) {
   const registerInput = register && register(name);
   const [selected, setSelected] = useState(selectedOption);
+  const [query, setQuery] = useState("");
   
 
   useEffect(()=>{
     if (selectedOption) {
       setSelected(selectedOption)
-    }
-  
+    }  
   },  [selectedOption])
+
   useEffect(() => {
     if (selected) setValue && setValue(name, selected?.name);
   }, [selected, setValue, name])
+
+  const filteredElements =
+  query === ""
+    ? options
+    : options.filter((element) => {
+        return element.name.toLowerCase().includes(query.toLowerCase());
+      });
 
   return (
     <div className="">
@@ -44,7 +50,8 @@ function SelectDropdown({
               className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
               displayValue={(person) => person?.name}
               onChange={(event) => {
-                  onChangeInput(event.target.value);
+                  registerInput && registerInput.onChange(event);
+                  setQuery(event.target.value);
                 }
               }
             />
@@ -60,15 +67,15 @@ function SelectDropdown({
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
-            afterLeave={() => onChangeInput('')}
+            afterLeave={() => setQuery('')}
           >
             <Combobox.Options className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {options?.length === 0 && query !== '' ? (
+              {filteredElements?.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                   Nothing found.
                 </div>
               ) : (
-                options.map((person) => (
+                filteredElements.map((person) => (
                   <Combobox.Option                    
                     key={person.id}
                     className={({ active }) =>

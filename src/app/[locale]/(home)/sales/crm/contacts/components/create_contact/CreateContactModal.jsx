@@ -10,7 +10,7 @@ export default function CreateContactModal() {
   const { openModal, setOpenModal } = useAppContext();  
   
   return (
-    <SlideOver colorTag="bg-yellow-100" labelTag="contact" samePage={`/sales/crm/contacts`}>
+    <SlideOver colorTag="bg-yellow-100" labelTag="contact" samePage={`/sales/crm/contacts?page=1`}>
       <CreateContact />
     </SlideOver>
   );

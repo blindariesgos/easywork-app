@@ -1,8 +1,11 @@
+'use client';
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import PolizasEmpty from "./PolizasEmpty";
 import { useTranslation } from "react-i18next";
 import { useOrderByColumn } from "@/hooks/useOrderByColumn";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const people = [
   {
@@ -29,10 +32,11 @@ const people = [
   // More people...
 ];
 
-export default function ContactPolizaTable({ polizas: data, base }) {
+export default function ContactPolizaTable({ polizas: data, base, contactID }) {
   const { t } = useTranslation();
   const {fieldClicked, handleSorting,orderItems } = useOrderByColumn({}, people);
   const [polizas, setPolizas] = useState(people);
+  const pathname = usePathname();
 
   useEffect(() => {
     setPolizas(orderItems);
@@ -176,10 +180,12 @@ export default function ContactPolizaTable({ polizas: data, base }) {
             {polizas.map((poliza, index) => (
               <tr key={index}>
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
-                  <div className="flex gap-2 px-2 hover:text-primary">
-                    <CheckIcon className="h-4 w-4 text-primary" aria-hidden="true" />
-                    {poliza.noPoliza}
-                  </div>
+                  <Link href={`/sales/crm/contacts/contact/policy/consult/${poliza.noPoliza}?show=true`}>
+                    <div className="flex gap-2 px-2 hover:text-primary">
+                      <CheckIcon className="h-4 w-4 text-primary" aria-hidden="true" />
+                      {poliza.noPoliza}
+                    </div>
+                  </Link>
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
                   {poliza.product}
@@ -204,14 +210,6 @@ export default function ContactPolizaTable({ polizas: data, base }) {
                     {poliza.ramo}
                   </td>
                 )}
-                {/* <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                  <a
-                    href="#"
-                    className="text-indigo-600 hover:text-indigo-400"
-                  >
-                    {t('common:buttons:edit')}<span className="sr-only">, {poliza.name}</span>
-                  </a>
-                </td> */}
               </tr>
             ))}
           </tbody>

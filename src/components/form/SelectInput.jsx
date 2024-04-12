@@ -2,26 +2,24 @@
 "use client";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { TextInput } from "@tremor/react";
-import clsx from "clsx";
 import React, { Fragment, useEffect, useState } from "react";
 
 function SelectInput({
   label,
   selectedOption,
   options,
-  onChangeInput,
-  query,
   disabled,
   register,
   name,
   error,
   setValue,
-  object
+  object,
+  border,
+  value
 }) {
 
   const [selected, setSelected] = useState(selectedOption);
-  
+  const [query, setQuery] = useState("");  
 
   useEffect(()=>{
     if (selectedOption) {
@@ -33,25 +31,32 @@ function SelectInput({
   useEffect(() => {
     if (selected) setValue && setValue(name, object ? selected : selected.name);
   }, [selected, setValue, name])
+
+  const filteredElements =
+    query === ""
+      ? options
+      : options.filter((element) => {
+          return element.name.toLowerCase().includes(query.toLowerCase());
+        });
   
   // console.log("field", selected, register(name))
   
 
   return (
-    <div className="">
+    <div className="w-full">
       <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
         <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
         </Combobox.Label>
         <div className="relative mt-1">
-          <div className="">
             <Combobox.Input
               {...register && register(name)}
-              className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
-              displayValue={(person) => person?.name}              
+              className={`z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md drop-shadow-sm placeholder:text-xs text-sm ${border ? "border border-gray-200 focus:ring-gray-200" : "border-none focus:ring-0 "}`}
+              displayValue={(person) => person?.name}   
+              value={value || ''}           
               onChange={(event) => {
                   register && register(name).onChange(event);
-                  onChangeInput && onChangeInput(event.target.value);
+                  setQuery && setQuery(event.target.value);
                 }
               }
             />
@@ -61,21 +66,20 @@ function SelectInput({
                 aria-hidden="true"
               />
             </Combobox.Button>
-          </div>
           <Transition
             as={Fragment}
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
-            afterLeave={() => onChangeInput && onChangeInput('')}
+            afterLeave={() => setQuery && setQuery('')}
           >
-            <Combobox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {options?.length === 0 && query !== '' ? (
+            <Combobox.Options className="absolute z-50 bottom-2 mb-8 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              {filteredElements?.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                   Nothing found.
                 </div>
               ) : (
-                options && options.map((person) => (
+                filteredElements && filteredElements.map((person) => (
                   <Combobox.Option                    
                     key={person.id}
                     className={({ active }) =>

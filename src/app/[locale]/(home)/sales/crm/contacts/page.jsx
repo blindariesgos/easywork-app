@@ -13,7 +13,7 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getContacts(searchParams.get('page')?.toString() || "1");
+        const response = await getContacts(searchParams.get('page')?.toString() || 0);
         setContacts(response);
       } catch (error) { 
         getApiError(error.message, errorsDuplicated)

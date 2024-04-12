@@ -7,6 +7,7 @@ import { useCommon } from "@/hooks/useCommon";
 export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon()
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);
   const [openModal, setOpenModal] = useState(false);
@@ -20,6 +21,8 @@ export default function AppContextProvider({ children }) {
     () => ({
       sidebarOpen,
       setSidebarOpen,
+      sidebarOpenEmail,
+      setSidebarOpenEmail,
       calendarView,
       setCalendarView,
       driveView,
@@ -41,6 +44,7 @@ export default function AppContextProvider({ children }) {
       contactDetailTab,
       showContact,
       showPoliza,
+      sidebarOpenEmail,
     ]
   );
 

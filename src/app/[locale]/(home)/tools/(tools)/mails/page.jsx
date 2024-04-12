@@ -6,15 +6,23 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SliderOverShort from "@/components/SliderOverShort";
+import { useRouter } from "next/navigation";
 
 export default function IngresarEmail() {
-  const [modal, setModal] = useState(false);
+  const router = useRouter();
+  const [modalG, setModalG] = useState(false);
+  const [modalC, setModalC] = useState(false);
+
+  function saveIMAP() {
+    setModalG(false);
+    setModalC(true);
+  }
 
   const emails = [
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => setModal(true),
+      click: () => setModalG(true),
     },
     {
       name: "ICloud",
@@ -51,10 +59,10 @@ export default function IngresarEmail() {
   return (
     <div className="rounded-2xl px-2 flex justify-center items-center flex flex-col">
       <div className="w-full rounded-xl text-easywork-main mb-4">
-        <h1 className="ml-3 py-3 font-medium">Integración del buzón</h1>
+        <h1 className="ml-3 py-3 font-medium text-xl">Integración del buzón</h1>
       </div>
       <div className="w-full bg-white rounded-xl drop-shadow-md text-easywork-main mb-4">
-        <h1 className="ml-3 w-full py-5 text-center font-medium">
+        <h1 className="ml-3 w-full py-5 text-center font-medium text-xl">
           Use y gestione su buzón
         </h1>
       </div>
@@ -82,8 +90,8 @@ export default function IngresarEmail() {
           ))}
         </ul>
       </div>
-      <SliderOverShort openModal={modal}>
-        <Tag onclick={() => setModal(false)} className="bg-green-500" />
+      <SliderOverShort openModal={modalG}>
+        <Tag onclick={() => setModalG(false)} className="bg-green-500" />
         <div className="bg-gray-300 w-full rounded-l-2xl overflow-y-auto h-screen">
           <div className="m-3 font-medium text-lg">
             <h1>Gestionar buzón</h1>
@@ -141,15 +149,17 @@ export default function IngresarEmail() {
               <div className="m-3 text-xs my-4 w-80">
                 <h1 className="font-bold text-lg">Acceso al buzón</h1>
                 <p className="bg-gray-300 p-2">
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                  Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                  natoque penatibus et magnis dis parturient
+                  Dé a los empleados permiso de acceso a este buzón para que
+                  puedan recibir y responder mensajes de correo electrónico. Es
+                  una forma sencilla de crear un entorno de colaboración para su
+                  departamento de ventas o servicio de asistencia.
                 </p>
               </div>
               <div className="flex justify-around">
                 <button
                   type="button"
                   className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
+                  onClick={() => saveIMAP()}
                 >
                   Guardar
                 </button>
@@ -162,9 +172,98 @@ export default function IngresarEmail() {
                 <button
                   type="button"
                   className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
+                  onClick={() => setModalG(false)}
                 >
                   Cancelar
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SliderOverShort>
+      <SliderOverShort openModal={modalC}>
+        <Tag onclick={() => setModalG(false)} className="bg-green-500" />
+        <div className="bg-gray-300 w-full rounded-l-2xl overflow-y-auto h-screen">
+          <div className="m-3 font-medium text-lg">
+            <h1>Configurar Folders</h1>
+          </div>
+          <div className="m-3 py-5 bg-gray-100 rounded-2xl">
+            <div className="bg-white px-2">
+              <div className="p-3">
+                <h1 className="font-medium text-lg">Synchronize folders</h1>
+              </div>
+              <div className="text-xs">
+                <div className="flex ml-2">
+                  <input type="checkbox" />
+                  <p className="ml-1">Select all</p>
+                </div>
+                <div className="mt-4 ml-4">
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">Inbox</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">Sent</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">Trash</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">Junk</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">Drafts</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">elementos</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">elementos</p>
+                  </div>
+                  <div className="flex mt-4 ml-2">
+                    <input type="checkbox" />
+                    <p className="ml-1">elementos</p>
+                  </div>
+                </div>
+                <div className="m-3 text-xs my-4 w-80">
+                  <h1 className="font-medium text-lg border-b-4 border-black pb-1">
+                    Folder rules
+                  </h1>
+                  <p className="p-2">
+                    Save sent emails to folder{" "}
+                    <span className="text-cyan-500">INBOX / Sent</span>
+                  </p>
+                  <p className="p-2">
+                    Move deleted emails to folder{" "}
+                    <span className="text-cyan-500">INBOX / Sent</span>
+                  </p>
+                  <p className="p-2">
+                    Move spam to folder{" "}
+                    <span className="text-cyan-500">INBOX / Sent</span>
+                  </p>
+                </div>
+                <div className="flex justify-around">
+                  <button
+                    type="button"
+                    className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
+                    onClick={() => router.push("/tools/webmail")}
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    type="button"
+                    className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
+                    onClick={() => setModalC(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
             </div>
           </div>

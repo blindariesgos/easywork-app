@@ -14,31 +14,45 @@ import SearchBox from "../SearchBox";
 import Clock from "./Clock";
 import Status from "./Status";
 import { useTranslation } from "react-i18next";
-
+import { usePathname } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Header() {
+  const pathname = usePathname();
+  function ifWebmailPath() {
+    if (pathname === "/tools/webmail") return true;
+  }
+
   const { t } = useTranslation();
-  const { setSidebarOpen } = useAppContext();
+  const { setSidebarOpen, setSidebarOpenEmail } = useAppContext();
   const userNavigation = [
-    { name: t('common:header:profile'), href: "#" },
-    { name: t('common:header:signout'), href: "#" },
+    { name: t("common:header:profile"), href: "#" },
+    { name: t("common:header:signout"), href: "#" },
   ];
-  
 
   return (
     <div className="h-20">
       <div className="rounded-2xl mx-auto z-10 flex h-16 shrink-0 items-center gap-x-4 bg-white opacity-90 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-        <button
-          type="button"
-          className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-        </button>
+        {ifWebmailPath() ? (
+          <button
+            type="button"
+            className="p-2.5 text-gray-700 lg:hidden"
+            onClick={() => setSidebarOpenEmail(true)}
+          >
+            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        )}
 
         {/* Separator */}
         <div className="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />

@@ -27,7 +27,7 @@ export const useSidebar = () => {
                 },
                 {
                     name: t("common:menu:tools:email"),
-                    href: "/tools/webmail",
+                    href: "/tools/mails",
                     image: '/img/herramientas/correo.png'
                 },
                 {

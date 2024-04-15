@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 export default function LoadingContactId() {
   const { t } = useTranslation()
+  console.log("entre loader")
   // You can add any UI inside Loading, including a Skeleton.
   return (
     <div role="status" className="inset-0 bg-black/10 w-full h-full absolute flex items-center z-50">
@@ -23,7 +24,6 @@ export default function LoadingContactId() {
           fill="currentFill"
         />
       </svg>
-      <span className="sr-only">{t("common:loading")}</span>
     </div>
   );
 }

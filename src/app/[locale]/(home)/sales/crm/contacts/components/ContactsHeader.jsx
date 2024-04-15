@@ -9,88 +9,24 @@ import IconDropdown from './SettingsButton';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import FiltersContact from './filters/FiltersContact';
+import { useCommon } from '@/hooks/useCommon';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function ContactsHeader() {
 	const { t } = useTranslation();
 	const { setOpenModal } = useAppContext();
+	const { trash, settingsContact: settings } = useCommon();
+	const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
+	const pathname = usePathname();
+	const { replace } = useRouter();
 
-	const settings = [
-		{
-			value: 0,
-			name: t('contacts:header:settings:vcard'),
-			onclick: () => {}
-		},
-		{
-			value: 1,
-			name: t('contacts:header:settings:gmail'),
-			onclick: () => {}
-		},
-		{
-			value: 2,
-			name: t('contacts:header:settings:outlook'),
-			onclick: () => {}
-		},
-		{
-			value: 3,
-			name: t('contacts:header:settings:yahoo'),
-			onclick: () => {}
-		},
-		{
-			value: 4,
-			name: t('contacts:header:settings:import'),
-			onclick: () => {}
-		},
-		{
-			value: 5,
-			name: t('contacts:header:settings:crm'),
-			onclick: () => {}
-		},
-		{
-			value: 6,
-			name: t('contacts:header:settings:csv'),
-			onclick: () => {}
-		},
-		{
-			value: 7,
-			name: t('contacts:header:settings:excel'),
-			onclick: () => {}
-		},
-		{
-			value: 8,
-			name: t('contacts:header:settings:export'),
-			onclick: () => {}
-		},
-		{
-			value: 9,
-			name: t('contacts:header:settings:control'),
-			onclick: () => {}
-		},
-		{
-			value: 10,
-			name: t('contacts:header:settings:search'),
-			onclick: () => {}
-		},
-		{
-			value: 11,
-			name: t('contacts:header:settings:entity'),
-			onclick: () => {}
-		}
-	];
-
-	const trash = [
-		{
-			value: 0,
-			name: t('contacts:header:delete:remove'),
-			icon: XMarkIcon,
-			onclick: () => {}
-		},
-		{
-			value: 1,
-			icon: TrashIcon,
-			name: t('contacts:header:delete:trash'),
-			onclick: () => {}
-		}
-	];
+	const handlePathname = () => {
+		params.delete( 'page');
+		params.set('show', true); 
+		replace(`/sales/crm/contacts/contact?${params.toString()}`);
+	}
+	
 
 	return (
 		<header className="flex flex-col">
@@ -101,7 +37,7 @@ export default function ContactsHeader() {
 				<Button
 					label={t('contacts:header:create')}
 					type="button"
-					onclick={() => setOpenModal(true)}
+					onclick={() => handlePathname()}
 					buttonStyle={'primary'}
 					icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
 					className="px-3 py-2"

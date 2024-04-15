@@ -30,7 +30,7 @@ export default function Button({
 			type={type}
 			onClick={onclick}
 			disabled={disabled}
-			className={`flex items-center gap-x-2 rounded-md ${className} font-medium outline-none focus:outline-none ${buttonStyle &&
+			className={`flex items-center gap-x-2 rounded-md ${className} font-medium outline-none focus:outline-none justify-center ${buttonStyle &&
 				ButtonStyleFC(buttonStyle)}`}
 		>
 			{iconLeft}

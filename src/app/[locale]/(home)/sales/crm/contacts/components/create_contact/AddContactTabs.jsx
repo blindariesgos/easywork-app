@@ -14,7 +14,7 @@ export default function AddContactTabs({ id }) {
   const {setContactDetailTab, contactDetailTab} = useAppContext();
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0 },
-    { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/policies/${id}` },
+    { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/contact/policies/${id}?show=true` },
     { name: t("contacts:create:tabs:activities"), value: 2 },
     { name: t("contacts:create:tabs:reports"), value: 3 },
     { name: t("contacts:create:tabs:documents"), value: 4 },
@@ -59,18 +59,18 @@ export default function AddContactTabs({ id }) {
               <Link
                 key={tab.name}
                 href={tab.link || ""}
-                className="ring-0"
+                className="ring-0 focus:outline-none focus:ring-0"
               >
                 <div
                   onClick={() => setContactDetailTab(contactDetailTabs[tab.value])}
-                  className={clsx(tab.value === 0 && "border-indigo-500 text-white bg-blue-100 rounded-md",
+                  className={clsx(tab.value === 0 && "border-indigo-500 text-white bg-blue-100 rounded-md focus:outline-none focus:ring-0",
                     // tab.value === contactDetailTabs.indexOf(contactDetailTab)
                     //   ? "border-indigo-500 text-white bg-blue-100 rounded-md"
                     //   : 
                       tab.disabled
                       ? "border-transparent text-gray-300 cursor-default"
-                      : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
-                    "whitespace-nowrap p-2 text-sm font-medium cursor-pointer"
+                      : "border-transparent text-gray-400",
+                    "whitespace-nowrap p-2 text-sm font-medium cursor-pointer focus:outline-none focus:ring-0"
                   )}
                   aria-current={tab.current ? "page" : undefined}
                 >

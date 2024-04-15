@@ -1,186 +1,322 @@
 {
-    "header": {
-        "contact": "Contacto",
-        "search": "Búsqueda",
-        "create": "Crear",
-        "mine": "Míos",
-        "elements": "Mis Elementos",
-        "planned": "Planteados",
-        "invitation": "Invitaciones",
-        "others": "Otros",
-        "expired": "Vencida",
-        "comments": "Comentarios",
-        "mark-all": "Marcar todo como leído",
-        "settings": {
-            "vcard":"Importación vCard",
-            "gmail":"GMail. importar",
-            "outlook":"Outlook! importar",
-            "yahoo":"Yahoo! Mail importar",
-            "import":"Importación personalizada",
-            "crm":"Migrar desde CRM",
-            "csv":"Exportar a CSV",
-            "excel":"Exportar a Excel",
-            "export":"Exportar a Outlook",
-            "control":"Control de duplicados",
-            "search":"Buscar y fusionar duplicados",
-            "entity":"¿Cómo administrar las entidades duplicadas?"
-        },
-        "delete": {
-            "remove": "Eliminar definitivamente",
-            "trash" : "Enviar a papelera de reciclaje"
-        }
-    },
-    "table": {
-        "not-data": "No hay contactos",
-        "contact": "Contacto",
-        "birthday": "Cumpleaños",
-        "responsible": "Responsable",
-        "email": "Correo electrónico",
-        "phone": "Teléfono",
-        "created": "Creado el",
-        "origin": "Origen",
-        "activities":"Actividades"
-    },
-    "create": {
-        "msg": "¡Contacto creado!",
-        "error": "Error al crear el contacto!",
-        "save": "Guardando...",
-        "client": "Nuevo cliente",
-        "data": "Datos del contratante",
-        "name": "Nombre y Apellido",
-        "placeholder-name": "Ej.: Luis",
-        "lastName": "Apellidos",
-        "placeholder-lastname": "Ej.: Herrera",
-        "charge" : "Cargo",
-        "curp": "CURP",
-        "phone" : "Teléfono",
-        "email" : "Correo electrónico",
-        "born-date" : "Fecha de nacimiento",
-        "born": "Nacimiento",
-        "sex" : "Sexo: ",
-        "rfc" : "RFC",
-        "zip-code" : "Código postal",
-        "address" : "Dirección",
-        "placeholder-address": "Escriba la dirección del cliente.",
-        "contact-type" : "Tipo de contacto",
-        "responsible" : "Responsable",
-        "sub-agent" : "Sub-Agente",
-        "agent": "Agente",
-        "origen" : "Orígen",
-        "passport": "Identificaciones INE, RFC o Pasaporte",
-        "upload-file" : "Subir un archivo",
-        "png": "PNG, JPG, PDF hasta 5MB",
-        "drap-drop" : "o arrastrar y soltar",
-        "select" : "Seleccionar",
-        "change-photo": "Cambiar foto",
-        "jpg": "JPG, GIF or PNG. 1MB max.",
-        "select-page": "Seleccione una pestaña",
-        "add": "Agregar",
-        "print" : "Imprimir",
-        "download" : "Descargar",
-        "cua": "Código CUA",
-        "otherType": "Otro",
-        "tabs": {
-            "general" : "General",
-            "policies" : "Pólizas",
-            "activities" : "Actividades",
-            "reports" : "Reportes",
-            "documents" : "Documentos"
-        },
-        "activities":{
-            "email": "Correo",
-            "tasks" : "Tareas",
-            "whatsapp" : "WhatsApp",
-            "comment" : "Comentario",
-            "appointments" : "Citas",
-            "todo-tasks" : "Tareas por hacer",
-            "zoom" : "Zoom",
-            "call" : "Llamada"
-        }
-    },
-    "edit": {
-        "not-contact": "Sin contacto",
-        "updated-contact": "¡Contacto Actualizado!",
-        "error": "Error al crear el contacto!",
-        "name": "Editar",
-        "policies": {
-            "exists": "Poliza ya existe",
-            "error-file": "Error al subir el archivo",
-            "created": "Póliza creada!",
-            "general" : "General",
-            "documents" : "Documentos",
-            "add": "Agregar",
-            "upload" : "Subir póliza desde archivo PDF",
-            "select": "Seleccionar archivo PDF",
-            "insurance": "Aseguradora",
-            "policy-type": "Tipo de Póliza",
-            "table": {
-                "empty": {
-                    "not-policies": "No hay pólizas registradas",
-                    "register": "Registra una nueva póliza para el contacto.",
-                    "new": "Nueva Póliza"
-                },
-                "policy": "Póliza",
-                "product": "Producto",
-                "company": "Compañia",
-                "status": "Estado",
-                "start": "Inicio",
-                "expiration": "Vencimiento",
-                "amount": "Importe",
-                "branch": "Ramo"
-            }
-        }
-    },
-    "filters": {
-        "name" : "Filtros",
-        "my-contact" : "Mis Contactos",
-        "all-contact" : "Todos los Contactos",
-        "save" : "Guardar Filtro",
-        "responsible" : "Persona Responsable",
-        "created" : "Creado el",
-        "origin" : "Origen",
-        "created-by": "Creado por",
-        "add-field" : "Agregar campo",
-        "restore" : "Restaurar campos predeterminados",
-        "search" : "Buscar",
-        "restart" : "Reiniciar",
-        "cua": "Código CUA",
-        "fullname": "Nombre y Apellido",
-        "contact-type" : "Tipo de contacto",
-        "rfc" : "RFC",
-        "date": {
-            "yesterday": "Ayer",
-            "today": "Hoy",
-            "tomorrow": "Mañana",
-            "thisWeek": "Esta semana",
-            "thisMonth": "Este mes",
-            "currentQuarter": "Trimestre actual",
-            "last7Days": "Últimos 7 días",
-            "last30Days": "Últimos 30 días",
-            "last60Days": "Últimos 60 días",
-            "last90Days": "Últimos 90 días",
-            "lastNDays": "Últimos N días",
-            "nextNDays": "Próximos N días",
-            "month": "Mes",
-            "quarter": "Trimestre",
-            "year": "Año",
-            "exactDate": "Fecha exacta",
-            "lastWeek": "La semana pasada",
-            "lastMonth": "El mes pasado",
-            "dateRange": "Rango de fecha",
-            "nextWeek": "La próxima semana",
-            "nextMonth": "El próximo mes"
-        }
+  "header": {
+    "contact": "Contacto",
+    "search": "Búsqueda",
+    "create": "Crear",
+    "mine": "Míos",
+    "elements": "Mis Elementos",
+    "planned": "Planteados",
+    "invitation": "Invitaciones",
+    "others": "Otros",
+    "expired": "Vencida",
+    "comments": "Comentarios",
+    "mark-all": "Marcar todo como leído",
+    "settings": {
+      "vcard": "Importación vCard",
+      "gmail": "GMail. importar",
+      "outlook": "Outlook! importar",
+      "yahoo": "Yahoo! Mail importar",
+      "import": "Importación personalizada",
+      "crm": "Migrar desde CRM",
+      "csv": "Exportar a CSV",
+      "excel": "Exportar a Excel",
+      "export": "Exportar a Outlook",
+      "control": "Control de duplicados",
+      "search": "Buscar y fusionar duplicados",
+      "entity": "¿Cómo administrar las entidades duplicadas?"
     },
     "delete": {
-        "msg": "Contacto(s) eliminado exitosamente!"
+      "remove": "Eliminar definitivamente",
+      "trash": "Enviar a papelera de reciclaje"
     },
-    "policies": {
-        "ramo": "Ramo",
-        "life": "Vida",
-        "health": "Salud",
-        "medical-expenses": "Gastos Médicos",
-        "damages": "Daños",
-        "various": "Diversos"
+    "excel": {
+      "print": "Imprimir",
+      "export": "Exportar todas las listas"
     }
+  },
+  "table": {
+    "not-data": "No hay contactos",
+    "contact": "Contacto",
+    "birthday": "Cumpleaños",
+    "responsible": "Responsable",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "created": "Creado el",
+    "origin": "Origen",
+    "activities": "Actividades"
+  },
+  "create": {
+    "msg": "¡Contacto creado!",
+    "error": "Error al crear el contacto!",
+    "save": "Guardando...",
+    "client": "Nuevo cliente",
+    "data": "Datos del contratante",
+    "name": "Nombre y Apellido",
+    "placeholder-name": "Ej.: Luis",
+    "lastName": "Apellidos",
+    "placeholder-lastname": "Ej.: Herrera",
+    "charge": "Cargo",
+    "curp": "CURP",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "born-date": "Fecha de nacimiento",
+    "born": "Nacimiento",
+    "sex": "Sexo: ",
+    "rfc": "RFC",
+    "zip-code": "Código postal",
+    "address": "Dirección",
+    "placeholder-address": "Escriba la dirección del cliente.",
+    "contact-type": "Tipo de contacto",
+    "responsible": "Responsable",
+    "sub-agent": "Sub-Agente",
+    "agent": "Agente",
+    "origen": "Orígen",
+    "passport": "Identificaciones INE, RFC o Pasaporte",
+    "upload-file": "Subir un archivo",
+    "png": "PNG, JPG, PDF hasta 5MB",
+    "drap-drop": "o arrastrar y soltar",
+    "select": "Seleccionar",
+    "change-photo": "Cambiar foto",
+    "jpg": "JPG, GIF or PNG. 1MB max.",
+    "select-page": "Seleccione una pestaña",
+    "add": "Agregar",
+    "print": "Imprimir",
+    "download": "Descargar",
+    "cua": "Código CUA",
+    "otherType": "Otro",
+    "tabs": {
+      "general": "General",
+      "policies": "Pólizas",
+      "activities": "Actividades",
+      "reports": "Reportes",
+      "documents": "Documentos"
+    },
+    "activities": {
+      "email": "Correo",
+      "tasks": "Tareas",
+      "whatsapp": "WhatsApp",
+      "comment": "Comentario",
+      "appointments": "Citas",
+      "todo-tasks": "Tareas por hacer",
+      "zoom": "Zoom",
+      "call": "Llamada"
+    }
+  },
+  "edit": {
+    "not-contact": "Sin contacto",
+    "updated-contact": "¡Contacto Actualizado!",
+    "error": "Error al crear el contacto!",
+    "name": "Editar",
+    "policies": {
+      "exists": "Poliza ya existe",
+      "error-file": "Error al subir el archivo",
+      "created": "Póliza creada!",
+      "general": "General",
+      "documents": "Documentos",
+      "add": "Agregar",
+      "upload": "Subir póliza desde archivo PDF",
+      "select": "Seleccionar archivo PDF",
+      "insurance": "Aseguradora",
+      "policy-type": "Tipo de Póliza",
+      "consult": {
+        "name": "Consulta",
+        "date": "Fecha Emisión de póliza",
+        "product": "Producto",
+        "policy": "Póliza",
+        "company": "Compañia",
+        "code": "Código de cliente",
+        "payments": "Pagos / Recibos",
+        "claims": "Siniestros",
+        "refund": "Reembolso",
+        "invoices": "Facturas",
+        "versions": "Versiones",
+        "commissions": "Comisiones",
+        "quotes": "Cotizaciones",
+        "schedules": "Programaciones",
+        "settings": {
+          "print": "Imprimir",
+          "download": "Descargar"
+        },
+        "form": {
+          "responsible": "Responsable",
+          "comments": "Comentarios",
+          "status": "Estado de la póliza",
+          "prima": "Prima",
+          "subBranch": "Subramo",
+          "payment": "Forma de pago actual",
+          "frecuency": "Frecuencia del pago",
+          "date": "Fecha de inicio de vigencia",
+          "number": "Número de plazos",
+          "year": "Año de vigencia",
+          "ot": "Número de OT",
+          "beneficiary": "Beneficiario",
+          "annotations": "Annotaciones"
+        }
+      },
+      "payments": {
+        "table": {
+          "receipt": "# De Recibo",
+          "status": "Estado",
+          "method-payment": "Método de pago",
+          "validity": "Inicio de vigencia",
+          "expiration": "Vencimiento",
+          "amount": "Importe",
+          "coin": "Moneda",
+          "attach": "Adjunto"
+        },
+        "consult": {
+          "name": "Consulta",
+          "add": "Agregar",
+          "responsible": "Responsable",
+          "status": "Estado",
+          "payment-method": "Método de Pago",
+          "date-start": "Inicio de vigencia",
+          "expiration": "Vencimiento",
+          "amount": "Importe",
+          "coin": "Moneda",
+          "comments": "Comentarios"
+        }
+      },
+      "claims": {
+        "table": {
+          "claim": "# Siniestro",
+          "status": "Estado",
+          "date": "Fecha"
+        },
+        "consult": {
+          "responsible": "Responsable",
+          "comments": "Comentarios",
+          "date-start": "Fecha de inicio",
+          "number": "Número de Reclamación",
+          "number-claim": "Número de Siniestro",
+          "claim": "Número de Siniestro - CLAIM",
+          "folio-number": "Número de Folio",
+          "diagnosis": "Diagnóstico / Padecimiento",
+          "folio-number1": "Número de folio - Aclaración inicial",
+          "refund": "Necesita reembolso subsecuente"
+        }
+      },
+      "refunds": {
+        "table": {
+          "refund": "# Reembolso",
+          "status": "Estado",
+          "date": "Fecha"
+        },
+        "consult": {
+          "responsible": "Responsable",
+          "comments": "Comentarios",
+          "date-start": "Fecha de inicio",
+          "number": "Número de Reclamación",
+          "number-claim": "Número de Siniestro",
+          "claim": "Número de Siniestro - CLAIM",
+          "folio-number": "Número de Folio",
+          "diagnosis": "Diagnóstico / Padecimiento",
+          "folio-number1": "Número de folio - Aclaración inicial",
+          "refund": "Necesita reembolso subsecuente"
+        }
+      },
+      "invoices": {
+        "table": {
+          "attach": "Adjunto",
+          "invoice": "Factura",
+          "coin": "Moneda",
+          "amount": "Monto",
+          "date": "Fecha"
+        }
+      },
+      "versions": {
+        "table": {
+          "attach": "Adjunto",
+          "version" : "Versión",
+          "date-init" : "Fecha inicial",
+          "date-end" : "Fecha final",
+          "renewal" : "Renovación"
+        }
+      },
+      "commissions": {
+        "table": {
+            "receipt" : "Recibo",
+            "date-commision" : "Fecha pago comisión",
+            "amount" : "Monto"
+        }
+      },
+      "table": {
+        "empty": {
+          "not-policies": "No hay pólizas registradas",
+          "register": "Registra una nueva póliza para el contacto.",
+          "new": "Nueva Póliza"
+        },
+        "policy": "Póliza",
+        "product": "Producto",
+        "company": "Compañia",
+        "status": "Estado",
+        "start": "Inicio",
+        "expiration": "Vencimiento",
+        "amount": "Importe",
+        "branch": "Ramo"
+      }
+    }
+  },
+  "filters": {
+    "name": "Filtros",
+    "my-contact": "Mis Contactos",
+    "all-contact": "Todos los Contactos",
+    "save": "Guardar Filtro",
+    "responsible": "Persona Responsable",
+    "created": "Creado el",
+    "origin": "Origen",
+    "created-by": "Creado por",
+    "add-field": "Agregar campo",
+    "restore": "Restaurar campos predeterminados",
+    "search": "Buscar",
+    "restart": "Reiniciar",
+    "cua": "Código CUA",
+    "fullname": "Nombre y Apellido",
+    "contact-type": "Tipo de contacto",
+    "rfc": "RFC",
+    "date": {
+      "yesterday": "Ayer",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "currentQuarter": "Trimestre actual",
+      "last7Days": "Últimos 7 días",
+      "last30Days": "Últimos 30 días",
+      "last60Days": "Últimos 60 días",
+      "last90Days": "Últimos 90 días",
+      "lastNDays": "Últimos N días",
+      "nextNDays": "Próximos N días",
+      "month": "Mes",
+      "quarter": "Trimestre",
+      "year": "Año",
+      "exactDate": "Fecha exacta",
+      "lastWeek": "La semana pasada",
+      "lastMonth": "El mes pasado",
+      "dateRange": "Rango de fecha",
+      "nextWeek": "La próxima semana",
+      "nextMonth": "El próximo mes"
+    }
+  },
+  "delete": {
+    "msg": "Contacto(s) eliminado exitosamente!"
+  },
+  "policies": {
+    "ramo": "Ramo",
+    "life": "Vida",
+    "health": "Salud",
+    "medical-expenses": "Gastos Médicos",
+    "damages": "Daños",
+    "various": "Diversos",
+    "branches": {
+      "all": "Todos los ramos",
+      "life": "Vida",
+      "cars": "Autos",
+      "medicinal": "Gastos Médicos",
+      "damages": "Daños",
+      "various": "Diversos",
+      "others": "Otros (próximamente)",
+      "fleets": "Flotillas (próximamente)"
+    }
+  }
 }

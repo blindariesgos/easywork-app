@@ -1,23 +1,13 @@
 'use client';
 import useAppContext from '@/context/app';
-import { DocumentTextIcon, PhotoIcon, UserIcon, VideoCameraIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { DocumentTextIcon, PhotoIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { PencilIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
-import ActivityHeader from '../ActivityHeader';
-import CardTask from '../CardTask';
 import AddContactTabs from './AddContactTabs';
 import ProfileImageInput from './ProfileImageInput';
-import TextInputLocal from './TextInputLocal';
-import TextArea from './TextArea';
-import { useFormState } from 'react-dom';
-import { createContact } from '@/lib/api';
-import useCrmContext from '@/context/crm';
-import { es, enUS } from 'date-fns/locale';
 import { toast } from 'react-toastify';
-import { contactDetailTabs, contactTypes, filterOptions, responsible } from '@/lib/common';
+import { contactDetailTabs, contactTypes, responsible } from '@/lib/common';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'next/navigation';
 import Button from '@/components/form/Button';
 import TextInput from '@/components/form/TextInput';
 import { Controller, useForm } from 'react-hook-form';
@@ -26,9 +16,11 @@ import * as Yup from 'yup';
 import InputPhone from '@/components/form/InputPhone';
 import SelectInput from '@/components/form/SelectInput';
 import SelectDropdown from './SelectDropdown';
-import ContactPoliza from '../show_contact/tab_polizas/ContactPoliza';
 import InputDate from '@/components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
+import ActivityPanel from '../ActivityPanel';
+import { getApiError } from '@/utils/getApiErrors';
+import { createContact } from '@/lib/apis';
 
 const contactSources = [
 	{ id: 1, name: 'Correo electrónico' },
@@ -46,61 +38,17 @@ const contactSources = [
 	{ id: 13, name: 'WhatsApp' }
 ];
 
-const timeline = [
-	{
-		id: 1,
-		child: ActivityHeader,
-		content: 'Applied to',
-		target: 'Front End Developer',
-		href: '#',
-		date: 'Sep 20',
-		datetime: '2020-09-20',
-		icon: UserIcon,
-		iconBackground: 'bg-gray-400'
-	},
-	{
-		id: 2,
-		content: 'Advanced to phone screening by',
-		child: CardTask,
-		target: 'Bethany Blake',
-		href: '#',
-		date: 'Sep 22',
-		datetime: '2020-09-22',
-		icon: VideoCameraIcon,
-		iconBackground: 'bg-blue-500'
-	}
-];
-
-const initialState = {
-	email: ''
-};
-
-const sexoOptions = [ { id: 1, name: 'Masculino' }, { id: 2, name: 'Femenino' }, { id: 3, name: 'Otro' } ];
 
 export default function CreateContact({ edit, id }) {
 	const { t } = useTranslation();
-	const { locale } = useParams();
 	const { setOpenModal, contactDetailTab } = useAppContext();
-	const { crmUsers, setLastContactsUpdate, currentContactID } = useCrmContext();
 	const [ openButtons, setOpenButtons ] = useState(!edit);
-
-	const [ query, setQuery ] = useState('');
-	const [ querySource, setQuerySource ] = useState('');
-	const [ queryResponsible, setQueryResponsible ] = useState('');
-	const [ querySexo, setQuerySexo ] = useState('');
-
 	const [ contactType, setContactType ] = useState(null);
 	const [ contactSource, setContactSource ] = useState(null);
 	const [ contactResponsible, setContactResponsible ] = useState(null);
-	const [ contactSexo, setContactSexo ] = useState(null);
 	const [ files, setFiles ] = useState([]);
 
-	// const [errors, setErrors] = useState({});
-
-	const [ birthday, setBirthday ] = useState(null);
-
 	const [ selectedProfileImage, setSelectedProfileImage ] = useState(null);
-	const [ state, formAction ] = useFormState(createContact, initialState);
 	const [ loading, setLoading ] = useState(false);
 
 	const schema = Yup.object().shape({
@@ -108,7 +56,7 @@ export default function CreateContact({ edit, id }) {
 		  .string()
 		  .required(t('common:validations:required'))
 		  .email(t('common:validations:email'))
-		  .min(5,  t('common:validations:min', {min: 5})),
+		  .min(5,  t('common:validations:min', { min: 5 })),
 		name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
 		charge: Yup.string().required(t('common:validations:required')),
 		phone: Yup.string().required(t('common:validations:required')),
@@ -168,7 +116,7 @@ export default function CreateContact({ edit, id }) {
 			const reader = new FileReader();
 
 			reader.onload = (e) => {
-				setSelectedProfileImage(e.target.result);
+				setSelectedProfileImage({base64:e.target.result, file: file});
 			};
 
 			reader.readAsDataURL(file);
@@ -206,20 +154,48 @@ export default function CreateContact({ edit, id }) {
 		}
 	};
 
-	const handleBirthdayChange = useCallback((value) => {
-		const date = new Date(value);
-		const formattedDate = value ? date.toISOString().split('T')[0] : '';
-		setBirthday(formattedDate);
-	}, []);
-
 	const handleFormSubmit = async (data) => {
-		console.log('data', data);
 		// event.preventDefault();
 		// // setErrors({});
 		// setLoading(true);
+		const body = {
+			name: data.name,
+			fullName: data.name,
+			photo: selectedProfileImage?.file || null,
+			assignedById: "37e3b947-b56b-43b3-a617-30897f4f5193",
+			observadorId: "37e3b947-b56b-43b3-a617-30897f4f5193",
+			cargo: data.charge,
+			tipo: data.typeContact,
+			curp: data.rfc,
+			cua: data.cua,
+			address: data.address,
+			emails_dto: JSON.stringify([{"email": data.email}]),
+			phones_dto: [{"number": data.phone}]
+		}
 
-		// const formData = new FormData(event.target);
+		console.log('data', body);
+		const formData = new FormData();
+		for (const key in body) {
+			if (body[key] instanceof File || body[key] instanceof Blob) {
+			  formData.append(key, body[key]);
+			} else if (Array.isArray(body[key])) {
+				console.log("entre 2", body[key])
+			  formData.append(key, JSON.stringify(body[key]));
+			} else {
+			  formData.append(key, body[key]?.toString() || '');
+			}
+		}
+		console.log('formData', [...formData.entries()]);
 
+		try {
+			setLoading(true);
+			await createContact(formData);
+		  	toast.success(t('contacts:create:msg'));
+			setLoading(false);			
+		} catch (error) {
+			getApiError(error.message);
+			setLoading(false);			
+		}
 		// try {
 		//   const result = await createContact(state, formData);
 
@@ -231,26 +207,24 @@ export default function CreateContact({ edit, id }) {
 		//   }
 
 		//   setLastContactsUpdate(Date.now());
-		//   toast.success(t('contacts:create:msg'));
 		//   setOpenModal(false);
 		// } catch (error) {
-		//   toast.error(t('contacts:create:error'));
 		// } finally {
 		//   setLoading(false);
 		// }
 	};
 
-	const filteredContactTypes = filterOptions(query, contactTypes);
-	const filteredContactSources = filterOptions(querySource, contactSources);
-	// const filteredContactResponsible = filterOptions(queryResponsible, crmUsers);
-	const filteredContactResponsible = filterOptions(queryResponsible, responsible);
-	const filteredSexoOptions = filterOptions(querySexo, sexoOptions);
+	
+	// Calculate the user's 18th birthday
+	const eighteenYearsAgo = new Date();
+	eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  
 
 	return (
 		<div className="flex flex-col h-screen relative w-full">
 			{/* Formulario Principal */}
 			{loading && (
-				<div className="absolute z-50 inset-0 bg-easy-800/10 w-2/5 h-full">
+				<div className="absolute z-50 inset-0 bg-easy-800/10 w-full h-full">
 					{/* Loader spinner */}
 
 					<div className="flex items-center justify-center h-full flex-col gap-2 cursor-progress">
@@ -266,9 +240,9 @@ export default function CreateContact({ edit, id }) {
 				>
 					{/* Encabezado del Formulario */}
 					<div className="bg-transparent py-6 mx-4">
-						<div className="flex items-start flex-col justify-between space-y-3">
-							{!edit && <div className="inset-0 bg-white/75 w-full h-36 z-50 absolute rounded-t-2xl" />}
-							<h1 className="text-xl">{edit ? edit?.fullName : t('contacts:create:client')}</h1>
+						<div className="flex items-start flex-col justify-between space-y-3 relative">
+							{!id && <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />}
+							<h1 className="text-xl sm:pl-6 pl-2">{edit ? edit?.fullName : t('contacts:create:client')}</h1>
 							<AddContactTabs id={id} />
 						</div>
 					</div>
@@ -281,7 +255,7 @@ export default function CreateContact({ edit, id }) {
 						<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
 							<div className="flex justify-between bg-white py-4 px-4 rounded-md">
 								<h1 className="">{t('contacts:create:data')}</h1>
-								<button type="button" disabled={!edit} onClick={() => setOpenButtons(!openButtons)}>
+								<button type="button" disabled={!id} onClick={() => setOpenButtons(!openButtons)}>
 									<PencilIcon className="h-6 w-6 text-primary" />
 								</button>
 							</div>
@@ -300,12 +274,14 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="name"
 									disabled={!openButtons}
+									value={watch('name')}
 								/>
 								<TextInput
 									label={t('contacts:create:charge')}
 									placeholder={t('contacts:create:charge')}
 									error={errors.charge}
 									register={register}
+									value={watch('charge')}
 									name="charge"
 									disabled={!openButtons}
 								/>
@@ -337,6 +313,7 @@ export default function CreateContact({ edit, id }) {
 												icon={<FaCalendarDays className='h-3 w-3 text-primary pr-4'/>}
 												error={errors.birthday}
 												disabled={!openButtons}
+												inactiveDate={eighteenYearsAgo}
 											/>
 										);
 									}}
@@ -350,6 +327,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.email}
 									register={register}
 									name="email"
+									value={watch('email')}
 									disabled={!openButtons}
 								/>
 								<TextInput
@@ -359,18 +337,18 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="rfc"
 									disabled={!openButtons}
+									value={watch('rfc')}
 								/>
 								<SelectInput
 									label={t('contacts:create:contact-type')}
-									options={filteredContactTypes}
+									options={contactTypes}
 									selectedOption={contactType}
-									onChangeInput={setQuery}
-									// query={query}
 									name="typeContact"
 									error={!watch('typeContact') && errors.typeContact}
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
+									value={watch('typeContact')}
 								/>
 								{watch('typeContact') == 'Otro' ? (
 									<TextInput
@@ -380,6 +358,7 @@ export default function CreateContact({ edit, id }) {
 										register={register}
 										name="otherType"
 										disabled={!openButtons}
+										value={watch('otherType')}
 									/>
 								) : null}
 								<TextInput
@@ -389,27 +368,29 @@ export default function CreateContact({ edit, id }) {
 									name="address"
 									placeholder={t('contacts:create:placeholder-address')}
 									disabled={!openButtons}
+									value={watch('address')}
 								/>
 								<SelectInput
 									label={t('contacts:create:origen')}
 									name="origin"
-									options={filteredContactSources}
+									options={contactSources}
 									selectedOption={contactSource}
-									onChangeInput={setQuerySource}
 									error={!watch('origin') && errors.origin}
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
+									value={watch('origin')}
 								/>
 								<SelectDropdown
 									label={t('contacts:create:responsible')}
 									name="responsible"
-									options={filteredContactResponsible}
+									options={responsible}
 									selectedOption={contactResponsible}
-									onChangeInput={setQueryResponsible}
-									error={errors.responsible}
 									register={register}
 									disabled={!openButtons}
+									error={!watch('responsible') && errors.responsible}
+									setValue={setValue}
+									value={watch('responsible')}
 								/>
 								<TextInput
 									label={t('contacts:create:cua')}
@@ -417,6 +398,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="cua"
 									disabled={!openButtons}
+									value={watch('cua')}
 									// placeholder={t('contacts:create:placeholder-address')}
 								/>
 								<DocumentSelector name="files" onChange={handleFilesUpload} files={files} disabled={!openButtons} setFiles={setFiles}/>
@@ -424,7 +406,7 @@ export default function CreateContact({ edit, id }) {
 						</div>
 
 						{/* Menu Derecha */}
-						<ActivityPanel editing={!edit} />
+						<ActivityPanel editing={!id} />
 					</div>
 					{/* )} */}
 					{/* {contactDetailTab === contactDetailTabs[1] && <ContactPoliza contactID={currentContactID} />} */}
@@ -477,9 +459,10 @@ function DocumentSelector({ onChange, files, disabled, setFiles, ...props }) {
 			</label>
 			<div
 				className="mt-2 rounded-lg border border-dashed border-gray-900/25 py-6 px-2 relative w-full"
-				onDrop={!disabled && handleDrop}
-				onDragOver={(event) =>!disabled && event.preventDefault()}
+				onDrop={handleDrop}
+				onDragOver={(event) => event.preventDefault()}
 			>
+			{disabled && <div className="inset-0 bg-white/75 w-full h-full z-10 absolute rounded-tr-lg" />}
 				<div className="grid grid-cols-3 gap-x-2">
 					{files.length > 0 &&
 						files.map((file, index) => (
@@ -527,41 +510,4 @@ function DocumentSelector({ onChange, files, disabled, setFiles, ...props }) {
 	);
 }
 
-function ActivityPanel({ editing }) {
-	return (
-		<div className="px-4 py-6 relative bg-gray-100 rounded-tr-lg w-full sm:w-3/5">
-			{editing && <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-tr-lg" />}
-			<div className="flow-root bg-gray-300 rounded-lg">
-				<ul role="list" className="p-3">
-					{timeline.slice(0, editing ? 1 : timeline.length).map((event, eventIdx) => (
-						<li key={event.id}>
-							<div className="relative pb-4">
-								{(eventIdx !== timeline.length - 1) && !editing ? (
-									<span
-										className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-zinc-400"
-										aria-hidden="true"
-									/>
-								) : null}
-								<div className="relative flex space-x-3">
-									{!editing && (
-										<div>
-											<span
-												className={clsx(
-													event.iconBackground,
-													'h-10 w-10 rounded-full flex items-center justify-center'
-												)}
-											>
-												<event.icon className="h-5 w-5 text-white" aria-hidden="true" />
-											</span>
-										</div>
-									)}
-									{<event.child />}
-								</div>
-							</div>
-						</li>
-					))}
-				</ul>
-			</div>
-		</div>
-	);
-}
+

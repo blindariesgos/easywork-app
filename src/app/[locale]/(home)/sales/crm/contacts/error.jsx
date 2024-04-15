@@ -13,7 +13,7 @@ export default function Error({ error, reset }) {
 	useEffect(
 		() => {
       getApiError(error, errorsDuplicated);
-      if (id) router.push('/sales/crm/contacts');
+      if (id) router.push('/sales/crm/contacts?page=1');
 		},
 		[ error ]
 	);

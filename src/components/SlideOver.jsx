@@ -1,9 +1,9 @@
 'use client';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
 import Tag from './Tag';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SlideOver({
 	openModal,
@@ -13,36 +13,15 @@ export default function SlideOver({
 	labelTag,
 	samePage,
 	previousModalPadding,
-	subLabelTag
+	subLabelTag,
+	mtTag
 }) {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const [ label, setLabel ] = useState('');
 	const [ subLabel, setSubLabel] = useState('');
-	const [ modalWidth, setModalWidth ] = useState(0);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
-	const pathname = usePathname();
-	const { replace } = useRouter();
-	const modalRef = useRef(null);
-
-	useEffect(
-		() => {
-			function handleResize() {
-				if (modalRef.current) {
-					const width = modalRef.current.offsetWidth;
-					setModalWidth(width);
-				}
-			}
-
-			window.addEventListener('resize', handleResize);
-
-			return () => {
-				window.removeEventListener('resize', handleResize);
-			};
-		},
-		[ modalRef ]
-	);
 
 	useEffect(
 		() => {
@@ -131,7 +110,7 @@ export default function SlideOver({
 					<div className="fixed inset-0" />
 					<div className="fixed inset-0 overflow-hidden">
 						<div className="absolute inset-0 overflow-hidden">
-							<div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0' sm:pl-16">
+							<div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 sm:pl-52">
 								<Transition.Child
 									as={Fragment}
 									enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -142,12 +121,10 @@ export default function SlideOver({
 									leaveTo="translate-x-full"
 								>
 									<Dialog.Panel
-										ref={modalRef}
-										className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding &&
-											'pl-20'}`}
+										className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
 									>
 										<div className="flex">
-											<div className='flex flex-col'>
+											<div className={`flex flex-col ${mtTag}`}>
 												<Tag
 													title={label}
 													onclick={() => {
@@ -158,7 +135,7 @@ export default function SlideOver({
 													className={colorTag}
 												/>
 												{subLabelTag && (
-													<Tag title={subLabel} className="bg-green-primary pl-2" closeIcon />
+													<Tag title={subLabel} className="bg-green-primary pl-2" closeIcon second/>
 												)}
 											</div>
 											{children}

@@ -26,8 +26,6 @@ export default function HeaderDataPoliza() {
 				<IconDropdown
 					icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" />}
 					options={settingsPolicy}
-					width="w-[340px]"
-					colorIcon="text-green-100"
 				/>
 			</div>
 		</div>

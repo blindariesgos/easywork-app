@@ -7,10 +7,24 @@ import Header from "@/components/header/Header";
 import HeaderCrm from "../HeaderCrm";
 import { Pagination } from "@/components/pagination/Pagination";
 import useCrmContext from "@/context/crm";
+import { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function ContactLayout({ children, table, modal }) {
   const { t } = useTranslation();
   const { contacts } = useCrmContext();
+  const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
+	const pathname = usePathname();
+	const { replace } = useRouter();
+  
+  useEffect(() => {
+    if (Number(params.get('page')) === 0 || !params.get('page')) {
+      params.set('page', 1); 
+      replace(`${pathname}?${params.toString()}`);
+    }
+  }, [])
+  
   const options = [
     {
       id: 1,

@@ -3,24 +3,24 @@ import useCrmContext from "@/context/crm";
 import { getContacts } from "@/lib/apis";
 import { getApiError } from "@/utils/getApiErrors";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useRef } from "react";
-import { toast } from 'react-toastify';
+import { useEffect, useRef } from "react";
 
 export default function Page() {
   const { setContacts, lastContactsUpdate } = useCrmContext();
   const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
   const errorsDuplicated = useRef(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getContacts(searchParams.get('page')?.toString() || 0);
+        const response = await getContacts(params.get('page')?.toString() || 1);
         setContacts(response);
       } catch (error) { 
         getApiError(error.message, errorsDuplicated)
       }
     }
-    fetchData();
-  }, [lastContactsUpdate, searchParams]);
+    if (params.get('page') || Number(params.get('page')) !== 0) fetchData();
+  }, [lastContactsUpdate, searchParams]);  
 
   return <></>;
 }

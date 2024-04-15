@@ -19,6 +19,8 @@ import SelectDropdown from './SelectDropdown';
 import InputDate from '@/components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 import ActivityPanel from '../ActivityPanel';
+import { getApiError } from '@/utils/getApiErrors';
+import { createContact } from '@/lib/apis';
 
 const contactSources = [
 	{ id: 1, name: 'Correo electrónico' },
@@ -185,15 +187,15 @@ export default function CreateContact({ edit, id }) {
 		}
 		console.log('formData', [...formData.entries()]);
 
-		// try {
-		// 	setLoading(true);
-		// 	await createContact(formData);
-		//   	toast.success(t('contacts:create:msg'));
-		// 	setLoading(false);			
-		// } catch (error) {
-		// 	getApiError(error.message);
-		// 	setLoading(false);			
-		// }
+		try {
+			setLoading(true);
+			await createContact(formData);
+		  	toast.success(t('contacts:create:msg'));
+			setLoading(false);			
+		} catch (error) {
+			getApiError(error.message);
+			setLoading(false);			
+		}
 		// try {
 		//   const result = await createContact(state, formData);
 
@@ -272,12 +274,14 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="name"
 									disabled={!openButtons}
+									value={watch('name')}
 								/>
 								<TextInput
 									label={t('contacts:create:charge')}
 									placeholder={t('contacts:create:charge')}
 									error={errors.charge}
 									register={register}
+									value={watch('charge')}
 									name="charge"
 									disabled={!openButtons}
 								/>
@@ -323,6 +327,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.email}
 									register={register}
 									name="email"
+									value={watch('email')}
 									disabled={!openButtons}
 								/>
 								<TextInput
@@ -332,6 +337,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="rfc"
 									disabled={!openButtons}
+									value={watch('rfc')}
 								/>
 								<SelectInput
 									label={t('contacts:create:contact-type')}
@@ -342,6 +348,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
+									value={watch('typeContact')}
 								/>
 								{watch('typeContact') == 'Otro' ? (
 									<TextInput
@@ -351,6 +358,7 @@ export default function CreateContact({ edit, id }) {
 										register={register}
 										name="otherType"
 										disabled={!openButtons}
+										value={watch('otherType')}
 									/>
 								) : null}
 								<TextInput
@@ -360,6 +368,7 @@ export default function CreateContact({ edit, id }) {
 									name="address"
 									placeholder={t('contacts:create:placeholder-address')}
 									disabled={!openButtons}
+									value={watch('address')}
 								/>
 								<SelectInput
 									label={t('contacts:create:origen')}
@@ -370,6 +379,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
+									value={watch('origin')}
 								/>
 								<SelectDropdown
 									label={t('contacts:create:responsible')}
@@ -380,6 +390,7 @@ export default function CreateContact({ edit, id }) {
 									disabled={!openButtons}
 									error={!watch('responsible') && errors.responsible}
 									setValue={setValue}
+									value={watch('responsible')}
 								/>
 								<TextInput
 									label={t('contacts:create:cua')}
@@ -387,6 +398,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="cua"
 									disabled={!openButtons}
+									value={watch('cua')}
 									// placeholder={t('contacts:create:placeholder-address')}
 								/>
 								<DocumentSelector name="files" onChange={handleFilesUpload} files={files} disabled={!openButtons} setFiles={setFiles}/>

@@ -1,11 +1,10 @@
 'use client';
-import { ChevronDownIcon, CheckIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { useOrderByColumn } from '@/hooks/useOrderByColumn';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import PolizasEmpty from '../show_contact/tab_polizas/PolizasEmpty';
+import PolizasEmpty from '../../show_contact/tab_polizas/PolizasEmpty';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 
 const people = [
@@ -36,13 +35,26 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 	const { t } = useTranslation();
 	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn({}, people);
 	const [ payments, setPayments ] = useState(people);
-	const pathname = usePathname();
+	const [ selectedPayments, setSelectedPayments ] = useState([]);
+	const [ checked, setChecked ] = useState(false);
+	const checkbox = useRef();
 
 	useEffect(
 		() => {
 			setPayments(orderItems);
 		},
 		[ orderItems ]
+	);
+	useLayoutEffect(
+		() => {
+			if (checkbox.current) {
+				const isIndeterminate =
+					selectedPayments && selectedPayments.length > 0 && selectedPayments.length < payments.length;
+				setChecked(selectedPayments.length === payments.length);
+				checkbox.current.indeterminate = isIndeterminate;
+			}
+		},
+		[ selectedPayments ]
 	);
 
 	if (!payments || payments.length === 0) {
@@ -231,7 +243,22 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 					<tbody className="bg-gray-100">
 						{payments.map((poliza, index) => (
 							<tr key={index}>
-								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer hover:text-primary">
+								<td className="whitespace-nowrap py-4 text-sm font-semibold text-black cursor-pointer hover:text-primary flex gap-4 items-center justify-center">
+									{selectedPayments.includes(poliza) && (
+										<div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
+									)}
+									<input
+										type="checkbox"
+										className="h-4 w-4 rounded border-gray-300 text-primary focus:text-primary focus:ring-0"
+										value={poliza.id}
+										checked={selectedPayments.includes(poliza)}
+										onChange={(e) =>
+											setSelectedPayments(
+												e.target.checked
+													? [ ...selectedPayments, poliza ]
+													: selectedPayments.filter((p) => p !== poliza)
+											)}
+									/>
 									<Link
 										href={`/sales/crm/contacts/contact/policy/payments/consult/${poliza.receipt}?show=true`}
 									>

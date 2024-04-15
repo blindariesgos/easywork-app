@@ -4,15 +4,19 @@ import HeaderDataPoliza from '../../../components/show_poliza/HeaderDataPoliza';
 import HeaderConsults from '../../../components/show_poliza/HeaderConsults';
 import LoaderSpinner from '@/components/LoaderSpinner';
 import FormPolicy from '../../../components/show_poliza/FormPolicy';
-import PaymentsTable from '../../../components/show_poliza/PaymentsTable';
+import PaymentsTable from '../../../components/show_poliza/payments/PaymentsTable';
 import { Pagination } from '@/components/pagination/Pagination';
-import ClaimsTable from '../../../components/show_poliza/ClaimsTable';
+import ClaimsTable from '../../../components/show_poliza/claims/ClaimsTable';
+import RefundTable from '../../../components/show_poliza/refunds/refundTable';
+import InvoicesTable from '../../../components/show_poliza/InvoicesTable';
+import VersionsTable from '../../../components/show_poliza/VersionsTable';
+import CommissionsTable from '../../../components/show_poliza/CommissionsTable';
 
 export default function PolicyDetails({ opt, id }) {
 	return (
 		<SlideOver
 			openModal={true}
-			colorTag="bg-green-primary w-28"
+			colorTag={`bg-green-primary ${opt === "payments" && "w-28"}`}
 			labelTag={opt}
 			subLabelTag={opt == 'consult' ? 'consult' : null}
 			samePage={`/sales/crm/contacts/contact/policies/${id}?show=true`}
@@ -37,6 +41,26 @@ export default function PolicyDetails({ opt, id }) {
 						{opt === 'claims' && (
 							<div className="mt-4">
 								<ClaimsTable noPolicy={id} />
+							</div>
+						)}
+						{opt === 'refunds' && (
+							<div className="mt-4">
+								<RefundTable noPolicy={id} />
+							</div>
+						)}
+						{opt === 'invoices' && (
+							<div className="mt-4">
+								<InvoicesTable noPolicy={id} />
+							</div>
+						)}
+						{opt === 'versions' && (
+							<div className="mt-4">
+								<VersionsTable noPolicy={id} />
+							</div>
+						)}
+						{opt === 'commissions' && (
+							<div className="mt-4">
+								<CommissionsTable noPolicy={id} />
 							</div>
 						)}
 					</Suspense>

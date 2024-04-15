@@ -25,7 +25,7 @@ function TextInput({
 						type={type}
 						name={name}
 						disabled={disabled}
-						value={value || ''}
+						// value={value || ''}
 						onChange={(e) => {
 							registerProps && registerProps.onChange(e);
 							onChangeCustom && onChangeCustom(e);

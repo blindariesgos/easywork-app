@@ -82,7 +82,7 @@ export default function ContactLayout({ children, table, modal }) {
         </Suspense>
       </div>  
       
-      <div className="absolute bottom-2">
+      <div className="">
         <Pagination
           totalPages={contacts?.meta?.totalPages || 0}
         />

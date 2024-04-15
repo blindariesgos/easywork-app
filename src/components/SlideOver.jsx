@@ -56,7 +56,7 @@ export default function SlideOver({
 				case 'claims':
 					setLabel(t('contacts:edit:policies:consult:claims'));
 					break;
-				case 'refund':
+				case 'refunds':
 					setLabel(t('contacts:edit:policies:consult:refund'));
 					break;
 				case 'invoices':

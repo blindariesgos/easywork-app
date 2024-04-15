@@ -15,6 +15,7 @@ import ContactDetails from "./ContactDetails";
 
 export default async function PageContactId({ params: { id } }) {
   const contactInfo = await getContactId(id);
+  console.log("contactInfo", contactInfo)
 
   return <ContactDetails contactInfo={contactInfo} id={id}/>
 }

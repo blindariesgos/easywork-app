@@ -1,13 +1,11 @@
 'use client';
-import { ChevronDownIcon, CheckIcon, Cog8ToothIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { useOrderByColumn } from '@/hooks/useOrderByColumn';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import Button from '@/components/form/Button';
-import PolizasEmpty from '../show_contact/tab_polizas/PolizasEmpty';
+import PolizasEmpty from '../../show_contact/tab_polizas/PolizasEmpty';
 
 const people = [
 	{
@@ -32,8 +30,6 @@ export default function ClaimsTable({ claims: data, base, noPolicy }) {
 	const [ selectedClaims, setSelectedClaims ] = useState([]);
 	const [ checked, setChecked ] = useState(false);
 	const checkbox = useRef();
-	const [ indeterminate, setIndeterminate ] = useState(false);
-	const pathname = usePathname();
 
 	useEffect(
 		() => {
@@ -48,17 +44,11 @@ export default function ClaimsTable({ claims: data, base, noPolicy }) {
 				const isIndeterminate =
 					selectedClaims && selectedClaims.length > 0 && selectedClaims.length < claims.length;
 				setChecked(selectedClaims.length === claims.length);
-				setIndeterminate(isIndeterminate);
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
 		[ selectedClaims ]
 	);
-	function toggleAll() {
-		setSelectedClaims(checked || indeterminate ? [] : claims.items);
-		setChecked(!checked && !indeterminate);
-		setIndeterminate(false);
-	}
 
 	if (!claims || claims.length === 0) {
 		return <PolizasEmpty add />;
@@ -84,18 +74,6 @@ export default function ClaimsTable({ claims: data, base, noPolicy }) {
 				<table className="min-w-full rounded-md bg-gray-100">
 					<thead className="text-sm bg-white drop-shadow-sm uppercase">
 						<tr className="">
-							{/* <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
-								<input
-									type="checkbox"
-									className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-									ref={checkbox}
-									checked={checked}
-									onChange={toggleAll}
-								/>
-								<div className="cursor-pointer">
-									<Cog8ToothIcon className="ml-4 h-5 w-5 text-primary " aria-hidden="true" />
-								</div>
-							</th> */}
 							<th
 								scope="col"
 								className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-s-xl"

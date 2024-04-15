@@ -15,11 +15,11 @@ export const getDataPassword = async (email) => {
   return response.data;
 }
 export const createContact = async (data) => {
-  console.log("data",data)
-  // const response = await axios.post('/sales/crm/contacts', data);
+  console.log("data", data)
+  const response = await axios.post('/sales/crm/contacts', data);
   // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
-  // console.log(response)
-  // return response
+  console.log(response);
+  return response
 }
 
 export const getContacts = async (page) => {

@@ -543,8 +543,8 @@ export const usePolicies = (contactID, ) => {
     {
         value: 3,
         name: t('contacts:edit:policies:consult:refund'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/refund/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/refund/${contactID}`,
+        onclick: () => push(`/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`),
+        route: `/sales/crm/contacts/contact/policy/refunds/${contactID}`,
     },
     {
         value: 4,

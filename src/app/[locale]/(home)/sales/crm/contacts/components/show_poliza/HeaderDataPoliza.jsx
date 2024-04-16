@@ -5,7 +5,7 @@ import { Cog8ToothIcon } from '@heroicons/react/20/solid';
 import { useCommon } from '@/hooks/useCommon';
 import { useTranslation } from 'react-i18next';
 
-export default function HeaderDataPoliza() {
+export default function HeaderDataPoliza({ selectedRows }) {
     const { t } = useTranslation();
     const { settingsPolicy } = useCommon();
 	return (
@@ -26,6 +26,7 @@ export default function HeaderDataPoliza() {
 				<IconDropdown
 					icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" />}
 					options={settingsPolicy}
+                    disabled={selectedRows?.length > 0 ? false : true}
 				/>
 			</div>
 		</div>

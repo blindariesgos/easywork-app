@@ -6,7 +6,7 @@ import { getMonth, getYear } from 'date-fns';
 import range from 'lodash/range';
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
-const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate }) => {
+const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate, border }) => {
 	const { months } = useCommon();
 	const years = range(1990, getYear(new Date()) + 1, 1);
   
@@ -77,11 +77,11 @@ const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate
 			onChange={onChange}
 			// onBlur={onBlur}
 			icon={icon ? icon : undefined}
-			className="w-full border-none rounded-md text-sm h-9 shadow-sm focus:ring-0 z-50"
+			className={`w-full rounded-md text-sm h-9 shadow-sm focus:ring-0 z-50 ${border ? "border border-gray-200 focus:ring-gray-200 outline-none focus:outline-none" : "border-none focus:ring-0 "}`}
 			isClearable
 			disabled={disabled}
 			filterDate={date => {
-			  return date <= inactiveDate;
+			  return inactiveDate ? date <= inactiveDate : date;
 			}}
 		  />
 		</div>

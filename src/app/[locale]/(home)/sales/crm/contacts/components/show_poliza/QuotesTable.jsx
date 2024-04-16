@@ -1,5 +1,5 @@
 'use client';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon, DocumentTextIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { useOrderByColumn } from '@/hooks/useOrderByColumn';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -8,32 +8,32 @@ import PolizasEmpty from '../show_contact/tab_polizas/PolizasEmpty';
 const people = [
 	{
 		id: 1,
-		receipt: '00017892',
+		attach: 'archivo.doc',
 		amount: '2000',
-		"date-commision": '10/10/2024',
-		status: "Pendiente"
+		date: '10/10/2024',
+		coin: 'Peso'
 	},
 	{
 		id: 2,
-		receipt: '10017892',
+		attach: 'archivo.doc',
 		amount: '1000',
-		"date-commision": '10/10/2024',
-		status: "Pagada"
+		date: '10/10/2024',
+		coin: 'USD'
 	}
 	// More people...
 ];
 
-export default function CommissionsTable({ commissions: data, noPolicy, setSelectedCommissions, selectedCommissions }) {
+export default function QuotesTable({ quotes: data, noPolicy, selectedQuotes, setSelectedQuotes }) {
 	const { t } = useTranslation();
 	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn({}, people);
-	const [ commissions, setCommissions ] = useState(people);
+	const [ quotes, setQuotes ] = useState(people);
 	const [ checked, setChecked ] = useState(false);
 	const [ indeterminate, setIndeterminate ] = useState(false);
 	const checkbox = useRef();
 
 	useEffect(
 		() => {
-			setCommissions(orderItems);
+			setQuotes(orderItems);
 		},
 		[ orderItems ]
 	);
@@ -42,22 +42,22 @@ export default function CommissionsTable({ commissions: data, noPolicy, setSelec
 		() => {
 			if (checkbox.current) {
 				const isIndeterminate =
-					selectedCommissions && selectedCommissions.length > 0 && selectedCommissions.length < commissions.length;
-				setChecked(selectedCommissions.length === commissions.length);
+					selectedQuotes && selectedQuotes.length > 0 && selectedQuotes.length < quotes.length;
+				setChecked(selectedQuotes.length === quotes.length);
 				setIndeterminate(isIndeterminate);
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedCommissions ]
+		[ selectedQuotes ]
 	);
 
 	function toggleAll() {
-		setSelectedCommissions(checked || indeterminate ? [] : commissions);
+		setSelectedQuotes(checked || indeterminate ? [] : quotes);
 		setChecked(!checked && !indeterminate);
 		setIndeterminate(false);
 	}
 
-	if (!commissions || commissions.length === 0) {
+	if (!quotes || quotes.length === 0) {
 		return <PolizasEmpty add />;
 	}
 
@@ -78,13 +78,32 @@ export default function CommissionsTable({ commissions: data, noPolicy, setSelec
 							</th>
 							<th
 								scope="col"
+								className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer"
+								onClick={() => {
+									handleSorting('attach');
+								}}
+							>
+								<div className="group inline-flex items-center">
+									{t('contacts:edit:policies:quotes:table:attach')}
+									<span
+										className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${fieldClicked.field ===
+											'attach' && fieldClicked.sortDirection === 'desc'
+											? 'transform rotate-180'
+											: ''}`}
+									>
+										<ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+									</span>
+								</div>
+							</th>
+							<th
+								scope="col"
 								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
 								onClick={() => {
 									handleSorting('date');
 								}}
 							>
 								<div className="group inline-flex items-center">
-									{t('polizas:edit:policies:commissions:table:date-commision')}
+									{t('polizas:edit:policies:quotes:table:date')}
 									<span
 										className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${fieldClicked.field ===
 											'date' && fieldClicked.sortDirection === 'desc'
@@ -99,14 +118,14 @@ export default function CommissionsTable({ commissions: data, noPolicy, setSelec
 								scope="col"
 								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
 								onClick={() => {
-									handleSorting('status');
+									handleSorting('amount');
 								}}
 							>
 								<div className="group inline-flex items-center">
-									{t('polizas:edit:policies:commissions:table:status')}
+									{t('polizas:edit:policies:quotes:table:amount')}
 									<span
 										className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${fieldClicked.field ===
-											'status' && fieldClicked.sortDirection === 'desc'
+											'amount' && fieldClicked.sortDirection === 'desc'
 											? 'transform rotate-180'
 											: ''}`}
 									>
@@ -121,14 +140,14 @@ export default function CommissionsTable({ commissions: data, noPolicy, setSelec
 								scope="col"
 								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
 								onClick={() => {
-									handleSorting('amount');
+									handleSorting('coin');
 								}}
 							>
 								<div className="group inline-flex items-center">
-									{t('polizas:edit:policies:commissions:table:amount')}
+									{t('polizas:edit:policies:quotes:table:coin')}
 									<span
 										className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${fieldClicked.field ===
-											'amount' && fieldClicked.sortDirection === 'desc'
+											'coin' && fieldClicked.sortDirection === 'desc'
 											? 'transform rotate-180'
 											: ''}`}
 									>
@@ -142,33 +161,39 @@ export default function CommissionsTable({ commissions: data, noPolicy, setSelec
 						</tr>
 					</thead>
 					<tbody className="bg-gray-100">
-						{commissions.map((commission, index) => (
-							<tr key={index}>								
+						{quotes.map((quote, index) => (
+							<tr key={index}>
 								<td className="relative px-7 sm:w-12 sm:px-6">
-									{selectedCommissions.includes(commission) && (
+									{selectedQuotes.includes(quote) && (
 										<div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
 									)}
 									<input
 										type="checkbox"
 										className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary focus:ring-0"
-										value={commission.id}
-										checked={selectedCommissions.includes(commission)}
+										value={quote.id}
+										checked={selectedQuotes.includes(quote)}
 										onChange={(e) =>
-											setSelectedCommissions(
+											setSelectedQuotes(
 												e.target.checked
-													? [ ...selectedCommissions, commission ]
-													: selectedCommissions.filter((p) => p !== commission)
+													? [ ...selectedQuotes, quote ]
+													: selectedQuotes.filter((p) => p !== quote)
 											)}
 									/>
 								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{commission['date-commision']}
+								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
+									<div className="flex gap-2 px-2 hover:text-primary">
+										<DocumentTextIcon className="h-5 w-5 text-primary" aria-hidden="true" />
+										{quote.attach}
+									</div>
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{commission.status}
+									{quote.date}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                                    {`$ ${commission.amount}`}
+									{`$ ${quote.amount}`}
+								</td>
+								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
+                                    {quote.coin}
 								</td>
 							</tr>
 						))}

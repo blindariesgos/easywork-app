@@ -44,14 +44,6 @@ export default function FormPolicy() {
 										value={'Otilio Graterol'}
 										disabled
 									/>
-									<TextInput
-										type="text"
-										label={t('contacts:edit:policies:consult:form:comments')}
-										name="comments"
-										value={'test'}
-										disabled
-										multiple
-									/>
 									<SelectInput
 										label={t('contacts:edit:policies:consult:form:status')}
 										options={[]}
@@ -122,7 +114,15 @@ export default function FormPolicy() {
 										value={'Yamile Rayme'}
 										disabled
 									/>
-									<div className="bg-white rounded-lg p-4">
+									<TextInput
+										type="text"
+										label={t('contacts:edit:policies:consult:form:comments')}
+										name="comments"
+										value={'test'}
+										disabled
+										multiple
+									/>
+									<div className="bg-white rounded-lg p-4 mb-20">
 										<div className="grid grid-cols-2 gap-4 mt-4">
 											{files.map((file, index) => (
 												<div key={index} className="flex flex-col gap-2 items-center">

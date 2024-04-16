@@ -9,8 +9,6 @@ export default function PoliciesDetails( { id }) {
         colorTag="bg-green-primary"
         labelTag="policy"
         samePage={`/sales/crm/contacts/contact/${id}?show=true`}
-        previousModalPadding="sm:pl-14 pl-8"
-        mtTag="mt-10"
     >
         <Suspense
             fallback={

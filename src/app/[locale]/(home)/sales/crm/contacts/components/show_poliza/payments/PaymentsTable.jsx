@@ -31,12 +31,12 @@ const people = [
 	// More people...
 ];
 
-export default function PaymentsTable({ payments: data, base, noPolicy }) {
+export default function PaymentsTable({ payments: data, noPolicy, selectedPayments, setSelectedPayments }) {
 	const { t } = useTranslation();
 	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn({}, people);
 	const [ payments, setPayments ] = useState(people);
-	const [ selectedPayments, setSelectedPayments ] = useState([]);
 	const [ checked, setChecked ] = useState(false);
+	const [ indeterminate, setIndeterminate ] = useState(false);
 	const checkbox = useRef();
 
 	useEffect(
@@ -51,11 +51,17 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 				const isIndeterminate =
 					selectedPayments && selectedPayments.length > 0 && selectedPayments.length < payments.length;
 				setChecked(selectedPayments.length === payments.length);
+				setIndeterminate(isIndeterminate);
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
 		[ selectedPayments ]
 	);
+	function toggleAll() {
+		setSelectedPayments(checked || indeterminate ? [] : payments);
+		setChecked(!checked && !indeterminate);
+		setIndeterminate(false);
+	}
 
 	if (!payments || payments.length === 0) {
 		return <PolizasEmpty add />;
@@ -63,13 +69,22 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 
 	return (
 		<div className="h-full relative">
-			<div className="relative overflow-x-auto shadow-md rounded-xl">
-				<table className="min-w-full rounded-md bg-gray-100">
+			<div className="w-full overflow-x-auto shadow-md rounded-xl">
+				<table className="min-w-full rounded-md bg-gray-100 table-a">
 					<thead className="text-sm bg-white drop-shadow-sm uppercase">
 						<tr className="">
+							<th scope="col" className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl">
+								<input
+									type="checkbox"
+									className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+									ref={checkbox}
+									checked={checked}
+									onChange={toggleAll}
+								/>
+							</th>
 							<th
 								scope="col"
-								className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-s-xl"
+								className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer"
 								onClick={() => {
 									handleSorting('receipt');
 								}}
@@ -175,6 +190,28 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 								scope="col"
 								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
 								onClick={() => {
+									handleSorting('date-payment');
+								}}
+							>
+								<div className="group inline-flex items-center">
+									{t('contacts:edit:policies:payments:table:date-payment')}
+									<span
+										className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${fieldClicked.field ===
+											'date-payment' && fieldClicked.sortDirection === 'desc'
+											? 'transform rotate-180'
+											: ''}`}
+									>
+										<ChevronDownIcon
+											className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
+											aria-hidden="true"
+										/>
+									</span>
+								</div>
+							</th>
+							<th
+								scope="col"
+								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+								onClick={() => {
 									handleSorting('amount');
 								}}
 							>
@@ -195,8 +232,7 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 							</th>
 							<th
 								scope="col"
-								className={`px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer ${base >
-									0 && 'rounded-e-xl'}`}
+								className={`px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer`}
 								onClick={() => {
 									handleSorting('coin');
 								}}
@@ -241,52 +277,57 @@ export default function PaymentsTable({ payments: data, base, noPolicy }) {
 						</tr>
 					</thead>
 					<tbody className="bg-gray-100">
-						{payments.map((poliza, index) => (
+						{payments.map((payment, index) => (
 							<tr key={index}>
-								<td className="whitespace-nowrap py-4 text-sm font-semibold text-black cursor-pointer hover:text-primary flex gap-4 items-center justify-center">
-									{selectedPayments.includes(poliza) && (
+								<td className="relative px-7 sm:w-12 sm:px-6">
+									{selectedPayments.includes(payment) && (
 										<div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
 									)}
 									<input
 										type="checkbox"
-										className="h-4 w-4 rounded border-gray-300 text-primary focus:text-primary focus:ring-0"
-										value={poliza.id}
-										checked={selectedPayments.includes(poliza)}
+										className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary focus:ring-0"
+										value={payment.id}
+										checked={selectedPayments.includes(payment)}
 										onChange={(e) =>
 											setSelectedPayments(
 												e.target.checked
-													? [ ...selectedPayments, poliza ]
-													: selectedPayments.filter((p) => p !== poliza)
+													? [ ...selectedPayments, payment ]
+													: selectedPayments.filter((p) => p !== payment)
 											)}
 									/>
+								</td>
+								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center font-semibold cursor-pointer hover:text-primary">
 									<Link
-										href={`/sales/crm/contacts/contact/policy/payments/consult/${poliza.receipt}?show=true`}
+										href={`/sales/crm/contacts/contact/policy/payments/consult/${payment.receipt}?show=true`}
 									>
-										{poliza.receipt}
+										{payment.receipt}
 									</Link>
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{poliza.status}
+									{payment.status}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{poliza.method}
+									{payment.method}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{poliza.dateStart}
+									{payment.dateStart}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-									{poliza.dateEnd}
+									{payment.dateEnd}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-									{`$ ${poliza.amount}`}
+									{payment.dateEnd}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-									{poliza.coin}
+									{`$ ${payment.amount}`}
+								</td>
+								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
+									{payment.coin}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
 									<div className="flex gap-2 px-2 hover:text-primary">
 										<DocumentTextIcon className="h-4 w-4 text-primary" aria-hidden="true" />
-										{poliza.attach}
+										{payment.attach}
 									</div>
 								</td>
 							</tr>

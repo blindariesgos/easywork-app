@@ -10,8 +10,8 @@ export default async function RefundLayout({ params: { id }, children }) {
 	if (id)
 		return (
 			<div>
-				<ContactDetails id={id} contactInfo={null} />
-				<PoliciesDetails id={id} />
+				{/* <ContactDetails id={id} contactInfo={null} />
+				<PoliciesDetails id={id} /> */}
 				<RefundDetail id={id} />
 			</div>
 		);

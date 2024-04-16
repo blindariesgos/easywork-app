@@ -10,8 +10,8 @@ export default async function PaymentLayout({ params: { id }, children }) {
 	if (id)
 		return (
 			<div>
-				<ContactDetails id={id} contactInfo={null} />
-				<PoliciesDetails id={id} />
+				{/* <ContactDetails id={id} contactInfo={null} />
+				<PoliciesDetails id={id} /> */}
 				{/* <PolicyDetails opt={"opt"} id={id} /> */}
 				<PaymentDetail id={id} />
 			</div>

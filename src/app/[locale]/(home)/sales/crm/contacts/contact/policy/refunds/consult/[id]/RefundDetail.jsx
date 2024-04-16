@@ -16,8 +16,6 @@ export default function RefundDetail({ id }) {
 			labelTag={'refunds'}
 			subLabelTag={'consult'}
 			samePage={`/sales/crm/contacts/contact/policy/refunds/${id}?show=true`}
-			previousModalPadding="sm:pl-14 pl-10"
-			mtTag="mt-20"
 		>
 			<div className="w-full h-screen flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4 relative">
 				<div className="flex flex-col flex-1 text-black overflow-hidden p-4">

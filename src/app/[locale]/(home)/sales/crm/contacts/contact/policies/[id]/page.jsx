@@ -16,8 +16,8 @@ export default async function Page({ params: { id } }) {
 
 	return (
 		<div>
-      <ContactDetails contactInfo={null} id={id}/>
-      <PoliciesDetails id={id}/>
+			{/* <ContactDetails contactInfo={null} id={id} /> */}
+			<PoliciesDetails id={id} />
 		</div>
 	);
 }

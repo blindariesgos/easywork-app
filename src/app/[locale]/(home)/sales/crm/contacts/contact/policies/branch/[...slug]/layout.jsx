@@ -14,7 +14,7 @@ export default async function PoliciesLayout({ params: { slug }, children }) {
 	if (branch)
 		return (
 			<div>
-				<ContactDetails contactInfo={null} id={id} />
+				{/* <ContactDetails contactInfo={null} id={id} /> */}
 				<BranchDetails id={id} branch={branch}/>
 			</div>
 		);

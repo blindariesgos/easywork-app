@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useOrderByColumn } from '@/hooks/useOrderByColumn';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import Button from '@/components/form/Button';
 import PolizasEmpty from '../../show_contact/tab_polizas/PolizasEmpty';
 
 const people = [
@@ -24,14 +22,13 @@ const people = [
 	// More people...
 ];
 
-export default function RefundTable({ refunds: data, base, noPolicy }) {
+export default function RefundTable({ refunds: data, noPolicy, selectedRefunds, setSelectedRefunds }) {
 	const { t } = useTranslation();
 	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn({}, people);
 	const [ refunds, setRefunds ] = useState(people);
-	const [ selectedRefunds, setSelectedRefunds ] = useState([]);
 	const [ checked, setChecked ] = useState(false);
+	const [ indeterminate, setIndeterminate ] = useState(false);
 	const checkbox = useRef();
-	const pathname = usePathname();
 
 	useEffect(
 		() => {
@@ -46,11 +43,18 @@ export default function RefundTable({ refunds: data, base, noPolicy }) {
 				const isIndeterminate =
 					selectedRefunds && selectedRefunds.length > 0 && selectedRefunds.length < refunds.length;
 				setChecked(selectedRefunds.length === refunds.length);
+				setIndeterminate(isIndeterminate);
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
 		[ selectedRefunds ]
 	);
+	
+	function toggleAll() {
+		setSelectedRefunds(checked || indeterminate ? [] : refunds);
+		setChecked(!checked && !indeterminate);
+		setIndeterminate(false);
+	}
 
 	if (!refunds || refunds.length === 0) {
 		return <PolizasEmpty add />;
@@ -58,27 +62,22 @@ export default function RefundTable({ refunds: data, base, noPolicy }) {
 
 	return (
 		<div className="h-full relative">
-			<div className="flex justify-end">
-				{selectedRefunds &&
-				selectedRefunds.length > 0 && (
-					<div className="flex h-12 items-center">
-						<Button
-							label={t('common:buttons:delete')}
-							type="button"
-							className="px-2 py-2"
-							buttonStyle="primary"
-							// onclick={() => deleteContact(selectedRefunds)}
-						/>
-					</div>
-				)}
-			</div>
 			<div className="relative overflow-x-auto shadow-md rounded-xl">
-				<table className="min-w-full rounded-md bg-gray-100">
+				<table className="min-w-full rounded-md bg-gray-100 table-auto">
 					<thead className="text-sm bg-white drop-shadow-sm uppercase">
 						<tr className="">
+							<th scope="col" className="relative w-10 rounded-s-xl">
+								<input
+									type="checkbox"
+									className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+									ref={checkbox}
+									checked={checked}
+									onChange={toggleAll}
+								/>
+							</th>
 							<th
 								scope="col"
-								className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-s-xl"
+								className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer"
 								onClick={() => {
 									handleSorting('refund');
 								}}
@@ -116,7 +115,7 @@ export default function RefundTable({ refunds: data, base, noPolicy }) {
 							</th>
 							<th
 								scope="col"
-								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+								className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
 								onClick={() => {
 									handleSorting('date');
 								}}
@@ -139,35 +138,37 @@ export default function RefundTable({ refunds: data, base, noPolicy }) {
 						</tr>
 					</thead>
 					<tbody className="bg-gray-100">
-						{refunds.map((poliza, index) => (
+						{refunds.map((refund, index) => (
 							<tr key={index}>
-								<td className="whitespace-nowrap py-4 text-sm font-semibold text-black cursor-pointer hover:text-primary flex gap-4 items-center justify-center">
-									{selectedRefunds.includes(poliza) && (
+								<td className="relative px-7 sm:w-12 sm:px-6">
+									{selectedRefunds.includes(refund) && (
 										<div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
 									)}
 									<input
 										type="checkbox"
-										className="h-4 w-4 rounded border-gray-300 text-primary focus:text-primary focus:ring-0"
-										value={poliza.id}
-										checked={selectedRefunds.includes(poliza)}
+										className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary focus:ring-0"
+										value={refund.id}
+										checked={selectedRefunds.includes(refund)}
 										onChange={(e) =>
 											setSelectedRefunds(
 												e.target.checked
-													? [ ...selectedRefunds, poliza ]
-													: selectedRefunds.filter((p) => p !== poliza)
+													? [ ...selectedRefunds, refund ]
+													: selectedRefunds.filter((p) => p !== refund)
 											)}
 									/>
+								</td>
+								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center font-semibold cursor-pointer hover:text-primary">	
 									<Link
-										href={`/sales/crm/contacts/contact/policy/refunds/consult/${poliza.claim}?show=true`}
+										href={`/sales/crm/contacts/contact/policy/refunds/consult/${refund.claim}?show=true`}
 									>
-										{poliza.claim}
+										{refund.claim}
 									</Link>
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{poliza.status}
+									{refund.status}
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-									{poliza.date}
+									{refund.date}
 								</td>
 							</tr>
 						))}

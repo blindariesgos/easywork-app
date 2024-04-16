@@ -10,7 +10,7 @@ const instance = (contentType = "application/json") => {
       "Content-Type": contentType,
       Authorization:
         "Bearer " +
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W3siaWQiOiIzZmY3ODZkNi04Y2M5LTRkMjktODQxMC0xNzE5N2QyNWVmMGYiLCJuYW1lIjoidXNlciJ9XSwiaXNUd29GYWN0b3JFbmFibGVkIjpmYWxzZSwiaWF0IjoxNzEzMjA1MTEzLCJleHAiOjE3MTMyMDg3MTMsInN1YiI6IjM3ZTNiOTQ3LWI1NmItNDNiMy1hNjE3LTMwODk3ZjRmNTE5MyJ9.G1Qi5PLfCwQulkVdtWcDhgYQ9Ix8VjExbUHPxXT3o3Y",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W3siaWQiOiIzZmY3ODZkNi04Y2M5LTRkMjktODQxMC0xNzE5N2QyNWVmMGYiLCJuYW1lIjoidXNlciJ9XSwiaXNUd29GYWN0b3JFbmFibGVkIjpmYWxzZSwiaWF0IjoxNzEzMzA1NDM0LCJleHAiOjE3MTMzMDkwMzQsInN1YiI6IjM3ZTNiOTQ3LWI1NmItNDNiMy1hNjE3LTMwODk3ZjRmNTE5MyJ9.ONaB6Q4EIGp8jX0gnrBUJJ6mnRQ48ZLhnFs6LHs83Xc",
     },
   });
   // Data Response Interceptor

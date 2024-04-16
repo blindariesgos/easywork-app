@@ -7,7 +7,7 @@ import SelectInput from '@/components/form/SelectInput';
 import { DocumentTextIcon } from '@heroicons/react/20/solid';
 import ActivityPanel from '../../ActivityPanel';
 
-export default function FormRefund() {
+export default function FormSchedule() {
 	const { t } = useTranslation();
 	const [ loading, setLoading ] = useState(false);
 	const files = [
@@ -39,83 +39,84 @@ export default function FormRefund() {
 								<div className="flex flex-col gap-y-3 pl-2 pr-4 w-full">
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:responsible')}
+										label={t('contacts:edit:policies:schedules:consult:responsible')}
 										name="responsible"
 										value={'Otilio Graterol'}
 										disabled
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:date-start')}
+										label={t('contacts:edit:policies:schedules:consult:date-start')}
 										name="dateStart"
 										value={'10/10/2024'}
 										disabled
 									/>
+									<SelectInput
+										label={t('contacts:edit:policies:schedules:consult:schedule')}
+										options={[]}
+										value={'schedule'}
+										name="schedule"
+										disabled
+									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:number')}
+										label={t('contacts:edit:policies:schedules:consult:number')}
 										name="number"
 										value={'2018HI000691916'}
 										disabled
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:number-claim')}
+										label={t('contacts:edit:policies:schedules:consult:number-claim')}
 										name="number-claim"
 										value={'0118180256'}
 										disabled
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:claim')}
+										label={t('contacts:edit:policies:schedules:consult:claim')}
 										name="claim"
 										value={'001122'}
 										disabled
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:folio-number')}
+										label={t('contacts:edit:policies:schedules:consult:folio-number')}
 										name="number-folio"
 										value={'SIGREE20218250056229'}
 										disabled
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:diagnosis')}
+										label={t('contacts:edit:policies:schedules:consult:diagnosis')}
 										name="diagnosis"
 										value={'Diabetis tipo II'}
 										disabled
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:comments')}
+										label={t('contacts:edit:policies:schedules:consult:comments')}
 										name="comments"
 										value={'loremlorem pmflrmv'}
 										disabled
 										multiple
 									/>
 									<div>
-										{[ 0, 1 ].map((num, index) => (
-											<div key={index}>
-												<div className="grid sm:grid-cols-3 grid-cols-2 items-center gap-4 mt-4 bg-white rounded-lg px-4 sm:py-10 py-4 justify-center">
-													{files.map((file, index) => (
-														<div key={index} className="flex flex-col gap-2 items-center">
-															<p className="font-medium text-sm">{file.title}</p>
-															<div>
-																<DocumentTextIcon className="h-10 w-10 text-primary" />
-															</div>
-															<p className="font-regular text-xs text-gray-200">
-																{file.name}
-															</p>
-														</div>
-													))}
+										<div className="grid sm:grid-cols-3 grid-cols-2 items-center gap-4 mt-4 bg-white rounded-lg px-4 sm:py-10 py-4 justify-center">
+											{files.map((file, index) => (
+												<div key={index} className="flex flex-col gap-2 items-center">
+													<p className="font-medium text-sm">{file.title}</p>
+													<div>
+														<DocumentTextIcon className="h-10 w-10 text-primary" />
+													</div>
+													<p className="font-regular text-xs text-gray-200">{file.name}</p>
 												</div>
-											</div>
-										))}
+											))}
+										</div>
 									</div>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:refunds:consult:folio-number1')}
+										label={t('contacts:edit:policies:schedules:consult:folio-number1')}
 										name="number-folio1"
 										value={'12311'}
 										disabled
@@ -131,13 +132,6 @@ export default function FormRefund() {
 											</div>
 										))}
 									</div>
-									<SelectInput
-										label={t('contacts:edit:policies:refunds:consult:refund')}
-										options={[]}
-										value={'refund'}
-										name="Test"
-										disabled
-									/>
 								</div>
 							</div>
 						</div>

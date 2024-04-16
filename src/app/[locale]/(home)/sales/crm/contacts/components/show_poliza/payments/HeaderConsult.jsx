@@ -13,7 +13,7 @@ export default function HeaderConsult({ setAdd }) {
 			</div>
 			<div>
 				<Button
-					label={t('contacts:edit:policies:payments:consult:add')}
+					label={t('contacts:edit:policies:add-policy')}
 					buttonStyle="primary"
 					className="px-3 py-2.5"
 					icon={<PlusIcon className="w-5 h-5 text-white" />}

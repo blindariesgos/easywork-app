@@ -43,7 +43,7 @@ export default function Page() {
   const {fieldClicked, handleSorting,orderItems } = useOrderByColumn(sortFieltByColumn, AppContacts?.items);
 
   useEffect(() => {
-    setContacts({ items: orderItems, meta: AppContacts?.meta});
+    if (orderItems.length > 0) setContacts({ items: orderItems, meta: AppContacts?.meta});
   }, [orderItems])
   
 
@@ -135,7 +135,7 @@ export default function Page() {
                 </button> */}
               </div>
             )}
-            <table className="min-w-full divide-y divide-gray-300">
+            <table className="min-w-full divide-y divide-gray-300 table-auto">
               <thead className="bg-white mb-2">
                 <tr>
                   <th scope="col" className="relative px-7 sm:w-12 sm:px-6">

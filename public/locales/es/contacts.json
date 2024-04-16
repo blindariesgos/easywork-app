@@ -118,6 +118,7 @@
       "select": "Seleccionar archivo PDF",
       "insurance": "Aseguradora",
       "policy-type": "Tipo de Póliza",
+      "add-policy": "Agregar Nueva Poliza",
       "consult": {
         "name": "Consulta",
         "date": "Fecha Emisión de póliza",
@@ -154,6 +155,7 @@
         }
       },
       "payments": {
+        "upload": "Subir Pago / Recibo desde archivo PDF",
         "table": {
           "receipt": "# De Recibo",
           "status": "Estado",
@@ -162,11 +164,12 @@
           "expiration": "Vencimiento",
           "amount": "Importe",
           "coin": "Moneda",
-          "attach": "Adjunto"
+          "attach": "Adjunto",
+          "date-payment": "Fecha de Pago"
         },
         "consult": {
           "name": "Consulta",
-          "add": "Agregar",
+          "add": "Agregar Soporte de pago",
           "responsible": "Responsable",
           "status": "Estado",
           "payment-method": "Método de Pago",
@@ -178,8 +181,10 @@
         }
       },
       "claims": {
+        "upload": "Subir Siniestro desde archivo PDF",
         "table": {
-          "claim": "# Siniestro",
+          "claim": "# Sigre",
+          "case": "# Caso",
           "status": "Estado",
           "date": "Fecha"
         },
@@ -197,6 +202,7 @@
         }
       },
       "refunds": {
+        "upload": "Subir Reembolso desde archivo PDF",
         "table": {
           "refund": "# Reembolso",
           "status": "Estado",
@@ -227,17 +233,47 @@
       "versions": {
         "table": {
           "attach": "Adjunto",
-          "version" : "Versión",
-          "date-init" : "Fecha inicial",
-          "date-end" : "Fecha final",
-          "renewal" : "Renovación"
+          "version": "Versión",
+          "date-init": "Fecha inicial",
+          "date-end": "Fecha final",
+          "renewal": "Renovación"
         }
       },
       "commissions": {
         "table": {
-            "receipt" : "Recibo",
-            "date-commision" : "Fecha pago comisión",
-            "amount" : "Monto"
+          "receipt": "Recibo",
+          "date-commision": "Fecha pago comisión",
+          "amount": "Monto",
+          "status": "Estado"
+        }
+      },
+      "quotes": {
+        "table": {
+          "attach": "Adjunto",
+          "date": "Fecha",
+          "amount": "Monto",
+          "coin": "Moneda"
+        }
+      },
+      "schedules": {
+        "upload": "Subir Programación desde archivo PDF",
+        "table": {
+          "schedules": "# Programaciones",
+          "schedule": "# Programación",
+          "date": "Fecha",
+          "status": "Estado"
+        },
+        "consult": {
+          "responsible": "Responsable",
+          "comments": "Comentarios",
+          "date-start": "Fecha de inicio",
+          "schedule":"Programación",
+          "number": "Número de Reclamación",
+          "number-claim": "Número de Siniestro",
+          "claim": "Número de Siniestro - CLAIM",
+          "folio-number": "Número de Folio",
+          "diagnosis": "Diagnóstico / Padecimiento",
+          "folio-number1": "Número de folio - Programaciones"
         }
       },
       "table": {

@@ -10,8 +10,8 @@ export default async function ClaimLayout({ params: { id }, children }) {
 	if (id)
 		return (
 			<div>
-				<ContactDetails id={id} contactInfo={null} />
-				<PoliciesDetails id={id} />
+				{/* <ContactDetails id={id} contactInfo={null} />
+				<PoliciesDetails id={id} /> */}
 				<ClaimDetail id={id} />
 			</div>
 		);

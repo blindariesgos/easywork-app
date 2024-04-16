@@ -46,14 +46,6 @@ export default function FormClaim() {
 									/>
 									<TextInput
 										type="text"
-										label={t('contacts:edit:policies:claims:consult:comments')}
-										name="comments"
-										value={'loremlorem pmflrmv'}
-										disabled
-										multiple
-									/>
-									<TextInput
-										type="text"
 										label={t('contacts:edit:policies:claims:consult:date-start')}
 										name="dateStart"
 										value={'10/10/2024'}
@@ -70,6 +62,13 @@ export default function FormClaim() {
 										type="text"
 										label={t('contacts:edit:policies:claims:consult:number-claim')}
 										name="number-claim"
+										value={'0118180256'}
+										disabled
+									/>
+									<TextInput
+										type="text"
+										label={t('contacts:edit:policies:claims:consult:claim')}
+										name="claim"
 										value={'001122'}
 										disabled
 									/>
@@ -86,6 +85,14 @@ export default function FormClaim() {
 										name="diagnosis"
 										value={'Diabetis tipo II'}
 										disabled
+									/>
+									<TextInput
+										type="text"
+										label={t('contacts:edit:policies:claims:consult:comments')}
+										name="comments"
+										value={'loremlorem pmflrmv'}
+										disabled
+										multiple
 									/>
 									<div>
 										{[ 0, 1, 2, 3, 4, 5 ].map((num, index) => (

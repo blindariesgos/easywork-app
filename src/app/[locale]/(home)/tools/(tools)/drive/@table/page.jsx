@@ -96,7 +96,7 @@ export default function Page() {
                   </button>
                 </div>
               )}
-              <table className="min-w-full table-fixed divide-y divide-gray-300">
+              <table className="min-w-full divide-y divide-gray-300 table-auto">
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="relative px-7 sm:w-12 sm:px-6">

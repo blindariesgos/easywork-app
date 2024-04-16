@@ -53,7 +53,7 @@ function SelectInput({
               {...register && register(name)}
               className={`z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md drop-shadow-sm placeholder:text-xs text-sm ${border ? "border border-gray-200 focus:ring-gray-200" : "border-none focus:ring-0 "}`}
               displayValue={(person) => person?.name}   
-              value={value || ''}           
+              value={value}           
               onChange={(event) => {
                   register && register(name).onChange(event);
                   setQuery && setQuery(event.target.value);

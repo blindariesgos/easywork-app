@@ -21,9 +21,9 @@ export default async function PolicyIdLayout({ params: { slug }, children }) {
 
 	if (opt)
 		return (
-			<div>
-				<ContactDetails id={id} contactInfo={null}/>
-				<PoliciesDetails id={id}/>
+			<div className='w-full'>
+				{/* <ContactDetails id={id} contactInfo={null}/>
+				<PoliciesDetails id={id}/> */}
 				<PolicyDetails opt={opt} id={id} />
 			</div>
 		);

@@ -10,7 +10,7 @@ import useCrmContext from "@/context/crm";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function ContactLayout({ children, table, modal }) {
+export default function ContactLayout({ children, table }) {
   const { t } = useTranslation();
   const { contacts } = useCrmContext();
   const searchParams = useSearchParams();
@@ -71,7 +71,7 @@ export default function ContactLayout({ children, table, modal }) {
                   fill="currentFill"
                 />
               </svg>
-              <span className="sr-only">{t('common:loading')}d</span>
+              <span className="sr-only">{t('common:loading')}</span>
             </div>
           }
         >

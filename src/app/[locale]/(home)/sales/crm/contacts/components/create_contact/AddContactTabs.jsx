@@ -6,8 +6,8 @@ import { ArrowDownTrayIcon, Cog8ToothIcon, DocumentTextIcon, PlusIcon } from "@h
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import IconDropdown from "../SettingsButton";
 import Link from "next/link"
+import IconDropdown from "@/components/SettingsButton";
 
 export default function AddContactTabs({ id }) {
   const { t } = useTranslation();

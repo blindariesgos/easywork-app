@@ -176,12 +176,13 @@ export default function Page() {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                    onClick={() => { handleSorting("responsible"); }}
                   >
                     <div className="flex justify-center items-center gap-2">
                       {t('contacts:table:responsible')}
                       <div>
-                        <ChevronDownIcon className="h-6 w-6 text-primary"/>
+                        <ChevronDownIcon className={`h-6 w-6 text-primary ${fieldClicked.field === "responsible" && fieldClicked.sortDirection === "desc" ? "transform rotate-180" : ""}`}/>
                       </div>
                     </div>
                   </th>

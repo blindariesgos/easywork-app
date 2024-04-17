@@ -73,6 +73,9 @@ export default function SlideOver({
 				case 'schedules':
 					setLabel(t('contacts:edit:policies:consult:schedules'));
 					break;
+				case 'lead':
+					setLabel(t('leads:header:lead'));
+					break;
 			
 
 				default:

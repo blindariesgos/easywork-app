@@ -18,15 +18,14 @@ function SelectInput({
   value
 }) {
 
-  const [selected, setSelected] = useState(selectedOption);
+  const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");  
 
   useEffect(()=>{
     if (selectedOption) {
       setSelected(selectedOption)
-    }
-  
-  },  [selectedOption])
+    }  
+  },  [])
 
   useEffect(() => {
     if (selected) setValue && setValue(name, object ? selected : selected.name);
@@ -39,7 +38,6 @@ function SelectInput({
           return element.name.toLowerCase().includes(query.toLowerCase());
         });
   
-  // console.log("field", selected, register(name))
   
 
   return (

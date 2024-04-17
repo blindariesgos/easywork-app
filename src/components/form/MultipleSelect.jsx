@@ -40,7 +40,7 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
                     <span className="ml-2 text-gray-60 flex gap-1 flex-wrap">
                         {getValues(name)?.length > 0
                             ? getValues(name).map((res) => (
-                                    <div key={res.id} className="bg-easy-1000 p-1 rounded-md text-white flex gap-2 items-center">
+                                    <div key={res.id} className="bg-blue-100 p-1 rounded-md text-white flex gap-2 items-center">
                                         {res.name}
                                         <button
                                             type="button"
@@ -58,13 +58,13 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
                     </span>
                 </button>
                 {isOpen && (
-                    <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50">
-                        <div className="py-1 grid grid-cols-2 gap-2" aria-labelledby="options-menu">
+                    <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+                        <div className="py-1 flex flex-col gap-2 px-2" aria-labelledby="options-menu">
                             {options.map((option) => (
                                 <div
                                     key={option.id}
                                     className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                                        getValues(name).some((res) => res.id === option.id) ? 'bg-easy-1100' : ''
+                                        getValues(name).some((res) => res.id === option.id) ? 'bg-blue-100' : ''
                                     }`}
                                     onClick={() => handleSelect(option)}
                             >

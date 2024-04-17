@@ -8,10 +8,10 @@ import useCrmContext from "@/context/crm";
 import { useTranslation } from "react-i18next";
 import { useCommon, usePolicies } from "@/hooks/useCommon";
 import Button from "@/components/form/Button";
-import IconDropdown from "../../SettingsButton";
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from "next/navigation";
 import DialogUploadFile from "./DialogUploadFile";
+import IconDropdown from "@/components/SettingsButton";
 
 const initialState = {
   filePdf: "",
@@ -77,6 +77,7 @@ export default function PolizasHeader({ contactID, selected }) {
             options={settings}
             width="w-[340px]"
             colorIcon="text-green-100"
+            excel={t('leads:header:excel:export')}
           />
         </div>
         <DialogUploadFile isOpen={isOpen} setIsOpen={setIsOpen} contactID={contactID}/>

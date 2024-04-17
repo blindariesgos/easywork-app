@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import IconDropdown from '../SettingsButton';
 import { Cog8ToothIcon } from '@heroicons/react/20/solid';
 import { useCommon } from '@/hooks/useCommon';
 import { useTranslation } from 'react-i18next';
+import IconDropdown from '@/components/SettingsButton';
 
 export default function HeaderDataPoliza({ selectedRows }) {
     const { t } = useTranslation();

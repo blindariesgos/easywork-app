@@ -31,8 +31,8 @@ const timeline = [
 
 export default function ActivityPanel({ editing }) {
 	return (
-		<div className="px-4 relative bg-gray-100 rounded-tr-lg w-full md:w-3/5 ">
-			{editing && <div className="inset-0 bg-white/75 w-full h-full z-10 absolute rounded-tr-lg" />}
+		<div className="px-4 relative bg-gray-100 rounded-tr-lg w-full md:w-3/5 h-full">
+			{editing && <div className="inset-0 bg-white/75 w-full z-10 absolute rounded-tr-lg h-full" />}
 			<div className="flow-root rounded-lg">
 				<ul role="list" className="p-3">
 					{timeline.slice(0, editing ? 1 : timeline.length).map((event, eventIdx) => (

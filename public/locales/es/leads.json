@@ -1,0 +1,115 @@
+{
+    "header": {
+        "sales": "Ventas",
+        "activities": "Actividades",
+        "documents": "Documentos",
+        "reports": "Reportes",
+        "lead": "Prospecto",
+        "create": "Crear",
+        "search": "Búsqueda",
+        "delete": {
+            "remove": "Eliminar definitivamente",
+            "trash": "Enviar a papelera de reciclaje"
+        },
+        "excel": {
+            "alone": "Solo los prospectos seleccionados",
+            "export": "Exportar a microsoft Excel",
+            "all": "Todos los campos de los prospectos"
+        }
+    },
+    "filters": {
+        "name": "Filtros",
+        "proccess" : "Prospectos en proceso",
+        "closed" : "Prospectos cerrados",
+        "my-leads" : "Mis Prospectos",
+        "save" : "Guardar filtro",
+        "origin" : "Origen",
+        "stages" : {
+            "name": "Estados",
+            "initial-contact" : "Contacto Inicial",
+            "submit-proposal" : "Presentar propuesta",
+            "revision-proposal" : "Propuesta en revisión",
+            "process-issuance" : "Trámite para emisión",
+            "policy-issuance" : "Emisión de Poliza"
+        },
+        "created" : "Creado el",
+        "status" : "Estado",
+        "add-field" : "Agregar campo",
+        "restore-fields" : "Restaurar campos predeterminados",
+        "search" : "Buscar",
+        "restart" : "Reiniciar",
+        "completed": "Completado",
+        "not-completed" : "No completado",
+        "fullname": "Nombre y Apellido",
+        "contact-type": "Tipo de contacto",
+        "rfc": "RFC"
+    },
+    "table": {
+        "lead" : "Prospecto",
+        "stages" : "Etapas",
+        "created" : "Creado el",
+        "origin" : "Origen",
+        "activities" : "Actividades"
+    },
+    "lead": {
+        "new" : "Nuevo cliente",
+        "lead": "Prospecto",
+        "lead-data": "Datos del prospecto",
+        "fields" :{
+            "placeholder-address": "Escriba la dirección del cliente.",
+            "placeholder-name": "Ej.: Luis Oropeza",
+            "fullname" : "Nombres y Apellidos",
+            "charge" : "Cargo",
+            "phone-number" : "Teléfono",
+            "email" : "Correo electrónico",
+            "rfc" : "RFC",
+            "address" : "Dirección",
+            "contact-type" : "Tipo de contacto",
+            "responsible" : "Persona responsable",
+            "origin" : "Origen",
+            "amount" : "Monto de la cotización",
+            "ine": "Identificaciones INE, RFC o pasaporte",
+            "quote" : "Cotización",
+            "client-profile" : "Perfil del cliente"
+        },
+        "stages" : {
+            "initial-contact" : "Contacto Inicial",
+            "submit-proposal" : "Presentar propuesta",
+            "revision-proposal" : "Propuesta en revisión",
+            "process-issuance" : "Trámite para emisión",
+            "policy-issuance" : "Emisión de Poliza",
+            "positive-stage" : "Etapa positiva",
+            "negative-stage": "Etapa negativa",
+            "modal": {
+                "select" : "Seleccione el resultado del prospecto",
+                "policy" : "Generar Póliza",
+                "discard" : "Póliza Descartada",
+                "positive": {
+                    "policyContact" : "Póliza + Contacto + Compañia",
+                    "contact" : "Póliza + Contacto",
+                    "company" : "Póliza + Compañia",
+                    "policy" : "Póliza"
+
+                },
+                "negative": {
+                    "cancel" : "Cancelada y no reagendada",
+                    "canceled" : "Cancelada",
+                    "person" : "Lo verá con otra persona (familiar)",
+                    "documents" : "Documentos incompletos",
+                    "noApproved" : "No Aprobado por aseguradora",
+                    "noResources" : "No tiene recursos",
+                    "noInterested" : "No le interesó",
+                    "noReschedule" : "No reagendo cita 1",
+                    "noPresent" : "No se presentó cita 1",
+                    "noReschedule1" : "No reagendo cita 2",
+                    "noPresent1" : "No se presentó cita 2",
+                    "noAnswer" : "No contesta",
+                    "otherReason" : "Otro mtivo no específico",
+                    "otherDate" : "Pidió retomar en otra fecha",
+                    "policyIssued": "Póliza emitida - anulada aseguradora",
+                    "cost": "Precio"
+                }
+            }
+        }
+    }
+}

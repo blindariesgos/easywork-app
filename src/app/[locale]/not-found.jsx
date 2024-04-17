@@ -3,8 +3,6 @@ import { headers } from 'next/headers';
 
 export default async function NotFound() {
   const headersList = headers();
-  const domain = headersList.get('host');
-//   const data = await getSiteData(domain);
 
   return (
     <div className='fixed bg-gray-400 top-0 left-0 z-50'>

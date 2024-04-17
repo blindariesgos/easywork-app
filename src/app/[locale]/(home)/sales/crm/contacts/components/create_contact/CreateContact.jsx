@@ -4,7 +4,6 @@ import { DocumentTextIcon, PhotoIcon, XCircleIcon } from '@heroicons/react/20/so
 import { PencilIcon } from '@heroicons/react/24/outline';
 import React, { useCallback, useState } from 'react';
 import AddContactTabs from './AddContactTabs';
-import ProfileImageInput from './ProfileImageInput';
 import { toast } from 'react-toastify';
 import { contactDetailTabs, contactTypes, responsible } from '@/lib/common';
 import { useTranslation } from 'react-i18next';
@@ -15,12 +14,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import InputPhone from '@/components/form/InputPhone';
 import SelectInput from '@/components/form/SelectInput';
-import SelectDropdown from './SelectDropdown';
 import InputDate from '@/components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 import ActivityPanel from '../ActivityPanel';
 import { getApiError } from '@/utils/getApiErrors';
 import { createContact } from '@/lib/apis';
+import SelectDropdown from '@/components/form/SelectDropdown';
+import { DocumentSelector } from '@/components/DocumentSelector';
+import ProfileImageInput from '@/components/ProfileImageInput';
+import { useRouter } from 'next/navigation';
 
 const contactSources = [
 	{ id: 1, name: 'Correo electrónico' },
@@ -47,6 +49,7 @@ export default function CreateContact({ edit, id }) {
 	const [ contactSource, setContactSource ] = useState(null);
 	const [ contactResponsible, setContactResponsible ] = useState(null);
 	const [ files, setFiles ] = useState([]);
+    const router = useRouter();
 
 	const [ selectedProfileImage, setSelectedProfileImage ] = useState(null);
 	const [ loading, setLoading ] = useState(false);
@@ -242,7 +245,14 @@ export default function CreateContact({ edit, id }) {
 					<div className="bg-transparent py-6 mx-4">
 						<div className="flex items-start flex-col justify-between space-y-3 relative">
 							{!id && <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />}
-							<h1 className="text-xl sm:pl-6 pl-2">{edit ? edit?.fullName : t('contacts:create:client')}</h1>
+							<div className='flex gap-2 items-center'>
+								<h1 className="text-xl sm:pl-6 pl-2">
+									{edit ? edit.fullName : t('leads:create:client')}
+								</h1>
+								<div>
+									<PencilIcon className='h-4 w-4 text-gray-200'/>
+								</div>
+							</div>
 							<AddContactTabs id={id} />
 						</div>
 					</div>
@@ -412,8 +422,7 @@ export default function CreateContact({ edit, id }) {
 					{/* {contactDetailTab === contactDetailTabs[1] && <ContactPoliza contactID={currentContactID} />} */}
 
 					{/* Botones de acción */}
-					{contactDetailTab === contactDetailTabs[0] &&
-					openButtons && (
+					{openButtons || !edit && (
 						<div className="flex justify-center px-4 py-4 gap-4 sticky bottom-0 bg-white">
 							<Button
 								type="submit"
@@ -428,7 +437,7 @@ export default function CreateContact({ edit, id }) {
 								label={t('common:buttons:cancel')}
 								disabled={loading}
 								buttonStyle="secondary"
-								onClick={() => setOpenModal(false)}
+								onclick={() => router.back()}
 								className="px-3 py-2"
 							/>
 						</div>
@@ -439,75 +448,6 @@ export default function CreateContact({ edit, id }) {
 	);
 }
 
-function DocumentSelector({ onChange, files, disabled, setFiles, ...props }) {
-	const { t } = useTranslation();
 
-	const handleDrop = (event) => {
-		event.preventDefault();
-		onChange(event, true);
-	};
-
-	const deleteDocument = (indexToDelete) => {
-		const documents = files.filter((item, index) => index !== indexToDelete) ;
-		setFiles(documents);
-	}
-
-	return (
-		<div className="col-span-full">
-			<label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-				{t('contacts:create:passport')}
-			</label>
-			<div
-				className="mt-2 rounded-lg border border-dashed border-gray-900/25 py-6 px-2 relative w-full"
-				onDrop={handleDrop}
-				onDragOver={(event) => event.preventDefault()}
-			>
-			{disabled && <div className="inset-0 bg-white/75 w-full h-full z-10 absolute rounded-tr-lg" />}
-				<div className="grid grid-cols-3 gap-x-2">
-					{files.length > 0 &&
-						files.map((file, index) => (
-							<div key={index} className="flex flex-col items-center">
-								<div className='flex'>
-									<DocumentTextIcon className="h-10 w-10 text-primary" />
-									<div onClick={() => deleteDocument(index)} className='cursor-pointer'>										
-										<XCircleIcon className='h-3 w-3 text-primary'/>
-									</div>
-								</div>
-								<p className="text-[10px]">{file.name}</p>
-							</div>
-						))}
-				</div>
-				{files.length === 0 && (
-					<div className="">
-						<PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-					</div>
-				)}
-				<div className="text-center">
-					<div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
-						<label
-							htmlFor="file-upload"
-							className="relative cursor-pointer rounded-md bg-zinc-100 font-semibold text-primary focus-within:outline-none  focus-within:ring-primary  hover:text-indigo-600 outline-none focus:ring-0 focus-within:ring-0"
-						>
-							<span>{t('contacts:create:upload-file')}</span>
-							<input
-								type="file"
-								accept="image/*,application/pdf"
-								onChange={(event) => onChange(event)}
-								id="file-upload"
-								className="sr-only outline-none focus:ring-0"
-								multiple
-								disabled={disabled}
-								{...props}
-							/>
-						</label>
-						<p className="pl-1">{t('contacts:create:drap-drop')}</p>
-					</div>
-					<p className="text-xs leading-5 text-gray-600">{t('contacts:create:png')}</p>
-				</div>
-			</div>
-			{files.length === 0 && <p className="mt-1 text-xs text-red-600">{t('common:validations:file')}</p>}
-		</div>
-	);
-}
 
 

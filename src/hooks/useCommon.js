@@ -16,6 +16,7 @@ import {
 import {
     useRouter
 } from "next/navigation";
+import { useState } from "react";
 
 export const useSidebar = () => {
     const {
@@ -65,7 +66,7 @@ export const useSidebar = () => {
                         },
                         {
                             name: t("common:menu:sales:crm:prospects"),
-                            href: "/sales/crm/leads",
+                            href: "/sales/crm/leads?page=1",
                             image: '/img/crm/prospecto.png'
                         },
                     ],
@@ -337,7 +338,7 @@ export const useCommon = () => {
         }
     ];
 
-    const trash = [{
+    const trashContact = [{
             value: 0,
             name: t('contacts:header:delete:remove'),
             icon: XMarkIcon,
@@ -347,6 +348,20 @@ export const useCommon = () => {
             value: 1,
             icon: TrashIcon,
             name: t('contacts:header:delete:trash'),
+            onclick: () => {}
+        }
+    ];
+
+    const trashLead = [{
+            value: 0,
+            name: t('leads:header:delete:remove'),
+            icon: XMarkIcon,
+            onclick: () => {}
+        },
+        {
+            value: 1,
+            icon: TrashIcon,
+            name: t('leads:header:delete:trash'),
             onclick: () => {}
         }
     ];
@@ -428,18 +443,32 @@ export const useCommon = () => {
     ];
 
     const settingsPolicy = [{
-        value: 0,
-        name: t('contacts:edit:policies:consult:settings:download'),
-        icon: ArrowDownTrayIcon,
-        onclick: () => {}
-    },
-    {
-        value: 1,
-        icon: DocumentTextIcon,
-        name: t('contacts:edit:policies:consult:settings:print'),
-        onclick: () => {}
-    }
-];
+            value: 0,
+            name: t('contacts:edit:policies:consult:settings:download'),
+            icon: ArrowDownTrayIcon,
+            onclick: () => {}
+        },
+        {
+            value: 1,
+            icon: DocumentTextIcon,
+            name: t('contacts:edit:policies:consult:settings:print'),
+            onclick: () => {}
+        }
+    ];
+
+    const settingsLead = [{
+            value: 0,
+            name: t('leads:header:excel:alone'),
+            icon: RiFileExcel2Fill,
+            onclick: () => {}
+        },
+        {
+            value: 0,
+            name: t('leads:header:excel:all'),
+            icon: RiFileExcel2Fill,
+            onclick: () => {}
+        },
+    ]
 
     const months = [
         t('common:months:january'),
@@ -456,14 +485,50 @@ export const useCommon = () => {
         t('common:months:december')
     ];
 
+    const stagesLead = [{
+            id: 1,
+            name: t('leads:filters:stages:initial-contact')
+        },
+        {
+            id: 2,
+            name: t('leads:filters:stages:submit-proposal')
+        },
+        {
+            id: 3,
+            name: t('leads:filters:stages:revision-proposal')
+        },
+        {
+            id: 4,
+            name: t('leads:filters:stages:process-issuance')
+        },
+        {
+            id: 5,
+            name: t('leads:filters:stages:policy-issuance')
+        }
+    ];
+
+    const statusLead = [{
+            id: 1,
+            name: t('leads:filters:completed')
+        },
+        {
+            id: 2,
+            name: t('leads:filters:not-completed')
+        },
+    ];
+
     return {
         calendarViews,
         createdDate,
-        trash,
+        trash: trashContact,
+        trashLead,
         settingsContact,
         settingsPolicies,
         months,
-        settingsPolicy
+        settingsPolicy,
+        settingsLead,
+        statusLead,
+        stagesLead
     }
 }
 
@@ -521,65 +586,128 @@ export const usePolicies = (contactID, ) => {
             inactive: true,
         }
     ];
-    
+
     const policyConsult = [{
-        value: 0,
-        name: t('contacts:edit:policies:consult:name'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/consult/${contactID}`,
-    },
-    {
-        value: 1,
-        name: t('contacts:edit:policies:consult:payments'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/payments/${contactID}`,
-    },
-    {
-        value: 2,
-        name: t('contacts:edit:policies:consult:claims'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/claims/${contactID}`,
-    },
-    {
-        value: 3,
-        name: t('contacts:edit:policies:consult:refund'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/refunds/${contactID}`,
-    },
-    {
-        value: 4,
-        name: t('contacts:edit:policies:consult:invoices'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/invoices/${contactID}`,
-    },
-    {
-        value: 5,
-        name: t('contacts:edit:policies:consult:versions'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/versions/${contactID}`,
-    },
-    {
-        value: 6,
-        name: t('contacts:edit:policies:consult:commissions'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/commissions/${contactID}`,
-    },
-    {
-        value: 7,
-        name: t('contacts:edit:policies:consult:quotes'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/quotes/${contactID}`,
-    },
-    {
-        value: 8,
-        name: t('contacts:edit:policies:consult:schedules'),
-        onclick: () => push(`/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`),
-        route: `/sales/crm/contacts/contact/policy/schedules/${contactID}`,
-    },
-];
+            value: 0,
+            name: t('contacts:edit:policies:consult:name'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/consult/${contactID}`,
+        },
+        {
+            value: 1,
+            name: t('contacts:edit:policies:consult:payments'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/payments/${contactID}`,
+        },
+        {
+            value: 2,
+            name: t('contacts:edit:policies:consult:claims'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/claims/${contactID}`,
+        },
+        {
+            value: 3,
+            name: t('contacts:edit:policies:consult:refund'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/refunds/${contactID}`,
+        },
+        {
+            value: 4,
+            name: t('contacts:edit:policies:consult:invoices'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/invoices/${contactID}`,
+        },
+        {
+            value: 5,
+            name: t('contacts:edit:policies:consult:versions'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/versions/${contactID}`,
+        },
+        {
+            value: 6,
+            name: t('contacts:edit:policies:consult:commissions'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/commissions/${contactID}`,
+        },
+        {
+            value: 7,
+            name: t('contacts:edit:policies:consult:quotes'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/quotes/${contactID}`,
+        },
+        {
+            value: 8,
+            name: t('contacts:edit:policies:consult:schedules'),
+            onclick: () => push(`/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`),
+            route: `/sales/crm/contacts/contact/policy/schedules/${contactID}`,
+        },
+    ];
 
     return {
         branches,
         policyConsult
+    }
+}
+
+export const useLeads = () => {
+    let [isOpen, setIsOpen] = useState(false);
+    const {
+        t
+    } = useTranslation();
+
+    const optionsHeader = [{
+            id: 1,
+            name: t('leads:header:sales')
+        },
+        {
+            id: 2,
+            name: t('leads:header:activities')
+        },
+        {
+            id: 3,
+            name: t('leads:header:reports')
+        },
+        {
+            id: 4,
+            name: t('leads:header:documents')
+        }
+    ];
+
+    const stages = [{
+            id: 1,
+            name: t('leads:lead:stages:initial-contact')
+        },
+        {
+            id: 2,
+            name: t('leads:lead:stages:submit-proposal')
+        },
+        {
+            id: 3,
+            name: t('leads:lead:stages:revision-proposal')
+        },
+        {
+            id: 4,
+            name: t('leads:lead:stages:process-issuance')
+        },
+        {
+            id: 5,
+            name: t('leads:lead:stages:policy-issuance')
+        },
+        {
+            id: 6,
+            name: t('leads:lead:stages:positive-stage'),
+            onclick: () => {setIsOpen(true)}
+        },
+        {
+            id: 7,
+            name: t('leads:lead:stages:negative-stage')
+        }
+    ];
+
+    return {
+        optionsHeader,
+        stages,
+        isOpen,
+        setIsOpen
     }
 }

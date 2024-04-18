@@ -23,7 +23,7 @@ export default function SliderOverShort({ openModal, setOpenModal, children }) {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto w-auto">  {/*w-max-full md:max-w-4xl lg:max-w-4xl xl:max-w-7xl*/}
+                <Dialog.Panel className="pointer-events-auto w-auto max-md:w-screen"> 
                   <div className="flex b-gray-300">
                     {children}
                   </div>

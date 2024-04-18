@@ -92,7 +92,7 @@ export default function IngresarEmail() {
       </div>
       <SliderOverShort openModal={modalG}>
         <Tag onclick={() => setModalG(false)} className="bg-green-500" />
-        <div className="bg-gray-300 w-full rounded-l-2xl overflow-y-auto h-screen">
+        <div className="bg-gray-300 rounded-l-2xl max-md:w-screen w-96 overflow-y-auto h-screen">
           <div className="m-3 font-medium text-lg">
             <h1>Gestionar buzón</h1>
           </div>
@@ -146,7 +146,7 @@ export default function IngresarEmail() {
                 </p>
                 <input type="password" className="rounded-md border-0 w-full" />
               </div>
-              <div className="m-3 text-xs my-4 w-80">
+              <div className="m-3 text-xs my-4 w-full">
                 <h1 className="font-bold text-lg">Acceso al buzón</h1>
                 <p className="bg-gray-300 p-2">
                   Dé a los empleados permiso de acceso a este buzón para que
@@ -182,8 +182,8 @@ export default function IngresarEmail() {
         </div>
       </SliderOverShort>
       <SliderOverShort openModal={modalC}>
-        <Tag onclick={() => setModalG(false)} className="bg-green-500" />
-        <div className="bg-gray-300 w-full rounded-l-2xl overflow-y-auto h-screen">
+        <Tag onclick={() => setModalC(false)} className="bg-green-500" />
+        <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
           <div className="m-3 font-medium text-lg">
             <h1>Configurar Folders</h1>
           </div>

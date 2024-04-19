@@ -27,14 +27,14 @@ function SelectDropdown({
   },  [selectedOption])
 
   useEffect(() => {
-    if (selected) setValue && setValue(name, selected?.name);
+    if (selected) setValue && setValue(name, selected?.id);
   }, [selected, setValue, name])
 
   const filteredElements =
   query === ""
     ? options
     : options.filter((element) => {
-        return element.name.toLowerCase().includes(query.toLowerCase());
+        return `${element.name} ${element.username}`.toLowerCase().includes(query.toLowerCase());
       });
 
   return (
@@ -46,11 +46,11 @@ function SelectDropdown({
         <div className="relative mt-1">
           <div className="">
             <Combobox.Input
-              {...registerInput}
+              // {...registerInput}
               className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
-              displayValue={(person) => person?.name}
+              displayValue={(person) => person?.name || person?.username}
               onChange={(event) => {
-                  registerInput && registerInput.onChange(event);
+                  // registerInput && registerInput.onChange(event);
                   setQuery(event.target.value);
                 }
               }
@@ -88,16 +88,16 @@ function SelectDropdown({
                     {({ selected, active }) => (
                       <>
                         <span
-                          className={`flex items-center gap-2 ${
+                          className={`flex items-center gap-2 w-full${
                             selected ? 'font-medium' : 'font-normal'
                           }`}
                         >
-                          <div>
-                            <Image src={person.image} alt="" height={25} width={25} layout='fixed' objectFit='cover' className="rounded-full"/>
+                          <div className="w-[20%]">
+                            <Image src={person.avatar} alt="" height={30} width={30} layout='fixed' objectFit='cover' className="rounded-full"/>
                           </div>
-                          <div className={`flex flex-col leading-3`}>
-                            <p className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}>{person.name}</p>
-                            <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}>{person.email}</p>
+                          <div className={`flex flex-col leading-3 w-[80%]`}>
+                            <p className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}>{person.name || person?.username}</p>
+                            <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}>{person.email}</p>
                             <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}>{person.phone}</p>
                           </div>
                         </span>

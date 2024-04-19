@@ -12,8 +12,8 @@ export default function Error({ error, reset }) {
 	const errorsDuplicated = useRef(false);
 	useEffect(
 		() => {
-      getApiError(error, errorsDuplicated);
-      if (id) router.push('/sales/crm/contacts?page=1');
+			getApiError(error, errorsDuplicated);
+			if (id) router.push('/sales/crm/contacts?page=1');
 		},
 		[ error ]
 	);

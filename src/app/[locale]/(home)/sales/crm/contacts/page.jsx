@@ -2,7 +2,7 @@
 import useCrmContext from "@/context/crm";
 import { getContacts } from "@/lib/apis";
 import { getApiError } from "@/utils/getApiErrors";
-import { useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function Page() {
@@ -13,6 +13,7 @@ export default function Page() {
   const isMounted = useRef(false);
 
   isMounted.current = true;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,11 +23,11 @@ export default function Page() {
           getApiError(error.message, errorsDuplicated);
       }
     }
-    if ((params.get('page') || Number(params.get('page')) !== 0) && isMounted.current) fetchData();
+    if ((params.get('page') || Number(params.get('page')) !== 0) || lastContactsUpdate) fetchData();
     return () => {
       isMounted.current = false;
     }
-  }, []);  
+  }, [lastContactsUpdate, params.get('page')]);  
 
   return <></>;
 }

@@ -7,7 +7,7 @@ import InputPhone from '@/components/form/InputPhone';
 import SelectDropdown from '@/components/form/SelectDropdown';
 import SelectInput from '@/components/form/SelectInput';
 import { PencilIcon } from '@heroicons/react/20/solid';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FaCalendarDays } from 'react-icons/fa6';
 import ActivityPanel from '../../contacts/components/ActivityPanel';
@@ -41,13 +41,18 @@ const contactSources = [
 
 export default function CreateLead({ edit, id }) {
     const { t } = useTranslation();
-    const [ openButtons, setOpenButtons ] = useState(false);
+    const [ openButtons, setOpenButtons ] = useState();
     const [ selectedProfileImage, setSelectedProfileImage ] = useState(null);
     const [ loading, setLoading ] = useState(false);
     const [ files, setFiles ] = useState([]);
     const { optionsHeader } = useLeads();
     const router = useRouter();
+	useEffect(() => {
+		setOpenButtons(id ? false : true)
+	}, [id])
+	
   
+	console.log("openButtons",openButtons)
     const schema = Yup.object().shape({
           email: Yup
             .string()
@@ -176,9 +181,9 @@ export default function CreateLead({ edit, id }) {
 					{/* Panel Principal */}
 
 					{/* {contactDetailTab === contactDetailTabs[0] && ( */}
-					<div className="flex flex-col sm:flex-row h-full pb-[20rem] bg-white mx-4 rounded-lg p-4 w-full">
+					<div className="flex flex-col md:flex-row h-full pb-0 md:pb-[20rem] bg-white mx-4 rounded-lg p-4 w-full">
 						{/* Menu Izquierda */}
-						<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
+						<div className="md:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
 							<div className="flex justify-between bg-white py-4 px-4 rounded-md">
 								<h1 className="">{t('leads:lead:lead-data')}</h1>
 								<button type="button" disabled={!id} onClick={() => setOpenButtons(!openButtons)}>
@@ -321,7 +326,7 @@ export default function CreateLead({ edit, id }) {
 					</div>
 
 					{/* Botones de acción */}
-					{openButtons || (!edit) && (
+					{!openButtons || (!edit) && (
 						<div className="flex justify-center gap-4 sticky bottom-0 bg-white pt-3 pb-2">
 							<Button
 								type="submit"
@@ -335,7 +340,7 @@ export default function CreateLead({ edit, id }) {
 								label={t('common:buttons:cancel')}
 								disabled={loading}
 								buttonStyle="secondary"
-								onclick={() => router.back()}
+								onclick={() => router.push(`/sales/crm/leads?page=1`)}
 								className="px-3 py-2"
 							/>
 						</div>

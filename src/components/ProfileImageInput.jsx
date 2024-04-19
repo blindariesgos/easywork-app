@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 
-function ProfileImageInput({ selectedProfileImage, onChange }) {
+function ProfileImageInput({ selectedProfileImage, onChange, disabled }) {
   const { t } = useTranslation();
   return (
     <div className="text-center">
@@ -25,6 +25,7 @@ function ProfileImageInput({ selectedProfileImage, onChange }) {
               className="peer absolute inset-0 h-full w-full  rounded-md opacity-0 cursor-pointer"
               onChange={onChange}
               accept="image/*"
+              disabled={disabled}
             />
             <label
               htmlFor="profilePhoto"

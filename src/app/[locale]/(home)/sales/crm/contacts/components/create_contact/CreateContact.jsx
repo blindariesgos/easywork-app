@@ -1,11 +1,9 @@
 'use client';
 import useAppContext from '@/context/app';
-import { DocumentTextIcon, PhotoIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { PencilIcon } from '@heroicons/react/24/outline';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AddContactTabs from './AddContactTabs';
 import { toast } from 'react-toastify';
-import { contactDetailTabs, contactTypes, responsible } from '@/lib/common';
 import { useTranslation } from 'react-i18next';
 import Button from '@/components/form/Button';
 import TextInput from '@/components/form/TextInput';
@@ -18,30 +16,14 @@ import InputDate from '@/components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 import ActivityPanel from '../ActivityPanel';
 import { getApiError } from '@/utils/getApiErrors';
-import { createContact } from '@/lib/apis';
+import { createContact, updateContact, updatePhotoContact } from '@/lib/apis';
 import SelectDropdown from '@/components/form/SelectDropdown';
 import { DocumentSelector } from '@/components/DocumentSelector';
 import ProfileImageInput from '@/components/ProfileImageInput';
 import { useRouter } from 'next/navigation';
 
-const contactSources = [
-	{ id: 1, name: 'Correo electrónico' },
-	{ id: 2, name: 'Maratón de llamadas' },
-	{ id: 3, name: 'Formulario de CRM' },
-	{ id: 4, name: 'Formulario de devolución de llamada' },
-	{ id: 5, name: 'Gestión del agente' },
-	{ id: 6, name: 'Red social - LinkedIn' },
-	{ id: 7, name: 'Red social - Instagram' },
-	{ id: 8, name: 'Red social - Facebook' },
-	{ id: 9, name: 'Red social - Otra' },
-	{ id: 10, name: 'Otro CRM' },
-	{ id: 11, name: 'Página de ventas' },
-	{ id: 12, name: 'Teléfono' },
-	{ id: 13, name: 'WhatsApp' }
-];
-
-
-export default function CreateContact({ edit, id }) {
+export default function CreateContact({ edit, id, lists }) {
+	const { users, contactSources, contactTypes } = lists;
 	const { t } = useTranslation();
 	const { setOpenModal, contactDetailTab } = useAppContext();
 	const [ openButtons, setOpenButtons ] = useState(!edit);
@@ -53,6 +35,15 @@ export default function CreateContact({ edit, id }) {
 
 	const [ selectedProfileImage, setSelectedProfileImage ] = useState(null);
 	const [ loading, setLoading ] = useState(false);
+
+	useEffect(() => {
+		if ( edit ) {
+			setContactType(contactTypes.filter(option => option.id === edit?.type?.id )[0]);
+			setContactSource(contactSources.filter(option => option.id === edit?.source?.id )[0]);
+			setSelectedProfileImage({base64:edit?.photo || null, file: null})
+		}
+	}, [edit, contactTypes, contactSources])
+	
 
 	const schema = Yup.object().shape({
 		email: Yup
@@ -70,7 +61,7 @@ export default function CreateContact({ edit, id }) {
 		origin: Yup.string().required(t('common:validations:required')),
 		address: Yup.string().required(t('common:validations:required')),
 		responsible: Yup.string().required(t('common:validations:required')),
-		birthday: Yup.string().required(t('common:validations:required'))
+		birthday: Yup.date().required(t('common:validations:required'))
 
 		// files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
 		// files: Yup
@@ -99,14 +90,15 @@ export default function CreateContact({ edit, id }) {
 	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
 		defaultValues: {
 			name: id ? edit?.fullName : "",
-			charge: id ? edit?.charge : "",
+			charge: id ? edit?.cargo : "",
 			phone: id ? edit?.phones[0]?.phone?.number : "",
 			email: id ? edit?.emails[0]?.email?.email : "",
-			rfc: id ? edit?.fullName : "",
+			rfc: id ? edit?.curp : "",
 			cua: id ? edit?.cua : "",
-			typeContact: id ? edit?.fullName : "",
-			origin: id ? edit?.source : "",
+			typeContact: id ? edit?.type?.id : "",
+			origin: id ? edit?.source?.id : "",
 			birthday: id ? edit?.birthdate : "",
+			address: id? edit?.address : "",
 		},
 		mode: 'onChange',
 		resolver: yupResolver(schema)
@@ -158,63 +150,53 @@ export default function CreateContact({ edit, id }) {
 	};
 
 	const handleFormSubmit = async (data) => {
-		// event.preventDefault();
-		// // setErrors({});
-		// setLoading(true);
 		const body = {
 			name: data.name,
 			fullName: data.name,
-			photo: selectedProfileImage?.file || null,
-			assignedById: "37e3b947-b56b-43b3-a617-30897f4f5193",
-			observadorId: "37e3b947-b56b-43b3-a617-30897f4f5193",
+			photo: id ? "" : selectedProfileImage?.file || "",
 			cargo: data.charge,
-			tipo: data.typeContact,
+			typeId: data.typeContact,
 			curp: data.rfc,
 			cua: data.cua,
 			address: data.address,
+			birthdate: data.birthday,
+			sourceId: data.origin,
 			emails_dto: JSON.stringify([{"email": data.email}]),
-			phones_dto: [{"number": data.phone}]
+			phones_dto: [{"number": data.phone}],
+			observadorId: data.responsible,
+			assignedById: data.responsible
 		}
 
-		console.log('data', body);
 		const formData = new FormData();
 		for (const key in body) {
 			if (body[key] instanceof File || body[key] instanceof Blob) {
 			  formData.append(key, body[key]);
 			} else if (Array.isArray(body[key])) {
-				console.log("entre 2", body[key])
 			  formData.append(key, JSON.stringify(body[key]));
 			} else {
 			  formData.append(key, body[key]?.toString() || '');
 			}
 		}
-		console.log('formData', [...formData.entries()]);
-
 		try {
 			setLoading(true);
-			await createContact(formData);
-		  	toast.success(t('contacts:create:msg'));
+			if ( !edit ) {
+				await createContact(formData);
+				toast.success(t('contacts:create:msg'));
+			}else {
+				await updateContact(formData, id);
+				if (selectedProfileImage.file){	
+					const photo = new FormData();		
+					photo.append("photo", selectedProfileImage.file);	
+					await updatePhotoContact(photo, id);
+				}
+				toast.success(t('contacts:edit:updated-contact'));
+			}
 			setLoading(false);			
+			router.push(`/sales/crm/contacts?page=1`);
 		} catch (error) {
 			getApiError(error.message);
 			setLoading(false);			
 		}
-		// try {
-		//   const result = await createContact(state, formData);
-
-		//   if (!result?.success) {
-		//     if (result?.errors) {
-		//       // setErrors(result.errors);
-		//     }
-		//     return;
-		//   }
-
-		//   setLastContactsUpdate(Date.now());
-		//   setOpenModal(false);
-		// } catch (error) {
-		// } finally {
-		//   setLoading(false);
-		// }
 	};
 
 	
@@ -273,6 +255,7 @@ export default function CreateContact({ edit, id }) {
 								<ProfileImageInput
 									selectedProfileImage={selectedProfileImage}
 									onChange={handleProfileImageChange}
+									disabled={!openButtons}
 								/>
 							</div>
 							<div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 px-2 mb-10 mt-8">
@@ -284,14 +267,14 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="name"
 									disabled={!openButtons}
-									value={watch('name')}
+									//value={watch('name')}
 								/>
 								<TextInput
 									label={t('contacts:create:charge')}
 									placeholder={t('contacts:create:charge')}
 									error={errors.charge}
 									register={register}
-									value={watch('charge')}
+									//value={watch('charge')}
 									name="charge"
 									disabled={!openButtons}
 								/>
@@ -337,7 +320,7 @@ export default function CreateContact({ edit, id }) {
 									error={errors.email}
 									register={register}
 									name="email"
-									value={watch('email')}
+									//value={watch('email')}
 									disabled={!openButtons}
 								/>
 								<TextInput
@@ -347,18 +330,17 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="rfc"
 									disabled={!openButtons}
-									value={watch('rfc')}
+									//value={watch('rfc')}
 								/>
 								<SelectInput
 									label={t('contacts:create:contact-type')}
 									options={contactTypes}
-									selectedOption={contactType}
+									selectedOption={contactType && contactType}
 									name="typeContact"
 									error={!watch('typeContact') && errors.typeContact}
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
-									value={watch('typeContact')}
 								/>
 								{watch('typeContact') == 'Otro' ? (
 									<TextInput
@@ -368,7 +350,7 @@ export default function CreateContact({ edit, id }) {
 										register={register}
 										name="otherType"
 										disabled={!openButtons}
-										value={watch('otherType')}
+										//value={watch('otherType')}
 									/>
 								) : null}
 								<TextInput
@@ -378,29 +360,29 @@ export default function CreateContact({ edit, id }) {
 									name="address"
 									placeholder={t('contacts:create:placeholder-address')}
 									disabled={!openButtons}
-									value={watch('address')}
+									//value={watch('address')}
 								/>
 								<SelectInput
 									label={t('contacts:create:origen')}
 									name="origin"
 									options={contactSources}
-									selectedOption={contactSource}
+									selectedOption={contactSource && contactSource}
 									error={!watch('origin') && errors.origin}
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
-									value={watch('origin')}
+									//value={watch('origin')}
 								/>
 								<SelectDropdown
 									label={t('contacts:create:responsible')}
 									name="responsible"
-									options={responsible}
+									options={users}
 									selectedOption={contactResponsible}
 									register={register}
 									disabled={!openButtons}
 									error={!watch('responsible') && errors.responsible}
 									setValue={setValue}
-									value={watch('responsible')}
+									// //value={watch('responsible')}
 								/>
 								<TextInput
 									label={t('contacts:create:cua')}
@@ -408,7 +390,7 @@ export default function CreateContact({ edit, id }) {
 									register={register}
 									name="cua"
 									disabled={!openButtons}
-									value={watch('cua')}
+									//value={watch('cua')}
 									// placeholder={t('contacts:create:placeholder-address')}
 								/>
 								<DocumentSelector name="files" onChange={handleFilesUpload} files={files} disabled={!openButtons} setFiles={setFiles}/>
@@ -419,10 +401,9 @@ export default function CreateContact({ edit, id }) {
 						<ActivityPanel editing={!id} />
 					</div>
 					{/* )} */}
-					{/* {contactDetailTab === contactDetailTabs[1] && <ContactPoliza contactID={currentContactID} />} */}
 
 					{/* Botones de acción */}
-					{openButtons || !edit && (
+					{(openButtons || !edit) && (
 						<div className="flex justify-center px-4 py-4 gap-4 sticky bottom-0 bg-white">
 							<Button
 								type="submit"

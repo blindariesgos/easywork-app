@@ -2,7 +2,7 @@ import SlideOver from '@/components/SlideOver'
 import React, { Suspense } from 'react'
 import CreateContact from '../../components/create_contact/CreateContact'
 
-export default function ContactDetails({ contactInfo, id }) {
+export default function ContactDetails({ contactInfo, id, lists }) {
   return (
     <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
       <Suspense
@@ -13,7 +13,7 @@ export default function ContactDetails({ contactInfo, id }) {
           </div>
         }
       >
-        <CreateContact edit={contactInfo} id={id} />
+        <CreateContact edit={contactInfo} id={id} lists={lists}/>
       </Suspense>
     </SlideOver>
   )

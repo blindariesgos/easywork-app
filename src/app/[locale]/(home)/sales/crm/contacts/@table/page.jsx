@@ -36,7 +36,7 @@ export default function Page() {
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const { setShowContact } = useAppContext();
-  const { contacts: AppContacts, setCurrentContactID, setContacts } = useCrmContext();
+  const { contacts: AppContacts, setLastContactsUpdate, setContacts } = useCrmContext();
   const sortFieltByColumn = {
     name: [ "fullName" ],
   };
@@ -75,7 +75,6 @@ export default function Page() {
     if ( contact.length > 1 ) {
       contact.map((cont) => apiDelete(cont.id));
     }
-    router.push('/sales/crm/contacts?page=1');
     toast.success(t('contacts:delete:msg'));
     setSelectedContacts([]);
   }
@@ -83,6 +82,7 @@ export default function Page() {
   const apiDelete = async(id) => {
     try{
       const response = await deleteContactId(id);   
+      setLastContactsUpdate(response);
     }catch(err){
       getApiError(err.message);
     }

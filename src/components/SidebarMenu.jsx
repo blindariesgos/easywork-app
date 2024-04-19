@@ -1,5 +1,5 @@
 'use client';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import React from 'react'
 import { Disclosure, } from "@headlessui/react";
 import Link from 'next/link';
@@ -11,6 +11,8 @@ function classNames(...classes) {
   }
 const SidebarMenu = () => {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const paramsPathname = `${pathname}?${new URLSearchParams(searchParams).toString() || ""}`
     const { sidebarNavigation } = useSidebar();
     return (        
         <nav className="flex flex-1 flex-col mt-3">
@@ -42,7 +44,7 @@ const SidebarMenu = () => {
                                         <Link href={item.href}>
                                             <Disclosure.Button
                                                 className={classNames(
-                                                item.ref === pathname
+                                                item.href === pathname
                                                     ? "bg-primary text-white"
                                                     : "text-slate-50 hover:text-white hover:bg-easy-300",
                                                 "flex items-center w-full text-left rounded-md p-2 gap-x-3 text-sm leading-6 font-semibold uppercase"
@@ -110,7 +112,7 @@ const SidebarMenu = () => {
                                                                                 <Link
                                                                                 href={subSubItem.href}
                                                                                 className={classNames(
-                                                                                    subSubItem.href === pathname
+                                                                                    subSubItem.href === paramsPathname
                                                                                     ? "bg-primary text-white"
                                                                                     : "text-slate-50 hover:text-white hover:bg-easy-300",
                                                                                     "block rounded-md py-2 pr-2 pl-9 text-sm leading-6 ml-6"

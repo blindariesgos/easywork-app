@@ -35,9 +35,17 @@ export default function WebmailLayout({ children, table }) {
     if (window.innerWidth > 1023) {
       setTimeout(() => {
         setSidebarOpenEmail(true);
-      }, 500);
+      }, 1000);
+    } else {
+     
     }
-  }, []);
+  }, [setSidebarOpenEmail]);
+  
+  function backButton() {
+    setSidebarOpenEmail(false);
+    router.push("/tools/mails");
+  }
+  
 
   return (
     <div className="flex flex-col flex-grow">
@@ -100,7 +108,7 @@ export default function WebmailLayout({ children, table }) {
           </div>
           <div className="w-full">
             <button
-              onClick={() => router.push("/tools/mails")}
+              onClick={() => backButton()}
               className="w-full bg-white text-easywork-main py-2 rounded-lg"
             >
               volver

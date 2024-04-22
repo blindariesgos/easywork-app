@@ -1,37 +1,53 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import Button from './form/Button';
+import { ChevronDownIcon, Cog8ToothIcon, TrashIcon } from '@heroicons/react/20/solid';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import IconDropdown from './SettingsButton';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
 
-export default function ToolHeader({
-  title,
-  ActionButton,
-  ToolsButtons,
-  children,
-}) {
-  const { t } = useTranslation();
-  return (
-    <header className="flex flex-col">
-      <div className="lg:px-6 px-2 flex gap-3 items-center bg-white py-4 rounded-md">
-        <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
-          {title}
-        </h1>
-        <ActionButton />
+export default function ToolHeader({ title, children, route, Filters, toolButtons }) {
+	const { t } = useTranslation();
+	const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
+	const pathname = usePathname();
+	const { replace } = useRouter();
 
-        <div className="flex-grow">
-          <label htmlFor="search" className="sr-only">
-            {t('tools:tasks:search')}
-          </label>
-          <input
-            type="search"
-            name="search"
-            id="search-cal"
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            placeholder={t('tools:tasks:search')}
-          />
-        </div>
-        {ToolsButtons}
-      </div>
-
-      {children}
-    </header>
-  );
+	const handlePathname = () => {
+		params.delete('page');
+		params.set('show', true);
+		replace(`${route}${params.toString()}`);
+	};
+	return (
+		<header className="flex flex-col">
+			<div className="lg:px-6 px-2 flex gap-3 items-center bg-white py-4 rounded-md flex-wrap">
+				<h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">{title}</h1>
+				<Button
+					label={t('contacts:header:create')}
+					type="button"
+					onclick={() => handlePathname()}
+					buttonStyle={'primary'}
+					icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
+					className="px-3 py-2"
+				/>
+				<div className="flex-grow">
+					<div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+						<Filters />
+						<div className="flex items-center w-full">
+							<FaMagnifyingGlass className="h-4 w-4 text-primary" />
+							<input
+								type="search"
+								name="search"
+								id="search-cal"
+								className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
+								placeholder={t('contacts:header:search')}
+							/>
+						</div>
+					</div>
+				</div>
+				{toolButtons}
+			</div>
+			{children}
+		</header>
+	);
 }

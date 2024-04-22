@@ -5,7 +5,6 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { filterOptions, responsible } from '@/lib/common';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { useCommon } from '@/hooks/useCommon';
 import SelectInput from '@/components/form/SelectInput';
@@ -17,25 +16,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from './AddFields';
 import SelectDropdown from '@/components/form/SelectDropdown';
-
-
-const contactSources = [
-  { id: 1, name: "Correo electrónico" },
-  { id: 2, name: "Maratón de llamadas" },
-  { id: 3, name: "Formulario de CRM" },
-  { id: 4, name: "Formulario de devolución de llamada" },
-  { id: 5, name: "Gestión del agente" },
-  { id: 6, name: "Red social - LinkedIn" },
-  { id: 7, name: "Red social - Instagram" },
-  { id: 8, name: "Red social - Facebook" },
-  { id: 9, name: "Red social - Otra" },
-  { id: 10, name: "Otro CRM" },
-  { id: 11, name: "Página de ventas" },
-  { id: 12, name: "Teléfono" },
-  { id: 13, name: "WhatsApp" },
-];
+import useAppContext from '@/context/app';
 
 const FormFilters = () => {
+    const { lists } = useAppContext();
+	const { users, listContact } = lists;
+	const { contactSources } = listContact;
 	const { t } = useTranslation();
 	const { createdDate } = useCommon();
 	const schema = yup.object().shape({
@@ -92,7 +78,7 @@ const FormFilters = () => {
 			<SelectDropdown
 				label={t('contacts:filters:responsible')}
 				name="responsible"
-				options={responsible}
+				options={users}
 				setValue={setValue}
 			/>
 			{/* <Controller
@@ -190,7 +176,7 @@ const FormFilters = () => {
 				render={({ field }) => {
 				return (
 					<SelectInput
-					{...field}
+					// {...field}
 					label={t("contacts:filters:origin")}
 					name="origin"
 					options={contactSources}
@@ -219,7 +205,7 @@ const FormFilters = () => {
 			<SelectDropdown
 				label={t('contacts:filters:created-by')}
 				name="createdby"
-				options={responsible}
+				options={users}
 				selectedOption={null}
 				setValue={setValue}
 			/>
@@ -236,11 +222,9 @@ const FormFilters = () => {
 						)}
 						{field.type === "select" && (
 							<SelectInput
-								{...field}
 								label={field.name}
 								name={`fields[${index}].value`}
 								options={field.options}
-								register={register}
 								setValue={setValue}
 							/>							
 						)}
@@ -270,6 +254,7 @@ const FormFilters = () => {
 					label={t('contacts:filters:restart')}
 					buttonStyle="secondary"
 					className="py-1 px-3"
+					onclick={() => { setValue("fields", []); reset() }}
 				/>
 			</div>
 		</form>

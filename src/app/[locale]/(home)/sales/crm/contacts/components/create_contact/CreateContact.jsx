@@ -22,10 +22,11 @@ import { DocumentSelector } from '@/components/DocumentSelector';
 import ProfileImageInput from '@/components/ProfileImageInput';
 import { useRouter } from 'next/navigation';
 
-export default function CreateContact({ edit, id, lists }) {
-	const { users, contactSources, contactTypes } = lists;
+export default function CreateContact({ edit, id }) {
+    const { lists } = useAppContext();
+	const { users, listContact } = lists;
+	const { contactSources, contactTypes } = listContact;
 	const { t } = useTranslation();
-	const { setOpenModal, contactDetailTab } = useAppContext();
 	const [ openButtons, setOpenButtons ] = useState(!edit);
 	const [ contactType, setContactType ] = useState(null);
 	const [ contactSource, setContactSource ] = useState(null);
@@ -241,7 +242,6 @@ export default function CreateContact({ edit, id, lists }) {
 
 					{/* Panel Principal */}
 
-					{/* {contactDetailTab === contactDetailTabs[0] && ( */}
 					<div className="flex flex-col sm:flex-row h-full pb-[13.5rem] bg-white mx-4 rounded-lg p-4 w-full">
 						{/* Menu Izquierda */}
 						<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">

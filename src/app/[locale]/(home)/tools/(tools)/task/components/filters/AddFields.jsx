@@ -5,7 +5,7 @@ import { PlusIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import NewFields from './NewFields';
 
-const AddFields = ({append, remove, fields }) => {
+const AddFields = ({append, remove, fields}) => {
 	const { t } = useTranslation();
 	
 	return (

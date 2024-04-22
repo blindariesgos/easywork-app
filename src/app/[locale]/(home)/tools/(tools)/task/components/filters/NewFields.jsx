@@ -1,40 +1,39 @@
+import useAppContext from '@/context/app';
+import { useTasks } from '@/hooks/useCommon';
+import { contactTypes } from '@/lib/common';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const NewFields = ({ append, remove, fields: selectFields}) => {
-    const { lists } = useAppContext();
-	const { listContact } = lists;
-	const { contactTypes } = listContact;
 	const { t } = useTranslation();
+	const { lists } = useAppContext();
+	const { users } = lists;
+	const { status } = useTasks();
 	const [ fields, setFields ] = useState([
 		{
 			id: 1,
-			name: t('contacts:filters:fullname'),
-			type: 'input',
+			name: t('tools:tasks:filters:fields:status'),
+			options: status,
+			type: 'multipleSelect',
 			check: false,
-            code: "name"
+            code: "role"
 		},
 		{
 			id: 2,
-			name: t('contacts:filters:contact-type'),
-			type: 'select',
-			options: contactTypes,
+			name: t('tools:tasks:filters:fields:responsible'),
+			type: 'dropdown',
+			options: users,
 			check: false,
             code: "typeContact"
 		},
 		{
 			id: 3,
-			name: t('contacts:filters:cua'),
-			type: 'input',
+			name: t('tools:tasks:filters:fields:limit-date'),
+			type: 'date',
 			check: false,
-            code: "cua"
-		},
-		{
-			id: 4,
-			name: t('contacts:filters:rfc'),
-			type: 'input',
-			check: false,
-            code: "rfc"
+            code: "limitDate",
+			date: "newDate",
+			state: 1,
 		}
 	]);
 
@@ -52,7 +51,7 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 	const handleAddField = (e) => {
 		const { value, checked } = e.target;
 		const field = fields.filter((fld) => fld.id === parseInt(value))[0] || fields[0];
-		if (checked) append({ ...field, value: '' });
+		if (checked) append({ ...field, value: '', newValue: "" });
 		else {
 			const fieldIndex = selectFields.indexOf((item) => item.id == value);
 			if (fieldIndex) remove(fieldIndex);

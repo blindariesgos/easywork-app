@@ -16,7 +16,9 @@ import {
 import {
     useRouter
 } from "next/navigation";
-import { useState } from "react";
+import {
+    useState
+} from "react";
 
 export const useSidebar = () => {
     const {
@@ -247,94 +249,94 @@ export const useCommon = () => {
 
         {
             id: 1,
-            name: t('contacts:filters:date:yesterday')
+            name: t('common:date:yesterday')
         },
         {
             id: 2,
-            name: t('contacts:filters:date:today')
+            name: t('common:date:today')
         },
         {
             id: 3,
-            name: t('contacts:filters:date:tomorrow')
+            name: t('common:date:tomorrow')
         },
         {
             id: 4,
-            name: t('contacts:filters:date:thisWeek')
+            name: t('common:date:thisWeek')
         },
         {
             id: 5,
-            name: t('contacts:filters:date:thisMonth')
+            name: t('common:date:thisMonth')
         },
         {
             id: 6,
-            name: t('contacts:filters:date:currentQuarter')
+            name: t('common:date:currentQuarter')
         },
         {
             id: 7,
-            name: t('contacts:filters:date:last7Days')
+            name: t('common:date:last7Days')
         },
         {
             id: 8,
-            name: t('contacts:filters:date:last30Days')
+            name: t('common:date:last30Days')
         },
         {
             id: 9,
-            name: t('contacts:filters:date:last60Days')
+            name: t('common:date:last60Days')
         },
         {
             id: 10,
-            name: t('contacts:filters:date:last90Days')
+            name: t('common:date:last90Days')
         },
         {
             id: 11,
-            name: t('contacts:filters:date:lastNDays'),
+            name: t('common:date:lastNDays'),
             date: "input"
         },
         {
             id: 12,
-            name: t('contacts:filters:date:nextNDays'),
+            name: t('common:date:nextNDays'),
             date: "input"
         },
         {
             id: 13,
-            name: t('contacts:filters:date:month'),
+            name: t('common:date:month'),
             date: "month"
         },
         {
             id: 14,
-            name: t('contacts:filters:date:quarter'),
+            name: t('common:date:quarter'),
             date: "quarter"
         },
         {
             id: 15,
-            name: t('contacts:filters:date:year'),
+            name: t('common:date:year'),
             date: "year"
         },
         {
             id: 16,
-            name: t('contacts:filters:date:exactDate'),
+            name: t('common:date:exactDate'),
             date: "exactDate"
         },
         {
             id: 17,
-            name: t('contacts:filters:date:lastWeek')
+            name: t('common:date:lastWeek')
         },
         {
             id: 18,
-            name: t('contacts:filters:date:lastMonth')
+            name: t('common:date:lastMonth')
         },
         {
             id: 19,
-            name: t('contacts:filters:date:dateRange'),
+            name: t('common:date:dateRange'),
             date: "range"
         },
         {
             id: 20,
-            name: t('contacts:filters:date:nextWeek')
+            name: t('common:date:nextWeek')
         },
         {
             id: 21,
-            name: t('contacts:filters:date:nextMonth')
+            name: t('common:date:nextMonth')
         }
     ];
 
@@ -468,7 +470,7 @@ export const useCommon = () => {
             icon: RiFileExcel2Fill,
             onclick: () => {}
         },
-    ]
+    ];
 
     const months = [
         t('common:months:january'),
@@ -696,7 +698,9 @@ export const useLeads = () => {
         {
             id: 6,
             name: t('leads:lead:stages:positive-stage'),
-            onclick: () => {setIsOpen(true)}
+            onclick: () => {
+                setIsOpen(true)
+            }
         },
         {
             id: 7,
@@ -709,5 +713,65 @@ export const useLeads = () => {
         stages,
         isOpen,
         setIsOpen
+    }
+}
+
+export const useTasks = () => {
+    const {
+        t
+    } = useTranslation();
+    const [status, setStatus] = useState([{
+            id: 1,
+            name: t('tools:tasks:filters:closed'),
+            selected: false
+        },
+        {
+            id: 2,
+            name: t('tools:tasks:filters:in-progress'),
+            selected: false
+        },
+        {
+            id: 3,
+            name: t('tools:tasks:filters:expirated'),
+            selected: false
+        },
+        {
+            id: 4,
+            name: t('tools:tasks:filters:pending'),
+            selected: false
+        }
+    ]);
+    const optionsSettings = [{
+            value: 0,
+            name: t('leads:header:excel:alone'),
+            icon: RiFileExcel2Fill,
+            onclick: () => {}
+        },
+        {
+            value: 0,
+            name: t('leads:header:excel:all'),
+            icon: RiFileExcel2Fill,
+            onclick: () => {}
+        },
+    ]
+    const optionsTrash = [{
+            value: 0,
+            name: t('leads:header:delete:remove'),
+            icon: XMarkIcon,
+            onclick: () => {}
+        },
+        {
+            value: 1,
+            icon: TrashIcon,
+            name: t('leads:header:delete:trash'),
+            onclick: () => {}
+        }
+    ];
+
+    return {
+        optionsTrash,
+        optionsSettings,
+        status,
+        setStatus
     }
 }

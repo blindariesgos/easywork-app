@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
 
-export default function SliderOverShort({ openModal, setOpenModal, children }) {
+export default function SliderOverShort({ openModal, children }) {
   const { t } = useTranslation();
 
   return (

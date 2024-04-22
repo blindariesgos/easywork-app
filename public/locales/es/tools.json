@@ -46,6 +46,31 @@
             "limit-date" : "Fecha límite",
             "created-by": "Creado por",
             "responsible" : "Persona responsable"
+        },
+        "filters": {
+            "title" : "Filtros",
+            "closed" : "Terminado",
+            "in-progress" : "En progreso",
+            "expirated" : "Vencidas",
+            "pending" : "Pendientes",
+            "save" : "Guardar filtro",
+            "search": "Buscar",
+            "reset" : "Reiniciar",
+            "add-fields" : "Agregar campo",
+            "restore-fields" : "Restaurar campos predeterminados",
+            "fields": {
+                "role" : "Rol",
+                "status" : "Estado",
+                "responsible" : "Persona Responsable",
+                "limit-date": "Fecha límite",
+                "tag": "Etiquetas",
+                "createdThe" : "Creado el",
+                "createdBy" : "Creado por",
+                "closed" : "Cerrado el",
+                "name": "Nombre",
+                "participant" : "Participante",
+                "obserber" : "Observador"
+            }
         }
     },
     "calendar": {

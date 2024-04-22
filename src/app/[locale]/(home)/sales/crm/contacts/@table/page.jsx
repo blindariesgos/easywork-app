@@ -35,7 +35,6 @@ export default function Page() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const { setShowContact } = useAppContext();
   const { contacts: AppContacts, setLastContactsUpdate, setContacts } = useCrmContext();
   const sortFieltByColumn = {
     name: [ "fullName" ],
@@ -295,15 +294,7 @@ export default function Page() {
                         </div>
                         <div className="ml-4">
                           <div className="font-medium text-sm text-black hover:text-primary capitalize">
-                            {/* <button
-                              onClick={() => {
-                                setCurrentContactID(contact.id);
-                                setShowContact(true);
-                              }}
-                            > */}
                             <Link href={`/sales/crm/contacts/contact/${contact.id}?show=true`} className="">{capitalizedText(contact.fullName)}</Link>
-                              
-                            {/* </button> */}
                           </div>
                         </div>
                       </div>

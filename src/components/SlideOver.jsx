@@ -125,7 +125,7 @@ export default function SlideOver({
 									<Dialog.Panel
 										className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
 									>
-										<div className="flex">
+										<div className="flex justify-end h-screen">
 											<div className={`flex flex-col`}>
 												<Tag
 													title={label}

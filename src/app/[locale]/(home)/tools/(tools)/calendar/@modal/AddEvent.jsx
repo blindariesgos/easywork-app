@@ -13,7 +13,7 @@ import {
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import ComboBox, { ComboBoxWithElement } from "../../components/ComboBox";
+import ComboBox, { ComboBoxWithElement } from "../components/ComboBox";
 import { timezones } from "@/lib/timezones";
 import Dropdown from "@/components/Dropdown";
 import RepeatOptions from "./components/RepeatOptions";
@@ -66,6 +66,7 @@ const eventLocalizations = [
 ];
 
 export default function AddEvent() {
+  const { t } = useTranslation();
   const repeatOptions = [
     { name: "No repetir", value: 1, label: "" },
     { name: "Diario", value: 2, label: t("tools:calendar:day") },
@@ -73,7 +74,6 @@ export default function AddEvent() {
     { name: "Mensual", value: 4, label: t("tools:calendar:month") },
     { name: "Anual", value: 5, label: t("tools:calendar:year") },
   ];
-  const { t } = useTranslation();
   const [eventImportant, setEventImportant] = useState(false);
   const [timezoneStart, setTimezoneStart] = useState(false);
   const [timezoneEnd, setTimezoneEnd] = useState(false);

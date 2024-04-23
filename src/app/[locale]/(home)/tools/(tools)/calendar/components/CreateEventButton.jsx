@@ -19,7 +19,7 @@ export default function CreateEventButton() {
   return (
     <div className="md:inline-flex rounded-md shadow-sm hidden">
       <Link
-        href="/tools/calendar/event"
+        href="/tools/calendar?show=true"
         className="relative inline-flex items-center rounded-l-md bg-primary px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
       >
         {t('tools:calendar:create')}

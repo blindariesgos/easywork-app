@@ -3,6 +3,7 @@ import useAppContext from "@/context/app";
 import CalendarHeader from "./components/CalendarHeader";
 import Link from "next/link";
 import { useCommon } from "@/hooks/useCommon";
+import Modal from "./@modal/page";
 
 export default function CalendarLayout({
   children,
@@ -10,7 +11,6 @@ export default function CalendarLayout({
   week,
   month,
   programar,
-  modal,
 }) {
   const { calendarView } = useAppContext();
   const { calendarViews } = useCommon()
@@ -18,8 +18,8 @@ export default function CalendarLayout({
   return (
     <>
       <div className="flex flex-col flex-grow">
+        <Modal />
         <CalendarHeader />
-        {modal}
         <div className="h-[63vh] mb-10 overflow-auto">
           {children}
           {calendarView === calendarViews[0]

@@ -1,21 +1,21 @@
-import SlideOver from "@/components/SlideOver";
-import React, { Suspense } from "react";
-import CreateContact from "../../components/create_contact/CreateContact";
-import { getContactId } from "@/lib/apis";
+import React from "react";
 import ContactDetails from "./ContactDetails";
+import { getAddListContacts, getContactId, getUsersContacts } from "@/lib/apis";
 
-// async function useContact({ contactID }) {
-//   try {
-//     const response = await getContactId(contactID); 
-//     return response;    
-//   } catch (error) {
-//     throw new Error(JSON.stringify(error?.response?.data));
-//   }
-// }
+async function getUsersList(id) {
+	const usersLits = await getUsersContacts();
+	const lists = await getAddListContacts();
+  const contactInfo = await getContactId(id);
+	return {
+		users: usersLits,
+		contactTypes: lists.contactTypes,
+		contactSources: lists.contactSources,
+    contactInfo
+	};
+}
 
 export default async function PageContactId({ params: { id } }) {
-  const contactInfo = await getContactId(id);
-  console.log("contactInfo", contactInfo)
+  const lists = await getUsersList(id);
 
-  return <ContactDetails contactInfo={contactInfo} id={id}/>
+  return <ContactDetails contactInfo={lists.contactInfo} id={id} lists={lists}/>
 }

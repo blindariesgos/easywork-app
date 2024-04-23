@@ -12,12 +12,16 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
 
     const handleSelect = (option) => {
         const array = getValues(name);
-        const index = array.findIndex((res) => res.id === option.id);
-        if (index === -1) {
-            setValue(name, [...array, option], { shouldValidate: true });
-        } else {
-            const updatedResponsible = array.filter((res) => res.id !== option.id);
-            setValue(name, updatedResponsible, { shouldValidate: true });
+        if (array){
+            const index = array.findIndex((res) => res.id === option.id);
+            if (index === -1) {
+                setValue(name, [...array, option], { shouldValidate: true });
+            } else {
+                const updatedResponsible = array.filter((res) => res.id !== option.id);
+                setValue(name, updatedResponsible, { shouldValidate: true });
+            }
+        }else {
+            setValue(name, [option], { shouldValidate: true });
         }
     };
 
@@ -25,7 +29,6 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
         const updatedResponsible = getValues(name).filter((res) => res.id !== id);
         setValue(name, updatedResponsible, { shouldValidate: true });
     };
-
     return (
         <div className="">
             <label className='text-sm font-medium leading-6 text-gray-900'>
@@ -60,11 +63,11 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
                 {isOpen && (
                     <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
                         <div className="py-1 flex flex-col gap-2 px-2" aria-labelledby="options-menu">
-                            {options.map((option) => (
+                            {options && options.map((option) => (
                                 <div
                                     key={option.id}
                                     className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                                        getValues(name).some((res) => res.id === option.id) ? 'bg-blue-100' : ''
+                                        getValues(name) && getValues(name).some((res) => res.id === option.id) ? 'bg-blue-100' : ''
                                     }`}
                                     onClick={() => handleSelect(option)}
                             >
@@ -77,7 +80,7 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
                                             className="w-6 h-6 rounded-full mr-2"
                                         />
                                     )}
-                                    <span className={`${getValues(name).some((res) => res.id === option.id) ? "text-white" : "text-black"}`}>{option.name}</span>
+                                    <span className={`${getValues(name) && getValues(name).some((res) => res.id === option.id) ? "text-white" : "text-black"}`}>{option.name}</span>
                                 </div>
                             ))}
                         </div>

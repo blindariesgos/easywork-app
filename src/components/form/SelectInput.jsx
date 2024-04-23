@@ -15,7 +15,8 @@ function SelectInput({
   setValue,
   object,
   border,
-  value
+  value,
+  setSelectedOption
 }) {
 
   const [selected, setSelected] = useState();
@@ -28,7 +29,10 @@ function SelectInput({
   },  [selectedOption])
 
   useEffect(() => {
-    if (selected) setValue && setValue(name, object ? selected : selected.id);
+    if (selected) {
+      setValue && setValue(name, object ? selected : selected.id)
+      setSelectedOption && setSelectedOption(selected);
+    };
   }, [selected, setValue, name])
 
   const filteredElements =
@@ -43,15 +47,15 @@ function SelectInput({
   return (
     <div className="w-full">
       <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
-        <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
+        <Combobox.Label className={`block text-sm font-medium leading-6 text-gray-900`}>
           {label}
         </Combobox.Label>
-        <div className="relative mt-1">
+        <div className={`relative ${label ? "mt-1" : "mt-0"}`}>
             <Combobox.Input
               // {...register && register(name)}
-              className={`z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md drop-shadow-sm placeholder:text-xs text-sm ${border ? "border border-gray-200 focus:ring-gray-200" : "border-none focus:ring-0 "}`}
+              className={`z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md drop-shadow-sm placeholder:text-xs text-sm ${border ? "border border-gray-200 focus:ring-gray-200 focus:outline-0" : "border-none focus:ring-0 "}`}
               displayValue={(person) => person?.name}   
-              value={value}           
+              // value={value}           
               onChange={(event) => {
                   // register && register(name).onChange(event);
                   setQuery && setQuery(event.target.value);

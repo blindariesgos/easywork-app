@@ -42,7 +42,8 @@ const FormFilters = () => {
 
 	const schema = yup.object().shape({
 		role: yup.string(),
-		status: yup.array().min(1, t('common:validations:min-array', { min: 1 })),
+		// status: yup.array().min(1, t('common:validations:min-array', { min: 1 })),
+		status: yup.array(),
 		responsible: yup.string(),
 		limitDate: yup.object(),
 		newDate: yup.string(),
@@ -52,7 +53,7 @@ const FormFilters = () => {
 		closedThe: yup.object(),
 		newDate2: yup.string(),
 		labels: yup.array(),
-		fields: yup.array().of(yup.object().shape({}))
+		fields: yup.array().of(yup.object().shape()),
 	});
 	const [ dateRange, setDateRange ] = useState([ null, null ]);
 	const [ dateRangeThe, setDateRangeThe ] = useState([ null, null ]);
@@ -68,13 +69,20 @@ const FormFilters = () => {
 		formState: { isValid, errors }
 	} = useForm({
 		defaultValues: {
-			range: [ null, null ]
+			range: [ null, null ],
+			fields: [{
+				id: 1,
+				name: t('tools:tasks:filters:fields:role'),
+				options: [],
+				type: "select",
+				check: false,
+				code: "role",
+			}]
 		},
 		mode: 'onChange',
 		resolver: yupResolver(schema)
 	});
 
-	console.log('data', errors);
 	const handleFormFilters = (data) => {
 		console.log('data', data);
 	};
@@ -83,148 +91,88 @@ const FormFilters = () => {
 		reset();
 	}, []);
 
-
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'fields'
 	});
-	
+
 	return (
 		<form onSubmit={handleSubmit(handleFormFilters)}>
-			<div className='h-[325px] overflow-y-auto '>
-				<div className='grid grid-cols-1 gap-2 sm:w-96 w-72 px-2 mb-4'>
-					<Controller
-						name="role"
-						control={control}
-						defaultValue={''}
-						render={({ field }) => {
-							return (
-								<SelectInput
-									{...field}
-									label={t('tools:tasks:filters:fields:role')}
-									name="role"
-									options={contactSources}
-									error={!field.value && errors.role}
-									setValue={setValue}
-								/>
-							);
-						}}
-					/>
-					<Controller
-						name="status"
-						control={control}
-						defaultValue={[]}
-						render={({ field }) => (
-							<MultipleSelect
-								{...field}
-								options={status}
-								getValues={getValues}
-								setValue={setValue}
-								name="status"
-								label={t('tools:tasks:filters:fields:status')}
-								error={errors.status}
-							/>
-						)}
-					/>
-					<SelectDropdown
-						label={t('tools:tasks:filters:fields:responsible')}
-						name="responsible"
-						options={users}
-						setValue={setValue}
-					/>
-					<InputDateFilter 
-						label={t('tools:tasks:filters:fields:limit-date')}
-						watch={watch} 
-						setValue={setValue} 
-						register={register} 
-						nameDate={'newDate'} 
-						name="limitDate" 
-						dateRange={dateRange} 
-						setDateRange={setDateRange}
-					/>
-					<InputDateFilter 
-						label={t('tools:tasks:filters:fields:createdThe')}
-						watch={watch} 
-						setValue={setValue} 
-						register={register} 
-						nameDate={'newDate1'} 
-						name="createdThe" 
-						dateRange={dateRangeThe} 
-						setDateRange={setDateRangeThe}
-					/>
-					<SelectDropdown
-						label={t('tools:tasks:filters:fields:createdBy')}
-						name="createdBy"
-						options={users}
-						setValue={setValue}
-					/>
-					<Controller
-						name="labels"
-						control={control}
-						defaultValue={[]}
-						render={({ field }) => (
-							<MultipleSelect
-								{...field}
-								options={status}
-								getValues={getValues}
-								setValue={setValue}
-								name="labels"
-								label={t('tools:tasks:filters:fields:tag')}
-								error={errors.labels}
-							/>
-						)}
-					/>
-					<InputDateFilter 
-						label={t('tools:tasks:filters:fields:closed')}
-						watch={watch} 
-						setValue={setValue} 
-						register={register} 
-						nameDate={'newDate2'} 
-						name="closedThe" 
-						dateRange={dateRangeClosedThe} 
-						setDateRange={setDateRangeClosedThe}
-					/>
-					{fields.map((field, index) => {
-							{console.log("fields[${index}].value", `fields[${index}].value`)}
+			<div className="h-[325px] overflow-y-auto ">
+				<div className="grid grid-cols-1 gap-2 sm:w-96 w-72 px-2 mb-4">
+					{fields.map((dataField, index) => {
 						return (
-							<div key={field.id}>
-								{field.type === 'input' && (
+							<div key={dataField.id}>
+								{dataField.type === 'input' && (
 									<TextInput
-										label={field.name}
+										label={dataField.name}
 										type="text"
 										name={`fields[${index}].value`}
 										register={register}
 									/>
 								)}
-								{field.type === 'select' && (
+								{dataField.type === 'select' && (
 									<SelectInput
-										{...field}
-										label={field.name}
+										{...dataField}
+										label={dataField.name}
 										name={`fields[${index}].value`}
-										options={field.options}
+										options={dataField.options}
 										register={register}
 										setValue={setValue}
 									/>
 								)}
-								{field.type === 'dropdown' && (
+								{dataField.type === 'dropdown' && (
 									<SelectDropdown
-										label={field.name}
+										label={dataField.name}
 										name={`fields[${index}].value`}
-										options={field.options}
+										options={dataField.options}
 										setValue={setValue}
 									/>
 								)}
-								{field.type === 'date' && (
-									<InputDateFilter 
-										{...field}
-										label={field.name}
-										watch={watch} 
-										setValue={setValue} 
-										register={register} 
-										nameDate={field.date} 
+								{dataField.type === 'date' && (
+									<InputDateFilter
+										{...dataField}
+										label={dataField.name}
+										watch={watch}
+										setValue={setValue}
+										register={register}
+										nameDate={`fields[${index}].newValue`}
 										name={`fields[${index}].value`}
-										dateRange={field.state === 1 ? dateRange : field.state === 2 ? dateRangeThe : dateRangeClosedThe} 
-										setDateRange={field.state === 1 ? setDateRange : field.state === 2 ? setDateRangeThe : setDateRangeClosedThe}
+										dateRange={
+											dataField.state === 1 ? (
+												dateRange
+											) : dataField.state === 2 ? (
+												dateRangeThe
+											) : (
+												dateRangeClosedThe
+											)
+										}
+										setDateRange={
+											dataField.state === 1 ? (
+												setDateRange
+											) : dataField.state === 2 ? (
+												setDateRangeThe
+											) : (
+												setDateRangeClosedThe
+											)
+										}
+									/>
+								)}
+								{dataField.type === 'multipleSelect' && (
+									<Controller
+										name={`fields[${index}].value`}
+										control={control}
+										defaultValue={[]}
+										render={({ field }) => (
+											<MultipleSelect
+												{...field}
+												options={dataField.options}
+												getValues={getValues}
+												setValue={setValue}
+												name={`fields[${index}].value`}
+												label={dataField.name}
+											/>
+										)}
 									/>
 								)}
 							</div>
@@ -258,7 +206,10 @@ const FormFilters = () => {
 					label={t('tools:tasks:filters:reset')}
 					buttonStyle="secondary"
 					className="py-1 px-3"
-					onclick={() => { setValue("fields", []); reset() }}
+					onclick={() => {
+						setValue('fields', []);
+						reset();
+					}}
 				/>
 			</div>
 		</form>

@@ -28,7 +28,7 @@ export default function InputDateFilter({ label, watch, setValue, register, name
             </div>
             {watch(name)?.date === "input" && (
                 <div className="w-3/5">
-                    <TextInput type="number" onChange={(e) => field.newValue = "#dff"} />
+                    <TextInput type="number" onChange={(e) => setValue(nameDate, e.target.value)} />
                 </div>
             )}
             {watch(name)?.date === "month" && (

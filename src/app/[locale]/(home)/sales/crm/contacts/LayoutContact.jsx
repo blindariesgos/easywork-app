@@ -53,7 +53,7 @@ export default function LayoutContact({ children }) {
             
             <div className="">
                 <Pagination
-                totalPages={contacts?.meta?.totalPages || 0}
+                    totalPages={contacts?.meta?.totalPages || 0}
                 />
             </div>  
         </div>

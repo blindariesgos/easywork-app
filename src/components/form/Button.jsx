@@ -20,6 +20,8 @@ export default function Button({
 				return 'text-primary bg-gray-500 shadow-sm text-sm';
 			case 'text':
 				return `text-gray-400 bg-transparent ${fontSize}`;
+			case 'outlined':
+				return 'text-primary border border-primary';
 			default:
 				break;
 		}

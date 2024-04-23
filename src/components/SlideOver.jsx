@@ -76,6 +76,9 @@ export default function SlideOver({
 				case 'lead':
 					setLabel(t('leads:header:lead'));
 					break;
+				case 'task':
+					setLabel(t('tools:tasks:name'));
+					break;
 			
 
 				default:

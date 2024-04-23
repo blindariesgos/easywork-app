@@ -1,18 +1,34 @@
 "use client";
 import ToolHeader from "@/components/ToolHeader";
-import React from "react";
+import React, { Suspense, useEffect } from "react";
 import { Cog8ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
 import { useTasks } from "@/hooks/useCommon";
 import IconDropdown from "@/components/SettingsButton";
 import FiltersTasks from "./components/filters/FiltersTasks";
+import LoaderSpinner from "@/components/LoaderSpinner";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Header from "@/components/header/Header";
 
-export default function TaskLayout({ children, table }) {
+export default function TaskLayout({ children, table, createTask }) {
   const { t } = useTranslation();
   const { optionsSettings, optionsTrash } = useTasks();
+	const searchParams = useSearchParams();
+	const params = new URLSearchParams(searchParams);
+	const pathname = usePathname();
+	const { replace } = useRouter();
+
+	// useEffect(() => {
+	// 	if (Number(params.get('page')) === 0 || !params.get('page')) {
+	// 		params.set('page', 1);
+	// 		replace(`${pathname}?${params.toString()}`);
+	// 	}
+	// }, []);
+  
   return (
-    <div className="flex flex-col flex-grow">
+    <div className="flex flex-col flex-grow h-full">
+			{/* <Header /> */}
       <ToolHeader
         title={t('tools:tasks:name')}
         route="/tools/task"
@@ -38,9 +54,11 @@ export default function TaskLayout({ children, table }) {
           <TaskSubMenu />
         </div>
       </ToolHeader>
-
-      {table}
-      {children}
+      <Suspense fallback={<LoaderSpinner/>}>
+        {table}
+        {children}
+      </Suspense>
+      {createTask}
     </div>
   );
 }

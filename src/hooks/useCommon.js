@@ -768,10 +768,60 @@ export const useTasks = () => {
         }
     ];
 
+    
+	const columnTable = [
+		{
+			id: 1,
+			name: t('tools:tasks:table:name'),
+            row: "name",
+            check: true,
+            link: true,
+            permanent: true
+		},
+		{
+			id: 2,
+			name: t('tools:tasks:table:activity'),
+            row: "activity",
+            check: true
+		},
+		{
+			id: 3,
+			name: t('tools:tasks:table:contact'),
+            row: "contact",
+            check: true
+		},
+		{
+			id: 4,
+			name: t('tools:tasks:table:policy'),
+            row: "policy",
+            check: true
+		},
+		{
+			id: 5,
+			name: t('tools:tasks:table.responsible'),
+            row: "responsiblePerson",
+            check: false,
+            photo: true
+		},
+		{
+			id: 6,
+			name: t('tools:tasks:table.limit-date'),
+            row: "limitDate",
+            check: false
+		},
+		{
+			id: 7,
+			name: t('tools:tasks:table.created-by'),
+            row: "createdBy",
+            photo: true,
+            check: false
+		},
+	]
     return {
         optionsTrash,
         optionsSettings,
         status,
-        setStatus
+        setStatus,
+        columnTable
     }
 }

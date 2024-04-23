@@ -57,7 +57,9 @@
         "upload": "Subir",
         "edit": "Editar",
         "delete": "Eliminar",
-        "close": "Cerrar"
+        "close": "Cerrar",
+        "apply" : "Aplicar",
+        "continue": "Continuar"
     },
     "menu": {
         "tools": {
@@ -134,5 +136,16 @@
         "attach": "Adjunte su documento en PDF",
         "convert" : "Convertir a imagen",
         "generated" : "Imagen generada"
+    },
+    "table": {
+        "checkbox": {
+            "msg-delete" : "¿Estas seguro que deseas continuar?",
+            "complete": "Completar",
+            "delete": "Eliminar",
+            "add-obserber" : "Agregar observador",
+            "add-participant" : "Agregar participante",
+            "change-obserber" : "Cambiar observador",
+            "change-participant" : "Cambiar participante"
+        }
     }
 }

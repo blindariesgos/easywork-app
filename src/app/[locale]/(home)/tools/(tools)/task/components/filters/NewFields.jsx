@@ -12,14 +12,22 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 	const [ fields, setFields ] = useState([
 		{
 			id: 1,
+			name: t('tools:tasks:filters:fields:role'),
+			options: [],
+			type: "select",
+			check: true,
+            code: "role",
+		},
+		{
+			id: 2,
 			name: t('tools:tasks:filters:fields:status'),
 			options: status,
 			type: 'multipleSelect',
 			check: false,
-            code: "role"
+            code: "status",
 		},
 		{
-			id: 2,
+			id: 3,
 			name: t('tools:tasks:filters:fields:responsible'),
 			type: 'dropdown',
 			options: users,
@@ -27,14 +35,71 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
             code: "typeContact"
 		},
 		{
-			id: 3,
+			id: 4,
 			name: t('tools:tasks:filters:fields:limit-date'),
 			type: 'date',
 			check: false,
             code: "limitDate",
 			date: "newDate",
 			state: 1,
-		}
+		},
+		{
+			id: 11,
+			name: t('tools:tasks:filters:fields:createdThe'),
+			type: 'date',
+			check: false,
+            code: "createdThe",
+			date: "newDate1",
+			state: 2,
+		},
+		{
+			id: 5,
+			name: t('tools:tasks:filters:fields:createdBy'),
+			type: 'dropdown',
+			check: false,
+            code: "createdBy",
+			options: users
+		},
+		{
+			id: 6,
+			name: t('tools:tasks:filters:fields:tag'),
+			type: 'multipleSelect',
+			check: false,
+            code: "labels",
+			options: status
+		},
+		{
+			id: 7,
+			name: t('tools:tasks:filters:fields:closed'),
+			type: 'date',
+			check: false,
+            code: "closedThe",
+			date: "newDate2",
+			state: 3,
+		},
+		{
+			id: 8,
+			name: t('tools:tasks:filters:fields:name'),
+			type: 'input',
+			check: false,
+            code: "name",
+		},
+		{
+			id: 9,
+			name: t('tools:tasks:filters:fields:participant'),
+			type: 'dropdown',
+			check: false,
+            code: "participant",
+			options: users
+		},
+		{
+			id: 10,
+			name: t('tools:tasks:filters:fields:obserber'),
+			type: 'dropdown',
+			check: false,
+            code: "obserber",
+			options: users
+		},
 	]);
 
 	useEffect(
@@ -64,7 +129,7 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 
 	return (
 		<div className="p-4">
-			<div className="flex gap-4 flex-col">
+			<div className="grid grid-cols-2 gap-4">
 				{fields.map((field, index) => (
 					<div key={index} className="flex gap-2">
 						<input

@@ -26,7 +26,7 @@ const AddFields = ({append, remove, fields}) => {
 				leaveTo="transform opacity-0 scale-95"
 			>
 				<Menu.Items
-					className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-60`}
+					className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-96`}
 				>
                     <NewFields append={append} remove={remove} fields={fields}/>
 				</Menu.Items>

@@ -817,11 +817,28 @@ export const useTasks = () => {
             check: false
 		},
 	]
+    
+  const settings = [
+    {
+      value: 0,
+      name: t("tools:tasks:new:download"),
+      onclick: () => {},
+      icon: ArrowDownTrayIcon
+    },
+    {
+      value: 0,
+      name: t("tools:tasks:new:print"),
+      onclick: () => {},
+      icon: DocumentTextIcon
+    }
+  ]
+
     return {
         optionsTrash,
         optionsSettings,
         status,
         setStatus,
-        columnTable
+        columnTable,
+        settings
     }
 }

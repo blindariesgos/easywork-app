@@ -21,6 +21,7 @@ import SelectDropdown from '@/components/form/SelectDropdown';
 import { DocumentSelector } from '@/components/DocumentSelector';
 import ProfileImageInput from '@/components/ProfileImageInput';
 import { useRouter } from 'next/navigation';
+import LoaderSpinner from '@/components/LoaderSpinner';
 
 export default function CreateContact({ edit, id }) {
     const { lists } = useAppContext();
@@ -210,14 +211,7 @@ export default function CreateContact({ edit, id }) {
 		<div className="flex flex-col h-screen relative w-full">
 			{/* Formulario Principal */}
 			{loading && (
-				<div className="absolute z-50 inset-0 bg-easy-800/10 w-full h-full">
-					{/* Loader spinner */}
-
-					<div className="flex items-center justify-center h-full flex-col gap-2 cursor-progress">
-						<div className="animate-spin rounded-full h-28 w-28 border-t-2 border-b-2 border-easy-600" />
-						<p className="text-easy-600 animate-pulse select-none">{t('contacts:create:save')}</p>
-					</div>
-				</div>
+				<LoaderSpinner/>
 			)}
 			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
 				<form

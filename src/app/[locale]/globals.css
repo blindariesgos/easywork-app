@@ -49,3 +49,12 @@ body {
 .react-datepicker-wrapper{
   width: 100%;
 }
+
+.ql-container{
+  /* height: 200px !important; */
+  border: none !important;
+}
+
+.ql-toolbar{
+  border: none !important;
+}

@@ -3,6 +3,8 @@
     "save": "¡Salvado con éxito!",
     "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
     "select": "Seleccione",
+    "not-found" : "No se encontraron resultados",
+    "time": "Hora",
     "validations": {
         "required": "El campo es requerido",
         "min": "El campo debe tener al menos {{min}} caracteres",
@@ -59,7 +61,8 @@
         "delete": "Eliminar",
         "close": "Cerrar",
         "apply" : "Aplicar",
-        "continue": "Continuar"
+        "continue": "Continuar",
+        "add": "Agregar"
     },
     "menu": {
         "tools": {

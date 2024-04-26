@@ -65,3 +65,18 @@ body {
   border: 1px solid #ccc;
   border-radius: "20px";
 }
+
+.react-datepicker__day--selected {
+  background-color: #241F61 !important;
+  color: white !important;
+}
+
+.react-datepicker-time__input{
+  font-size: 12px !important;
+  height: 32px !important;
+  border-radius: 12px !important;
+}
+
+.react-datepicker__close-icon{
+  color: #241F61 !important;
+}

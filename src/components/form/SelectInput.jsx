@@ -3,6 +3,7 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import React, { Fragment, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function SelectInput({
   label,
@@ -18,7 +19,7 @@ function SelectInput({
   value,
   setSelectedOption
 }) {
-
+  const { t } = useTranslation();
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");  
 
@@ -77,8 +78,8 @@ function SelectInput({
           >
             <Combobox.Options className="absolute z-50 bottom-2 mb-8 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {filteredElements?.length === 0 && query !== '' ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                  Nothing found.
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                  {t('common:not-found')}
                 </div>
               ) : (
                 filteredElements && filteredElements.map((person) => (

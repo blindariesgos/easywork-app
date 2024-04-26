@@ -11,7 +11,7 @@ import LoaderSpinner from "@/components/LoaderSpinner";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/header/Header";
 
-export default function TaskLayout({ children, table, createTask }) {
+export default function TaskLayout({ children, table }) {
   const { t } = useTranslation();
   const { optionsSettings, optionsTrash } = useTasks();
 	const searchParams = useSearchParams();
@@ -58,7 +58,6 @@ export default function TaskLayout({ children, table, createTask }) {
         {table}
         {children}
       </Suspense>
-      {createTask}
     </div>
   );
 }

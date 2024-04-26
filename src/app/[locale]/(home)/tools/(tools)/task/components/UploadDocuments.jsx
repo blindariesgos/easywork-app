@@ -60,7 +60,7 @@ export default function UploadDocuments({ files, deleteFiles, setFiles }) {
 					))}
 			</div>
 			<hr className="text-gray-200 border border-dashed" />
-			<div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-x-4">
+			<div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
 				<div className="">
 					<label
 						htmlFor="file-upload"

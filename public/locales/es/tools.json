@@ -116,7 +116,9 @@
             "completed": "Completado {{init}} de {{end}}",
             "add-item" : "Añadir elemento",
             "delete-item": "Eliminar la lista de verificación",
-            "add-lists" : "Agregar una lista de verificación"
+            "add-lists" : "Agregar una lista de verificación",
+            "create-new": "Crear nuevo",
+            "empty-value": "Seleccione la descripción de la tarea que desea agregar a la lista de verificación"
         },
         "edit": {
             "task" : "Tarea",

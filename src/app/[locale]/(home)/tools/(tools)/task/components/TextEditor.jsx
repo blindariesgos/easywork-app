@@ -1,8 +1,9 @@
-import React from 'react';
+'use client';
+import React, { useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const TextEditor = ({ value, onChange, className }) => {
+const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef }) => {
   const modules = {
     toolbar: [
         ['bold', 'italic', 'underline', 'strike'],
@@ -10,11 +11,11 @@ const TextEditor = ({ value, onChange, className }) => {
         [{ 'color': [] }],
         [{ 'font': [] }],
         [{ 'size': ['small', false, 'large', 'huge'] }],
-        ['code-block'],
+        ['code-block', 'blockquote',],
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
         [{ 'indent': '-1' }, { 'indent': '+1' }],
         [{ 'align': [] }],
-        ['link', 'image', 'video']
+        ['link', 'image', 'video'],
     ],
   };
 
@@ -43,14 +44,18 @@ const TextEditor = ({ value, onChange, className }) => {
   ];
 
   return (
-    <ReactQuill
-      value={value}
-      onChange={onChange}
-      modules={modules}
-      formats={formats}
-      theme="snow"
-      className={className}
-    />
+    <div>
+      <ReactQuill
+        ref={quillRef}
+        value={value}
+        onChange={onChange}
+        modules={modules}
+        formats={formats}
+        theme="snow"
+        className={className}
+        onChangeSelection={onChangeSelection}
+      />
+    </div>
   );
 };
 

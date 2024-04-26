@@ -3,13 +3,19 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import React from 'react';
 
-export default function DropdownVisibleUsers({ dataUsers, onChangeCustom, setUserSelected, userSelected, setDropdownVisible}) {
+export default function DropdownVisibleUsers({ dataUsers, onChangeCustom, setUserSelected, userSelected, setDropdownVisible, mentionButtonRef}) {
 	const handleSelected = (user) => {
 		setUserSelected(user);
 	};
 
 	return (
-		<div className={`absolute rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-10 w-48`}>
+		<div 
+			className={`absolute rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-10 w-54 h-min-96 overflow-y-auto`}
+			style={{
+			  top: mentionButtonRef && mentionButtonRef.current.offsetTop + mentionButtonRef.current.offsetHeight,
+			  left: mentionButtonRef && mentionButtonRef.current.offsetLeft,
+			}}
+		>
 			<div className="p-4">
 				<div className="flex justify-end gap-2">
 					<div className="cursor-pointer" onClick={() => setDropdownVisible(false)}>

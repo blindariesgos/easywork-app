@@ -58,3 +58,10 @@ body {
 .ql-toolbar{
   border: none !important;
 }
+
+.ql-editor blockquote {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: "20px";
+}

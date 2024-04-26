@@ -17,6 +17,7 @@ import {
     useRouter
 } from "next/navigation";
 import {
+    useRef,
     useState
 } from "react";
 
@@ -841,4 +842,61 @@ export const useTasks = () => {
         columnTable,
         settings
     }
+}
+
+export const useTooltip = () => {    
+    const [showTooltip, setShowTooltip] = useState(false);
+    const tooltipRef = useRef(null);
+
+    const getTooltipStyle = (position) => {
+        switch (position) {
+            case 'top':
+                return {
+                    top: -5,
+                    left: 95,
+                    transform: 'translate(-50%, -100%)',
+                };
+            case 'bottom':
+                return {
+                    top: 25,
+                    left: 15,
+                    transform: 'translate(-50%, 0)',
+                };
+            case 'left':
+                return {
+                    top: 5,
+                    left: 5,
+                    transform: 'translate(-100%, -50%)',
+                };
+            case 'right':
+                return {
+                    top: 5,
+                    left: 25,
+                    transform: 'translate(0, -50%)',
+                };
+            default:
+                return {
+                    top: 0,
+                    left: 0,
+                    transform: 'translate(0, 0)',
+                };
+            }
+    };
+
+    const handleMouseEnter = () => {
+        setShowTooltip(true);
+    };
+    
+    const handleMouseLeave = () => {
+        setShowTooltip(false);
+    };
+
+    return{
+        showTooltip,
+        handleMouseEnter,
+        handleMouseLeave,
+        getTooltipStyle,
+        tooltipRef
+    }
+
 }

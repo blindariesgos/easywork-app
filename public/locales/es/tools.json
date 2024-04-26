@@ -15,6 +15,14 @@
             "office365": "Office 365",
             "desktopApp": "Aplicación de escritorio"
         },
+        "organizer": {
+            "by-name": "Por nombre",
+            "by-change-date": "Por fecha de cambio",
+            "by-id": "Por ID",
+            "by-size": "Por Tamaño",
+            "reverse": "Revertir",
+            "mixed-classification": "Por Nombre"
+        },
         "table": {
             "edit": "Bulk edit",
             "delete": "Delete all",

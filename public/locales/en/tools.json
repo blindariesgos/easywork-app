@@ -15,6 +15,9 @@
       "office365": "Office 365",
       "desktopApp": "Desktop App"
     },
+    "organizer": {
+      "by-name": "By Name"
+    },
     "table": {
       "edit": "Bulk edit",
       "delete": "Delete all",

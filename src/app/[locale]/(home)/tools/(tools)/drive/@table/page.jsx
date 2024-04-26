@@ -4,6 +4,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 const files = [
   {
@@ -86,18 +88,18 @@ export default function Page() {
                     type="button"
                     className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                   >
-                    {t('tools:drive:table:edit')}
+                    {t("tools:drive:table:edit")}
                   </button>
                   <button
                     type="button"
                     className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                   >
-                    {t('tools:drive:table:delete')}
+                    {t("tools:drive:table:delete")}
                   </button>
                 </div>
               )}
               <table className="min-w-full divide-y divide-gray-300 table-auto">
-                <thead className="bg-gray-50">
+                <thead className="bg-white">
                   <tr>
                     <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
                       <input
@@ -112,25 +114,25 @@ export default function Page() {
                       scope="col"
                       className="min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
                     >
-                      {t('tools:drive:table:name')}
+                      {t("tools:drive:table:name")}
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      {t('tools:drive:table:modified')}
+                      {t("tools:drive:table:modified")}
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      {t('tools:drive:table:modified-by')}
+                      {t("tools:drive:table:modified-by")}
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      {t('tools:drive:table:size')}
+                      {t("tools:drive:table:size")}
                     </th>
                   </tr>
                 </thead>
@@ -183,10 +185,10 @@ export default function Page() {
                           </div>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         {file.modifiedAt}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         <div className="flex items-center">
                           <div className="h-9 w-9 flex-shrink-0">
                             <Image
@@ -204,12 +206,31 @@ export default function Page() {
                           </div>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         {file.size}
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                <tfoot className="bg-white w-full h-10">
+                  <tr>
+                    <td></td>
+                    <td>Seleccionado: 0/50</td>
+                    <td>Pagina 1/2</td>
+                    <td>
+                      <div className="flex items-center ">
+                        <div className="flex">
+                          <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
+                          anterior
+                        </div>
+                        <div className="ml-4 flex">siguiente
+                        <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
+                        </div>
+                      </div>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>

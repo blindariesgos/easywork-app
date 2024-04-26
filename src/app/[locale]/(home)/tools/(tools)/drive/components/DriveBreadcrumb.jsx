@@ -11,7 +11,7 @@ export default function DriveBreadcrumb() {
     { name: "Rosmer Campos", href: "#", current: true },
   ];
   return (
-    <nav className="flex" aria-label="Breadcrumb">
+    <nav className="flex ml-3" aria-label="Breadcrumb">
       <ol role="list" className="flex items-center space-x-4">
         <li>
           <div>
@@ -28,7 +28,7 @@ export default function DriveBreadcrumb() {
           <li key={page.name}>
             <div className="flex items-center">
               <svg
-                className="h-5 w-5 flex-shrink-0 text-gray-300"
+                className="h-5 w-5 flex-shrink-0 text-gray-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 aria-hidden="true"
@@ -37,7 +37,7 @@ export default function DriveBreadcrumb() {
               </svg>
               <a
                 href={page.href}
-                className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                className="ml-4 text-sm font-medium text-gray-400 hover:text-gray-700"
                 aria-current={page.current ? "page" : undefined}
               >
                 {page.name}

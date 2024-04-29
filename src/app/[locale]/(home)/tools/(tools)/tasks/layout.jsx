@@ -31,7 +31,7 @@ export default function TaskLayout({ children, table }) {
 			{/* <Header /> */}
       <ToolHeader
         title={t('tools:tasks:name')}
-        route="/tools/task"
+        route="/tools/tasks/task"
         Filters={FiltersTasks}
         toolButtons={(
           <>

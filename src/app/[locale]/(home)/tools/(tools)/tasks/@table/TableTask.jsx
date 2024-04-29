@@ -185,7 +185,7 @@ export default function TableTask() {
 													<td className="ml-4 text-left py-5" key={index}>
 														<div className="font-medium text-sm text-black hover:text-primary capitalize">
 															{column.link ? (
-																<Link href={`/tools/task/edit/${task.id}?show=true`} className="">
+																<Link href={`/tools/tasks/task/${task.id}?show=true`} className="">
 																	{task[column.row]}
 																</Link>
 															) : column.photo ? (

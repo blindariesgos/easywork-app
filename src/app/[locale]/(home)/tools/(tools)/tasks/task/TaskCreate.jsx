@@ -26,6 +26,7 @@ import CkeckBoxMultiple from '@/components/form/CkeckBoxMultiple';
 import InputCheckBox from '@/components/form/InputCheckBox';
 import Button from '@/components/form/Button';
 import { useRouter } from 'next/navigation';
+import OptionsTask from '../components/OptionsTask';
 ;
 
 export default function TaskCreate() {
@@ -35,17 +36,17 @@ export default function TaskCreate() {
 	const { settings } = useTasks();
 	const [ loading, setLoading ] = useState(false);
 	const [ check, setCheck ] = useState(false);
-	const [ openFiles, setOpenFiles ] = useState(false);
-	const [ files, setFiles ] = useState([]);
-	const [ value, setValueText ] = useState('');
-	const [ dropdownVisible, setDropdownVisible ] = useState(false);
-	const [ dataUsers, setDataUsers ] = useState();
-    const [ userSelected, setUserSelected ] = useState(null);
-	const [openList, setOpenList] = useState(false);
-	const [selectText, setSelectText] = useState("");
-	const quillRef = useRef(null);
-	const mentionButtonRef = useRef(null);
-	const [arroba, setArroba] = useState(false);
+	// const [ openFiles, setOpenFiles ] = useState(false);
+	// const [ files, setFiles ] = useState([]);
+	// const [ value, setValueText ] = useState('');
+	// const [ dropdownVisible, setDropdownVisible ] = useState(false);
+	// const [ dataUsers, setDataUsers ] = useState();
+    // const [ userSelected, setUserSelected ] = useState(null);
+	// const [openList, setOpenList] = useState(false);
+	// const [selectText, setSelectText] = useState("");
+	// const quillRef = useRef(null);
+	// const mentionButtonRef = useRef(null);
+	// const [arroba, setArroba] = useState(false);
 	const [ selectedOptions, setSelectedOptions ] = useState([]);
 	const [checkedTime, setCheckedTime] = useState(false);
 	const [checkedTask, setCheckedTask] = useState(false);
@@ -57,7 +58,7 @@ export default function TaskCreate() {
 		options: false,
 		more: false
 	})
-	const [isBlockquoteAdded, setIsBlockquoteAdded] = useState(false);
+	// const [isBlockquoteAdded, setIsBlockquoteAdded] = useState(false);
 
 	const optionsTime = [
 		{
@@ -78,13 +79,13 @@ export default function TaskCreate() {
 		},
 	]
 	
-    useEffect(() => {
-        if (userSelected) addUserSelected(userSelected.username);
-    }, [userSelected])
+    // useEffect(() => {
+    //     if (userSelected) addUserSelected(userSelected.username);
+    // }, [userSelected])
 
-	const handleTextSelection = (selection, source, editor) => {
-		selection && setSelectText(editor.getText(selection.index, selection.length));
-	};
+	// const handleTextSelection = (selection, source, editor) => {
+	// 	selection && setSelectText(editor.getText(selection.index, selection.length));
+	// };
 
 	
 	const schemaInputs = yup.object().shape({
@@ -116,63 +117,63 @@ export default function TaskCreate() {
     });
 
 	//FUNCTIONS TO CHECKLIST
-	const schema = yup.object().shape({
-		items: yup.array().of(
-			yup.object().shape({
-				name: yup.string().required(),
-				subItems: yup.array().of(
-					yup.object().shape({
-						name: yup.string().required()
-					})
-				)
-			})
-		)
-	});
+	// const schema = yup.object().shape({
+	// 	items: yup.array().of(
+	// 		yup.object().shape({
+	// 			name: yup.string().required(),
+	// 			subItems: yup.array().of(
+	// 				yup.object().shape({
+	// 					name: yup.string().required()
+	// 				})
+	// 			)
+	// 		})
+	// 	)
+	// });
     
-    const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
-        defaultValues: {
-            // items: [
-            //     {
-            //         id: "",
-            //         name: `${t('tools:tasks:new:verification-list')} #1`,
-            //         subItems: [
-            //             { name: "", value: false, empty: true }
-            //         ]
-            //     }
-            // ]
-        },
-        resolver: yupResolver(schema),
-    });
+    // const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
+    //     defaultValues: {
+    //         // items: [
+    //         //     {
+    //         //         id: "",
+    //         //         name: `${t('tools:tasks:new:verification-list')} #1`,
+    //         //         subItems: [
+    //         //             { name: "", value: false, empty: true }
+    //         //         ]
+    //         //     }
+    //         // ]
+    //     },
+    //     resolver: yupResolver(schema),
+    // });
   
-    const { fields, append, remove } = useFieldArray({
-      control,
-      name: "items",
-    });
+    // const { fields, append, remove } = useFieldArray({
+    //   control,
+    //   name: "items",
+    // });
 
 	/*-------------------------------------------------------------*/
 
-    useEffect(() => {
-        if (lists?.users) setDataUsers(lists?.users);
-    }, [lists])
+    // useEffect(() => {
+    //     if (lists?.users) setDataUsers(lists?.users);
+    // }, [lists])
 
-	const onChangeCustom = (event) => {
-        const { value } = event.target;
-        const filterData = lists?.users.filter((user) => {
-            return user.username.toLowerCase().includes(value.toLowerCase());
-          });
-        setDataUsers(filterData); 
-	};
+	// const onChangeCustom = (event) => {
+    //     const { value } = event.target;
+    //     const filterData = lists?.users.filter((user) => {
+    //         return user.username.toLowerCase().includes(value.toLowerCase());
+    //       });
+    //     setDataUsers(filterData); 
+	// };
 
-	const handleChange = (newValue, delta, source, editor) => {
-		setArroba(false);
-        if (delta && delta.ops && delta.ops.length > 0 && typeof delta.ops[0].insert === 'string') {
-			const insertText = delta.ops[0].insert.trim();
-			if (insertText === '@') {
-				return setArroba(true);
-			}
-        }
-		setValueText(newValue);
-	};
+	// const handleChange = (newValue, delta, source, editor) => {
+	// 	setArroba(false);
+    //     if (delta && delta.ops && delta.ops.length > 0 && typeof delta.ops[0].insert === 'string') {
+	// 		const insertText = delta.ops[0].insert.trim();
+	// 		if (insertText === '@') {
+	// 			return setArroba(true);
+	// 		}
+    //     }
+	// 	setValueText(newValue);
+	// };
 
 	// const addQuote = () => {
 	// 	if (quillRef.current) {
@@ -186,75 +187,75 @@ export default function TaskCreate() {
 	// 	}
 	// };
   
-	const addUserSelected = (name) => {
-		if (quillRef.current) {
-		  quillRef.current.editor.updateContents([
-			{ insert: name, attributes: { color: "#86BEDF", underline: true } },
-			{ insert: " " },
-		  ]);
-		}
-	};
+	// const addUserSelected = (name) => {
+	// 	if (quillRef.current) {
+	// 	  quillRef.current.editor.updateContents([
+	// 		{ insert: name, attributes: { color: "#86BEDF", underline: true } },
+	// 		{ insert: " " },
+	// 	  ]);
+	// 	}
+	// };
 
-	const deleteFiles = (indexToDelete) => {
-		const documents = files.filter((item, index) => index !== indexToDelete);
-		setFiles(documents);
-	};
+	// const deleteFiles = (indexToDelete) => {
+	// 	const documents = files.filter((item, index) => index !== indexToDelete);
+	// 	setFiles(documents);
+	// };
 
-	const options = [
-		{
-			id: 1,
-			name: t('tools:tasks:new:file'),
-			icon: PaperClipIcon,
-			onclick: () => setOpenFiles(!openFiles)
-		},
-		{
-			id: 2,
-			name: t('tools:tasks:new:document'),
-			icon: DocumentTextIcon,
-		},
-		{
-			id: 3,
-			name: t('tools:tasks:new:mention'),
-			icon: AtSymbolIcon,
-			onclick: () => setDropdownVisible(!dropdownVisible),
-			disabled: arroba
-		},
-		// {
-		// 	id: 4,
-		// 	name: t('tools:tasks:new:appointment'),
-		// 	icon: RiDoubleQuotesL,
-		// 	onclick: () => addQuote()
-		// },
-		{
-			id: 5,
-			name: t('tools:tasks:new:verification-list'),
-			onclick: () => {
-				fields.length === 0 &&
-				append({
-					name: `${t('tools:tasks:new:verification-list')} #${fields.length + 1}`,
-					subItems: [ { name: "", value: false, empty: true } ]
-				});
-				setOpenList(!openList)
-			},
-		},
-		{
-			id: 6,
-			name: t('tools:tasks:new:add-list'),
-			onclick: () => {},
-			menu: true
-		}
-	];
+	// const options = [
+	// 	{
+	// 		id: 1,
+	// 		name: t('tools:tasks:new:file'),
+	// 		icon: PaperClipIcon,
+	// 		onclick: () => setOpenFiles(!openFiles)
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		name: t('tools:tasks:new:document'),
+	// 		icon: DocumentTextIcon,
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		name: t('tools:tasks:new:mention'),
+	// 		icon: AtSymbolIcon,
+	// 		onclick: () => setDropdownVisible(!dropdownVisible),
+	// 		disabled: arroba
+	// 	},
+	// 	// {
+	// 	// 	id: 4,
+	// 	// 	name: t('tools:tasks:new:appointment'),
+	// 	// 	icon: RiDoubleQuotesL,
+	// 	// 	onclick: () => addQuote()
+	// 	// },
+	// 	{
+	// 		id: 5,
+	// 		name: t('tools:tasks:new:verification-list'),
+	// 		onclick: () => {
+	// 			fields.length === 0 &&
+	// 			append({
+	// 				name: `${t('tools:tasks:new:verification-list')} #${fields.length + 1}`,
+	// 				subItems: [ { name: "", value: false, empty: true } ]
+	// 			});
+	// 			setOpenList(!openList)
+	// 		},
+	// 	},
+	// 	{
+	// 		id: 6,
+	// 		name: t('tools:tasks:new:add-list'),
+	// 		onclick: () => {},
+	// 		menu: true
+	// 	}
+	// ];
 
-	const dropdownUsers = (editor) => (
-		<DropdownVisibleUsers 
-			mentionButtonRef={editor ? null : mentionButtonRef}
-			dataUsers={dataUsers} 
-			onChangeCustom={onChangeCustom} 
-			setUserSelected={setUserSelected} 
-			userSelected={userSelected} 
-			setDropdownVisible={editor ? setArroba : setDropdownVisible}
-		/>
-	)
+	// const dropdownUsers = (editor) => (
+	// 	<DropdownVisibleUsers 
+	// 		mentionButtonRef={editor ? null : mentionButtonRef}
+	// 		dataUsers={dataUsers} 
+	// 		onChangeCustom={onChangeCustom} 
+	// 		setUserSelected={setUserSelected} 
+	// 		userSelected={userSelected} 
+	// 		setDropdownVisible={editor ? setArroba : setDropdownVisible}
+	// 	/>
+	// )
 
 	useEffect(() => {
 		if (errors){
@@ -266,7 +267,7 @@ export default function TaskCreate() {
 	return (
 		<div className="flex flex-col h-screen relative w-full overflow-y-auto">
 			{loading && <LoaderSpinner />}
-			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-4">
+			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4">
 				<div className="flex justify-between items-center py-2">
 					<h1 className="text-xl font-medium">{t('tools:tasks:new:title')}</h1>
 					<IconDropdown
@@ -294,7 +295,8 @@ export default function TaskCreate() {
 							<FireIcon className={`h-5 w-5 ${check ? 'text-orange-400' : 'text-gray-200'}`} />
 						</div>
 					</div>
-					<div className="bg-white w-full p-2 rounded-lg mt-2 sm:h-48 h-60">
+					<OptionsTask/>
+					{/* <div className="bg-white w-full p-2 rounded-lg mt-2 sm:h-48 h-60">
 						<TextEditor 
 							quillRef={quillRef}
 							value={value} 
@@ -337,7 +339,7 @@ export default function TaskCreate() {
 							control={control}
 							register={register}
 						/>
-					)}	
+					)}	 */}
 					<div className='mt-6 flex flex-col gap-3'>
 						<div className=''>
 							<div className='flex gap-2 sm:flex-row flex-col sm:items-center'>
@@ -360,13 +362,13 @@ export default function TaskCreate() {
 									/>
 								</div>
 								<div className='flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6'>
-									<div className='cursor-pointer hover:text-primary' onClick={() => setOpenOptions({...openOptions, created: !openOptions.created})}>
+									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => setOpenOptions({...openOptions, created: !openOptions.created})}>
 										<p className='text-sm'>{t("tools:tasks:new:created-by")}</p>	
 									</div>
-									<div className='cursor-pointer hover:text-primary' onClick={() => setOpenOptions({...openOptions, participants: !openOptions.participants})}>
+									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => setOpenOptions({...openOptions, participants: !openOptions.participants})}>
 										<p className='text-sm'>{t("tools:tasks:new:participants")}</p>	
 									</div>
-									<div className='cursor-pointer hover:text-primary' onClick={() => setOpenOptions({...openOptions, obserbers: !openOptions.obserbers})}>
+									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => setOpenOptions({...openOptions, obserbers: !openOptions.obserbers})}>
 										<p className='text-sm'>{t("tools:tasks:new:obserbers")}</p>	
 									</div>
 								</div>
@@ -460,10 +462,10 @@ export default function TaskCreate() {
 									/>
 								</div>
 								<div className='flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6'>
-									<div className='cursor-pointer hover:text-primary' onClick={() => {setValue("endDate", "");setValue("duration", 0);setValue("startDate", "");setOpenOptions({...openOptions, time: !openOptions.time})}}>
+									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => {setValue("endDate", "");setValue("duration", 0);setValue("startDate", "");setOpenOptions({...openOptions, time: !openOptions.time})}}>
 										<p className='text-sm'>{t("tools:tasks:new:time")}</p>	
 									</div>
-									<div className='cursor-pointer hover:text-primary' onClick={() => setOpenOptions({...openOptions, options: !openOptions.options})}>
+									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => setOpenOptions({...openOptions, options: !openOptions.options})}>
 										<p className='text-sm'>{t("tools:tasks:new:options")}</p>	
 									</div>
 								</div>

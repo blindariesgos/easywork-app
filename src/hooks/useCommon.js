@@ -38,7 +38,7 @@ export const useSidebar = () => {
                 },
                 {
                     name: t("common:menu:tools:tasks"),
-                    href: "/tools/task",
+                    href: "/tools/tasks",
                     image: '/img/herramientas/tareas.png'
                 },
                 {

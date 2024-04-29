@@ -3,17 +3,18 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import React from 'react';
 
-export default function DropdownVisibleUsers({ dataUsers, onChangeCustom, setUserSelected, userSelected, setDropdownVisible, mentionButtonRef}) {
+export default function DropdownVisibleUsers({ dataUsers, onChangeCustom, setUserSelected, userSelected, setDropdownVisible, mentionButtonRef, modalPosition}) {
 	const handleSelected = (user) => {
 		setUserSelected(user);
+		setDropdownVisible(false);
 	};
 
 	return (
 		<div 
 			className={`absolute rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-10 w-54 h-min-96 overflow-y-auto`}
 			style={{
-			  top: mentionButtonRef && mentionButtonRef.current.offsetTop + mentionButtonRef.current.offsetHeight,
-			  left: mentionButtonRef && mentionButtonRef.current.offsetLeft,
+			  top: mentionButtonRef ? mentionButtonRef.current.offsetTop + mentionButtonRef.current.offsetHeight : modalPosition.y,
+			  left: mentionButtonRef ?  mentionButtonRef.current.offsetLeft : modalPosition.x,
 			}}
 		>
 			<div className="p-4">

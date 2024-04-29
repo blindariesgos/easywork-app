@@ -80,3 +80,9 @@ body {
 .react-datepicker__close-icon{
   color: #241F61 !important;
 }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

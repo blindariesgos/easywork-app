@@ -16,7 +16,7 @@ export default function ToolHeader({ title, children, route, Filters, toolButton
 	const handlePathname = () => {
 		params.delete('page');
 		params.set('show', true);
-		replace(`${route}/new?${params.toString()}`);
+		replace(`${route}?${params.toString()}`);
 	};
 	return (
 		<header className="flex flex-col">

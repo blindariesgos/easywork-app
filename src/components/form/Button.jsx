@@ -22,6 +22,8 @@ export default function Button({
 				return `text-gray-400 bg-transparent ${fontSize}`;
 			case 'outlined':
 				return 'text-primary border border-primary';
+			case 'green':
+				return `text-black bg-green-primary hover:bg-green-100 ${fontSize}`;
 			default:
 				break;
 		}

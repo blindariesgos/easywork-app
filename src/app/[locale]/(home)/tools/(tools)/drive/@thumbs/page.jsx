@@ -1,5 +1,7 @@
 import React from "react";
 import { FolderIcon } from "@heroicons/react/20/solid";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 export default function Page() {
   return (
@@ -51,6 +53,22 @@ export default function Page() {
           <div className="flex flex-col items-center">
             <FolderIcon className="h-24 w-24 text-easywork-main" />
             <p>Carpeta de tal cosa</p>
+          </div>
+        </div>
+      </div>
+      <div className="flex bg-white w-full pb-2">
+        <div className="ml-6">Seleccionado: 0/50</div>
+        <div className="ml-6">Pagina 1/2</div>
+        <div className="ml-6">
+          <div className="flex items-center ">
+            <div className="flex">
+              <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
+              anterior
+            </div>
+            <div className="ml-4 flex">
+              siguiente
+              <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
+            </div>
           </div>
         </div>
       </div>

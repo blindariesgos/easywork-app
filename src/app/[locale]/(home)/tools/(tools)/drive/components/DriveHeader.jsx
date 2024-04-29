@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { ChevronDownIcon, Bars3Icon, Squares2X2Icon } from "@heroicons/react/16/solid";
 import Image from "next/image";
 import useAppContext from "@/context/app";
+import FiltersContact from './filters/FiltersContact';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
 
 export default function DriveHeader() {
   const { t } = useTranslation();
@@ -18,7 +20,22 @@ export default function DriveHeader() {
           {t("tools:drive:name")}
         </h1>
         <CreateDocumentButton />
-        <div className="flex-grow">
+				<div className="flex-grow">
+					<div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+						<FiltersContact />
+						<div className="flex items-center w-full">
+							<FaMagnifyingGlass className="h-4 w-4 text-primary" />
+							<input
+								type="search"
+								name="search"
+								id="search-cal"
+								className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
+								placeholder={t('contacts:header:search')}
+							/>
+						</div>
+					</div>
+				</div>
+        {/* <div className="flex-grow">
           <label htmlFor="search" className="sr-only">
             {t("tools:drive:search")}
           </label>
@@ -29,7 +46,7 @@ export default function DriveHeader() {
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder={t("tools:drive:filter")}
           />
-        </div>
+        </div> */}
         <button
           type="button"
           className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

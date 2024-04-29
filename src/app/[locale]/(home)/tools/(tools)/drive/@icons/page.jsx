@@ -6,7 +6,7 @@ import { ChevronRightIcon } from "@heroicons/react/20/solid";
 export default function Page() {
   return (
     <div className="mb-2">
-      <div className="bg-white grid grid-cols-3 gap-4 p-5">
+      <div className="bg-white grid md:grid-cols-3 sm:grid-cols-2 gap-4 p-5">
         <div className="bg-neutral-200 min-w-48 w-96 min-h-32 h-52 rounded-md flex justify-center items-center">
           <div className="flex flex-col items-center">
             <FolderIcon className="h-24 w-24 text-easywork-main" />

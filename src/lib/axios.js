@@ -5,7 +5,7 @@ const config = axios.defaults;
 
 const instance = (contentType = "application/json") => {
   const axiosInstance = axios.create({
-    baseURL: "https://api.easywork.com.mx/v1",
+    baseURL: process.env.API_HOST,
     headers: {
       ...config.headers.common,
       "Content-Type": contentType,

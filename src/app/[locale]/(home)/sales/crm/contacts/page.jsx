@@ -27,7 +27,7 @@ export default function Page() {
     return () => {
       isMounted.current = false;
     }
-  }, [lastContactsUpdate]);  
+  }, [lastContactsUpdate, params.get('page')]);  
 
   return <></>;
 }

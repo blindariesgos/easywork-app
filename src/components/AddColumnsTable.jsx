@@ -17,6 +17,7 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data, }) => {
         const updateChecked = columns.map(column => {
             return  (column.id == col.id && !column.permanent)? { ...column, check: !col.check} : column;
         });
+		console.log("updateChecked", updateChecked)
         
         setSelectedColumns(updateChecked.filter(c=> c.check));
         setColmuns(updateChecked);

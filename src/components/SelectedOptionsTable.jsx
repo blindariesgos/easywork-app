@@ -1,46 +1,20 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectInput from './form/SelectInput';
 import Button from './form/Button';
 import { useTranslation } from 'react-i18next';
 import MenuAddUser from './MenuAddUser';
 import { useAlertContext } from '../context/common/AlertContext';
 
-export default function SelectedOptionsTable() {
+export default function SelectedOptionsTable({ options: data }) {
 	const { t } = useTranslation();
 	const [selectedOption, setSelectedOption] = useState(null);
     const {onCloseAlertDialog, onOpenAlertDialog } = useAlertContext();
-	const options = [
-		{
-			id: 1,
-			name: t('common:table:checkbox:complete')
-		},
-		{
-			id: 2,
-			name: t('common:table:checkbox:add-obserber'),
-            selectUser: true,
-		},
-		{
-			id: 3,
-			name: t('common:table:checkbox:add-participant'),
-            selectUser: true,
-		},
-		{
-			id: 4,
-			name: t('common:table:checkbox:change-obserber'),
-            selectUser: true,
-		},
-		{
-			id: 5,
-			name: t('common:table:checkbox:change-participant'),
-            selectUser: true,
-		},
-		{
-			id: 6,
-			name: t('common:table:checkbox:delete')
-		}
-	];
-	// console.log("selectedOption", selectedOption)
+	const [options, setOptions] = useState([]);
+	useEffect(() => {
+		setOptions(data);
+	}, [data])
+	
     const handleApplyPermission = () => {
         onOpenAlertDialog({
             isOpen: true,
@@ -50,6 +24,8 @@ export default function SelectedOptionsTable() {
             buttonCancel: true,
             buttonAcceptLabel: t("common:buttons:continue"),
             buttonCancelLabel: t("common:buttons:cancel"),  
+			onButtonAcceptClicked: selectedOption.onclick && selectedOption.onclick,
+			onButtonCancelClicked: () => onCloseAlertDialog(),
         }) 
     }
 

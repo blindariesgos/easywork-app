@@ -7,11 +7,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AddColumnsTable from '../components/AddColumnsTable';
 import { useTasks } from '../../../../../../../hooks/useCommon';
 import { Pagination } from '../../../../../../../components/pagination/Pagination';
 import SelectInput from '../../../../../../../components/form/SelectInput';
 import SelectedOptionsTable from '../../../../../../../components/SelectedOptionsTable';
+import AddColumnsTable from '../../../../../../../components/AddColumnsTable';
 const tasks = [
 	{
 		id: 1,
@@ -79,7 +79,7 @@ export default function TableTask() {
 	const [ selectedTasks, setSelectedTasks ] = useState([]);
 	const [ dataTask, setDataTask ] = useState(tasks);
 	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn([], dataTask);
-	const { columnTable } = useTasks();
+	const { columnTable, optionsCheckBox } = useTasks();
 	const [selectedColumns, setSelectedColumns] = useState([]);
 
 	useEffect(
@@ -217,7 +217,7 @@ export default function TableTask() {
 					<div className="absolute bottom-0 w-full">
 						<div className='flex justify-between items-center flex-wrap'>
 							{selectedTasks.length > 0 && (
-								<SelectedOptionsTable/>
+								<SelectedOptionsTable options={optionsCheckBox}/>
 							)}
 							<Pagination totalPages={10} />
 						</div>

@@ -18,6 +18,10 @@ import { toast } from 'react-toastify';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { useOrderByColumn } from '../../../../../../../hooks/useOrderByColumn';
+import { Pagination } from '../../../../../../../components/pagination/Pagination';
+import AddColumnsTable from '../../../../../../../components/AddColumnsTable';
+import { useLeads } from '../../../../../../../hooks/useCommon';
+import SelectedOptionsTable from '../../../../../../../components/SelectedOptionsTable';
 
 export default function TableLeads() {
 	const params = useSearchParams();
@@ -29,9 +33,18 @@ export default function TableLeads() {
 	const [ checked, setChecked ] = useState(false);
 	const [ indeterminate, setIndeterminate ] = useState(false);
 	const [ selectedLeads, setSelectedLeads ] = useState([]);
+	const [selectedColumns, setSelectedColumns] = useState([]);
+  	const { columnTable } = useLeads()
 	// const sortFieltByColumn = {
 	// 	name: [ 'name' ]
 	// };
+	const options = [
+		{
+			id: 1,
+			name: t('common:buttons:delete'),
+		}
+	]
+
 
 	const [leads, setLeads] = useState([
 		{
@@ -106,6 +119,11 @@ export default function TableLeads() {
 		// }
 	};
 
+	
+	useEffect(() => {
+		if (columnTable) setSelectedColumns(columnTable.filter(c=> c.check));
+ 	 }, [])
+
 	if (leads && leads.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-96">
@@ -156,23 +174,13 @@ export default function TableLeads() {
 		);
 	};
 
+  
+
 	return (
-		<div className="flow-root relative">
+		<div className="flow-root relative h-full">
 			<div className="overflow-x-auto">
 				<div className="inline-block min-w-full py-2 align-middle sm:h-[40rem] overflow-y-auto h-full">
 					<div className="relative overflow-hidden  sm:rounded-lg">
-						{selectedLeads &&
-						selectedLeads.length > 0 && (
-							<div className="absolute left-16 top-0 flex h-12 items-center space-x-3 bg-white sm:left-16">
-								<Button
-									label={t('common:buttons:delete')}
-									type="button"
-									className="px-2 py-2"
-									buttonStyle="secondary"
-									onclick={() => deleteContact(selectedLeads)}
-								/>
-							</div>
-						)}
 						<table className="min-w-full rounded-md bg-gray-100 table-auto">
 							<thead className="text-sm bg-white drop-shadow-sm">
 								<tr>
@@ -184,191 +192,122 @@ export default function TableLeads() {
 											checked={checked}
 											onChange={toggleAll}
 										/>
-										<div className="cursor-pointer">
-											<Cog8ToothIcon className="ml-4 h-5 w-5 text-primary " aria-hidden="true" />
-										</div>
-									</th>
-									<th
-										scope="col"
-										className="min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer"
-										onClick={() => {
-											handleSorting('name');
-										}}
-									>
-										<div className="flex justify-center items-center gap-2">
-											{t('leads:table:lead')}
+										<AddColumnsTable columns={columnTable} setSelectedColumns={setSelectedColumns}/>
+									</th>									
+									{selectedColumns.length > 0 && selectedColumns.map((column, index) => (
+										<th
+											key={index}
+											scope="col"
+											className={`min-w-[12rem] py-2 pr-3 text-sm font-medium text-gray-400 cursor-pointer ${index === selectedColumns.length - 1  && "rounded-e-xl"}`}
+											onClick={() => {
+											column.order &&
+											handleSorting(column.order);
+											}}
+										>
+											<div className="flex justify-center items-center gap-2">
+											{column.name}
 											<div>
-												<ChevronDownIcon
-													className={`h-6 w-6 text-primary ${fieldClicked.field === 'name' &&
-													fieldClicked.sortDirection === 'desc'
+												{column.order && (
+													<ChevronDownIcon
+														className={`h-6 w-6 text-primary ${fieldClicked.field ===
+														column.order && fieldClicked.sortDirection === 'desc'
 														? 'transform rotate-180'
 														: ''}`}
-												/>
+													/>
+												)}
 											</div>
-										</div>
-									</th>
-									<th
-										scope="col"
-										className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
-										onClick={() => {
-											handleSorting('stages.name');
-										}}
-									>
-										<div className="flex justify-center items-center gap-2">
-											{t('leads:table:stages')}
-											<div>
-												<ChevronDownIcon
-													className={`h-6 w-6 text-primary ${fieldClicked.field ===
-														'stages.name' && fieldClicked.sortDirection === 'desc'
-														? 'transform rotate-180'
-														: ''}`}
-												/>
 											</div>
-										</div>
-									</th>
-									<th 
-										scope="col"
-										className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
-										onClick={() => {
-											handleSorting('date');
-										}}
-									>
-										<div className="flex justify-center items-center gap-2">
-											{t('leads:table:created')}
-											<div>
-												<ChevronDownIcon
-													className={`h-6 w-6 text-primary ${fieldClicked.field ===
-														'date' && fieldClicked.sortDirection === 'desc'
-														? 'transform rotate-180'
-														: ''}`}
-												/>
-											</div>
-										</div>
-									</th>
-									<th
-										scope="col"
-										className="px-3 py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
-										onClick={() => {
-											handleSorting('origin');
-										}}
-									>
-										<div className="flex justify-center items-center gap-2">
-											{t('leads:table:origin')}
-											<div>
-												<ChevronDownIcon
-													className={`h-6 w-6 text-primary ${fieldClicked.field ===
-														'origin' && fieldClicked.sortDirection === 'desc'
-														? 'transform rotate-180'
-														: ''}`}
-												/>
-											</div>
-										</div>
-									</th>
-									<th scope="col" className="px-3 py-3.5 text-sm font-medium text-gray-400 rounded-e-xl">
-										<div className="flex justify-center items-center">
-											{t('leads:table:activities')}
-										</div>
-									</th>
+										</th>
+									))}
 								</tr>
 							</thead>
 							<tbody className="bg-gray-100">
-								{leads.length > 0 &&
+								{selectedColumns.length > 0 && leads.length > 0 &&
 									leads.map((lead, index) => (
 										<tr
-											key={lead.id}
+											key={index}
 											className={clsx(
 												selectedLeads.includes(lead) ? 'bg-gray-200' : undefined,
 												'hover:bg-indigo-100/40 cursor-default'
 											)}
 										>
-											<td className="relative px-7 sm:w-12 sm:px-6">
+											<td className=" px-7 sm:w-12 sm:px-6">
 												{selectedLeads.includes(lead) && (
 													<div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
 												)}
 												<input
 													type="checkbox"
-													className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+													className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
 													value={lead.id}
 													checked={selectedLeads.includes(lead)}
 													onChange={(e) =>
 														setSelectedLeads(
-															e.target.checked
-																? [ ...selectedLeads, lead ]
-																: selectedLeads.filter((p) => p !== lead)
+														e.target.checked
+															? [ ...selectedLeads, lead ]
+															: selectedLeads.filter((p) => p !== lead)
 														)}
 												/>
-											</td>
-											<td
-												className={clsx(
-													'whitespace-nowrap py-4 pr-3 text-sm font-medium',
-													selectedLeads.includes(lead) ? 'text-primary' : 'text-gray-400'
-												)}
-											>
-												<div className="flex items-center">
-													<div className="h-8 w-8 flex-shrink-0">
-														<Image
-															className="h-8 w-8 rounded-full bg-zinc-200"
-															width={15}
-															height={15}
-															src={
-															  getURLContactPhoto(lead) ?? "/img/avatar.svg"
-															}
-															alt=""
-														/>
-													</div>
-													<div className="ml-4">
-														<div className="font-medium text-sm text-black hover:text-primary capitalize">
-															<Link
-																href={`/sales/crm/leads/lead/${lead.id}?show=true`}
-																className=""
-															>
-																{capitalizedText(lead.name)}
+											</td>												
+											{selectedColumns.length > 0 && selectedColumns.map((column, index) => (
+												<td className="ml-4 text-center py-4" key={index}>
+													<div className="font-medium text-sm text-black hover:text-primary capitalize">
+														{column.link ? (
+															<Link href={`/sales/crm/leads/lead/${lead.id}?show=true`} className="flex gap-3">
+																<Image
+																	className="h-8 w-8 rounded-full bg-zinc-200"
+																	width={30}
+																	height={30}
+																	src={
+																		lead.photo ?? "/img/avatar.svg"
+																	}
+																	alt=""
+																/>
+																{lead[column.row]}
 															</Link>
-														</div>
+														) : column.row === "stages" ? (
+															<div className="flex items-center flex-col">
+																<div className='flex justify-center'>{ColorDivisionsStages(lead.stages)}</div>
+																<p className='mt-1 text-xs text-gray-200 font-semibold'>{lead.stages.name}</p>
+															</div>
+														): column.activities ? (
+															<div className="flex gap-2">
+																<button
+																	type="button"
+																	className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+																>
+																	<FaWhatsapp className="h-4 w-4" aria-hidden="true" />
+																</button>
+																<button
+																	type="button"
+																	className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+																>
+																	<EnvelopeIcon
+																		className="h-4 w-4"
+																		aria-hidden="true"
+																	/>
+																</button>
+																<button
+																	type="button"
+																	className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+																>
+																	<ChatBubbleBottomCenterIcon
+																		className="h-4 w-4"
+																		aria-hidden="true"
+																	/>
+																</button>
+																<button
+																	type="button"
+																	className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+																>
+																	<PhoneIcon className="h-4 w-4" aria-hidden="true" />
+																</button>
+															</div>) 
+														: column.row === "date" ? lead?.date ?? "N/A"
+														: column.row === "origin" ? lead.origin
+														: lead[column.row] || "-"}
 													</div>
-												</div>
-											</td>
-											<td className="whitespace-nowrap px-3 py-4 text-sm text-black text-center">
-												<div className='flex justify-center'>{ColorDivisionsStages(lead.stages)}</div>
-												<p className='mt-1 text-xs text-gray-200 font-semibold'>{lead.stages.name}</p>
-											</td>
-											<td className="whitespace-nowrap px-3 py-4 text-sm text-black text-center">
-												{lead?.date ?? "N/A"}
-											</td>
-											<td className="whitespace-nowrap px-3 py-4 text-sm text-black text-center">
-												{lead.origin}
-											</td>
-											<td className="whitespace-nowrap px-3 py-4 text-sm text-black">
-												<div className="flex gap-2">
-													<button
-														type="button"
-														className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-													>
-														<FaWhatsapp className="h-4 w-4" aria-hidden="true" />
-													</button>
-													<button
-														type="button"
-														className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-													>
-														<EnvelopeIcon className="h-4 w-4" aria-hidden="true" />
-													</button>
-													<button
-														type="button"
-														className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-													>
-														<ChatBubbleBottomCenterIcon
-															className="h-4 w-4"
-															aria-hidden="true"
-														/>
-													</button>
-													<button
-														type="button"
-														className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-													>
-														<PhoneIcon className="h-4 w-4" aria-hidden="true" />
-													</button>
-												</div>
-											</td>
+												</td>
+											))}
 										</tr>
 									))}
 							</tbody>
@@ -376,11 +315,16 @@ export default function TableLeads() {
 					</div>
 				</div>
 			</div>
-			{/* <div className="">
-        <Pagination
-          totalPages={AppLeads?.meta?.totalPages || 10}
-        />
-      </div> */}
+			<div className="sm:absolute sm:bottom-0 pt-4 sm:pt-0 w-full">
+				<div className='flex justify-between items-center flex-wrap gap-4'>
+				{selectedLeads.length > 0 && (
+					<SelectedOptionsTable options={options}/>
+				)}
+				<Pagination 
+					totalPages={10}
+				/>
+				</div>
+			</div>
 		</div>
 	);
 }

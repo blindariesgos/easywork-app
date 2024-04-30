@@ -709,11 +709,52 @@ export const useLeads = () => {
         }
     ];
 
+	const columnTable = [
+		{
+			id: 1,
+			name: t('leads:table:lead'),
+            row: "name",
+            order: "name",
+            check: true,
+            link: true,
+            permanent: true,
+            photo: true
+		},
+		{
+			id: 2,
+			name: t('leads:table:stages'),
+            row: "stages",
+            order: "stages.name",
+            check: true
+		},
+		{
+			id: 3,
+			name: t('leads:table:created'),
+            row: "date",
+            order: "date",
+            check: true,
+		},
+		{
+			id: 4,
+			name: t('leads:table:origin'),
+            row: "origin",
+            order: "origin",
+            check: false
+		},
+		{
+			id: 5,
+			name: t('leads:table:activities'),
+            row: "activities",
+            check: false,
+            activities: true
+		},
+	]
     return {
         optionsHeader,
         stages,
         isOpen,
-        setIsOpen
+        setIsOpen,
+        columnTable
     }
 }
 
@@ -833,6 +874,37 @@ export const useTasks = () => {
       icon: DocumentTextIcon
     }
   ]
+  
+	const optionsCheckBox = [
+		{
+			id: 1,
+			name: t('common:table:checkbox:complete')
+		},
+		{
+			id: 2,
+			name: t('common:table:checkbox:add-obserber'),
+            selectUser: true,
+		},
+		{
+			id: 3,
+			name: t('common:table:checkbox:add-participant'),
+            selectUser: true,
+		},
+		{
+			id: 4,
+			name: t('common:table:checkbox:change-obserber'),
+            selectUser: true,
+		},
+		{
+			id: 5,
+			name: t('common:table:checkbox:change-participant'),
+            selectUser: true,
+		},
+		{
+			id: 6,
+			name: t('common:table:checkbox:delete')
+		}
+	];
 
     return {
         optionsTrash,
@@ -840,7 +912,8 @@ export const useTasks = () => {
         status,
         setStatus,
         columnTable,
-        settings
+        settings,
+        optionsCheckBox
     }
 }
 
@@ -899,4 +972,71 @@ export const useTooltip = () => {
         tooltipRef
     }
 
+}
+
+export const useContactTable = () => {
+    const { t } = useTranslation();
+	const columnTable = [
+		{
+			id: 1,
+			name: t('contacts:table:contact'),
+            row: "fullName",
+            order: "name",
+            check: true,
+            link: true,
+            permanent: true,
+            photo: true
+		},
+		{
+			id: 2,
+			name: t('contacts:table:birthday'),
+            row: "birthdate",
+            order: "birthdate",
+            check: true
+		},
+		{
+			id: 3,
+			name: t('contacts:table:responsible'),
+            row: "responsible",
+            order: "responsible",
+            check: true,
+            photo: true
+		},
+		{
+			id: 4,
+			name: t('contacts:table:email'),
+            row: "email",
+            order: "emails[0].email.email",
+            check: true
+		},
+		{
+			id: 5,
+			name: t('contacts:table:phone'),
+            row: "phone",
+            order: "phones[0].phone.number",
+            check: false,
+		},
+		{
+			id: 6,
+			name: t('contacts:table:created'),
+            row: "createdAt",
+            order: "createdAt",
+            check: false
+		},
+		{
+			id: 7,
+			name: t('contacts:table:origin'),
+            row: "source",
+            order: "source",
+            check: false
+		},
+		{
+			id: 8,
+			name: t('contacts:table:activities'),
+            row: "activities",
+            check: false,
+            activities: true
+		},
+	]
+    return { columnTable }
 }

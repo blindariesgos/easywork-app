@@ -51,11 +51,11 @@ export default function LayoutContact({ children }) {
                 {children}
             </div>  
             
-            <div className="">
+            {/* <div className="">
                 <Pagination
                     totalPages={contacts?.meta?.totalPages || 0}
                 />
-            </div>  
+            </div>   */}
         </div>
     );
 }

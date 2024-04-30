@@ -180,7 +180,6 @@ export default function CreateLead({ edit, id }) {
 
 					{/* Panel Principal */}
 
-					{/* {contactDetailTab === contactDetailTabs[0] && ( */}
 					<div className="flex flex-col md:flex-row h-full pb-0 md:pb-[20rem] bg-white mx-4 rounded-lg p-4 w-full">
 						{/* Menu Izquierda */}
 						<div className="md:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">

@@ -57,7 +57,7 @@ export const Pagination = ({ totalPages, bgColor }) => {
 	return (
 		<div>
 			{totalPagesPag >= 1 && (
-				<div className="mt-2 items-center w-fit">
+				<div className="items-center w-fit">
 					<div className={`flex flex-row justify-start p-2 border-none rounded-md gap-x-2 ${bgColor || "bg-white"}`}>
 						<div
 							className={clsx(

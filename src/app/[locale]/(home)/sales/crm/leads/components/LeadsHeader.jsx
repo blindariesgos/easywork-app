@@ -14,7 +14,6 @@ import FiltersLead from './filters/FiltersLeads';
 
 export default function LeadsHeader() {
 	const { t } = useTranslation();
-	const { setOpenModal } = useAppContext();
 	const { trashLead, settingsLead } = useCommon();
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);

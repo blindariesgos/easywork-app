@@ -93,7 +93,15 @@ function SelectDropdown({
                           }`}
                         >
                           <div className="w-[20%]">
-                            <Image src={person.avatar} alt="" height={30} width={30} layout='fixed' objectFit='cover' className="rounded-full"/>
+                            <Image
+                              src={person.avatar}
+                              alt=""
+                              height={500}
+                              width={500}
+                              layout="fixed"
+                              objectFit="cover"
+											        className="h-6 w-6 rounded-full"
+                            />
                           </div>
                           <div className={`flex flex-col leading-3 w-[80%]`}>
                             <p className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}>{person.name || person?.username}</p>

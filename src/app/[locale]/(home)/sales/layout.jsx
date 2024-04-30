@@ -12,10 +12,10 @@ export default async function HomeLayout({ children, params: { locale }  }) {
   // const crmUsers = await getUsers();
 
   return (
-    <UserProvider users={null}>
+    // <UserProvider users={null}>
       <div className="p-2 rounded-xl h-full relative">
         {children}
       </div>
-    </UserProvider>
+    // </UserProvider>
   );
 }

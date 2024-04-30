@@ -35,7 +35,6 @@ export default function Page() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const { setShowContact } = useAppContext();
   const { contacts: AppContacts, setLastContactsUpdate, setContacts } = useCrmContext();
   const sortFieltByColumn = {
     name: [ "fullName" ],
@@ -127,18 +126,12 @@ export default function Page() {
                   buttonStyle="secondary"
                   onclick={() => deleteContact(selectedContacts)}
                 />
-                
-                {/* <button
-                  type="button"
-                  className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-medium text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                >
-                </button> */}
               </div>
             )}
-            <table className="min-w-full divide-y divide-gray-300 table-auto">
-              <thead className="bg-white mb-2">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto">
+					      <thead className="text-sm bg-white drop-shadow-sm">
                 <tr>
-                  <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
+                  <th scope="col" className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5">
                     <input
                       type="checkbox"
                       className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -236,7 +229,7 @@ export default function Page() {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-sm font-medium text-gray-400"
+                    className="px-3 py-3.5 text-sm font-medium text-gray-400 rounded-e-xl"
                   >
                     <div className="flex justify-center items-center">
                       {t('contacts:table:activities')}
@@ -244,7 +237,7 @@ export default function Page() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+					      <tbody className="bg-gray-100">
                 {AppContacts?.items && AppContacts?.items.map((contact, index) => (
                   <tr
                     key={contact.id}
@@ -295,15 +288,7 @@ export default function Page() {
                         </div>
                         <div className="ml-4">
                           <div className="font-medium text-sm text-black hover:text-primary capitalize">
-                            {/* <button
-                              onClick={() => {
-                                setCurrentContactID(contact.id);
-                                setShowContact(true);
-                              }}
-                            > */}
                             <Link href={`/sales/crm/contacts/contact/${contact.id}?show=true`} className="">{capitalizedText(contact.fullName)}</Link>
-                              
-                            {/* </button> */}
                           </div>
                         </div>
                       </div>

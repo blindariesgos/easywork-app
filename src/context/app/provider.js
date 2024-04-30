@@ -1,8 +1,10 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AppContext } from "..";
-import { contactDetailTabs, driveViews } from "@/lib/common";
+import { driveViews } from "@/lib/common";
 import { useCommon } from "@/hooks/useCommon";
+import { getAddListContacts, getUsersContacts } from "@/lib/apis";
+import { getApiError } from "@/utils/getApiErrors";
 
 export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon()
@@ -11,11 +13,40 @@ export default function AppContextProvider({ children }) {
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);
   const [openModal, setOpenModal] = useState(false);
-  const [contactDetailTab, setContactDetailTab] = useState(
-    contactDetailTabs[0]
-  );
-  const [showContact, setShowContact] = useState(false);
-  const [showPoliza, setShowPoliza] = useState(false);
+  const [lists, setLists] = useState(null);
+
+  useEffect(() => {
+    const getLists = async() => {
+      if ( !lists ){
+        const appList = {};
+        const users = await getUsers();
+        const listContact = await getListsContact();
+        appList.listContact = listContact;
+        appList.users = users;
+        setLists(appList);
+      }
+    };
+    getLists();
+  }, [lists])
+
+  const getUsers = async() => {
+    try {
+      const response = await getUsersContacts();   
+      return response; 
+    } catch (error) {
+      getApiError(error, null, true);
+    }
+  }
+
+  const getListsContact = async() => {
+    try {
+      const response =  await getAddListContacts();    
+      return response;
+    } catch (error) {
+      getApiError(error, null, true);
+    }
+  }
+  
 
   const values = useMemo(
     () => ({
@@ -29,22 +60,17 @@ export default function AppContextProvider({ children }) {
       setDriveView,
       openModal,
       setOpenModal,
-      contactDetailTab,
-      setContactDetailTab,
-      showContact,
-      setShowContact,
-      showPoliza,
-      setShowPoliza,
+      setLists,
+      lists
+
     }),
     [
       sidebarOpen,
       calendarView,
       driveView,
       openModal,
-      contactDetailTab,
-      showContact,
-      showPoliza,
       sidebarOpenEmail,
+      lists
     ]
   );
 

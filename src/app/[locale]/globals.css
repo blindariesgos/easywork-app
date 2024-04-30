@@ -49,3 +49,40 @@ body {
 .react-datepicker-wrapper{
   width: 100%;
 }
+
+.ql-container{
+  /* height: 200px !important; */
+  border: none !important;
+}
+
+.ql-toolbar{
+  border: none !important;
+}
+
+.ql-editor blockquote {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: "20px";
+}
+
+.react-datepicker__day--selected {
+  background-color: #241F61 !important;
+  color: white !important;
+}
+
+.react-datepicker-time__input{
+  font-size: 12px !important;
+  height: 32px !important;
+  border-radius: 12px !important;
+}
+
+.react-datepicker__close-icon{
+  color: #241F61 !important;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

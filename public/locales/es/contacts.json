@@ -103,7 +103,6 @@
     }
   },
   "edit": {
-    "msg": "¡Contacto actualizado!",
     "not-contact": "Sin contacto",
     "updated-contact": "¡Contacto Actualizado!",
     "error": "Error al crear el contacto!",

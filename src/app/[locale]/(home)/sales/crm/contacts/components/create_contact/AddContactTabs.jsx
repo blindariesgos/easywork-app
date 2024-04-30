@@ -1,7 +1,6 @@
 "use client"
 import Button from "@/components/form/Button";
 import useAppContext from "@/context/app";
-import { contactDetailTabs } from "@/lib/common";
 import { ArrowDownTrayIcon, Cog8ToothIcon, DocumentTextIcon, PlusIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React from "react";
@@ -11,7 +10,6 @@ import IconDropdown from "@/components/SettingsButton";
 
 export default function AddContactTabs({ id }) {
   const { t } = useTranslation();
-  const {setContactDetailTab, contactDetailTab} = useAppContext();
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0 },
     { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/contact/policies/${id}?show=true` },
@@ -62,11 +60,7 @@ export default function AddContactTabs({ id }) {
                 className="ring-0 focus:outline-none focus:ring-0"
               >
                 <div
-                  onClick={() => setContactDetailTab(contactDetailTabs[tab.value])}
                   className={clsx(tab.value === 0 && "border-indigo-500 text-white bg-blue-100 rounded-md focus:outline-none focus:ring-0",
-                    // tab.value === contactDetailTabs.indexOf(contactDetailTab)
-                    //   ? "border-indigo-500 text-white bg-blue-100 rounded-md"
-                    //   : 
                       tab.disabled
                       ? "border-transparent text-gray-300 cursor-default"
                       : "border-transparent text-gray-400",

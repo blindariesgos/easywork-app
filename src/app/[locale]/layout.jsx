@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from "react-toastify";
 import initTranslations from "../i18n";
 import TranslationsProvider from "@/components/TranslationsProvider";
+import { AlertContextProvider } from "@/context/common/AlertContext";
+import { ModalAlert } from "@/components/modalAlert/ModalAlert";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +28,15 @@ export default async function RootLayout({ children, params: { locale }}) {
           locale={locale}
           resources={resources}
         >
-          <AppContextProvider>
-            <CrmContextProvider>
-              <ToastContainer />
-              {children}
-              </CrmContextProvider>
-          </AppContextProvider>
+          <AlertContextProvider>
+            <AppContextProvider>
+              <CrmContextProvider>
+                <ToastContainer />
+                  <ModalAlert/>
+                  {children}
+                </CrmContextProvider>
+            </AppContextProvider>
+          </AlertContextProvider>
         </TranslationsProvider>
       </body>
     </html>

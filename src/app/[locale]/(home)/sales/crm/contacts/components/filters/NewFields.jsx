@@ -1,8 +1,10 @@
-import { contactTypes } from '@/lib/common';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const NewFields = ({ append, remove, fields: selectFields}) => {
+    const { lists } = useAppContext();
+	const { listContact } = lists;
+	const { contactTypes } = listContact;
 	const { t } = useTranslation();
 	const [ fields, setFields ] = useState([
 		{

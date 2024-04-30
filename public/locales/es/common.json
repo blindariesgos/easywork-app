@@ -3,6 +3,8 @@
     "save": "¡Salvado con éxito!",
     "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
     "select": "Seleccione",
+    "not-found" : "No se encontraron resultados",
+    "time": "Hora",
     "validations": {
         "required": "El campo es requerido",
         "min": "El campo debe tener al menos {{min}} caracteres",
@@ -26,6 +28,29 @@
         "november" : "Noviembre", 
         "december" : "Diciembre"
     },
+    "date": {
+      "yesterday": "Ayer",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "currentQuarter": "Trimestre actual",
+      "last7Days": "Últimos 7 días",
+      "last30Days": "Últimos 30 días",
+      "last60Days": "Últimos 60 días",
+      "last90Days": "Últimos 90 días",
+      "lastNDays": "Últimos N días",
+      "nextNDays": "Próximos N días",
+      "month": "Mes",
+      "quarter": "Trimestre",
+      "year": "Año",
+      "exactDate": "Fecha exacta",
+      "lastWeek": "La semana pasada",
+      "lastMonth": "El mes pasado",
+      "dateRange": "Rango de fecha",
+      "nextWeek": "La próxima semana",
+      "nextMonth": "El próximo mes"
+    },
     "buttons": {
         "saving" : "Guardando...",
         "cancel" : "Cancelar",
@@ -34,7 +59,10 @@
         "upload": "Subir",
         "edit": "Editar",
         "delete": "Eliminar",
-        "close": "Cerrar"
+        "close": "Cerrar",
+        "apply" : "Aplicar",
+        "continue": "Continuar",
+        "add": "Agregar"
     },
     "menu": {
         "tools": {
@@ -111,5 +139,16 @@
         "attach": "Adjunte su documento en PDF",
         "convert" : "Convertir a imagen",
         "generated" : "Imagen generada"
+    },
+    "table": {
+        "checkbox": {
+            "msg-delete" : "¿Estas seguro que deseas continuar?",
+            "complete": "Completar",
+            "delete": "Eliminar",
+            "add-obserber" : "Agregar observador",
+            "add-participant" : "Agregar participante",
+            "change-obserber" : "Cambiar observador",
+            "change-participant" : "Cambiar participante"
+        }
     }
 }

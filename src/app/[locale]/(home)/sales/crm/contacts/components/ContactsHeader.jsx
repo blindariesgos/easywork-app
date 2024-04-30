@@ -14,7 +14,6 @@ import IconDropdown from '@/components/SettingsButton';
 
 export default function ContactsHeader() {
 	const { t } = useTranslation();
-	const { setOpenModal } = useAppContext();
 	const { trash, settingsContact: settings } = useCommon();
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
@@ -44,7 +43,7 @@ export default function ContactsHeader() {
 				/>
 				<div className="flex-grow">
 					<div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
-						<FiltersContact />
+						<FiltersContact/>
 						<div className="flex items-center w-full">
 							<FaMagnifyingGlass className="h-4 w-4 text-primary" />
 							<input

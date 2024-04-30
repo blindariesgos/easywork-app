@@ -1,54 +1,13 @@
-'use client';
+
 import React, { Suspense } from "react";
-import ContactsHeader from "./components/ContactsHeader";
-import { useTranslation } from "react-i18next";
-import Header from "@/components/header/Header";
-import HeaderCrm from "../HeaderCrm";
-import { Pagination } from "@/components/pagination/Pagination";
-import useCrmContext from "@/context/crm";
-import { useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import LayoutContact from "./LayoutContact";
 import LoaderSpinner from "@/components/LoaderSpinner";
 
-export default function ContactLayout({ children, table }) {
-  const { t } = useTranslation();
-  const { contacts } = useCrmContext();
-  const searchParams = useSearchParams();
-	const params = new URLSearchParams(searchParams);
-	const pathname = usePathname();
-	const { replace } = useRouter();
-  
-  useEffect(() => {
-    if (Number(params.get('page')) === 0 || !params.get('page')) {
-      params.set('page', 1); 
-      replace(`${pathname}?${params.toString()}`);
-    }
-  }, [])
-  
-  const options = [
-    {
-      id: 1,
-      name: t("contacts:create:tabs:policies"),
-    },
-    {
-      id: 2,
-      name: t("contacts:create:tabs:activities"),
-    },
-    {
-      id: 3,
-      name: t("contacts:create:tabs:reports"),
-    },
-    {
-      id: 4,
-      name: t("contacts:create:tabs:documents"),
-    }
-  ]
+
+export default async function ContactLayout({ children, table }) {
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
-      <Header />
-      <div className="flex flex-col w-full">
-        <HeaderCrm options={options}/>
-        <ContactsHeader />
+      <LayoutContact>
         <Suspense
           fallback={
             <LoaderSpinner/>
@@ -57,13 +16,7 @@ export default function ContactLayout({ children, table }) {
             {table}
             {children}  
         </Suspense>
-      </div>  
-      
-      <div className="">
-        <Pagination
-          totalPages={contacts?.meta?.totalPages || 0}
-        />
-      </div>  
+      </LayoutContact> 
     </div>
   );
 }

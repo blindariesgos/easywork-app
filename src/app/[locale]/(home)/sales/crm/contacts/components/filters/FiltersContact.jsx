@@ -23,7 +23,7 @@ const FiltersContact = () => {
 	const handleSelected = (id) => {
 		const updateSelection = contacts.map((cont) => {
 			return cont.id === id ? { ...cont, selected: !cont.selected } : { ...cont, selected: false };
-		});;
+		});
 		setContacts(updateSelection);
 	};
 
@@ -76,7 +76,7 @@ const FiltersContact = () => {
 									</div>
 								</div>
 							</div>
-                            <FormFilters/>
+							<FormFilters/>
 						</div>
 					</div>
 				</Menu.Items>

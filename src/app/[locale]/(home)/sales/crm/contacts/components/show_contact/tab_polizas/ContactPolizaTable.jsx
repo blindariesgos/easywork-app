@@ -262,24 +262,24 @@ export default function ContactPolizaTable({ polizas: data, base, polizaID }) {
 					<tbody className="bg-gray-100">
 						{polizas.map((poliza, index) => (
 							<tr key={index}>
-                <td className="relative px-7 sm:w-12 sm:px-6">
-                  {selectedPolizas.includes(poliza) && (
-                    <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                  )}
-                  <input
-                    type="checkbox"
-                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
-                    value={poliza.id}
-                    checked={selectedPolizas.includes(poliza)}
-                    onChange={(e) =>
-                      setSelectedPolizas(
-                        e.target.checked
-                          ? [...selectedPolizas, poliza]
-                          : selectedPolizas.filter((p) => p !== poliza)
-                      )
-                    }
-                  />
-                </td>
+								<td className="relative px-7 sm:w-12 sm:px-6">
+								{selectedPolizas.includes(poliza) && (
+									<div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
+								)}
+								<input
+									type="checkbox"
+									className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
+									value={poliza.id}
+									checked={selectedPolizas.includes(poliza)}
+									onChange={(e) =>
+									setSelectedPolizas(
+										e.target.checked
+										? [...selectedPolizas, poliza]
+										: selectedPolizas.filter((p) => p !== poliza)
+									)
+									}
+								/>
+								</td>
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
 									<Link
 										href={`/sales/crm/contacts/contact/policy/consult/${poliza.noPoliza}?show=true`}

@@ -5,11 +5,13 @@ import DatePicker from 'react-datepicker';
 import { getMonth, getYear } from 'date-fns';
 import range from 'lodash/range';
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import { useTranslation } from 'react-i18next';
 
-const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate, border }) => {
+const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate, border, time }) => {
+	const  { t } = useTranslation();
 	const { months } = useCommon();
 	const years = range(1990, getYear(new Date()) + 1, 1);
-  
+
 	return (
 	  <div className="flex flex-col gap-y-2 w-full">
 		{label && <label className="text-sm font-medium text-gray-900">{label}</label>}
@@ -83,6 +85,9 @@ const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate
 			filterDate={date => {
 			  return inactiveDate ? date <= inactiveDate : date;
 			}}
+			timeInputLabel={time && t('common:time')}
+			dateFormat={time ? "MM/dd/yyyy h:mm aa" : ""}
+			showTimeInput={time}	  
 		  />
 		</div>
 		{error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}

@@ -173,10 +173,10 @@ export default function TableLeads() {
 								/>
 							</div>
 						)}
-						<table className="min-w-full divide-y divide-gray-300 table-auto">
-							<thead className="bg-white mb-2">
+						<table className="min-w-full rounded-md bg-gray-100 table-auto">
+							<thead className="text-sm bg-white drop-shadow-sm">
 								<tr>
-									<th scope="col" className="relative px-7 sm:w-12 sm:px-6">
+									<th scope="col" className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5">
 										<input
 											type="checkbox"
 											className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -264,14 +264,14 @@ export default function TableLeads() {
 											</div>
 										</div>
 									</th>
-									<th scope="col" className="px-3 py-3.5 text-sm font-medium text-gray-400">
+									<th scope="col" className="px-3 py-3.5 text-sm font-medium text-gray-400 rounded-e-xl">
 										<div className="flex justify-center items-center">
 											{t('leads:table:activities')}
 										</div>
 									</th>
 								</tr>
 							</thead>
-							<tbody className="divide-y divide-gray-200 bg-white">
+							<tbody className="bg-gray-100">
 								{leads.length > 0 &&
 									leads.map((lead, index) => (
 										<tr

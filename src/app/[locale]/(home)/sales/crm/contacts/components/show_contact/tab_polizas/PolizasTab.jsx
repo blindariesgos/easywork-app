@@ -1,10 +1,10 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { Tab } from "@headlessui/react";
-import useCrmContext from "@/context/crm";
+import useCrmContext from "../../../../../../../../../context/crm";
 import ContactPolizaTable from "./ContactPolizaTable";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "@/hooks/useCommon";
+import { usePolicies } from "../../../../../../../../../hooks/useCommon";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 
 function classNames(...classes) {

@@ -1,4 +1,4 @@
-import ToolBox from "@/components/ToolBoox";
+import ToolBox from "../../../../components/ToolBoox";
 
 export default function Home() {
   return (

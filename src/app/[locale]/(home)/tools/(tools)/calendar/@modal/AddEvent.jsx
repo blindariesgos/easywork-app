@@ -1,6 +1,6 @@
 "use client";
-import useAppContext from "@/context/app";
-import { onDismissModal } from "@/lib/common";
+import useAppContext from "../../../../../../../context/app";
+import { onDismissModal } from "../../../../../../../lib/common";
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import {
   ChevronDownIcon,
@@ -14,8 +14,8 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import ComboBox, { ComboBoxWithElement } from "../components/ComboBox";
-import { timezones } from "@/lib/timezones";
-import Dropdown from "@/components/Dropdown";
+import { timezones } from "../../../../../../../lib/timezones";
+import Dropdown from "../../../../../../../components/Dropdown";
 import RepeatOptions from "./components/RepeatOptions";
 import SelectMenu from "./components/SelectMenu";
 import SelectEventAttendees from "./components/SelectEventAttendees";

@@ -1,7 +1,7 @@
 import React from "react";
 import PolizasHeader from "./PolizasHeader";
 import PolizasTab from "./PolizasTab";
-import { Pagination } from "@/components/pagination/Pagination";
+import { Pagination } from "../../../../../../../../../components/pagination/Pagination";
 
 export default function ContactPoliza({contactID}) {
   return (

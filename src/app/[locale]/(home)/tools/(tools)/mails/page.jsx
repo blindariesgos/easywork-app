@@ -1,11 +1,11 @@
 "use client";
-import { useSidebar } from "@/hooks/useCommon";
+import { useSidebar } from "../../../../../../hooks/useCommon";
 import { usePathname } from "next/navigation";
-import Tag from "@/components/Tag";
+import Tag from "../../../../../../components/Tag";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import SliderOverShort from "@/components/SliderOverShort";
+import SliderOverShort from "../../../../../../components/SliderOverShort";
 import { useRouter } from "next/navigation";
 
 export default function IngresarEmail() {

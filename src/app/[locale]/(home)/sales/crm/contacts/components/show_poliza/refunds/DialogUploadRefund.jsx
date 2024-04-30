@@ -4,13 +4,13 @@ import { Dialog, DialogPanel } from "@tremor/react";
 import { BsFileEarmarkPdf } from "react-icons/bs";
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import SelectInput from '@/components/form/SelectInput';
+import SelectInput from '../../../../../../../../../components/form/SelectInput';
 import * as yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Button from '@/components/form/Button';
-import TextInput from '@/components/form/TextInput';
-import InputDate from '@/components/form/InputDate';
+import Button from '../../../../../../../../../components/form/Button';
+import TextInput from '../../../../../../../../../components/form/TextInput';
+import InputDate from '../../../../../../../../../components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 
 const status = [

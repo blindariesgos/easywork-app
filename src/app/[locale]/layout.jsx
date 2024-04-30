@@ -1,12 +1,12 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import CrmContextProvider from '@/context/crm/provider';
+import CrmContextProvider from '../../context/crm/provider';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import initTranslations from '../i18n';
-import { AlertContextProvider } from '@/context/common/AlertContext';
-import { ModalAlert } from '@/components/modalAlert/ModalAlert';
-import TranslationsProvider from '@/components/Providers/TranslationsProvider';
+import { AlertContextProvider } from '../../context/common/AlertContext';
+import { ModalAlert } from '../../components/modalAlert/ModalAlert';
+import TranslationsProvider from '../../components/Providers/TranslationsProvider';
 
 const inter = Inter({ subsets: [ 'latin' ] });
 

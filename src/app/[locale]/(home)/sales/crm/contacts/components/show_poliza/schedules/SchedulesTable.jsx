@@ -1,7 +1,7 @@
 'use client';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
-import { useOrderByColumn } from '@/hooks/useOrderByColumn';
+import { useOrderByColumn } from '../../../../../../../../../hooks/useOrderByColumn';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import PolizasEmpty from '../../show_contact/tab_polizas/PolizasEmpty';
 import Link from 'next/link';

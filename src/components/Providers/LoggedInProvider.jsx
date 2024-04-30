@@ -1,4 +1,4 @@
-import { isLoggedIn } from '@/lib/apis';
+import { isLoggedIn } from '../../lib/apis';
 import { redirect } from 'next/navigation';
 
 const LoggedInProvider = async ({children}) => {

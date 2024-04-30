@@ -4,7 +4,7 @@ import SelectInput from './form/SelectInput';
 import Button from './form/Button';
 import { useTranslation } from 'react-i18next';
 import MenuAddUser from './MenuAddUser';
-import { useAlertContext } from '@/context/common/AlertContext';
+import { useAlertContext } from '../context/common/AlertContext';
 
 export default function SelectedOptionsTable() {
 	const { t } = useTranslation();

@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextEditor from '../TextEditor';
 import DropdownVisibleUsers from '../DropdownVisibleUsers';
-import useAppContext from '@/context/app';
 
 export default function TabComment({ data }) {
 	const { t } = useTranslation();

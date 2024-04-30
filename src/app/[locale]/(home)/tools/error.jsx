@@ -1,6 +1,6 @@
 'use client'; // Error components must be Client Components
 
-import { getApiError } from '@/utils/getApiErrors';
+import { getApiError } from '../../../../utils/getApiErrors';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';

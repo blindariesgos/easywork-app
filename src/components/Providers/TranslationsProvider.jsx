@@ -2,7 +2,7 @@
 
 import { I18nextProvider } from 'react-i18next';
 import { createInstance } from 'i18next';
-import initTranslations from '@/app/i18n';
+import initTranslations from '../../app/i18n';
 
 export default function TranslationsProvider({
   children,

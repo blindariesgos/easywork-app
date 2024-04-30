@@ -5,13 +5,13 @@ import { BsFileEarmarkPdf } from "react-icons/bs";
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useFormState } from "react-dom";
-import useCrmContext from "@/context/crm";
-import { subirPolizaPDF } from '@/lib/api';
-import SelectInput from '@/components/form/SelectInput';
+import useCrmContext from "../../../../../../../../../context/crm";
+import { subirPolizaPDF } from '../../../../../../../../../lib/api';
+import SelectInput from '../../../../../../../../../components/form/SelectInput';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Button from '@/components/form/Button';
+import Button from '../../../../../../../../../components/form/Button';
 
 const company = [{ id: 1, name: "GNP" }, {id: 2, name: "TEST"}];
 

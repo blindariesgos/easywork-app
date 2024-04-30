@@ -1,6 +1,6 @@
 import React from 'react';
 import TableLeads from '../components/TableLeads';
-import { Pagination } from '@/components/pagination/Pagination';
+import { Pagination } from '../../../../../../../components/pagination/Pagination';
 const wait3seconds = () => {
 	return new Promise((resolve) => setTimeout(resolve, 5000));
 };

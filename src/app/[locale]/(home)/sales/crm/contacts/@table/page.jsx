@@ -9,21 +9,21 @@ import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import useCrmContext from "@/context/crm";
-import { getURLContactPhoto } from "@/lib/common";
-import useAppContext from "@/context/app";
+import useCrmContext from "../../../../../../../context/crm";
+import { getURLContactPhoto } from "../../../../../../../lib/common";
+import useAppContext from "../../../../../../../context/app";
 import { useTranslation } from "react-i18next";
-import { Pagination } from "@/components/pagination/Pagination";
+import { Pagination } from "../../../../../../../components/pagination/Pagination";
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Cog8ToothIcon } from '@heroicons/react/20/solid';
-import Button from "@/components/form/Button";
-import { deleteContactId } from "@/lib/apis";
-import { getApiError } from "@/utils/getApiErrors";
+import Button from "../../../../../../../components/form/Button";
+import { deleteContactId } from "../../../../../../../lib/apis";
+import { getApiError } from "../../../../../../../utils/getApiErrors";
 import { toast } from "react-toastify";
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation'
-import { useOrderByColumn } from "@/hooks/useOrderByColumn";
+import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
 
 export default function Page() {
   const params = useSearchParams();

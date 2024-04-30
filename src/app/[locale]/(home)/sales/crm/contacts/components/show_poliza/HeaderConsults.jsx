@@ -1,5 +1,5 @@
 'use client';
-import { usePolicies } from '@/hooks/useCommon';
+import { usePolicies } from '../../../../../../../../hooks/useCommon';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 

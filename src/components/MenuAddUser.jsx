@@ -4,7 +4,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import TextInput from './form/TextInput';
-import useAppContext from '@/context/app';
+import useAppContext from '../context/app';
 import Image from 'next/image';
 
 const MenuAddUser = ({ selectedOption }) => {

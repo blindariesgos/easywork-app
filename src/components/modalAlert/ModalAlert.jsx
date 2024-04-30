@@ -3,7 +3,7 @@ import React, { Fragment, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/navigation';
 import Button from '../form/Button';
-import { useAlertContext } from '@/context/common/AlertContext';
+import { useAlertContext } from '../../context/common/AlertContext';
 
 export const ModalAlert = ({ }) => {
     const { onCloseAlertDialog, isOpen, setIsOpen, stateAlert, disabled } = useAlertContext();

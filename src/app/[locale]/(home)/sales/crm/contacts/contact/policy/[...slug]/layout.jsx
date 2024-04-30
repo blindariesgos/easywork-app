@@ -1,4 +1,4 @@
-import NotFound from '@/app/[locale]/not-found';
+import NotFound from '../../../../../../../../../app/[locale]/not-found';
 import React from 'react';
 import PolicyDetails from './PolicyDetails';
 import ContactDetails from '../../[id]/ContactDetails';

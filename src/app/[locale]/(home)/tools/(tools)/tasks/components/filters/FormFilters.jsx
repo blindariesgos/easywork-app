@@ -1,21 +1,21 @@
-import Button from '@/components/form/Button';
+import Button from '../../../../../../../../components/form/Button';
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
-import { useCommon, useTasks } from '@/hooks/useCommon';
-import SelectInput from '@/components/form/SelectInput';
-import TextInput from '@/components/form/TextInput';
+import { useCommon, useTasks } from '../../../../../../../../hooks/useCommon';
+import SelectInput from '../../../../../../../../components/form/SelectInput';
+import TextInput from '../../../../../../../../components/form/TextInput';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import AddFields from './AddFields';
-import MultipleSelect from '@/components/form/MultipleSelect';
+import MultipleSelect from '../../../../../../../../components/form/MultipleSelect';
 import InputDateFilter from './InputDateFilter';
-import SelectDropdown from '@/components/form/SelectDropdown';
-import useAppContext from '@/context/app';
+import SelectDropdown from '../../../../../../../../components/form/SelectDropdown';
+import useAppContext from '../../../../../../../../context/app';
 
 const contactSources = [
 	{ id: 1, name: 'Correo electrónico' },

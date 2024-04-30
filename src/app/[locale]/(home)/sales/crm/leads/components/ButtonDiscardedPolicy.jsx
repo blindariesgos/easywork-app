@@ -1,5 +1,5 @@
 'use client';
-import Button from '@/components/form/Button';
+import Button from '../../../../../../../components/form/Button';
 import { Popover, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next';

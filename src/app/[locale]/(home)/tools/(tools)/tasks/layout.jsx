@@ -1,15 +1,15 @@
 "use client";
-import ToolHeader from "@/components/ToolHeader";
+import ToolHeader from "../../../../../../components/ToolHeader";
 import React, { Suspense, useEffect } from "react";
 import { Cog8ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
-import { useTasks } from "@/hooks/useCommon";
-import IconDropdown from "@/components/SettingsButton";
+import { useTasks } from "../../../../../../hooks/useCommon";
+import IconDropdown from "../../../../../../components/SettingsButton";
 import FiltersTasks from "./components/filters/FiltersTasks";
-import LoaderSpinner from "@/components/LoaderSpinner";
+import LoaderSpinner from "../../../../../../components/LoaderSpinner";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import Header from "@/components/header/Header";
+import Header from "../../../../../../components/header/Header";
 
 export default function TaskLayout({ children, table }) {
   const { t } = useTranslation();

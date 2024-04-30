@@ -2,7 +2,7 @@
 import { ChevronDownIcon, CheckIcon, Cog8ToothIcon } from '@heroicons/react/20/solid';
 import PolizasEmpty from './PolizasEmpty';
 import { useTranslation } from 'react-i18next';
-import { useOrderByColumn } from '@/hooks/useOrderByColumn';
+import { useOrderByColumn } from '../../../../../../../../../hooks/useOrderByColumn';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

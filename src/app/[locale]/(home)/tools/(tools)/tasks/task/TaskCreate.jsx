@@ -1,7 +1,7 @@
 'use client';
-import LoaderSpinner from '@/components/LoaderSpinner';
-import IconDropdown from '@/components/SettingsButton';
-import { useTasks } from '@/hooks/useCommon';
+import LoaderSpinner from '../../../../../../../components/LoaderSpinner';
+import IconDropdown from '../../../../../../../components/SettingsButton';
+import { useTasks } from '../../../../../../../hooks/useCommon';
 import { ArrowUpTrayIcon, AtSymbolIcon, Cog8ToothIcon, FireIcon, PaperClipIcon } from '@heroicons/react/20/solid';
 import { ChevronDownIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,20 +11,20 @@ import CardFile from '../components/CardFile';
 import UploadDocuments from '../components/UploadDocuments';
 import TextEditor from '../components/TextEditor';
 import DropdownVisibleUsers from '../components/DropdownVisibleUsers';
-import useAppContext from '@/context/app';
+import useAppContext from '../../../../../../../context/app';
 import CheckList from '../components/CheckList';
 import AddListSeLectingText from '../components/AddListSeLectingText';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';import { toast } from 'react-toastify';
-import MultipleSelect from '@/components/form/MultipleSelect';
-import InputDate from '@/components/form/InputDate';
+import MultipleSelect from '../../../../../../../components/form/MultipleSelect';
+import InputDate from '../../../../../../../components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
-import TextInput from '@/components/form/TextInput';
+import TextInput from '../../../../../../../components/form/TextInput';
 import DateTimeCalculator from '../components/DateTimeCalculator';
-import CkeckBoxMultiple from '@/components/form/CkeckBoxMultiple';
-import InputCheckBox from '@/components/form/InputCheckBox';
-import Button from '@/components/form/Button';
+import CkeckBoxMultiple from '../../../../../../../components/form/CkeckBoxMultiple';
+import InputCheckBox from '../../../../../../../components/form/InputCheckBox';
+import Button from '../../../../../../../components/form/Button';
 import { useRouter } from 'next/navigation';
 import OptionsTask from '../components/OptionsTask';
 ;
@@ -462,7 +462,7 @@ export default function TaskCreate() {
 									/>
 								</div>
 								<div className='flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6'>
-									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => {setValue("endDate", "");setValue("duration", 0);setValue("startDate", "");setOpenOptions({...openOptions, time: !openOptions.time})}}>
+									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => {setValueInputs("endDate", "");setValueInputs("duration", 0);setValueInputs("startDate", "");setOpenOptions({...openOptions, time: !openOptions.time})}}>
 										<p className='text-sm'>{t("tools:tasks:new:time")}</p>	
 									</div>
 									<div className='cursor-pointer hover:text-primary hover:border-b hover:border-dashed' onClick={() => setOpenOptions({...openOptions, options: !openOptions.options})}>
@@ -576,19 +576,19 @@ export default function TaskCreate() {
 						label={t("tools:tasks:new:add-task")}
 						buttonStyle="primary"
 						className="px-3 py-2 drop-shadow-lg"
-						onclick={() => router.push(`/tools/task?page=1`)}
+						onclick={() => router.push(`/tools/tasks?page=1`)}
 					/>
 					<Button
 						label={t("tools:tasks:new:add-create")}
 						buttonStyle="secondary"
 						className="px-3 py-2 drop-shadow-lg"
-						onclick={() => router.push(`/tools/task?page=1`)}
+						onclick={() => router.push(`/tools/tasks?page=1`)}
 					/>
 					<Button
 						label={t("common:buttons:cancel")}
 						buttonStyle="secondary"
 						className="px-3 py-2 drop-shadow-lg"
-						onclick={() => router.push(`/tools/task?page=1`)}
+						onclick={() => router.push(`/tools/tasks?page=1`)}
 					/>						
 				</div>		
 			</div>

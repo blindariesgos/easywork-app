@@ -1,5 +1,3 @@
-import UserProvider from "@/components/UserProvider";
-import { getUsers } from "@/lib/api";
 
 export const metadata = {
   title: "Easywork",

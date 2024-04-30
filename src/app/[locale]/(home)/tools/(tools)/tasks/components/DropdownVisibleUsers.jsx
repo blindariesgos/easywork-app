@@ -1,4 +1,4 @@
-import TextInput from '@/components/form/TextInput';
+import TextInput from '../../../../../../../components/form/TextInput';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import React from 'react';

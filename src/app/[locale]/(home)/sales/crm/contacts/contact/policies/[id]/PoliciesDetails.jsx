@@ -1,4 +1,4 @@
-import SlideOver from '@/components/SlideOver'
+import SlideOver from '../../../../../../../../../components/SlideOver'
 import React, { Suspense } from 'react'
 import ContactPoliza from '../../../components/show_contact/tab_polizas/ContactPoliza'
 

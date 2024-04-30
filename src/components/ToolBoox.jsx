@@ -1,5 +1,5 @@
 'use client';
-import { useSidebar } from '@/hooks/useCommon'
+import { useSidebar } from '../hooks/useCommon'
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import Link from "next/link";

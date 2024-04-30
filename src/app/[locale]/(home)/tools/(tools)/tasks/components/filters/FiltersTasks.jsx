@@ -4,7 +4,7 @@ import React, { Fragment, useState } from 'react';
 import { ChevronDownIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import FormFilters from './FormFilters';
-import { useTasks } from '@/hooks/useCommon';
+import { useTasks } from '../../../../../../../../hooks/useCommon';
 // import FormFilters from './FormFilters';
 
 const FiltersTasks= () => {

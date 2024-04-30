@@ -1,4 +1,4 @@
-import NotFound from '@/app/[locale]/not-found';
+import NotFound from '../../../../../../../../../../app/[locale]/not-found';
 import ContactDetails from '../../../[id]/ContactDetails';
 import BranchDetails from './BranchDetails';
 

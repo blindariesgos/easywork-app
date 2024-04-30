@@ -1,6 +1,6 @@
 'use client';
-import Button from '@/components/form/Button';
-import { useOrderByColumn } from '@/hooks/useOrderByColumn';
+import Button from '../../../../../../../components/form/Button';
+import { useOrderByColumn } from '../../../../../../../hooks/useOrderByColumn';
 import { ChevronDownIcon, Cog8ToothIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import Image from 'next/image';
@@ -8,10 +8,10 @@ import Link from 'next/link';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddColumnsTable from '../components/AddColumnsTable';
-import { useTasks } from '@/hooks/useCommon';
-import { Pagination } from '@/components/pagination/Pagination';
-import SelectInput from '@/components/form/SelectInput';
-import SelectedOptionsTable from '@/components/SelectedOptionsTable';
+import { useTasks } from '../../../../../../../hooks/useCommon';
+import { Pagination } from '../../../../../../../components/pagination/Pagination';
+import SelectInput from '../../../../../../../components/form/SelectInput';
+import SelectedOptionsTable from '../../../../../../../components/SelectedOptionsTable';
 const tasks = [
 	{
 		id: 1,

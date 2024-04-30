@@ -1,8 +1,8 @@
 "use client";
-import useAppContext from "@/context/app";
+import useAppContext from "../../../../../../context/app";
 import CalendarHeader from "./components/CalendarHeader";
 import Link from "next/link";
-import { useCommon } from "@/hooks/useCommon";
+import { useCommon } from "../../../../../../hooks/useCommon";
 import Modal from "./@modal/page";
 
 export default function CalendarLayout({

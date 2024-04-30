@@ -1,10 +1,10 @@
 'use client';
-import LoaderSpinner from '@/components/LoaderSpinner';
+import LoaderSpinner from '../../../../../../../../components/LoaderSpinner';
 import React, { useState } from 'react';
 import ActivityPanel from '../ActivityPanel';
 import { useTranslation } from 'react-i18next';
-import TextInput from '@/components/form/TextInput';
-import SelectInput from '@/components/form/SelectInput';
+import TextInput from '../../../../../../../../components/form/TextInput';
+import SelectInput from '../../../../../../../../components/form/SelectInput';
 import { DocumentTextIcon } from '@heroicons/react/20/solid';
 
 export default function FormPolicy() {

@@ -1,7 +1,7 @@
 
 import React, { Suspense } from "react";
 import LayoutContact from "./LayoutContact";
-import LoaderSpinner from "@/components/LoaderSpinner";
+import LoaderSpinner from "../../../../../../components/LoaderSpinner";
 
 
 export default async function ContactLayout({ children, table }) {

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
 import { PlusIcon } from '@heroicons/react/20/solid';
-import Tooltip from '@/components/Tooltip';
+import Tooltip from '../../../../../../../components/Tooltip';
 
 export default function AddListSeLectingText({ text, fields, setValue, append, value, getValues, watch, setOpenList }) {
 	const { t } = useTranslation();

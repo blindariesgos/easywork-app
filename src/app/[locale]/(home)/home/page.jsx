@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '@/components/header/Header';
+import Header from '../../../../components/header/Header';
 import { ClockIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 

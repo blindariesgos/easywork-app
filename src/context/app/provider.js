@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { AppContext } from "..";
-import { driveViews } from "@/lib/common";
-import { useCommon } from "@/hooks/useCommon";
-import { getAddListContacts, getUsersContacts } from "@/lib/apis";
-import { getApiError } from "@/utils/getApiErrors";
+import { driveViews } from "../../lib/common";
+import { useCommon } from "../../hooks/useCommon";
+import { getAddListContacts, getUsersContacts } from "../../lib/apis";
+import { getApiError } from "../../utils/getApiErrors";
 
 export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon()

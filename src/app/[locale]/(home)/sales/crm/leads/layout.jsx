@@ -1,12 +1,12 @@
 'use client';
-import Header from '@/components/header/Header';
+import Header from '../../../../../../components/header/Header';
 import { Suspense, useEffect } from 'react';
 import HeaderCrm from '../HeaderCrm';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import LeadsHeader from './components/LeadsHeader';
-import LoaderSpinner from '@/components/LoaderSpinner';
-import { useLeads } from '@/hooks/useCommon';
+import LoaderSpinner from '../../../../../../components/LoaderSpinner';
+import { useLeads } from '../../../../../../hooks/useCommon';
 
 export default function LayoutLeads({ table,  children}) {
 	const { t } = useTranslation();

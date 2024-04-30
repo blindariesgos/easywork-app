@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import InputDate from '@/components/form/InputDate';
+import InputDate from '../../../../../../../../components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 
 export default function TabTableTime({ data }) {

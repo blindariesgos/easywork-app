@@ -1,26 +1,26 @@
 'use client';
-import { DocumentSelector } from '@/components/DocumentSelector';
-import LoaderSpinner from '@/components/LoaderSpinner';
-import ProfileImageInput from '@/components/ProfileImageInput';
-import InputDate from '@/components/form/InputDate';
-import InputPhone from '@/components/form/InputPhone';
-import SelectDropdown from '@/components/form/SelectDropdown';
-import SelectInput from '@/components/form/SelectInput';
+import { DocumentSelector } from '../../../../../../../components/DocumentSelector';
+import LoaderSpinner from '../../../../../../../components/LoaderSpinner';
+import ProfileImageInput from '../../../../../../../components/ProfileImageInput';
+import InputDate from '../../../../../../../components/form/InputDate';
+import InputPhone from '../../../../../../../components/form/InputPhone';
+import SelectDropdown from '../../../../../../../components/form/SelectDropdown';
+import SelectInput from '../../../../../../../components/form/SelectInput';
 import { PencilIcon } from '@heroicons/react/20/solid';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FaCalendarDays } from 'react-icons/fa6';
 import ActivityPanel from '../../contacts/components/ActivityPanel';
-import Button from '@/components/form/Button';
+import Button from '../../../../../../../components/form/Button';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { contactTypes, responsible } from '@/lib/common';
+import { contactTypes, responsible } from '../../../../../../../lib/common';
 import { toast } from 'react-toastify';
 import HeaderCrm from '../../HeaderCrm';
-import { useLeads } from '@/hooks/useCommon';
+import { useLeads } from '../../../../../../../hooks/useCommon';
 import ProgressStages from './ProgressStages';
-import TextInput from '@/components/form/TextInput';
+import TextInput from '../../../../../../../components/form/TextInput';
 import { useRouter } from 'next/navigation';
 
 const contactSources = [

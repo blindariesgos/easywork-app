@@ -1,5 +1,5 @@
 'use client';
-import Button from '@/components/form/Button';
+import Button from '../../../../../../../../../components/form/Button';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

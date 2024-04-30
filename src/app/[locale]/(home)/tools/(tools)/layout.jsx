@@ -1,5 +1,5 @@
 'use client';
-import Header from '@/components/header/Header';
+import Header from '../../../../../components/header/Header';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

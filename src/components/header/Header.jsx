@@ -1,5 +1,5 @@
 'use client';
-import useAppContext from '@/context/app';
+import useAppContext from '../../context/app';
 import { Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
@@ -10,7 +10,7 @@ import Clock from './Clock';
 import Status from './Status';
 import { useTranslation } from 'react-i18next';
 import { usePathname } from 'next/navigation';
-import { logout } from '@/lib/apis';
+import { logout } from '../../lib/apis';
 import {useSession} from 'next-auth/react'
 
 function classNames(...classes) {
@@ -18,7 +18,8 @@ function classNames(...classes) {
 }
 
 export default function Header() {
-	const session = useSession();
+	const {data: session} = useSession();
+	console.log("login", session)
 	const pathname = usePathname();
 	function ifWebmailPath() {
 		if (pathname === '/tools/webmail') return true;

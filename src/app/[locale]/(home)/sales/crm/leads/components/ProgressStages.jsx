@@ -1,5 +1,5 @@
 'use client';
-import { useLeads } from '@/hooks/useCommon';
+import { useLeads } from '../../../../../../../hooks/useCommon';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import React, { useState } from 'react';
 import DialogPositiveStage from './DialogPositiveStage';

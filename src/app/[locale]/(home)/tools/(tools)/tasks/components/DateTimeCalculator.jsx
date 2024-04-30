@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import ReactDatePicker from 'react-datepicker';
 import { Controller } from 'react-hook-form';
-import InputDate from '@/components/form/InputDate';
+import InputDate from '../../../../../../../components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 import { useTranslation } from 'react-i18next';
-import TextInput from '@/components/form/TextInput';
+import TextInput from '../../../../../../../components/form/TextInput';
 
 const DateTimeCalculator = ({ control, watch, setValue }) => {
 	const { t } = useTranslation();

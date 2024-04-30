@@ -1,10 +1,10 @@
-import SlideOver from '@/components/SlideOver'
+import SlideOver from '../../../../../../../../../../components/SlideOver'
 import { PencilIcon } from '@heroicons/react/20/solid'
 import React, { Suspense } from 'react'
 import PolizasHeader from '../../../../components/show_contact/tab_polizas/PolizasHeader'
 import LoadingContactId from '../../../[id]/loading'
 import PolizasTab from '../../../../components/show_contact/tab_polizas/PolizasTab'
-import { Pagination } from '@/components/pagination/Pagination'
+import { Pagination } from '../../../../../../../../../../components/pagination/Pagination'
 
 export default function BranchDetails({ id, branch }) {
   return (

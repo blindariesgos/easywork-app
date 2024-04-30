@@ -1,8 +1,8 @@
 // 'use client';
 
-import AppContextProvider from '@/context/app/provider';
+import AppContextProvider from '../../../context/app/provider';
 import Sidebar from '../../../components/Sidebar';
-import LoggedInProvider from '@/components/Providers/LoggedInProvider';
+import LoggedInProvider from '../../../components/Providers/LoggedInProvider';
 import { SessionProvider } from 'next-auth/react';
 
 export default function HomeLayout({ children }) {

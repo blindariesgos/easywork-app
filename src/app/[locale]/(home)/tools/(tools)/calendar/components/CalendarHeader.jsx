@@ -1,5 +1,5 @@
 "use client";
-import useAppContext from "@/context/app";
+import useAppContext from "../../../../../../../context/app";
 import { Menu, Transition } from "@headlessui/react";
 import {
   ChevronDownIcon,
@@ -15,7 +15,7 @@ import CreateEventButton from "./CreateEventButton";
 import ViewsOptions from "./ViewsOptions";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { useCommon } from "@/hooks/useCommon";
+import { useCommon } from "../../../../../../../hooks/useCommon";
 
 export default function CalendarHeader() {
   const { calendarView, setCalendarView } = useAppContext();

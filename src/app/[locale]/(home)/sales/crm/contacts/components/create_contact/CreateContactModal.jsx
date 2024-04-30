@@ -1,5 +1,5 @@
 "use client";
-import SlideOver from "@/components/SlideOver";
+import SlideOver from "../../../../../../../../components/SlideOver";
 import React from "react";
 import CreateContact from "./CreateContact";
 

@@ -1,5 +1,5 @@
 "use client";
-import { getFileIcon } from "@/lib/drive_helper";
+import { getFileIcon } from "../../../../../../../lib/drive_helper";
 import clsx from "clsx";
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";

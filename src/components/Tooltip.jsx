@@ -1,4 +1,4 @@
-import { useTooltip } from "@/hooks/useCommon";
+import { useTooltip } from "../hooks/useCommon";
 import React from "react";
 
 const Tooltip = ({

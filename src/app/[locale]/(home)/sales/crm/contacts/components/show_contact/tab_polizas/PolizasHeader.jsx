@@ -2,16 +2,16 @@
 import React from 'react';
 import SelectRamo from './SelectRamo';
 import { PlusIcon, Cog8ToothIcon } from '@heroicons/react/20/solid';
-import { subirPolizaPDF } from '@/lib/api';
+import { subirPolizaPDF } from '../../../../../../../../../lib/api';
 import { useFormState } from 'react-dom';
-import useCrmContext from '@/context/crm';
+import useCrmContext from '../../../../../../../../../context/crm';
 import { useTranslation } from 'react-i18next';
-import { useCommon, usePolicies } from '@/hooks/useCommon';
-import Button from '@/components/form/Button';
+import { useCommon, usePolicies } from '../../../../../../../../../hooks/useCommon';
+import Button from '../../../../../../../../../components/form/Button';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import DialogUploadFile from './DialogUploadFile';
-import IconDropdown from '@/components/SettingsButton';
+import IconDropdown from '../../../../../../../../../components/SettingsButton';
 
 const initialState = {
 	filePdf: '',

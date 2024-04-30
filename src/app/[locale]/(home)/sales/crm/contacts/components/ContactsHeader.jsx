@@ -3,14 +3,14 @@ import React from 'react';
 import { ChevronDownIcon, Cog8ToothIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import ContactSubMenu from './ContactSubMenu';
 import { useTranslation } from 'react-i18next';
-import Button from '@/components/form/Button';
-import useAppContext from '@/context/app';
+import Button from '../../../../../../../components/form/Button';
+import useAppContext from '../../../../../../../context/app';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import FiltersContact from './filters/FiltersContact';
-import { useCommon } from '@/hooks/useCommon';
+import { useCommon } from '../../../../../../../hooks/useCommon';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import IconDropdown from '@/components/SettingsButton';
+import IconDropdown from '../../../../../../../components/SettingsButton';
 
 export default function ContactsHeader() {
 	const { t } = useTranslation();

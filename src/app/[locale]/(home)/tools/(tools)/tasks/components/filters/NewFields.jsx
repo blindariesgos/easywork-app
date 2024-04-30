@@ -1,6 +1,5 @@
-import useAppContext from '@/context/app';
-import { useTasks } from '@/hooks/useCommon';
-import { contactTypes } from '@/lib/common';
+import useAppContext from '../../../../../../../../context/app';
+import { useTasks } from '../../../../../../../../hooks/useCommon';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

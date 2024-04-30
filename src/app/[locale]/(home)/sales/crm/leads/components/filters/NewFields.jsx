@@ -1,4 +1,4 @@
-import { contactTypes } from '@/lib/common';
+import { contactTypes } from '../../../../../../../../lib/common';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

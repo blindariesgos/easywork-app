@@ -1,5 +1,5 @@
 "use client";
-import useCrmContext from "@/context/crm";
+import useCrmContext from "../context/crm";
 import React, { useEffect } from "react";
 
 export default function UserProvider({children, users}) {

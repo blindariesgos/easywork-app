@@ -1,7 +1,7 @@
 'use client';
-import SelectInput from '@/components/form/SelectInput';
-import TextInput from '@/components/form/TextInput';
-import { useCommon } from '@/hooks/useCommon';
+import SelectInput from '../../../../../../../../components/form/SelectInput';
+import TextInput from '../../../../../../../../components/form/TextInput';
+import { useCommon } from '../../../../../../../../hooks/useCommon';
 import React, { useEffect } from 'react'
 import ReactDatePicker from 'react-datepicker';
 import { useTranslation } from 'react-i18next';

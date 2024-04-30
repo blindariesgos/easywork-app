@@ -1,6 +1,6 @@
 'use client';
 
-import LoaderSpinner from '@/components/LoaderSpinner';
+import LoaderSpinner from '../../../../../../components/LoaderSpinner';
 import { useTranslation } from 'react-i18next';
 
 export default function Loading() {

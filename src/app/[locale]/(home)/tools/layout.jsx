@@ -1,5 +1,3 @@
-import Header from '@/components/header/Header';
-
 export const metadata = {
 	title: 'Easywork',
 	description: 'All in one'

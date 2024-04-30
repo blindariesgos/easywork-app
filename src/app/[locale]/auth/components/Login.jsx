@@ -7,7 +7,7 @@ import { useDataContext } from '../context';
 import { getLogin, login } from '../../../../lib/apis';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import LoaderSpinner from '@/components/LoaderSpinner';
+import LoaderSpinner from '../../../../components/LoaderSpinner';
 
 export default function Login() {
 	const router = useRouter();

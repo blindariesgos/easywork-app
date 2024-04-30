@@ -1,8 +1,8 @@
 'use client';
-import SlideOver from '@/components/SlideOver';
+import SlideOver from '../../../../../../../../../../../components/SlideOver';
 import React, { Suspense, useState } from 'react';
 import HeaderDataPoliza from '../../../../../components/show_poliza/HeaderDataPoliza';
-import LoaderSpinner from '@/components/LoaderSpinner';
+import LoaderSpinner from '../../../../../../../../../../../components/LoaderSpinner';
 import HeaderConsult from '../../../../../components/show_poliza/payments/HeaderConsult';
 import FormPayments from '../../../../../components/show_poliza/payments/FormPayment';
 import DialogUploadFile from '../../../../../components/show_contact/tab_polizas/DialogUploadFile';

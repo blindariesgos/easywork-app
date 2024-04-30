@@ -1,12 +1,12 @@
 "use client"
-import Button from "@/components/form/Button";
-import useAppContext from "@/context/app";
+import Button from "../../../../../../../../components/form/Button";
+import useAppContext from "../../../../../../../../context/app";
 import { ArrowDownTrayIcon, Cog8ToothIcon, DocumentTextIcon, PlusIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link"
-import IconDropdown from "@/components/SettingsButton";
+import IconDropdown from "../../../../../../../../components/SettingsButton";
 
 export default function AddContactTabs({ id }) {
   const { t } = useTranslation();

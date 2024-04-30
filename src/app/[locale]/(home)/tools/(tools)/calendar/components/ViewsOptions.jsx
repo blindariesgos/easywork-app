@@ -1,7 +1,7 @@
 "use client";
 import { RadioGroup } from "@headlessui/react";
-import useAppContext from "@/context/app";
-import { useCommon } from "@/hooks/useCommon";
+import useAppContext from "../../../../../../../context/app";
+import { useCommon } from "../../../../../../../hooks/useCommon";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

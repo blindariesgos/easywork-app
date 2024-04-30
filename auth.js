@@ -1,7 +1,8 @@
-import { getLogin } from "@/lib/apis";
+
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
+import { getLogin } from "./src/lib/apis";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
@@ -41,9 +42,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         ...token,
         ...user,
       }    
+      console.log("token", data)
       return data;
     },
     session({ session, token }) {
+      console.log("session", session, token )
       return {
         ...session,
         user: {

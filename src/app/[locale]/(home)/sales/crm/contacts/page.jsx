@@ -1,7 +1,7 @@
 "use client";
-import useCrmContext from "@/context/crm";
-import { getContacts } from "@/lib/apis";
-import { getApiError } from "@/utils/getApiErrors";
+import useCrmContext from "../../../../../../context/crm";
+import { getContacts } from "../../../../../../lib/apis";
+import { getApiError } from "../../../../../../utils/getApiErrors";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 

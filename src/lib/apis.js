@@ -4,13 +4,27 @@ import {
   revalidateTag
 } from 'next/cache';
 import axios from './axios';
+import { auth, signIn, signOut } from '../../auth';
+
+export const login = async (formdata) => {
+  return await signIn("credentials", formdata)
+}
+
+export const logout = async () => {
+  return await signOut({redirectTo: "/auth"});
+}
+
+export const isLoggedIn = async() => {
+    const session = await auth();
+    return !!session?.user?.accessToken;
+}
 
 export const getLogin = async (email, password) => {
   const response = await axios().post(`/auth/login`, {
     email,
     password
-  });
-  return response.data;
+  }); 
+  return response;
 }
 export const getDataPassword = async (email) => {
   const response = await axios().put(`/auth/forgot-password`, {

@@ -98,7 +98,7 @@ export default function Sidebar() {
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-6 pb-4 rounded-tr-[50px] rounded-br-[50px]">
           <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
-            <Link href="/">
+            <Link href="/home">
               <Image
                 width={72}
                 height={72}

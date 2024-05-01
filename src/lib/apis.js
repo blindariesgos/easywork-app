@@ -85,3 +85,8 @@ export const createImap = async (data) => {
   const response = await axios().post(`/imap-config`, data);
   return response;
 }
+
+export const saveFolders = async (data) => {
+  const response = await axios().post(`/imap-config/folder/save`, data);
+  return response;
+}

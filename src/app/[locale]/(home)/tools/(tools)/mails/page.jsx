@@ -5,8 +5,9 @@ import Image from "next/image";
 import SliderOverShort from "../../../../../../components/SliderOverShort";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { createImap } from "../../../../../../lib/apis";
+import { createImap, saveFolders } from "../../../../../../lib/apis";
 import { getApiError } from "../../../../../../utils/getApiErrors";
+import axios from "axios";
 
 export default function IngresarEmail() {
   const session = useSession();
@@ -21,20 +22,54 @@ export default function IngresarEmail() {
     user: null,
     password: null,
     senderName: null,
-    userId: session.data.user.id,
+    userId: session.data.user.user.id,
   });
+  const [folderData, setFolderData] = useState([]);
+  const [folderId, setFolderId] = useState(null);
 
   async function saveIMAP() {
     try {
       const response = await createImap(ImapData);
       if (response) {
-        setModalG(false);
-        setModalC(true);
-        console.log(response)
-        return response
+        setFolderId(response);
+        getFolders();
       }
     } catch (error) { 
         getApiError(error.message, errorsDuplicated);
+    }
+  }
+
+  async function getFolders() {
+    try {
+      const response = await axios.post(`http://localhost:4000/v1/gmail/folders`, { id: session.data.user.user.id });
+      if (response) {
+        const newData = response.data.map(folder => ({
+          folder: folder,
+          state: false,
+        }));
+        setFolderData(newData);
+        setModalG(false);
+        setModalC(true);
+      }
+    } catch (error) {
+      getApiError(error.message, errorsDuplicated);
+    }
+  }
+
+  async function saveFoldersData(){
+    const folders = [];
+    folderData.forEach(element => {
+      if(element.state){
+        folders.push({ imapFolderId: folderId.imapConfigId , mailboxName: element.folder });
+      }
+    });
+    try {
+      const response = await saveFolders(folders);
+      if(response){
+        router.push('/tools/webmail');
+      }
+    } catch (error) {
+      getApiError(error.message, errorsDuplicated);
     }
   }
 
@@ -273,38 +308,23 @@ export default function IngresarEmail() {
                   <p className="ml-1">Select all</p>
                 </div>
                 <div className="mt-4 ml-4">
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">Inbox</p>
+                {folderData.map((data, index) => (
+                  <div className="flex mt-4 ml-2" key={index}>
+                    <input 
+                      type="checkbox" 
+                      checked={data.state}
+                      onChange={(e) => {
+                        const newFolderData = [...folderData];
+                        newFolderData[index] = {
+                          ...newFolderData[index],
+                          state: e.target.checked
+                        };
+                        setFolderData(newFolderData);
+                      }}
+                    />
+                    <p className="ml-1">{data.folder}</p>
                   </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">Sent</p>
-                  </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">Trash</p>
-                  </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">Junk</p>
-                  </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">Drafts</p>
-                  </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">elementos</p>
-                  </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">elementos</p>
-                  </div>
-                  <div className="flex mt-4 ml-2">
-                    <input type="checkbox" />
-                    <p className="ml-1">elementos</p>
-                  </div>
+                ))}
                 </div>
                 <div className="m-3 text-xs my-4 w-80">
                   <h1 className="font-medium text-lg border-b-4 border-black pb-1">
@@ -327,7 +347,7 @@ export default function IngresarEmail() {
                   <button
                     type="button"
                     className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
-                    onClick={() => router.push("/tools/webmail")}
+                    onClick={() => saveFoldersData()}
                   >
                     Guardar
                   </button>

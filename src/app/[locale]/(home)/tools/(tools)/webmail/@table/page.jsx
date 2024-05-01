@@ -1,67 +1,12 @@
 "use client";
 import clsx from "clsx";
 import Image from "next/image";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ExclamationCircleIcon, TrashIcon, FolderArrowDownIcon, EnvelopeOpenIcon } from '@heroicons/react/24/outline';
-const tasks = [
-  {
-    id: 1,
-    name: "otilio graterol",
-    activity: "Enero, 28 05:40 pm",
-    contact: "No especificado",
-    policy: "No especificado",
-    limitDate: "26/01/2024",
-    createdBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    responsiblePerson: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  },
-  {
-    id: 1,
-    name: "otilio graterol",
-    activity: "Enero, 28 10:40 am",
-    contact: "No especificado",
-    policy: "No especificado",
-    limitDate: "28/01/2024",
-    createdBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-
-    responsiblePerson: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  },
-  {
-    id: 1,
-    name: "otilio graterol",
-    activity: "Enero, 29 09:40 am",
-    contact: "No especificado",
-    policy: "No especificado",
-    limitDate: "30/01/2024",
-    createdBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    responsiblePerson: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  },
-  // More tasks...
-];
+import { getApiError } from "../../../../../../../utils/getApiErrors";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
   const { t } = useTranslation();
@@ -69,14 +14,27 @@ export default function Page() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState([]);
+  const [tasks, setTasks] = useState(null);
+  const session = useSession();
+
+  useEffect(() => {
+    axios.post(`http://localhost:4000/v1/gmail/emails`, { id: session.data.user.user.id })
+    .then((response) => {
+      setTasks(response.data);
+      console.log(tasks)
+    })
+    .catch((error) => {getApiError(error.message, errorsDuplicated);})
+  }, [session]);
 
   useLayoutEffect(() => {
-    const isIndeterminate =
-      selectedTasks.length > 0 && selectedTasks.length < tasks.length;
-    setChecked(selectedTasks.length === tasks.length);
-    setIndeterminate(isIndeterminate);
-    checkbox.current.indeterminate = isIndeterminate;
-  }, [selectedTasks]);
+    if (tasks) {
+      const isIndeterminate =
+        selectedTasks.length > 0 && selectedTasks.length < tasks.length;
+      setChecked(selectedTasks.length === tasks.length);
+      setIndeterminate(isIndeterminate);
+      checkbox.current.indeterminate = isIndeterminate;
+    }
+  }, [selectedTasks, tasks]);
 
   function toggleAll() {
     setSelectedTasks(checked || indeterminate ? [] : tasks);
@@ -128,7 +86,7 @@ export default function Page() {
             </div>
             <table className="min-w-full divide-y divide-gray-300">
               <tbody className="divide-y divide-gray-200 bg-white">
-                {tasks.map((task) => (
+                {tasks && tasks.map((task) => (
                   <tr
                     key={task.id}
                     className={clsx(
@@ -162,15 +120,15 @@ export default function Page() {
                           : "text-gray-900"
                       )}
                     >
-                      {task.name}
+                      {task.headers.subject}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 bg-indigo-100/30">
-                      {task.activity}
+                      {task.headers.date}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {task.contact}
+                      {task.headers.from}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {task.policy}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -196,7 +154,7 @@ export default function Page() {
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <div className="flex items-center">
                         <div className="h-9 w-9 flex-shrink-0">
                           <Image
@@ -213,7 +171,7 @@ export default function Page() {
                           </div>
                         </div>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

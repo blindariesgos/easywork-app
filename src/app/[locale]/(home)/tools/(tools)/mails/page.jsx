@@ -5,7 +5,7 @@ import Image from "next/image";
 import SliderOverShort from "../../../../../../components/SliderOverShort";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { createImap, saveFolders } from "../../../../../../lib/apis";
+import { createImap, saveFolders, getImapConfig } from "../../../../../../lib/apis";
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
 
@@ -73,11 +73,22 @@ export default function IngresarEmail() {
     }
   }
 
+  async function toKnowEmail(){
+    try {
+      const response = await getImapConfig({id: session.data.user.user.id });
+      if (response) {
+        router.push('/tools/webmail');
+      } 
+    } catch (error) {
+      setModalG(true)
+    }
+  }
+
   const emails = [
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => setModalG(true),
+      click: () => toKnowEmail(),
     },
     {
       name: "ICloud",

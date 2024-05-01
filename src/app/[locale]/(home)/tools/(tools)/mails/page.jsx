@@ -1,21 +1,41 @@
 "use client";
-import { useSidebar } from "../../../../../../hooks/useCommon";
-import { usePathname } from "next/navigation";
 import Tag from "../../../../../../components/Tag";
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import Image from "next/image";
 import SliderOverShort from "../../../../../../components/SliderOverShort";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { createImap } from "../../../../../../lib/apis";
+import { getApiError } from "../../../../../../utils/getApiErrors";
 
 export default function IngresarEmail() {
+  const session = useSession();
   const router = useRouter();
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
 
-  function saveIMAP() {
-    setModalG(false);
-    setModalC(true);
+  const [ImapData, setImapData] = useState({
+    host: null,
+    port: null,
+    tls: false,
+    user: null,
+    password: null,
+    senderName: null,
+    userId: session.data.user.id,
+  });
+
+  async function saveIMAP() {
+    try {
+      const response = await createImap(ImapData);
+      if (response) {
+        setModalG(false);
+        setModalC(true);
+        console.log(response)
+        return response
+      }
+    } catch (error) { 
+        getApiError(error.message, errorsDuplicated);
+    }
   }
 
   const emails = [
@@ -57,7 +77,7 @@ export default function IngresarEmail() {
   ];
 
   return (
-    <div className="rounded-2xl px-2 flex justify-center items-center flex flex-col">
+    <div className="rounded-2xl px-2 flex justify-center items-center flex-col">
       <div className="w-full rounded-xl text-easywork-main mb-4">
         <h1 className="ml-3 py-3 font-medium text-xl">Integración del buzón</h1>
       </div>
@@ -106,45 +126,100 @@ export default function IngresarEmail() {
             <div className="text-xs">
               <div className="mt-2">
                 <p className="ml-2">Dirección del servidor IMAP</p>
-                <input type="password" className="rounded-md border-0 w-full" />
+                <input
+                  type="text"
+                  className="rounded-md border-0 w-full"
+                  onChange={(e) =>
+                    setImapData((prevState) => ({
+                      ...prevState,
+                      host: e.target.value,
+                    }))
+                  }
+                />
               </div>
               <div className="flex mt-3">
                 <div className="w-20">
                   <p className="ml-2">Puerto</p>
                   <input
                     type="number"
-                    className="w-full rounded-md border-0 w-full"
+                    className="w-full rounded-md border-0"
+                    onChange={(e) =>
+                      setImapData((prevState) => ({
+                        ...prevState,
+                        port: e.target.value,
+                      }))
+                    }
                   />
                 </div>
                 <div className="flex mt-4 ml-2">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      setImapData((prevState) => ({
+                        ...prevState,
+                        tls: e.target.checked,
+                      }))
+                    }
+                  />
                   <p className="ml-1">Usar SSL</p>
                 </div>
               </div>
               <div className="mt-2">
                 <p className="ml-2">Iniciar Sesión</p>
-                <input type="password" className="rounded-md border-0 w-full" />
+                <input
+                  type="text"
+                  onChange={(e) =>
+                    setImapData((prevState) => ({
+                      ...prevState,
+                      user: e.target.value,
+                    }))
+                  }
+                  className="rounded-md border-0 w-full"
+                />
               </div>
               <div className="mt-2">
                 <p className="ml-2">Contraseña</p>
-                <input type="password" className="rounded-md border-0 w-full" />
+                <input
+                  type="password"
+                  onChange={(e) =>
+                    setImapData((prevState) => ({
+                      ...prevState,
+                      password: e.target.value,
+                    }))
+                  }
+                  className="rounded-md border-0 w-full"
+                />
               </div>
               <p className="mt-2 underline text-violet-800">
                 Configurar carpetas para la sincronización
               </p>
               <div className="mt-2">
                 <p className="ml-2">Nombre del buzón</p>
-                <input type="password" className="rounded-md border-0 w-full" />
+                <input type="text" />
               </div>
               <div className="mt-2">
                 <p className="ml-2">Nombre del remitente</p>
-                <input type="password" className="rounded-md border-0 w-full" />
+                <input
+                  type="text"
+                  onChange={(e) =>
+                    setImapData((prevState) => ({
+                      ...prevState,
+                      senderName: e.target.value,
+                    }))
+                  }
+                  className="rounded-md border-0 w-full"
+                />
               </div>
               <div className="mt-2">
                 <p className="ml-2">
                   URL de la interfaz web del servidor de correo electrónico
                 </p>
-                <input type="password" className="rounded-md border-0 w-full" />
+                <input
+                  type="text"
+                  value="www.gmail.com"
+                  className="rounded-md border-0 w-full"
+                  disabled
+                />
               </div>
               <div className="m-3 text-xs my-4 w-full">
                 <h1 className="font-bold text-lg">Acceso al buzón</h1>

@@ -80,3 +80,8 @@ export const getUsersContacts = async (id) => {
   const response = await axios().get(`/sales/crm/contacts/users`);
   return response;
 }
+
+export const createImap = async (data) => {
+  const response = await axios().post(`/imap-config`, data);
+  return response;
+}

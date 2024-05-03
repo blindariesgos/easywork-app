@@ -78,7 +78,7 @@ const FormFilters = () => {
 
   useEffect(() => {
     reset();
-  }, []);
+  }, [reset]);
 
 	const { fields, append, remove } = useFieldArray({
 		control,

@@ -33,6 +33,7 @@ const instance = (contentType = "application/json") => {
     (error) => {
       // console.log("error axios", Promise.reject(error))
       // throw new Error(error)
+      console.log("error", error)
       return Promise.reject(JSON.stringify(error.response.data));
     }
   );

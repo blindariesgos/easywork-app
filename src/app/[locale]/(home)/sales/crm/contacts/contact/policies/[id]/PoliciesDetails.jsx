@@ -2,7 +2,7 @@ import SlideOver from '../../../../../../../../../components/SlideOver'
 import React, { Suspense } from 'react'
 import ContactPoliza from '../../../components/show_contact/tab_polizas/ContactPoliza'
 
-export default function PoliciesDetails( { id }) {
+export default function PoliciesDetails( { id, polizas }) {
   return (
     <SlideOver
         openModal={true}

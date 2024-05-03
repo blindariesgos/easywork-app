@@ -8,8 +8,8 @@ import { SessionProvider } from 'next-auth/react';
 export default function HomeLayout({ children }) {
 	return (
 		<SessionProvider>
-			<LoggedInProvider>
-				<AppContextProvider>
+			<AppContextProvider>
+				<LoggedInProvider>
 					<div className="w-full h-screen">
 						<div className="flex">
 							<Sidebar />
@@ -18,8 +18,8 @@ export default function HomeLayout({ children }) {
 							</main>
 						</div>
 					</div>
-				</AppContextProvider>
-			</LoggedInProvider>
+				</LoggedInProvider>
+			</AppContextProvider>
 		</SessionProvider>
 	);
 }

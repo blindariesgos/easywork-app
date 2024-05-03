@@ -10,7 +10,7 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data, }) => {
 
   useEffect(() => {
     setSelectedColumns(columns.filter(c=> c.check));
-  }, [columns])
+  }, [columns, setSelectedColumns])
   
 
     const handleSelectChange = (col) => {

@@ -86,7 +86,7 @@ const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate
 			  return inactiveDate ? date <= inactiveDate : date;
 			}}
 			timeInputLabel={time && t('common:time')}
-			dateFormat={time ? "MM/dd/yyyy h:mm aa" : ""}
+			dateFormat={time ? "MM/dd/yyyy h:mm aa" : "MM/dd/yyyy"}
 			showTimeInput={time}	  
 		  />
 		</div>

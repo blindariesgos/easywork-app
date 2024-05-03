@@ -14,6 +14,7 @@ export default function DontRememberDetails() {
                         width={156.75}
                         height={118.84}
                         src={"/img/logo.svg"}
+                        alt="img"
                     />
                 </div>
                 {/* Titulo */}

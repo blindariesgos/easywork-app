@@ -10,7 +10,7 @@ export const getApiError = async(error, errorsDuplicated, server) => {
                 toastError(errorObject?.message || errorObject);
                 logout();
             case 401:
-                toastError(errorObject?.message || errorObject);
+                // toastError(errorObject?.message || errorObject);
                 logout();
             default:
                 !server ? toastError(errorObject?.message || errorObject) : console.log("getApierror", errorObject)

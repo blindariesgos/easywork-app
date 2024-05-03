@@ -14,7 +14,7 @@ export default function Error({ error, reset }) {
 			getApiError(error, errorsDuplicated);
 			if (id) router.push('/sales/crm/contacts?page=1');
 		},
-		[ error ]
+		[ error, id, router]
 	);
 
 	return <div />;

@@ -1,10 +1,9 @@
+import useAppContext from '@/context/app';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const NewFields = ({ append, remove, fields: selectFields}) => {
     const { lists } = useAppContext();
-	const { listContact } = lists;
-	const { contactTypes } = listContact;
 	const { t } = useTranslation();
 	const [ fields, setFields ] = useState([
 		{
@@ -18,7 +17,7 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 			id: 2,
 			name: t('contacts:filters:contact-type'),
 			type: 'select',
-			options: contactTypes,
+			options: lists?.listContact?.contactTypes || [],
 			check: false,
             code: "typeContact"
 		},
@@ -38,16 +37,26 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 		}
 	]);
 
-	useEffect(
-		() => {
-			const updatedFields = fields.map((field) => {
-				const correspondingItem = selectFields.find((select) => select.name === field.name);
-				if (correspondingItem) return { ...field, check: true };
-				return field;
-			});
+	// useEffect(() => {
+	// 	const updatedFields = fields.map((field) => {
+	// 		const correspondingItem = selectFields.find((select) => select.name === field.name);
+	// 		return correspondingItem ? { ...field, check: true } : field;
+	// 	});
+	// 	setFields(updatedFields);
+	// }, [fields, selectFields]);
+
+	useEffect(() => {
+		const updatedFields = fields.map((field) => {
+			const correspondingItem = selectFields.find((select) => select.name === field.name);
+			if (correspondingItem) return { ...field, check: true };
+			return field;
+		});
+	
+		// Verificar si hay cambios antes de actualizar 'fields'
+		if (!fields.every((field, index) => field.check === updatedFields[index].check)) {
 			setFields(updatedFields);
-		},
-	[]);
+		}
+	}, [selectFields, fields]);
 
 	const handleAddField = (e) => {
 		const { value, checked } = e.target;

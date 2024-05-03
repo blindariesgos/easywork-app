@@ -5,7 +5,7 @@ import { EnvelopeIcon, UserIcon } from '@heroicons/react/24/solid';
 import { useDataContext } from "../context";
 import { getDataPassword } from '../../../../lib/apis';
 
-export default function getPassword() {
+export default function GetPassword() {
     const { contextData, setContextData } = useDataContext();
     const [email, setEmail] = useState('');
 

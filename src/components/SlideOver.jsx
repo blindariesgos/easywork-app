@@ -85,7 +85,7 @@ export default function SlideOver({
 					break;
 			}
 		},
-		[ labelTag ]
+		[ labelTag, t ]
 	);
 
 	useEffect(
@@ -98,16 +98,9 @@ export default function SlideOver({
 					break;
 			}
 		},
-		[ subLabelTag ]
+		[ subLabelTag, t ]
 	);
-	// if (!params.get("show")) return <div/>;
-
-	// useEffect(() => {
-	// 	if ( !params.get('show') ){
-	// 		params.set('show', true);
-	// 		replace(`${pathname}?${params.toString()}`);
-	// 	}
-	// }, [])
+	
 	if (params.get('show'))
 		return (
 			<Transition.Root show={JSON.parse(params.get('show'))} as={Fragment}>

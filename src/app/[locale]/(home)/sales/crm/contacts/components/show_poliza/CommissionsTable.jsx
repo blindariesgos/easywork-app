@@ -48,7 +48,7 @@ export default function CommissionsTable({ commissions: data, noPolicy, setSelec
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedCommissions ]
+		[ selectedCommissions, commissions ]
 	);
 
 	function toggleAll() {

@@ -29,16 +29,28 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 		}
 	]);
 
-	useEffect(
-		() => {
-			const updatedFields = fields.map((field) => {
-				const correspondingItem = selectFields.find((select) => select.name === field.name);
-				if (correspondingItem) return { ...field, check: true };
-				return field;
-			});
+	// useEffect(
+	// 	() => {
+	// 		const updatedFields = fields.map((field) => {
+	// 			const correspondingItem = selectFields.find((select) => select.name === field.name);
+	// 			if (correspondingItem) return { ...field, check: true };
+	// 			return field;
+	// 		});
+	// 		setFields(updatedFields);
+	// 	},
+	// [selectFields, fields]);
+	useEffect(() => {
+		const updatedFields = fields.map((field) => {
+			const correspondingItem = selectFields.find((select) => select.name === field.name);
+			if (correspondingItem) return { ...field, check: true };
+			return field;
+		});
+	
+		// Verificar si hay cambios antes de actualizar 'fields'
+		if (!fields.every((field, index) => field.check === updatedFields[index].check)) {
 			setFields(updatedFields);
-		},
-	[]);
+		}
+	}, [selectFields, fields]);
 
 	const handleAddField = (e) => {
 		const { value, checked } = e.target;

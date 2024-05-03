@@ -1,4 +1,5 @@
 // components/PdfToImage.js
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 const Global = require('pdfjs-dist/build/pdf');
@@ -74,7 +75,7 @@ const Converter = () => {
       {imageData && (
         <div>
           <p>{t('common:file:generated')}:</p>
-          <img src={imageData} alt="Generated Image" style={{ maxWidth: '100%' }} />
+          <Image src={imageData} alt="Generated Image" style={{ maxWidth: '100%' }} width={100} height={100}/>
         </div>
       )}
     </div>

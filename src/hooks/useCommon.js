@@ -20,6 +20,10 @@ import {
     useRef,
     useState
 } from "react";
+import { useAlertContext } from "@/context/common/AlertContext";
+import { toast } from "react-toastify";
+import { deleteTask } from "@/lib/apis";
+import { getApiError } from "@/utils/getApiErrors";
 
 export const useSidebar = () => {
     const {
@@ -33,22 +37,22 @@ export const useSidebar = () => {
             current: true,
             children: [{
                     name: t("common:menu:tools:drive"),
-                    href: "/tools/drive",
+                    href: "/tools/tool/drive",
                     image: '/img/herramientas/drive.png'
                 },
                 {
                     name: t("common:menu:tools:tasks"),
-                    href: "/tools/tasks",
+                    href: "/tools/tool/tasks?page=1",
                     image: '/img/herramientas/tareas.png'
                 },
                 {
                     name: t("common:menu:tools:email"),
-                    href: "/tools/mails",
+                    href: "/tools/tool//mails",
                     image: '/img/herramientas/correo.png'
                 },
                 {
                     name: t("common:menu:tools:calendar"),
-                    href: "/tools/calendar",
+                    href: "/tools/tool//calendar",
                     image: '/img/herramientas/calendario.png'
                 },
             ],
@@ -823,7 +827,7 @@ export const useTasks = () => {
 		{
 			id: 2,
 			name: t('tools:tasks:table:activity'),
-            row: "activity",
+            row: "startTime",
             check: true
 		},
 		{
@@ -848,7 +852,7 @@ export const useTasks = () => {
 		{
 			id: 6,
 			name: t('tools:tasks:table.limit-date'),
-            row: "limitDate",
+            row: "deadline",
             check: false
 		},
 		{
@@ -874,6 +878,21 @@ export const useTasks = () => {
       icon: DocumentTextIcon
     }
   ]
+    return {
+        optionsTrash,
+        optionsSettings,
+        status,
+        setStatus,
+        columnTable,
+        settings,
+    }
+}
+
+export const useTasksDetete = (selectedTask, setSelectedTasks, setLoading) => {
+    const {
+        t
+    } = useTranslation();
+    const { onCloseAlertDialog } = useAlertContext();
   
 	const optionsCheckBox = [
 		{
@@ -902,17 +921,35 @@ export const useTasks = () => {
 		},
 		{
 			id: 6,
-			name: t('common:table:checkbox:delete')
+			name: t('common:table:checkbox:delete'),
+            onclick: () => deleteTasks()
+
 		}
 	];
 
+    const deleteTasks = () => {        
+        if ( selectedTask.length === 1 ) apiDelete(selectedTask[0].id);
+        if ( selectedTask.length > 1 ) {
+            selectedTask.map((task) => apiDelete(task.id));
+        }
+        toast.success(t('tools:tasks:delete-msg'));
+        setSelectedTasks([]);
+        onCloseAlertDialog();
+    }
+
+    
+  const apiDelete = async(id) => {
+    try{
+      setLoading(true);
+      const response = await deleteTask(id);   
+      setLoading(false);
+    }catch(err){
+      setLoading(false);
+      getApiError(err.message);
+    }
+  }
+
     return {
-        optionsTrash,
-        optionsSettings,
-        status,
-        setStatus,
-        columnTable,
-        settings,
         optionsCheckBox
     }
 }

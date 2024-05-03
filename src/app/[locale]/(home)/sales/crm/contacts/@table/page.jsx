@@ -28,6 +28,7 @@ import { useContactTable } from "../../../../../../../hooks/useCommon";
 import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
 import SelectedOptionsTable from "@/components/SelectedOptionsTable";
 import { useAlertContext } from "@/context/common/AlertContext";
+import LoaderSpinner from "@/components/LoaderSpinner";
 
 export default function Page() {
   const params = useSearchParams();
@@ -40,9 +41,10 @@ export default function Page() {
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const { contacts: AppContacts, setLastContactsUpdate, setContacts } = useCrmContext();
-	const [selectedColumns, setSelectedColumns] = useState([]);
   const { columnTable } = useContactTable()
+	const [selectedColumns, setSelectedColumns] = useState(columnTable.filter(c=> c.check));
   const { onCloseAlertDialog } = useAlertContext();
+  const [loading, setLoading] = useState(false);
   const sortFieltByColumn = {
     name: [ "fullName" ],
   };
@@ -50,7 +52,7 @@ export default function Page() {
 
   useEffect(() => {
     if (orderItems.length > 0) setContacts({ items: orderItems, meta: AppContacts?.meta});
-  }, [orderItems])
+  }, [orderItems, setContacts, AppContacts])
 
 
   useLayoutEffect(() => {
@@ -95,15 +97,15 @@ export default function Page() {
 
   const apiDelete = async(id) => {
     try{
+      setLoading(true);
       const response = await deleteContactId(id);   
       setLastContactsUpdate(response);
+      setLoading(false);
     }catch(err){
+      setLoading(false);
       getApiError(err.message);
     }
   }
-  useEffect(() => {
-		if (columnTable) setSelectedColumns(columnTable.filter(c=> c.check));
-	}, [])
 
   if (AppContacts?.items && AppContacts?.items.length === 0) {
     return (
@@ -132,6 +134,7 @@ export default function Page() {
 
   return (
     <div className="flow-root relative h-full">
+      {loading && <LoaderSpinner/>}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle sm:h-[32rem] overflow-y-auto h-full">
           <div className="relative overflow-hidden  sm:rounded-lg">
@@ -222,7 +225,7 @@ export default function Page() {
                                   width={30}
                                   height={30}
                                   src={
-                                    contact.photo ?? "/img/avatar.svg"
+                                    contact.photo || "/img/avatar.svg"
                                   }
                                   alt=""
                                 />

@@ -8,13 +8,13 @@ import { useEffect, useRef } from "react";
 export default function Page() {
   const { setContacts, lastContactsUpdate } = useCrmContext();
   const searchParams = useSearchParams();
-	const params = new URLSearchParams(searchParams);
   const errorsDuplicated = useRef(false);
   const isMounted = useRef(false);
 
   isMounted.current = true;
 
   useEffect(() => {
+    const params = new URLSearchParams(searchParams);
     const fetchData = async () => {
       try {
         const response = await getContacts(params.get('page')?.toString() || 1);
@@ -27,7 +27,7 @@ export default function Page() {
     return () => {
       isMounted.current = false;
     }
-  }, [lastContactsUpdate, params.get('page')]);  
+  }, [lastContactsUpdate, searchParams, setContacts]);  
 
   return <></>;
 }

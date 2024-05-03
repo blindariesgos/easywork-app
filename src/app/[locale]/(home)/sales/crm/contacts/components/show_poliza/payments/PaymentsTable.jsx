@@ -55,7 +55,7 @@ export default function PaymentsTable({ payments: data, noPolicy, selectedPaymen
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedPayments ]
+		[ selectedPayments, payments ]
 	);
 	function toggleAll() {
 		setSelectedPayments(checked || indeterminate ? [] : payments);

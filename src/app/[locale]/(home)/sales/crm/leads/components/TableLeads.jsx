@@ -33,8 +33,8 @@ export default function TableLeads() {
 	const [ checked, setChecked ] = useState(false);
 	const [ indeterminate, setIndeterminate ] = useState(false);
 	const [ selectedLeads, setSelectedLeads ] = useState([]);
-	const [selectedColumns, setSelectedColumns] = useState([]);
-  	const { columnTable } = useLeads()
+	const { columnTable } = useLeads()
+	const [selectedColumns, setSelectedColumns] = useState(columnTable.filter(c=> c.check));
 	// const sortFieltByColumn = {
 	// 	name: [ 'name' ]
 	// };
@@ -88,7 +88,7 @@ export default function TableLeads() {
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		},
-		[ selectedLeads ]
+		[ selectedLeads, leads ]
 	);
 
 	function toggleAll() {
@@ -120,9 +120,6 @@ export default function TableLeads() {
 	};
 
 	
-	useEffect(() => {
-		if (columnTable) setSelectedColumns(columnTable.filter(c=> c.check));
- 	 }, [])
 
 	if (leads && leads.length === 0) {
 		return (

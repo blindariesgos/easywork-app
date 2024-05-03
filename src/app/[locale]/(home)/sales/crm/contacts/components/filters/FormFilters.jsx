@@ -20,8 +20,6 @@ import useAppContext from '../../../../../../../../context/app';
 
 const FormFilters = () => {
     const { lists } = useAppContext();
-	const { users, listContact } = lists;
-	const { contactSources } = listContact;
 	const { t } = useTranslation();
 	const { createdDate } = useCommon();
 	const schema = yup.object().shape({
@@ -66,7 +64,7 @@ const FormFilters = () => {
 
   useEffect(() => {
     reset();
-  }, []);
+  }, [reset]);
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -78,7 +76,7 @@ const FormFilters = () => {
 			<SelectDropdown
 				label={t('contacts:filters:responsible')}
 				name="responsible"
-				options={users}
+				options={lists?.users}
 				setValue={setValue}
 			/>
 			{/* <Controller
@@ -179,7 +177,7 @@ const FormFilters = () => {
 					// {...field}
 					label={t("contacts:filters:origin")}
 					name="origin"
-					options={contactSources}
+					options={lists?.listContact?.contactSources}
 					error={!field.value && errors.origin}
 					setValue={setValue}
 					/>
@@ -205,7 +203,7 @@ const FormFilters = () => {
 			<SelectDropdown
 				label={t('contacts:filters:created-by')}
 				name="createdby"
-				options={users}
+				options={lists?.users}
 				selectedOption={null}
 				setValue={setValue}
 			/>

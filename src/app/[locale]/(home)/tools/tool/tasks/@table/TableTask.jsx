@@ -144,12 +144,12 @@ export default function TableTask({ data }) {
 																			className="h-9 w-9 rounded-full"
 																			width={36}
 																			height={36}
-																			src={task[column.row].image}
+																			src={""}
 																			alt=""
 																		/>
 																	</div>
 																	<div className="ml-4">
-																		<div className="font-medium text-black ">{task[column.row].name}</div>
+																		{/* <div className="font-medium text-black ">{task[column.row].name}</div> */}
 																	</div>
 																</div>
 															)															
@@ -170,7 +170,7 @@ export default function TableTask({ data }) {
 							</div>
 						</div>
 					</div>
-					<div className="absolute bottom-0 w-full">
+					<div className="w-full mt-2">
 						<div className='flex justify-between items-center flex-wrap'>
 							{selectedTasks.length > 0 && (
 								<SelectedOptionsTable options={optionsCheckBox}/>

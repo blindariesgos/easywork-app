@@ -1,6 +1,6 @@
 "use client";
 import Page from './page.jsx';
-import { DataContextProvider, useDataContext } from "./context";
+import { DataContextProvider } from "./context";
 export default function LoginLayout({ children, contextData }) {
   const background = {
     backgroundImage: "url('/img/atom.png')",

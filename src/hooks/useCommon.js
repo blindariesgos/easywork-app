@@ -20,6 +20,10 @@ import {
     useRef,
     useState
 } from "react";
+import { useAlertContext } from "@/context/common/AlertContext";
+import { toast } from "react-toastify";
+import { deleteTask } from "@/lib/apis";
+import { getApiError } from "@/utils/getApiErrors";
 
 export const useSidebar = () => {
     const {
@@ -33,22 +37,22 @@ export const useSidebar = () => {
             current: true,
             children: [{
                     name: t("common:menu:tools:drive"),
-                    href: "/tools/drive",
+                    href: "/tools/tool/drive",
                     image: '/img/herramientas/drive.png'
                 },
                 {
                     name: t("common:menu:tools:tasks"),
-                    href: "/tools/tasks",
+                    href: "/tools/tool/tasks?page=1",
                     image: '/img/herramientas/tareas.png'
                 },
                 {
                     name: t("common:menu:tools:email"),
-                    href: "/tools/mails",
+                    href: "/tools/tool//mails",
                     image: '/img/herramientas/correo.png'
                 },
                 {
                     name: t("common:menu:tools:calendar"),
-                    href: "/tools/calendar",
+                    href: "/tools/tool//calendar",
                     image: '/img/herramientas/calendario.png'
                 },
             ],
@@ -709,11 +713,52 @@ export const useLeads = () => {
         }
     ];
 
+	const columnTable = [
+		{
+			id: 1,
+			name: t('leads:table:lead'),
+            row: "name",
+            order: "name",
+            check: true,
+            link: true,
+            permanent: true,
+            photo: true
+		},
+		{
+			id: 2,
+			name: t('leads:table:stages'),
+            row: "stages",
+            order: "stages.name",
+            check: true
+		},
+		{
+			id: 3,
+			name: t('leads:table:created'),
+            row: "date",
+            order: "date",
+            check: true,
+		},
+		{
+			id: 4,
+			name: t('leads:table:origin'),
+            row: "origin",
+            order: "origin",
+            check: false
+		},
+		{
+			id: 5,
+			name: t('leads:table:activities'),
+            row: "activities",
+            check: false,
+            activities: true
+		},
+	]
     return {
         optionsHeader,
         stages,
         isOpen,
-        setIsOpen
+        setIsOpen,
+        columnTable
     }
 }
 
@@ -782,7 +827,7 @@ export const useTasks = () => {
 		{
 			id: 2,
 			name: t('tools:tasks:table:activity'),
-            row: "activity",
+            row: "startTime",
             check: true
 		},
 		{
@@ -807,7 +852,7 @@ export const useTasks = () => {
 		{
 			id: 6,
 			name: t('tools:tasks:table.limit-date'),
-            row: "limitDate",
+            row: "deadline",
             check: false
 		},
 		{
@@ -833,14 +878,79 @@ export const useTasks = () => {
       icon: DocumentTextIcon
     }
   ]
-
     return {
         optionsTrash,
         optionsSettings,
         status,
         setStatus,
         columnTable,
-        settings
+        settings,
+    }
+}
+
+export const useTasksDetete = (selectedTask, setSelectedTasks, setLoading) => {
+    const {
+        t
+    } = useTranslation();
+    const { onCloseAlertDialog } = useAlertContext();
+  
+	const optionsCheckBox = [
+		{
+			id: 1,
+			name: t('common:table:checkbox:complete')
+		},
+		{
+			id: 2,
+			name: t('common:table:checkbox:add-obserber'),
+            selectUser: true,
+		},
+		{
+			id: 3,
+			name: t('common:table:checkbox:add-participant'),
+            selectUser: true,
+		},
+		{
+			id: 4,
+			name: t('common:table:checkbox:change-obserber'),
+            selectUser: true,
+		},
+		{
+			id: 5,
+			name: t('common:table:checkbox:change-participant'),
+            selectUser: true,
+		},
+		{
+			id: 6,
+			name: t('common:table:checkbox:delete'),
+            onclick: () => deleteTasks()
+
+		}
+	];
+
+    const deleteTasks = () => {        
+        if ( selectedTask.length === 1 ) apiDelete(selectedTask[0].id);
+        if ( selectedTask.length > 1 ) {
+            selectedTask.map((task) => apiDelete(task.id));
+        }
+        toast.success(t('tools:tasks:delete-msg'));
+        setSelectedTasks([]);
+        onCloseAlertDialog();
+    }
+
+    
+  const apiDelete = async(id) => {
+    try{
+      setLoading(true);
+      const response = await deleteTask(id);   
+      setLoading(false);
+    }catch(err){
+      setLoading(false);
+      getApiError(err.message);
+    }
+  }
+
+    return {
+        optionsCheckBox
     }
 }
 
@@ -899,4 +1009,71 @@ export const useTooltip = () => {
         tooltipRef
     }
 
+}
+
+export const useContactTable = () => {
+    const { t } = useTranslation();
+	const columnTable = [
+		{
+			id: 1,
+			name: t('contacts:table:contact'),
+            row: "fullName",
+            order: "name",
+            check: true,
+            link: true,
+            permanent: true,
+            photo: true
+		},
+		{
+			id: 2,
+			name: t('contacts:table:birthday'),
+            row: "birthdate",
+            order: "birthdate",
+            check: true
+		},
+		{
+			id: 3,
+			name: t('contacts:table:responsible'),
+            row: "responsible",
+            order: "responsible",
+            check: true,
+            photo: true
+		},
+		{
+			id: 4,
+			name: t('contacts:table:email'),
+            row: "email",
+            order: "emails[0].email.email",
+            check: true
+		},
+		{
+			id: 5,
+			name: t('contacts:table:phone'),
+            row: "phone",
+            order: "phones[0].phone.number",
+            check: false,
+		},
+		{
+			id: 6,
+			name: t('contacts:table:created'),
+            row: "createdAt",
+            order: "createdAt",
+            check: false
+		},
+		{
+			id: 7,
+			name: t('contacts:table:origin'),
+            row: "source",
+            order: "source",
+            check: false
+		},
+		{
+			id: 8,
+			name: t('contacts:table:activities'),
+            row: "activities",
+            check: false,
+            activities: true
+		},
+	]
+    return { columnTable }
 }

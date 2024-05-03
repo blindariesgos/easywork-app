@@ -1,13 +1,15 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { AppContext } from "..";
-import { driveViews } from "../../lib/common";
+import { contactTypes, driveViews } from "../../lib/common";
 import { useCommon } from "../../hooks/useCommon";
 import { getAddListContacts, getUsersContacts } from "../../lib/apis";
 import { getApiError } from "../../utils/getApiErrors";
+import { useSession } from "next-auth/react";
 
 export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon()
+  const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
@@ -16,25 +18,23 @@ export default function AppContextProvider({ children }) {
   const [lists, setLists] = useState(null);
 
   useEffect(() => {
+    const appList = {}
     const getLists = async() => {
-      if ( !lists ){
-        const appList = {};
-        const users = await getUsers();
-        const listContact = await getListsContact();
-        appList.listContact = listContact;
-        appList.users = users;
-        setLists(appList);
-      }
+      const users = await getUsers();
+      const listContact = await getListsContact();
+      appList.listContact = listContact;
+      appList.users = users;
+      setLists(appList);
     };
-    getLists();
-  }, [lists])
+    if (session?.user?.accessToken && !lists) getLists();
+  }, [session, lists])
 
   const getUsers = async() => {
     try {
       const response = await getUsersContacts();   
       return response; 
     } catch (error) {
-      getApiError(error, null, true);
+      getApiError(error.message);
     }
   }
 
@@ -43,7 +43,7 @@ export default function AppContextProvider({ children }) {
       const response =  await getAddListContacts();    
       return response;
     } catch (error) {
-      getApiError(error, null, true);
+      getApiError(error.message);
     }
   }
   

@@ -48,7 +48,7 @@ export default function InvoicesTable({ invoices: data, noPolicy, selectedInvoic
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedInvoices ]
+		[ selectedInvoices, invoices ]
 	);
 	
 	function toggleAll() {

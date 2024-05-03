@@ -24,6 +24,7 @@ export const useOrderByColumn = (sortFieltByColumn, data) => {
 
   useEffect(() => {
       sortHardwares();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ fieldClicked ]);
 
   return {

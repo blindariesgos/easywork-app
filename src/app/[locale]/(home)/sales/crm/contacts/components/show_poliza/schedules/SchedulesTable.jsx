@@ -46,7 +46,7 @@ export default function SchedulesTable({ schedules: data, noPolicy, selectedSche
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedSchedules ]
+		[ selectedSchedules, schedules ]
 	);
 
 	function toggleAll() {

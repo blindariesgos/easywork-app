@@ -36,7 +36,7 @@ function SelectDropdown({
     : options.filter((element) => {
         return `${element.name} ${element.username}`.toLowerCase().includes(query.toLowerCase());
       });
-
+      
   return (
     <div className="">
       <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
@@ -75,7 +75,7 @@ function SelectDropdown({
                   Nothing found.
                 </div>
               ) : (
-                filteredElements.map((person) => (
+                filteredElements && filteredElements.map((person) => (
                   <Combobox.Option                    
                     key={person.id}
                     className={({ active }) =>

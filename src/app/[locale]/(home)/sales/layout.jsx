@@ -11,7 +11,7 @@ export default async function HomeLayout({ children, params: { locale }  }) {
 
   return (
     // <UserProvider users={null}>
-      <div className="p-2 rounded-xl h-full relative">
+      <div className="p-2 rounded-xl sm:h-full relative">
         {children}
       </div>
     // </UserProvider>

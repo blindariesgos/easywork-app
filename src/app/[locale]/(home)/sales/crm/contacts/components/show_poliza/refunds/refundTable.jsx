@@ -47,7 +47,7 @@ export default function RefundTable({ refunds: data, noPolicy, selectedRefunds, 
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedRefunds ]
+		[ selectedRefunds, refunds ]
 	);
 	
 	function toggleAll() {

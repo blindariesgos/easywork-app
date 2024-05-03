@@ -46,6 +46,10 @@
         "others": "Otros",
         "mark-all": "Marca todos como leído",
         "search": "Buscar",
+        "add-tags" : "Crear una nueva etiqueta",
+        "description": "La descripción de la tarea es un campo requerido",
+        "name-msg": "El nombre de la tarea es requerido",
+        "delete-msg": "Tarea(s) eliminada(s) exitosamente!",
         "table": {
             "name": "Nombre",
             "activity": "Actividad",

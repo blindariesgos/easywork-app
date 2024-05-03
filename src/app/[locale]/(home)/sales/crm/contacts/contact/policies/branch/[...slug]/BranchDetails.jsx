@@ -2,9 +2,9 @@ import SlideOver from '../../../../../../../../../../components/SlideOver'
 import { PencilIcon } from '@heroicons/react/20/solid'
 import React, { Suspense } from 'react'
 import PolizasHeader from '../../../../components/show_contact/tab_polizas/PolizasHeader'
-import LoadingContactId from '../../../[id]/loading'
 import PolizasTab from '../../../../components/show_contact/tab_polizas/PolizasTab'
 import { Pagination } from '../../../../../../../../../../components/pagination/Pagination'
+import LoaderSpinner from '../../../../../../../../../../components/LoaderSpinner'
 
 export default function BranchDetails({ id, branch }) {
   return (
@@ -25,7 +25,7 @@ export default function BranchDetails({ id, branch }) {
                     </div>
                     <PolizasHeader contactID={id} selected="branch" />
                 </div>
-                <Suspense fallback={<LoadingContactId />}>
+                <Suspense fallback={<LoaderSpinner />}>
                     <PolizasTab contactID={id} base={1} />
                 </Suspense>
                 <div className="absolute bottom-0">

@@ -1,8 +1,9 @@
+'use client';
 import React from "react";
 import Image from "next/image";
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import { useDataContext } from "../context";
-export default function changePassword() {
+export default function ChangePassword() {
     const { contextData } = useDataContext();
     if (contextData === 2) {
         return (
@@ -13,6 +14,7 @@ export default function changePassword() {
                         width={156.75}
                         height={118.84}
                         src={"/img/logo.svg"}
+                        alt="img"
                     />
                 </div>
                 <div className="mb-4">

@@ -14,44 +14,48 @@ export const Pagination = ({ totalPages, bgColor }) => {
 	const { t } = useTranslation();
 	useEffect(
 		() => {
-			// if (Number(params.get('page')) === 0) handlePathname("1");
+			const params = new URLSearchParams(searchParams);
+			const CreatePagination = () => {
+				const pagination = [];
+				const totalPagesPages = Number(totalPages);
+				for (let i = 0; i < totalPagesPages; i++) {
+					i <= 4 && pagination.push(getPages(i + 1));
+				}
+				if (totalPagesPages > 4) pagination.push(<div>....</div>);
+				if (totalPagesPages > 5) pagination.push(getPages(totalPagesPages));
+				setPagination(pagination);
+			};
+			
+			const getPages = (i) => {
+				return (
+					<div
+						key={i}
+						className={clsx(
+							'px-2 cursor-pointer font-medium text-xs flex items-center justify-center rounded-full w-6 h-6',
+								Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
+						)}
+						onClick={() => {handlePathnamePage(i)}}
+					>
+						{i}
+					</div>
+				);
+			};
+			const handlePathnamePage = (page) => {
+				params.set('page', page); 
+				replace(`${pathname}?${params.toString()}`);
+			}
+		
 			CreatePagination();
 		},
-		[ totalPages, params.get('page') ]
+		[ totalPages, pathname, replace, searchParams]
 	);
-
-	const CreatePagination = () => {
-		const pagination = [];
-		const totalPagesPages = Number(totalPages);
-		for (let i = 0; i < totalPagesPages; i++) {
-			i <= 4 && pagination.push(getPages(i + 1));
-		}
-		if (totalPagesPages > 4) pagination.push(<div>....</div>);
-		if (totalPagesPages > 5) pagination.push(getPages(totalPagesPages));
-		setPagination(pagination);
-	};
-
-	const getPages = (i) => {
-		return (
-			<div
-				key={i}
-				className={clsx(
-					'px-2 cursor-pointer font-medium text-xs flex items-center justify-center rounded-full w-6 h-6',
-						Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
-				)}
-				onClick={() => {handlePathname(i)}}
-			>
-				{i}
-			</div>
-		);
-	};
 
 	const handlePathname = (page) => {
 		params.set('page', page); 
 		replace(`${pathname}?${params.toString()}`);
 	}
 
-	// const totalPagesPag = Math.floor((Number(totalPages) - 1) / Number(takeCount)) + 1;
+
 	const totalPagesPag = totalPages;
 
 	return (

@@ -4,7 +4,6 @@ import ContactsHeader from "./components/ContactsHeader";
 import { useTranslation } from "react-i18next";
 import Header from "../../../../../../components/header/Header";
 import HeaderCrm from "../HeaderCrm";
-import { Pagination } from "../../../../../../components/pagination/Pagination";
 import useCrmContext from "../../../../../../context/crm";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -13,16 +12,16 @@ export default function LayoutContact({ children }) {
     const { t } = useTranslation();
     const { contacts } = useCrmContext();
     const searchParams = useSearchParams();
-    const params = new URLSearchParams(searchParams);
     const pathname = usePathname();
     const { replace } = useRouter();  
 
     useEffect(() => {
+        const params = new URLSearchParams(searchParams);
         if (Number(params.get('page')) === 0 || !params.get('page')) {
-        params.set('page', 1); 
-        replace(`${pathname}?${params.toString()}`);
+            params.set('page', 1); 
+            replace(`${pathname}?${params.toString()}`);
         }
-    }, [])
+    }, [pathname, replace, searchParams])
     
     const options = [
         {
@@ -49,12 +48,6 @@ export default function LayoutContact({ children }) {
                 <HeaderCrm options={options}/>
                 <ContactsHeader/>
                 {children}
-            </div>  
-            
-            <div className="">
-                <Pagination
-                    totalPages={contacts?.meta?.totalPages || 0}
-                />
             </div>  
         </div>
     );

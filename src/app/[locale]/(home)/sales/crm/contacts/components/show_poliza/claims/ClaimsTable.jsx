@@ -49,7 +49,7 @@ export default function ClaimsTable({ claims: data, noPolicy, selectedClaims, se
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedClaims ]
+		[ selectedClaims, claims ]
 	);
 
 	function toggleAll() {

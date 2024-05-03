@@ -11,17 +11,17 @@ import { useLeads } from '../../../../../../hooks/useCommon';
 export default function LayoutLeads({ table,  children}) {
 	const { t } = useTranslation();
 	const searchParams = useSearchParams();
-	const params = new URLSearchParams(searchParams);
 	const pathname = usePathname();
 	const { replace } = useRouter();
 	const { optionsHeader } = useLeads();
 
 	useEffect(() => {
+		const params = new URLSearchParams(searchParams);
 		if (Number(params.get('page')) === 0 || !params.get('page')) {
 			params.set('page', 1);
 			replace(`${pathname}?${params.toString()}`);
 		}
-	}, []);
+	}, [searchParams, replace, pathname]);
 
 	return (
 		<div className="bg-gray-100 h-full p-2 rounded-xl relative">

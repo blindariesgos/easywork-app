@@ -48,7 +48,7 @@ export default function QuotesTable({ quotes: data, noPolicy, selectedQuotes, se
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedQuotes ]
+		[ selectedQuotes, quotes ]
 	);
 
 	function toggleAll() {

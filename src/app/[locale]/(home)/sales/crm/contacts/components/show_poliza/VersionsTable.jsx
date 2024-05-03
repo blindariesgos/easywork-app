@@ -48,7 +48,7 @@ export default function VersionsTable({ versions: data, noPolicy, selectedVersio
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 		},
-		[ selectedVersions ]
+		[ selectedVersions, versions ]
 	);
 
 	function toggleAll() {

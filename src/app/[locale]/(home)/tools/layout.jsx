@@ -1,8 +1,6 @@
-export const metadata = {
-	title: 'Easywork',
-	description: 'All in one'
-};
+'use client';
+import React from 'react';
 
-export default function Layout({ children }) {
-	return <div className='h-full'>{children}</div>
+export default function layout({ children }) {
+	return <div className='h-full'>{children}</div>;
 }

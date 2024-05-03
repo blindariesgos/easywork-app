@@ -25,8 +25,8 @@ import LoaderSpinner from '../../../../../../../../components/LoaderSpinner';
 
 export default function CreateContact({ edit, id }) {
     const { lists } = useAppContext();
-	const { users, listContact } = lists;
-	const { contactSources, contactTypes } = listContact;
+	// const { users, listContact } = lists;
+	// const { contactSources, contactTypes } = listContact;
 	const { t } = useTranslation();
 	const [ openButtons, setOpenButtons ] = useState(!edit);
 	const [ contactType, setContactType ] = useState(null);
@@ -40,12 +40,11 @@ export default function CreateContact({ edit, id }) {
 
 	useEffect(() => {
 		if ( edit ) {
-			setContactType(contactTypes.filter(option => option.id === edit?.type?.id )[0]);
-			setContactSource(contactSources.filter(option => option.id === edit?.source?.id )[0]);
+			lists?.listContact?.contactTypes.length > 0 && setContactType(lists?.listContact?.contactTypes.filter(option => option.id === edit?.type?.id )[0]);
+			lists?.listContact?.contactSources.length > 0 && setContactSource(lists?.listContact?.contactSources.filter(option => option.id === edit?.source?.id )[0]);
 			setSelectedProfileImage({base64:edit?.photo || null, file: null})
 		}
-	}, [edit, contactTypes, contactSources])
-	
+	}, [edit, lists])	
 
 	const schema = Yup.object().shape({
 		email: Yup
@@ -63,7 +62,7 @@ export default function CreateContact({ edit, id }) {
 		origin: Yup.string().required(t('common:validations:required')),
 		address: Yup.string().required(t('common:validations:required')),
 		responsible: Yup.string().required(t('common:validations:required')),
-		birthday: Yup.date().required(t('common:validations:required'))
+		birthday: Yup.string().required(t('common:validations:required'))
 
 		// files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
 		// files: Yup
@@ -91,16 +90,16 @@ export default function CreateContact({ edit, id }) {
 
 	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
 		defaultValues: {
-			name: id ? edit?.fullName : "",
-			charge: id ? edit?.cargo : "",
-			phone: id ? edit?.phones[0]?.phone?.number : "",
-			email: id ? edit?.emails[0]?.email?.email : "",
-			rfc: id ? edit?.curp : "",
-			cua: id ? edit?.cua : "",
-			typeContact: id ? edit?.type?.id : "",
-			origin: id ? edit?.source?.id : "",
-			birthday: id ? edit?.birthdate : "",
-			address: id? edit?.address : "",
+			name: edit ? edit?.fullName : "",
+			charge: edit ? edit?.cargo : "",
+			phone: edit ? edit?.phones[0]?.phone?.number : "",
+			email: edit ? edit?.emails[0]?.email?.email : "",
+			rfc: edit ? edit?.curp : "",
+			cua: edit ? edit?.cua : "",
+			typeContact: edit ? edit?.type?.id : "",
+			origin: edit ? edit?.source?.id : "",
+			birthday: edit ? edit?.birthdate : "",
+			address: edit? edit?.address : "",
 		},
 		mode: 'onChange',
 		resolver: yupResolver(schema)
@@ -328,7 +327,7 @@ export default function CreateContact({ edit, id }) {
 								/>
 								<SelectInput
 									label={t('contacts:create:contact-type')}
-									options={contactTypes}
+									options={lists?.listContact?.contactTypes}
 									selectedOption={contactType && contactType}
 									name="typeContact"
 									error={!watch('typeContact') && errors.typeContact}
@@ -359,7 +358,7 @@ export default function CreateContact({ edit, id }) {
 								<SelectInput
 									label={t('contacts:create:origen')}
 									name="origin"
-									options={contactSources}
+									options={lists?.listContact?.contactSources}
 									selectedOption={contactSource && contactSource}
 									error={!watch('origin') && errors.origin}
 									register={register}
@@ -370,7 +369,7 @@ export default function CreateContact({ edit, id }) {
 								<SelectDropdown
 									label={t('contacts:create:responsible')}
 									name="responsible"
-									options={users}
+									options={lists?.users}
 									selectedOption={contactResponsible}
 									register={register}
 									disabled={!openButtons}

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { auth } from "../../auth";
+import { logout } from "./apis";
 
 const config = axios.defaults;
 
@@ -33,7 +34,8 @@ const instance = (contentType = "application/json") => {
     (error) => {
       // console.log("error axios", Promise.reject(error))
       // throw new Error(error)
-      console.log("error", error)
+      console.log("error", error.response.data.statusCode)
+      if (error.response.data.statusCode === 401) return logout();
       return Promise.reject(JSON.stringify(error.response.data));
     }
   );

@@ -43,7 +43,7 @@ const formats = [
 	'direction'
 ];
 
-const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, setValue }) => {
+const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, setValue, disabled }) => {
 	const { lists } = useAppContext();
 	const [ arroba, setArroba ] = useState(false);
 	const [ dataUsers, setDataUsers ] = useState();
@@ -132,6 +132,7 @@ const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, s
 				theme="snow"
 				className={className}
 				onChangeSelection={onChangeSelection}
+				readOnly={disabled}
 			/>
 			{arroba && dropdownUsers()}
 		</div>

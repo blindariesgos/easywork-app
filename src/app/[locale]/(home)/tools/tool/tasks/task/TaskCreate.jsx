@@ -266,7 +266,7 @@ export default function TaskCreate() {
 	// 	/>
 	// )
 
-	const createTask = async(data) => {
+	const createTask = async(data, isNewTask) => {
 		if (value === "") return toast.error(t('tools:tasks:description'));
 		if (data.name === "") return toast.error(t('tools:tasks:name-msg'));
 		const body ={
@@ -275,10 +275,7 @@ export default function TaskCreate() {
 			"requireRevision": selectedOptions.filter(sel => sel.id === 2).length > 0 ? true :  false,
 			"requireSummary": checkedTime,
 			"responsibleCanChangeDate": selectedOptions.filter(sel => sel.id === 1).length > 0 ? true :  false,
-			// "tagsIds": [],
 			"createdById": session.user.user?.id,
-			// "participantsIds": [],
-			// "observersIds": []
 		}
 		if (data.obserbers && data.obserbers.length > 0){
 			const observersIds = data.obserbers.map(obs => {
@@ -299,19 +296,19 @@ export default function TaskCreate() {
 			body.tagsIds = tagsIds || [];
 		}
 		if (data?.limitDate || data?.endDate) body.deadline = getFormatDate(data?.limitDate) || getFormatDate(data?.endDate);
-		console.log("new Date(data?.endDate)", getFormatDate(data?.endDate));
 		if (data?.startDate) body.startTime = getFormatDate(data?.startDate);
-		// console.log("createTask", data, body, selectedOptions, selectedOptions.filter(sel => sel.id === 1));
-
 		try {
 			const task = await postTask(body);
 			toast.success(task);
-			router.push("/tools/tool/tasks?page=1");
+			if(isNewTask){
+				reset();
+				setValueText("");
+				setValue("name", "")
+			} else router.push("/tools/tool/tasks?page=1");
 		} catch (error) {
 			getApiError(error.message);			
 		}
 	}
-
 	
 
 	return (
@@ -583,13 +580,13 @@ export default function TaskCreate() {
 						label={t("tools:tasks:new:add-task")}
 						buttonStyle="primary"
 						className="px-3 py-2 drop-shadow-lg"
-						onclick={handleSubmit(createTask)}
+						onclick={handleSubmit((data) => createTask(data, false))}
 					/>
 					<Button
 						label={t("tools:tasks:new:add-create")}
 						buttonStyle="secondary"
 						className="px-3 py-2 drop-shadow-lg"
-						onclick={() => router.push(`/tools/tool/tasks?page=1`)}
+						onclick={handleSubmit((data) => createTask(data, true))}
 					/>
 					<Button
 						label={t("common:buttons:cancel")}

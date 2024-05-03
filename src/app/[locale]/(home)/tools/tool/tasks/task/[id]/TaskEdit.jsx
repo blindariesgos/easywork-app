@@ -60,7 +60,7 @@ export default function TaskEdit({data}) {
 								</div>
 							</div>
 							<div className="p-2 sm:p-4">
-								<OptionsTask edit={data} setValueText={setValueText} value={value}/>
+								<OptionsTask edit={data} setValueText={setValueText} value={value} disabled={data ? true : false}/>
 							</div>
 							<div className="flex items-end flex-col p-2 sm:p-4 gap-2">
 								<div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">

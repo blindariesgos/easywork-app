@@ -41,7 +41,7 @@ export default function IngresarEmail() {
 
   async function getFolders() {
     try {
-      const response = await axios.post(`http://localhost:4000/v1/gmail/folders`, { id: session.data.user.user.id });
+      const response = await axios.post(`${process.env.API_THIRDPARTY}/gmail/folders`, { id: session.data.user.user.id });
       if (response) {
         const newData = response.data.map(folder => ({
           folder: folder,

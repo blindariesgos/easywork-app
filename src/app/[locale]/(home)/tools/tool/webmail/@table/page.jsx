@@ -18,7 +18,7 @@ export default function Page() {
   const session = useSession();
 
   useEffect(() => {
-    axios.post(`http://localhost:4000/v1/gmail/emails`, { id: session.data.user.user.id })
+    axios.post(`${process.env.API_THIRDPARTY}/v1/gmail/emails`, { id: session.data.user.user.id })
     .then((response) => {
       setTasks(response.data);
       console.log(tasks)

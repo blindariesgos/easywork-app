@@ -13,8 +13,11 @@ RUN npm install
 # Copia el resto de los archivos de la aplicación a la carpeta de trabajo
 COPY . .
 
+# Compila el proyecto
+RUN npm run build
+
 # Expone el puerto en el que se ejecuta la aplicación de Next.js
 EXPOSE 3000
 
-# Define el comando para iniciar la aplicación en modo de desarrollo
-CMD ["npm", "run", "dev"]
+# Define el comando para iniciar la aplicación en modo de produccion
+CMD ["npm", "start"]

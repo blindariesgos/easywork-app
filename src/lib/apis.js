@@ -94,7 +94,13 @@ export const saveFolders = async (data) => {
 }
 
 export const getImapConfig = async (data) => {
-  const response = await axios().post(`/imap-config/get-imap-config`, data);
+  const response = await axios().get(`/imap-config/${data}`);
+  return response;
+}
+
+export const getFoldersSaved = async (data) => {
+  const response = await axios().get(`/imap-config/folder/${data}`);
+  return response;
 }
 
 export const getTasks = async (page, limit = 6) => {

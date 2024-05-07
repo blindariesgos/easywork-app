@@ -19,7 +19,7 @@ export default function Login() {
 	const sendData = async () => {
 		try {
 			setIsLoading(true);
-			const promise = await login({ email, password, redirectTo: '/home'});
+			const promise = await login({ email: email.trim(), password, redirectTo: '/home'});
 		} catch (error) {
             toast.error("Credential didn't match");
 			setIsLoading(false);

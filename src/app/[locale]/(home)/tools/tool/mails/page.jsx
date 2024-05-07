@@ -5,7 +5,12 @@ import Image from "next/image";
 import SliderOverShort from "../../../../../../components/SliderOverShort";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { createImap, saveFolders, getImapConfig } from "../../../../../../lib/apis";
+import {
+  createImap,
+  saveFolders,
+  getImapConfig,
+  getFoldersSaved
+} from "../../../../../../lib/apis";
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
 
@@ -22,6 +27,7 @@ export default function IngresarEmail() {
     user: null,
     password: null,
     senderName: null,
+    mailName: null,
     userId: session.data.user.user.id,
   });
   const [folderData, setFolderData] = useState([]);
@@ -34,16 +40,18 @@ export default function IngresarEmail() {
         setFolderId(response);
         getFolders();
       }
-    } catch (error) { 
-        getApiError(error.message, errorsDuplicated);
+    } catch (error) {
+      getApiError(error.message, errorsDuplicated);
     }
   }
 
   async function getFolders() {
     try {
-      const response = await axios.post(`${process.env.API_THIRDPARTY}/gmail/folders`, { id: session.data.user.user.id });
+      const response = await axios.get(
+        `${process.env.API_THIRDPARTY}/gmail/folders/${session.data.user.user.id}`
+      );
       if (response) {
-        const newData = response.data.map(folder => ({
+        const newData = response.data.map((folder) => ({
           folder: folder,
           state: false,
         }));
@@ -56,31 +64,40 @@ export default function IngresarEmail() {
     }
   }
 
-  async function saveFoldersData(){
+  async function saveFoldersData() {
     const folders = [];
-    folderData.forEach(element => {
-      if(element.state){
-        folders.push({ imapFolderId: folderId.imapConfigId , mailboxName: element.folder });
+    folderData.forEach((element) => {
+      if (element.state) {
+        folders.push({
+          imapFolderId: folderId.imapConfigId,
+          mailboxName: element.folder,
+        });
       }
     });
     try {
       const response = await saveFolders(folders);
-      if(response){
-        router.push('/tools/webmail');
+      if (response) {
+        router.push("/tools/webmail");
       }
     } catch (error) {
       getApiError(error.message, errorsDuplicated);
     }
   }
 
-  async function toKnowEmail(){
+  async function toKnowEmail() {
     try {
-      const response = await getImapConfig({id: session.data.user.user.id });
-      if (response) {
-        router.push('/tools/webmail');
+      const responseImap = await getImapConfig( session.data.user.user.id );
+      if (responseImap){
+        const responseFolders = await getFoldersSaved( session.data.user.user.id );
+        if (responseFolders)
+          router.push("/tools/webmail");
+        else 
+          setModalC(true);
+      } else {
+        setModalG(true);
       } 
     } catch (error) {
-      setModalG(true)
+      setModalG(true);
     }
   }
 
@@ -241,7 +258,15 @@ export default function IngresarEmail() {
               </p>
               <div className="mt-2">
                 <p className="ml-2">Nombre del buzón</p>
-                <input type="text" />
+                <input
+                  type="text"
+                  onChange={(e) =>
+                    setImapData((prevState) => ({
+                      ...prevState,
+                      mailName: e.target.value,
+                    }))
+                  }
+                />
               </div>
               <div className="mt-2">
                 <p className="ml-2">Nombre del remitente</p>
@@ -319,23 +344,23 @@ export default function IngresarEmail() {
                   <p className="ml-1">Select all</p>
                 </div>
                 <div className="mt-4 ml-4">
-                {folderData.map((data, index) => (
-                  <div className="flex mt-4 ml-2" key={index}>
-                    <input 
-                      type="checkbox" 
-                      checked={data.state}
-                      onChange={(e) => {
-                        const newFolderData = [...folderData];
-                        newFolderData[index] = {
-                          ...newFolderData[index],
-                          state: e.target.checked
-                        };
-                        setFolderData(newFolderData);
-                      }}
-                    />
-                    <p className="ml-1">{data.folder}</p>
-                  </div>
-                ))}
+                  {folderData.map((data, index) => (
+                    <div className="flex mt-4 ml-2" key={index}>
+                      <input
+                        type="checkbox"
+                        checked={data.state}
+                        onChange={(e) => {
+                          const newFolderData = [...folderData];
+                          newFolderData[index] = {
+                            ...newFolderData[index],
+                            state: e.target.checked,
+                          };
+                          setFolderData(newFolderData);
+                        }}
+                      />
+                      <p className="ml-1">{data.folder}</p>
+                    </div>
+                  ))}
                 </div>
                 <div className="m-3 text-xs my-4 w-80">
                   <h1 className="font-medium text-lg border-b-4 border-black pb-1">

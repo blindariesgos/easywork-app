@@ -18,13 +18,18 @@ export default function Page() {
   const session = useSession();
 
   useEffect(() => {
-    axios.post(`${process.env.API_THIRDPARTY}/v1/gmail/emails`, { id: session.data.user.user.id })
+    axios.get(`${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/${session.data.user.user.id}/inbox`,
+    {
+      headers: {
+        'Authorization': `Bearer ${session.data.user.accessToken}`
+      }
+    })
     .then((response) => {
       setTasks(response.data);
       console.log(tasks)
     })
     .catch((error) => {getApiError(error.message, errorsDuplicated);})
-  }, [session]);
+  }, [session, tasks]);
 
   useLayoutEffect(() => {
     if (tasks) {

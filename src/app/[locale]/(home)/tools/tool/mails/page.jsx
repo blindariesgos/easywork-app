@@ -9,7 +9,7 @@ import {
   createImap,
   saveFolders,
   getImapConfig,
-  getFoldersSaved
+  getFoldersSaved,
 } from "../../../../../../lib/apis";
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
@@ -48,7 +48,12 @@ export default function IngresarEmail() {
   async function getFolders() {
     try {
       const response = await axios.get(
-        `${process.env.API_THIRDPARTY}/gmail/folders/${session.data.user.user.id}`
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
       );
       if (response) {
         const newData = response.data.map((folder) => ({
@@ -77,7 +82,7 @@ export default function IngresarEmail() {
     try {
       const response = await saveFolders(folders);
       if (response) {
-        router.push("/tools/webmail");
+        router.push("/tools/tool/webmail");
       }
     } catch (error) {
       getApiError(error.message, errorsDuplicated);
@@ -86,16 +91,12 @@ export default function IngresarEmail() {
 
   async function toKnowEmail() {
     try {
-      const responseImap = await getImapConfig( session.data.user.user.id );
-      if (responseImap){
-        const responseFolders = await getFoldersSaved( session.data.user.user.id );
-        if (responseFolders)
-          router.push("/tools/webmail");
-        else 
-          setModalC(true);
+      const responseImap = await getImapConfig(session.data.user.user.id);
+      if (responseImap) {
+        router.push("/tools/tool/webmail");
       } else {
         setModalG(true);
-      } 
+      }
     } catch (error) {
       setModalG(true);
     }
@@ -209,7 +210,7 @@ export default function IngresarEmail() {
                     onChange={(e) =>
                       setImapData((prevState) => ({
                         ...prevState,
-                        port: e.target.value,
+                        port: parseInt(e.target.value),
                       }))
                     }
                   />

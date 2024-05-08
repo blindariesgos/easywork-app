@@ -16,12 +16,11 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data, }) => {
     const handleSelectChange = (col) => {
         const updateChecked = columns.map(column => {
             return  (column.id == col.id && !column.permanent)? { ...column, check: !col.check} : column;
-        });
-		console.log("updateChecked", updateChecked)
-        
+        });        
         setSelectedColumns(updateChecked.filter(c=> c.check));
         setColmuns(updateChecked);
     };
+	
 	return (
 		<Menu as="div" className="relative inline-block">
 			<div>

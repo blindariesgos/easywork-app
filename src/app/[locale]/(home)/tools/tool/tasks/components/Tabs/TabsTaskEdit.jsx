@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
 import TabComment from './TabComment';
@@ -11,103 +11,108 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(' ');
 }
 
-export default function TabsTaskEdit() {
+export default function TabsTaskEdit({ data }) {
 	const { t } = useTranslation();
-	let [ categories ] = useState({
-		comments: {
-			name: t('tools:tasks:edit:comments'),
-            qty: "21",
-            pings: 9,
-            component: TabComment
-		},
-		history: {
-			name: t('tools:tasks:edit:history'),
-            qty: "1",
-            pings: 9,
-            component: TabTableHistory,
-			data: [
-				{
-					id: 1,
-					date: "12/12/2023 15:08:40",
-					created: "Nathaly Gomez",
-					update: "Comentario creado",
-					link: "#8965412",
-					updating: "12/12/2023 15:00 - 19/12/2023 15:00"
-				},
-				{
-					id: 2,
-					date: "12/12/2023 0:00:00",
-					created: "Nathaly Gomez",
-					update: "Comentario creado",
-					link: "#8965412",
-					updating: "12/12/2023 15:00 - 19/12/2023 15:00"
-				},
-				{
-					id: 3,
-					date: "12/12/2023 15:08:40",
-					created: "Nathaly Gomez",
-					update: "Comentario creado",
-					link: "#8965412",
-					updating: "12/12/2023 15:00 - 19/12/2023 15:00"
-				},
-				{
-					id: 4,
-					date: "12/12/2023 15:08:40",
-					created: "Nathaly Gomez",
-					update: "Comentario creado",
-					link: "#8965412",
-					updating: "12/12/2023 15:00 - 19/12/2023 15:00"
-				}
-			]
-		},
-		time: {
-			name: t('tools:tasks:edit:time'),
-            qty: "00:00:00",
-            pings: 9,
-            component: TabTableTime,
-			data: [
-				{
-					id: 1,
-					date: "12/12/2023 15:08:40",
-					created: "Yamile Rayme",
-					time: "09:00:00",
-					comment: "hola"
-				},
-				{
-					id: 2,
-					date: "5/29/2024 19:41:00",
-					created: "Yamile Rayme",
-					time: "09:00:00",
-					comment: ""
-				},
-			]
-		},
-		objections: {
-			name: t('tools:tasks:edit:objections'),
-            qty: "1",
-            pings: 9,
-            component: TabTableObjections,
-			data: [
-				{
-					id: 1,
-					date: "12/12/2023 15:08:40",
-					created: "Yamile Rayme",
-				},
-				{
-					id: 2,
-					date: "5/29/2024 19:41:00",
-					created: "Yamile Rayme",
-				},
-			]
-		}
-	});
+	let [ categories, setCategories ] = useState(null);
+	useEffect(() => {
+		setCategories({
+			comments: {
+				name: t('tools:tasks:edit:comments'),
+				qty: "21",
+				pings: 9,
+				component: TabComment,
+				data: data
+			},
+			history: {
+				name: t('tools:tasks:edit:history'),
+				qty: "1",
+				pings: 9,
+				component: TabTableHistory,
+				data: [
+					{
+						id: 1,
+						date: "12/12/2023 15:08:40",
+						created: "Nathaly Gomez",
+						update: "Comentario creado",
+						link: "#8965412",
+						updating: "12/12/2023 15:00 - 19/12/2023 15:00"
+					},
+					{
+						id: 2,
+						date: "12/12/2023 0:00:00",
+						created: "Nathaly Gomez",
+						update: "Comentario creado",
+						link: "#8965412",
+						updating: "12/12/2023 15:00 - 19/12/2023 15:00"
+					},
+					{
+						id: 3,
+						date: "12/12/2023 15:08:40",
+						created: "Nathaly Gomez",
+						update: "Comentario creado",
+						link: "#8965412",
+						updating: "12/12/2023 15:00 - 19/12/2023 15:00"
+					},
+					{
+						id: 4,
+						date: "12/12/2023 15:08:40",
+						created: "Nathaly Gomez",
+						update: "Comentario creado",
+						link: "#8965412",
+						updating: "12/12/2023 15:00 - 19/12/2023 15:00"
+					}
+				]
+			},
+			time: {
+				name: t('tools:tasks:edit:time'),
+				qty: "00:00:00",
+				pings: 9,
+				component: TabTableTime,
+				data: [
+					{
+						id: 1,
+						date: "12/12/2023 15:08:40",
+						created: "Yamile Rayme",
+						time: "09:00:00",
+						comment: "hola"
+					},
+					{
+						id: 2,
+						date: "5/29/2024 19:41:00",
+						created: "Yamile Rayme",
+						time: "09:00:00",
+						comment: ""
+					},
+				]
+			},
+			objections: {
+				name: t('tools:tasks:edit:objections'),
+				qty: "1",
+				pings: 9,
+				component: TabTableObjections,
+				data: [
+					{
+						id: 1,
+						date: "12/12/2023 15:08:40",
+						created: "Yamile Rayme",
+					},
+					{
+						id: 2,
+						date: "5/29/2024 19:41:00",
+						created: "Yamile Rayme",
+					},
+				]
+			}
+		});
+	}, [data, t])
+	
 
 
 	return (
 		<div className="w-full">
 			<Tab.Group>
 				<Tab.List className="flex space-x-1 rounded-xl bg-transparent p-1 w-full">
-					{Object.keys(categories).map((category) => (
+					{categories && Object.keys(categories).map((category) => (
 						<Tab
 							key={category}
 							className={({ selected }) =>
@@ -127,7 +132,7 @@ export default function TabsTaskEdit() {
 					))}
 				</Tab.List>
 				<Tab.Panels className="mt-2 w-full">
-					{Object.values(categories).map((categ, idx) => (
+					{categories && Object.values(categories).map((categ, idx) => (
 						<Tab.Panel
 							key={idx}
 							className={classNames(
@@ -135,7 +140,7 @@ export default function TabsTaskEdit() {
 								'focus:outline-none focus:ring-0'
 							)}
 						>
-							<categ.component data={categ}/>
+							<categ.component data={categ.data} info={data}/>
 						</Tab.Panel>
 					))}
 				</Tab.Panels>

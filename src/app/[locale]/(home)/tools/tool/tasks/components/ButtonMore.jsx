@@ -1,11 +1,11 @@
 'use client';
 import { Menu, Transition } from '@headlessui/react';
 import { PlusIcon, UserPlusIcon } from '@heroicons/react/20/solid';
-import { DocumentDuplicateIcon } from '@heroicons/react/24/outline';
+import { DocumentDuplicateIcon, PencilIcon } from '@heroicons/react/24/outline';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function ButtonMore() {
+export default function ButtonMore({ setOpenEdit, openEdit }) {
     const { t } = useTranslation();
     const options = [
         {
@@ -22,6 +22,12 @@ export default function ButtonMore() {
             id: 2,
             name: t("tools:tasks:edit:delegate"),
             icon: UserPlusIcon
+        },
+        {
+            id: 32,
+            name: t("tools:tasks:edit:edit"),
+            icon: PencilIcon,
+			onclick: () => setOpenEdit(!openEdit)
         }
     ]
     
@@ -47,6 +53,7 @@ export default function ButtonMore() {
 							<Menu.Item key={index}>
 								{({ active }) => (
 									<button
+										onClick={opt.onclick}
 										className={`${active
 											? ' text-white bg-green-primary'
 											: 'text-gray-400'} group flex w-full items-center gap-1 rounded-md px-2 py-2 text-xs`}

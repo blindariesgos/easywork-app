@@ -105,7 +105,7 @@ export default function TableTask({ data }) {
 										</tr>
 									</thead>
 									<tbody className="bg-gray-100">
-										{selectedColumns.length > 0 && dataTask?.items.length > 0 && dataTask?.items?.map((task, index) => (
+										{selectedColumns.length > 0 && dataTask?.items?.length > 0 && dataTask?.items?.map((task, index) => (
 											<tr
 												key={index}
 												className={clsx(
@@ -137,23 +137,15 @@ export default function TableTask({ data }) {
 																<Link href={`/tools/tool/tasks/task/${task.id}?show=true`} className="">
 																	{task[column.row]}
 																</Link>
-															) : column.photo ? (
-																<div className="flex items-center">
-																	<div className="h-9 w-9 flex-shrink-0">
-																		<Image
-																			className="h-9 w-9 rounded-full"
-																			width={36}
-																			height={36}
-																			src={""}
-																			alt=""
-																		/>
-																	</div>
-																	<div className="ml-4">
-																		{/* <div className="font-medium text-black ">{task[column.row].name}</div> */}
-																	</div>
+															) : column.row === "responsible" ? (
+																<div className="flex items-center justify-center">
+																	<div className="font-medium text-black ">{task[column.row].length > 0 ? task[column.row].map(item => `${item.username}`).join(',') : ""}</div>
 																</div>
-															)															
-															: column.row === "deadline" ? task[column.row] ? (
+															): column.row === "createdBy" ? (
+																<div className="flex items-center justify-center">
+																	<div className="font-medium text-black ">{task[column.row]?.username}</div>
+																</div>
+															): column.row === "deadline" ? task[column.row] ? (
 																<div className='p-1 px-2 bg-blue-100 rounded-full text-sm'>
 																	{moment(task[column.row]).format('DD/MM/YYYY hh:mm:ss A')}
 																</div>

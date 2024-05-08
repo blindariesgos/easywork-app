@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Image from "next/image";
 import TextInput from './TextInput';
 
-const MultipleSelect = ({ options, getValues, setValue, name, label, error }) => {
+const MultipleSelect = ({ options, getValues, setValue, name, label, error, onlyOne }) => {
     const { t } = useTranslation(); 
     const [isOpen, setIsOpen] = useState(false);
     // const [options, setOptions] = useState(data);
@@ -16,6 +16,7 @@ const MultipleSelect = ({ options, getValues, setValue, name, label, error }) =>
 
     const handleSelect = (option) => {
         const array = getValues(name);
+        if (onlyOne) return setValue(name, [option]);
         if (array){
             const index = array.findIndex((res) => res.id === option.id);
             if (index === -1) {

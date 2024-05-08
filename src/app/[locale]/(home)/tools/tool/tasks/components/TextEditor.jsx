@@ -43,7 +43,7 @@ const formats = [
 	'direction'
 ];
 
-const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, setValue }) => {
+const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, setValue, disabled, handleKeyDown }) => {
 	const { lists } = useAppContext();
 	const [ arroba, setArroba ] = useState(false);
 	const [ dataUsers, setDataUsers ] = useState();
@@ -53,18 +53,18 @@ const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, s
 
 	const handleChange = (newValue, delta, source, editor) => {
 		setArroba(false);
-    const text = editor.getText();
+		const text = editor.getText();
 		if (delta && delta.ops && delta.ops.length > 0 ) {
-        delta.ops.forEach(obj => {
-        if (obj.insert === "@") {
-            const atIndex = text.indexOf('@');
-            const range = editor.getBounds(atIndex);
-            setModalPosition({ x: range.left, y: range.bottom });
-            return setArroba(true);
-        }
-      })
-    }
-    setValue(newValue)
+			delta.ops.forEach(obj => {
+				if (obj.insert === "@") {
+					const atIndex = text.indexOf('@');
+					const range = editor.getBounds(atIndex);
+					setModalPosition({ x: range.left, y: range.bottom });
+					return setArroba(true);
+				}
+			})
+		}
+    	setValue(newValue)
 	};
 
 	const onChangeCustom = (event) => {
@@ -113,7 +113,7 @@ const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, s
 		<DropdownVisibleUsers
 			mentionButtonRef={null}
 			dataUsers={dataUsers}
-      modalPosition={modalPosition}
+      		modalPosition={modalPosition}
 			onChangeCustom={onChangeCustom}
 			setUserSelected={setUserSelected}
 			userSelected={userSelected}
@@ -132,6 +132,8 @@ const TextEditor = ({ value, onChange, className, onChangeSelection, quillRef, s
 				theme="snow"
 				className={className}
 				onChangeSelection={onChangeSelection}
+				readOnly={disabled}
+				onKeyDown={handleKeyDown}
 			/>
 			{arroba && dropdownUsers()}
 		</div>

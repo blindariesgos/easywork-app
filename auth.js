@@ -6,8 +6,8 @@ import { getLogin } from "./src/lib/apis";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
-  trustHost: true,
-  trustedHosts: ['localhost', 'your-domain.com'],
+  // trustHost: true,
+  // trustedHosts: ['localhost', 'your-domain.com'],
   providers: [
     Credentials({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.

@@ -52,7 +52,7 @@ export const updatePhotoContact = async (photo, id) => {
   return response
 }
 
-export const getContacts = async (page) => {
+export const getContacts = async (page=1) => {
   const response = await axios().get(`/sales/crm/contacts?limit=6&page=${page}`);
   return response;
 }
@@ -103,14 +103,19 @@ export const getFoldersSaved = async (data) => {
   return response;
 }
 
-export const getTasks = async (page, limit = 6) => {
+export const getTasks = async (page=1, limit = 6) => {
   const response = await axios().get(`/tools/tasks?limit=${limit}&page=${page}`);
+  return response;
+}
+
+export const getTasksUser = async (page=1, limit = 6) => {
+  const response = await axios().get(`/tools/tasks/user?limit=${limit}&page=${page}`);
   return response;
 }
 
 export const deleteTask = async (id) => {
   const response = await axios().delete(`/tools/tasks/${id}`);
-  revalidatePath('/tools/tasks', 'page');
+  revalidatePath('/tools/tool/tasks', 'page');
   return response;
 }
 
@@ -121,7 +126,7 @@ export const getTaskId = async (id) => {
 
 export const postTask = async (body) => {
   const response = await axios().post(`/tools/tasks`, body);
-  revalidatePath('/tools/tasks', 'page');
+  revalidatePath('/tools/tool/tasks', 'page');
   return response;
 }
 
@@ -132,6 +137,28 @@ export const putTaskId = async (id, body) => {
 
 export const putTaskCompleted = async (id, body) => {
   const response = await axios().put(`/tools/tasks/${id}/completed`, body);
+  return response;
+}
+
+export const postComment = async (body, id) => {
+  const response = await axios().post(`/tools/tasks/comments`, body);
+  revalidatePath(`/tools/tool/tasks/task/${id}`, 'page');
+  return response;
+}
+export const deleteComment = async (commentId, id) => {
+  const response = await axios().delete(`/tools/tasks/comments/${commentId}`);
+  revalidatePath(`/tools/tool/tasks/task/${id}`, 'page');
+  return response;
+}
+
+export const putComment = async (commentId, body, id) => {
+  const response = await axios().put(`/tools/tasks/comments/${commentId}`, body);
+  revalidatePath(`/tools/tool/tasks/task/${id}`, 'page');
+  return response;
+}
+
+export const getComments = async (taskId) => {
+  const response = await axios().get(`/tools/tasks/comments/task/${taskId}`);
   return response;
 }
 

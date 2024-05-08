@@ -14,8 +14,7 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import useAppContext from '../../../../../../../context/app';
 
-export default function OptionsTask({ edit, value, setValueText }) {
-	console.log("data", edit)
+export default function OptionsTask({ edit, value, setValueText, disabled }) {
     const { t } = useTranslation();
     const { lists } = useAppContext();
 	const quillRef = useRef(null);
@@ -195,6 +194,7 @@ export default function OptionsTask({ edit, value, setValueText }) {
 					className="sm:h-36 h-52 w-full"
 					onChangeSelection={handleTextSelection}
                     setValue={setValueText}
+					disabled={disabled}
 				/>
                 {arroba && dropdownUsers(true)}
 			</div>

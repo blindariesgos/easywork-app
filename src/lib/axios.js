@@ -1,6 +1,8 @@
+'use server'
 import axios from "axios";
 import { auth } from "../../auth";
 import { logout } from "./apis";
+import { cookies } from 'next/headers'
 
 const config = axios.defaults;
 
@@ -31,11 +33,10 @@ const instance = (contentType = "application/json") => {
     (response) => {
       return response.data;
     },
-    (error) => {
-      // console.log("error axios", Promise.reject(error))
+    async (error) => {
+      console.log("error axios", error.response.data)
       // throw new Error(error)
-      console.log("error", error.response.data.statusCode)
-      if (error.response.data.statusCode === 401) return logout();
+      if (error.response.data.statusCode == 401 || error.response.data.statusCode == 403) cookies().delete('authjs.session-token');
       return Promise.reject(JSON.stringify(error.response.data));
     }
   );

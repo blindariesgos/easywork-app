@@ -845,7 +845,7 @@ export const useTasks = () => {
 		{
 			id: 5,
 			name: t('tools:tasks:table.responsible'),
-            row: "responsiblePerson",
+            row: "responsible",
             check: false,
             photo: true
 		},
@@ -962,8 +962,8 @@ export const useTooltip = () => {
         switch (position) {
             case 'top':
                 return {
-                    top: -5,
-                    left: 95,
+                    top: 5,
+                    left: 0,
                     transform: 'translate(-50%, -100%)',
                 };
             case 'bottom':

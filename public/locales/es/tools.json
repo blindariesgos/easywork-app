@@ -50,6 +50,8 @@
         "description": "La descripción de la tarea es un campo requerido",
         "name-msg": "El nombre de la tarea es requerido",
         "delete-msg": "Tarea(s) eliminada(s) exitosamente!",
+        "success-msg": "Tarea creado exitosamente!",
+        "update-msg": "Tarea actualizada exitosamente!",
         "table": {
             "name": "Nombre",
             "activity": "Actividad",
@@ -166,6 +168,7 @@
             "time": "Tiempo transcurrido",
             "objections": "Objeciones",
             "pings": "Mostrar pings ({{qty}})",
+            "edit": "Editar",
             "table": {
                 "date" : "Fecha",
                 "created-by" : "Creado Por",

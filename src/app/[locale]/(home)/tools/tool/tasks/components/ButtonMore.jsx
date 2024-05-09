@@ -2,12 +2,12 @@
 import { Menu, Transition } from '@headlessui/react';
 import { PlusIcon, UserPlusIcon } from '@heroicons/react/20/solid';
 import { DocumentDuplicateIcon, PencilIcon } from '@heroicons/react/24/outline';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function ButtonMore({ setOpenEdit, openEdit }) {
+export default function ButtonMore({ setOpenEdit, openEdit, data }) {
     const { t } = useTranslation();
-    const options = [
+    const [options, setOptions] = useState([
         {
             id: 1,
             name: t("tools:tasks:edit:copy"),
@@ -23,13 +23,19 @@ export default function ButtonMore({ setOpenEdit, openEdit }) {
             name: t("tools:tasks:edit:delegate"),
             icon: UserPlusIcon
         },
-        {
-            id: 32,
-            name: t("tools:tasks:edit:edit"),
-            icon: PencilIcon,
-			onclick: () => setOpenEdit(!openEdit)
-        }
-    ]
+    ])
+
+	useEffect(() => {
+		if (data && !data.isCompleted ){
+			setOptions([...options, {
+				id: 32,
+				name: t("tools:tasks:edit:edit"),
+				icon: PencilIcon,
+				onclick: () => setOpenEdit(!openEdit)
+			}]);
+		}
+	}, [data])
+	
     
 	return (
 		<Menu as="div" className="relative inline-block text-left">
@@ -47,7 +53,7 @@ export default function ButtonMore({ setOpenEdit, openEdit }) {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute right-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-36">
+				<Menu.Items className="absolute left-0 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-36">
 					<div className="px-1 py-1 ">
 						{options.map((opt, index) => (
 							<Menu.Item key={index}>

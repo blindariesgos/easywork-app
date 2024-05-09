@@ -129,8 +129,9 @@ export const putTaskId = async (id, body) => {
   return response;
 }
 
-export const putTaskCompleted = async (id, body) => {
-  const response = await axios().put(`/tools/tasks/${id}/completed`, body);
+export const putTaskCompleted = async (id) => {
+  const response = await axios().put(`/tools/tasks/${id}/completed`);
+  revalidatePath(`/tools/tool/tasks/task/${id}`, 'page');
   return response;
 }
 

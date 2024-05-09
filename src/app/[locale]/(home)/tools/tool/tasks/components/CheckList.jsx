@@ -89,7 +89,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                                             onClick={() => setEditTitleList({...editTitleList, [index]: !editTitleList[index]})}
                                             className='flex gap-10 items-center flex-wrap'>
                                                 <div className='flex gap-1'>
-                                                    <p className='text-sm text-black'>{t('tools:tasks:new:verification-list')} {`#${index + 1}`}</p>
+                                                    <p className='text-sm text-black'>{getValues(`items.${index}.name`) || `${t('tools:tasks:new:verification-list')} ${`#${index + 1}`}`}</p>
                                                     {showIcon[index] && (
                                                         <PencilSquareIcon className="h-4 cursor-pointer text-gray-400"/>
                                                     )}                                    

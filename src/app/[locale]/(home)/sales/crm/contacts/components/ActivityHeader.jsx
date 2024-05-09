@@ -76,25 +76,10 @@ export default function ActivityHeader() {
   ]
   return (
     <>
-      <div className="bg-white px-2 rounded-md w-full shadow-sm">
+      <div className="bg-white px-2 md:px-4 rounded-lg w-full shadow-sm">
         <div className="bg-white">
-          {/* <div className="sm:hidden">
-            <label htmlFor="tabs" className="sr-only">
-              {t('contacts:create:select')}
-            </label>
-            <select
-              id="tabs"
-              name="tabs"
-              className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
-              defaultValue={tabs.find((tab) => tab.current).name}
-            >
-              {tabs.map((tab, index) => (
-                <option key={index}>{tab.name}</option>
-              ))}
-            </select>
-          </div> */}
           <div className="">
-            <div className="border-b border-gray-200 mt-4">
+            <div className=" mt-4">
               <nav className="flex space-x-4 flex-wrap pt-4" aria-label="Tabs">
                 {tabs.map((tab) => (
                   <div key={tab.name}>
@@ -111,9 +96,9 @@ export default function ActivityHeader() {
                         href={tab.href}
                         className={clsx(
                           tab.current
-                            ? " text-white bg-blue-100 rounded-md"
+                            ? " text-gray-400"
                             : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
-                          "whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium uppercase"
+                          "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
                         )}
                         aria-current={tab.current ? "page" : undefined}
                       >

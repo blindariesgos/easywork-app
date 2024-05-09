@@ -1,4 +1,9 @@
 {
+  "panel": {
+    "video": "Video llamada",
+    "date": "Fecha",
+    "open": "Abrir"
+  },
   "header": {
     "contact": "Contacto",
     "search": "Búsqueda",

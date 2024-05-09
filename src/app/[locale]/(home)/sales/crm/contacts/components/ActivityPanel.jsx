@@ -1,8 +1,10 @@
 import React from 'react';
 import ActivityHeader from './ActivityHeader';
-import CardTask from './CardTask';
-import { UserIcon, VideoCameraIcon } from '@heroicons/react/20/solid';
+import { CameraIcon, UserIcon, VideoCameraIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
+import CardVideo from './CardVideo';
+import CardTask from './CardTask';
+import { EnvelopeIcon } from '@heroicons/react/24/solid';
 
 const timeline = [
 	{
@@ -14,25 +16,37 @@ const timeline = [
 		date: 'Sep 20',
 		datetime: '2020-09-20',
 		icon: UserIcon,
-		iconBackground: 'bg-gray-400'
+		iconBackground: 'bg-gray-200'
 	},
 	{
 		id: 2,
+		content: 'Advanced to phone screening by',
+		child: CardVideo,
+		target: 'Bethany Blake',
+		href: '#',
+		date: 'Sep 22',
+		datetime: '2020-09-22',
+		icon: CameraIcon,
+		iconBackground: 'bg-blue-100',
+		more: true
+	},
+	{
+		id: 3,
 		content: 'Advanced to phone screening by',
 		child: CardTask,
 		target: 'Bethany Blake',
 		href: '#',
 		date: 'Sep 22',
 		datetime: '2020-09-22',
-		icon: VideoCameraIcon,
-		iconBackground: 'bg-blue-500'
+		icon: EnvelopeIcon,
+		iconBackground: 'bg-primary'
 	}
 ];
 
 export default function ActivityPanel({ editing }) {
 	return (
 		<div className="px-4 relative bg-gray-100 rounded-tr-lg w-full md:w-3/5 h-full">
-			<div className='w-full hidden md:flex'>
+			<div className="w-full flex ">
 				{editing && (
 					<div className="inset-0 bg-white/75 w-full z-10 hidden sm:flex absolute rounded-tr-lg h-full" />
 				)}
@@ -61,11 +75,20 @@ export default function ActivityPanel({ editing }) {
 											</div>
 										)}
 										<div
-											className={`bg-gray-200 lg:w-[93%] w-[90%] pb-4 px-4 ${eventIdx === 0
+											className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${eventIdx === 0
 												? 'rounded-t-lg'
 												: eventIdx === timeline.length - 1 && 'rounded-b-lg'}`}
 										>
-											{<event.child className="w-full" />}
+											{event.more && (
+												<div className="flex gap-2 w-full items-center mb-2">
+													<div className="border-b border-primary w-full" />
+													<div className="text-xs py-1 px-2 bg-primary text-white rounded-xl">
+														20/10/10
+													</div>
+													<div className="border-b border-primary w-full" />
+												</div>
+											)}
+											{<event.child className="w-full" data={event} />}
 										</div>
 									</div>
 								</div>

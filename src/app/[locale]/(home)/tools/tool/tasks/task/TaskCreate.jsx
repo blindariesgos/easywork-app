@@ -40,6 +40,7 @@ export default function TaskCreate({ edit }) {
 	const [ selectedOptions, setSelectedOptions ] = useState([]);
 	const [checkedTime, setCheckedTime] = useState(false);
 	const [checkedTask, setCheckedTask] = useState(false);
+	const [listField, setListField] = useState([]);
 	const [openOptions, setOpenOptions] = useState({
 		created: edit?.createdBy ? true : false,
 		participants: edit?.participants?.length > 0 ? true : false,
@@ -133,7 +134,6 @@ export default function TaskCreate({ edit }) {
 	}, [session, lists?.users, setValue])
 	
 	const createTask = async(data, isNewTask) => {
-		console.log("entre", data)
 		if (value === "") return toast.error(t('tools:tasks:description'));
 		if (data.name === "") return toast.error(t('tools:tasks:name-msg'));
 		const body ={
@@ -168,6 +168,22 @@ export default function TaskCreate({ edit }) {
 			})
 			body.tagsIds = tagsIds || [];
 		}
+		if (listField && listField.length > 0 ){
+			const outputArray = listField.map(item => {
+				const child = item.subItems.filter(subItem => subItem.name !== "").map(subItem => ({
+					text: subItem.name,
+					completed: subItem.value
+				}));
+				const completed = child.every(subItem => subItem.completed);
+				return {
+					text: item.name,
+					completed,
+					child
+				};
+			});
+			body.listField = outputArray || [];
+		}
+		console.log("listField", body, listField)
 		if (data?.limitDate || data?.endDate) body.deadline = getFormatDate(data?.limitDate) || getFormatDate(data?.endDate);
 		if (data?.startDate) body.startTime = getFormatDate(data?.startDate);
 		try {
@@ -230,7 +246,7 @@ export default function TaskCreate({ edit }) {
 								<FireIcon className={`h-5 w-5 ${check ? 'text-orange-400' : 'text-gray-200'}`} />
 							</div>
 						</div>
-						<OptionsTask setValueText={setValueText} value={value}/>
+						<OptionsTask setValueText={setValueText} value={value} setListField={setListField}/>
 						<div className='mt-6 flex flex-col gap-3'>
 							<div className=''>
 								<div className='flex gap-2 sm:flex-row flex-col sm:items-center'>

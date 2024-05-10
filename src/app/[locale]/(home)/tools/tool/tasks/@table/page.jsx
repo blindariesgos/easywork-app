@@ -1,6 +1,6 @@
 import React from 'react';
 import TableTask from './TableTask';
-import { getTasks, getTasksUser } from '@/lib/apis';
+import { getTasks, getTasksUser } from '../../../../../../../lib/apis';
 import { auth } from '../../../../../../../../auth';
 
 async function getAllTasks(page) {

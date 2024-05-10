@@ -1,15 +1,18 @@
 import React from "react";
 import LeadDetails from "./LeadDetails";
-// async function useContact({ contactID }) {
-//   try {
-//     const response = await getContactId(contactID); 
-//     return response;    
-//   } catch (error) {
-//     throw new Error(JSON.stringify(error?.response?.data));
-//   }
-// }
+import { getLeadById } from "../../../../../../../../lib/apis";
+
+async function getLeadId(id) {
+	try {
+		const lead = await getLeadById(id);
+		return lead;
+	} catch (error) {		
+		throw new Error(error);
+	}
+}
 
 export default async function PageContactId({ params: { id } }) {
+  const data = await getLeadId(id);
 
-  return <LeadDetails contactInfo={null} id={id}/>
+  return <LeadDetails leadInfo={data} id={id}/>
 }

@@ -14,9 +14,9 @@ import ButtonMore from '../../components/ButtonMore';
 import { BsStopwatchFill } from 'react-icons/bs';import TabsTaskEdit from '../../components/Tabs/TabsTaskEdit';
 import moment from 'moment';
 import TaskCreate from '../TaskCreate';
-import { putTaskCompleted } from '@/lib/apis';
+import { putTaskCompleted } from '../../../../../../../../lib/apis';
 import { toast } from 'react-toastify';
-import { getApiError } from '@/utils/getApiErrors';
+import { getApiError } from '../../../../../../../../utils/getApiErrors';
 ;
 
 export default function TaskEdit({data}) {

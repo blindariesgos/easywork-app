@@ -20,10 +20,10 @@ import {
     useRef,
     useState
 } from "react";
-import { useAlertContext } from "@/context/common/AlertContext";
+import { useAlertContext } from "../context/common/AlertContext";
 import { toast } from "react-toastify";
-import { deleteTask } from "@/lib/apis";
-import { getApiError } from "@/utils/getApiErrors";
+import { deleteLeadById, deleteTask } from "../lib/apis";
+import { getApiError } from "../utils/getApiErrors";
 
 export const useSidebar = () => {
     const {
@@ -734,8 +734,8 @@ export const useLeads = () => {
 		{
 			id: 3,
 			name: t('leads:table:created'),
-            row: "date",
-            order: "date",
+            row: "createdAt",
+            order: "createdAt",
             check: true,
 		},
 		{
@@ -1076,4 +1076,47 @@ export const useContactTable = () => {
 		},
 	]
     return { columnTable }
+}
+
+export const useLeadDetete = (selectedLead, setSelectedLead, setLoading) => {
+    const {
+        t
+    } = useTranslation();
+    const { onCloseAlertDialog } = useAlertContext();
+  
+	const optionsCheckBox = [
+		{
+			id: 1,
+			name: t('common:table:checkbox:delete'),
+            onclick: () => deleteTasks()
+
+		}
+	];
+
+    const deleteTasks = () => {        
+        if ( selectedLead.length === 1 ) apiDelete(selectedLead[0].id);
+        if ( selectedLead.length > 1 ) {
+            selectedLead.map((task) => apiDelete(task.id));
+        }
+		// router.push('/sales/crm/leads?page=1');
+		toast.success(t('leads:delete:msg'));
+        setSelectedLead([]);
+        onCloseAlertDialog();
+    }
+
+    
+  const apiDelete = async(id) => {
+    try{
+      setLoading(true);
+      const response = await deleteLeadById(id);   
+      setLoading(false);
+    }catch(err){
+      setLoading(false);
+      getApiError(err.message);
+    }
+  }
+
+    return {
+        optionsCheckBox
+    }
 }

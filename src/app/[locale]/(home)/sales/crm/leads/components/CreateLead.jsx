@@ -52,7 +52,6 @@ export default function CreateLead({ edit, id }) {
 	}, [id])
 	
   
-	console.log("openButtons",openButtons)
     const schema = Yup.object().shape({
           email: Yup
             .string()
@@ -83,17 +82,17 @@ export default function CreateLead({ edit, id }) {
   
       const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
           defaultValues: {
-              name: id ? "Armando Alvarado" : "",
-              charge: id ? "Programador" : "",
-              phone: id ? "5284791145" : "",
-              email: id ? "test@gmail.com" : "",
-              rfc: id ?  "fcdvv" : "",
-              amount: id ? "2022.00" : "",
-              typeContact: id ? "Amigo" : "",
-              otherType: id ? "" : "",
-              origin: id ? "Correo electrónico" : "",
-              responsible: id ? "Nathaly Polin": "",
-              address: id ? "Address": ""
+              name: id ? edit?.name : "",
+            //   charge: id ? "Programador" : "",
+            //   phone: id ? "5284791145" : "",
+            //   email: id ? "test@gmail.com" : "",
+            //   rfc: id ?  "fcdvv" : "",
+            //   amount: id ? "2022.00" : "",
+            //   typeContact: id ? "Amigo" : "",
+            //   otherType: id ? "" : "",
+            //   origin: id ? "Correo electrónico" : "",
+            //   responsible: id ? "Nathaly Polin": "",
+            //   address: id ? "Address": ""
           },
           mode: 'onChange',
           resolver: yupResolver(schema)
@@ -148,14 +147,15 @@ export default function CreateLead({ edit, id }) {
         console.log('data', data);
     };
 	
+	console.log("edit", edit)
 	return (
 		<div className="flex flex-col h-screen relative w-full">
 			{/* Formulario Principal */}
 			{loading && <LoaderSpinner />}
-			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
+			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
 				<form
 					onSubmit={handleSubmit(handleFormSubmit)}
-					className="flex flex-col flex-1 bg-gray-100 text-black overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
+					className="flex flex-col flex-1 bg-gray-100 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
 				>
 					{/* Encabezado del Formulario */}
 					<div className="bg-transparent py-6 mx-4">
@@ -163,7 +163,7 @@ export default function CreateLead({ edit, id }) {
 							{!id && <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />}
 							<div className="flex gap-2 items-center">
 								<h1 className="text-xl sm:pl-6 pl-2">
-									{edit ? edit.fullName : t('leads:lead:new')}
+									{edit ? edit.name : t('leads:lead:new')}
 								</h1>
 								<div>
 									<PencilIcon className="h-4 w-4 text-gray-200" />
@@ -180,9 +180,9 @@ export default function CreateLead({ edit, id }) {
 
 					{/* Panel Principal */}
 
-					<div className="flex flex-col md:flex-row h-full pb-0 md:pb-[20rem] bg-white mx-4 rounded-lg p-4 w-full">
+					<div className="flex flex-col md:flex-row h-full md:pb-[18.5rem] bg-white md:mx-4 rounded-lg p-4 w-full">
 						{/* Menu Izquierda */}
-						<div className="md:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
+						<div className="md:w-2/5 bg-gray-100 md:overflow-y-scroll rounded-lg">
 							<div className="flex justify-between bg-white py-4 px-4 rounded-md">
 								<h1 className="">{t('leads:lead:lead-data')}</h1>
 								<button type="button" disabled={!id} onClick={() => setOpenButtons(!openButtons)}>
@@ -325,8 +325,8 @@ export default function CreateLead({ edit, id }) {
 					</div>
 
 					{/* Botones de acción */}
-					{!openButtons || (!edit) && (
-						<div className="flex justify-center gap-4 sticky bottom-0 bg-white pt-3 pb-2">
+					{(openButtons || !edit) && (
+						<div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
 							<Button
 								type="submit"
 								label={loading ? t('common:buttons:saving') : t('common:buttons:save')}

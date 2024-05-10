@@ -30,7 +30,6 @@ export default function OptionsTask({ edit, value, setValueText, disabled, setLi
 	const [ openFiles, setOpenFiles ] = useState(false);
     const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
-	console.log("edit", edit)
     const options = [
 		{
 			id: 1,
@@ -89,19 +88,20 @@ export default function OptionsTask({ edit, value, setValueText, disabled, setLi
 		)
 	});
     
-    const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
+    const { register, handleSubmit, control, getValues, setValue, watch, } = useForm({
         defaultValues: {},
         resolver: yupResolver(schema),
-    });
-  
+    });  
     const { fields, append, remove } = useFieldArray({
       control,
       name: "items",
     });
 
+
 	useEffect(() => {
 		setListField && setListField(watch("items"));
-	}, [watch("items")])
+	}, [watch()])
+
 
 	useEffect(() => {
 		if (edit &&  edit.listField && edit.listField.length > 0){
@@ -111,13 +111,11 @@ export default function OptionsTask({ edit, value, setValueText, disabled, setLi
 					value: subItem.completed,
 					empty: false,
 				}));
-				// const completed = child.every(subItem => subItem.completed);
 				return {
 					name: item.text,
 					subItems
 				};
 			});
-			console.log("outputArray", outputArray)
 			setValue('items', outputArray)
 		}
 	}, [edit, setValue])

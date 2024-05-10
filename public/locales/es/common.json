@@ -5,6 +5,7 @@
     "select": "Seleccione",
     "not-found" : "No se encontraron resultados",
     "time": "Hora",
+    "search": "Búsqueda",
     "validations": {
         "required": "El campo es requerido",
         "min": "El campo debe tener al menos {{min}} caracteres",

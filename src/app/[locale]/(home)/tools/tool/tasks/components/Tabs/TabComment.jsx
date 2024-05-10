@@ -3,12 +3,10 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextEditor from '../TextEditor';
-import DropdownVisibleUsers from '../DropdownVisibleUsers';
-import { deleteComment, postComment, putComment } from '@/lib/apis';
-import { getApiError } from '@/utils/getApiErrors';
+import { deleteComment, postComment, putComment } from '../../../../../../../../lib/apis';
+import { getApiError } from '../../../../../../../../utils/getApiErrors';
 import { useSession } from 'next-auth/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import Tooltip from '@/components/Tooltip';
 
 export default function TabComment({ data, info }) {
 	// console.log('data', data, info);

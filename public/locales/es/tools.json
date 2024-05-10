@@ -36,7 +36,8 @@
         "panel":{
             "date": "Fecha limite",
             "title": "Título",
-            "responsible": "Responsable"
+            "responsible": "Responsable",
+            "todo": "Cosas por hacer"
         },
         "name": "Tareas",
         "create": "Crear",

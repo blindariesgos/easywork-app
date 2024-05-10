@@ -2,7 +2,14 @@
   "panel": {
     "video": "Video llamada",
     "date": "Fecha",
-    "open": "Abrir"
+    "open": "Abrir",
+    "whatsapp": "WhatsApp",
+    "subject": "Asunto",
+    "addressee": "Destinatario",
+    "sender": "Remitente",
+    "sent": "Correo saliente",
+    "enter": "Correo entrante",
+    "comment": "Comentario"
   },
   "header": {
     "contact": "Contacto",

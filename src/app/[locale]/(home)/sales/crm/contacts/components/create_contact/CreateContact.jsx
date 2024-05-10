@@ -62,31 +62,8 @@ export default function CreateContact({ edit, id }) {
 		origin: Yup.string().required(t('common:validations:required')),
 		address: Yup.string().required(t('common:validations:required')),
 		responsible: Yup.string().required(t('common:validations:required')),
-		birthday: Yup.string().required(t('common:validations:required'))
-
-		// files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
-		// files: Yup
-		// .array()
-		// .min(1, 'Debe seleccionar al menos un archivo')
-		// .required('Debe seleccionar al menos un archivo'),
-
-		// files:Yup.mixed()
-		//   .required("You need to provide a file")
-		//   .test("fileSize", "File Size is too large", (value) => {
-		//     return value[0].size <= 5242880;
-		//   })
-		// .test("fileType", "Unsupported File Format", (value) =>
-		//   ["image/jpeg", "image/png", "image/jpg"].includes(value.type)
-		// ),
-		// files: Yup.array().of(
-		//   Yup.mixed().test('fileSize', 'El tamaño del archivo es demasiado grande', (value) => {
-		//     // Realiza la validación del tamaño del archivo aquí
-		//     // Devuelve true si el tamaño es válido, de lo contrario, devuelve false
-		//     return value && value[0].size <= 1024 * 1024; // Ejemplo: tamaño máximo de 1MB
-		//   })
-		// ),
-		// files: Yup.array().required('Debe seleccionar al menos un archivo.'),
-	});
+		birthday: Yup.string().required(t('common:validations:required'))}
+	);
 
 	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
 		defaultValues: {

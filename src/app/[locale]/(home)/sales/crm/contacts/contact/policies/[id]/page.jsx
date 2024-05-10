@@ -1,8 +1,7 @@
 import React from 'react';
-import ContactDetails from '../../[id]/ContactDetails';
 import PoliciesDetails from './PoliciesDetails';
-import { getPolizaByContact } from '@/lib/apis';
-import { getApiError } from '@/utils/getApiErrors';
+import { getPolizaByContact } from '../../../../../../../../../lib/apis';
+import { getApiError } from '../../../../../../../../../utils/getApiErrors';
 
 async function getPoliza(id) {
 	try {

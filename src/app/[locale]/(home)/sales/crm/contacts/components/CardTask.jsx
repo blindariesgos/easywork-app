@@ -1,8 +1,7 @@
 'use client';
 import TextEditor from '../../../../tools/tool/tasks/components/TextEditor';
-import IconDropdown from '@/components/SettingsButton';
+import IconDropdown from '../../../../../../../components/SettingsButton';
 import { EllipsisHorizontalIcon, PencilIcon, UserIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { BriefcaseIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +14,7 @@ export default function CardTask() {
 	const quillRef = useRef(null);
 	const [ openEdit, setOpenEdit ] = useState(false);
 
-	const handleComment = async (e, id) => {
+	const handleComment = async (e) => {
 		if (e.key === 'Enter') {
 			if (quillRef.current) {
 				const quillEditor = quillRef.current.getEditor();
@@ -44,7 +43,7 @@ export default function CardTask() {
 			value={value}
 			className="sm:h-16 h-30  w-full"
 			setValue={setValueText}
-			handleKeyDown={(e) => handleComment(e, dat.id)}
+			handleKeyDown={(e) => handleComment(e)}
 		/>
 	);
 	return (

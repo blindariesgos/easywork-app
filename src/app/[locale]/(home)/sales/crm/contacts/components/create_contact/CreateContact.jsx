@@ -62,31 +62,8 @@ export default function CreateContact({ edit, id }) {
 		origin: Yup.string().required(t('common:validations:required')),
 		address: Yup.string().required(t('common:validations:required')),
 		responsible: Yup.string().required(t('common:validations:required')),
-		birthday: Yup.string().required(t('common:validations:required'))
-
-		// files: Yup.array().of(Yup.object().shape({})).required('Debe seleccionar al menos un archivo'),
-		// files: Yup
-		// .array()
-		// .min(1, 'Debe seleccionar al menos un archivo')
-		// .required('Debe seleccionar al menos un archivo'),
-
-		// files:Yup.mixed()
-		//   .required("You need to provide a file")
-		//   .test("fileSize", "File Size is too large", (value) => {
-		//     return value[0].size <= 5242880;
-		//   })
-		// .test("fileType", "Unsupported File Format", (value) =>
-		//   ["image/jpeg", "image/png", "image/jpg"].includes(value.type)
-		// ),
-		// files: Yup.array().of(
-		//   Yup.mixed().test('fileSize', 'El tamaño del archivo es demasiado grande', (value) => {
-		//     // Realiza la validación del tamaño del archivo aquí
-		//     // Devuelve true si el tamaño es válido, de lo contrario, devuelve false
-		//     return value && value[0].size <= 1024 * 1024; // Ejemplo: tamaño máximo de 1MB
-		//   })
-		// ),
-		// files: Yup.array().required('Debe seleccionar al menos un archivo.'),
-	});
+		birthday: Yup.string().required(t('common:validations:required'))}
+	);
 
 	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
 		defaultValues: {
@@ -212,10 +189,10 @@ export default function CreateContact({ edit, id }) {
 			{loading && (
 				<LoaderSpinner/>
 			)}
-			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
+			<div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
 				<form
 					onSubmit={handleSubmit(handleFormSubmit)}
-					className="flex flex-col flex-1 bg-gray-100 text-black overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
+					className="flex flex-col flex-1 bg-gray-100 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
 				>
 					{/* Encabezado del Formulario */}
 					<div className="bg-transparent py-6 mx-4">
@@ -235,9 +212,9 @@ export default function CreateContact({ edit, id }) {
 
 					{/* Panel Principal */}
 
-					<div className="flex flex-col sm:flex-row h-full pb-[13.5rem] bg-white mx-4 rounded-lg p-4 w-full">
+					<div className="flex flex-col md:flex-row h-full md:pb-[13.5rem] bg-white md:mx-4 rounded-lg p-4 w-full">
 						{/* Menu Izquierda */}
-						<div className="sm:w-2/5 bg-gray-100 overflow-y-scroll rounded-lg">
+						<div className="md:w-2/5 bg-gray-100 md:overflow-y-scroll rounded-lg">
 							<div className="flex justify-between bg-white py-4 px-4 rounded-md">
 								<h1 className="">{t('contacts:create:data')}</h1>
 								<button type="button" disabled={!id} onClick={() => setOpenButtons(!openButtons)}>
@@ -397,7 +374,7 @@ export default function CreateContact({ edit, id }) {
 
 					{/* Botones de acción */}
 					{(openButtons || !edit) && (
-						<div className="flex justify-center px-4 py-4 gap-4 sticky bottom-0 bg-white">
+						<div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
 							<Button
 								type="submit"
 								label={loading ? t('common:buttons:saving') : t('common:buttons:save')}

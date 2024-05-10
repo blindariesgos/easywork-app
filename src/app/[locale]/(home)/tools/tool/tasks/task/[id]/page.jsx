@@ -1,7 +1,7 @@
 import SlideOver from '../../../../../../../../components/SlideOver';
 import React, { Suspense } from 'react';
 import TaskEdit from './TaskEdit';
-import { getComments, getTaskId } from '@/lib/apis';
+import { getComments, getTaskId } from '../../../../../../../../lib/apis';
 
 async function getTasksId(id) {
 	try {

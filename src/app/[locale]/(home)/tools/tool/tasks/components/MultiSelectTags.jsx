@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDownIcon, PlusCircleIcon, PlusIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from 'react-i18next';
-import Image from "next/image";
-import TextInput from '@/components/form/TextInput';
-import { deleteTags, getTags, postTags } from '@/lib/apis';
-import { getApiError } from '@/utils/getApiErrors';
+import TextInput from '../../../../../../../components/form/TextInput';
+import { deleteTags, getTags, postTags } from '../../../../../../../lib/apis';
+import { getApiError } from '../../../../../../../utils/getApiErrors';
 
 const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
     const { t } = useTranslation(); 

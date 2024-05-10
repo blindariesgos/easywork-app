@@ -1,7 +1,7 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 
-const IconDropdown = ({options, width, icon, colorIcon = "text-primary", disabled, excel}) => {
+const IconDropdown = ({options, width, icon, colorIcon = "text-primary", disabled, excel, children}) => {
     return (
         <Menu as="div" className="relative inline-block text-left mt-1">
             <div>
@@ -23,7 +23,7 @@ const IconDropdown = ({options, width, icon, colorIcon = "text-primary", disable
                         {excel && (
                             <div className='pl-2 mb-1'><p className='text-sm font-bold text-primary'>{excel}</p></div>
                         )}
-                        {options.map((opt, index) => (
+                        {options && options.map((opt, index) => (
                             <Menu.Item key={index}>
                                 {({ active }) => (
                                     <button
@@ -38,6 +38,7 @@ const IconDropdown = ({options, width, icon, colorIcon = "text-primary", disable
                                 )}
                             </Menu.Item>
                         ))}
+                        {children}
                     </div>
                 </Menu.Items>
             </Transition>

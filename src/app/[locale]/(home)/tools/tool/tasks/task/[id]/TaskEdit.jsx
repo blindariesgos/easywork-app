@@ -14,6 +14,9 @@ import ButtonMore from '../../components/ButtonMore';
 import { BsStopwatchFill } from 'react-icons/bs';import TabsTaskEdit from '../../components/Tabs/TabsTaskEdit';
 import moment from 'moment';
 import TaskCreate from '../TaskCreate';
+import { putTaskCompleted } from '../../../../../../../../lib/apis';
+import { toast } from 'react-toastify';
+import { getApiError } from '../../../../../../../../utils/getApiErrors';
 ;
 
 export default function TaskEdit({data}) {
@@ -27,7 +30,19 @@ export default function TaskEdit({data}) {
 	const [ check, setCheck ] = useState(true);
 	const [ value, setValueText ] = useState(data ? data.description : '');
 	const [openEdit, setOpenEdit] = useState(false);
-	
+	const [listField, setListField] = useState([]);
+
+	const getCompletedTask = async() => {
+		try {
+			setLoading(true);
+			const completed = await putTaskCompleted(data.id);
+			toast.success(t('tools:tasks:completed-success'));
+			setLoading(false);
+		} catch (error) {
+			setLoading(false);
+			getApiError(error.message);	
+		}
+	}	
 	return (
 		<div className="flex flex-col h-screen relative w-full overflow-y-auto">
 			{loading && <LoaderSpinner />}
@@ -47,20 +62,8 @@ export default function TaskEdit({data}) {
 						<div className={`w-full ${!openEdit ? "sm:w-9/12" : "sm:w-full"}`}>
 							<div className="bg-white rounded-lg">
 								<div className="flex justify-between gap-2 items-center bg-gray-300 p-2">
-									{/* <input
-									{...registerInputs("name")} 
-									placeholder={t('tools:tasks:new:description')}
-									className="bg-transparent border-none focus:ring-0 w-full placeholder:text-black"
-								/> */}
-									<p className="text-xs">Tarea 12312 - {t('tools:tasks:edit:pending')}</p>
+									<p className="text-xs">{t('tools:tasks:task')} - {t(`tools:tasks:status:${data?.status}`)}</p>
 									<div className="flex gap-2 items-center">
-										{/* <input
-										type="checkbox"
-										className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-0"
-										value={check}
-										checked={check}
-										onChange={(e) => setCheck(e.target.checked)}
-									/> */}
 										<FireIcon className={`h-5 w-5 ${check ? 'text-red-500' : 'text-gray-200'}`} />
 										<p className="text-sm">{t('tools:tasks:new:high')}</p>
 									</div>
@@ -80,19 +83,24 @@ export default function TaskEdit({data}) {
 								</div>
 								<div className="p-2 sm:p-4">
 									<div className="flex gap-2 flex-wrap">
-										<Button
-											label={t('tools:tasks:edit:init')}
-											buttonStyle="green"
-											className="px-3 py-2"
-											fontSize="text-xs"
-										/>
-										<Button
-											label={t('tools:tasks:edit:end')}
-											buttonStyle="green"
-											className="px-3 py-2"
-											fontSize="text-xs"
-										/>
-										<ButtonMore setOpenEdit={setOpenEdit} openEdit={openEdit}/>
+										{!data.isCompleted && (
+											<Button
+												label={t('tools:tasks:edit:init')}
+												buttonStyle="green"
+												className="px-3 py-2"
+												fontSize="text-xs"
+											/>
+										)}
+										{!data.isCompleted && (
+											<Button
+												label={t('tools:tasks:edit:end')}
+												buttonStyle="green"
+												className="px-3 py-2"
+												fontSize="text-xs"
+												onclick={() => getCompletedTask()}
+											/>
+										)}
+										<ButtonMore setOpenEdit={setOpenEdit} openEdit={openEdit} data={data}/>
 										<div className="flex gap-2 items-center">
 											<BsStopwatchFill className="h-4 w-4 text-easy-400" />
 											<p className="text-easy-400 text-xs">00:00:00</p>

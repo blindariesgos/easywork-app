@@ -3,7 +3,6 @@ import React, { Suspense } from 'react'
 import CreateContact from '../../components/create_contact/CreateContact'
 
 export default function ContactDetails({ contactInfo, id }) {
-  console.log("contactInfo", contactInfo)
   return (
     <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
       <Suspense

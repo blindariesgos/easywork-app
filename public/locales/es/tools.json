@@ -33,9 +33,18 @@
         }
     },
     "tasks": {
+        "panel":{
+            "date": "Fecha limite",
+            "title": "Título",
+            "responsible": "Responsable",
+            "todo": "Cosas por hacer"
+        },
         "name": "Tareas",
         "create": "Crear",
         "task": "Tarea",
+        "status": {
+            "pending": "Pendiente"
+        },
         "template": "Tare usando una plantilla",
         "span": "Abrir opciones",
         "list": "Lista",
@@ -52,6 +61,7 @@
         "delete-msg": "Tarea(s) eliminada(s) exitosamente!",
         "success-msg": "Tarea creado exitosamente!",
         "update-msg": "Tarea actualizada exitosamente!",
+        "completed-success": "Tarea completada, debe esperar aprobación del supervisor",
         "table": {
             "name": "Nombre",
             "activity": "Actividad",

@@ -135,8 +135,9 @@ export const putTaskId = async (id, body) => {
   return response;
 }
 
-export const putTaskCompleted = async (id, body) => {
-  const response = await axios().put(`/tools/tasks/${id}/completed`, body);
+export const putTaskCompleted = async (id) => {
+  const response = await axios().put(`/tools/tasks/${id}/completed`);
+  revalidatePath(`/tools/tool/tasks/task/${id}`, 'page');
   return response;
 }
 
@@ -183,5 +184,29 @@ export const deleteTags = async (id) => {
 
 export const getPolizaByContact = async (id) => {
   const response = await axios().get(`/sales/crm/polizas/contact/${id}`);
+  return response;
+}
+
+export const getAllLeads = async (page=1, limit = 6) => {
+  const response = await axios().get(`/sales/crm/leads?limit=${limit}&page=${page}`);
+  return response;
+
+}
+export const getLeadById = async (id) => {
+  const response = await axios().get(`/sales/crm/leads/${id}`);
+  return response;
+}
+export const postLead = async (body) => {
+  const response = await axios().post(`/sales/crm/leads`, body);
+  return response;
+}
+export const putLead = async (body) => {
+  const response = await axios().put(`/sales/crm/leads/${id}`, body);
+  return response;
+}
+
+export const deleteLeadById = async (id) => {
+  const response = await axios().delete(`/sales/crm/leads/${id}`);
+  revalidatePath('/sales/crm/leads', 'page');
   return response;
 }

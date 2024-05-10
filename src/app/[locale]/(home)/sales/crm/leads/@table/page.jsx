@@ -1,14 +1,22 @@
 import React from 'react';
 import TableLeads from '../components/TableLeads';
+import { getAllLeads } from '../../../../../../../lib/apis';
 
-const wait3seconds = () => {
-	return new Promise((resolve) => setTimeout(resolve, 5000));
-};
-export default async function Page() {
-	await wait3seconds();
+
+async function getLeads(page) {
+	try {
+		const tasks = await getAllLeads(page, 6);
+		return tasks;
+	} catch (error) {
+		console.log("error", error)
+	}
+}
+
+export default async function page({ params, searchParams: { page } }) {
+	const leads = await getLeads(page);
 	return (
 		<div className="h-full relative">
-			<TableLeads />
+			<TableLeads data={leads}/>
 		</div>
 	);
 }

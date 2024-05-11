@@ -19,7 +19,7 @@ function classNames(...classes) {
 
 export default function Header() {
 	const {data: session} = useSession();
-	// console.log("login", session)
+	console.log("login", session)
 	const pathname = usePathname();
 	function ifWebmailPath() {
 		if (pathname === '/tools/webmail') return true;

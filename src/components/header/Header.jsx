@@ -19,7 +19,7 @@ function classNames(...classes) {
 
 export default function Header() {
 	const {data: session} = useSession();
-	// console.log("login", session)
+	console.log("login", session)
 	const pathname = usePathname();
 	function ifWebmailPath() {
 		if (pathname === '/tools/webmail') return true;
@@ -82,7 +82,7 @@ export default function Header() {
 									width={32}
 									height={32}
 									className="h-8 w-8 rounded-full bg-gray-50"
-									src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+									src={session?.user?.user?.avatar}
 									alt=""
 								/>
 								<span className="hidden lg:flex lg:items-center">
@@ -90,7 +90,7 @@ export default function Header() {
 										className="ml-4 text-sm font-semibold leading-6 text-black"
 										aria-hidden="true"
 									>
-										Rosmer Campos
+										{`${session?.user?.user?.profile?.firstName} ${session?.user?.user?.profile?.lastName}`}
 									</span>
 									<ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
 								</span>

@@ -12,7 +12,7 @@ import { Pagination } from '../../../../../../../components/pagination/Paginatio
 import SelectInput from '../../../../../../../components/form/SelectInput';
 import SelectedOptionsTable from '../../../../../../../components/SelectedOptionsTable';
 import AddColumnsTable from '../../../../../../../components/AddColumnsTable';
-import LoaderSpinner from '@/components/LoaderSpinner';
+import LoaderSpinner from '../../../../../../../components/LoaderSpinner';
 import moment from 'moment';
 
 export default function TableTask({ data }) {

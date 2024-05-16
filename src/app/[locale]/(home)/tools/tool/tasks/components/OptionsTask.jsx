@@ -14,7 +14,7 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import useAppContext from '../../../../../../../context/app';
 
-export default function OptionsTask({ edit, value, setValueText, disabled }) {
+export default function OptionsTask({ edit, value, setValueText, disabled, setListField }) {
     const { t } = useTranslation();
     const { lists } = useAppContext();
 	const quillRef = useRef(null);
@@ -88,44 +88,41 @@ export default function OptionsTask({ edit, value, setValueText, disabled }) {
 		)
 	});
     
-    const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
-        defaultValues: {
-            // items: [
-            //     {
-            //         id: "",
-            //         name: `${t('tools:tasks:new:verification-list')} #1`,
-            //         subItems: [
-            //             { name: "", value: false, empty: true }
-            //         ]
-            //     }
-            // ]
-        },
+    const { register, handleSubmit, control, getValues, setValue, watch, } = useForm({
+        defaultValues: {},
         resolver: yupResolver(schema),
-    });
-  
+    });  
     const { fields, append, remove } = useFieldArray({
       control,
       name: "items",
     });
 
+
+	useEffect(() => {
+		setListField && setListField(watch("items"));
+	}, [watch()])
+
+
+	useEffect(() => {
+		if (edit &&  edit.listField && edit.listField.length > 0){
+			const outputArray = edit?.listField.map(item => {
+				const subItems = item.child.map(subItem => ({
+					name: subItem.text,
+					value: subItem.completed,
+					empty: false,
+				}));
+				return {
+					name: item.text,
+					subItems
+				};
+			});
+			setValue('items', outputArray)
+		}
+	}, [edit, setValue])
+	
+
+	
 	/*-------------------------------------------------------------*/
-
-    // const handleChange = (newValue, delta, source, editor) => {
-	// 	setArroba(false);
-    //     const text = editor.getText();
-    //         if (delta && delta.ops && delta.ops.length > 0 ) {
-    //         delta.ops.forEach(obj => {
-    //         if (obj.insert === "@") {
-    //             const atIndex = text.indexOf('@');
-    //             const range = editor.getBounds(atIndex);
-    //             setModalPosition({ x: range.left, y: range.bottom });
-    //             return setArroba(true);
-    //         }
-    //     })
-    //     }
-    //     setValue(newValue)
-	// };
-
    
 	const handleTextSelection = (selection, source, editor) => {
 		selection && setSelectText(editor.getText(selection.index, selection.length));

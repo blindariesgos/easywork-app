@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Cog8ToothIcon } from '@heroicons/react/20/solid';
 import Button from '../../../../../../../components/form/Button';
-import { deleteContactId } from '../../../../../../../lib/apis';
+import { deleteContactId, deleteLeadById } from '../../../../../../../lib/apis';
 import { getApiError } from '../../../../../../../utils/getApiErrors';
 import { toast } from 'react-toastify';
 import { revalidatePath } from 'next/cache';
@@ -20,10 +20,13 @@ import { redirect } from 'next/navigation';
 import { useOrderByColumn } from '../../../../../../../hooks/useOrderByColumn';
 import { Pagination } from '../../../../../../../components/pagination/Pagination';
 import AddColumnsTable from '../../../../../../../components/AddColumnsTable';
-import { useLeads } from '../../../../../../../hooks/useCommon';
+import { useLeadDetete, useLeads } from '../../../../../../../hooks/useCommon';
 import SelectedOptionsTable from '../../../../../../../components/SelectedOptionsTable';
+import moment from 'moment';
+import LoaderSpinner from '../../../../../../../components/LoaderSpinner';
 
-export default function TableLeads() {
+export default function TableLeads({ data }) {
+	console.log("data", data)
 	const params = useSearchParams();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -35,93 +38,48 @@ export default function TableLeads() {
 	const [ selectedLeads, setSelectedLeads ] = useState([]);
 	const { columnTable } = useLeads()
 	const [selectedColumns, setSelectedColumns] = useState(columnTable.filter(c=> c.check));
-	// const sortFieltByColumn = {
-	// 	name: [ 'name' ]
-	// };
-	const options = [
-		{
-			id: 1,
-			name: t('common:buttons:delete'),
-		}
-	]
+	const [ dataLeads, setDataLeads ] = useState();
+	const [loading, setLoading] = useState(false);
+	const { optionsCheckBox } = useLeadDetete(selectedLeads, setSelectedLeads, setLoading);
+	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn([], dataLeads?.items);
 
-
-	const [leads, setLeads] = useState([
-		{
-			id: 1,
-			name: 'Armando graterol',
-			stages: {
-				id: "etapa1",
-				name: 'Contacto inicial'
-			},
-			date: '10/10/10',
-			origin: 'Facebook'
-		},
-		{
-			id: 2,
-			name: 'Armando graterol',
-			stages: {
-				id: "etapa7",
-				name: 'Cliente no interesado'
-			},
-			date: '10/10/10',
-			origin: 'Facebook'
-		}
-	]);
-
-	const { fieldClicked, handleSorting, orderItems } = useOrderByColumn([], leads);
+	useEffect(() => {
+		if (data) setDataLeads(data);
+	}, [data])
 
 	useEffect(
 		() => {
-			if (orderItems.length > 0) setLeads(orderItems);
+			if (orderItems.length > 0) setDataLeads({ items: orderItems, meta: data?.meta});
 		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ orderItems ]
 	);
+
 
 	useLayoutEffect(
 		() => {
 			if (checkbox.current) {
-				const isIndeterminate = selectedLeads && selectedLeads.length > 0 && selectedLeads.length < leads.length;
-				setChecked(selectedLeads.length === leads.length);
+				const isIndeterminate = selectedLeads && selectedLeads.length > 0 && selectedLeads.length < dataLeads?.items?.length;
+				setChecked(selectedLeads.length === dataLeads?.items?.length);
 				setIndeterminate(isIndeterminate);
 				checkbox.current.indeterminate = isIndeterminate;
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		},
-		[ selectedLeads, leads ]
+		[ selectedLeads, dataLeads ]
 	);
 
 	function toggleAll() {
-		setSelectedLeads(checked || indeterminate ? [] : leads);
+		setSelectedLeads(checked || indeterminate ? [] : dataLeads?.items);
 		setChecked(!checked && !indeterminate);
 		setIndeterminate(false);
 	}
 
 	const capitalizedText = (text) => {
 		return text.charAt(0).toUpperCase() + text.slice(1);
-	};
+	};	
 
-	const deleteContact = (lead) => {
-		if (lead.length === 1) apiDelete(lead[0].id);
-		if (lead.length > 1) {
-			lead.map((cont) => apiDelete(cont.id));
-		}
-		router.push('/sales/crm/leads?page=1');
-		toast.success(t('leads:delete:msg'));
-		setSelectedLeads([]);
-	};
-
-	const apiDelete = async (id) => {
-		// try {
-		// 	const response = await deleteContactId(id);
-		// } catch (err) {
-		// 	getApiError(err.message);
-		// }
-	};
-
-	
-
-	if (leads && leads.length === 0) {
+	if (dataLeads && dataLeads.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-96">
 				<div className="flex flex-col items-center space-y-3">
@@ -174,10 +132,11 @@ export default function TableLeads() {
   
 
 	return (
-		<div className="flow-root relative h-full">
+		<div className="flow-root ">
+		{loading && <LoaderSpinner/>}
 			<div className="overflow-x-auto">
-				<div className="inline-block min-w-full py-2 align-middle sm:h-[40rem] overflow-y-auto h-full">
-					<div className="relative overflow-hidden  sm:rounded-lg">
+				<div className="inline-block min-w-full py-2 align-middle">
+					<div className="relative sm:rounded-lg h-[60vh]">
 						<table className="min-w-full rounded-md bg-gray-100 table-auto">
 							<thead className="text-sm bg-white drop-shadow-sm">
 								<tr>
@@ -219,8 +178,8 @@ export default function TableLeads() {
 								</tr>
 							</thead>
 							<tbody className="bg-gray-100">
-								{selectedColumns.length > 0 && leads.length > 0 &&
-									leads.map((lead, index) => (
+								{selectedColumns.length > 0 && dataLeads?.items?.length > 0 &&
+									dataLeads?.items?.map((lead, index) => (
 										<tr
 											key={index}
 											className={clsx(
@@ -263,8 +222,8 @@ export default function TableLeads() {
 															</Link>
 														) : column.row === "stages" ? (
 															<div className="flex items-center flex-col">
-																<div className='flex justify-center'>{ColorDivisionsStages(lead.stages)}</div>
-																<p className='mt-1 text-xs text-gray-200 font-semibold'>{lead.stages.name}</p>
+																{/* <div className='flex justify-center'>{ColorDivisionsStages(lead.stages)}</div> */}
+																{/* <p className='mt-1 text-xs text-gray-200 font-semibold'>{lead.stages.name}</p> */}
 															</div>
 														): column.activities ? (
 															<div className="flex gap-2">
@@ -299,7 +258,7 @@ export default function TableLeads() {
 																	<PhoneIcon className="h-4 w-4" aria-hidden="true" />
 																</button>
 															</div>) 
-														: column.row === "date" ? lead?.date ?? "N/A"
+														: column.row === "createdAt" ? moment(lead[column.row]).format('DD/MM/YYYY') ?? "N/A"
 														: column.row === "origin" ? lead.origin
 														: lead[column.row] || "-"}
 													</div>
@@ -312,14 +271,14 @@ export default function TableLeads() {
 					</div>
 				</div>
 			</div>
-			<div className="sm:absolute sm:bottom-0 pt-4 sm:pt-0 w-full">
-				<div className='flex justify-between items-center flex-wrap gap-4'>
-				{selectedLeads.length > 0 && (
-					<SelectedOptionsTable options={options}/>
-				)}
-				<Pagination 
-					totalPages={10}
-				/>
+			<div className="w-full mt-2">
+				<div className='flex justify-between items-center flex-wrap'>
+					{selectedLeads.length > 0 && (
+						<SelectedOptionsTable options={optionsCheckBox}/>
+					)}
+					<Pagination 
+						totalPages={10}
+					/>
 				</div>
 			</div>
 		</div>

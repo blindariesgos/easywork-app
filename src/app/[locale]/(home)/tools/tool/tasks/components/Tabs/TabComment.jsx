@@ -3,12 +3,10 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextEditor from '../TextEditor';
-import DropdownVisibleUsers from '../DropdownVisibleUsers';
-import { deleteComment, postComment, putComment } from '@/lib/apis';
-import { getApiError } from '@/utils/getApiErrors';
+import { deleteComment, postComment, putComment } from '../../../../../../../../lib/apis';
+import { getApiError } from '../../../../../../../../utils/getApiErrors';
 import { useSession } from 'next-auth/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import Tooltip from '@/components/Tooltip';
 
 export default function TabComment({ data, info }) {
 	// console.log('data', data, info);
@@ -16,7 +14,6 @@ export default function TabComment({ data, info }) {
 	const quillRef = useRef(null);
 	const { data: session } = useSession();
 	const [ value, setValueText ] = useState('');
-	const [ value1, setValueText1 ] = useState('');
 	const [ disabled, setDisabled ] = useState(false);
 	const [ openActions, setOpenActions ] = useState({});
 	const [ editComment, setEditComment ] = useState({});
@@ -37,33 +34,6 @@ export default function TabComment({ data, info }) {
 					const response = id ? await putComment(id, body, info.id) : await postComment(body, info.id);
 					setDisabled(false);
 					setValueText('');
-					console.log('data', data);
-				} catch (error) {
-					console.log('error', error);
-					getApiError(error.message);
-					setDisabled(false);
-				}
-			}
-		}
-	};
-	const handleComment2 = async (e) => {
-		console.log('entre');
-		if (e.key === 'Enter') {
-			if (quillRef2.current) {
-				const quillEditor = quillRef2.current.getEditor();
-				const currentContents = quillEditor.getContents();
-				const text = currentContents.ops.map((op) => op.insert).join('');
-				const body = {
-					comment: text,
-					isSummary: info.requireSummary,
-					taskId: info.id
-				};
-				try {
-					setDisabled(true);
-					const data = await postComment(body, info.id);
-					setDisabled(false);
-					setValueText1('');
-					console.log('data', data);
 				} catch (error) {
 					getApiError(error.message);
 					setDisabled(false);
@@ -71,6 +41,7 @@ export default function TabComment({ data, info }) {
 			}
 		}
 	};
+
 	const getDeleteComment = async (id) => {
 		try {
 			setDisabled(true);

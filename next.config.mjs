@@ -3,14 +3,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/auth',
+        source: "/",
+        destination: "/auth",
         permanent: true,
       },
-    ]
+    ];
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ["app.easywork.com.mx", "localhost"],
+    },
   },
   typescript: {
     ignoreBuildErrors: true,

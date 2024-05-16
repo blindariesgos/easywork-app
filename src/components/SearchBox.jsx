@@ -57,33 +57,8 @@ export default function SearchBox() {
           return project.name.toLowerCase().includes(query.toLowerCase());
         });
 
-  {
-    /* <form className="relative flex lg:min-w-96" action="#" method="GET">
-        <label htmlFor="search-field" className="sr-only">
-          Search
-        </label>
-         <MagnifyingGlassIcon
-                className="pointer-events-none absolute inset-y-0 left-2 h-full w-5 text-gray-400"
-                aria-hidden="true"
-              />
-        
-        <input
-          id="search-field"
-          className=" hover:bg-red-400"
-          placeholder="Buscar personas, documentos y mas..."
-          onChange={handleSearch}
-          type="search"
-          value={query}
-          name="search"
-        />
-      </form> */
-  }
-
   return (
     <form className="relative flex lg:min-w-96 " action="#" method="GET">
-      <label htmlFor="search-field" className="sr-only">
-        Search
-      </label>
       <input
         id="search-field"
         className=" w-full h-8 my-auto rounded-xl border-0 py-0 pl-2 pr-8 text-black placeholder:text-primary focus:ring-0 sm:text-sm bg-gray-200 font-medium"
@@ -95,7 +70,6 @@ export default function SearchBox() {
         className="pointer-events-none absolute inset-y-0 right-2 h-full w-5 text-primary"
         aria-hidden="true"
       />
-
     </form>
   );
 }

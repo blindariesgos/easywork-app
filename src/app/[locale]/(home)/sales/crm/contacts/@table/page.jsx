@@ -26,9 +26,9 @@ import { redirect } from 'next/navigation'
 import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
 import { useContactTable } from "../../../../../../../hooks/useCommon";
 import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
-import SelectedOptionsTable from "@/components/SelectedOptionsTable";
-import { useAlertContext } from "@/context/common/AlertContext";
-import LoaderSpinner from "@/components/LoaderSpinner";
+import SelectedOptionsTable from "../../../../../../../components/SelectedOptionsTable";
+import { useAlertContext } from "../../../../../../../context/common/AlertContext";
+import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 
 export default function Page() {
   const params = useSearchParams();

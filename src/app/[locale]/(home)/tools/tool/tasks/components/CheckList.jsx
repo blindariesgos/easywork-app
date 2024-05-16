@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
@@ -60,6 +60,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
     const removeList = (index) => {
         remove(index);
     }
+
 	return (    
         <form onSubmit={handleSubmit(onSubmit)} >
             <ul>
@@ -68,7 +69,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                     <li key={index}>{error.message}</li>
                 ))} */}
                 {fields.map((field, index) => ( 
-                    <Disclosure key={field.id} className="mt-2">
+                    <Disclosure key={index} className="mt-2">
                         {({ open }) => (
                             <div className='bg-gray-100 drop-shadow-lg rounded-lg p-2' >
                                 <Disclosure.Button className="flex w-full justify-between items-center p-2 pb-0 focus:ring-0 outline-none">
@@ -89,7 +90,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                                             onClick={() => setEditTitleList({...editTitleList, [index]: !editTitleList[index]})}
                                             className='flex gap-10 items-center flex-wrap'>
                                                 <div className='flex gap-1'>
-                                                    <p className='text-sm text-black'>{t('tools:tasks:new:verification-list')} {`#${index + 1}`}</p>
+                                                    <p className='text-sm text-black'>{getValues(`items.${index}.name`) || `${t('tools:tasks:new:verification-list')} ${`#${index + 1}`}`}</p>
                                                     {showIcon[index] && (
                                                         <PencilSquareIcon className="h-4 cursor-pointer text-gray-400"/>
                                                     )}                                    
@@ -123,7 +124,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                                             render={({ field, }) => (
                                             <ul className='pt-2'>
                                                 {field.value.map((subField, subIndex) => (
-                                                    <li key={subField.id} >
+                                                    <li key={subIndex} >
                                                         <div className='flex gap-2 items-center mt-2' onKeyPress={(e) => handleKeyPress(e, subIndex, index)}>
                                                             <input
                                                                 type='checkbox'

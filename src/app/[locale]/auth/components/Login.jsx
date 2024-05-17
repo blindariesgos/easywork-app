@@ -101,7 +101,7 @@ export default function Login() {
 								onClick={() => setIsOpen(true)}
 								className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
 							>
-								Cómo ingresar?
+								¿Cómo ingresar?
 							</button>
 						}
 					/>

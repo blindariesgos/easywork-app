@@ -1,5 +1,5 @@
-import Tag from "@/components//Tag";
-import SliderOverShort from "@/components//SliderOverShort";
+import Tag from "@/components/Tag";
+import SliderOverShort from "@/components/SliderOverShort";
 
 export default function ModalAddFolders() {
   return (

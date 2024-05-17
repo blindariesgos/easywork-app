@@ -210,3 +210,14 @@ export const deleteLeadById = async (id) => {
   revalidatePath('/sales/crm/leads', 'page');
   return response;
 }
+
+export const googleCallback = async (data, state) => {
+  const response = await axios().post(`/oauth/google-save-token`,{
+    refresh_token: data.refresh_token,
+    access_token: data.access_token,
+    expires_in: data.expires_in,
+    userId: state,
+    service: 1
+  });
+  return response;
+}

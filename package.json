@@ -25,6 +25,7 @@
     "next-auth": "^5.0.0-beta.17",
     "next-i18n-router": "^5.4.0",
     "pdfjs-dist": "^4.0.379",
+    "qs": "^6.12.1",
     "react": "^18",
     "react-datepicker": "^6.6.0",
     "react-dom": "^18",
@@ -41,6 +42,7 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
     "@types/node": "20.12.7",
+    "@types/qs": "^6.9.15",
     "@types/react": "18.3.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",

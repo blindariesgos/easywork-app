@@ -1,8 +1,21 @@
-import SliderOverShort from "@/components/SliderOverShort";
+import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import Image from "next/image";
+import axios from "axios";
 import { Dropdown, Ripple, initTWE } from "tw-elements";
+import { useSession } from "next-auth/react";
+
 export default function ModalAddGmail({ children, state }) {
+  const session = useSession();
+
   initTWE({ Dropdown, Ripple });
+  async function openWindowOauth() {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.user.id}`
+    );
+    window.open(response.data.url, '_blank', 'width=500, height=500')
+    console.log(response.data.url)
+  }
+
   return (
     <SliderOverShort openModal={state}>
       {children}
@@ -20,7 +33,7 @@ export default function ModalAddGmail({ children, state }) {
                 height={27}
               />
               <h1 className="text-gray-400 font-medium text-lg ml-1">Gmail</h1>
-              <button className="bg-cyan-400 text-white py-2 px-4 rounded-sm text-xs ml-2">
+              <button className="bg-cyan-400 text-white py-2 px-4 rounded-sm text-xs ml-2" onClick={() => openWindowOauth()}>
                 AUTENTICACIÓN
               </button>
             </div>

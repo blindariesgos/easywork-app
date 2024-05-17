@@ -12,8 +12,7 @@ import {
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
 import ModalAddGmail from "./components/ModalAddGmail";
-import Tag from "@/components/Tag";
-import ModalAddFolders from "./components/ModalAddFolders";
+import Tag from "../../../../../../components/Tag";
 
 export default function IngresarEmail() {
   const session = useSession();

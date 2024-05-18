@@ -10,7 +10,7 @@ export default function GetPassword() {
   const [email, setEmail] = useState("");
 
   function sendData() {
-    setContextData(0);
+    setContextData(2);
     // getDataPassword(email)
     // .then(data => {
     //   console.log(data);
@@ -46,7 +46,7 @@ export default function GetPassword() {
             style={{ border: "none" }}
             type="search"
             name="q"
-            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900"
+            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
             placeholder="Usuario"
             autoComplete="off"
           />
@@ -66,7 +66,7 @@ export default function GetPassword() {
             type="search"
             name="q"
             onChange={(e) => setEmail(e.target.value)}
-            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900"
+            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
             placeholder="E-mail"
             autoComplete="off"
           />

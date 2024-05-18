@@ -1,30 +1,37 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { LockClosedIcon, UserIcon } from '@heroicons/react/24/solid';
 import ModalVideo from './ModalVideo';
 import { useDataContext } from '../context';
-import { getLogin, login } from '../../../../lib/apis';
-import { useRouter } from 'next/navigation';
+import { login } from '../../../../lib/apis';
 import { toast } from 'react-toastify';
 import LoaderSpinner from '../../../../components/LoaderSpinner';
+import { setCookie } from 'cookies-next'
 
 export default function Login() {
-	const router = useRouter();
 	const { contextData, setContextData } = useDataContext();
 	const [ email, setEmail ] = useState('');
 	const [ password, setPassword ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
 
+	useEffect(() => {
+		setCookie('rememberSession', false)
+	}, []);
+
 	const sendData = async () => {
 		try {
 			setIsLoading(true);
-			const promise = await login({ email: email.trim(), password, redirectTo: '/home'});
+			await login({ email: email.trim(), password, redirectTo: '/home'});
 		} catch (error) {
             toast.error("Credential didn't match");
 			setIsLoading(false);
 		}
 	};
+
+	const rememberSessionCookie = (state) => {
+		setCookie('rememberSession', state)
+	}
 
 	if (contextData === 0) {
 		return (
@@ -45,7 +52,7 @@ export default function Login() {
 						style={{ border: 'none' }}
 						type="text"
 						name="q"
-						className="py-2 text-sm rounded-md pl-10 focus:text-gray-900"
+						className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
 						placeholder="Email"
 						autoComplete="off"
 						onChange={(e) => setEmail(e.target.value)}
@@ -62,7 +69,7 @@ export default function Login() {
 						style={{ border: 'none' }}
 						type="password"
 						name="q"
-						className="py-2 text-sm rounded-md pl-10 focus:text-gray-900"
+						className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
 						placeholder="Contraseña"
 						autoComplete="off"
 						onChange={(e) => setPassword(e.target.value)}
@@ -70,7 +77,7 @@ export default function Login() {
 				</div>
 				{/* Recordar contraseña */}
 				<div className="flex justify-between my-4 text-sm">
-					<input type="checkbox" />
+					<input type="checkbox" onChange={(e) => {rememberSessionCookie(e.target.checked)}} />
 					<p className="ml-1">Recordar en esta computadora</p>
 				</div>
 				{/* Ingresar */}

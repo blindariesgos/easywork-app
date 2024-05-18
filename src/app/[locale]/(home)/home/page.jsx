@@ -1,9 +1,17 @@
-import React from 'react';
+'use client';
+import React, { useEffect } from 'react';
 import Header from '../../../../components/header/Header';
 import { ClockIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { getCookie } from 'cookies-next';
 
 export default function Page() {
+	useEffect(() => {
+		const fromUrl = new URL(document.referrer)
+		if (fromUrl.pathname == "/auth" && getCookie('rememberSession') == 'true') 
+			toast.success("Datos guardados");
+	}, []);
 	return (
 		<div className="bg-center bg-cover rounded-2xl px-2" style={{ backgroundImage: "url('/img/fondo-home.png')" }}>
 			<div className="h-full w-full py-5">

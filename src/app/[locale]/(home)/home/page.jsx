@@ -108,7 +108,7 @@ export default function Page() {
 						</div>
 					</div>
 					<div className="flex max-md:flex-col max-md:gap-2 justify-between px-3 w-full ">
-						<div className="h-80 max-md:w-full bg-white rounded-lg p-2" style={{width: '38rem'}}>
+						<div className="h-80 max-md:w-full bg-white rounded-lg p-2" style={{width: '38.2rem'}}>
 							<h1 className="h-1/6 font-medium">Recordatorios Recientes</h1>
 							<ul className="h-5/6 p-1 overflow-y-auto">
 								<li className="flex items-center mb-3">
@@ -172,7 +172,7 @@ export default function Page() {
 								</li>
 							</ul>
 						</div>
-						<div className="h-80 max-md:w-full bg-white rounded-lg p-2" style={{width: '40rem'}}>
+						<div className="h-80 max-md:w-full bg-white rounded-lg p-2" style={{width: '39.5rem'}}>
 							<h1 className="h-1/6 font-medium">Actividades Próximas</h1>
 							<ul className="h-3/6 p-1">
 								<li className="flex items-center mb-3">

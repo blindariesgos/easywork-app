@@ -19,7 +19,7 @@ export default function DontRememberDetails() {
                 </div>
                 {/* Titulo */}
                 <div className="mb-4">
-                    <h1>¡No recuerdo mis datos!</h1>
+                    <h1>No recuerdo mis datos</h1>
                 </div>
                 {/* Dato de usuario */}
                 <div className="relative text-gray-600 focus-within:text-gray-400">

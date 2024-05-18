@@ -9,7 +9,7 @@ export default function Status() {
       <div className="flex gap-x-2">
         <div className="flex items-center gap-x-1">
           <BellIcon className="h-3 w-3 text-black" aria-hidden="true" />
-          <p className="text-black text-xs">2:30pm</p>
+          <p className="text-black text-xs">100</p>
         </div>
         <div className="flex items-center gap-x-1">
           <FlagIcon className="h-3 w-3 text-black" aria-hidden="true" />

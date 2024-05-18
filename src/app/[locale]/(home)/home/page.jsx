@@ -16,7 +16,7 @@ export default function Page() {
 								<ClockIcon className="h-16 w-16 text-slate-400" />
 							</div>
 							<div className="h-1/4 flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg">
-								<h1>Buen trabajo!! No tienes actividades vencidas</h1>
+								<h1 className="text-sm">¡Buen trabajo! No tienes actividades vencidas</h1>
 							</div>
 						</div>
 						<div className="max-w-72 h-64 bg-white rounded-lg p-2">
@@ -25,7 +25,7 @@ export default function Page() {
 								<CalendarIcon className="h-16 w-16 text-slate-400" />
 							</div>
 							<div className="h-1/4 flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg">
-								<h1>No tienes actividades para hoy</h1>
+								<h1 className="text-sm">No tienes actividades para hoy</h1>
 							</div>
 						</div>
 						<div className="max-w-72 h-64 bg-white rounded-lg p-2">
@@ -100,7 +100,7 @@ export default function Page() {
 						</div>
 					</div>
 					<div className="flex max-md:flex-col max-md:gap-2 justify-between px-3 w-full ">
-						<div className="w-7/12 h-80 max-md:w-full bg-white rounded-lg p-2">
+						<div className="h-80 max-md:w-full bg-white rounded-lg p-2" style={{width: '38rem'}}>
 							<h1 className="h-1/6 font-medium">Recordatorios Recientes</h1>
 							<ul className="h-5/6 p-1 overflow-y-auto">
 								<li className="flex items-center mb-3">
@@ -164,7 +164,7 @@ export default function Page() {
 								</li>
 							</ul>
 						</div>
-						<div className="w-4/12 h-80 max-md:w-full bg-white rounded-lg p-2">
+						<div className="h-80 max-md:w-full bg-white rounded-lg p-2" style={{width: '40rem'}}>
 							<h1 className="h-1/6 font-medium">Actividades Próximas</h1>
 							<ul className="h-3/6 p-1">
 								<li className="flex items-center mb-3">

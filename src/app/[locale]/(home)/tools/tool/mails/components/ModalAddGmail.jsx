@@ -3,17 +3,21 @@ import Image from "next/image";
 import axios from "axios";
 import { Dropdown, Ripple, initTWE } from "tw-elements";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 export default function ModalAddGmail({ children, state }) {
   const session = useSession();
+
+  const [sendSmtp, setSendSmtp] = useState(false);
+  const [editParams, setEditParams] = useState(false);
 
   initTWE({ Dropdown, Ripple });
   async function openWindowOauth() {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.user.id}`
     );
-    window.open(response.data.url, '_blank', 'width=500, height=500')
-    console.log(response.data.url)
+    window.open(response.data.url, "_blank", "width=500, height=500");
+    console.log(response.data.url);
   }
 
   return (
@@ -33,22 +37,21 @@ export default function ModalAddGmail({ children, state }) {
                 height={27}
               />
               <h1 className="text-gray-400 font-medium text-lg ml-1">Gmail</h1>
-              <button className="bg-cyan-400 text-white py-2 px-4 rounded-sm text-xs ml-2" onClick={() => openWindowOauth()}>
+              <button
+                className="bg-cyan-400 text-white py-2 px-4 rounded-sm text-xs ml-2"
+                onClick={() => openWindowOauth()}
+              >
                 AUTENTICACIÓN
               </button>
             </div>
             <div className="flex mt-4">
-              <input type="checkbox" checked="" />
+              <input type="checkbox" />
               <p className="ml-1" data-twe-dropdown-ref>
                 Extraer mensajes para{" "}
                 <span
                   className="underline text-blue-600 cursor-pointer"
-                  type="button"
                   id="dropdownMenuButton1"
                   data-twe-dropdown-toggle-ref
-                  aria-expanded="false"
-                  data-twe-ripple-init
-                  data-twe-ripple-color="light"
                 >
                   una semana
                 </span>
@@ -92,33 +95,70 @@ export default function ModalAddGmail({ children, state }) {
                     >
                       3 meses
                     </a>
-                  </li>                
+                  </li>
                 </ul>
               </p>
             </div>
-            <p className="mt-4 underline text-blue-600">
-              Editar más parámetros
-            </p>
+            <div className="mt-2">
+              {editParams ? (
+                <>
+                  <p className="ml-2 mb-1">Nombre del buzón</p>
+                  <input
+                    type="text"
+                    className="rounded-md border-1 ml-2 w-full"
+                  />
+                  <p className="ml-2 mb-1">Nombre del remitente</p>
+                  <input
+                    type="text"
+                    className="rounded-md border-1 ml-2 w-full"
+                  />
+                </>
+              ) : (
+                <p
+                  className="mt-4 underline text-blue-600 cursor-pointer"
+                  onClick={() => {
+                    setEditParams(true);
+                  }}
+                >
+                  Editar más parámetros
+                </p>
+              )}
+            </div>
             <div className="border-b-2 pb-2">
               <h1 className="mt-4 text-lg">
                 Configuraciones de correo saliente
               </h1>
             </div>
             <div className="flex mt-4">
-              <input type="checkbox" checked="" />
+              <input
+                type="checkbox"
+                onChange={(e) => {
+                  setSendSmtp(e.target.checked);
+                }}
+              />
               <p className="ml-1">Enviar utilizando SMTP externo</p>
             </div>
-            <div className="mt-3 text-xs my-4 w-full">
-              <p className="bg-red-200 ml-2 text-red-500 p-2 rounded-md">
-                ¡Importante! Asegúrese de qué detalle del servidor SMTP que
-                proporcionó sean correctos. De lo contrario, el correo no será
-                entregado.
-              </p>
-            </div>
-            <div className="mt-2">
-              <p className="ml-2 mb-1">Contraseña de la aplicación</p>
-              <input type="text" className="rounded-md border-1 ml-2 w-full" />
-            </div>
+            {sendSmtp ? (
+              <>
+                <div className="mt-3 text-xs my-4 w-full">
+                  <p className="bg-red-200 ml-2 text-red-500 p-2 rounded-md">
+                    ¡Importante! Asegúrese de qué detalle del servidor SMTP que
+                    proporcionó sean correctos. De lo contrario, el correo no
+                    será entregado.
+                  </p>
+                </div>
+                <div className="mt-2">
+                  <p className="ml-2 mb-1">Contraseña de la aplicación</p>
+                  <input
+                    type="text"
+                    className="rounded-md border-1 ml-2 w-full"
+                  />
+                </div>
+              </>
+            ) : (
+              ""
+            )}
+
             <div className="border-b-2 pb-2">
               <h1 className="mt-4 text-lg">Instegración del CRM</h1>
             </div>

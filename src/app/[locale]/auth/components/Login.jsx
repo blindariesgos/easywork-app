@@ -7,7 +7,7 @@ import { useDataContext } from '../context';
 import { login } from '../../../../lib/apis';
 import { toast } from 'react-toastify';
 import LoaderSpinner from '../../../../components/LoaderSpinner';
-import { setCookie } from 'cookies-next'
+import { setCookie, getCookie } from 'cookies-next'
 
 export default function Login() {
 	const { contextData, setContextData } = useDataContext();
@@ -22,7 +22,7 @@ export default function Login() {
 	const sendData = async () => {
 		try {
 			setIsLoading(true);
-			await login({ email: email.trim(), password, redirectTo: '/home'});
+			await login({ email: email.trim(), password, redirectTo: `/home?rememberSession=${getCookie('rememberSession')}`});
 		} catch (error) {
             toast.error("Credential didn't match");
 			setIsLoading(false);

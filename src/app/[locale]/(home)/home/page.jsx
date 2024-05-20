@@ -9,7 +9,9 @@ import { getCookie } from 'cookies-next';
 export default function Page() {
 	useEffect(() => {
 		const fromUrl = new URL(document.referrer)
-		if (fromUrl.pathname == "/auth" && getCookie('rememberSession') == 'true') 
+		const urlParams = new URLSearchParams(window.location.search);
+		const rememberSessionParam = urlParams.get('rememberSession');
+		if (fromUrl.pathname == "/auth" && getCookie('rememberSession') == 'true' && rememberSessionParam == 'true') 
 			toast.success("Datos guardados");
 	}, []);
 	return (

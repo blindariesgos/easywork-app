@@ -26,7 +26,7 @@ export default function Header() {
 	}
 
 	const { t } = useTranslation();
-	const { setSidebarOpen, setSidebarOpenEmail } = useAppContext();
+	const { setSidebarOpen, setSidebarOpenEmail, sidebarOpenDesktop, setSidebarOpenDesktop } = useAppContext();
 	const userNavigation = [
 		{ name: t('common:header:profile'), href: '#' },
 		{ name: t('common:header:signout'), href: '#', onClick: () => logout() }
@@ -44,17 +44,23 @@ export default function Header() {
 						<Bars3Icon className="h-6 w-6" aria-hidden="true" />
 					</button>
 				) : (
-					<button
-						type="button"
-						className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-						onClick={() => setSidebarOpen(true)}
-					>
-						<Bars3Icon className="h-6 w-6" aria-hidden="true" />
-					</button>
+					<><button
+							type="button"
+							className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+							onClick={() => setSidebarOpen(true)}
+						>
+							<Bars3Icon className="h-6 w-6" aria-hidden="true" />
+						</button><button
+							type="button"
+							className="-m-2.5 p-2.5 text-gray-700 max-lg:hidden"
+							onClick={() => sidebarOpenDesktop ? setSidebarOpenDesktop(false) : setSidebarOpenDesktop(true)}
+						>
+								<Bars3Icon className="h-6 w-6" aria-hidden="true" />
+							</button></>
 				)}
 
 				{/* Separator */}
-				<div className="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
+				<div className="h-6 w-px bg-gray-900/10" aria-hidden="true" />
 
 				<div className="flex justify-between flex-1 gap-x-4 lg:gap-x-6">
 					{/*  */}
@@ -123,7 +129,6 @@ export default function Header() {
 								</Menu.Items>
 							</Transition>
 						</Menu>
-
 						{/* Separator */}
 						<div className="hidden lg:block lg:h-10 lg:w-px lg:bg-gray-900/10" aria-hidden="true" />
 

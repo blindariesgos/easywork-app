@@ -11,6 +11,7 @@ export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon()
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpenDesktop, setSidebarOpenDesktop] = useState(true);
   const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);
@@ -52,6 +53,8 @@ export default function AppContextProvider({ children }) {
     () => ({
       sidebarOpen,
       setSidebarOpen,
+      sidebarOpenDesktop,
+      setSidebarOpenDesktop,
       sidebarOpenEmail,
       setSidebarOpenEmail,
       calendarView,
@@ -70,7 +73,9 @@ export default function AppContextProvider({ children }) {
       driveView,
       openModal,
       sidebarOpenEmail,
-      lists
+      lists,
+      sidebarOpenDesktop,
+      setSidebarOpenDesktop
     ]
   );
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../../components/header/Header";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -18,6 +18,11 @@ export default function Page() {
     )
       toast.success("Datos guardados");
   }, []);
+  let texto =
+    "Nathaly Gomez M . Se ha vencido la tarea Seguimiento oportunidad “Naty Polin P-1” “Naty Polin P-2” “Naty Polin P-3” “Naty Polin P-4”";
+  let textoRecortado = texto.substring(0, 81);
+
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <div
       className="bg-center bg-cover rounded-2xl px-2"
@@ -126,9 +131,7 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div
-            className="col-span-2 row-start-2 bg-white rounded-lg p-2"
-          >
+          <div className="col-span-2 row-start-2 bg-white rounded-lg p-2 h-72">
             <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
             <ul className="h-5/6 p-1 overflow-y-auto">
               <li className="flex items-center mb-3">
@@ -171,9 +174,12 @@ export default function Page() {
                   alt=""
                 />
                 <div className="ml-2">
-                  <h3 className="text-sm">
-                    Nathaly Gomez M . Se ha vencido la tarea Seguimiento
-                    oportunidad “Naty Polin P-1”
+                  <h3
+                    className="text-sm"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    {isHovered ? texto : textoRecortado}
                   </h3>
                   <p className="text-xs text-slate-500">hace 1 semana</p>
                 </div>
@@ -196,9 +202,7 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div
-            className="col-span-2 col-start-3 row-start-2 bg-white rounded-lg p-2"
-          >
+          <div className="col-span-2 col-start-3 row-start-2 bg-white rounded-lg p-2">
             <h1 className="h-1/6 font-medium">
               Contactos que requieren atención
             </h1>
@@ -214,7 +218,6 @@ export default function Page() {
                 <div className="ml-3">
                   <h3 className="text-sm">Nathaly Polin</h3>
                   <p className="text-xs text-slate-500">
-                    naty@gmail.com <br />
                     +5263524120
                   </p>
                 </div>
@@ -230,7 +233,6 @@ export default function Page() {
                 <div className="ml-3">
                   <h3 className="text-sm">Ezequiel Trodler</h3>
                   <p className="text-xs text-slate-500">
-                    Ezequiel@happpy.com <br />
                     +525566742902
                   </p>
                 </div>

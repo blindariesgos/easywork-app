@@ -99,35 +99,22 @@ export default function Sidebar() {
           </div>
         </Dialog>
       </Transition.Root>
-      <Transition.Root show={sidebarOpenDesktop} as={Fragment}>
-        <Transition.Child
-          as={Fragment}
-          enter="transition ease-in-out duration-300 transform"
-          enterFrom="-translate-x-full"
-          enterTo="translate-x-0"
-          leave="transition ease-in-out duration-300 transform"
-          leaveFrom="translate-x-0"
-          leaveTo="-translate-x-full"
-        >
-          <div className="hidden lg:z-50 lg:flex lg:w-96 lg:flex-col h-screen">
-            {/* Sidebar component, swap this element with another sidebar if you like */}
-            <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-6 pb-4 rounded-tr-[50px] rounded-br-[50px]">
-              <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
-                <Link href="/home">
-                  <Image
-                    width={72}
-                    height={72}
-                    className="h-16 w-auto"
-                    src="/img/Layer_2.svg"
-                    alt="EasyWork"
-                  />
-                </Link>
-              </div>
-              <SidebarMenu />
-            </div>
+      <div className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop ? 'lg:w-96' : 'lg:w-24'}`}>
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-6 pb-4 rounded-tr-[50px] rounded-br-[50px]">
+          <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
+            <Link href="/home">
+              <Image
+                width={72}
+                height={72}
+                className="h-16 w-auto"
+                src="/img/Layer_2.svg"
+                alt="EasyWork"
+              />
+            </Link>
           </div>
-        </Transition.Child>
-      </Transition.Root>
+          <SidebarMenu />
+        </div>
+      </div>
     </>
   );
 }

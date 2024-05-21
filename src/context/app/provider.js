@@ -12,6 +12,8 @@ export default function AppContextProvider({ children }) {
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenDesktop, setSidebarOpenDesktop] = useState(true);
+  const [openModalFolders, setOpenModalFolders] = useState(false);
+  const [userGoogle, setUserGoogle] = useState({access_token: "", userId: ""});
   const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);
@@ -64,8 +66,11 @@ export default function AppContextProvider({ children }) {
       openModal,
       setOpenModal,
       setLists,
-      lists
-
+      lists,
+      setOpenModalFolders,
+      openModalFolders,
+      setUserGoogle,
+      userGoogle
     }),
     [
       sidebarOpen,
@@ -75,7 +80,8 @@ export default function AppContextProvider({ children }) {
       sidebarOpenEmail,
       lists,
       sidebarOpenDesktop,
-      setSidebarOpenDesktop
+      openModalFolders,
+      userGoogle
     ]
   );
 

@@ -221,3 +221,9 @@ export const googleCallback = async (data, state) => {
   });
   return response;
 }
+
+export const getTokenGoogle = async (id) => {
+  const response = await axios().get(`/oauth/${id}`);
+  return response;
+}
+

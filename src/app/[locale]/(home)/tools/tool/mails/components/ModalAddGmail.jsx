@@ -4,24 +4,63 @@ import axios from "axios";
 import { Dropdown, Ripple, initTWE } from "tw-elements";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { getTokenGoogle } from "../../../../../../../lib/apis";
+import useAppContext from "../../../../../../../context/app/index";
+import { setCookie } from 'cookies-next'
 
 export default function ModalAddGmail({ children, state }) {
   const session = useSession();
-
+  const {
+    setOpenModalFolders,
+    openModalFolders,
+    userGoogle,
+    setUserGoogle
+  } = useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
+  const [user, setUser] = useState(null);
 
   initTWE({ Dropdown, Ripple });
   async function openWindowOauth() {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.user.id}`
     );
-    window.open(response.data.url, "_blank", "width=500, height=500");
-    console.log(response.data.url);
+    const oauthWindow = window.open(
+      response.data.url,
+      "_blank",
+      "width=500, height=500"
+    );
+
+    const checkWindowClosed = setInterval(async function () {
+      if (oauthWindow.closed) {
+        clearInterval(checkWindowClosed);
+        console.log("La ventana se ha cerrado");
+        getTokenGoogle(session.data.user.user.id).then((res) => {
+          setCookie('tokenGoogle', res.access_token)
+          const config = {
+            headers: { Authorization: `Bearer ${res.access_token}` },
+          };
+          axios
+            .get(
+              "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
+              config
+            )
+            .then((userInfo) => {
+              setUserGoogle(userInfo.data, ...res.access_token)
+              console.log(userGoogle)
+              setUser(userInfo.data);
+            });
+        });
+      }
+    }, 1000);
+
+    console.log(response);
   }
 
+  let estatus = !openModalFolders && state
+
   return (
-    <SliderOverShort openModal={state}>
+    <SliderOverShort openModal={estatus}>
       {children}
       <div className="bg-gray-100 rounded-l-2xl max-md:w-screen w-96 overflow-y-auto h-screen">
         <div className="m-3 font-medium text-lg">
@@ -37,12 +76,25 @@ export default function ModalAddGmail({ children, state }) {
                 height={27}
               />
               <h1 className="text-gray-400 font-medium text-lg ml-1">Gmail</h1>
-              <button
-                className="bg-cyan-400 text-white py-2 px-4 rounded-sm text-xs ml-2"
-                onClick={() => openWindowOauth()}
-              >
-                AUTENTICACIÓN
-              </button>
+              {user ? (
+                <div className="flex ml-2 items-center">
+                  <Image
+                    src={user.picture}
+                    alt=""
+                    width={27}
+                    height={27}
+                    className="rounded-xl"
+                  />
+                  <p className="ml-2">{user.email}</p>
+                </div>
+              ) : (
+                <button
+                  className="bg-cyan-400 text-white py-2 px-4 rounded-sm text-xs ml-2"
+                  onClick={() => openWindowOauth()}
+                >
+                  AUTENTICACIÓN
+                </button>
+              )}
             </div>
             <div className="flex mt-4">
               <input type="checkbox" />
@@ -170,7 +222,7 @@ export default function ModalAddGmail({ children, state }) {
               <button
                 type="button"
                 className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
-                // onClick={() => saveIMAP()}
+                onClick={() => setOpenModalFolders(true)}
               >
                 Conecta
               </button>

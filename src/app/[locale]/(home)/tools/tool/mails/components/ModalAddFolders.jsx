@@ -1,10 +1,37 @@
-import Tag from "@/components/Tag";
-import SliderOverShort from "@/components/SliderOverShort";
+import SliderOverShort from "../../../../../../../components/SliderOverShort";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import useAppContext from "../../../../../../../context/app/index";
+import { getCookie } from 'cookies-next'
 
-export default function ModalAddFolders() {
+export default function ModalAddFolders({ children, state }) {
+  const {
+    setOpenModalFolders,
+    openModalFolders,
+    userGoogle,
+    setUserGoogle
+  } = useAppContext();
+  const [folderData, setFolderData] = useState([]);
+  const [foldersLabel, setFoldersLabel] = useState(null);
+  useEffect(() => {
+    console.log(getCookie('tokenGoogle'))
+    const config = {
+      headers: { Authorization: `Bearer ${getCookie('tokenGoogle')}` },
+    };
+    axios
+      .get(
+        `https://www.googleapis.com/gmail/v1/users/${userGoogle.id}/labels`,
+        config
+      )
+      .then((labels) => {
+        setFolderData(labels.data.labels);
+        console.log(labels.data.labels)
+      });
+  }, []);
+
   return (
-    <SliderOverShort openModal={false}>
-      <Tag onclick={() => setModalC(false)} className="bg-green-500" />
+    <SliderOverShort openModal={openModalFolders}>
+      {children}
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 font-medium text-lg">
           <h1>Configurar Folders</h1>
@@ -34,7 +61,7 @@ export default function ModalAddFolders() {
                         setFolderData(newFolderData);
                       }}
                     />
-                    <p className="ml-1">{data.folder}</p>
+                    <p className="ml-1">{data.name}</p>
                   </div>
                 ))}
               </div>

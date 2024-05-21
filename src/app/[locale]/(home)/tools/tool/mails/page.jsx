@@ -12,7 +12,9 @@ import {
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
 import ModalAddGmail from "./components/ModalAddGmail";
+import ModalAddFolders from "./components/ModalAddFolders"
 import Tag from "../../../../../../components/Tag";
+import useAppContext from "../../../../../../context/app/index";
 
 export default function IngresarEmail() {
   const session = useSession();
@@ -20,6 +22,10 @@ export default function IngresarEmail() {
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
   const [gmailState, setGmailState] = useState(false);
+  const {
+    setOpenModalFolders,
+    openModalFolders,
+  } = useAppContext();
 
   const [ImapData, setImapData] = useState({
     host: null,
@@ -31,7 +37,7 @@ export default function IngresarEmail() {
     mailName: null,
     userId: session.data.user.user.id,
   });
-  const [folderData, setFolderData] = useState([]);
+
   const [folderId, setFolderId] = useState(null);
 
   async function saveIMAP() {
@@ -179,6 +185,12 @@ export default function IngresarEmail() {
       <ModalAddGmail state={gmailState}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
       </ModalAddGmail>
+      { openModalFolders &&
+      <ModalAddFolders state={true}>
+      <Tag onclick={() => setOpenModalFolders(false)} className="bg-green-500" />
+    </ModalAddFolders>
+      }
+
     </div>
   );
 }

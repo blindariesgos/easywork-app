@@ -5,11 +5,43 @@ import { DialogSuccess } from "./DialogSuccess";
 import { useState } from "react";
 import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { useDataContext } from "../context";
+import { toast } from 'react-toastify';
+
 export default function ChangePassword() {
   const { contextData, setContextData } = useDataContext();
+  const [newPassword, setNewPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+
+  function validatePassword(password) {
+    if (password.length < 7) {
+      return "La contraseña debe tener al menos 7 caracteres";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "La contraseña debe contener al menos una letra mayúscula";
+    }
+    if (!/[!@#$%^&*]/.test(password)) {
+      return "La contraseña debe contener al menos un caracter especial (!@#$%^&*)";
+    }
+    return "";
+  }
+
   function sendData() {
-    setContextData(0);
+    const newPasswordError = validatePassword(newPassword);
+    const repeatPasswordError = validatePassword(repeatPassword);
+    if (newPasswordError) {
+      toast.error(newPasswordError);
+      return;
+    }
+    if (repeatPasswordError) {
+      toast.error(repeatPasswordError);
+      return;
+    }
+    if (newPassword !== repeatPassword) {
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
+    setIsOpen(true);
     // getDataPassword(email)
     // .then(data => {
     //   console.log(data);
@@ -47,6 +79,7 @@ export default function ChangePassword() {
             className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
             placeholder="Contraseña nueva"
             autoComplete="off"
+            onChange={(e) => setNewPassword(e.target.value)}
           />
         </div>
         {/* E-mail */}
@@ -66,6 +99,7 @@ export default function ChangePassword() {
             className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
             placeholder="Repetir contraseña"
             autoComplete="off"
+            onChange={(e) => setRepeatPassword(e.target.value)}
           />
         </div>
         {/* info */}
@@ -77,7 +111,17 @@ export default function ChangePassword() {
             junto con un código para reestablecer su contraseña.
           </p>
         </div>
-        <DialogSuccess />
+        <DialogSuccess isOpen={isOpen}>
+          <div>
+            <button
+              onClick={() => sendData()}
+              style={{ backgroundColor: "#262261" }}
+              className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
+            >
+              Restablecer mi contraseña
+            </button>
+          </div>
+        </DialogSuccess>
       </div>
     );
   }

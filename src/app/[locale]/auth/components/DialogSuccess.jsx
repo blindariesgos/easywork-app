@@ -3,20 +3,11 @@ import React, { useState } from "react";
 import { useDataContext } from "../context";
 import { CheckIcon } from "@heroicons/react/20/solid";
 
-export function DialogSuccess() {
+export function DialogSuccess({children, isOpen}) {
   const { contextData, setContextData } = useDataContext();
-  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <div>
-        <button
-          onClick={() => setIsOpen(true)}
-          style={{ backgroundColor: "#262261" }}
-          className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-        >
-          Restablecer mi contraseña
-        </button>
-      </div>
+      {children}
       <Dialog open={isOpen} onClose={(val) => setIsOpen(val)} static={true}>
         <DialogPanel className="w-80 bg-gray-100">
           <div className="flex items-center justify-center">

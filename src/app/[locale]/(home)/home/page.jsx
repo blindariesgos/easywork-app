@@ -28,9 +28,9 @@ export default function Page() {
       className="bg-center bg-cover rounded-2xl px-2"
       style={{ backgroundImage: "url('/img/fondo-home.png')" }}
     >
-      <div className="w-full py-5">
+      <div className="w-full py-5 h-full">
         <Header />
-        <div className="grid grid-cols-4 grid-rows-2 gap-x-4 gap-y-0">
+        <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-x-4 gap-y-0">
           <div className="h-64 bg-white rounded-lg p-2">
             <h1 className="h-1/4 font-medium">Actividades vencidas</h1>
             <div className="h-2/4 flex justify-center">
@@ -42,7 +42,7 @@ export default function Page() {
               </h1>
             </div>
           </div>
-          <div className="h-64 bg-white rounded-lg p-2">
+          <div className="h-64 bg-white rounded-lg p-2 md:col-start-2">
             <h1 className="h-1/4 font-medium">Actividades de hoy</h1>
             <div className="h-2/4 flex justify-center">
               <CalendarIcon className="h-16 w-16 text-slate-400" />
@@ -51,7 +51,7 @@ export default function Page() {
               <h1 className="text-sm">No tienes actividades para hoy</h1>
             </div>
           </div>
-          <div className="h-64 bg-white rounded-lg p-2">
+          <div className="h-64 bg-white rounded-lg p-2 md:col-start-3">
             <h1 className="h-1/6 font-medium">Actividades próximas</h1>
             <ul className="h-3/6 p-1">
               <li className="flex items-center mb-3">
@@ -79,7 +79,7 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div className="h-64 bg-white rounded-lg p-2">
+          <div className="h-64 bg-white rounded-lg p-2 md:col-start-4">
             <h1 className="h-1/6 font-medium">
               Pólizas que requieren atención
             </h1>
@@ -131,7 +131,7 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div className="col-span-2 row-start-2 bg-white rounded-lg p-2 h-72">
+          <div className="col-span-1 md:col-span-2 md:row-start-2 bg-white rounded-lg p-2 h-72">
             <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
             <ul className="h-5/6 p-1 overflow-y-auto">
               <li className="flex items-center mb-3">
@@ -202,7 +202,7 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div className="col-span-2 col-start-3 row-start-2 bg-white rounded-lg p-2">
+          <div className="col-span-1 md:col-span-2 md:col-start-3 md:row-start-2 bg-white rounded-lg p-2 h-72">
             <h1 className="h-1/6 font-medium">
               Contactos que requieren atención
             </h1>

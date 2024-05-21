@@ -19,12 +19,21 @@ export default function Login() {
 		setCookie('rememberSession', false)
 	}, []);
 
+	function validateEmail(email) {
+		var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return re.test(String(email.trim()).toLowerCase());
+	}
+
 	const sendData = async () => {
+		if (!validateEmail(email)) {
+			toast.error("El formato del correo electrónico no es válido");
+			return;
+		}
 		try {
 			setIsLoading(true);
 			await login({ email: email.trim(), password, redirectTo: `/home?rememberSession=${getCookie('rememberSession')}`});
 		} catch (error) {
-            toast.error("Credential didn't match");
+			toast.error("Las credenciales no coinciden");
 			setIsLoading(false);
 		}
 	};

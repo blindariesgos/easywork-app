@@ -43,7 +43,7 @@ export default function DontRememberDetails() {
             </button>
             <button
               onClick={() => setMode("cellphone")}
-              className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md"
+              className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md ml-3"
             >
               Usar teléfono
             </button>

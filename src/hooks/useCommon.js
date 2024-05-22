@@ -3,6 +3,7 @@ import {
   ChevronRightIcon,
   DocumentTextIcon,
   XMarkIcon,
+  ArrowDownCircleIcon
 } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -22,27 +23,32 @@ export const useSidebar = () => {
       name: t("common:menu:tools:name"),
       href: "/tools",
       icon: ChevronRightIcon,
+      iconShortBar: ArrowDownCircleIcon,
       current: true,
       children: [
         {
           name: t("common:menu:tools:drive"),
           href: "/tools/tool/drive",
           image: "/img/herramientas/drive.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:tools:tasks"),
           href: "/tools/tool/tasks?page=1",
           image: "/img/herramientas/tareas.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:tools:email"),
           href: "/tools/tool//mails",
           image: "/img/herramientas/correo.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:tools:calendar"),
           href: "/tools/tool//calendar",
           image: "/img/herramientas/calendario.png",
+          iconShortBar: ArrowDownCircleIcon
         },
       ],
     },
@@ -51,21 +57,25 @@ export const useSidebar = () => {
       icon: ChevronRightIcon,
       current: false,
       href: "/sales",
+      iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:sales:crm:name"),
           href: "/sales/crm",
           image: "/img/ventas/crm.png",
+          iconShortBar: ArrowDownCircleIcon,
           children: [
             {
               name: t("common:menu:sales:crm:contacts"),
               href: "/sales/crm/contacts?page=1",
               image: "/img/crm/contacto.png",
+              iconShortBar: ArrowDownCircleIcon
             },
             {
               name: t("common:menu:sales:crm:prospects"),
               href: "/sales/crm/leads?page=1",
               image: "/img/crm/prospecto.png",
+              iconShortBar: ArrowDownCircleIcon
             },
           ],
         },
@@ -73,26 +83,32 @@ export const useSidebar = () => {
           name: t("common:menu:sales:reports:name"),
           href: "/sales/report",
           image: "/img/ventas/reportes.png",
+          iconShortBar: ArrowDownCircleIcon,
           children: [
             {
               name: t("common:menu:sales:reports:activities"),
               href: "/sales/report/activities",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:reports:history"),
               href: "/sales/report/history",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:reports:reports"),
               href: "/sales/report/reports",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:reports:agent"),
               href: "#",
+              iconShortBar: ArrowDownCircleIcon,
               children: [
                 {
                   name: "Embudo de ventas sin conversión",
                   href: "/sales/report/agentperformance/noconv",
+                  iconShortBar: ArrowDownCircleIcon
                 },
               ],
             },
@@ -102,11 +118,13 @@ export const useSidebar = () => {
           name: t("common:menu:sales:marketing:name"),
           href: "#",
           image: "/img/ventas/marketing.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:sales:control:name"),
           href: "#",
           image: "/img/ventas/cobranza.png",
+          iconShortBar: ArrowDownCircleIcon
         },
       ],
     },
@@ -115,36 +133,43 @@ export const useSidebar = () => {
       icon: ChevronRightIcon,
       current: false,
       href: "/services",
+      iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:services:automations"),
           href: "#",
           image: "/img/services/automatizaciones.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:services:funnels"),
           href: "#",
           image: "/img/services/embudos.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:services:soport"),
           href: "#",
           image: "/img/services/soporte.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:services:trash"),
           href: "#",
           image: "/img/services/papelera.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:services:logs"),
           href: "#",
           image: "/img/services/logs.png",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:services:academy"),
           href: "#",
           image: "/img/services/academia.png",
+          iconShortBar: ArrowDownCircleIcon
         },
       ],
     },
@@ -153,26 +178,32 @@ export const useSidebar = () => {
       href: "/",
       icon: ChevronRightIcon,
       current: false,
+      iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:agent-management:recruitement"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:agent-management:capacitations"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:agent-management:conections"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:agent-management:development-agents"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:agent-management:learning"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
       ],
     },
@@ -181,38 +212,47 @@ export const useSidebar = () => {
       href: "/",
       icon: ChevronRightIcon,
       current: false,
+      iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:companies:gnp"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:axxa"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:banorte"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:atlas"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:zurich"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:qualitas"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:afirme"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:companies:others"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
       ],
     },
@@ -221,18 +261,22 @@ export const useSidebar = () => {
       href: "/",
       icon: ChevronRightIcon,
       current: false,
+      iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:settings:permissions"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:settings:password"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
         {
           name: t("common:menu:settings:others"),
           href: "#",
+          iconShortBar: ArrowDownCircleIcon
         },
       ],
     },

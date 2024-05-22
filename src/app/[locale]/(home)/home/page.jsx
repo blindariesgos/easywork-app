@@ -5,6 +5,7 @@ import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { getCookie } from "cookies-next";
+import HelpChat from "../../../../components/HelpChat";
 
 export default function Page() {
   useEffect(() => {
@@ -241,6 +242,7 @@ export default function Page() {
           </div>
         </div>
       </div>
+      <HelpChat />
     </div>
   );
 }

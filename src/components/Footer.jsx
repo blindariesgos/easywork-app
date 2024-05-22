@@ -3,7 +3,7 @@
 export default function Footer() {
 
 	return (
-		<div>
+		<div className="mt-2">
             <ul className="flex w-96 justify-between ml-6 max-md:hidden">
                 <li className="cursor-pointer">© 2024 Easywork</li>
                 <span>|</span>

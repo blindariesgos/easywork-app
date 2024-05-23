@@ -86,7 +86,7 @@ const HelpChat = () => {
       <div
         className="size-16 rounded-full bg-blue-400 flex justify-center items-center mt-1 cursor-pointer"
         onClick={() => {
-          setOpen(true);
+          setOpen(!open);
         }}
       >
         <Image src="/icons/chatHelp.svg" alt="" width={40} height={40} />

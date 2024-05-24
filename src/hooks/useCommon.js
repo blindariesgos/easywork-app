@@ -124,7 +124,7 @@ export const useSidebar = () => {
             },
             {
               name: t("common:menu:sales:reports:agent"),
-              href: "/",
+              href: "/sd",
               iconShortBar: ArrowDownCircleIcon,
               children: [
                 {
@@ -138,13 +138,13 @@ export const useSidebar = () => {
         },
         {
           name: t("common:menu:sales:marketing:name"),
-          href: "/",
+          href: "/sd",
           image: "/img/ventas/marketing.png",
           iconShortBar: MegaphoneIcon,
         },
         {
           name: t("common:menu:sales:control:name"),
-          href: "/",
+          href: "/sd",
           image: "/img/ventas/cobranza.png",
           iconShortBar: WalletIcon,
         },
@@ -159,37 +159,37 @@ export const useSidebar = () => {
       children: [
         {
           name: t("common:menu:services:automations"),
-          href: "/",
+          href: "/sd",
           image: "/img/services/automatizaciones.png",
           iconShortBar: GlobeAltIcon,
         },
         {
           name: t("common:menu:services:funnels"),
-          href: "/",
+          href: "/sd",
           image: "/img/services/embudos.png",
           iconShortBar: FunnelIcon,
         },
         {
           name: t("common:menu:services:soport"),
-          href: "/",
+          href: "/sd",
           image: "/img/services/soporte.png",
           iconShortBar: ChatBubbleOvalLeftEllipsisIcon,
         },
         {
           name: t("common:menu:services:trash"),
-          href: "/",
+          href: "/sd",
           image: "/img/services/papelera.png",
           iconShortBar: TrashIcon,
         },
         {
           name: t("common:menu:services:logs"),
-          href: "/",
+          href: "/sd",
           image: "/img/services/logs.png",
           iconShortBar: ShieldCheckIcon,
         },
         {
           name: t("common:menu:services:academy"),
-          href: "/",
+          href: "/sd",
           image: "/img/services/academia.png",
           iconShortBar: AcademicCapIcon,
         },
@@ -204,27 +204,27 @@ export const useSidebar = () => {
       children: [
         {
           name: t("common:menu:agent-management:recruitement"),
-          href: "/",
+          href: "/sd",
           iconShortBar: UserPlusIcon,
         },
         {
           name: t("common:menu:agent-management:capacitations"),
-          href: "/",
+          href: "/sd",
           iconShortBar: NewspaperIcon,
         },
         {
           name: t("common:menu:agent-management:conections"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowPathIcon,
         },
         {
           name: t("common:menu:agent-management:development-agents"),
-          href: "/",
+          href: "/sd",
           iconShortBar: SparklesIcon,
         },
         {
           name: t("common:menu:agent-management:learning"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
       ],
@@ -238,42 +238,42 @@ export const useSidebar = () => {
       children: [
         {
           name: t("common:menu:companies:gnp"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:axxa"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:banorte"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:atlas"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:zurich"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:qualitas"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:afirme"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:others"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
       ],
@@ -287,17 +287,17 @@ export const useSidebar = () => {
       children: [
         {
           name: t("common:menu:settings:permissions"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:settings:password"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:settings:others"),
-          href: "/",
+          href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
       ],

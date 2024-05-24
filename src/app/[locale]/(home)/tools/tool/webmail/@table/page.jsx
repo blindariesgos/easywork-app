@@ -3,10 +3,17 @@ import clsx from "clsx";
 import Image from "next/image";
 import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ExclamationCircleIcon, TrashIcon, FolderArrowDownIcon, EnvelopeOpenIcon } from '@heroicons/react/24/outline';
+import {
+  ExclamationCircleIcon,
+  TrashIcon,
+  FolderArrowDownIcon,
+  EnvelopeOpenIcon,
+} from "@heroicons/react/24/outline";
 import { getApiError } from "../../../../../../../utils/getApiErrors";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { getTokenGoogle } from "../../../../../../../lib/apis";
+import useAppContext from "../../../../../../../context/app/index";
 
 export default function Page() {
   const { t } = useTranslation();
@@ -16,20 +23,34 @@ export default function Page() {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [tasks, setTasks] = useState(null);
   const session = useSession();
-
+  const { userGoogle } = useAppContext();
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/${session.data.user.user.id}/inbox`,
-    {
-      headers: {
-        'Authorization': `Bearer ${session.data.user.accessToken}`
-      }
-    })
-    .then((response) => {
-      setTasks(response.data);
-      console.log(tasks)
-    })
-    .catch((error) => {getApiError(error.message, errorsDuplicated);})
-  }, [session, tasks]);
+    getTokenGoogle(session.data.user.user.id).then((res) => {
+      const config = {
+        headers: { Authorization: `Bearer ${res.access_token}` },
+      };
+      axios
+        .get(
+          `https://www.googleapis.com/gmail/v1/users/${userGoogle.id}/messages`,
+          config
+        )
+        .then((response) => {
+          const messages = response.data.messages;
+          let messageHeaders = [];
+          messages.forEach((message) => {
+            axios
+              .get(
+                `https://www.googleapis.com/gmail/v1/users/${userGoogle.id}/messages/${message.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject`,
+                config
+              )
+              .then((messageInfo) => {
+                messageHeaders.push(messageInfo.data);
+                setTasks(messageHeaders);
+              });
+          });
+        });
+    });
+  }, []);
 
   useLayoutEffect(() => {
     if (tasks) {
@@ -72,68 +93,69 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-                <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
-                  <EnvelopeOpenIcon className="h-5 w-5" />
-                  <p className="ml-2">Leer</p>
-                </div>
-                <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
-                  <FolderArrowDownIcon className="h-5 w-5" />
-                  <p className="ml-2">Mover a carpeta</p>
-                </div>
-                <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
-                  <ExclamationCircleIcon className="h-5 w-5" />
-                  <p className="ml-2">Marcar como correo no deseado</p>
-                </div>
-                <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
-                  <TrashIcon className="h-5 w-5" />
-                  <p className="ml-2">Eliminar</p>
-                </div>
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+                <EnvelopeOpenIcon className="h-5 w-5" />
+                <p className="ml-2">Leer</p>
+              </div>
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+                <FolderArrowDownIcon className="h-5 w-5" />
+                <p className="ml-2">Mover a carpeta</p>
+              </div>
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+                <ExclamationCircleIcon className="h-5 w-5" />
+                <p className="ml-2">Marcar como correo no deseado</p>
+              </div>
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+                <TrashIcon className="h-5 w-5" />
+                <p className="ml-2">Eliminar</p>
+              </div>
             </div>
             <table className="min-w-full divide-y divide-gray-300">
               <tbody className="divide-y divide-gray-200 bg-white">
-                {tasks && tasks.map((task) => (
-                  <tr
-                    key={task.id}
-                    className={clsx(
-                      selectedTasks.includes(task) ? "bg-gray-50" : undefined,
-                      "hover:bg-indigo-100/40 cursor-default"
-                    )}
-                  >
-                    <td className="relative px-7 sm:w-12 sm:px-6">
-                      {selectedTasks.includes(task) && (
-                        <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                      )}
-                      <input
-                        type="checkbox"
-                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        value={task.id}
-                        checked={selectedTasks.includes(task)}
-                        onChange={(e) =>
-                          setSelectedTasks(
-                            e.target.checked
-                              ? [...selectedTasks, task]
-                              : selectedTasks.filter((p) => p !== task)
-                          )
-                        }
-                      />
-                    </td>
-                    <td
+                {tasks &&
+                  tasks.map((task) => (
+                    <tr
+                      key={task.id}
                       className={clsx(
-                        "whitespace-nowrap py-4 pr-3 text-sm font-medium",
-                        selectedTasks.includes(task)
-                          ? "text-indigo-600"
-                          : "text-gray-900"
+                        selectedTasks.includes(task) ? "bg-gray-50" : undefined,
+                        "hover:bg-indigo-100/40 cursor-default"
                       )}
                     >
-                      {task.headers.subject}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 bg-indigo-100/30">
-                      {task.headers.date}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="relative px-7 sm:w-12 sm:px-6">
+                        {selectedTasks.includes(task) && (
+                          <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
+                        )}
+                        <input
+                          type="checkbox"
+                          className="..."
+                          value={task.id}
+                          checked={selectedTasks.includes(task)}
+                          onChange={(e) =>
+                            setSelectedTasks(
+                              e.target.checked
+                                ? [...selectedTasks, task]
+                                : selectedTasks.filter((p) => p !== task)
+                            )
+                          }
+                        />
+                      </td>
+                      <td
+                        className={clsx(
+                          "whitespace-nowrap py-4 pr-3 text-sm font-medium",
+                          selectedTasks.includes(task)
+                            ? "text-indigo-600"
+                            : "text-gray-900"
+                        )}
+                      >
+                        <td>{task.snippet}</td>
+                      </td>
+                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 bg-indigo-100/30">
+                    {task.payload.headers[0]}
+                    </td> */}
+                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {task.headers.from}
-                    </td>
-                    {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    </td> */}
+                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {task.policy}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -177,8 +199,8 @@ export default function Page() {
                         </div>
                       </div>
                     </td> */}
-                  </tr>
-                ))}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

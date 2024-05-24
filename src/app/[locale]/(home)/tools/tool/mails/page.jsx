@@ -38,7 +38,6 @@ export default function IngresarEmail() {
     userId: session.data.user.user.id,
   });
 
-  const [folderId, setFolderId] = useState(null);
 
   async function saveIMAP() {
     try {
@@ -76,25 +75,6 @@ export default function IngresarEmail() {
     }
   }
 
-  async function saveFoldersData() {
-    const folders = [];
-    folderData.forEach((element) => {
-      if (element.state) {
-        folders.push({
-          imapFolderId: folderId.imapConfigId,
-          mailboxName: element.folder,
-        });
-      }
-    });
-    try {
-      const response = await saveFolders(folders);
-      if (response) {
-        router.push("/tools/tool/webmail");
-      }
-    } catch (error) {
-      getApiError(error.message, errorsDuplicated);
-    }
-  }
 
   async function toKnowEmail() {
     try {
@@ -154,7 +134,7 @@ export default function IngresarEmail() {
         <h1 className="ml-3 py-3 font-medium text-xl">Integración del buzón</h1>
       </div>
       <div className="w-full bg-white rounded-xl drop-shadow-md text-easywork-main mb-4">
-        <h1 className="ml-3 w-full py-5 text-center font-medium text-xl">
+        <h1 className="ml-3 w-full py-5 text-center font-medium text-xl" onClick={() => {router.push("/tools/tool/webmail");}}>
           Use y gestione su buzón
         </h1>
       </div>

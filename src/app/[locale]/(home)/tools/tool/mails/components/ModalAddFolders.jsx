@@ -1,18 +1,22 @@
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import useAppContext from "../../../../../../../context/app/index";
 import { getCookie } from 'cookies-next'
+import { useRouter } from 'next/navigation';
+import {
+  saveFolders,
+} from "../../../../../../../lib/apis";
 
 export default function ModalAddFolders({ children, state }) {
+  const router = useRouter();
+  const session = useSession();
   const {
-    setOpenModalFolders,
     openModalFolders,
     userGoogle,
-    setUserGoogle
   } = useAppContext();
   const [folderData, setFolderData] = useState([]);
-  const [foldersLabel, setFoldersLabel] = useState(null);
   useEffect(() => {
     console.log(getCookie('tokenGoogle'))
     const config = {
@@ -28,6 +32,24 @@ export default function ModalAddFolders({ children, state }) {
         console.log(labels.data.labels)
       });
   }, []);
+
+  async function saveFoldersData() {
+    const folders = [];
+    folderData.forEach((element) => {
+      if (element.state) {
+        folders.push({
+          imapFolderId: element.id,
+          mailboxName: element.name,
+          userId: session.data.user.user.id
+        });
+      }
+    });
+    try {
+      const response = await saveFolders(folders);
+      console.log(response)
+      router.push("/tools/tool/webmail");
+    } catch (error) {}
+  }
 
   return (
     <SliderOverShort openModal={openModalFolders}>

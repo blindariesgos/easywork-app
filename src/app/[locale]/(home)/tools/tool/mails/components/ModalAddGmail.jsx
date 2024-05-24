@@ -36,6 +36,7 @@ export default function ModalAddGmail({ children, state }) {
         clearInterval(checkWindowClosed);
         console.log("La ventana se ha cerrado");
         getTokenGoogle(session.data.user.user.id).then((res) => {
+          console.log(res)
           setCookie('tokenGoogle', res.access_token)
           const config = {
             headers: { Authorization: `Bearer ${res.access_token}` },

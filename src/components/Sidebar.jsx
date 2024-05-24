@@ -99,7 +99,8 @@ export default function Sidebar() {
           </div>
         </Dialog>
       </Transition.Root>
-      <div className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop ? 'lg:w-96' : 'lg:w-24'}`}>
+      <div className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop ? 'lg:w-96' : 'lg:w-24'}`}></div>
+      <div className={`hidden fixed lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop ? 'lg:w-72' : 'lg:w-24'}`}>
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-4 pb-4 rounded-tr-[50px] rounded-br-[50px]">
           <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
             <Link href="/home">

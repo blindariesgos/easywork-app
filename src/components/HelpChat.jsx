@@ -52,13 +52,13 @@ const HelpChat = () => {
             </div>
           </div>
           <div className="px-3 mt-3 w-full">
-            <div className="bg-white flex rounded-lg p-2 justify-between items-center w-full">
+            <div className="bg-white flex rounded-lg p-3 justify-between items-center w-full">
               <p className="text-sm">Envíanos un mensaje</p>
               <ArrowTopRightOnSquareIcon className="h-5 w-5 text-easywork-main" />
             </div>
           </div>
           <div className="px-3 mt-3 w-full">
-            <div className="bg-white flex rounded-lg px-3 py-5 items-center w-full">
+            <div className="bg-white flex rounded-lg p-3 items-center w-full">
               <MagnifyingGlassIcon className="h-5 w-5 text-easywork-main" />
               <p className="text-easywork-main ml-2">Buscar ayuda</p>
             </div>

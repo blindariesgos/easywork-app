@@ -1,14 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/auth",
-        permanent: true,
-      },
-    ];
-  },
   experimental: {
     serverActions: {
       allowedOrigins: ["app.easywork.com.mx", "localhost"],

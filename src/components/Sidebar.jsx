@@ -8,16 +8,6 @@ import Link from "next/link";
 import SidebarMenu from "./SidebarMenu";
 import { useTranslation } from "react-i18next";
 
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function Sidebar() {
   const {
     sidebarOpen,
@@ -99,7 +89,11 @@ export default function Sidebar() {
           </div>
         </Dialog>
       </Transition.Root>
-      <div className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop ? 'lg:w-96' : 'lg:w-24'}`}>
+      <div
+        className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${
+          sidebarOpenDesktop ? "lg:w-96" : "lg:w-24"
+        }`}
+      >
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-4 pb-4 rounded-tr-[50px] rounded-br-[50px]">
           <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
             <Link href="/home">

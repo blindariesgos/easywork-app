@@ -35,7 +35,7 @@ export default function IngresarEmail() {
     password: null,
     senderName: null,
     mailName: null,
-    userId: session.data.user.user.id,
+    userId: session.user.id,
   });
 
 

@@ -1,4 +1,3 @@
-
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
@@ -16,15 +15,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token: {},
       },
       authorize: async (credentials) => {
-        const {
-        email,
-        password,
-      } = credentials;
-        const data  = await getLogin(
-          email,
-          password,
-        );
-        return data;
+        const { email, password, } = credentials;
+        const response = await getLogin(email, password);
+
+        if (response){
+
+          return {
+            ...response?.user,
+            accessToken: response?.accessToken,
+            refreshToken: response?.refreshToken
+          };
+        }
+        return null;
       },
     }),
   ],
@@ -37,16 +39,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // signOut: "/login",
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
-      const decoded = jwtDecode(user ? user?.accessToken : token?.accessToken);
-      const data = {
-        ...decoded,
-        ...token,
-        ...user,
-      }    
-      return data;
+    jwt: async ({ token, user, account }) => {
+     
+        if (account && user){
+        // Usuario inicio sesion por primera vez, configurar tokens inicialmente
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+      }
+      if (user){
+        const decoded = jwtDecode(user.accessToken);
+        token = { ...token, ...decoded, ...user };
+      }
+      return token;
     },
     session({ session, token }) {
+      delete token?.refreshToken;
       return {
         ...session,
         user: {

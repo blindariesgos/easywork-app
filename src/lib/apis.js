@@ -1,14 +1,12 @@
 'use server';
 import axios from './axios';
+import { cookies } from 'next/headers'
 import {
   auth,
   signIn,
   signOut
 } from '../../auth';
-import {
-  revalidatePath,
-  revalidateTag
-} from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
 export const login = async (formdata) => {
   return await signIn("credentials", formdata)
@@ -30,6 +28,10 @@ export const getLogin = async (email, password) => {
     email,
     password
   });
+
+  if (response && response.refreshToken)
+    cookies().set('refreshToken', response.refreshToken, { httpOnly: true, sameSite: 'strict', path: '/' })
+
   return response;
 }
 export const getDataPassword = async (email) => {

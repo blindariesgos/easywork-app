@@ -12,7 +12,7 @@ import {
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
 import ModalAddGmail from "./components/ModalAddGmail";
-import ModalAddFolders from "./components/ModalAddFolders"
+import ModalAddFolders from "./components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
 import useAppContext from "../../../../../../context/app/index";
 
@@ -22,10 +22,7 @@ export default function IngresarEmail() {
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
   const [gmailState, setGmailState] = useState(false);
-  const {
-    setOpenModalFolders,
-    openModalFolders,
-  } = useAppContext();
+  const { setOpenModalFolders, openModalFolders } = useAppContext();
 
   const [ImapData, setImapData] = useState({
     host: null,
@@ -37,7 +34,6 @@ export default function IngresarEmail() {
     mailName: null,
     userId: session.user.id,
   });
-
 
   async function saveIMAP() {
     try {
@@ -54,10 +50,10 @@ export default function IngresarEmail() {
   async function getFolders() {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.user.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.user.id}`,
         {
           headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
+            Authorization: `Bearer ${session.user.accessToken}`,
           },
         }
       );
@@ -75,10 +71,9 @@ export default function IngresarEmail() {
     }
   }
 
-
   async function toKnowEmail() {
     try {
-      const responseImap = await getImapConfig(session.data.user.user.id);
+      const responseImap = await getImapConfig(session.user.id);
       if (responseImap) {
         router.push("/tools/tool/webmail");
       } else {
@@ -134,7 +129,12 @@ export default function IngresarEmail() {
         <h1 className="ml-3 py-3 font-medium text-xl">Integración del buzón</h1>
       </div>
       <div className="w-full bg-white rounded-xl drop-shadow-md text-easywork-main mb-4">
-        <h1 className="ml-3 w-full py-5 text-center font-medium text-xl" onClick={() => {router.push("/tools/tool/webmail");}}>
+        <h1
+          className="ml-3 w-full py-5 text-center font-medium text-xl"
+          onClick={() => {
+            router.push("/tools/tool/webmail");
+          }}
+        >
           Use y gestione su buzón
         </h1>
       </div>
@@ -165,12 +165,14 @@ export default function IngresarEmail() {
       <ModalAddGmail state={gmailState}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
       </ModalAddGmail>
-      { openModalFolders &&
-      <ModalAddFolders state={true}>
-      <Tag onclick={() => setOpenModalFolders(false)} className="bg-green-500" />
-    </ModalAddFolders>
-      }
-
+      {openModalFolders && (
+        <ModalAddFolders state={true}>
+          <Tag
+            onclick={() => setOpenModalFolders(false)}
+            className="bg-green-500"
+          />
+        </ModalAddFolders>
+      )}
     </div>
   );
 }

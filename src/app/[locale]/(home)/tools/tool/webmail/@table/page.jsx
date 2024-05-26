@@ -25,7 +25,7 @@ export default function Page() {
   const session = useSession();
   const { userGoogle } = useAppContext();
   useEffect(() => {
-    getTokenGoogle(session.data.user.user.id).then((res) => {
+    getTokenGoogle(session.user.id).then((res) => {
       const config = {
         headers: { Authorization: `Bearer ${res.access_token}` },
       };

@@ -6,16 +6,12 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
-import { setCookie } from 'cookies-next'
+import { setCookie } from "cookies-next";
 
 export default function ModalAddGmail({ children, state }) {
   const session = useSession();
-  const {
-    setOpenModalFolders,
-    openModalFolders,
-    userGoogle,
-    setUserGoogle
-  } = useAppContext();
+  const { setOpenModalFolders, openModalFolders, userGoogle, setUserGoogle } =
+    useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [user, setUser] = useState(null);
@@ -23,7 +19,7 @@ export default function ModalAddGmail({ children, state }) {
   initTWE({ Dropdown, Ripple });
   async function openWindowOauth() {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.user.id}`
     );
     const oauthWindow = window.open(
       response.data.url,
@@ -35,9 +31,9 @@ export default function ModalAddGmail({ children, state }) {
       if (oauthWindow.closed) {
         clearInterval(checkWindowClosed);
         console.log("La ventana se ha cerrado");
-        getTokenGoogle(session.data.user.user.id).then((res) => {
-          console.log(res)
-          setCookie('tokenGoogle', res.access_token)
+        getTokenGoogle(session.user.id).then((res) => {
+          console.log(res);
+          setCookie("tokenGoogle", res.access_token);
           const config = {
             headers: { Authorization: `Bearer ${res.access_token}` },
           };
@@ -47,8 +43,8 @@ export default function ModalAddGmail({ children, state }) {
               config
             )
             .then((userInfo) => {
-              setUserGoogle(userInfo.data, ...res.access_token)
-              console.log(userGoogle)
+              setUserGoogle(userInfo.data, ...res.access_token);
+              console.log(userGoogle);
               setUser(userInfo.data);
             });
         });
@@ -58,7 +54,7 @@ export default function ModalAddGmail({ children, state }) {
     console.log(response);
   }
 
-  let estatus = !openModalFolders && state
+  let estatus = !openModalFolders && state;
 
   return (
     <SliderOverShort openModal={estatus}>

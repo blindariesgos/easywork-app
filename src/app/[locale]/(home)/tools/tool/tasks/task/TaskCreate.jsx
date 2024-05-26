@@ -133,7 +133,7 @@ export default function TaskCreate({ edit }) {
     if (session)
       setValue(
         "createdBy",
-        lists?.users.filter((user) => user.id === session.user.user?.id)
+        lists?.users.filter((user) => user.id === session.user?.id)
       );
   }, [session, lists?.users, setValue]);
 
@@ -148,7 +148,7 @@ export default function TaskCreate({ edit }) {
       requireSummary: checkedTime,
       responsibleCanChangeDate:
         selectedOptions.filter((sel) => sel.id === 1).length > 0 ? true : false,
-      createdById: session.user.user?.id,
+      createdById: session.user?.id,
     };
     if (data.observers && data.observers.length > 0) {
       const observersIds = data.observers.map((obs) => {

@@ -86,17 +86,26 @@ export default function Header() {
           <div className="flex items-center gap-x-2 lg:gap-x-6">
             {/*             <button
               type="button"
-              className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
+              className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+              onClick={() => setSidebarOpen(true)}
             >
-              <span className="sr-only">View notifications</span>
-              <BellIcon className="h-6 w-6" aria-hidden="true" />
-            </button> */}
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="-m-2.5 p-2.5 text-gray-700 max-lg:hidden"
+              onClick={() => setSidebarOpenDesktop(!sidebarOpenDesktop)}
+            >
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </>
+        )}
 
             {/* Separator */}
             {/* <div
               className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
               aria-hidden="true"
-            /> */}
+            />
 
             {/* Profile dropdown */}
             <Menu

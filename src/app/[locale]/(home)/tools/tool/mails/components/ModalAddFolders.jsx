@@ -3,24 +3,19 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import useAppContext from "../../../../../../../context/app/index";
-import { getCookie } from 'cookies-next'
-import { useRouter } from 'next/navigation';
-import {
-  saveFolders,
-} from "../../../../../../../lib/apis";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+import { saveFolders } from "../../../../../../../lib/apis";
 
 export default function ModalAddFolders({ children, state }) {
   const router = useRouter();
   const session = useSession();
-  const {
-    openModalFolders,
-    userGoogle,
-  } = useAppContext();
+  const { openModalFolders, userGoogle } = useAppContext();
   const [folderData, setFolderData] = useState([]);
   useEffect(() => {
-    console.log(getCookie('tokenGoogle'))
+    console.log(getCookie("tokenGoogle"));
     const config = {
-      headers: { Authorization: `Bearer ${getCookie('tokenGoogle')}` },
+      headers: { Authorization: `Bearer ${getCookie("tokenGoogle")}` },
     };
     axios
       .get(
@@ -29,7 +24,7 @@ export default function ModalAddFolders({ children, state }) {
       )
       .then((labels) => {
         setFolderData(labels.data.labels);
-        console.log(labels.data.labels)
+        console.log(labels.data.labels);
       });
   }, []);
 
@@ -40,13 +35,13 @@ export default function ModalAddFolders({ children, state }) {
         folders.push({
           imapFolderId: element.id,
           mailboxName: element.name,
-          userId: session.data.user.user.id
+          userId: session.user.id,
         });
       }
     });
     try {
       const response = await saveFolders(folders);
-      console.log(response)
+      console.log(response);
       router.push("/tools/tool/webmail");
     } catch (error) {}
   }

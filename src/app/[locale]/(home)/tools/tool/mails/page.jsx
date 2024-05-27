@@ -30,7 +30,7 @@ export default function IngresarEmail() {
     password: null,
     senderName: null,
     mailName: null,
-    userId: session.data.user.user.id,
+    userId: session.data.user.id,
   });
 
   async function saveIMAP() {
@@ -48,7 +48,7 @@ export default function IngresarEmail() {
   async function getFolders() {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.user.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.id}`,
         {
           headers: {
             Authorization: `Bearer ${session.data.user.accessToken}`,
@@ -71,7 +71,7 @@ export default function IngresarEmail() {
 
   async function toKnowEmail() {
     try {
-      const responseImap = await getTokenGoogle(session.data.user.user.id);
+      const responseImap = await getTokenGoogle(session.data.user.id);
       console.log(responseImap);
       if (responseImap) {
         router.push("/tools/tool/webmail");

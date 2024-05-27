@@ -1,47 +1,85 @@
-'use server'
+"use server";
 import axios from "axios";
-import { auth } from "../../auth";
+import { auth, signIn } from "../../auth";
 import { logout } from "./apis";
-import { cookies } from 'next/headers'
+import refreshAuthToken from "./helpers/refresh_auth_token";
+import { cookies } from "next/headers";
 
-const config = axios.defaults;
+const updateSessionToken = async (newAccessToken) => {
+  const session = await auth();
 
-const instance = (contentType = "application/json") => {
+  if (!session) return;
+
+  const updatedSession = {
+    ...session,
+    user: {
+      ...session.user,
+      accessToken: newAccessToken,
+    },
+  };
+
+  await signIn("credentials", {
+    prevSession: JSON.stringify(updatedSession),
+    redirect: false,
+  });
+};
+
+const createAxiosInstance = (contentType = "application/json") => {
   const axiosInstance = axios.create({
     baseURL: process.env.API_HOST,
     headers: {
-      ...config.headers.common,
       "Content-Type": contentType,
     },
   });
 
   axiosInstance.interceptors.request.use(
-    (config) =>
-      auth()
-        .then((res) => {
-          if (res?.user?.accessToken)
-            config.headers.Authorization = "Bearer " + res?.user?.accessToken;
-        })
-        .then(() => config),
-    (error) => {
-      Promise.reject(error)
-    }
+    async (config) => {
+      try {
+        const session = await auth();
+        if (session?.user?.accessToken && !config.headers.Authorization) {
+          config.headers.Authorization = `Bearer ${session.user.accessToken}`;
+        }
+        return config;
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
+    (error) => Promise.reject(error)
   );
 
-  // Data Response Interceptor
   axiosInstance.interceptors.response.use(
-    (response) => {
-      return response.data;
-    },
+    (response) => response.data,
     async (error) => {
-      console.log("error axios", error.response.data)
-      // throw new Error(error)
-      if (error.response.data.statusCode == 401 || error.response.data.statusCode == 403) cookies().delete('authjs.session-token');
-      return Promise.reject(JSON.stringify(error.response.data));
+      const originalRequest = error.config;
+
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        try {
+          const updatedAuthToken = await refreshAuthToken();
+
+          if (!updatedAuthToken) {
+            throw new Error("Failed to refresh auth token");
+          }
+
+          originalRequest.headers.Authorization = `Bearer ${updatedAuthToken}`;
+
+          await updateSessionToken(updatedAuthToken);
+
+          return axiosInstance(originalRequest);
+        } catch (tokenError) {
+          cookies().delete("authjs.session-token");
+          await logout();
+          // Redirige o maneja el error de manera apropiada
+          throw tokenError;
+        }
+      }
+
+      return Promise.reject(error.response?.data || "Unknown Error");
     }
   );
 
   return axiosInstance;
 };
 
-export default instance;
+export default createAxiosInstance;

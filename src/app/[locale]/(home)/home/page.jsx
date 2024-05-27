@@ -7,18 +7,40 @@ import { toast } from "react-toastify";
 import { getCookie } from "cookies-next";
 import HelpChat from "../../../../components/HelpChat";
 
+const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
+
+const TASKS = [
+  { title: "Seguimiento prospecto", dueDate: "10/07/2025" },
+  { title: "Cristian llamada", dueDate: "20/05/2025" },
+  { title: "Enviar correo electrónico a Carlos", dueDate: "14/12/2025" },
+];
+
 export default function Page() {
   useEffect(() => {
-    const fromUrl = new URL(document.referrer);
-    const urlParams = new URLSearchParams(window.location.search);
-    const rememberSessionParam = urlParams.get("rememberSession");
-    if (
-      fromUrl.pathname == "/auth" &&
-      getCookie("rememberSession") == "true" &&
-      rememberSessionParam == "true"
-    )
-      toast.success("Datos guardados");
+    const fromUrl = document.referrer ? new URL(document.referrer) : null; // Validador para document.referrer
+    const urlParams = window.location.search
+      ? new URLSearchParams(window.location.search)
+      : null; // Validador para window.location.search
+
+    // Verificar si los parámetros son válidos antes de continuar
+    if (fromUrl && urlParams) {
+      const rememberSessionParam = urlParams.get("rememberSession");
+      if (
+        fromUrl.pathname === "/auth" &&
+        getCookie("rememberSession") === "true" &&
+        rememberSessionParam === "true"
+      ) {
+        toast.success("Datos guardados");
+      }
+    } else {
+      // Manejar el caso en que los parámetros sean nulos o indefinidos (opcional)
+      console.warn(
+        "No se pudo obtener la URL de referencia o los parámetros de búsqueda."
+      );
+      // Puedes mostrar un mensaje al usuario, registrar el error, etc.
+    }
   }, []);
+
   let texto =
     "Nathaly Gomez M . Se ha vencido la tarea Seguimiento oportunidad “Naty Polin P-1” “Naty Polin P-2” “Naty Polin P-3” “Naty Polin P-4”";
   let textoRecortado = texto.substring(0, 81);
@@ -27,8 +49,9 @@ export default function Page() {
   return (
     <div
       className="bg-center bg-cover rounded-2xl px-2"
-      style={{ backgroundImage: "url('/img/fondo-home.png')" }}
+      style={{ backgroundImage: `url(${BACKGROUND_IMAGE_URL})` }}
     >
+      {/* Flexbox para controlar el footer */}
       <div className="w-full py-5 h-full">
         <Header />
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-x-4 gap-y-0">
@@ -218,9 +241,7 @@ export default function Page() {
                 />
                 <div className="ml-3">
                   <h3 className="text-sm">Nathaly Polin</h3>
-                  <p className="text-xs text-slate-500">
-                    +5263524120
-                  </p>
+                  <p className="text-xs text-slate-500">+5263524120</p>
                 </div>
               </li>
               <li className="flex items-center mb-3">
@@ -233,9 +254,7 @@ export default function Page() {
                 />
                 <div className="ml-3">
                   <h3 className="text-sm">Ezequiel Trodler</h3>
-                  <p className="text-xs text-slate-500">
-                    +525566742902
-                  </p>
+                  <p className="text-xs text-slate-500">+525566742902</p>
                 </div>
               </li>
             </ul>

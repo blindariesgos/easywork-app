@@ -6,24 +6,21 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
-import { setCookie } from 'cookies-next'
+import { setCookie } from "cookies-next";
 
 export default function ModalAddGmail({ children, state }) {
   const session = useSession();
-  const {
-    setOpenModalFolders,
-    openModalFolders,
-    userGoogle,
-    setUserGoogle
-  } = useAppContext();
+  const { setOpenModalFolders, openModalFolders, userGoogle, setUserGoogle } =
+    useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [user, setUser] = useState(null);
 
   initTWE({ Dropdown, Ripple });
   async function openWindowOauth() {
+    console.log(session.data.user.id)
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
     );
     const oauthWindow = window.open(
       response.data.url,
@@ -34,7 +31,7 @@ export default function ModalAddGmail({ children, state }) {
     const checkWindowClosed = setInterval(async function () {
       if (oauthWindow.closed) {
         clearInterval(checkWindowClosed);
-        getTokenGoogle(session.data.user.user.id).then((res) => {
+        getTokenGoogle(session.data.user.id).then((res) => {
           setCookie('tokenGoogle', res.access_token)
           const config = {
             headers: { Authorization: `Bearer ${res.access_token}` },
@@ -55,7 +52,7 @@ export default function ModalAddGmail({ children, state }) {
     console.log(response);
   }
 
-  let estatus = !openModalFolders && state
+  let estatus = !openModalFolders && state;
 
   return (
     <SliderOverShort openModal={estatus}>

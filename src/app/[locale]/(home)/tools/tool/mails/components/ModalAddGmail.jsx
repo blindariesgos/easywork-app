@@ -3,7 +3,7 @@ import Image from "next/image";
 import axios from "axios";
 import { Dropdown, Ripple, initTWE } from "tw-elements";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import { setCookie } from "cookies-next";
@@ -18,7 +18,7 @@ export default function ModalAddGmail({ children, state }) {
 
   initTWE({ Dropdown, Ripple });
   async function openWindowOauth() {
-    console.log(session.data.user.id)
+    console.log(session.data.user.id);
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
     );
@@ -28,28 +28,32 @@ export default function ModalAddGmail({ children, state }) {
       "width=500, height=500"
     );
 
+    useEffect(async () => {
+      try {
+        await getDataGoogleUser();
+      } catch (error) {}
+    }, []);
+
+    async function getDataGoogleUser() {
+      const res = await getTokenGoogle(session.data.user.id);
+      setCookie("tokenGoogle", res.access_token);
+      const config = {
+        headers: { Authorization: `Bearer ${res.access_token}` },
+      };
+      const userInfo = await axios.get(
+        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
+        config
+      );
+      setUserGoogle(userInfo.data, ...res.access_token);
+      setUser(userInfo.data);
+    }
+
     const checkWindowClosed = setInterval(async function () {
       if (oauthWindow.closed) {
         clearInterval(checkWindowClosed);
-        getTokenGoogle(session.data.user.id).then((res) => {
-          setCookie('tokenGoogle', res.access_token)
-          const config = {
-            headers: { Authorization: `Bearer ${res.access_token}` },
-          };
-          axios
-            .get(
-              "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
-              config
-            )
-            .then((userInfo) => {
-              setUserGoogle(userInfo.data, ...res.access_token)
-              setUser(userInfo.data);
-            });
-        });
+        getDataGoogleUser();
       }
     }, 1000);
-
-    console.log(response);
   }
 
   let estatus = !openModalFolders && state;

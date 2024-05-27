@@ -35,7 +35,7 @@ export default function ModalAddFolders({ children, state }) {
         folders.push({
           imapFolderId: element.id,
           mailboxName: element.name,
-          userId: session.user.id,
+          userId: session.data.user.id,
         });
       }
     });

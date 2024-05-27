@@ -50,7 +50,7 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
-    getTokenGoogle(session.data.user.user.id).then((res) => {
+    getTokenGoogle(session.data.user.id).then((res) => {
       console.log(res);
       setUserData(res);
       const config = {

@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import Link from "next/link";
 import Image from "next/image";
+import Header from "./header/Header";
 
 const ToolBox = () => {
   const { sidebarNavigation } = useSidebar();
@@ -28,8 +29,9 @@ const ToolBox = () => {
   }).filter(Boolean)[0];
   
   return (
-    <div className="bg-center bg-cover h-full rounded-2xl px-2" style={{backgroundImage: "url('/img/fondo-home.png')"}}>
-      <div className='flex justify-center items-center h-full'>
+    <div className="bg-center bg-cover h-full rounded-2xl px-2 pt-4" style={{backgroundImage: "url('/img/fondo-home.png')"}}>
+      <Header />
+      <div className='flex justify-center items-center h-3/4'>
         <div className='sm:w-1/2 w-full bg-white rounded-xl drop-shadow-md px-8 py-10 flex items-center flex-col gap-4'>
           <h1 className='text-4xl font-bold text-primary uppercase mb-4'>{options?.name}</h1>
           <ul className={`grid grid-cols-1 gap-6 ${options?.children?.length <= 4 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>

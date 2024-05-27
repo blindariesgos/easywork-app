@@ -3,6 +3,7 @@ import Sidebar from "../../../components/Sidebar";
 import LoggedInProvider from "../../../components/Providers/LoggedInProvider";
 import { SessionProvider } from "next-auth/react";
 import Footer from "../../../components/Footer";
+import HelpChat from "../../../components/HelpChat";
 
 export default function HomeLayout({ children }) {
   return (
@@ -19,6 +20,7 @@ export default function HomeLayout({ children }) {
               </main>
               <Footer /> {/* Footer fuera del main */}
             </div>
+            <HelpChat />
           </div>
         </LoggedInProvider>
       </AppContextProvider>

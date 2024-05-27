@@ -79,6 +79,7 @@ export default function IngresarEmail() {
         setGmailState(true);
       }
     } catch (error) {
+      console.log('quetal')
       setGmailState(true);
     }
   }

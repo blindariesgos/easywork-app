@@ -1,7 +1,7 @@
 "use client";
 import clsx from "clsx";
 import Image from "next/image";
-import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ExclamationCircleIcon,
@@ -9,61 +9,23 @@ import {
   FolderArrowDownIcon,
   EnvelopeOpenIcon,
 } from "@heroicons/react/24/outline";
-import { getApiError } from "../../../../../../../utils/getApiErrors";
-import axios from "axios";
 import { useSession } from "next-auth/react";
-import { getTokenGoogle } from "../../../../../../../lib/apis";
-import useAppContext from "../../../../../../../context/app/index";
 
-export default function Page() {
+export default function Table({ mails }) {
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState([]);
-  const [tasks, setTasks] = useState(null);
+  const [mailsData, setMailsData] = useState(mails);
   const session = useSession();
-  const { userGoogle } = useAppContext();
-  useEffect(() => {
-    getTokenGoogle(session.data.user.user.id).then((res) => {
-      const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
-      };
-      axios
-        .get(
-          `https://www.googleapis.com/gmail/v1/users/${userGoogle.id}/messages`,
-          config
-        )
-        .then((response) => {
-          const messages = response.data.messages;
-          let messageHeaders = [];
-          messages.forEach((message) => {
-            axios
-              .get(
-                `https://www.googleapis.com/gmail/v1/users/${userGoogle.id}/messages/${message.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject`,
-                config
-              )
-              .then((messageInfo) => {
-                messageHeaders.push(messageInfo.data);
-                setTasks(messageHeaders);
-              });
-          });
-        });
-    });
-  }, []);
 
-  useLayoutEffect(() => {
-    if (tasks) {
-      const isIndeterminate =
-        selectedTasks.length > 0 && selectedTasks.length < tasks.length;
-      setChecked(selectedTasks.length === tasks.length);
-      setIndeterminate(isIndeterminate);
-      checkbox.current.indeterminate = isIndeterminate;
-    }
-  }, [selectedTasks, tasks]);
+  useEffect(() => {
+    console.log(mailsData);
+  }, [mailsData]);
 
   function toggleAll() {
-    setSelectedTasks(checked || indeterminate ? [] : tasks);
+    setSelectedTasks(checked || indeterminate ? [] : mails);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
@@ -112,8 +74,8 @@ export default function Page() {
             </div>
             <table className="min-w-full divide-y divide-gray-300">
               <tbody className="divide-y divide-gray-200 bg-white">
-                {tasks &&
-                  tasks.map((task) => (
+                {mailsData &&
+                  mailsData.map((task) => (
                     <tr
                       key={task.id}
                       className={clsx(
@@ -147,58 +109,12 @@ export default function Page() {
                             : "text-gray-900"
                         )}
                       >
-                        <td>{task.snippet}</td>
+                        {task.payload.headers.map((data) => (
+                          <>
+                            <td>{data.name == "Subject" && data.value}</td>
+                          </>
+                        ))}
                       </td>
-                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 bg-indigo-100/30">
-                    {task.payload.headers[0]}
-                    </td> */}
-                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {task.headers.from}
-                    </td> */}
-                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {task.policy}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <span className="inline-flex items-center rounded-full bg-green-100/70 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                        {task.limitDate}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 flex-shrink-0">
-                          <Image
-                            className="h-9 w-9 rounded-full"
-                            width={36}
-                            height={36}
-                            src={task.createdBy.image}
-                            alt=""
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <div className="font-medium text-gray-900">
-                            {task.createdBy.name}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 flex-shrink-0">
-                          <Image
-                            width={36}
-                            height={36}
-                            className="h-9 w-9 rounded-full"
-                            src={task.responsiblePerson.image}
-                            alt=""
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <div className="font-medium text-gray-900">
-                            {task.responsiblePerson.name}
-                          </div>
-                        </div>
-                      </div>
-                    </td> */}
                     </tr>
                   ))}
               </tbody>

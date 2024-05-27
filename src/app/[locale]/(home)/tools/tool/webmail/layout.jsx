@@ -3,6 +3,9 @@ import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect } from "react";
 import CreateTaskButton from "./components/CreateTaskButton";
+import Tag from "../../../../../../components/Tag";
+import Table from "./components/Table";
+import axios from "axios";
 import {
   Cog8ToothIcon,
   BookmarkIcon,
@@ -24,12 +27,18 @@ import SliderOverEmail from "./components/SliderOverEmail";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { getTokenGoogle } from "../../../../../../lib/apis";
+import { useSession } from "next-auth/react";
+import ModalAddGmail from "../mails/components/ModalAddGmail";
 
 export default function WebmailLayout({ children, table }) {
+  const session = useSession();
   const router = useRouter();
   const { sidebarOpenEmail, setSidebarOpenEmail } = useAppContext();
   const { t } = useTranslation();
-  const [modal, setModal] = useState(false);
+  const [userData, setUserData] = useState([]);
+  const [mails, setMails] = useState(null);
+  const [gmailState, setGmailState] = useState(false);
 
   useEffect(() => {
     if (window.innerWidth > 1023) {
@@ -37,15 +46,48 @@ export default function WebmailLayout({ children, table }) {
         setSidebarOpenEmail(true);
       }, 1000);
     } else {
-     
     }
   }, [setSidebarOpenEmail]);
+
+  useEffect(() => {
+    getTokenGoogle(session.data.user.user.id).then((res) => {
+      console.log(res);
+      setUserData(res);
+      const config = {
+        headers: { Authorization: `Bearer ${res.access_token}` },
+      };
+      axios
+        .get(
+          `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages`,
+          config
+        )
+        .then((response) => {
+          const messages = response.data.messages;
+          let messagePromises = messages.map((message) => {
+            return axios.get(
+              `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date`,
+              config
+            );
+          });
   
+          Promise.all(messagePromises).then((messageInfos) => {
+            const messageHeaders = messageInfos.map((info) => {
+              return {
+                ...info.data,
+                snippet: info.data.snippet,
+              };
+            });
+            setMails(messageHeaders);
+          });
+        });
+    });
+  }, []);
+  
+
   function backButton() {
     setSidebarOpenEmail(false);
     router.push("/tools/tool/mails");
   }
-  
 
   return (
     <div className="flex flex-col flex-grow">
@@ -57,6 +99,7 @@ export default function WebmailLayout({ children, table }) {
             <button
               type="button"
               className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={() => setGmailState(true)}
             >
               <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
             </button>
@@ -87,10 +130,12 @@ export default function WebmailLayout({ children, table }) {
                   height={45}
                   alt="img"
                   className="rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  src={userData?.picture}
                 />
                 <div className="ml-2">
-                  <h1 className="font-bold">Armando Graterol</h1>
+                  <h1 className="font-bold">
+                    {userData?.given_name} {userData?.family_name}
+                  </h1>
                   <p className="text-xs">info</p>
                 </div>
                 <div className="flex items-center mb-1">
@@ -152,8 +197,11 @@ export default function WebmailLayout({ children, table }) {
           </ul>
         </div>
       </SliderOverEmail>
-      {table}
+      {mails && <Table mails={mails} />}
       {children}
+      <ModalAddGmail state={gmailState}>
+        <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
+      </ModalAddGmail>
     </div>
   );
 }

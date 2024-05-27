@@ -217,7 +217,13 @@ export const googleCallback = async (data, state) => {
     access_token: data.access_token,
     expires_in: data.expires_in,
     userId: state,
-    service: 1
+    usergoogle_id: data.usergoogle_id,
+    service: 1,
+    family_name: data.family_name,
+    given_name: data.given_name,
+    email: data.email,
+    picture: data.picture,
+    id_token: data.id_token,
   });
   return response;
 }

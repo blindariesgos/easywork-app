@@ -89,7 +89,9 @@ const SidebarMenu = () => {
                                   )}
                                 >
                                   {width < 100 ? (
-                                    <subItem.iconShortBar className="h-7 w-7 shrink-0" />
+                                    <div className="flex justify-center items-center">
+                                      <subItem.iconShortBar className="h-5 w-5 shrink-0" />
+                                    </div>
                                   ) : (
                                     subItem.name
                                   )}
@@ -113,12 +115,14 @@ const SidebarMenu = () => {
                                               open
                                                 ? "rotate-90 text-slate-50"
                                                 : "text-slate-50",
-                                              "h-5 w-5 shrink-0",
+                                              "h-5 w-5 shrink-0"
                                             )}
                                             aria-hidden="true"
                                           />
                                           {width < 100 ? (
-                                            <subItem.iconShortBar className="h-7 w-7 shrink-0" />
+                                            <div className="flex justify-center items-center">
+                                              <subItem.iconShortBar className="h-5 w-5 shrink-0" />
+                                            </div>
                                           ) : (
                                             subItem.name
                                           )}
@@ -142,7 +146,9 @@ const SidebarMenu = () => {
                                               )}
                                             >
                                               {width < 100 ? (
-                                                <subItem.iconShortBar className="h-7 w-7 shrink-0" />
+                                                <div className="flex justify-center items-center">
+                                                  <subItem.iconShortBar className="h-5 w-5 shrink-0" />
+                                                </div>
                                               ) : (
                                                 subSubItem.name
                                               )}

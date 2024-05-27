@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   createImap,
-  saveFolders,
-  getImapConfig,
-  getFoldersSaved,
+  getTokenGoogle,
 } from "../../../../../../lib/apis";
 import { getApiError } from "../../../../../../utils/getApiErrors";
 import axios from "axios";
 import ModalAddGmail from "./components/ModalAddGmail";
-import ModalAddFolders from "./components/ModalAddFolders"
+import ModalAddFolders from "./components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
 import useAppContext from "../../../../../../context/app/index";
 
@@ -22,10 +20,7 @@ export default function IngresarEmail() {
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
   const [gmailState, setGmailState] = useState(false);
-  const {
-    setOpenModalFolders,
-    openModalFolders,
-  } = useAppContext();
+  const { setOpenModalFolders, openModalFolders } = useAppContext();
 
   const [ImapData, setImapData] = useState({
     host: null,
@@ -37,7 +32,6 @@ export default function IngresarEmail() {
     mailName: null,
     userId: session.data.user.user.id,
   });
-
 
   async function saveIMAP() {
     try {
@@ -75,17 +69,17 @@ export default function IngresarEmail() {
     }
   }
 
-
   async function toKnowEmail() {
     try {
-      const responseImap = await getImapConfig(session.data.user.user.id);
+      const responseImap = await getTokenGoogle(session.data.user.user.id);
+      console.log(responseImap);
       if (responseImap) {
         router.push("/tools/tool/webmail");
       } else {
-        setModalG(true);
+        setGmailState(true);
       }
     } catch (error) {
-      setModalG(true);
+      setGmailState(true);
     }
   }
 
@@ -93,8 +87,7 @@ export default function IngresarEmail() {
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => setGmailState(true),
-      // click: () => toKnowEmail(),
+      click: () => toKnowEmail(),
     },
     {
       name: "ICloud",
@@ -134,7 +127,12 @@ export default function IngresarEmail() {
         <h1 className="ml-3 py-3 font-medium text-xl">Integración del buzón</h1>
       </div>
       <div className="w-full bg-white rounded-xl drop-shadow-md text-easywork-main mb-4">
-        <h1 className="ml-3 w-full py-5 text-center font-medium text-xl" onClick={() => {router.push("/tools/tool/webmail");}}>
+        <h1
+          className="ml-3 w-full py-5 text-center font-medium text-xl"
+          onClick={() => {
+            router.push("/tools/tool/webmail");
+          }}
+        >
           Use y gestione su buzón
         </h1>
       </div>
@@ -165,12 +163,14 @@ export default function IngresarEmail() {
       <ModalAddGmail state={gmailState}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
       </ModalAddGmail>
-      { openModalFolders &&
-      <ModalAddFolders state={true}>
-      <Tag onclick={() => setOpenModalFolders(false)} className="bg-green-500" />
-    </ModalAddFolders>
-      }
-
+      {openModalFolders && (
+        <ModalAddFolders state={true}>
+          <Tag
+            onclick={() => setOpenModalFolders(false)}
+            className="bg-green-500"
+          />
+        </ModalAddFolders>
+      )}
     </div>
   );
 }

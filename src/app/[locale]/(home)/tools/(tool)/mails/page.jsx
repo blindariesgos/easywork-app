@@ -158,7 +158,7 @@ export default function IngresarEmail() {
           ))}
         </ul>
       </div>
-      <ModalAddGmail state={gmailState}>
+      <ModalAddGmail state={gmailState} from={"lobby"}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
       </ModalAddGmail>
       {openModalFolders && (

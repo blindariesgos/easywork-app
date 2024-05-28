@@ -1,8 +1,8 @@
 // import { signOut } from "next-auth/react";
-import { logout } from "../lib/apis";
+import { logout } from "../../lib/apis";
 import { toast } from "react-toastify";
 
-export const getApiError = async (error, errorsDuplicated, server) => {
+export const handleApiError = async (error, errorsDuplicated, server) => {
   console.log(error);
   const errorObject = server
     ? error
@@ -20,7 +20,7 @@ export const getApiError = async (error, errorsDuplicated, server) => {
       default:
         !server
           ? toastError(errorObject?.message || errorObject)
-          : console.log("getApierror", errorObject);
+          : console.log("handleApiError", errorObject);
         break;
     }
     if (errorsDuplicated) errorsDuplicated.current = true;

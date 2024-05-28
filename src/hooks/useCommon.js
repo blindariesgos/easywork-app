@@ -24,7 +24,7 @@ import {
   UserPlusIcon,
   ArrowPathIcon,
   BuildingOfficeIcon,
-  SparklesIcon
+  SparklesIcon,
 } from "@heroicons/react/20/solid";
 
 import { useTranslation } from "react-i18next";
@@ -35,7 +35,7 @@ import { useRef, useState } from "react";
 import { useAlertContext } from "../context/common/AlertContext";
 import { toast } from "react-toastify";
 import { deleteLeadById, deleteTask } from "../lib/apis";
-import { getApiError } from "../utils/getApiErrors";
+import { handleApiError } from "../utils/api/errors";
 
 export const useSidebar = () => {
   const { t } = useTranslation();
@@ -50,25 +50,25 @@ export const useSidebar = () => {
       children: [
         {
           name: t("common:menu:tools:drive"),
-          href: "/tools/tool/drive",
+          href: "/tools/drive",
           image: "/img/herramientas/drive.png",
           iconShortBar: ArchiveBoxIcon,
         },
         {
           name: t("common:menu:tools:tasks"),
-          href: "/tools/tool/tasks?page=1",
+          href: "/tools/tasks?page=1",
           image: "/img/herramientas/tareas.png",
           iconShortBar: BookOpenIcon,
         },
         {
           name: t("common:menu:tools:email"),
-          href: "/tools/tool//mails",
+          href: "/tools//mails",
           image: "/img/herramientas/correo.png",
           iconShortBar: InboxArrowDownIcon,
         },
         {
           name: t("common:menu:tools:calendar"),
-          href: "/tools/tool//calendar",
+          href: "/tools//calendar",
           image: "/img/herramientas/calendario.png",
           iconShortBar: CalendarDaysIcon,
         },
@@ -904,13 +904,13 @@ export const useTasks = () => {
   const optionsSettings = [
     {
       value: 0,
-      name: t("leads:header:excel:alone"),
+      name: t("tools:tasks:header:excel:alone"),
       icon: RiFileExcel2Fill,
       onclick: () => {},
     },
     {
       value: 0,
-      name: t("leads:header:excel:all"),
+      name: t("tools:tasks:header:excel:all"),
       icon: RiFileExcel2Fill,
       onclick: () => {},
     },
@@ -918,14 +918,14 @@ export const useTasks = () => {
   const optionsTrash = [
     {
       value: 0,
-      name: t("leads:header:delete:remove"),
+      name: t("tools:tasks:header:delete:remove"),
       icon: XMarkIcon,
       onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
-      name: t("leads:header:delete:trash"),
+      name: t("tools:tasks:header:delete:trash"),
       onclick: () => {},
     },
   ];
@@ -1056,7 +1056,7 @@ export const useTasksDetete = (selectedTask, setSelectedTasks, setLoading) => {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      getApiError(err.message);
+      handleApiError(err.message);
     }
   };
 
@@ -1218,7 +1218,7 @@ export const useLeadDetete = (selectedLead, setSelectedLead, setLoading) => {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      getApiError(err.message);
+      handleApiError(err.message);
     }
   };
 

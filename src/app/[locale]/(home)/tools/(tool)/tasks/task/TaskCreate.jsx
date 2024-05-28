@@ -24,7 +24,7 @@ import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
 import { postTask, putTaskId } from "../../../../../../../lib/apis";
-import { getApiError } from "../../../../../../../utils/getApiErrors";
+import { handleApiError } from "../../../../../../../utils/api/errors";
 import { getFormatDate } from "../../../../../../../utils/getFormatDate";
 
 export default function TaskCreate({ edit }) {
@@ -201,7 +201,7 @@ export default function TaskCreate({ edit }) {
         const task = await putTaskId(edit.id, body);
         setLoading(false);
         toast.success(t("tools:tasks:update-msg"));
-        router.push("/tools/tool/tasks?page=1");
+        router.push("/tools/tasks?page=1");
       } else {
         const task = await postTask(body);
         toast.success(t("tools:tasks:success-msg"));
@@ -210,11 +210,11 @@ export default function TaskCreate({ edit }) {
           reset();
           setValueText("");
           setValue("name", "");
-        } else router.push("/tools/tool/tasks?page=1");
+        } else router.push("/tools/tasks?page=1");
       }
     } catch (error) {
       setLoading(false);
-      getApiError(error.message);
+      handleApiError(error.message);
     }
   };
 
@@ -606,7 +606,7 @@ export default function TaskCreate({ edit }) {
               label={t("common:buttons:cancel")}
               buttonStyle="secondary"
               className="px-3 py-2 drop-shadow-lg"
-              onclick={() => router.push(`/tools/tool/tasks?page=1`)}
+              onclick={() => router.push(`/tools/tasks?page=1`)}
             />
           </div>
         </div>

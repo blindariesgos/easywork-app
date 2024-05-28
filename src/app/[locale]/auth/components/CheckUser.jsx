@@ -33,7 +33,7 @@ export default function CheckUser() {
                     <h1>¡Valida tu usuario!</h1>
                 </div>
                 <div style={{ width: 320 }} className="text-md text-center my-4 w-1/4">
-                    <h4>Introducir los 6 dígitos recibidos por mensaje de texto al número <br /> +58 412*****85</h4>
+                    <h4>Introducir los 6 dígitos recibidos por mensaje de texto o correo</h4>
                 </div>
                 <div className='p-4 bg-slate-50 rounded-xl'>
                     <div className="flex flex-row gap-4">

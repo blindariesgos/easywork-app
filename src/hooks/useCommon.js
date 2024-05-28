@@ -3,7 +3,30 @@ import {
   ChevronRightIcon,
   DocumentTextIcon,
   XMarkIcon,
+  ArrowDownCircleIcon,
+  SquaresPlusIcon,
+  ArchiveBoxIcon,
+  BookOpenIcon,
+  InboxArrowDownIcon,
+  CalendarDaysIcon,
+  TagIcon,
+  NewspaperIcon,
+  PresentationChartBarIcon,
+  MegaphoneIcon,
+  WalletIcon,
+  PuzzlePieceIcon,
+  GlobeAltIcon,
+  FunnelIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  ShieldCheckIcon,
+  AcademicCapIcon,
+  IdentificationIcon,
+  UserPlusIcon,
+  ArrowPathIcon,
+  BuildingOfficeIcon,
+  SparklesIcon,
 } from "@heroicons/react/20/solid";
+
 import { useTranslation } from "react-i18next";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { RiFileExcel2Fill } from "react-icons/ri";
@@ -12,7 +35,7 @@ import { useRef, useState } from "react";
 import { useAlertContext } from "../context/common/AlertContext";
 import { toast } from "react-toastify";
 import { deleteLeadById, deleteTask } from "../lib/apis";
-import { getApiError } from "../utils/getApiErrors";
+import { handleApiError } from "../utils/api/errors";
 
 export const useSidebar = () => {
   const { t } = useTranslation();
@@ -22,27 +45,32 @@ export const useSidebar = () => {
       name: t("common:menu:tools:name"),
       href: "/tools",
       icon: ChevronRightIcon,
+      iconShortBar: SquaresPlusIcon,
       current: true,
       children: [
         {
           name: t("common:menu:tools:drive"),
-          href: "/tools/tool/drive",
+          href: "/tools/drive",
           image: "/img/herramientas/drive.png",
+          iconShortBar: ArchiveBoxIcon,
         },
         {
           name: t("common:menu:tools:tasks"),
-          href: "/tools/tool/tasks?page=1",
+          href: "/tools/tasks?page=1",
           image: "/img/herramientas/tareas.png",
+          iconShortBar: BookOpenIcon,
         },
         {
           name: t("common:menu:tools:email"),
-          href: "/tools/tool//mails",
+          href: "/tools//mails",
           image: "/img/herramientas/correo.png",
+          iconShortBar: InboxArrowDownIcon,
         },
         {
           name: t("common:menu:tools:calendar"),
-          href: "/tools/tool//calendar",
+          href: "/tools//calendar",
           image: "/img/herramientas/calendario.png",
+          iconShortBar: CalendarDaysIcon,
         },
       ],
     },
@@ -51,21 +79,25 @@ export const useSidebar = () => {
       icon: ChevronRightIcon,
       current: false,
       href: "/sales",
+      iconShortBar: TagIcon,
       children: [
         {
           name: t("common:menu:sales:crm:name"),
           href: "/sales/crm",
           image: "/img/ventas/crm.png",
+          iconShortBar: NewspaperIcon,
           children: [
             {
               name: t("common:menu:sales:crm:contacts"),
               href: "/sales/crm/contacts?page=1",
               image: "/img/crm/contacto.png",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:crm:prospects"),
               href: "/sales/crm/leads?page=1",
               image: "/img/crm/prospecto.png",
+              iconShortBar: ArrowDownCircleIcon,
             },
           ],
         },
@@ -73,26 +105,32 @@ export const useSidebar = () => {
           name: t("common:menu:sales:reports:name"),
           href: "/sales/report",
           image: "/img/ventas/reportes.png",
+          iconShortBar: PresentationChartBarIcon,
           children: [
             {
               name: t("common:menu:sales:reports:activities"),
               href: "/sales/report/activities",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:reports:history"),
               href: "/sales/report/history",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:reports:reports"),
               href: "/sales/report/reports",
+              iconShortBar: ArrowDownCircleIcon,
             },
             {
               name: t("common:menu:sales:reports:agent"),
-              href: "#",
+              href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
               children: [
                 {
                   name: "Embudo de ventas sin conversión",
                   href: "/sales/report/agentperformance/noconv",
+                  iconShortBar: ArrowDownCircleIcon,
                 },
               ],
             },
@@ -100,13 +138,15 @@ export const useSidebar = () => {
         },
         {
           name: t("common:menu:sales:marketing:name"),
-          href: "#",
+          href: "/sd",
           image: "/img/ventas/marketing.png",
+          iconShortBar: MegaphoneIcon,
         },
         {
           name: t("common:menu:sales:control:name"),
-          href: "#",
+          href: "/sd",
           image: "/img/ventas/cobranza.png",
+          iconShortBar: WalletIcon,
         },
       ],
     },
@@ -115,36 +155,43 @@ export const useSidebar = () => {
       icon: ChevronRightIcon,
       current: false,
       href: "/services",
+      iconShortBar: PuzzlePieceIcon,
       children: [
         {
           name: t("common:menu:services:automations"),
-          href: "#",
+          href: "/sd",
           image: "/img/services/automatizaciones.png",
+          iconShortBar: GlobeAltIcon,
         },
         {
           name: t("common:menu:services:funnels"),
-          href: "#",
+          href: "/sd",
           image: "/img/services/embudos.png",
+          iconShortBar: FunnelIcon,
         },
         {
           name: t("common:menu:services:soport"),
-          href: "#",
+          href: "/sd",
           image: "/img/services/soporte.png",
+          iconShortBar: ChatBubbleOvalLeftEllipsisIcon,
         },
         {
           name: t("common:menu:services:trash"),
-          href: "#",
+          href: "/sd",
           image: "/img/services/papelera.png",
+          iconShortBar: TrashIcon,
         },
         {
           name: t("common:menu:services:logs"),
-          href: "#",
+          href: "/sd",
           image: "/img/services/logs.png",
+          iconShortBar: ShieldCheckIcon,
         },
         {
           name: t("common:menu:services:academy"),
-          href: "#",
+          href: "/sd",
           image: "/img/services/academia.png",
+          iconShortBar: AcademicCapIcon,
         },
       ],
     },
@@ -153,26 +200,32 @@ export const useSidebar = () => {
       href: "/",
       icon: ChevronRightIcon,
       current: false,
+      iconShortBar: IdentificationIcon,
       children: [
         {
           name: t("common:menu:agent-management:recruitement"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: UserPlusIcon,
         },
         {
           name: t("common:menu:agent-management:capacitations"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: NewspaperIcon,
         },
         {
           name: t("common:menu:agent-management:conections"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowPathIcon,
         },
         {
           name: t("common:menu:agent-management:development-agents"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: SparklesIcon,
         },
         {
           name: t("common:menu:agent-management:learning"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
       ],
     },
@@ -181,38 +234,47 @@ export const useSidebar = () => {
       href: "/",
       icon: ChevronRightIcon,
       current: false,
+      iconShortBar: BuildingOfficeIcon,
       children: [
         {
           name: t("common:menu:companies:gnp"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:axxa"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:banorte"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:atlas"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:zurich"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:qualitas"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:afirme"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:companies:others"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
       ],
     },
@@ -221,18 +283,22 @@ export const useSidebar = () => {
       href: "/",
       icon: ChevronRightIcon,
       current: false,
+      iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:settings:permissions"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:settings:password"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
         {
           name: t("common:menu:settings:others"),
-          href: "#",
+          href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
         },
       ],
     },
@@ -838,13 +904,13 @@ export const useTasks = () => {
   const optionsSettings = [
     {
       value: 0,
-      name: t("leads:header:excel:alone"),
+      name: t("tools:tasks:header:excel:alone"),
       icon: RiFileExcel2Fill,
       onclick: () => {},
     },
     {
       value: 0,
-      name: t("leads:header:excel:all"),
+      name: t("tools:tasks:header:excel:all"),
       icon: RiFileExcel2Fill,
       onclick: () => {},
     },
@@ -852,14 +918,14 @@ export const useTasks = () => {
   const optionsTrash = [
     {
       value: 0,
-      name: t("leads:header:delete:remove"),
+      name: t("tools:tasks:header:delete:remove"),
       icon: XMarkIcon,
       onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
-      name: t("leads:header:delete:trash"),
+      name: t("tools:tasks:header:delete:trash"),
       onclick: () => {},
     },
   ];
@@ -990,7 +1056,7 @@ export const useTasksDetete = (selectedTask, setSelectedTasks, setLoading) => {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      getApiError(err.message);
+      handleApiError(err.message);
     }
   };
 
@@ -1152,7 +1218,7 @@ export const useLeadDetete = (selectedLead, setSelectedLead, setLoading) => {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      getApiError(err.message);
+      handleApiError(err.message);
     }
   };
 

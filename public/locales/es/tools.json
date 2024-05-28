@@ -188,6 +188,17 @@
         "objections": "Objeciones",
         "add": "Agregar"
       }
+    },
+    "header": {
+      "delete": {
+        "remove": "Eliminar definitivamente",
+        "trash": "Enviar a papelera de reciclaje"
+      },
+      "excel": {
+        "alone": "Solo las tareas seleccionadas",
+        "export": "Exportar a microsoft Excel",
+        "all": "Todos los campos de las tareas"
+      }
     }
   },
   "calendar": {

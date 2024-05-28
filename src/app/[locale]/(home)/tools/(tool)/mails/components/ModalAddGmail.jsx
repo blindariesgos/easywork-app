@@ -1,4 +1,8 @@
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
+import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
+import * as yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -9,13 +13,53 @@ import { setCookie } from "cookies-next";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
-export default function ModalAddGmail({ children, state, from }) {
+export default function ModalAddGmail({ children, state, from, edit }) {
   const session = useSession();
   const { setOpenModalFolders, openModalFolders, userGoogle, setUserGoogle } =
     useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
+  const { lists } = useAppContext();
+
+  const schemaInputs = yup.object().shape({
+    name: yup.string(),
+    responsible: yup.array(),
+    createdBy: yup.array(),
+    participants: yup.array(),
+    observers: yup.array(),
+    limitDate: yup.string(),
+    startDate: yup.string(),
+    duration: yup.string(),
+    endDate: yup.string(),
+    crm: yup.array(),
+    tags: yup.array(),
+    listField: yup.array(),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid, errors },
+    control,
+    getValues,
+    watch,
+    reset,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      name: edit ? edit?.name : "",
+      limitDate: edit ? edit.deadline : "",
+      startDate: edit ? edit.startTime : "",
+      endDate: edit ? edit.deadline : "",
+      participants: edit ? edit.participants : [],
+      responsible: edit ? edit.responsible : [],
+      observers: edit ? edit.observers : [],
+      tags: edit ? edit.tags : [],
+      createdBy: edit ? [edit.createdBy] : [],
+    },
+    resolver: yupResolver(schemaInputs),
+  });
 
   async function openWindowOauth() {
     const response = await axios.get(
@@ -245,6 +289,23 @@ export default function ModalAddGmail({ children, state, from }) {
                   </div>
                   <div className="flex mt-4">
                     <p>Cola de distribución de contactos y prospectosÑ</p>
+                  </div>
+                  <div className="flex mt-4">
+                  <Controller
+                      name="responsible"
+                      control={control}
+                      defaultValue={[]}
+                      render={({ field }) => (
+                        <MultipleSelect
+                          {...field}
+                          options={lists?.users || []}
+                          getValues={getValues}
+                          setValue={setValue}
+                          name="responsible"
+                          error={errors.responsible}
+                        />
+                      )}
+                    />
                   </div>
                 </div>)}
               </div>

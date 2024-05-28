@@ -94,7 +94,7 @@ export default function WebmailLayout({ children, table }) {
 
   return (
     <>
-      <ModalAddGmail state={gmailState}>
+      <ModalAddGmail state={gmailState} from={"buzon"}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
       </ModalAddGmail>
       <div className="flex flex-col flex-grow">

@@ -22,7 +22,7 @@ import moment from "moment";
 import TaskCreate from "../TaskCreate";
 import { putTaskCompleted } from "../../../../../../../../lib/apis";
 import { toast } from "react-toastify";
-import { getApiError } from "../../../../../../../../utils/getApiErrors";
+import { handleApiError } from "../../../../../../../../utils/api/errors";
 export default function TaskEdit({ data }) {
   const params = useParams();
   const { id } = params;
@@ -44,7 +44,7 @@ export default function TaskEdit({ data }) {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      getApiError(error.message);
+      handleApiError(error.message);
     }
   };
   return (

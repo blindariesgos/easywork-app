@@ -134,7 +134,7 @@ export const getTasksUser = async (page = 1, limit = 6) => {
 
 export const deleteTask = async (id) => {
   const response = await axios().delete(`/tools/tasks/${id}`);
-  revalidatePath("/tools/tool/tasks", "page");
+  revalidatePath("/tools/tasks", "page");
   return response;
 };
 
@@ -145,7 +145,7 @@ export const getTaskId = async (id) => {
 
 export const postTask = async (body) => {
   const response = await axios().post(`/tools/tasks`, body);
-  revalidatePath("/tools/tool/tasks", "page");
+  revalidatePath("/tools/tasks", "page");
   return response;
 };
 
@@ -156,18 +156,18 @@ export const putTaskId = async (id, body) => {
 
 export const putTaskCompleted = async (id) => {
   const response = await axios().put(`/tools/tasks/${id}/complete`);
-  revalidatePath(`/tools/tool/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
 };
 
 export const postComment = async (body, id) => {
   const response = await axios().post(`/tools/tasks/comments`, body);
-  revalidatePath(`/tools/tool/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
 };
 export const deleteComment = async (commentId, id) => {
   const response = await axios().delete(`/tools/tasks/comments/${commentId}`);
-  revalidatePath(`/tools/tool/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
 };
 
@@ -176,7 +176,7 @@ export const putComment = async (commentId, body, id) => {
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tool/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
 };
 

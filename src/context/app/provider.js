@@ -4,7 +4,7 @@ import { AppContext } from "..";
 import { contactTypes, driveViews } from "../../lib/common";
 import { useCommon } from "../../hooks/useCommon";
 import { getAddListContacts, getUsersContacts } from "../../lib/apis";
-import { getApiError } from "../../utils/getApiErrors";
+import { handleApiError } from "../../utils/api/errors";
 import { useSession } from "next-auth/react";
 
 export default function AppContextProvider({ children }) {
@@ -38,7 +38,7 @@ export default function AppContextProvider({ children }) {
       const response = await getUsersContacts();
       return response;
     } catch (error) {
-      getApiError(error.message);
+      handleApiError(error.message);
     }
   };
 
@@ -47,7 +47,7 @@ export default function AppContextProvider({ children }) {
       const response = await getAddListContacts();
       return response;
     } catch (error) {
-      getApiError(error.message);
+      handleApiError(error.message);
     }
   };
 

@@ -3,11 +3,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import {
-  createImap,
-  getTokenGoogle,
-} from "../../../../../../lib/apis";
-import { getApiError } from "../../../../../../utils/getApiErrors";
+import { createImap, getTokenGoogle } from "../../../../../../lib/apis";
+import { handleApiError } from "../../../../../../utils/api/errors";
 import axios from "axios";
 import ModalAddGmail from "./components/ModalAddGmail";
 import ModalAddFolders from "./components/ModalAddFolders";
@@ -41,7 +38,7 @@ export default function IngresarEmail() {
         getFolders();
       }
     } catch (error) {
-      getApiError(error.message, errorsDuplicated);
+      handleApiError(error.message, errorsDuplicated);
     }
   }
 
@@ -65,7 +62,7 @@ export default function IngresarEmail() {
         setModalC(true);
       }
     } catch (error) {
-      getApiError(error.message, errorsDuplicated);
+      handleApiError(error.message, errorsDuplicated);
     }
   }
 
@@ -74,12 +71,12 @@ export default function IngresarEmail() {
       const responseImap = await getTokenGoogle(session.data.user.id);
       console.log(responseImap);
       if (responseImap) {
-        router.push("/tools/tool/webmail");
+        router.push("/tools/webmail");
       } else {
         setGmailState(true);
       }
     } catch (error) {
-      console.log('quetal')
+      console.log("quetal");
       setGmailState(true);
     }
   }
@@ -131,7 +128,7 @@ export default function IngresarEmail() {
         <h1
           className="ml-3 w-full py-5 text-center font-medium text-xl"
           onClick={() => {
-            router.push("/tools/tool/webmail");
+            router.push("/tools/webmail");
           }}
         >
           Use y gestione su buzón

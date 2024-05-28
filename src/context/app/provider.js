@@ -4,13 +4,17 @@ import { AppContext } from "..";
 import { contactTypes, driveViews } from "../../lib/common";
 import { useCommon } from "../../hooks/useCommon";
 import { getAddListContacts, getUsersContacts } from "../../lib/apis";
-import { getApiError } from "../../utils/getApiErrors";
+import { handleApiError } from "../../utils/api/errors";
 import { useSession } from "next-auth/react";
 
 export default function AppContextProvider({ children }) {
-  const { calendarViews } = useCommon()
+  const { calendarViews } = useCommon();
   const { data: session } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpenDesktop1, setSidebarOpenDesktop1] = useState(true);
+  const [sidebarOpenDesktop2, setSidebarOpenDesktop2] = useState(true);
+  const [openModalFolders, setOpenModalFolders] = useState(false);
+  const [userGoogle, setUserGoogle] = useState(null);
   const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);
@@ -18,8 +22,8 @@ export default function AppContextProvider({ children }) {
   const [lists, setLists] = useState(null);
 
   useEffect(() => {
-    const appList = {}
-    const getLists = async() => {
+    const appList = {};
+    const getLists = async () => {
       const users = await getUsers();
       const listContact = await getListsContact();
       appList.listContact = listContact;
@@ -27,31 +31,34 @@ export default function AppContextProvider({ children }) {
       setLists(appList);
     };
     if (session?.user?.accessToken && !lists) getLists();
-  }, [session, lists])
+  }, [session, lists]);
 
-  const getUsers = async() => {
+  const getUsers = async () => {
     try {
-      const response = await getUsersContacts();   
-      return response; 
-    } catch (error) {
-      getApiError(error.message);
-    }
-  }
-
-  const getListsContact = async() => {
-    try {
-      const response =  await getAddListContacts();    
+      const response = await getUsersContacts();
       return response;
     } catch (error) {
-      getApiError(error.message);
+      handleApiError(error.message);
     }
-  }
-  
+  };
+
+  const getListsContact = async () => {
+    try {
+      const response = await getAddListContacts();
+      return response;
+    } catch (error) {
+      handleApiError(error.message);
+    }
+  };
 
   const values = useMemo(
     () => ({
       sidebarOpen,
       setSidebarOpen,
+      sidebarOpenDesktop1,
+      setSidebarOpenDesktop1,
+      sidebarOpenDesktop2,
+      setSidebarOpenDesktop2,
       sidebarOpenEmail,
       setSidebarOpenEmail,
       calendarView,
@@ -61,8 +68,11 @@ export default function AppContextProvider({ children }) {
       openModal,
       setOpenModal,
       setLists,
-      lists
-
+      lists,
+      setOpenModalFolders,
+      openModalFolders,
+      setUserGoogle,
+      userGoogle,
     }),
     [
       sidebarOpen,
@@ -70,7 +80,11 @@ export default function AppContextProvider({ children }) {
       driveView,
       openModal,
       sidebarOpenEmail,
-      lists
+      lists,
+      sidebarOpenDesktop1,
+      sidebarOpenDesktop2,
+      openModalFolders,
+      userGoogle,
     ]
   );
 

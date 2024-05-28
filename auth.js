@@ -1,58 +1,72 @@
-
-import NextAuth from "next-auth"
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
 import { getLogin } from "./src/lib/apis";
-
+import { isValidToken } from "./src/lib/helpers";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
-  // trustHost: true,
-  // trustedHosts: ['localhost', 'your-domain.com'],
   providers: [
     Credentials({
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
       credentials: {
         token: {},
       },
       authorize: async (credentials) => {
-        const {
-        email,
-        password,
-      } = credentials;
-        const data  = await getLogin(
-          email,
-          password,
-        );
-        return data;
+        if (credentials.prevSession) {
+          try {
+            const prevSession = JSON.parse(credentials.prevSession);
+
+            const validToken = isValidToken(prevSession.user.accessToken);
+
+            if (!validToken) throw new Error("Credenciales inválidas");
+
+            return {
+              ...prevSession.user,
+            };
+          } catch (error) {
+            throw new Error("Credenciales inválidas");
+          }
+        }
+        const { email, password } = credentials;
+        try {
+          const response = await getLogin(email, password);
+          if (response) {
+            return {
+              ...response?.user,
+              accessToken: response?.accessToken,
+              refreshToken: response?.refreshToken,
+            };
+          } else {
+            throw new Error("Credenciales inválidas");
+          }
+        } catch (error) {
+          console.error("Error de autenticación:", error.message); // Log detallado
+          throw new Error("Error de autenticación"); // Lanzar el error para ser manejado externamente
+        }
       },
     }),
   ],
   session: {
-    strategy: 'jwt', // 1 hora
-    // maxAge: 60, // 1 minuto
+    strategy: "jwt",
   },
   pages: {
     signIn: "/auth",
-    // signOut: "/login",
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
-      const decoded = jwtDecode(user ? user?.accessToken : token?.accessToken);
-      const data = {
-        ...decoded,
-        ...token,
-        ...user,
-      }    
-      return data;
+    jwt: async ({ token, user, account }) => {
+      if (account && user) {
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+      }
+      if (user && user.accessToken) {
+        // Solo decodificar si existe accessToken
+        const decoded = jwtDecode(user.accessToken);
+        token = { ...token, ...decoded, ...user };
+      }
+      return token;
     },
     session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...token,
-        },
-      }
+      delete token?.refreshToken; // Considera cómo almacenar el refreshToken si lo necesitas
+      return { ...session, user: { ...token } };
     },
-  }
-})
+  },
+});

@@ -8,7 +8,7 @@ export default function Status() {
     <div className="md:flex flex-col gap-1 items-start hidden">
       <div className="flex gap-x-2">
         <div className="flex items-center gap-x-1">
-          <BellIcon className="h-3 w-3 text-black" aria-hidden="true" />
+          <BellIcon className="h-3 w-3 text-green-500" aria-hidden="true" />
           <p className="text-black text-xs">100</p>
         </div>
         <div className="flex items-center gap-x-1">

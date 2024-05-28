@@ -1,7 +1,7 @@
 "use client";
 import useCrmContext from "../../../../../../context/crm";
 import { getContacts } from "../../../../../../lib/apis";
-import { getApiError } from "../../../../../../utils/getApiErrors";
+import { handleApiError } from "../../../../../../utils/api/errors";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -17,17 +17,22 @@ export default function Page() {
     const params = new URLSearchParams(searchParams);
     const fetchData = async () => {
       try {
-        const response = await getContacts(params.get('page')?.toString() || 1);
-          setContacts(response);
-      } catch (error) { 
-          getApiError(error.message, errorsDuplicated);
+        const response = await getContacts(params.get("page")?.toString() || 1);
+        setContacts(response);
+      } catch (error) {
+        handleApiError(error.message, errorsDuplicated);
       }
-    }
-    if ((params.get('page') || Number(params.get('page')) !== 0) || lastContactsUpdate) fetchData();
+    };
+    if (
+      params.get("page") ||
+      Number(params.get("page")) !== 0 ||
+      lastContactsUpdate
+    )
+      fetchData();
     return () => {
       isMounted.current = false;
-    }
-  }, [lastContactsUpdate, searchParams, setContacts]);  
+    };
+  }, [lastContactsUpdate, searchParams, setContacts]);
 
   return <></>;
 }

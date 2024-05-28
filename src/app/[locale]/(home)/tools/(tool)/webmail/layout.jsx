@@ -89,7 +89,7 @@ export default function WebmailLayout({ children, table }) {
 
   function backButton() {
     setSidebarOpenEmail(false);
-    router.push("/tools/tool/mails");
+    router.push("/tools/mails");
   }
 
   return (

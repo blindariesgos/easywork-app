@@ -84,29 +84,6 @@ export default function Header() {
           {/*  */}
           <SearchBox />
           <div className="flex items-center gap-x-2 lg:gap-x-6">
-            {/*             <button
-              type="button"
-              className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="-m-2.5 p-2.5 text-gray-700 max-lg:hidden"
-              onClick={() => setSidebarOpenDesktop(!sidebarOpenDesktop)}
-            >
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </>
-        )}
-
-            {/* Separator */}
-            {/* <div
-              className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
-              aria-hidden="true"
-            />
-
             {/* Profile dropdown */}
             <Menu
               as="div"
@@ -118,7 +95,7 @@ export default function Header() {
                   width={32}
                   height={32}
                   className="h-8 w-8 rounded-full bg-gray-50"
-                  src={session?.user?.user?.avatar}
+                  src={session?.user?.avatar}
                   alt=""
                 />
                 <span className="hidden lg:flex lg:items-center">
@@ -126,7 +103,7 @@ export default function Header() {
                     className="ml-4 text-sm font-semibold leading-6 text-black"
                     aria-hidden="true"
                   >
-                    {`${session?.user?.user?.profile?.firstName} ${session?.user?.user?.profile?.lastName}`}
+                    {`${session?.user?.name}`}
                   </span>
                   <ChevronDownIcon
                     className="ml-2 h-5 w-5 text-gray-400"

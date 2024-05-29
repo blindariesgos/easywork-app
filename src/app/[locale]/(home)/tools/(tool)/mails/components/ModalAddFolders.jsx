@@ -3,29 +3,30 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import useAppContext from "../../../../../../../context/app/index";
-import { getCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { saveFolders } from "../../../../../../../lib/apis";
+import { getTokenGoogle } from "../../../../../../../lib/apis";
 
-export default function ModalAddFolders({ children, state }) {
+export default function ModalAddFolders({ children }) {
   const router = useRouter();
   const session = useSession();
-  const { openModalFolders, userGoogle } = useAppContext();
+  const { setOpenModalFolders, openModalFolders } = useAppContext();
   const [folderData, setFolderData] = useState([]);
   useEffect(() => {
-    console.log(getCookie("tokenGoogle"));
-    const config = {
-      headers: { Authorization: `Bearer ${getCookie("tokenGoogle")}` },
-    };
-    axios
-      .get(
-        `https://www.googleapis.com/gmail/v1/users/${userGoogle.id}/labels`,
-        config
-      )
-      .then((labels) => {
-        setFolderData(labels.data.labels);
-        console.log(labels.data.labels);
-      });
+    getTokenGoogle(session.data.user.id).then((res) => {
+      console.log(res)
+      const config = {
+        headers: { Authorization: `Bearer ${res.access_token}` },
+      };
+      axios
+        .get(
+          `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/labels`,
+          config
+        )
+        .then((labels) => {
+          setFolderData(labels.data.labels);
+        });
+    })
   }, []);
 
   async function saveFoldersData() {
@@ -40,8 +41,8 @@ export default function ModalAddFolders({ children, state }) {
       }
     });
     try {
-      const response = await saveFolders(folders);
-      console.log(response);
+      await saveFolders(folders);
+      setOpenModalFolders(false);
       router.push("/tools/webmail");
     } catch (error) {}
   }
@@ -64,7 +65,7 @@ export default function ModalAddFolders({ children, state }) {
                 <p className="ml-1">Select all</p>
               </div>
               <div className="mt-4 ml-4">
-                {folderData.map((data, index) => (
+                {folderData?.map((data, index) => (
                   <div className="flex mt-4 ml-2" key={index}>
                     <input
                       type="checkbox"
@@ -110,7 +111,7 @@ export default function ModalAddFolders({ children, state }) {
                 <button
                   type="button"
                   className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
-                  onClick={() => setModalC(false)}
+                  onClick={() => setOpenModalFolders(false)}
                 >
                   Cancelar
                 </button>

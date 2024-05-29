@@ -7,13 +7,18 @@ import Image from "next/image";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { getTokenGoogle } from "../../../../../../../lib/apis";
+import {
+  getTokenGoogle,
+  deleteTokenGoogle,
+  deleteFoldersMail,
+} from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
-import { setCookie } from "cookies-next";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ModalAddGmail({ children, state, from, edit }) {
+  const router = useRouter();
   const session = useSession();
   const { setOpenModalFolders, openModalFolders, userGoogle, setUserGoogle } =
     useAppContext();
@@ -61,6 +66,14 @@ export default function ModalAddGmail({ children, state, from, edit }) {
     resolver: yupResolver(schemaInputs),
   });
 
+  async function deleteOauth() {
+    try {
+      await deleteTokenGoogle(session.data.user.id);
+      await deleteFoldersMail(session.data.user.id);
+      router.push("/tools/mails");
+    } catch (error) {}
+  }
+
   async function openWindowOauth() {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
@@ -82,7 +95,6 @@ export default function ModalAddGmail({ children, state, from, edit }) {
   async function getDataGoogleUser() {
     try {
       const res = await getTokenGoogle(session.data.user.id);
-      setCookie("tokenGoogle", res.access_token);
       const config = {
         headers: { Authorization: `Bearer ${res.access_token}` },
       };
@@ -108,11 +120,9 @@ export default function ModalAddGmail({ children, state, from, edit }) {
     getDataGoogleUser();
   }, []);
 
-  let estatus = !openModalFolders && state;
-
   return (
     <>
-      <SliderOverShort openModal={estatus}>
+      <SliderOverShort openModal={state && !openModalFolders}>
         {children}
         <div className="bg-gray-100 rounded-l-2xl max-md:w-screen w-96 overflow-y-auto h-screen">
           <div className="m-3 font-medium text-lg">
@@ -254,60 +264,78 @@ export default function ModalAddGmail({ children, state, from, edit }) {
               </div>
               <div className="mt-4">
                 <div className="flex ml-1">
-                  <input type="checkbox"                   onChange={(e) => {
-                    setCrmConfig(e.target.checked);
-                  }} />
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      setCrmConfig(e.target.checked);
+                    }}
+                  />
                   <p className="ml-1">Enlace a CRM</p>
                 </div>
                 {crmConfig && (
-                <div className="ml-3">
-                  <div className="flex mt-4">
-                    <input type="checkbox" />
-                    <p className="ml-1">Procesar mensajes para una semana</p>
+                  <div className="ml-3">
+                    <div className="flex mt-4">
+                      <input type="checkbox" />
+                      <p className="ml-1">Procesar mensajes para una semana</p>
+                    </div>
+                    <div className="flex mt-4">
+                      <input type="checkbox" />
+                      <p className="ml-1">
+                        Enrutar correos electrónicos de clientes existentes a
+                        gerentes de CRM asignados
+                      </p>
+                    </div>
+                    <div className="flex mt-4">
+                      <input type="checkbox" />
+                      <p className="ml-1">
+                        Crear Prospecto para los mensajes entrantes a una nueva
+                        dirección de correo electrónico
+                      </p>
+                    </div>
+                    <div className="flex mt-4">
+                      <input type="checkbox" />
+                      <p className="ml-1">
+                        Crear Contacto para mensaje salientes a una nueva
+                        direción de correo electrónico
+                      </p>
+                    </div>
+                    <div className="flex mt-4">
+                      <input type="checkbox" />
+                      <p className="ml-1">
+                        Creat contactos usando vCard adjunto
+                      </p>
+                    </div>
+                    <div className="flex mt-4">
+                      <p>Origen de contacto y prospecto</p>
+                    </div>
+                    <div className="flex mt-4">
+                      <p>
+                        Crear un nuevo prospecto para cada nuevo mensaje
+                        entrante de{" "}
+                      </p>
+                    </div>
+                    <div className="flex mt-4">
+                      <p>Cola de distribución de contactos y prospectosÑ</p>
+                    </div>
+                    <div className="flex mt-4">
+                      <Controller
+                        name="responsible"
+                        control={control}
+                        defaultValue={[]}
+                        render={({ field }) => (
+                          <MultipleSelect
+                            {...field}
+                            options={lists?.users || []}
+                            getValues={getValues}
+                            setValue={setValue}
+                            name="responsible"
+                            error={errors.responsible}
+                          />
+                        )}
+                      />
+                    </div>
                   </div>
-                  <div className="flex mt-4">
-                    <input type="checkbox" />
-                    <p className="ml-1">Enrutar correos electrónicos de clientes existentes a gerentes de CRM asignados</p>
-                  </div>
-                  <div className="flex mt-4">
-                    <input type="checkbox" />
-                    <p className="ml-1">Crear Prospecto para los mensajes entrantes a una nueva dirección de correo electrónico</p>
-                  </div>
-                  <div className="flex mt-4">
-                    <input type="checkbox" />
-                    <p className="ml-1">Crear Contacto para mensaje salientes a una nueva direción de correo electrónico</p>
-                  </div>
-                  <div className="flex mt-4">
-                    <input type="checkbox" />
-                    <p className="ml-1">Creat contactos usando vCard adjunto</p>
-                  </div>
-                  <div className="flex mt-4">
-                    <p>Origen de contacto y prospecto</p>
-                  </div>
-                  <div className="flex mt-4">
-                    <p>Crear un nuevo prospecto para cada nuevo mensaje entrante de </p>
-                  </div>
-                  <div className="flex mt-4">
-                    <p>Cola de distribución de contactos y prospectosÑ</p>
-                  </div>
-                  <div className="flex mt-4">
-                  <Controller
-                      name="responsible"
-                      control={control}
-                      defaultValue={[]}
-                      render={({ field }) => (
-                        <MultipleSelect
-                          {...field}
-                          options={lists?.users || []}
-                          getValues={getValues}
-                          setValue={setValue}
-                          name="responsible"
-                          error={errors.responsible}
-                        />
-                      )}
-                    />
-                  </div>
-                </div>)}
+                )}
               </div>
               <div className="flex mt-4 justify-end">
                 {userGoogle && from == "buzon" ? (
@@ -315,6 +343,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                     <button
                       type="button"
                       className="hover:bg-gray-60 bg-gray-50 text-white font-bold py-2 px-4 rounded-md"
+                      onClick={() => deleteOauth()}
                     >
                       Inhabilitar
                     </button>

@@ -14,7 +14,7 @@ export default function ModalAddFolders({ children }) {
   const [folderData, setFolderData] = useState([]);
   useEffect(() => {
     getTokenGoogle(session.data.user.id).then((res) => {
-      console.log(res)
+      console.log(res);
       const config = {
         headers: { Authorization: `Bearer ${res.access_token}` },
       };
@@ -24,9 +24,14 @@ export default function ModalAddFolders({ children }) {
           config
         )
         .then((labels) => {
-          setFolderData(labels.data.labels);
+          // Set system folders to true by default
+          const updatedLabels = labels.data.labels.map((label) => ({
+            ...label,
+            state: label.type === "system" ? true : label.state,
+          }));
+          setFolderData(updatedLabels);
         });
-    })
+    });
   }, []);
 
   async function saveFoldersData() {
@@ -37,6 +42,7 @@ export default function ModalAddFolders({ children }) {
           imapFolderId: element.id,
           mailboxName: element.name,
           userId: session.data.user.id,
+          type: element.type,
         });
       }
     });
@@ -65,23 +71,26 @@ export default function ModalAddFolders({ children }) {
                 <p className="ml-1">Select all</p>
               </div>
               <div className="mt-4 ml-4">
-                {folderData?.map((data, index) => (
-                  <div className="flex mt-4 ml-2" key={index}>
-                    <input
-                      type="checkbox"
-                      checked={data.state}
-                      onChange={(e) => {
-                        const newFolderData = [...folderData];
-                        newFolderData[index] = {
-                          ...newFolderData[index],
-                          state: e.target.checked,
-                        };
-                        setFolderData(newFolderData);
-                      }}
-                    />
-                    <p className="ml-1">{data.name}</p>
-                  </div>
-                ))}
+                {folderData?.map(
+                  (data, index) =>
+                    data.type !== "system" && (
+                      <div className="flex mt-4 ml-2" key={index}>
+                        <input
+                          type="checkbox"
+                          checked={data.state}
+                          onChange={(e) => {
+                            const newFolderData = [...folderData];
+                            newFolderData[index] = {
+                              ...newFolderData[index],
+                              state: e.target.checked,
+                            };
+                            setFolderData(newFolderData);
+                          }}
+                        />
+                        <p className="ml-1">{data.name}</p>
+                      </div>
+                    )
+                )}
               </div>
               <div className="m-3 text-xs my-4 w-80">
                 <h1 className="font-medium text-lg border-b-4 border-black pb-1">

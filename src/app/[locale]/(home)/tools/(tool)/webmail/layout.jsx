@@ -87,11 +87,6 @@ export default function WebmailLayout({ children, table }) {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(folders)
-  }, [folders]);
-
-
   function backButton() {
     setSidebarOpenEmail(false);
     router.push("/tools/mails");
@@ -182,13 +177,7 @@ export default function WebmailLayout({ children, table }) {
               </button>
             </div>
             <ul className="w-full">
-              {folders && folders?.map((folder) => (
-                <li className="text-left text-white flex p-4">
-                  <BookmarkIcon className="h-6 w-6 text-white" />
-                  <h3 className="ml-4 text-md">{folder.mailboxName}</h3>
-                </li>
-              ))}
-              {/* <li className="text-left text-white flex p-4">
+              <li className="text-left text-white flex p-4">
                 <BookmarkIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Archivados</h3>
               </li>
@@ -211,7 +200,16 @@ export default function WebmailLayout({ children, table }) {
               <li className="text-left text-white flex p-4">
                 <TrashIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Basura</h3>
-              </li> */}
+              </li>
+              {folders &&
+                folders
+                  .filter((folder) => folder.type === "user")
+                  .map((folder) => (
+                    <li className="text-left text-white flex p-4">
+                      <FolderIcon className="h-6 w-6 text-white" />
+                      <h3 className="ml-4 text-md">{folder.mailboxName}</h3>
+                    </li>
+                  ))}
             </ul>
           </div>
         </SliderOverEmail>

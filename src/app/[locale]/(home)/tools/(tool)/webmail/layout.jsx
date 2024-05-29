@@ -66,7 +66,7 @@ export default function WebmailLayout({ children, table }) {
           const messages = response.data.messages;
           let messagePromises = messages.map((message) => {
             return axios.get(
-              `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date`,
+              `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=full`,
               config
             );
           });
@@ -86,6 +86,11 @@ export default function WebmailLayout({ children, table }) {
       setFolders(res);
     });
   }, []);
+
+  useEffect(() => {
+    console.log(folders)
+  }, [folders]);
+
 
   function backButton() {
     setSidebarOpenEmail(false);
@@ -177,13 +182,13 @@ export default function WebmailLayout({ children, table }) {
               </button>
             </div>
             <ul className="w-full">
-              {/* {folders.map((folder) => {
+              {folders && folders?.map((folder) => (
                 <li className="text-left text-white flex p-4">
                   <BookmarkIcon className="h-6 w-6 text-white" />
-                  <h3 className="ml-4 text-md">{folder}</h3>
-                </li>;
-              })} */}
-              <li className="text-left text-white flex p-4">
+                  <h3 className="ml-4 text-md">{folder.mailboxName}</h3>
+                </li>
+              ))}
+              {/* <li className="text-left text-white flex p-4">
                 <BookmarkIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Archivados</h3>
               </li>
@@ -206,7 +211,7 @@ export default function WebmailLayout({ children, table }) {
               <li className="text-left text-white flex p-4">
                 <TrashIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Basura</h3>
-              </li>
+              </li> */}
             </ul>
           </div>
         </SliderOverEmail>

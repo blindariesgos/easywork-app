@@ -255,3 +255,14 @@ export const getTokenGoogle = async (id) => {
   const response = await axios().get(`/oauth/${id}`);
   return response;
 };
+
+export const deleteTokenGoogle = async (id) => {
+  const response = await axios().delete(`/oauth/${id}`);
+  return response;
+};
+
+export const deleteFoldersMail = async (id) => {
+  const response = await axios().delete(`/imap-config/folder/${id}`);
+  return response;
+};
+

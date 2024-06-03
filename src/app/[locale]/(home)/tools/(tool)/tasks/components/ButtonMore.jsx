@@ -34,6 +34,7 @@ export default function ButtonMore({ setOpenEdit, openEdit, data }) {
 				onclick: () => setOpenEdit(!openEdit)
 			}]);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data])
 	
     

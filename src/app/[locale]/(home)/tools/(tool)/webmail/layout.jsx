@@ -105,6 +105,7 @@ export default function WebmailLayout({ children, table }) {
     getFoldersSaved(session.data.user.id).then((res) => {
       setFolders(res);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function backButton() {
@@ -279,8 +280,8 @@ export default function WebmailLayout({ children, table }) {
               {folders &&
                 folders
                   .filter((folder) => folder.type === "user")
-                  .map((folder) => (
-                    <li
+                  .map((folder, index) => (
+                    <li key={index}
                       className={`cursor-pointer text-left text-white flex p-4 ${
                         selectedFolder === folder.mailboxName
                           ? "bg-violet-500 transition-colors duration-200 rounded-lg"

@@ -32,6 +32,7 @@ export default function ModalAddFolders({ children }) {
           setFolderData(updatedLabels);
         });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function saveFoldersData() {

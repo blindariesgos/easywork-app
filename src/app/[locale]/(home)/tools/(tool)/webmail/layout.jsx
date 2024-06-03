@@ -53,35 +53,53 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
+    // getTokenGoogle(session.data.user.id).then((res) => {
+    //   setUserData(res);
+    //   const config = {
+    //     headers: { Authorization: `Bearer ${res.access_token}` },
+    //   };
+    //   axios
+    //     .get(
+    //       `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages?includeSpamTrash=true`,
+    //       config
+    //     )
+    //     .then((response) => {
+    //       const messages = response.data.messages;
+    //       let messagePromises = messages.map((message) => {
+    //         return axios.get(
+    //           `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=full`,
+    //           config
+    //         );
+    //       });
+
+    //       Promise.all(messagePromises).then((messageInfos) => {
+    //         const messageHeaders = messageInfos.map((info) => {
+    //           return {
+    //             ...info.data,
+    //             snippet: info.data.snippet,
+    //           };
+    //         });
+    //         setMails(messageHeaders);
+    //         console.log(messageHeaders);
+    //       });
+    //     });
+    // });
     getTokenGoogle(session.data.user.id).then((res) => {
       setUserData(res);
       const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
+        headers: {
+          Authorization: `${session.data.user.accessToken}`,
+        },
       };
+
       axios
         .get(
-          `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages?includeSpamTrash=true`,
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
           config
         )
         .then((response) => {
-          const messages = response.data.messages;
-          let messagePromises = messages.map((message) => {
-            return axios.get(
-              `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=full`,
-              config
-            );
-          });
-
-          Promise.all(messagePromises).then((messageInfos) => {
-            const messageHeaders = messageInfos.map((info) => {
-              return {
-                ...info.data,
-                snippet: info.data.snippet,
-              };
-            });
-            setMails(messageHeaders);
-            console.log(messageHeaders);
-          });
+          setMails(response.data);
+          console.log(response);
         });
     });
     getFoldersSaved(session.data.user.id).then((res) => {

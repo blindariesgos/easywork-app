@@ -48,7 +48,7 @@ export default function IngresarEmail() {
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.id}`,
         {
           headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
+            Authorization: `${session.data.user.accessToken}`,
           },
         }
       );

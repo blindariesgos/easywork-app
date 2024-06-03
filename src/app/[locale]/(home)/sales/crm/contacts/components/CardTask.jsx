@@ -1,5 +1,5 @@
 "use client";
-import TextEditor from "../../../../tools/tasks/components/TextEditor";
+import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import {
   EllipsisHorizontalIcon,

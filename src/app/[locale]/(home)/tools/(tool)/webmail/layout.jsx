@@ -53,59 +53,33 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
-    // getTokenGoogle(session.data.user.id).then((res) => {
-    //   setUserData(res);
-    //   const config = {
-    //     headers: { Authorization: `Bearer ${res.access_token}` },
-    //   };
-    //   axios
-    //     .get(
-    //       `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages?includeSpamTrash=true`,
-    //       config
-    //     )
-    //     .then((response) => {
-    //       const messages = response.data.messages;
-    //       let messagePromises = messages.map((message) => {
-    //         return axios.get(
-    //           `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=full`,
-    //           config
-    //         );
-    //       });
-
-    //       Promise.all(messagePromises).then((messageInfos) => {
-    //         const messageHeaders = messageInfos.map((info) => {
-    //           return {
-    //             ...info.data,
-    //             snippet: info.data.snippet,
-    //           };
-    //         });
-    //         setMails(messageHeaders);
-    //         console.log(messageHeaders);
-    //       });
-    //     });
-    // });
-    getTokenGoogle(session.data.user.id).then((res) => {
-      setUserData(res);
+    const fetchData = async () => {
       const config = {
-        headers: {
-          Authorization: `${session.data.user.accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${session.data.user.access_token}` },
       };
-
-      axios
-        .get(
+      try {
+        const userGoogle = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
+          config
+        );
+        console.log(userGoogle)
+        setUserData(userGoogle.data);
+  
+        const mails = await axios.get(
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
           config
-        )
-        .then((response) => {
-          setMails(response.data);
-          console.log(response);
+        );
+        setMails(mails.data);
+        console.log(mails);
+        getFoldersSaved(session.data.user.id).then((res) => {
+          setFolders(res);
         });
-    });
-    getFoldersSaved(session.data.user.id).then((res) => {
-      setFolders(res);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchData();
   }, []);
 
   function backButton() {
@@ -281,7 +255,8 @@ export default function WebmailLayout({ children, table }) {
                 folders
                   .filter((folder) => folder.type === "user")
                   .map((folder, index) => (
-                    <li key={index}
+                    <li
+                      key={index}
                       className={`cursor-pointer text-left text-white flex p-4 ${
                         selectedFolder === folder.mailboxName
                           ? "bg-violet-500 transition-colors duration-200 rounded-lg"

@@ -11,10 +11,13 @@ const ToolBox = () => {
   const pathname = usePathname();
   const options = sidebarNavigation.flatMap((side) => {
     let parts = pathname.split('/');
+    let newPathname
     if (parts[1] === 'en') {
       parts.splice(1, 1);
+      newPathname = parts.join('/');
+    } else {
+      newPathname = pathname
     }
-    const newPathname = parts.join('/');
     if (side.children) {
       const foundInChildren = side.children.find((child) => child.href == newPathname);
       if (foundInChildren) return foundInChildren;

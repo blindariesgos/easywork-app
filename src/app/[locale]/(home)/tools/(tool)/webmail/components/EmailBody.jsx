@@ -6,8 +6,6 @@ import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { decode } from "he";
 import base64 from "base64-js";
-import ReactHtmlParser from "react-html-parser";
-import DOMPurify from "dompurify";
 
 export default function EmailBody({
   selectMail,

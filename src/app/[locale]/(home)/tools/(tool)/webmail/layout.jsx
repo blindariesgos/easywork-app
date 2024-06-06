@@ -3,6 +3,7 @@ import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect } from "react";
 import CreateTaskButton from "./components/CreateTaskButton";
+import SendMessage from "./components/SendMessage";
 import Tag from "../../../../../../components/Tag";
 import Table from "./components/Table";
 import axios from "axios";
@@ -16,7 +17,7 @@ import {
 import {
   ChevronUpIcon,
   ArrowPathIcon,
-  ChevronDownIcon,
+  ChevronRightIcon,
   PauseCircleIcon,
   ExclamationCircleIcon,
   TrashIcon,
@@ -40,6 +41,7 @@ export default function WebmailLayout({ children, table }) {
   const [mails, setMails] = useState(null);
   const [gmailState, setGmailState] = useState(false);
   const [folders, setFolders] = useState(null);
+  const [selectedFolder, setSelectedFolder] = useState("INBOX");
 
   useEffect(() => {
     if (window.innerWidth > 1023) {
@@ -51,40 +53,33 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
-    getTokenGoogle(session.data.user.id).then((res) => {
-      console.log(res);
-      setUserData(res);
+    const fetchData = async () => {
       const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
+        headers: { Authorization: `Bearer ${session.data.user.access_token}` },
       };
-      axios
-        .get(
-          `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages`,
+      try {
+        const userGoogle = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
           config
-        )
-        .then((response) => {
-          const messages = response.data.messages;
-          let messagePromises = messages.map((message) => {
-            return axios.get(
-              `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/messages/${message.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date`,
-              config
-            );
-          });
-
-          Promise.all(messagePromises).then((messageInfos) => {
-            const messageHeaders = messageInfos.map((info) => {
-              return {
-                ...info.data,
-                snippet: info.data.snippet,
-              };
-            });
-            setMails(messageHeaders);
-          });
+        );
+        console.log(userGoogle)
+        setUserData(userGoogle.data);
+  
+        const mails = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
+          config
+        );
+        setMails(mails.data);
+        console.log(mails);
+        getFoldersSaved(session.data.user.id).then((res) => {
+          setFolders(res);
         });
-    });
-    getFoldersSaved(session.data.user.id).then((res) => {
-      setFolders(res);
-    });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchData();
   }, []);
 
   function backButton() {
@@ -94,13 +89,24 @@ export default function WebmailLayout({ children, table }) {
 
   return (
     <>
-      <ModalAddGmail state={gmailState}>
+      <ModalAddGmail state={gmailState} from={"buzon"}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
       </ModalAddGmail>
+      <SendMessage colorTag="bg-green-100" />
       <div className="flex flex-col flex-grow">
         <EmailHeader
           title="Tareas"
-          ActionButton={CreateTaskButton}
+          ActionButton={
+            <>
+              <button
+                type="button"
+                className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-md font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
+                onClick={() => router.push("/tools/webmail/?send=true")}
+              >
+                Nuevo mensaje
+              </button>
+            </>
+          }
           ToolsButtons={
             <>
               <button
@@ -162,55 +168,110 @@ export default function WebmailLayout({ children, table }) {
             <div className="w-full">
               <button
                 onClick={() => backButton()}
-                className="w-full bg-white text-easywork-main py-2 rounded-lg"
+                className="w-full bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
               >
                 volver
               </button>
-              <button className="flex justify-between w-full bg-violet-500 py-3 rounded-lg my-2 text-white font-bold">
-                <div className="flex">
-                  <ChevronDownIcon className="ml-2 h-5 w-5" />
-                  INBOX
-                </div>
-                <div>
-                  <PauseCircleIcon className="mr-2 h-6 w-6" />
-                </div>
-              </button>
             </div>
-            <ul className="w-full">
-              {/* {folders.map((folder) => {
-                <li className="text-left text-white flex p-4">
-                  <BookmarkIcon className="h-6 w-6 text-white" />
-                  <h3 className="ml-4 text-md">{folder}</h3>
-                </li>;
-              })} */}
-              <li className="text-left text-white flex p-4">
+            <ul className="w-full mt-2">
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "INBOX"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("INBOX")}
+              >
+                <ChevronRightIcon className="ml-2 mt-1 h-4 w-4" />
+                <h3 className="ml-4 text-md">INBOX</h3>
+              </li>
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "ARCHIVED"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("ARCHIVED")}
+              >
                 <BookmarkIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Archivados</h3>
               </li>
-              <li className="text-left text-white flex p-4">
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "SENT"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("SENT")}
+              >
                 <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Enviados</h3>
               </li>
-              <li className="text-left text-white flex p-4">
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "SAVED"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("SAVED")}
+              >
                 <HeartIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Guardados</h3>
               </li>
-              <li className="text-left text-white flex p-4">
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "SPAM"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("SPAM")}
+              >
                 <ExclamationCircleIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Spam</h3>
               </li>
-              <li className="text-left text-white flex p-4">
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "DRAFTS"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("DRAFTS")}
+              >
                 <FolderIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Borradores</h3>
               </li>
-              <li className="text-left text-white flex p-4">
+              <li
+                className={`cursor-pointer text-left text-white flex p-4 ${
+                  selectedFolder === "TRASH"
+                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                    : ""
+                }`}
+                onClick={() => setSelectedFolder("TRASH")}
+              >
                 <TrashIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Basura</h3>
               </li>
+              {folders &&
+                folders
+                  .filter((folder) => folder.type === "user")
+                  .map((folder, index) => (
+                    <li
+                      key={index}
+                      className={`cursor-pointer text-left text-white flex p-4 ${
+                        selectedFolder === folder.mailboxName
+                          ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedFolder(folder.mailboxName)}
+                    >
+                      <FolderIcon className="h-6 w-6 text-white" />
+                      <h3 className="ml-4 text-md">{folder.mailboxName}</h3>
+                    </li>
+                  ))}
             </ul>
           </div>
         </SliderOverEmail>
-        {mails && <Table mails={mails} />}
+        {mails && <Table mails={mails} selectedFolder={selectedFolder} />}
         {children}
       </div>
     </>

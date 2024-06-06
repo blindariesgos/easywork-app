@@ -108,6 +108,7 @@ export default function OptionsTask({
 
   useEffect(() => {
     setListField && setListField(watch("items"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch()]);
 
   useEffect(() => {

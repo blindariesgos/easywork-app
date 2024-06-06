@@ -36,6 +36,8 @@ function SelectDropdown({
     : options.filter((element) => {
         return `${element.name} ${element.username}`.toLowerCase().includes(query.toLowerCase());
       });
+
+    console.log(filteredElements)
       
   return (
     <div className="">
@@ -75,15 +77,15 @@ function SelectDropdown({
                   Nothing found.
                 </div>
               ) : (
-                filteredElements && filteredElements.map((person) => (
+                filteredElements && 
                   <Combobox.Option                    
-                    key={person.id}
+                    key={filteredElements.id}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-6 pr-4 ${
                         active ? 'bg-primary text-white rounded-md' : 'text-gray-900'
                       }`
                     }
-                    value={person}
+                    value={filteredElements}
                   >
                     {({ selected, active }) => (
                       <>
@@ -94,7 +96,7 @@ function SelectDropdown({
                         >
                           <div className="w-[20%]">
                             <Image
-                              src={person.avatar}
+                              src={filteredElements.avatar}
                               alt=""
                               height={500}
                               width={500}
@@ -104,9 +106,9 @@ function SelectDropdown({
                             />
                           </div>
                           <div className={`flex flex-col leading-3 w-[80%]`}>
-                            <p className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}>{person.name || person?.username}</p>
-                            <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}>{person.email}</p>
-                            <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}>{person.phone}</p>
+                            <p className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}>{filteredElements.name || filteredElements?.username}</p>
+                            <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}>{filteredElements.email}</p>
+                            <p className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}>{filteredElements.phone}</p>
                           </div>
                         </span>
                         {selected ? (
@@ -121,7 +123,6 @@ function SelectDropdown({
                       </>
                     )}
                   </Combobox.Option>
-                ))
               )}
             </Combobox.Options>
           </Transition>

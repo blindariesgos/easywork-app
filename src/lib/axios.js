@@ -2,8 +2,8 @@
 import axios from "axios";
 import { auth } from "../../auth";
 import { updateSession, clearSession } from "./session";
-import refreshAuthToken from "./helpers/refresh_auth_token";
-import {getLogger} from "@/src/utils/logger"
+import { refreshAuthToken } from "./helpers/refresh_auth_token";
+import { getLogger } from "@/src/utils/logger";
 
 const logger = getLogger("axios");
 
@@ -39,7 +39,7 @@ const createAxiosInstance = (contentType = "application/json") => {
         originalRequest._retry = true;
 
         try {
-          logger.info("Actualizando Token")
+          logger.info("Actualizando Token");
           const updatedAuthToken = await refreshAuthToken();
 
           if (!updatedAuthToken) {

@@ -6,7 +6,7 @@ import { getLogger } from "@/src/utils/logger";
 
 const logger = getLogger("Refresh Token");
 
-async function refreshAuthToken() {
+export async function refreshAuthToken() {
   const url = `${process.env.API_HOST}/auth/token/refresh`;
 
   try {
@@ -30,8 +30,6 @@ async function refreshAuthToken() {
       throw new Error("Failed to refresh token: Invalid response");
     }
   } catch (error) {
-      logger.error("Error refresh Token", error);
+    logger.error("Error refresh Token", error);
   }
 }
-
-export default refreshAuthToken;

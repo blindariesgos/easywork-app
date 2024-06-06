@@ -26,7 +26,7 @@ const HelpChat = () => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="bg-gradient-to-r from-green-600 to-green-500 w-72 h-96 rounded-lg pt-3 flex flex-col items-center justify-between">
+        <div className="bg-gradient-to-r opacity-85 from-green-600 to-green-500 w-72 h-96 rounded-lg pt-3 flex flex-col items-center justify-between">
           <div className="w-full">
             <div className="flex justify-end w-full px-3 ">
               <XMarkIcon

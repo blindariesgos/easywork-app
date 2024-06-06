@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import Button from '../../../../../../../components/form/Button';
 import useAppContext from '../../../../../../../context/app';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { FaMagnifyingGlass } from 'react-icons/fa6';
 import FiltersContact from './filters/FiltersContact';
 import { useCommon } from '../../../../../../../hooks/useCommon';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -44,16 +43,6 @@ export default function ContactsHeader() {
 				<div className="flex-grow">
 					<div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
 						<FiltersContact/>
-						<div className="flex items-center w-full">
-							<FaMagnifyingGlass className="h-4 w-4 text-primary" />
-							<input
-								type="search"
-								name="search"
-								id="search-cal"
-								className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
-								placeholder={t('contacts:header:search')}
-							/>
-						</div>
 					</div>
 				</div>
 

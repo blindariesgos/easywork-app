@@ -446,61 +446,73 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:settings:vcard"),
       onclick: () => {},
+      disabled: true
     },
     {
       value: 1,
       name: t("contacts:header:settings:gmail"),
       onclick: () => {},
+      disabled: true
     },
     {
       value: 2,
       name: t("contacts:header:settings:outlook"),
       onclick: () => {},
+      disabled: true
     },
     {
       value: 3,
       name: t("contacts:header:settings:yahoo"),
       onclick: () => {},
+      disabled: true
     },
     {
       value: 4,
       name: t("contacts:header:settings:import"),
       onclick: () => {},
+      disabled: false
     },
     {
       value: 5,
       name: t("contacts:header:settings:crm"),
       onclick: () => {},
+      disabled: true
     },
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
       onclick: () => {},
+      disabled: false
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
       onclick: () => {},
+      disabled: false
     },
     {
       value: 8,
       name: t("contacts:header:settings:export"),
       onclick: () => {},
+      disabled: true
     },
     {
       value: 9,
       name: t("contacts:header:settings:control"),
       onclick: () => {},
+      disabled: false
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
       onclick: () => {},
+      disabled: false
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
       onclick: () => {},
+      disabled: false
     },
   ];
 

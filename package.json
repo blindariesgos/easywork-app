@@ -31,6 +31,7 @@
     "next-auth": "^5.0.0-beta.18",
     "next-i18n-router": "^5.4.0",
     "pdfjs-dist": "^4.0.379",
+    "pino": "^9.1.0",
     "qs": "^6.12.1",
     "react": "^18",
     "react-datepicker": "^6.6.0",
@@ -46,6 +47,8 @@
     "react-toastify": "^10.0.4",
     "sharp": "^0.33.3",
     "socket.io-client": "^4.7.5",
+    "swr": "^2.2.5",
+    "tw-elements": "^2.0.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {

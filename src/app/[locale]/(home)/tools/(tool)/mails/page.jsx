@@ -38,7 +38,7 @@ export default function IngresarEmail() {
         getFolders();
       }
     } catch (error) {
-      handleApiError(error.message, errorsDuplicated);
+      handleApiError(error.message);
     }
   }
 
@@ -62,7 +62,7 @@ export default function IngresarEmail() {
         setModalC(true);
       }
     } catch (error) {
-      handleApiError(error.message, errorsDuplicated);
+      handleApiError(error.message);
     }
   }
 

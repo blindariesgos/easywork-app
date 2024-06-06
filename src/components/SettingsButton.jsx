@@ -27,9 +27,9 @@ const IconDropdown = ({options, width, icon, colorIcon = "text-primary", disable
                             <Menu.Item key={index}>
                                 {({ active }) => (
                                     <button
-                                        className={`${
-                                        active ? ' text-white bg-easy-600' : 'text-primary'
-                                        } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm`}
+                                        className={`group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm ${
+                                            active ? (opt.disabled ? 'bg-gray-200 text-white' : 'bg-easy-600 text-white') : 'text-primary'
+                                        }`}
                                         disabled={disabled}
                                     >
                                         {opt.icon && <opt.icon className={`h-4 w-4 ${active ? "text-white" : `${colorIcon}`}`}/>}

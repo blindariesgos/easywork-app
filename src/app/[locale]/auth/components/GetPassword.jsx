@@ -33,7 +33,7 @@ export default function GetPassword() {
           <h1>Obtener contraseña</h1>
         </div>
         {/* Usuario */}
-        <div className="relative text-gray-600 focus-within:text-gray-400">
+        {/* <div className="relative text-gray-600 focus-within:text-gray-400">
           <span className="absolute inset-y-0 left-0 flex items-center pl-2">
             <button
               type="submit"
@@ -50,7 +50,7 @@ export default function GetPassword() {
             placeholder="Usuario"
             autoComplete="off"
           />
-        </div>
+        </div> */}
         {/* E-mail */}
         <div className="relative text-gray-600 focus-within:text-gray-400 mt-2">
           <span className="absolute inset-y-0 left-0 flex items-center pl-2">

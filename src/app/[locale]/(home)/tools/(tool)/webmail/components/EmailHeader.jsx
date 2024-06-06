@@ -15,7 +15,7 @@ export default function ToolHeader({
           {title}
         </h1> */}
         <div className="flex gap-3 items-center">
-          <ActionButton />
+          {ActionButton}
           <div className="bg-white flex justify-around rounded-md py-2 px-4">
             <button className="bg-easywork-main flex text-white rounded-md px-2">
               Filtros <span className="ml-1 font-semibold">INBOX</span>

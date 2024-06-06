@@ -1,28 +1,11 @@
 "use server";
 import axios from "axios";
-import { auth, signIn } from "../../auth";
-import { logout } from "./apis";
+import { auth } from "../../auth";
+import { updateSession, clearSession } from "./session";
 import refreshAuthToken from "./helpers/refresh_auth_token";
-import { cookies } from "next/headers";
+import {getLogger} from "@/src/utils/logger"
 
-const updateSessionToken = async (newAccessToken) => {
-  const session = await auth();
-
-  if (!session) return;
-
-  const updatedSession = {
-    ...session,
-    user: {
-      ...session.user,
-      accessToken: newAccessToken,
-    },
-  };
-
-  await signIn("credentials", {
-    prevSession: JSON.stringify(updatedSession),
-    redirect: false,
-  });
-};
+const logger = getLogger("axios");
 
 const createAxiosInstance = (contentType = "application/json") => {
   const axiosInstance = axios.create({
@@ -56,6 +39,7 @@ const createAxiosInstance = (contentType = "application/json") => {
         originalRequest._retry = true;
 
         try {
+          logger.info("Actualizando Token")
           const updatedAuthToken = await refreshAuthToken();
 
           if (!updatedAuthToken) {
@@ -64,13 +48,11 @@ const createAxiosInstance = (contentType = "application/json") => {
 
           originalRequest.headers.Authorization = `Bearer ${updatedAuthToken}`;
 
-          await updateSessionToken(updatedAuthToken);
+          await updateSession(updatedAuthToken);
 
           return axiosInstance(originalRequest);
         } catch (tokenError) {
-          cookies().delete("authjs.session-token");
-          await logout();
-          // Redirige o maneja el error de manera apropiada
+          await clearSession();
           throw tokenError;
         }
       }

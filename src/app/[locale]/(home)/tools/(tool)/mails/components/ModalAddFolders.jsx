@@ -1,3 +1,4 @@
+"use client";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";

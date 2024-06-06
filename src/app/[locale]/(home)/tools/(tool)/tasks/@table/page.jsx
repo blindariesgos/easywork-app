@@ -1,19 +1,25 @@
-import React from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import TableTask from "./TableTask";
-import { getTasksUser } from "../../../../../../../lib/apis";
+import { useTasks } from "@/src/lib/api/hooks/tasks";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
-async function getAllTasks(page) {
-  try {
-    // const tasks = await getTasks(page, 6); //Rol admin
-    const tasks = await getTasksUser(page, 6);
-    return tasks;
-  } catch (error) {
-    console.log("error", error);
-  }
-}
 
-export default async function page({ params, searchParams: { page } }) {
-  const tasks = await getAllTasks(page);
+export default async function page({ params, searchParams }) {
+  const [page, setPage] = useState(searchParams.page || 1);
+  const [limit, setLimit] = useState(searchParams.limit || 6);
+
+  useEffect(() => {
+    setPage(searchParams.page || 1);
+  }, [searchParams.page]);
+
+  useEffect(() => {
+    setLimit(searchParams.limit || 6);
+  }, [searchParams.limit]);
+
+  const { tasks, isLoading, isError } = useTasks({page, limit})
+  if (isLoading) return <LoaderSpinner/>
+  if (isError || !tasks) return <div>Error al cargar las tareas</div>
   return (
     <div className="relative h-full">
       <TableTask data={tasks} />

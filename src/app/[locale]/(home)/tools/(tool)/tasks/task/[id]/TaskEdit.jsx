@@ -1,16 +1,12 @@
 "use client";
 import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
 import IconDropdown from "../../../../../../../../components/SettingsButton";
-import useAppContext from "../../../../../../../../context/app";
-import { useTasks } from "../../../../../../../../hooks/useCommon";
 import {
   Cog8ToothIcon,
   ExclamationTriangleIcon,
   FireIcon,
-  PlusIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
@@ -24,11 +20,14 @@ import { putTaskCompleted } from "../../../../../../../../lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "../../../../../../../../utils/api/errors";
 import { useTask } from "@/src/lib/api/hooks/tasks";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
 export default function TaskEdit({ id }) {
   const { task, isLoading, isError } = useTask(id);
 
+  console.log(task);
+
   const { t } = useTranslation();
-  const { settings } = useTasks();
+  const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(true);
   const [value, setValueText] = useState(task ? task.description : "");
@@ -46,14 +45,17 @@ export default function TaskEdit({ id }) {
     }
   };
 
-  if (isLoading) return <div className="flex flex-col h-screen relative w-full overflow-y-auto">
-    <div
-        className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
-      >
-        <LoaderSpinner/>
+  if (isLoading)
+    return (
+      <div className="flex flex-col h-screen relative w-full overflow-y-auto">
+        <div
+          className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
+        >
+          <LoaderSpinner />
+        </div>
       </div>
-  </div>
-  if (isError) return <>Error al cargar la tarea</>
+    );
+  if (isError) return <>Error al cargar la tarea</>;
   return (
     <div className="flex flex-col h-screen relative w-full overflow-y-auto">
       {loading && <LoaderSpinner />}
@@ -232,7 +234,7 @@ export default function TaskEdit({ id }) {
                           objectFit="cover"
                         />
                         <p className="text-base font-semibold text-black">
-                          {resp?.username}
+                          {resp?.name}
                         </p>
                       </div>
                     ))}
@@ -279,7 +281,7 @@ export default function TaskEdit({ id }) {
                           objectFit="contain"
                         />
                         <p className="text-base font-semibold text-black">
-                          {obs?.username}
+                          {obs?.name}
                         </p>
                       </div>
                     ))}

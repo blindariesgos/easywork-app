@@ -4,14 +4,14 @@ import React, { Suspense } from "react";
 import { Cog8ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
-import { useTasks } from "../../../../../../hooks/useCommon";
 import IconDropdown from "../../../../../../components/SettingsButton";
 import FiltersTasks from "./components/filters/FiltersTasks";
 import LoaderSpinner from "../../../../../../components/LoaderSpinner";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
 
 export default function TaskLayout({ children, table }) {
   const { t } = useTranslation();
-  const { optionsSettings, optionsTrash } = useTasks();
+  const { optionsSettings, optionsTrash } = useTasksConfigs();
 
   return (
     <div className="flex flex-col flex-grow h-full">

@@ -1,7 +1,6 @@
 "use client";
 import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
 import IconDropdown from "../../../../../../../../components/SettingsButton";
-import { useTasks } from "../../../../../../../../hooks/useCommon";
 import {
   Cog8ToothIcon,
   ExclamationTriangleIcon,
@@ -21,11 +20,14 @@ import { putTaskCompleted } from "../../../../../../../../lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "../../../../../../../../utils/api/errors";
 import { useTask } from "@/src/lib/api/hooks/tasks";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
 export default function TaskEdit({ id }) {
   const { task, isLoading, isError } = useTask(id);
 
+  console.log(task);
+
   const { t } = useTranslation();
-  const { settings } = useTasks();
+  const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(true);
   const [value, setValueText] = useState(task ? task.description : "");
@@ -232,7 +234,7 @@ export default function TaskEdit({ id }) {
                           objectFit="cover"
                         />
                         <p className="text-base font-semibold text-black">
-                          {resp?.username}
+                          {resp?.name}
                         </p>
                       </div>
                     ))}
@@ -279,7 +281,7 @@ export default function TaskEdit({ id }) {
                           objectFit="contain"
                         />
                         <p className="text-base font-semibold text-black">
-                          {obs?.username}
+                          {obs?.name}
                         </p>
                       </div>
                     ))}

@@ -52,6 +52,7 @@ const createAxiosInstance = (contentType = "application/json") => {
 
           return axiosInstance(originalRequest);
         } catch (tokenError) {
+          console.log("@@@@ Cerrando sesion");
           await clearSession();
           throw tokenError;
         }

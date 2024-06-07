@@ -1,7 +1,6 @@
 "use client";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 import IconDropdown from "../../../../../../../components/SettingsButton";
-import { useTasks } from "../../../../../../../hooks/useCommon";
 import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
@@ -12,9 +11,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
+import MultipleSelectWithFilters from "@/src/components/form/MultipleSelectWithFilters";
 import InputDate from "../../../../../../../components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
-import TextInput from "../../../../../../../components/form/TextInput";
 import DateTimeCalculator from "../components/DateTimeCalculator";
 import CkeckBoxMultiple from "../../../../../../../components/form/CkeckBoxMultiple";
 import InputCheckBox from "../../../../../../../components/form/InputCheckBox";
@@ -26,6 +25,8 @@ import MultiSelectTags from "../components/MultiSelectTags";
 import { postTask, putTaskId } from "../../../../../../../lib/apis";
 import { handleApiError } from "../../../../../../../utils/api/errors";
 import { getFormatDate } from "../../../../../../../utils/getFormatDate";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
+import { useTaskContactsPolizas } from "@/src/lib/api/hooks/tasks";
 
 export default function TaskCreate({ edit }) {
   // console.log("data", edit)
@@ -33,7 +34,7 @@ export default function TaskCreate({ edit }) {
   const { t } = useTranslation();
   const router = useRouter();
   const { lists } = useAppContext();
-  const { settings } = useTasks();
+  const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
   const [value, setValueText] = useState(edit ? edit.description : "");
@@ -50,6 +51,12 @@ export default function TaskCreate({ edit }) {
       edit?.responsibleCanChangeDate || edit?.requireRevision ? true : false,
     more: false,
   });
+
+  const {
+    data: listContactsPolizas,
+    isLoading,
+    isError,
+  } = useTaskContactsPolizas();
 
   useEffect(() => {
     if (edit) {
@@ -218,9 +225,13 @@ export default function TaskCreate({ edit }) {
     }
   };
 
+  if (isError) {
+    console.log("Error al cargar lista de contactos y tasks");
+  }
+
   return (
     <>
-      {loading && <LoaderSpinner />}
+      {loading || (isLoading && <LoaderSpinner />)}
       <div
         className={`flex flex-col ${
           edit ? "h-full" : "h-screen"
@@ -552,9 +563,9 @@ export default function TaskCreate({ edit }) {
                         control={control}
                         defaultValue={[]}
                         render={({ field }) => (
-                          <MultipleSelect
+                          <MultipleSelectWithFilters
                             {...field}
-                            options={lists?.users || []}
+                            data={listContactsPolizas || {}}
                             getValues={getValues}
                             setValue={setValue}
                             name="crm"

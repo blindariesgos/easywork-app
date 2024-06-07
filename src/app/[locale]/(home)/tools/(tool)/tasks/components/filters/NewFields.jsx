@@ -1,12 +1,12 @@
+import { useTasksConfigs } from "@/src/hooks/useCommon";
 import useAppContext from "../../../../../../../../context/app";
-import { useTasks } from "../../../../../../../../hooks/useCommon";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const NewFields = ({ append, remove, fields: selectFields }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
-  const { status } = useTasks();
+  const { status } = useTasksConfigs();
   const [fields, setFields] = useState([
     {
       id: 1,

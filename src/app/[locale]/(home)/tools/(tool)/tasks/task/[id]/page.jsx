@@ -5,7 +5,7 @@ import TaskEdit from "./TaskEdit";
 
 export default function TaskDetailsPage({ params: { id } }) {
   return (
-    <SlideOver colorTag="bg-green-primary" samePage={`/tools/tasks?page=1`}>
+    <SlideOver colorTag="bg-primary" samePage={`/tools/tasks?page=1`}>
       <Suspense fallback={<div>Loading task details...</div>}>
         <TaskEdit id={id} />
       </Suspense>

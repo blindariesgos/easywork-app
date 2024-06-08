@@ -103,7 +103,8 @@ export default function TaskEdit({ id }) {
                     disabled={task ? true : false}
                   />
                 </div>
-                <div className="flex items-end flex-col p-2 sm:p-4 gap-2">
+                {/* CRM */}
+                {/* <div className="flex items-end flex-col p-2 sm:p-4 gap-2">
                   <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
                     <p className="text-sm text-white">
                       {t("tools:tasks:edit:contact")}:
@@ -116,7 +117,7 @@ export default function TaskEdit({ id }) {
                     </p>
                     <p className="text-sm text-white">1587456621</p>
                   </div>
-                </div>
+                </div> */}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
                     {!task.isCompleted && (
@@ -209,7 +210,7 @@ export default function TaskEdit({ id }) {
                       objectFit="cover"
                     />
                     <p className="text-base font-semibold text-black">
-                      {task.createdBy?.username}
+                      {task.createdBy?.name || task.createdBy?.username}
                     </p>
                   </div>
                 </div>
@@ -234,7 +235,7 @@ export default function TaskEdit({ id }) {
                           objectFit="cover"
                         />
                         <p className="text-base font-semibold text-black">
-                          {resp?.name}
+                          {resp?.name || resp?.username}
                         </p>
                       </div>
                     ))}

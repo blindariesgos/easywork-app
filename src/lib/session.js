@@ -1,7 +1,8 @@
 "use server";
-import { auth, signIn } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { cookies } from "next/headers";
 import { getLogger } from "../utils/logger";
+import { logout } from "./apis";
 
 const logger = getLogger("Session Updater");
 
@@ -24,12 +25,13 @@ export const updateSession = async (newAccessToken) => {
   });
 };
 
-export const clearSession = async () => {
+export async function clearSession() {
   try {
-    const cookieJar = cookies();
-    cookieJar.delete("authjs.session-token");
-    cookieJar.delete("refreshToken");
+    logger.info("Clearing session...");
+    const response = await signOut({ redirect: false });
+    logger.info("Session cleared:", response);
   } catch (error) {
-    logger.warn(error);
+    logger.error("Error clearing session:", error);
+    throw error; // Relanza el error para manejarlo en otro lugar
   }
-};
+}

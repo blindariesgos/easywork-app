@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ChevronDownIcon,
   PlusIcon,
@@ -21,6 +21,22 @@ const MultipleSelect = ({
   const [isOpen, setIsOpen] = useState(false);
   // const [options, setOptions] = useState(data);
   const [query, setQuery] = useState("");
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
   const handleToggle = () => {
     setQuery("");
     setIsOpen(!isOpen);
@@ -40,6 +56,8 @@ const MultipleSelect = ({
     } else {
       setValue(name, [option], { shouldValidate: true });
     }
+
+    setIsOpen(false); // Close the dropdown after selection
   };
 
   const handleRemove = (id) => {
@@ -57,7 +75,7 @@ const MultipleSelect = ({
         });
 
   return (
-    <div className="">
+    <div>
       <label className="text-sm font-medium leading-6 text-gray-900">
         {label}
       </label>
@@ -86,7 +104,7 @@ const MultipleSelect = ({
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
               <PlusIcon className="h-3 w-3" />
-              <p className="text-xs">{t("common:buttons:add")}</p>
+              <p className="text-xs">{onlyOne ? t("common:buttons:change") : t("common:buttons:add")}</p>
             </div>
           </span>
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
@@ -94,7 +112,7 @@ const MultipleSelect = ({
           </span>
         </button>
         {isOpen && (
-          <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div ref={dropdownRef} className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
             <div
               className="py-1 flex flex-col gap-2 px-2"
               aria-labelledby="options-menu"

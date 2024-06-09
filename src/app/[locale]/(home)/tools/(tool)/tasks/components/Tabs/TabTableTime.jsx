@@ -8,9 +8,9 @@ import * as yup from 'yup';
 import InputDate from '../../../../../../../../components/form/InputDate';
 import { FaCalendarDays } from 'react-icons/fa6';
 
-export default function TabTableTime({ data }) {
-	const time = data.data || [];
-	const [ showIcon, setShowIcon ] = useState({});
+export default function TabTableTime() {
+	const time = [];
+	const [showIcon, setShowIcon] = useState({});
 	const { t } = useTranslation();
 
 	//FUNCTIONS TO ADD TIME
@@ -29,7 +29,7 @@ export default function TabTableTime({ data }) {
 
 	const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
 		defaultValues: {
-			queues: [ ...time ]
+			queues: [...time]
 		},
 		resolver: yupResolver(schema)
 	});
@@ -70,7 +70,7 @@ export default function TabTableTime({ data }) {
 							<tr key={index} onMouseEnter={() => setShowIcon({ [index]: !showIcon[index] })}>
 								<td className="text-xs py-2 text-center">
 									<div>
-										{time.edit ? (
+										{time?.edit ? (
 											<Controller
 												render={({ field: { value, onChange, ref, onBlur } }) => {
 													return (
@@ -100,13 +100,13 @@ export default function TabTableTime({ data }) {
 												defaultValue=""
 											/>
 										) : (
-											<div>{time.date}</div>
+											<div>{time?.date}</div>
 										)}
 									</div>
 								</td>
-								<td className="text-xs py-2 text-center">{time.created}</td>
+								<td className="text-xs py-2 text-center">{time?.created}</td>
 								<td className="text-xs py-2 flex justify-center">
-									{time.edit ? (
+									{time?.edit ? (
 										<div className="flex gap-1 items-center justify-center">
 											<input
 												{...register(`queues.${index}.hours`)}
@@ -128,16 +128,16 @@ export default function TabTableTime({ data }) {
 											<p className="text-xs">s</p>
 										</div>
 									) : (
-										time.time
+										time?.time
 									)}
 								</td>
 								<td className="text-xs py-2 text-center">
 									<div
-										className={`flex ${time.comment
+										className={`flex ${time?.comment
 											? 'justify-between'
 											: 'justify-end'} items-center w-full gap-2`}
 									>
-										{time.edit ? (
+										{time?.edit ? (
 											<div className="w-full">
 												<input
 													{...register(`queues.${index}.comment`)}
@@ -147,11 +147,11 @@ export default function TabTableTime({ data }) {
 												/>
 											</div>
 										) : (
-											time.comment
+											time?.comment
 										)}
 										{showIcon[index] && (
 											<div className="flex gap-2 items-center justify-end">
-												{time.edit ? (
+												{time?.edit ? (
 													<CheckIcon
 														className="h-3 cursor-pointer text-gray-400"
 														onClick={() => {
@@ -176,7 +176,7 @@ export default function TabTableTime({ data }) {
 												)}
 												<XMarkIcon
 													className="h-3 cursor-pointer text-gray-400"
-													onClick={() => time.edit ? setValue(`queues.${index}.edit`, false) : remove(index)}
+													onClick={() => time?.edit ? setValue(`queues.${index}.edit`, false) : remove(index)}
 												/>
 											</div>
 										)}
@@ -184,7 +184,7 @@ export default function TabTableTime({ data }) {
 								</td>
 							</tr>
 						))}
-					{!watch('queues')[watch('queues').length - 1].edit && (
+					{!watch('queues')[watch('queues').length - 1]?.edit && (
 						<tr className="">
 							<td
 								colSpan={4}

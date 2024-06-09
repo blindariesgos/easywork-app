@@ -64,7 +64,8 @@
     "close": "Cerrar",
     "apply": "Aplicar",
     "continue": "Continuar",
-    "add": "Agregar"
+    "add": "Agregar",
+    "change": "Cambiar"
   },
   "menu": {
     "tools": {

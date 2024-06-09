@@ -1,23 +1,21 @@
 "use client";
-import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import Link from "next/link";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   useTasksConfigs,
   useTasksDetete,
-} from "../../../../../../../hooks/useCommon";
-import { Pagination } from "../../../../../../../components/pagination/Pagination";
-import SelectedOptionsTable from "../../../../../../../components/SelectedOptionsTable";
-import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
-import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
+} from "@/src/hooks/useCommon";
+import { Pagination } from "@/src/components/pagination/Pagination";
+import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import AddColumnsTable from "@/src/components/AddColumnsTable";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import Image from "next/image";
+import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
 
 export default function TableTask({ data }) {
-  const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
@@ -100,10 +98,9 @@ export default function TableTask({ data }) {
                           <th
                             key={index}
                             scope="col"
-                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${
-                              index === selectedColumns.length - 1 &&
+                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${index === selectedColumns.length - 1 &&
                               "rounded-e-xl"
-                            }`}
+                              }`}
                             onClick={() => {
                               handleSorting(column.row);
                             }}
@@ -112,12 +109,11 @@ export default function TableTask({ data }) {
                               {column.name}
                               <div>
                                 <ChevronDownIcon
-                                  className={`h-6 w-6 text-primary ${
-                                    fieldClicked.field === column.row &&
+                                  className={`h-6 w-6 text-primary ${fieldClicked.field === column.row &&
                                     fieldClicked.sortDirection === "desc"
-                                      ? "transform rotate-180"
-                                      : ""
-                                  }`}
+                                    ? "transform rotate-180"
+                                    : ""
+                                    }`}
                                 />
                               </div>
                             </div>
@@ -138,7 +134,6 @@ export default function TableTask({ data }) {
                             "hover:bg-indigo-100/40 cursor-default"
                           )}
                         >
-                          {console.log(task)}
                           <td className=" px-7 sm:w-12 sm:px-6">
                             {selectedTasks.includes(task) && (
                               <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
@@ -164,7 +159,7 @@ export default function TableTask({ data }) {
                                   {column.link ? (
                                     <Link
                                       href={`/tools/tasks/task/${task.id}?show=true`}
-                                      className=""
+                                      className={clsx(task.status === "pending_review" ? "text-gray-800/45" : "text-black")}
                                     >
                                       {task[column.row]}
                                     </Link>
@@ -173,8 +168,8 @@ export default function TableTask({ data }) {
                                       <div className="font-medium text-black ">
                                         {task[column.row].length > 0
                                           ? task[column.row]
-                                              .map((item) => `${item.username}`)
-                                              .join(",")
+                                            .map((item) => `${item.username}`)
+                                            .join(",")
                                           : ""}
                                       </div>
                                     </div>

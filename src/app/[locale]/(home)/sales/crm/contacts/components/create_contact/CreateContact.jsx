@@ -1,31 +1,31 @@
 "use client";
-import useAppContext from "../../../../../../../../context/app";
+import useAppContext from "@/src/context/app";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
 import AddContactTabs from "./AddContactTabs";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../../../../components/form/Button";
-import TextInput from "../../../../../../../../components/form/TextInput";
+import Button from "@/src/components/form/Button";
+import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import InputPhone from "../../../../../../../../components/form/InputPhone";
-import SelectInput from "../../../../../../../../components/form/SelectInput";
-import InputDate from "../../../../../../../../components/form/InputDate";
+import InputPhone from "@/src/components/form/InputPhone";
+import SelectInput from "@/src/components/form/SelectInput";
+import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "../ActivityPanel";
-import { handleApiError } from "../../../../../../../../utils/api/errors";
+import { handleApiError } from "@/src/utils/api/errors";
 import {
   createContact,
   updateContact,
   updatePhotoContact,
-} from "../../../../../../../../lib/apis";
-import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
-import { DocumentSelector } from "../../../../../../../../components/DocumentSelector";
-import ProfileImageInput from "../../../../../../../../components/ProfileImageInput";
+} from "@/src/lib/apis";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
+import { DocumentSelector } from "@/src/components/DocumentSelector";
+import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter } from "next/navigation";
-import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 export default function CreateContact({ edit, id }) {
   const { lists } = useAppContext();

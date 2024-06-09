@@ -1,6 +1,6 @@
 "use client";
-import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
-import IconDropdown from "../../../../../../../../components/SettingsButton";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import IconDropdown from "@/src/components/SettingsButton";
 import {
   Cog8ToothIcon,
   ExclamationTriangleIcon,
@@ -10,21 +10,19 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
-import Button from "../../../../../../../../components/form/Button";
+import Button from "@/src/components/form/Button";
 import ButtonMore from "../../components/ButtonMore";
 import { BsStopwatchFill } from "react-icons/bs";
 import TabsTaskEdit from "../../components/Tabs/TabsTaskEdit";
 import moment from "moment";
 import TaskCreate from "../TaskCreate";
-import { putTaskCompleted } from "../../../../../../../../lib/apis";
+import { putTaskCompleted } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { handleApiError } from "../../../../../../../../utils/api/errors";
+import { handleApiError } from "@/src/utils/api/errors";
 import { useTask } from "@/src/lib/api/hooks/tasks";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 export default function TaskEdit({ id }) {
   const { task, isLoading, isError } = useTask(id);
-
-  console.log(task);
 
   const { t } = useTranslation();
   const { settings } = useTasksConfigs();
@@ -88,9 +86,8 @@ export default function TaskEdit({ id }) {
                   </p>
                   <div className="flex gap-2 items-center">
                     <FireIcon
-                      className={`h-5 w-5 ${
-                        check ? "text-red-500" : "text-gray-200"
-                      }`}
+                      className={`h-5 w-5 ${check ? "text-red-500" : "text-gray-200"
+                        }`}
                     />
                     <p className="text-sm">{t("tools:tasks:new:high")}</p>
                   </div>
@@ -104,20 +101,22 @@ export default function TaskEdit({ id }) {
                   />
                 </div>
                 {/* CRM */}
-                {/* <div className="flex items-end flex-col p-2 sm:p-4 gap-2">
-                  <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
-                    <p className="text-sm text-white">
-                      {t("tools:tasks:edit:contact")}:
-                    </p>
-                    <p className="text-sm text-white">Armando Medina</p>
+                {task?.crm?.length > 0 && (
+                  <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
+                    <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                      <p className="text-sm text-white">
+                        {t("tools:tasks:edit:contact")}:
+                      </p>
+                      <p className="text-sm text-white">Armando Medina</p>
+                    </div>
+                    <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                      <p className="text-sm text-white">
+                        {t("tools:tasks:edit:policy")}:
+                      </p>
+                      <p className="text-sm text-white">1587456621</p>
+                    </div>
                   </div>
-                  <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
-                    <p className="text-sm text-white">
-                      {t("tools:tasks:edit:policy")}:
-                    </p>
-                    <p className="text-sm text-white">1587456621</p>
-                  </div>
-                </div> */}
+                )}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
                     {!task.isCompleted && (
@@ -157,11 +156,7 @@ export default function TaskEdit({ id }) {
           {!openEdit && (
             <div className="w-full sm:w-3/12 bg-white rounded-lg h-full">
               <div className="bg-primary rounded-t-lg p-4 text-center">
-                <p className="text-white font-medium text-sm">
-                  {t("tools:tasks:edit:pending-since", {
-                    date: moment(task?.createdAt).format("DD-MM-YYYY"),
-                  })}
-                </p>
+                <TaskHeaderStatus task={task} />
               </div>
               <div className="p-2 sm:p-4">
                 <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
@@ -174,12 +169,7 @@ export default function TaskEdit({ id }) {
                       : ""}
                   </p>
                 </div>
-                {task.status !== "pending" && (
-                  <div className="w-ful bg-easy-300 rounded-md flex justify-center gap-2 p-1 my-3">
-                    <ExclamationTriangleIcon className="h-6 w-6 text-primary" />
-                    <p>{t("tools:tasks:edit:task-overdue")}</p>
-                  </div>
-                )}
+                <BannerStatus task={task} />
                 <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
                   <p className="text-sm text-black">
                     {t("tools:tasks:edit:created-the")}
@@ -223,7 +213,7 @@ export default function TaskEdit({ id }) {
                   {/* <div className="cursor-pointer">
 											<p className="text-xs text-black">{t('tools:tasks:edit:change')}</p>
 										</div> */}
-                  {task?.responsible.length > 0 &&
+                  {task?.responsible?.length > 0 &&
                     task.responsible.map((resp, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
@@ -244,7 +234,7 @@ export default function TaskEdit({ id }) {
                   <p className="text-sm text-black border-b-[1px] border-slate-300/40 pt-2 pb-1">
                     {t("tools:tasks:edit:participant")}
                   </p>
-                  {task?.participants.length > 0 &&
+                  {task?.participants?.length > 0 &&
                     task.participants.map((part, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
@@ -270,7 +260,7 @@ export default function TaskEdit({ id }) {
                       Agregar
                     </p>
                   </div>
-                  {task?.observers.length > 0 &&
+                  {task?.observers?.length > 0 &&
                     task.observers.map((obs, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
@@ -292,7 +282,7 @@ export default function TaskEdit({ id }) {
                     {t("tools:tasks:edit:tags")}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {task.tags.length > 0 &&
+                    {task?.tags?.length > 0 &&
                       task.tags.map((tag, index) => (
                         <div
                           key={index}
@@ -314,4 +304,37 @@ export default function TaskEdit({ id }) {
       </div>
     </div>
   );
+}
+
+const TaskHeaderStatus = ({ task }) => {
+  const { t } = useTranslation();
+  if (task.status === "pending") {
+    return <p className="text-white font-medium text-sm">
+      {t("tools:tasks:edit:pending-since", {
+        date: moment(task?.createdAt).format("DD-MM-YYYY"),
+      })}
+    </p>
+  } else if (task.status === "completed" || task?.status === "pending_review") {
+    return <p className="text-white font-medium text-sm">{t("tools:tasks:edit:completed-since", {
+      date: moment(task?.completedTime).format("DD-MM-YYYY"),
+    })}</p>
+  }
+};
+
+
+const BannerStatus = ({ task }) => {
+  const { t } = useTranslation();
+  if (task?.status === "pending") {
+    // Verificar si la tarea está vencida
+    if (task?.deadline) {
+      const today = new Date();
+      const deadline = new Date(task.deadline);
+      if (deadline < today) {
+        return <div className="w-ful bg-red-100 rounded-md flex justify-center gap-2 p-1 my-3">
+          <ExclamationTriangleIcon className="h-6 w-6 text-red-800" />
+          <p className="text-red-800">{t("tools:tasks:edit:task-overdue")}</p>
+        </div>
+      }
+    }
+  }
 }

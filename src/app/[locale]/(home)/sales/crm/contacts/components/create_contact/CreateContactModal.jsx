@@ -1,7 +1,7 @@
 "use client";
-import SlideOver from "../../../../../../../../components/SlideOver";
 import React from "react";
 import CreateContact from "./CreateContact";
+import SlideOver from "@/src/components/SlideOver";
 
 export default function CreateContactModal() {
   

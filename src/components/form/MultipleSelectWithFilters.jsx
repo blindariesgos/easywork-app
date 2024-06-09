@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDownIcon,
   PlusIcon,
@@ -23,24 +23,48 @@ const MultipleSelectWithFilters = ({
   const [filterSelect, setFilterSelect] = useState(1);
   const [query, setQuery] = useState("");
 
+  const dropdownRef = useRef(null);
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
   const handleToggle = () => {
     setQuery("");
     setIsOpen(!isOpen);
   };
 
   const handleSelect = (option) => {
-    const array = getValues(name);
-    if (onlyOne) return setValue(name, [option]);
-    if (array) {
-      const index = array.findIndex((res) => res.id === option.id);
-      if (index === -1) {
-        setValue(name, [...array, option], { shouldValidate: true });
-      } else {
-        const updatedValue = array.filter((res) => res.id !== option.id);
-        setValue(name, updatedValue, { shouldValidate: true });
-      }
+    const currentValues = getValues(name) || [];
+
+    // Determine the type based on filterSelect
+    const type = filterSelect === 1 ? "contact" : "poliza";
+
+    const newOption = { 
+      id: option.id,
+      name: option.name,
+      username: option.username,
+      title: option.title,
+      type
+    };
+
+    const index = currentValues.findIndex(res => res.id === option.id);
+
+    if (index === -1) {
+      setValue(name, [...currentValues, newOption], { shouldValidate: true });
     } else {
-      setValue(name, [option], { shouldValidate: true });
+      const updatedValue = currentValues.filter(res => res.id !== option.id);
+      setValue(name, updatedValue, { shouldValidate: true });
     }
   };
 
@@ -98,7 +122,7 @@ const MultipleSelectWithFilters = ({
           </span>
         </button>
         {isOpen && (
-          <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div ref={dropdownRef} className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
             <div className="flex divide-x-2 divide-gray-200/70">
               <div
                 className="py-1 flex flex-col gap-2 px-2 flex-1"

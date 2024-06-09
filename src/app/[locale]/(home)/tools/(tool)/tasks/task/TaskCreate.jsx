@@ -1,35 +1,34 @@
 "use client";
-import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
-import IconDropdown from "../../../../../../../components/SettingsButton";
 import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import useAppContext from "../../../../../../../context/app";
+import useAppContext from "@/src/context/app";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
-import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
+import MultipleSelect from "@/src/components/form/MultipleSelect";
 import MultipleSelectWithFilters from "@/src/components/form/MultipleSelectWithFilters";
-import InputDate from "../../../../../../../components/form/InputDate";
+import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import DateTimeCalculator from "../components/DateTimeCalculator";
-import CkeckBoxMultiple from "../../../../../../../components/form/CkeckBoxMultiple";
-import InputCheckBox from "../../../../../../../components/form/InputCheckBox";
-import Button from "../../../../../../../components/form/Button";
+import CkeckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
+import InputCheckBox from "@/src/components/form/InputCheckBox";
+import Button from "@/src/components/form/Button";
 import { useRouter } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
-import { postTask, putTaskId } from "../../../../../../../lib/apis";
-import { handleApiError } from "../../../../../../../utils/api/errors";
-import { getFormatDate } from "../../../../../../../utils/getFormatDate";
+import { postTask, putTaskId } from "@/src/lib/apis";
+import { handleApiError } from "@/src/utils/api/errors";
+import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useTaskContactsPolizas } from "@/src/lib/api/hooks/tasks";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import IconDropdown from "@/src/components/SettingsButton";
 
 export default function TaskCreate({ edit }) {
-  // console.log("data", edit)
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
@@ -147,6 +146,12 @@ export default function TaskCreate({ edit }) {
   const createTask = async (data, isNewTask) => {
     if (value === "") return toast.error(t("tools:tasks:description"));
     if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
+    let crm = [];
+
+    if (data?.crm?.length > 0)
+      crm = data?.crm.map((item) => ({ id: item.id, type: item.type }))
+
+
     const body = {
       name: data.name,
       description: value,
@@ -156,7 +161,9 @@ export default function TaskCreate({ edit }) {
       responsibleCanChangeDate:
         selectedOptions.filter((sel) => sel.id === 1).length > 0 ? true : false,
       createdById: session.user?.id,
+      crm,
     };
+
     if (data.observers && data.observers.length > 0) {
       const observersIds = data.observers.map((obs) => {
         return obs.id;
@@ -233,16 +240,13 @@ export default function TaskCreate({ edit }) {
     <>
       {loading || (isLoading && <LoaderSpinner />)}
       <div
-        className={`flex flex-col ${
-          edit ? "h-full" : "h-screen"
-        } relative w-full ${!edit && "overflow-y-auto"}`}
+        className={`flex flex-col ${edit ? "h-full" : "h-screen"
+          } relative w-full ${!edit && "overflow-y-auto"}`}
       >
         <div
-          className={`flex flex-col flex-1 ${
-            !edit && "bg-gray-600 shadow-xl"
-          } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${
-            edit ? "sm:p-0" : "sm:p-4"
-          }`}
+          className={`flex flex-col flex-1 ${!edit && "bg-gray-600 shadow-xl"
+            } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? "sm:p-0" : "sm:p-4"
+            }`}
         >
           {!edit && (
             <div className="flex justify-between items-center py-2">
@@ -280,9 +284,8 @@ export default function TaskCreate({ edit }) {
                 />
                 <p className="text-sm">{t("tools:tasks:new:high")}</p>
                 <FireIcon
-                  className={`h-5 w-5 ${
-                    check ? "text-orange-400" : "text-gray-200"
-                  }`}
+                  className={`h-5 w-5 ${check ? "text-orange-400" : "text-gray-200"
+                    }`}
                 />
               </div>
             </div>
@@ -527,9 +530,8 @@ export default function TaskCreate({ edit }) {
               >
                 <div>
                   <ChevronDownIcon
-                    className={`w-4 h-4 ${
-                      openOptions.more && "rotate-180"
-                    } text-primary`}
+                    className={`w-4 h-4 ${openOptions.more && "rotate-180"
+                      } text-primary`}
                   />
                 </div>
                 <div className="flex gap-2 text-sm">

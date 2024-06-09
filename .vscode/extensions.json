@@ -1,17 +1,15 @@
 {
-    "recommendations": [
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "ms-azuretools.vscode-docker",
-        "ms-vscode-remote.remote-containers",
-        "ms-vscode-remote.remote-ssh",
-        "ms-vscode-remote.remote-ssh-edit",
-        "ms-vscode-remote.remote-wsl",
-        "ms-vscode-remote.vscode-remote-extensionpack",
-        "ms-vscode.cpptools",
-        "ms-vscode.vscode-typescript-tslint-plugin",
-        "msjsdiag.debugger-for-chrome",
-        "redhat.vscode-yaml",
-        "vscoss.vscode-ansible",
-],
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-ssh-edit",
+    "ms-vscode-remote.remote-wsl",
+    "ms-vscode-remote.vscode-remote-extensionpack",
+    "ms-vscode.cpptools",
+    "redhat.vscode-yaml",
+    "vscoss.vscode-ansible"
+  ]
 }

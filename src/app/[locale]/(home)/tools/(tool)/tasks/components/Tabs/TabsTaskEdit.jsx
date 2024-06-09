@@ -6,22 +6,25 @@ import TabComment from './TabComment';
 import TabTableHistory from './TabTableHistory';
 import TabTableTime from './TabTableTime';
 import TabTableObjections from './TabTableObjections';
+import { useTaskComments } from '@/src/lib/api/hooks/tasks';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(' ');
 }
 
 export default function TabsTaskEdit({ data }) {
+	const { comments, isLoading, isError } = useTaskComments(data.id);
+
 	const { t } = useTranslation();
-	let [ categories, setCategories ] = useState(null);
+	let [categories, setCategories] = useState(null);
 	useEffect(() => {
 		setCategories({
 			comments: {
 				name: t('tools:tasks:edit:comments'),
-				qty: "21",
+				qty: comments?.length || 0,
 				pings: 9,
 				component: TabComment,
-				data: data
 			},
 			history: {
 				name: t('tools:tasks:edit:history'),
@@ -61,7 +64,9 @@ export default function TabsTaskEdit({ data }) {
 						link: "#8965412",
 						updating: "12/12/2023 15:00 - 19/12/2023 15:00"
 					}
-				]
+				],
+				isLoading: false,
+				isError: false
 			},
 			time: {
 				name: t('tools:tasks:edit:time'),
@@ -83,7 +88,9 @@ export default function TabsTaskEdit({ data }) {
 						time: "09:00:00",
 						comment: ""
 					},
-				]
+				],
+				isLoading: false,
+				isError: false
 			},
 			objections: {
 				name: t('tools:tasks:edit:objections'),
@@ -101,11 +108,16 @@ export default function TabsTaskEdit({ data }) {
 						date: "5/29/2024 19:41:00",
 						created: "Yamile Rayme",
 					},
-				]
+				],
+				isLoading: false,
+				isError: false
 			}
 		});
-	}, [data, t])
-	
+	}, [data, t, comments]);
+
+	if (isLoading) return <LoaderSpinner />;
+	if (isError) return <p>Error</p>;
+
 
 
 	return (
@@ -125,9 +137,9 @@ export default function TabsTaskEdit({ data }) {
 								)}
 						>
 							{t(`tools:tasks:edit:${category}`)}
-                            <div className='text-xs p-1 bg-gray-200 rounded-md'>
-                                {categories[category].qty}
-                            </div>
+							<div className='text-xs p-1 bg-gray-200 rounded-md'>
+								{categories[category].qty}
+							</div>
 						</Tab>
 					))}
 				</Tab.List>
@@ -140,7 +152,7 @@ export default function TabsTaskEdit({ data }) {
 								'focus:outline-none focus:ring-0'
 							)}
 						>
-							<categ.component data={categ.data} info={data}/>
+							<categ.component info={data} />
 						</Tab.Panel>
 					))}
 				</Tab.Panels>

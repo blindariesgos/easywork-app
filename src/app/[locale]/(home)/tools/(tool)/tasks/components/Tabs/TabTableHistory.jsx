@@ -2,8 +2,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function TabTableHistory({ data }) {
-	const history = data.data || [];
+export default function TabTableHistory() {
+	const history = [];
 	const { t } = useTranslation();
 	return (
 		<div className="relative overflow-hidden sm:rounded-lg p-2">

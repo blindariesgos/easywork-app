@@ -48,7 +48,7 @@ export const getDataPassword = async (email) => {
 export const createContact = async (data) => {
   const response = await axios("multipart/form-data").post(
     "/sales/crm/contacts/new",
-    data
+    data,
   );
   // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;
@@ -60,14 +60,14 @@ export const updateContact = async (data, id) => {
 export const updatePhotoContact = async (photo, id) => {
   const response = await axios("multipart/form-data").put(
     `/sales/crm/contacts/${id}/photo`,
-    photo
+    photo,
   );
   return response;
 };
 
 export const getContacts = async (page = 1) => {
   const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`
+    `/sales/crm/contacts?limit=6&page=${page}`,
   );
   return response;
 };
@@ -120,14 +120,14 @@ export const getFoldersSaved = async (data) => {
 
 export const getTasks = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`
+    `/tools/tasks?limit=${limit}&page=${page}`,
   );
   return response;
 };
 
 export const getTasksUser = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`
+    `/tools/tasks/user?limit=${limit}&page=${page}`,
   );
   return response;
 };
@@ -161,8 +161,8 @@ export const putTaskCompleted = async (id) => {
 };
 
 export const postComment = async (body, id) => {
+  console.log("### POSTING COMMENT", body, id);
   const response = await axios().post(`/tools/tasks/comments`, body);
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
 };
 export const deleteComment = async (commentId, id) => {
@@ -172,9 +172,10 @@ export const deleteComment = async (commentId, id) => {
 };
 
 export const putComment = async (commentId, body, id) => {
+  console.log("Actualizando comentario", commentId, body, id);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
-    body
+    body,
   );
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
@@ -211,7 +212,7 @@ export const getPolizaByContact = async (id) => {
 
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`
+    `/sales/crm/leads?limit=${limit}&page=${page}`,
   );
   return response;
 };
@@ -265,4 +266,3 @@ export const deleteFoldersMail = async (id) => {
   const response = await axios().delete(`/imap-config/folder/${id}`);
   return response;
 };
-

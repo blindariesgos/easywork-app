@@ -16,7 +16,7 @@ export default function Page({ params, searchParams }) {
   }, [searchParams.page]);
 
   useEffect(() => {
-    setLimit(searchParams.limit || 6);
+    setLimit(searchParams.limit || 15);
   }, [searchParams.limit]);
 
   const { tasks, isLoading, isError } = useTasks({ page, limit });
@@ -37,6 +37,9 @@ export default function Page({ params, searchParams }) {
         </div>
       </div>
     );
+
+
+
   return (
     <div className="relative h-full">
       <TableTask data={tasks} />

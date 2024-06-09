@@ -13,3 +13,8 @@ export default function LoaderSpinner() {
 		</div>
 	);
 }
+
+
+export const LoadingSpinnerSmall = ({ color }) => (
+	<div className={`w-5 h-5 animate-spin rounded-full border-t-2 border-b-2 border-${color}`} />
+)

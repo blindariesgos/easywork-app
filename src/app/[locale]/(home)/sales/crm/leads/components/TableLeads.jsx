@@ -9,19 +9,9 @@ import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import useCrmContext from "../../../../../../../context/crm";
-import { getURLContactPhoto } from "../../../../../../../lib/common";
-import useAppContext from "../../../../../../../context/app";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Cog8ToothIcon } from "@heroicons/react/20/solid";
-import Button from "../../../../../../../components/form/Button";
-import { deleteContactId, deleteLeadById } from "../../../../../../../lib/apis";
-import { handleApiError } from "../../../../../../../utils/api/errors";
-import { toast } from "react-toastify";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
 import { Pagination } from "../../../../../../../components/pagination/Pagination";
 import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
@@ -31,7 +21,6 @@ import moment from "moment";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 
 export default function TableLeads({ data }) {
-  console.log("data", data);
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

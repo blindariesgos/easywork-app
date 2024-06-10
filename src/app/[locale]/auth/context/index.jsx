@@ -4,8 +4,15 @@ export const DataContext = createContext();
 
 export function DataContextProvider(props) {
     const [contextData, setContextData] = useState(0);
+    const [otpToken, setOtpToken] = useState(null);
 
-    const value = { contextData, setContextData };
+    const value = {
+        contextData,
+        setContextData,
+        otpToken,
+        setOtpToken
+    };
+
 
     return (
         <DataContext.Provider value={value}>
@@ -14,7 +21,7 @@ export function DataContextProvider(props) {
     )
 }
 
-export function useDataContext(){
+export function useDataContext() {
     const context = useContext(DataContext);
     if (!context) {
         throw new Error('Error')

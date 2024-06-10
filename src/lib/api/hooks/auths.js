@@ -73,3 +73,15 @@ export const sendOtpEmail = async (email) => {
   });
   return response.data;
 };
+
+export const validateOTP = async (otpCode) => {
+  const response = await axios().post(`/auth/validate-otp`, {
+    otpCode,
+  });
+  return response;
+};
+
+export const changePassword = async (data) => {
+  const response = await axios().post(`/auth/reset-password`, data);
+  return response;
+};

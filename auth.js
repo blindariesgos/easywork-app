@@ -38,7 +38,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new Error("Credenciales inválidas");
           }
         } catch (error) {
-          console.error("Error de autenticación:", error.message); // Log detallado
           throw new Error("Error de autenticación"); // Lanzar el error para ser manejado externamente
         }
       },
@@ -52,8 +51,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     jwt: async ({ token, user, account, trigger, session }) => {
-      if (trigger === "update" && session.newToken){
-        token.accessToken = session.newToken
+      if (trigger === "update" && session.newToken) {
+        token.accessToken = session.newToken;
         return token;
       }
       if (account && user) {

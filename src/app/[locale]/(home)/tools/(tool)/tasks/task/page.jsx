@@ -1,4 +1,4 @@
-import SlideOver from "../../../../../../../components/SlideOver";
+import SlideOver from "@/src/components/SlideOver";
 import React from "react";
 import TaskCreate from "./TaskCreate";
 

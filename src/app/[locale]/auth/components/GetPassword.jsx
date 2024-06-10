@@ -1,13 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Image from "next/image";
 import { EnvelopeIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useDataContext } from "../context";
 import { getDataPassword } from "../../../../lib/apis";
+import { sendOtpEmail } from "@/src/lib/api/hooks/auths";
 
 export default function GetPassword() {
   const { contextData, setContextData } = useDataContext();
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSendOtp = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await sendOtpEmail(email);
+      setContextData(4);
+    } catch (err) {
+      console.log(err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [email, setContextData]);
 
   function sendData() {
     setContextData(2);
@@ -64,7 +81,7 @@ export default function GetPassword() {
         {/* boton */}
         <div>
           <button
-            onClick={() => sendData()}
+            onClick={() => handleSendOtp()}
             style={{ backgroundColor: "#262261" }}
             className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
           >

@@ -22,6 +22,16 @@ export default function SlideOver({
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
+  // Nuevo estado para controlar la transición
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    // Parsear el valor de `show` del parámetro de consulta
+    console.log("Update param", params.get("show") === "true")
+    console.log("Param show", params.get("show"))
+    setShow(params.get("show") === "true");
+  }, []); // Dependencia del parámetro de consulta 'show'
+
   useEffect(() => {
     switch (labelTag) {
       case "contact":
@@ -94,56 +104,57 @@ export default function SlideOver({
     }
   }, [subLabelTag, t]);
 
-  if (params.get("show"))
-    return (
-      <Transition.Root show={JSON.parse(params.get("show"))} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => {}}>
-          <div className="fixed inset-0" />
-          <div className="fixed inset-0 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
-                <Transition.Child
-                  as={Fragment}
-                  enter="transform transition ease-in-out duration-500 sm:duration-700"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-500 sm:duration-700"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
+  const closeModal = () => {
+    setShow(false);
+    params.set("show", "false");
+
+  };
+
+  return (
+    <Transition.Root show={show} as={Fragment} afterLeave={() => {
+      router.replace(`${samePage}`, undefined, { shallow: true });
+    }}>
+      <Dialog as="div" className="relative z-50" onClose={() => { }}>
+        <div className="fixed inset-0" />
+        <div className="fixed inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <Dialog.Panel
+                  className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
                 >
-                  <Dialog.Panel
-                    className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
-                  >
-                    <div className="flex justify-end h-screen">
-                      <div className={`flex flex-col`}>
+                  <div className="flex justify-end h-screen">
+                    <div className={`flex flex-col`}>
+                      <Tag
+                        title={label}
+                        onclick={closeModal}
+                        className={colorTag}
+                      />
+                      {subLabelTag && (
                         <Tag
-                          title={label}
-                          onclick={() => {
-                            setOpenModal
-                              ? setOpenModal(false)
-                              : samePage
-                              ? router.replace(samePage)
-                              : router.back();
-                          }}
-                          className={colorTag}
+                          title={subLabel}
+                          className="bg-green-primary pl-2"
+                          closeIcon
+                          second
                         />
-                        {subLabelTag && (
-                          <Tag
-                            title={subLabel}
-                            className="bg-green-primary pl-2"
-                            closeIcon
-                            second
-                          />
-                        )}
-                      </div>
-                      {children}
+                      )}
                     </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
+                    {children}
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
           </div>
-        </Dialog>
-      </Transition.Root>
-    );
+        </div>
+      </Dialog>
+    </Transition.Root>
+  );
 }

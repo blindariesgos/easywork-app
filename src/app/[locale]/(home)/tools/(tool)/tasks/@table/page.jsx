@@ -1,19 +1,45 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import TableTask from "./TableTask";
-import { getTasksUser } from "../../../../../../../lib/apis";
+import { useTasks } from "@/src/lib/api/hooks/tasks";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { XCircleIcon } from "@heroicons/react/20/solid";
+import { useTranslation } from "react-i18next";
 
-async function getAllTasks(page) {
-  try {
-    // const tasks = await getTasks(page, 6); //Rol admin
-    const tasks = await getTasksUser(page, 6);
-    return tasks;
-  } catch (error) {
-    console.log("error", error);
-  }
-}
+export default function Page({ params, searchParams }) {
+  const { t } = useTranslation();
+  const [page, setPage] = useState(searchParams.page || 1);
+  const [limit, setLimit] = useState(searchParams.limit || 6);
 
-export default async function page({ params, searchParams: { page } }) {
-  const tasks = await getAllTasks(page);
+  useEffect(() => {
+    setPage(searchParams.page || 1);
+  }, [searchParams.page]);
+
+  useEffect(() => {
+    setLimit(searchParams.limit || 15);
+  }, [searchParams.limit]);
+
+  const { tasks, isLoading, isError } = useTasks({ page, limit });
+
+  if (isLoading) return <LoaderSpinner />;
+  if (isError || !tasks)
+    return (
+      <div className="rounded-md bg-red-50 p-4 shadow-sm">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-red-800">
+              {t("common:error-loading")}
+            </h3>
+          </div>
+        </div>
+      </div>
+    );
+
+
+
   return (
     <div className="relative h-full">
       <TableTask data={tasks} />

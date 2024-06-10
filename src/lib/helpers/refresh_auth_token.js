@@ -2,8 +2,11 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 import { decrypt } from "./encrypt";
+import { getLogger } from "@/src/utils/logger";
 
-async function refreshAuthToken() {
+const logger = getLogger("Refresh Token");
+
+export async function refreshAuthToken() {
   const url = `${process.env.API_HOST}/auth/token/refresh`;
 
   try {
@@ -27,12 +30,6 @@ async function refreshAuthToken() {
       throw new Error("Failed to refresh token: Invalid response");
     }
   } catch (error) {
-    const errorMessage = error.response
-      ? `Error refreshing token: ${error.response.status} ${error.response.data}`
-      : "Error refreshing token: Network or other error";
-    console.error(errorMessage);
-    throw new Error(errorMessage);
+    logger.error("Error refresh Token", error);
   }
 }
-
-export default refreshAuthToken;

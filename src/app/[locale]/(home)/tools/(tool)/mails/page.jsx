@@ -38,7 +38,7 @@ export default function IngresarEmail() {
         getFolders();
       }
     } catch (error) {
-      handleApiError(error.message, errorsDuplicated);
+      handleApiError(error.message);
     }
   }
 
@@ -48,7 +48,7 @@ export default function IngresarEmail() {
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.id}`,
         {
           headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
+            Authorization: `${session.data.user.accessToken}`,
           },
         }
       );
@@ -62,7 +62,7 @@ export default function IngresarEmail() {
         setModalC(true);
       }
     } catch (error) {
-      handleApiError(error.message, errorsDuplicated);
+      handleApiError(error.message);
     }
   }
 

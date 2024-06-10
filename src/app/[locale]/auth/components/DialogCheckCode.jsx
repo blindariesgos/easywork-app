@@ -6,6 +6,8 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 export function DialogCheckCode() {
   const { contextData, setContextData } = useDataContext();
   const [isOpen, setIsOpen] = useState(false);
+
+
   return (
     <>
       <div>

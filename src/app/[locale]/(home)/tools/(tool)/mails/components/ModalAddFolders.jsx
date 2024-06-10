@@ -1,3 +1,4 @@
+"use client";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -32,6 +33,7 @@ export default function ModalAddFolders({ children }) {
           setFolderData(updatedLabels);
         });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function saveFoldersData() {

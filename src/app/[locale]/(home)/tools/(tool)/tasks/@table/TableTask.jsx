@@ -1,19 +1,21 @@
 "use client";
-import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
-import { ChevronDownIcon, Cog8ToothIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import Link from "next/link";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useTasks, useTasksDetete } from "../../../../../../../hooks/useCommon";
-import { Pagination } from "../../../../../../../components/pagination/Pagination";
-import SelectedOptionsTable from "../../../../../../../components/SelectedOptionsTable";
-import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
-import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
+import {
+  useTasksConfigs,
+  useTasksDetete,
+} from "@/src/hooks/useCommon";
+import { Pagination } from "@/src/components/pagination/Pagination";
+import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import AddColumnsTable from "@/src/components/AddColumnsTable";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
+import Image from "next/image";
+import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
 
 export default function TableTask({ data }) {
-  const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
@@ -23,7 +25,7 @@ export default function TableTask({ data }) {
     [],
     data?.items
   );
-  const { columnTable } = useTasks();
+  const { columnTable } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const { optionsCheckBox } = useTasksDetete(
     selectedTasks,
@@ -96,24 +98,22 @@ export default function TableTask({ data }) {
                           <th
                             key={index}
                             scope="col"
-                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer ${
-                              index === selectedColumns.length - 1 &&
+                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${index === selectedColumns.length - 1 &&
                               "rounded-e-xl"
-                            }`}
+                              }`}
                             onClick={() => {
                               handleSorting(column.row);
                             }}
                           >
-                            <div className="flex justify-center items-center gap-2">
+                            <div className="flex justify-left items-center gap-2">
                               {column.name}
                               <div>
                                 <ChevronDownIcon
-                                  className={`h-6 w-6 text-primary ${
-                                    fieldClicked.field === column.row &&
+                                  className={`h-6 w-6 text-primary ${fieldClicked.field === column.row &&
                                     fieldClicked.sortDirection === "desc"
-                                      ? "transform rotate-180"
-                                      : ""
-                                  }`}
+                                    ? "transform rotate-180"
+                                    : ""
+                                    }`}
                                 />
                               </div>
                             </div>
@@ -159,7 +159,7 @@ export default function TableTask({ data }) {
                                   {column.link ? (
                                     <Link
                                       href={`/tools/tasks/task/${task.id}?show=true`}
-                                      className=""
+                                      className={clsx(task.status === "pending_review" ? "text-gray-800/45" : "text-black")}
                                     >
                                       {task[column.row]}
                                     </Link>
@@ -168,15 +168,25 @@ export default function TableTask({ data }) {
                                       <div className="font-medium text-black ">
                                         {task[column.row].length > 0
                                           ? task[column.row]
-                                              .map((item) => `${item.username}`)
-                                              .join(",")
+                                            .map((item) => `${item.username}`)
+                                            .join(",")
                                           : ""}
                                       </div>
                                     </div>
                                   ) : column.row === "createdBy" ? (
-                                    <div className="flex items-center justify-center">
+                                    <div className="flex gap-x-2 items-center justify-left">
+                                      <Image
+                                        className="h-6 w-6 rounded-full bg-zinc-200"
+                                        width={30}
+                                        height={30}
+                                        src={
+                                          task[column.row]?.avatar ||
+                                          "/img/avatar.svg"
+                                        }
+                                        alt="avatar"
+                                      />
                                       <div className="font-medium text-black ">
-                                        {task[column.row]?.username}
+                                        {task[column.row]?.name}
                                       </div>
                                     </div>
                                   ) : column.row === "deadline" ? (
@@ -197,6 +207,9 @@ export default function TableTask({ data }) {
                                     ) : (
                                       ""
                                     )
+                                  ) : column.row === "contact" ||
+                                    column.row === "policy" ? (
+                                    task[column.row] || "No especificado"
                                   ) : (
                                     task[column.row]
                                   )}

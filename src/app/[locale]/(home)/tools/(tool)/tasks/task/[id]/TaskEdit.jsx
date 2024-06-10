@@ -1,45 +1,40 @@
 "use client";
-import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
-import IconDropdown from "../../../../../../../../components/SettingsButton";
-import useAppContext from "../../../../../../../../context/app";
-import { useTasks } from "../../../../../../../../hooks/useCommon";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import IconDropdown from "@/src/components/SettingsButton";
 import {
   Cog8ToothIcon,
   ExclamationTriangleIcon,
   FireIcon,
-  PlusIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
-import Button from "../../../../../../../../components/form/Button";
+import Button from "@/src/components/form/Button";
 import ButtonMore from "../../components/ButtonMore";
 import { BsStopwatchFill } from "react-icons/bs";
 import TabsTaskEdit from "../../components/Tabs/TabsTaskEdit";
 import moment from "moment";
 import TaskCreate from "../TaskCreate";
-import { putTaskCompleted } from "../../../../../../../../lib/apis";
+import { putTaskCompleted } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { handleApiError } from "../../../../../../../../utils/api/errors";
-export default function TaskEdit({ data }) {
-  const params = useParams();
-  const { id } = params;
+import { handleApiError } from "@/src/utils/api/errors";
+import { useTask } from "@/src/lib/api/hooks/tasks";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
+export default function TaskEdit({ id }) {
+  const { task, isLoading, isError } = useTask(id);
+
   const { t } = useTranslation();
-  const router = useRouter();
-  const { lists } = useAppContext();
-  const { settings } = useTasks();
+  const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(true);
-  const [value, setValueText] = useState(data ? data.description : "");
+  const [value, setValueText] = useState(task ? task.description : "");
   const [openEdit, setOpenEdit] = useState(false);
-  const [listField, setListField] = useState([]);
 
   const getCompletedTask = async () => {
     try {
       setLoading(true);
-      const completed = await putTaskCompleted(data.id);
+      await putTaskCompleted(task.id);
       toast.success(t("tools:tasks:completed-success"));
       setLoading(false);
     } catch (error) {
@@ -47,6 +42,18 @@ export default function TaskEdit({ data }) {
       handleApiError(error.message);
     }
   };
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col h-screen relative w-full overflow-y-auto">
+        <div
+          className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
+        >
+          <LoaderSpinner />
+        </div>
+      </div>
+    );
+  if (isError) return <>Error al cargar la tarea</>;
   return (
     <div className="flex flex-col h-screen relative w-full overflow-y-auto">
       {loading && <LoaderSpinner />}
@@ -54,7 +61,7 @@ export default function TaskEdit({ data }) {
         className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
       >
         <div className="flex justify-between items-center py-2">
-          <h1 className="text-xl font-medium">{data?.name}</h1>
+          <h1 className="text-xl font-medium">{task?.name}</h1>
           <IconDropdown
             icon={
               <Cog8ToothIcon
@@ -68,49 +75,51 @@ export default function TaskEdit({ data }) {
         </div>
         <div className="w-full flex gap-2 sm:gap-4 sm:flex-row flex-col h-full">
           {openEdit ? (
-            <TaskCreate edit={data} />
+            <TaskCreate edit={task} />
           ) : (
             <div className={`w-full ${!openEdit ? "sm:w-9/12" : "sm:w-full"}`}>
               <div className="bg-white rounded-lg">
                 <div className="flex justify-between gap-2 items-center bg-gray-300 p-2">
                   <p className="text-xs">
                     {t("tools:tasks:task")} -{" "}
-                    {t(`tools:tasks:status:${data?.status}`)}
+                    {t(`tools:tasks:status:${task?.status}`)}
                   </p>
                   <div className="flex gap-2 items-center">
                     <FireIcon
-                      className={`h-5 w-5 ${
-                        check ? "text-red-500" : "text-gray-200"
-                      }`}
+                      className={`h-5 w-5 ${check ? "text-red-500" : "text-gray-200"
+                        }`}
                     />
                     <p className="text-sm">{t("tools:tasks:new:high")}</p>
                   </div>
                 </div>
                 <div className="p-2 sm:p-4">
                   <OptionsTask
-                    edit={data}
+                    edit={task}
                     setValueText={setValueText}
                     value={value}
-                    disabled={data ? true : false}
+                    disabled={task ? true : false}
                   />
                 </div>
-                <div className="flex items-end flex-col p-2 sm:p-4 gap-2">
-                  <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
-                    <p className="text-sm text-white">
-                      {t("tools:tasks:edit:contact")}:
-                    </p>
-                    <p className="text-sm text-white">Armando Medina</p>
+                {/* CRM */}
+                {task?.crm?.length > 0 && (
+                  <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
+                    <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                      <p className="text-sm text-white">
+                        {t("tools:tasks:edit:contact")}:
+                      </p>
+                      <p className="text-sm text-white">Armando Medina</p>
+                    </div>
+                    <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                      <p className="text-sm text-white">
+                        {t("tools:tasks:edit:policy")}:
+                      </p>
+                      <p className="text-sm text-white">1587456621</p>
+                    </div>
                   </div>
-                  <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
-                    <p className="text-sm text-white">
-                      {t("tools:tasks:edit:policy")}:
-                    </p>
-                    <p className="text-sm text-white">1587456621</p>
-                  </div>
-                </div>
+                )}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
-                    {!data.isCompleted && (
+                    {!task.isCompleted && (
                       <Button
                         label={t("tools:tasks:edit:init")}
                         buttonStyle="green"
@@ -118,7 +127,7 @@ export default function TaskEdit({ data }) {
                         fontSize="text-xs"
                       />
                     )}
-                    {!data.isCompleted && (
+                    {!task.isCompleted && (
                       <Button
                         label={t("tools:tasks:edit:end")}
                         buttonStyle="green"
@@ -130,7 +139,7 @@ export default function TaskEdit({ data }) {
                     <ButtonMore
                       setOpenEdit={setOpenEdit}
                       openEdit={openEdit}
-                      data={data}
+                      data={task}
                     />
                     <div className="flex gap-2 items-center">
                       <BsStopwatchFill className="h-4 w-4 text-easy-400" />
@@ -140,18 +149,14 @@ export default function TaskEdit({ data }) {
                 </div>
               </div>
               <div className="mt-2 sm:mt-4 w-full relative">
-                <TabsTaskEdit data={data} />
+                <TabsTaskEdit data={task} />
               </div>
             </div>
           )}
           {!openEdit && (
             <div className="w-full sm:w-3/12 bg-white rounded-lg h-full">
               <div className="bg-primary rounded-t-lg p-4 text-center">
-                <p className="text-white font-medium text-sm">
-                  {t("tools:tasks:edit:pending-since", {
-                    date: moment(data?.createdAt).format("DD-MM-YYYY"),
-                  })}
-                </p>
+                <TaskHeaderStatus task={task} />
               </div>
               <div className="p-2 sm:p-4">
                 <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
@@ -159,24 +164,19 @@ export default function TaskEdit({ data }) {
                     {t("tools:tasks:edit:limit-date")}:
                   </p>
                   <p className="text-sm text-black">
-                    {data?.deadline
-                      ? moment(data?.deadline).format("DD/MM/YYYY")
+                    {task?.deadline
+                      ? moment(task?.deadline).format("DD/MM/YYYY")
                       : ""}
                   </p>
                 </div>
-                {data.status !== "pending" && (
-                  <div className="w-ful bg-easy-300 rounded-md flex justify-center gap-2 p-1 my-3">
-                    <ExclamationTriangleIcon className="h-6 w-6 text-primary" />
-                    <p>{t("tools:tasks:edit:task-overdue")}</p>
-                  </div>
-                )}
+                <BannerStatus task={task} />
                 <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
                   <p className="text-sm text-black">
                     {t("tools:tasks:edit:created-the")}
                   </p>
                   <p className="text-sm text-black">
-                    {data?.createdAt
-                      ? moment(data?.createdAt).format("DD/MM/YYYY")
+                    {task?.createdAt
+                      ? moment(task?.createdAt).format("DD/MM/YYYY")
                       : ""}
                   </p>
                 </div>
@@ -195,12 +195,12 @@ export default function TaskEdit({ data }) {
                       className="h-10 w-10 rounded-full object-contain"
                       width={50}
                       height={50}
-                      src={data.createdBy?.avatar || "/img/avatar.svg"}
+                      src={task.createdBy?.avatar || "/img/avatar.svg"}
                       alt=""
                       objectFit="cover"
                     />
                     <p className="text-base font-semibold text-black">
-                      {data.createdBy?.username}
+                      {task.createdBy?.name || task.createdBy?.username}
                     </p>
                   </div>
                 </div>
@@ -213,8 +213,8 @@ export default function TaskEdit({ data }) {
                   {/* <div className="cursor-pointer">
 											<p className="text-xs text-black">{t('tools:tasks:edit:change')}</p>
 										</div> */}
-                  {data?.responsible.length > 0 &&
-                    data.responsible.map((resp, index) => (
+                  {task?.responsible?.length > 0 &&
+                    task.responsible.map((resp, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
                           className="h-10 w-10 rounded-full object-cover"
@@ -225,7 +225,7 @@ export default function TaskEdit({ data }) {
                           objectFit="cover"
                         />
                         <p className="text-base font-semibold text-black">
-                          {resp?.username}
+                          {resp?.name || resp?.username}
                         </p>
                       </div>
                     ))}
@@ -234,8 +234,8 @@ export default function TaskEdit({ data }) {
                   <p className="text-sm text-black border-b-[1px] border-slate-300/40 pt-2 pb-1">
                     {t("tools:tasks:edit:participant")}
                   </p>
-                  {data?.participants.length > 0 &&
-                    data.participants.map((part, index) => (
+                  {task?.participants?.length > 0 &&
+                    task.participants.map((part, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
                           className="h-10 w-10 rounded-full object-fill"
@@ -260,8 +260,8 @@ export default function TaskEdit({ data }) {
                       Agregar
                     </p>
                   </div>
-                  {data?.observers.length > 0 &&
-                    data.observers.map((obs, index) => (
+                  {task?.observers?.length > 0 &&
+                    task.observers.map((obs, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
                           className="h-10 w-10 rounded-full object-cover"
@@ -272,7 +272,7 @@ export default function TaskEdit({ data }) {
                           objectFit="contain"
                         />
                         <p className="text-base font-semibold text-black">
-                          {obs?.username}
+                          {obs?.name}
                         </p>
                       </div>
                     ))}
@@ -282,8 +282,8 @@ export default function TaskEdit({ data }) {
                     {t("tools:tasks:edit:tags")}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {data.tags.length > 0 &&
-                      data.tags.map((tag, index) => (
+                    {task?.tags?.length > 0 &&
+                      task.tags.map((tag, index) => (
                         <div
                           key={index}
                           className="px-2 py-1 rounded-md bg-gray-200"
@@ -304,4 +304,37 @@ export default function TaskEdit({ data }) {
       </div>
     </div>
   );
+}
+
+const TaskHeaderStatus = ({ task }) => {
+  const { t } = useTranslation();
+  if (task.status === "pending") {
+    return <p className="text-white font-medium text-sm">
+      {t("tools:tasks:edit:pending-since", {
+        date: moment(task?.createdAt).format("DD-MM-YYYY"),
+      })}
+    </p>
+  } else if (task.status === "completed" || task?.status === "pending_review") {
+    return <p className="text-white font-medium text-sm">{t("tools:tasks:edit:completed-since", {
+      date: moment(task?.completedTime).format("DD-MM-YYYY"),
+    })}</p>
+  }
+};
+
+
+const BannerStatus = ({ task }) => {
+  const { t } = useTranslation();
+  if (task?.status === "pending") {
+    // Verificar si la tarea está vencida
+    if (task?.deadline) {
+      const today = new Date();
+      const deadline = new Date(task.deadline);
+      if (deadline < today) {
+        return <div className="w-ful bg-red-100 rounded-md flex justify-center gap-2 p-1 my-3">
+          <ExclamationTriangleIcon className="h-6 w-6 text-red-800" />
+          <p className="text-red-800">{t("tools:tasks:edit:task-overdue")}</p>
+        </div>
+      }
+    }
+  }
 }

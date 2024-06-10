@@ -19,19 +19,30 @@ function FirebaseMessaging() {
 
   useEffect(() => {
     // Verificar si el navegador soporta notificaciones
-    if ('Notification' in window && Notification.permission !== 'denied') {
+    if ('Notification' in window) {
       setIsSupported(true);
 
       const app = initializeApp(firebaseConfig);
       const messaging = getMessaging(app);
 
-      requestPermission(messaging);
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            // Permission granted, proceed with getting token and setting up listener
+            requestPermission(messaging);
+          } else {
+            console.log('User denied notification permission.');
+          }
+        });
+      }
 
       onMessage(messaging, (payload) => {
         console.log("Message received. ", payload);
         // Mostrar la notificación (puedes usar una librería o el API de notificaciones)
         new Notification(payload.notification.title, { body: payload.notification.body });
       });
+    } else {
+      console.log('This browser does not support notifications.');
     }
   }, []);
 
@@ -74,13 +85,7 @@ function FirebaseMessaging() {
   };
 
   return (
-    <div>
-      {isSupported ? (
-        <p>Las notificaciones están habilitadas.</p>
-      ) : (
-        <p>Este navegador no soporta notificaciones.</p>
-      )}
-    </div>
+    <></>
   );
 }
 

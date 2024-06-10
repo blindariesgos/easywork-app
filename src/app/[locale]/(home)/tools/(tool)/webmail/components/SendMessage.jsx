@@ -39,33 +39,15 @@ export default function SendMessage({
   }, []);
 
   async function sendEmail() {
-    console.log('hola')
-    const emailBody = {
-      raw: window
-        .btoa(
-          `To: ${recipient}\r\n` +
-            `Subject: ${subject}\r\n` +
-            `\r\n` +
-            `${value}`
-        )
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, ""),
-    };
-
     try {
-      const response = await axios.post(
-        `https://gmail.googleapis.com/gmail/v1/users/${user.usergoogle_id}/messages/send`,
-        emailBody,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}`,
         {
-          headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            "Content-Type": "application/json",
-          },
+          to: recipient,
+          subject: subject,
+          body: value,
         }
       );
-
-      console.log("Email sent:", response.data);
     } catch (error) {
       console.error("Failed to send email:", error);
     }
@@ -146,13 +128,15 @@ export default function SendMessage({
                             />
                           </div>
                           <div className="h-full py-2">
-                            <TextEditor
-                              className="w-full bg-white h-80"
-                              theme="snow"
-                              quillRef={quillRef}
-                              value={value}
-                              setValue={setValueText}
-                            />
+                            <div className="h-80">
+                              <TextEditor
+                                className="w-full bg-white h-full"
+                                theme="snow"
+                                quillRef={quillRef}
+                                value={value}
+                                setValue={setValueText}
+                              />
+                            </div>
                             <div className="mt-3">
                               <button
                                 className="bg-easywork-main text-white p-3 rounded-md"

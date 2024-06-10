@@ -147,7 +147,6 @@ export default function CreateLead({ edit, id }) {
         console.log('data', data);
     };
 	
-	console.log("edit", edit)
 	return (
 		<div className="flex flex-col h-screen relative w-full">
 			{/* Formulario Principal */}

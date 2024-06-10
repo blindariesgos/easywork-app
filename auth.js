@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
-import { getLogin } from "./src/lib/apis";
-import { isValidToken } from "./src/lib/helpers";
+import { isValidToken } from "/src/lib/helpers";
+import { getLogin } from "@/src/lib/api/hooks/auths";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
   providers: [
@@ -15,8 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           try {
             const prevSession = JSON.parse(credentials.prevSession);
 
-            const validToken = isValidToken(prevSession.user.accessToken);
-
+            const validToken = await isValidToken(prevSession.user.accessToken);
             if (!validToken) throw new Error("Credenciales inválidas");
 
             return {
@@ -39,7 +38,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new Error("Credenciales inválidas");
           }
         } catch (error) {
-          console.error("Error de autenticación:", error.message); // Log detallado
           throw new Error("Error de autenticación"); // Lanzar el error para ser manejado externamente
         }
       },
@@ -52,7 +50,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/auth",
   },
   callbacks: {
-    jwt: async ({ token, user, account }) => {
+    jwt: async ({ token, user, account, trigger, session }) => {
+      if (trigger === "update" && session.newToken) {
+        token.accessToken = session.newToken;
+        return token;
+      }
       if (account && user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;

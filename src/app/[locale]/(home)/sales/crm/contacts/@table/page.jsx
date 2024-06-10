@@ -39,11 +39,12 @@ export default function Page() {
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedContacts, setSelectedContacts] = useState([]);
   const {
     contacts: AppContacts,
     setLastContactsUpdate,
     setContacts,
+    selectedContacts,
+    setSelectedContacts,
   } = useCrmContext();
   const { columnTable } = useContactTable();
   const [selectedColumns, setSelectedColumns] = useState(
@@ -147,8 +148,8 @@ export default function Page() {
   return (
     <div className="flow-root relative h-full">
       {loading && <LoaderSpinner />}
-      <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle sm:h-[32rem] overflow-y-auto h-full">
+      <div className="overflow-x-auto overflow-y-hidden">
+        <div className="inline-block min-w-full py-2 align-middle sm:h-[32rem] overflow-y-hidden">
           <div className="relative overflow-hidden  sm:rounded-lg">
             {/* {selectedContacts && selectedContacts.length > 0 && (
               <div className="absolute left-16 top-2 flex h-12 items-center space-x-3 bg-white sm:left-16">
@@ -249,7 +250,7 @@ export default function Page() {
                               {column.link ? (
                                 <Link
                                   href={`/sales/crm/contacts/contact/${contact.id}?show=true`}
-                                  className="flex gap-3"
+                                  className="flex gap-3 items-center"
                                 >
                                   <Image
                                     className="h-8 w-8 rounded-full bg-zinc-200"
@@ -258,7 +259,9 @@ export default function Page() {
                                     src={contact.photo || "/img/avatar.svg"}
                                     alt=""
                                   />
-                                  {contact[column.row]}
+                                  <p className="text-start">
+                                    {contact[column.row]}
+                                  </p>
                                 </Link>
                               ) : column.row === "responsible" ? (
                                 <div className="flex items-center justify-center">
@@ -271,12 +274,14 @@ export default function Page() {
                                     alt=""
                                   />
                                 </div> */}
-                                  <div className="ml-4">
-                                    {contact?.responsibleUser?.name ?? "N/A"}
+                                  <div className="ml-4 flex">
+                                    <p className="text-start">
+                                      {contact?.responsibleUser?.name ?? "N/A"}
+                                    </p>
                                   </div>
                                 </div>
                               ) : column.activities ? (
-                                <div className="flex gap-2">
+                                <div className="flex justify-center gap-2">
                                   <button
                                     type="button"
                                     className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -347,7 +352,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="w-full pt-4 sm:pt-0">
+      <div className="w-full mt-1 pt-4 sm:pt-0 flex justify-center">
         <div className="flex justify-between items-center flex-wrap gap-4">
           {selectedContacts.length > 0 && (
             <SelectedOptionsTable options={options} />

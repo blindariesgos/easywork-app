@@ -1,3 +1,4 @@
+"use client";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
 import * as yup from "yup";

@@ -4,7 +4,7 @@ import CreateContact from '../../components/create_contact/CreateContact'
 
 export default function ContactDetails({ contactInfo, id }) {
   return (
-    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="contact">
       <Suspense
         fallback={
           <div className="flex flex-col h-screen">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { orderBy, } from "lodash";
 
 export const useOrderByColumn = (sortFieltByColumn, data) => {    
-  const [ fieldClicked, setFieldClicked ] = useState({ field: "name", sortDirection: "desc" });
+  const [ fieldClicked, setFieldClicked ] = useState({ field: "name", sortDirection: "asc" });
   const [orderItems, setOrderItems] = useState([]);
   
   const handleSorting = (fieldToSort) => {

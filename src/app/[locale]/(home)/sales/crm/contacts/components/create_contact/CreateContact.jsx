@@ -68,16 +68,16 @@ export default function CreateContact({ edit, id }) {
     name: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
-    charge: Yup.string().required(t("common:validations:required")),
+    // charge: Yup.string().required(t("common:validations:required")),
     phone: Yup.string().required(t("common:validations:required")),
-    rfc: Yup.string().required(t("common:validations:required")),
-    cua: Yup.string().required(t("common:validations:required")),
-    typeContact: Yup.string().required(t("common:validations:required")),
-    otherType: Yup.string(),
-    origin: Yup.string().required(t("common:validations:required")),
-    address: Yup.string().required(t("common:validations:required")),
-    responsible: Yup.string().required(t("common:validations:required")),
-    birthday: Yup.string().required(t("common:validations:required")),
+    // rfc: Yup.string().required(t("common:validations:required")),
+    // cua: Yup.string().required(t("common:validations:required")),
+    // typeContact: Yup.string().required(t("common:validations:required"))
+    // otherType: Yup.string(),
+    // origin: Yup.string().required(t("common:validations:required")),
+    // address: Yup.string().required(t("common:validations:required")),
+    // responsible: Yup.string().required(t("common:validations:required"))
+    // birthday: Yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -174,8 +174,13 @@ export default function CreateContact({ edit, id }) {
       assignedById: data.responsible,
     };
 
+    console.log(body);
+
     const formData = new FormData();
     for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
       if (body[key] instanceof File || body[key] instanceof Blob) {
         formData.append(key, body[key]);
       } else if (Array.isArray(body[key])) {
@@ -184,6 +189,7 @@ export default function CreateContact({ edit, id }) {
         formData.append(key, body[key]?.toString() || "");
       }
     }
+    
     try {
       setLoading(true);
       if (!edit) {

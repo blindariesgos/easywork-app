@@ -1,5 +1,11 @@
 export async function POST(req) {
-  console.log(req.body);
+  try {
+    const { token } = await req.json();
 
-  return Response.json(true);
+    console.log(token);
+
+    return Response.json(true);
+  } catch (error) {
+    return Response.json(false);
+  }
 }

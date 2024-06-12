@@ -1,26 +1,22 @@
 "use client";
 import { Menu, Transition } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { postFilter, getFilters } from "../../../../../../../../lib/apis";
+import useAppContext from "../../../../../../../../context/app";
+import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 const FiltersContact = () => {
+  const session = useSession();
+  const ref = useRef(null);
+  const { filter } = useAppContext();
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState(" ");
-  const [contacts, setContacts] = useState([
-    {
-      id: 1,
-      name: t("contacts:filters:my-contact"),
-      selected: false,
-    },
-    {
-      id: 2,
-      name: t("contacts:filters:all-contact"),
-      selected: false,
-    },
-  ]);
+  const [contacts, setContacts] = useState();
 
   const handleSelected = (id) => {
     const updateSelection = contacts.map((cont) => {
@@ -31,10 +27,48 @@ const FiltersContact = () => {
     setContacts(updateSelection);
   };
 
+  useEffect(() => {
+    getFilterSaved();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setSearchInput(" ");
+      }
+    };
+  
+    document.body.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.body.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+
+  const saveFilter = async () => {
+    if (!filter) {
+      toast.error("Debe colocar filtros");
+      return;
+    }
+    await postFilter({
+      view: "/sales/crm/contacts",
+      name: "filter ",
+      userId: session.data.user.id,
+      jsonData: filter,
+    });
+    toast.success("Filtro guardado");
+    getFilterSaved();
+  };
+
+  const getFilterSaved = () => {
+    getFilters(session.data.user.id).then((res) => {
+      const updatedRes = res.map((obj) => ({ ...obj, selected: false }));
+      setContacts(updatedRes);
+    });
+  };
+
   return (
     <Menu as="div" className="relative inline-block">
       <div>
-        {/* Zona comentada por cambios requeridos por Nathaly 06/06/24 - borrar despues de 15 dias */}
         {/* <Menu.Button className="inline-flex w-full bg-primary hover:bg-easy-500 text-white rounded-md text-xs px-1.5 py-1 gap-1">
 					{t('contacts:filters:name')}
 					<ChevronDownIcon className="h-4 w-4 -rotate-180" />
@@ -65,7 +99,7 @@ const FiltersContact = () => {
           <Menu.Items
             className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-fit`}
           >
-            <div className="p-4">
+            <div className="p-4" ref={ref}>
               <div className="flex gap-4 flex-col sm:flex-row">
                 <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
                   <p className="text-xs text-gray-60 text-center">
@@ -92,7 +126,10 @@ const FiltersContact = () => {
                       ))}
                   </div>
                   <div className="absolute bottom-2">
-                    <div className="flex gap-2 cursor-pointer items-center">
+                    <div
+                      className="flex gap-2 cursor-pointer items-center"
+                      onClick={() => saveFilter()}
+                    >
                       <PlusIcon className="h-3 w-3 text-gray-60" />
                       <p className="text-xs uppercase text-gray-60">
                         {t("contacts:filters:save")}

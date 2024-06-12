@@ -195,6 +195,7 @@ export const postTags = async (body) => {
   const response = await axios().post(`/tools/tags`, body);
   return response;
 };
+
 export const putTags = async (body) => {
   const response = await axios().put(`/tools/tags/${id}`, body);
   return response;
@@ -264,5 +265,20 @@ export const deleteTokenGoogle = async (id) => {
 
 export const deleteFoldersMail = async (id) => {
   const response = await axios().delete(`/imap-config/folder/${id}`);
+  return response;
+};
+
+export const postFilter = async (body) => {
+  const response = await axios().post(`/easyapp/filter`, body);
+  return response;
+};
+
+export const deleteFilter = async (idFilter) => {
+  const response = await axios().delete(`/easyapp/filter/${idFilter}`);
+  return response;
+};
+
+export const getFilters = async (idUser) => {
+  const response = await axios().get(`/easyapp/filter/${idUser}`);
   return response;
 };

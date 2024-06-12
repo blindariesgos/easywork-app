@@ -15,7 +15,7 @@ export default function AddContactTabs({ id }) {
     { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/contact/policies/${id}?show=true` },
     { name: t("contacts:create:tabs:activities"), value: 2 },
     { name: t("contacts:create:tabs:reports"), value: 3 },
-    { name: t("contacts:create:tabs:documents"), value: 4 },
+    { name: t("contacts:create:tabs:documents"), value: 4, link: `/tools/drive` },
   ];
 
   const settings = [

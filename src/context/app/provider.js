@@ -20,6 +20,7 @@ export default function AppContextProvider({ children }) {
   const [driveView, setDriveView] = useState(driveViews[0]);
   const [openModal, setOpenModal] = useState(false);
   const [lists, setLists] = useState(null);
+  const [filter, setFilter] = useState(null);
 
   useEffect(() => {
     const appList = {};
@@ -73,6 +74,8 @@ export default function AppContextProvider({ children }) {
       openModalFolders,
       setUserGoogle,
       userGoogle,
+      setFilter,
+      filter,
     }),
     [
       sidebarOpen,
@@ -85,6 +88,7 @@ export default function AppContextProvider({ children }) {
       sidebarOpenDesktop2,
       openModalFolders,
       userGoogle,
+      filter,
     ]
   );
 

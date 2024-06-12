@@ -1,15 +1,31 @@
 "use client";
 import { Menu, Transition } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 // import FormFilters from './FormFilters';
 
 const FiltersTasks = () => {
   const { t } = useTranslation();
+  const ref = useRef(null);
   const { status, setStatus } = useTasksConfigs();
+  const [searchInput, setSearchInput] = useState(" ");
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setSearchInput(" ");
+      }
+    };
+  
+    document.body.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.body.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
 
   const handleSelected = (id) => {
     const updateSelection = status.map((cont) => {
@@ -23,12 +39,25 @@ const FiltersTasks = () => {
   return (
     <Menu as="div" className="relative inline-block">
       <div>
-        <Menu.Button className="inline-flex w-full bg-primary hover:bg-easy-500 text-white rounded-md text-xs px-1.5 py-1 gap-1">
+        {/* <Menu.Button className="inline-flex w-full bg-primary hover:bg-easy-500 text-white rounded-md text-xs px-1.5 py-1 gap-1">
           {t("tools:filters:name")}
           <ChevronDownIcon className="h-4 w-4 -rotate-180" />
-        </Menu.Button>
+        </Menu.Button> */}
+        <div className="flex items-center w-full">
+          <FaMagnifyingGlass className="h-4 w-4 text-primary" />
+          <input
+            type="search"
+            name="search"
+            id="search-cal"
+            className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
+            placeholder={t("contacts:header:search")}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onClick={() => setSearchInput("")}
+          />
+        </div>
       </div>
-      <Transition
+      <Transition.Root show={searchInput === ""} as={Fragment}>
+        <Transition.Child
         as={Fragment}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
@@ -40,7 +69,7 @@ const FiltersTasks = () => {
         <Menu.Items
           className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-fit`}
         >
-          <div className="p-4">
+          <div className="p-4" ref={ref}>
             <div className="flex gap-4 flex-col sm:flex-row">
               <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
                 <p className="text-xs text-gray-60 text-center">
@@ -79,7 +108,8 @@ const FiltersTasks = () => {
             </div>
           </div>
         </Menu.Items>
-      </Transition>
+        </Transition.Child>
+      </Transition.Root>
     </Menu>
   );
 };

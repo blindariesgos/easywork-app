@@ -27,7 +27,7 @@ const createAxiosInstance = (contentType = "application/json") => {
         return Promise.reject(error);
       }
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
   );
 
   axiosInstance.interceptors.response.use(
@@ -59,7 +59,7 @@ const createAxiosInstance = (contentType = "application/json") => {
       }
 
       return Promise.reject(error.response?.data || "Unknown Error");
-    }
+    },
   );
 
   return axiosInstance;

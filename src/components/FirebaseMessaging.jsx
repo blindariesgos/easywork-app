@@ -81,7 +81,7 @@ function FirebaseMessaging() {
 
   const sendTokenToServer = async (token) => {
     try {
-      const response = await fetch("/api/save-token", {
+      const response = await fetch("/api/save_token", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

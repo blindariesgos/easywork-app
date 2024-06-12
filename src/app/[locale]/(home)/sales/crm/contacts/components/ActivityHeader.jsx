@@ -6,7 +6,7 @@ import AppointmentMenu from "./AppointmentMenu";
 export default function ActivityHeader() {
   const { t } = useTranslation();
   const tabs = [
-    { name: t('contacts:create:activities:email'), href: "#", current: true, disabled: false },
+    { name: t('contacts:create:activities:email'), href: "/tools/mails", current: true, disabled: false },
     { name: t('contacts:create:activities:tasks'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:whatsapp'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:comment'), href: "#", current: false, disabled: true },

@@ -76,7 +76,20 @@ const FormFilters = () => {
         {
           id: 1,
           name: t("tools:tasks:filters:fields:role"),
-          options: [],
+          options: [
+            {
+              name: "Participante",
+            },
+            {
+              name: "Creador",
+            },
+            {
+              name: "Responsable",
+            },
+            {
+              name: "Observador",
+            },
+          ],
           type: "select",
           check: false,
           code: "role",
@@ -146,15 +159,15 @@ const FormFilters = () => {
                       dataField.state === 1
                         ? dateRange
                         : dataField.state === 2
-                        ? dateRangeThe
-                        : dateRangeClosedThe
+                          ? dateRangeThe
+                          : dateRangeClosedThe
                     }
                     setDateRange={
                       dataField.state === 1
                         ? setDateRange
                         : dataField.state === 2
-                        ? setDateRangeThe
-                        : setDateRangeClosedThe
+                          ? setDateRangeThe
+                          : setDateRangeClosedThe
                     }
                   />
                 )}

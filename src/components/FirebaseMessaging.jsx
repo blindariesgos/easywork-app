@@ -32,12 +32,14 @@ function FirebaseMessaging() {
   }, []);
 
   useEffect(() => {
-    onMessage(messaging, (payload) => {
-      console.log("Message received. ", payload);
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
+    if (messaging) {
+      onMessage(messaging, (payload) => {
+        console.log("Message received. ", payload);
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+        });
       });
-    });
+    }
   }, [messaging]);
 
   useEffect(() => {

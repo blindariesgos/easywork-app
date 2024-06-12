@@ -36,8 +36,6 @@ function SelectDropdown({
     : options.filter((element) => {
         return `${element.name} ${element.username}`.toLowerCase().includes(query.toLowerCase());
       });
-
-    console.log("Filtered Elements", filteredElements)
       
   return (
     <div className="">

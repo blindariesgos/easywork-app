@@ -19,7 +19,7 @@ import SelectDropdown from '../../../../../../../../components/form/SelectDropdo
 import useAppContext from '../../../../../../../../context/app';
 
 const FormFilters = () => {
-    const { lists } = useAppContext();
+    const { lists, setFilter } = useAppContext();
 	const { t } = useTranslation();
 	const { createdDate } = useCommon();
 	const schema = yup.object().shape({
@@ -60,7 +60,13 @@ const FormFilters = () => {
 
   const handleFormFilters = (data) => {
     console.log("data", data);
+	const updatedData = { ...getValues() };
+	setFilter(updatedData);
   };
+
+  useEffect(() => {
+    setFilter(null);
+  }, []);
 
   useEffect(() => {
     reset();

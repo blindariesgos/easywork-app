@@ -32,6 +32,15 @@ function FirebaseMessaging() {
   }, []);
 
   useEffect(() => {
+    onMessage(messaging, (payload) => {
+      console.log("Message received. ", payload);
+      new Notification(payload.notification.title, {
+        body: payload.notification.body,
+      });
+    });
+  }, [messaging]);
+
+  useEffect(() => {
     // Verificar el estado del permiso de notificaciones
     if (Notification.permission === 'default') {
       setOpen(true);
@@ -48,13 +57,6 @@ function FirebaseMessaging() {
         } else {
           console.log("User denied notification permission.");
         }
-      });
-
-      onMessage(messaging, (payload) => {
-        console.log("Message received. ", payload);
-        new Notification(payload.notification.title, {
-          body: payload.notification.body,
-        });
       });
     }
   };

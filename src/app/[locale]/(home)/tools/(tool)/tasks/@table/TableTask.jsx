@@ -3,6 +3,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import Link from "next/link";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import ToolContextProvider from "../../../../../../../context/tools";
 import {
   useTasksConfigs,
   useTasksDetete,
@@ -17,9 +18,13 @@ import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
 
 export default function TableTask({ data }) {
   const checkbox = useRef();
+  const {
+    selectedTasks,
+    setSelectedTasks
+  } = ToolContextProvider();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedTasks, setSelectedTasks] = useState([]);
+  // const [selectedTasks, setSelectedTasks] = useState([]);
   const [dataTask, setDataTask] = useState();
   const { fieldClicked, handleSorting, orderItems } = useOrderByColumn(
     [],
@@ -224,11 +229,13 @@ export default function TableTask({ data }) {
             </div>
           </div>
           <div className="w-full mt-2">
-            <div className="flex justify-between items-center flex-wrap">
+            <div className="flex justify-center">
+              <Pagination totalPages={dataTask?.meta?.totalPages || 0} />
+            </div>
+            <div className="flex">
               {selectedTasks.length > 0 && (
                 <SelectedOptionsTable options={optionsCheckBox} />
               )}
-              <Pagination totalPages={dataTask?.meta?.totalPages || 0} />
             </div>
           </div>
         </div>

@@ -352,12 +352,14 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <div className="w-full mt-1 pt-4 sm:pt-0 flex justify-center">
-        <div className="flex justify-between items-center flex-wrap gap-4">
+      <div className="w-full mt-1 pt-4 sm:pt-0">
+        <div className="flex justify-center">
+          <Pagination totalPages={AppContacts?.meta?.totalPages || 0} />
+        </div>
+        <div className="flex">
           {selectedContacts.length > 0 && (
             <SelectedOptionsTable options={options} />
           )}
-          <Pagination totalPages={AppContacts?.meta?.totalPages || 0} />
         </div>
       </div>
     </div>

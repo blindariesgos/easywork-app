@@ -25,6 +25,7 @@ import {
   ArrowPathIcon,
   BuildingOfficeIcon,
   SparklesIcon,
+  HomeIcon,
 } from "@heroicons/react/20/solid";
 
 import { useTranslation } from "react-i18next";
@@ -41,6 +42,14 @@ export const useSidebar = () => {
   const { t } = useTranslation();
 
   const sidebarNavigation = [
+    {
+      name: t("common:menu:home:name"),
+      href: "/home",
+      icon: ChevronRightIcon,
+      iconShortBar: HomeIcon,
+      current: true,
+      children: [],
+    },
     {
       name: t("common:menu:tools:name"),
       href: "/tools",

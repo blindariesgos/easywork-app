@@ -13,6 +13,9 @@
         "close": "Close"
     },
     "menu": {
+        "home": {
+            "name": "Home"
+        },
         "tools": {
             "name": "Tools",
             "drive": "Drive - Documents",

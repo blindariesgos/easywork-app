@@ -68,6 +68,9 @@
     "change": "Cambiar"
   },
   "menu": {
+    "home": {
+      "name": "Home"
+    },
     "tools": {
       "name": "Herramientas",
       "drive": "Drive -  Documentos",

@@ -12,9 +12,9 @@
             "trash": "Enviar a papelera de reciclaje"
         },
         "excel": {
-            "alone": "Solo los prospectos seleccionados",
+            "alone": "Sólo las tareas seleccionadas",
             "export": "Exportar a microsoft Excel",
-            "all": "Todos los campos de los prospectos"
+            "all": "Todas las tareas"
         }
     },
     "filters": {

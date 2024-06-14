@@ -4,11 +4,18 @@ import {
   ChevronDownIcon,
   EnvelopeIcon,
   PhoneIcon,
+  Bars3Icon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  Fragment,
+} from "react";
 import useCrmContext from "../../../../../../../context/crm";
 import { getURLContactPhoto } from "../../../../../../../lib/common";
 import useAppContext from "../../../../../../../context/app";
@@ -29,6 +36,11 @@ import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
 import SelectedOptionsTable from "../../../../../../../components/SelectedOptionsTable";
 import { useAlertContext } from "../../../../../../../context/common/AlertContext";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
+import { Menu, Transition } from "@headlessui/react";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function Page() {
   const params = useSearchParams();
@@ -145,6 +157,15 @@ export default function Page() {
     );
   }
 
+  const itemOpcions = [
+    { name: "Ver" },
+    { name: "Editar" },
+    { name: "Copiar" },
+    { name: "Eliminar" },
+    { name: "Agregar Evento" },
+    { name: "Nuevo correo electrónico" },
+  ];
+
   return (
     <div className="flow-root relative h-full">
       {loading && <LoaderSpinner />}
@@ -225,23 +246,66 @@ export default function Page() {
                         "hover:bg-indigo-100/40 cursor-default"
                       )}
                     >
-                      <td className=" px-7 sm:w-12 sm:px-6">
+                      <td className="pr-7 pl-4 sm:w-12">
                         {selectedContacts.includes(contact) && (
                           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          value={contact.id}
-                          checked={selectedContacts.includes(contact)}
-                          onChange={(e) =>
-                            setSelectedContacts(
-                              e.target.checked
-                                ? [...selectedContacts, contact]
-                                : selectedContacts.filter((p) => p !== contact)
-                            )
-                          }
-                        />
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            value={contact.id}
+                            checked={selectedContacts.includes(contact)}
+                            onChange={(e) =>
+                              setSelectedContacts(
+                                e.target.checked
+                                  ? [...selectedContacts, contact]
+                                  : selectedContacts.filter(
+                                      (p) => p !== contact
+                                    )
+                              )
+                            }
+                          />
+
+                          <Menu
+                            as="div"
+                            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                          >
+                            <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                              <Bars3Icon
+                                className="ml-3 h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </Menu.Button>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                {itemOpcions.map((item) => (
+                                  <Menu.Item key={item.name}>
+                                    {({ active }) => (
+                                      <div
+                                        // onClick={item.onClick}
+                                        className={classNames(
+                                          active ? "bg-gray-50" : "",
+                                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                        )}
+                                      >
+                                        {item.name}
+                                      </div>
+                                    )}
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
+                        </div>
                       </td>
                       {selectedColumns.length > 0 &&
                         selectedColumns.map((column, index) => (

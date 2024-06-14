@@ -248,7 +248,7 @@ export default function CreateContact({ edit, id }) {
           <div className="flex flex-col md:flex-row h-full md:pb-[13.5rem] bg-white md:mx-4 rounded-lg p-4 w-full">
             {/* Menu Izquierda */}
             <div className="md:w-2/5 bg-gray-100 md:overflow-y-scroll rounded-lg">
-              <div className="flex justify-between bg-white py-4 px-4 rounded-md">
+              <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("contacts:create:data")}</h1>
                 <button
                   type="button"
@@ -265,7 +265,7 @@ export default function CreateContact({ edit, id }) {
                   disabled={!openButtons}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 px-2 mb-10 mt-8">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl px-5 mb-10 mt-8">
                 <TextInput
                   type="text"
                   label={t("contacts:create:name")}

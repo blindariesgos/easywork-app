@@ -14,7 +14,6 @@ export default function CreateEventButton() {
   const { t } = useTranslation();
   const items = [
     { name: t('tools:calendar:event'), href: "#evento" },
-    { name: t('tools:calendar:task'), href: "#tarea" },
   ];
   return (
     <div className="md:inline-flex rounded-md shadow-sm hidden">

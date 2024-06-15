@@ -2,10 +2,15 @@
 import { getFileIcon } from "../../../../../../../lib/drive_helper";
 import clsx from "clsx";
 import Image from "next/image";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import { ChevronRightIcon, Bars3Icon } from "@heroicons/react/20/solid";
+import { Menu, Transition } from "@headlessui/react";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const files = [
   {
@@ -76,6 +81,18 @@ export default function Page() {
     setIndeterminate(false);
   }
 
+  const itemOptions = [
+    { name: "Abrir" },
+    { name: "Compartir" },
+    { name: "Renombrar" },
+    { name: "Copiar" },
+  ];
+
+  const shareOptions = [
+    { name: "Compartir enlace interno" },
+    { name: "Compartir con otros usuarios" },
+  ];
+
   return (
     <div className="">
       <div className="mt-8 flow-root">
@@ -145,23 +162,104 @@ export default function Page() {
                         "hover:bg-zinc-100"
                       )}
                     >
-                      <td className="relative px-7 sm:w-12 sm:px-6">
-                        {selectedFiles.includes(file) && (
-                          <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                        )}
-                        <input
-                          type="checkbox"
-                          className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                          value={file.email}
-                          checked={selectedFiles.includes(file)}
-                          onChange={(e) =>
-                            setSelectedFiles(
-                              e.target.checked
-                                ? [...selectedFiles, file]
-                                : selectedFiles.filter((p) => p !== file)
-                            )
-                          }
-                        />
+                      <td className="relative px-7 h-full">
+                        <div className="flex h-full items-center">
+                          {selectedFiles.includes(file) && (
+                            <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
+                          )}
+                          <input
+                            type="checkbox"
+                            className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                            value={file.email}
+                            checked={selectedFiles.includes(file)}
+                            onChange={(e) =>
+                              setSelectedFiles(
+                                e.target.checked
+                                  ? [...selectedFiles, file]
+                                  : selectedFiles.filter((p) => p !== file)
+                              )
+                            }
+                          />
+                          <Menu
+                            as="div"
+                            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                          >
+                            <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                              <Bars3Icon
+                                className="ml-3 h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </Menu.Button>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items className="absolute left-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                {itemOptions.map((item) => (
+                                  <Menu.Item key={item.name}>
+                                    {({ active }) => (
+                                      <div
+                                        className={classNames(
+                                          active ? "bg-gray-50" : "",
+                                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                        )}
+                                      >
+                                        {item.name !== "Compartir" ? (
+                                          item.name
+                                        ) : (
+                                          <Menu
+                                            as="div"
+                                            className="relative inline-block text-left"
+                                          >
+                                            <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                                              <div className="w-full flex items-center justify-between">
+                                                {item.name}
+                                                <ChevronRightIcon className="h-6 w-6 ml-14" />
+                                              </div>
+                                            </Menu.Button>
+                                            <Transition
+                                              as={Fragment}
+                                              enter="transition ease-out duration-100"
+                                              enterFrom="transform opacity-0 scale-95"
+                                              enterTo="transform opacity-100 scale-100"
+                                              leave="transition ease-in duration-75"
+                                              leaveFrom="transform opacity-100 scale-100"
+                                              leaveTo="transform opacity-0 scale-95"
+                                            >
+                                              <Menu.Items className="absolute left-32 z-50 mt-2.5 w-56 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                                {shareOptions.map((item) => (
+                                                  <Menu.Item key={item.name}>
+                                                    {({ active }) => (
+                                                      <div
+                                                        className={classNames(
+                                                          active
+                                                            ? "bg-gray-50"
+                                                            : "",
+                                                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                                        )}
+                                                      >
+                                                        {item.name}
+                                                      </div>
+                                                    )}
+                                                  </Menu.Item>
+                                                ))}
+                                              </Menu.Items>
+                                            </Transition>
+                                          </Menu>
+                                        )}
+                                      </div>
+                                    )}
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
+                        </div>
                       </td>
                       <td
                         className={clsx(
@@ -223,8 +321,9 @@ export default function Page() {
                           <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
                           anterior
                         </div>
-                        <div className="ml-4 flex">siguiente
-                        <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
+                        <div className="ml-4 flex">
+                          siguiente
+                          <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
                         </div>
                       </div>
                     </td>

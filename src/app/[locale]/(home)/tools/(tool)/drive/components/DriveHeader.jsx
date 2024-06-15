@@ -23,7 +23,7 @@ export default function DriveHeader() {
 				<div className="flex-grow">
 					<div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
 						<FiltersContact />
-						<div className="flex items-center w-full">
+						{/* <div className="flex items-center w-full">
 							<FaMagnifyingGlass className="h-4 w-4 text-primary" />
 							<input
 								type="search"
@@ -32,7 +32,7 @@ export default function DriveHeader() {
 								className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
 								placeholder={t('contacts:header:search')}
 							/>
-						</div>
+						</div> */}
 					</div>
 				</div>
         {/* <div className="flex-grow">

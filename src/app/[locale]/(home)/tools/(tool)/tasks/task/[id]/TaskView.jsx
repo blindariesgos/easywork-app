@@ -7,9 +7,10 @@ import {
   FireIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
+import DropdownSelect from "../../components/DropdownSelect";
 import Button from "@/src/components/form/Button";
 import ButtonMore from "../../components/ButtonMore";
 import TabsTask from "../../components/Tabs/TabsTask";
@@ -22,11 +23,16 @@ import { useTask } from "@/src/lib/api/hooks/tasks";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useSWRConfig } from "swr";
 import { formatDate } from "@/src/utils/getFormatDate";
-
+import DatePicker from 'react-datepicker';
+import { formatISO, parseISO } from "date-fns";
+import { Transition } from '@headlessui/react';
+import { FaTimes } from 'react-icons/fa';
+import clsx from "clsx";
+import useAppContext from "@/src/context/app";
 
 export default function TaskView({ id }) {
   const { task, isLoading, isError } = useTask(id);
-
+  const { lists } = useAppContext();
   const { t } = useTranslation();
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
@@ -34,6 +40,24 @@ export default function TaskView({ id }) {
   const [value, setValueText] = useState(task ? task.description : "");
   const [openEdit, setOpenEdit] = useState(null);
   const { mutate } = useSWRConfig();
+
+  const handleDateChange = (date) => {
+    console.log('Nueva fecha:', date);
+  };
+
+  const getValues = (name) => {
+    // Simulación de obtención de valores (puede ser desde un formulario)
+    return console.log(name);
+  };
+
+  const setValue = (name, value, options) => {
+    // Simulación de establecimiento de valores (puede ser desde un formulario)
+    console.log(`Setting ${name} to`, value, options);
+  };
+
+  const field = {}; // Pasar props adicionales del campo si es necesario
+  const errors = {}; // Pasar errores de validación si es necesario
+
 
   const getCompletedTask = async () => {
     try {
@@ -164,16 +188,7 @@ export default function TaskView({ id }) {
                 <TaskHeaderStatus task={task} />
               </div>
               <div className="p-2 sm:p-4">
-                <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
-                  <p className="text-sm text-black">
-                    {t("tools:tasks:edit:limit-date")}:
-                  </p>
-                  <p className="text-sm text-black font-semibold underline decoration-dotted cursor-pointer">
-                    {task?.deadline
-                      ? formatDate(task?.deadline, "dd/MM/yyyy hh:mm a")
-                      : ""}
-                  </p>
-                </div>
+                <TaskDeadLine task={task} onDateChange={handleDateChange} t={t} />
                 <BannerStatus task={task} />
                 <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
                   <p className="text-sm text-black">
@@ -197,44 +212,27 @@ export default function TaskView({ id }) {
                   </p>
                   <div className="flex gap-2 items-center mt-3">
                     <Image
-                      className="h-10 w-10 rounded-full object-contain"
+                      className="h-8 w-8 rounded-full object-contain"
                       width={50}
                       height={50}
                       src={task.createdBy?.avatar || "/img/avatar.svg"}
                       alt=""
                       objectFit="cover"
                     />
-                    <p className="text-base font-semibold text-black">
+                    <p className="font-semibold text-blue-800 text-sm">
                       {task.createdBy?.name || task.createdBy?.username}
                     </p>
                   </div>
                 </div>
-                <div className="mb-4">
-                  <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
-                    <p className="text-sm text-black">
-                      {t("tools:tasks:edit:responsible")}
-                    </p>
-                     <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
-                      {t('tools:tasks:edit:change')}
-                    </p>
-                  </div>
-                  {task?.responsible?.length > 0 &&
-                    task.responsible.map((resp, index) => (
-                      <div className="flex gap-2 items-center mt-3" key={index}>
-                        <Image
-                          className="h-10 w-10 rounded-full object-cover"
-                          width={50}
-                          height={50}
-                          src={resp?.avatar || "/img/avatar.svg"}
-                          alt=""
-                          objectFit="cover"
-                        />
-                        <p className="text-base font-semibold text-black">
-                          {resp?.name || resp?.username}
-                        </p>
-                      </div>
-                    ))}
-                </div>
+                <TaskResponsible
+                  task={task}
+                  lists={lists}
+                  getValues={getValues}
+                  setValue={setValue}
+                  field={field}
+                  errors={errors}
+                  t={t}
+                />
                 <div className="mb-4">
                   <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
                   <p className="text-sm text-black">
@@ -249,14 +247,14 @@ export default function TaskView({ id }) {
                     task.participants.map((part, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
-                          className="h-10 w-10 rounded-full object-fill"
-                          width={400}
-                          height={400}
+                          className="h-8 w-8 rounded-full object-fill"
+                          width={50}
+                          height={50}
                           src={part?.avatar || "/img/avatar.svg"}
                           alt=""
                           objectFit="cover"
                         />
-                        <p className="text-base font-semibold text-black">
+                        <p className="font-semibold text-blue-800 text-sm">
                           {part?.username}
                         </p>
                       </div>
@@ -275,14 +273,14 @@ export default function TaskView({ id }) {
                     task.observers.map((obs, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
                         <Image
-                          className="h-10 w-10 rounded-full object-cover"
+                          className="h-8 w-8 rounded-full object-cover"
                           width={50}
                           height={50}
                           src={obs?.avatar || "/img/avatar.svg"}
                           alt=""
                           objectFit="contain"
                         />
-                        <p className="text-base font-semibold text-black">
+                        <p className="font-semibold text-blue-800 text-sm">
                           {obs?.name}
                         </p>
                       </div>
@@ -318,6 +316,165 @@ export default function TaskView({ id }) {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+const TaskDeadLine = ({task, onDateChange, t, onDateRemove})=>{
+  const [isEditing, setIsEditing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(task?.deadline ? parseISO(task.deadline) : new Date());
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const containerRef = useRef(null);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setIsEditing(false);
+    onDateChange(formatISO(date));
+  };
+
+  const handleDateRemove = () => {
+    setSelectedDate(null);
+    onDateRemove();
+  };
+
+
+  const handleDateClick = (e) => {
+    if (task.completedTime) return;
+    setIsEditing(true);
+    const containerRect = containerRef.current.getBoundingClientRect();
+    setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
+  };
+
+   return (
+    <div className="relative" ref={containerRef}>
+      <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
+        <p className="text-sm text-black">
+          {t("tools:tasks:edit:limit-date")}:
+        </p>
+        <div className="flex items-center"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}>
+          <p
+          className={clsx(!task.completedTime && "underline decoration-dotted cursor-pointer font-semibold", "text-sm text-black")}
+          onClick={handleDateClick}
+        >
+          {task?.deadline ? formatDate(task?.deadline, 'dd/MM/yyyy hh:mm a') : 'Ninguna'}
+        </p>
+          {task?.deadline && (
+            <FaTimes 
+              className={`ml-2 text-red-500 hover:text-red-700 cursor-pointer ${isHovering ? 'visible' : 'invisible'}`}
+              onClick={handleDateRemove}
+            />
+          )}
+        </div>
+      </div>
+       <Transition
+        show={isEditing}
+        enter="transition ease-out duration-200"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-150"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <div
+          className="absolute z-10 bg-white shadow-lg rounded-md"
+          style={{ top: position.top + 20, left: 'auto', right: `calc(90% - ${position.left}px)` }}
+        >
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            onClickOutside={() => setIsEditing(false)}
+            inline
+          />
+        </div>
+      </Transition>
+    </div>
+  );
+}
+
+const TaskResponsible = ({task, lists, getValues, setValue, field, errors, t})=>{
+  const [isEditing, setIsEditing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const containerRef = useRef(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  const handleEditClick = (e) => {
+    setIsEditing(true);
+    const containerRect = containerRef.current.getBoundingClientRect();
+    setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
+  };
+
+  const handleDateRemove = (id) => {
+    const updatedResponsible = getValues('responsible').filter((res) => res.id !== id);
+    setValue('responsible', updatedResponsible, { shouldValidate: true });
+  };
+
+
+  return (
+    <div className="relative mb-4" ref={containerRef}>
+      <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
+        <p className="text-sm text-black">
+          {t("tools:tasks:edit:responsible")}
+        </p>
+        <p
+          className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
+          onClick={handleEditClick}
+        >
+          {t('tools:tasks:edit:change')}
+        </p>
+      </div>
+      {task?.responsible?.length > 0 &&
+        task.responsible.map((resp, index) => (
+          <div
+            className="flex gap-2 items-center mt-3"
+            key={index}
+            onMouseEnter={() => setIsHovering(index)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            <Image
+              className="h-8 w-8 rounded-full object-cover"
+              width={50}
+              height={50}
+              src={resp?.avatar || "/img/avatar.svg"}
+              alt=""
+              objectFit="cover"
+            />
+            <p className="font-semibold text-blue-800 text-sm">
+              {resp?.name || resp?.username}
+            </p>
+            {isHovering === index && (
+              <FaTimes
+                className="ml-2 text-red-500 cursor-pointer"
+                onClick={() => handleDateRemove(resp.id)}
+              />
+            )}
+          </div>
+        ))}
+      <Transition
+        show={isEditing}
+        enter="transition ease-out duration-200"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-150"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <div className="absolute w-full z-50 bg-white shadow-lg rounded-md"
+        style={{ top: position.top + 20, left: 'auto', right: `auto` }}>
+          <DropdownSelect
+            {...field}
+            options={lists?.users || []}
+            getValues={getValues}
+            setValue={setValue}
+            name="responsible"
+            error={errors.responsible}
+            isOpen={isEditing}
+            setIsOpen={setIsEditing}
+          />
+        </div>
+      </Transition>
     </div>
   );
 }

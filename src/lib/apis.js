@@ -134,7 +134,6 @@ export const getTasksUser = async (page = 1, limit = 6) => {
 
 export const deleteTask = async (id) => {
   const response = await axios().delete(`/tools/tasks/${id}`);
-  revalidatePath("/tools/tasks", "page");
   return response;
 };
 
@@ -150,18 +149,18 @@ export const postTask = async (body) => {
 };
 
 export const putTaskId = async (id, body) => {
+
+  console.log("Updating task")
   const response = await axios().put(`/tools/tasks/${id}`, body);
   return response;
 };
 
 export const putTaskCompleted = async (id) => {
   const response = await axios().put(`/tools/tasks/${id}/complete`);
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
 };
 
 export const postComment = async (body, id) => {
-  console.log("### POSTING COMMENT", body, id);
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;
 };

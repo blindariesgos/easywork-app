@@ -12,16 +12,19 @@ import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
 import Button from "@/src/components/form/Button";
 import ButtonMore from "../../components/ButtonMore";
-import { BsStopwatchFill } from "react-icons/bs";
-import TabsTaskEdit from "../../components/Tabs/TabsTaskEdit";
+import TabsTask from "../../components/Tabs/TabsTask";
 import moment from "moment";
-import TaskCreate from "../TaskCreate";
+import TaskEditor from "../TaskEditor";
 import { putTaskCompleted } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useTask } from "@/src/lib/api/hooks/tasks";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-export default function TaskEdit({ id }) {
+import { useSWRConfig } from "swr";
+import { formatDate } from "@/src/utils/getFormatDate";
+
+
+export default function TaskView({ id }) {
   const { task, isLoading, isError } = useTask(id);
 
   const { t } = useTranslation();
@@ -29,7 +32,8 @@ export default function TaskEdit({ id }) {
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(true);
   const [value, setValueText] = useState(task ? task.description : "");
-  const [openEdit, setOpenEdit] = useState(false);
+  const [openEdit, setOpenEdit] = useState(null);
+  const { mutate } = useSWRConfig();
 
   const getCompletedTask = async () => {
     try {
@@ -37,6 +41,7 @@ export default function TaskEdit({ id }) {
       await putTaskCompleted(task.id);
       toast.success(t("tools:tasks:completed-success"));
       setLoading(false);
+      await mutate(`/tools/tasks/${task.id}`);
     } catch (error) {
       setLoading(false);
       handleApiError(error.message);
@@ -60,7 +65,7 @@ export default function TaskEdit({ id }) {
       <div
         className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
       >
-        <div className="flex justify-between items-center py-2">
+        {openEdit?.mode !== "copy" && <div className="flex justify-between items-center py-2">
           <h1 className="text-xl font-medium">{task?.name}</h1>
           <IconDropdown
             icon={
@@ -72,10 +77,10 @@ export default function TaskEdit({ id }) {
             options={settings}
             width="w-44"
           />
-        </div>
+        </div>}
         <div className="w-full flex gap-2 sm:gap-4 sm:flex-row flex-col h-full">
           {openEdit ? (
-            <TaskCreate edit={task} />
+            <TaskEditor edit={openEdit.mode === "edit" && task} copy={openEdit.mode === "copy" && task} />
           ) : (
             <div className={`w-full ${!openEdit ? "sm:w-9/12" : "sm:w-full"}`}>
               <div className="bg-white rounded-lg">
@@ -103,30 +108,30 @@ export default function TaskEdit({ id }) {
                 {/* CRM */}
                 {task?.crm?.length > 0 && (
                   <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                    <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                    {task.crm[0]?.type === "contact" && <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
                       <p className="text-sm text-white">
                         {t("tools:tasks:edit:contact")}:
                       </p>
-                      <p className="text-sm text-white">Armando Medina</p>
-                    </div>
-                    <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                      <p className="text-sm text-white">{task.crm[0].contact.fullName}</p>
+                    </div>}
+                    {task.crm[0]?.type === "poliza" && <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
                       <p className="text-sm text-white">
                         {t("tools:tasks:edit:policy")}:
                       </p>
-                      <p className="text-sm text-white">1587456621</p>
-                    </div>
+                      <p className="text-sm text-white">{task.crm[0].poliza.noPoliza}</p>
+                    </div>}
                   </div>
                 )}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
-                    {!task.isCompleted && (
+                    {/* {!task.isCompleted && (
                       <Button
                         label={t("tools:tasks:edit:init")}
                         buttonStyle="green"
                         className="px-3 py-2"
                         fontSize="text-xs"
                       />
-                    )}
+                    )} */}
                     {!task.isCompleted && (
                       <Button
                         label={t("tools:tasks:edit:end")}
@@ -141,15 +146,15 @@ export default function TaskEdit({ id }) {
                       openEdit={openEdit}
                       data={task}
                     />
-                    <div className="flex gap-2 items-center">
+                    {/* <div className="flex gap-2 items-center">
                       <BsStopwatchFill className="h-4 w-4 text-easy-400" />
                       <p className="text-easy-400 text-xs">00:00:00</p>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
               <div className="mt-2 sm:mt-4 w-full relative">
-                <TabsTaskEdit data={task} />
+                <TabsTask data={task} />
               </div>
             </div>
           )}
@@ -163,9 +168,9 @@ export default function TaskEdit({ id }) {
                   <p className="text-sm text-black">
                     {t("tools:tasks:edit:limit-date")}:
                   </p>
-                  <p className="text-sm text-black">
+                  <p className="text-sm text-black font-semibold underline decoration-dotted cursor-pointer">
                     {task?.deadline
-                      ? moment(task?.deadline).format("DD/MM/YYYY")
+                      ? formatDate(task?.deadline, "dd/MM/yyyy hh:mm a")
                       : ""}
                   </p>
                 </div>
@@ -205,14 +210,14 @@ export default function TaskEdit({ id }) {
                   </div>
                 </div>
                 <div className="mb-4">
-                  <div>
-                    <p className="text-sm text-black border-b-[1px] border-slate-300/40 pt-2 pb-1">
+                  <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
+                    <p className="text-sm text-black">
                       {t("tools:tasks:edit:responsible")}
                     </p>
+                     <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
+                      {t('tools:tasks:edit:change')}
+                    </p>
                   </div>
-                  {/* <div className="cursor-pointer">
-											<p className="text-xs text-black">{t('tools:tasks:edit:change')}</p>
-										</div> */}
                   {task?.responsible?.length > 0 &&
                     task.responsible.map((resp, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
@@ -231,9 +236,15 @@ export default function TaskEdit({ id }) {
                     ))}
                 </div>
                 <div className="mb-4">
-                  <p className="text-sm text-black border-b-[1px] border-slate-300/40 pt-2 pb-1">
-                    {t("tools:tasks:edit:participant")}
+                  <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
+                  <p className="text-sm text-black">
+                    {t("tools:tasks:edit:participants")}
                   </p>
+                  <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
+                      {t('tools:tasks:edit:add')}
+                    </p>
+                  </div>
+                  
                   {task?.participants?.length > 0 &&
                     task.participants.map((part, index) => (
                       <div className="flex gap-2 items-center mt-3" key={index}>
@@ -257,7 +268,7 @@ export default function TaskEdit({ id }) {
                       {t("tools:tasks:edit:observers")}
                     </p>
                     <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
-                      Agregar
+                      {t('tools:tasks:edit:add')}
                     </p>
                   </div>
                   {task?.observers?.length > 0 &&
@@ -278,9 +289,14 @@ export default function TaskEdit({ id }) {
                     ))}
                 </div>
                 <div className="mb-4">
-                  <p className="text-sm text-black border-b-[1px] border-slate-300/40 pt-2 pb-1">
+                  <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
+                  <p className="text-sm text-black">
                     {t("tools:tasks:edit:tags")}
                   </p>
+                  <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
+                      {task?.tags?.length > 0 ? t('tools:tasks:edit:editTag') : t('tools:tasks:edit:addTag')}
+                    </p>
+                  </div>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {task?.tags?.length > 0 &&
                       task.tags.map((tag, index) => (

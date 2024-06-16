@@ -16,6 +16,7 @@ import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { format } from "date-fns";
 import { es } from 'date-fns/locale'; // Importa el locale español
 import { useSWRConfig } from "swr";
+import parse from "html-react-parser";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
@@ -30,11 +31,11 @@ export default function TabComment({ info }) {
 
   const handleComment = async (_, id) => {
     if (quillRef.current) {
-      const quillEditor = quillRef.current.getEditor();
-      const currentContents = quillEditor.getContents();
-      const text = currentContents.ops.map((op) => op.insert).join("");
+      //const quillEditor = quillRef.current.getEditor();
+      //const currentContents = quillEditor.getContents();
+      //const text = currentContents.ops.map((op) => op.insert).join("");
       const body = {
-        comment: text,
+        comment: value,
         isSummary: info.requireSummary,
         taskId: info.id,
       };
@@ -76,7 +77,6 @@ export default function TabComment({ info }) {
       </div>
     );
   if (isError) return <>Error al cargar la tarea</>;
-  console.log("comments", comments);
 
   const getDeleteComment = async (id) => {
     try {
@@ -165,7 +165,7 @@ export default function TabComment({ info }) {
                         <span className="font-semibold">{getUserName(dat?.createdBy)}</span>
                         <span className="text-xs text-gray-800/50">{formattedDate(dat)}</span>
                       </div>
-                      {dat.comment}
+                      {parse(dat.comment)}
                     </div>
                   </div>
                   {openActions[index] && (
@@ -220,12 +220,6 @@ export default function TabComment({ info }) {
                 className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 {disabled ? <InlineSpinner /> : t("tools:tasks:edit:comment:send")}
-              </button>
-              <button
-                type="button"
-                className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
-              >
-                Cancelar
               </button>
             </div>
           </div>

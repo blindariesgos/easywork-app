@@ -16,6 +16,7 @@ import useAppContext from "../../../../../../../context/app";
 
 export default function OptionsTask({
   edit,
+  copy,
   value,
   setValueText,
   disabled,
@@ -32,7 +33,7 @@ export default function OptionsTask({
   const [userSelected, setUserSelected] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectText, setSelectText] = useState();
-  const [openList, setOpenList] = useState(edit ? true : false);
+  const [openList, setOpenList] = useState((edit ?? copy) ? true : false);
   const [openFiles, setOpenFiles] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
@@ -127,6 +128,23 @@ export default function OptionsTask({
       setValue("items", outputArray);
     }
   }, [edit, setValue]);
+
+  useEffect(() => {
+    if (copy && copy.listField && copy.listField.length > 0) {
+      const outputArray = copy?.listField.map((item) => {
+        const subItems = item.child.map((subItem) => ({
+          name: subItem.text,
+          value: subItem.completed,
+          empty: false,
+        }));
+        return {
+          name: item.text,
+          subItems,
+        };
+      });
+      setValue("items", outputArray);
+    }
+  }, [copy, setValue]);
 
   /*-------------------------------------------------------------*/
 

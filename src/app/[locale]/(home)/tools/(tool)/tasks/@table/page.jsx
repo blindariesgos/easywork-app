@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 export default function Page({ params, searchParams }) {
   const { t } = useTranslation();
   const [page, setPage] = useState(searchParams.page || 1);
-  const [limit, setLimit] = useState(searchParams.limit || 6);
+  const [limit, setLimit] = useState(searchParams.limit || 15);
 
   useEffect(() => {
     setPage(searchParams.page || 1);
@@ -42,7 +42,7 @@ export default function Page({ params, searchParams }) {
 
   return (
     <div className="relative h-full">
-      <TableTask data={tasks} />
+      <TableTask data={tasks}/>
     </div>
   );
 }

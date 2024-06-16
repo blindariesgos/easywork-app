@@ -1,3 +1,4 @@
+"use client";
 import {
   ArrowDownTrayIcon,
   ChevronRightIcon,
@@ -37,6 +38,8 @@ import { useAlertContext } from "../context/common/AlertContext";
 import { toast } from "react-toastify";
 import { deleteLeadById, deleteTask } from "../lib/apis";
 import { handleApiError } from "../utils/api/errors";
+import { useSWRConfig } from "swr";
+
 
 export const useSidebar = () => {
   const { t } = useTranslation();
@@ -922,6 +925,7 @@ export const useTasksConfigs = () => {
       selected: false,
     },
   ]);
+
   const optionsSettings = [
     {
       value: 0,
@@ -963,7 +967,7 @@ export const useTasksConfigs = () => {
     {
       id: 2,
       name: t("tools:tasks:table:activity"),
-      row: "startTime",
+      row: "activity",
       check: true,
     },
     {
@@ -1024,9 +1028,11 @@ export const useTasksConfigs = () => {
   };
 };
 
-export const useTasksDetete = (selectedTask, setSelectedTasks, setLoading) => {
+export const useTasksActions = (selectedTask, setSelectedTasks, setLoading) => {
   const { t } = useTranslation();
   const { onCloseAlertDialog } = useAlertContext();
+  const { mutate } = useSWRConfig();
+
 
   const optionsCheckBox = [
     {
@@ -1060,25 +1066,26 @@ export const useTasksDetete = (selectedTask, setSelectedTasks, setLoading) => {
     },
   ];
 
-  const deleteTasks = () => {
-    if (selectedTask.length === 1) apiDelete(selectedTask[0].id);
-    if (selectedTask.length > 1) {
-      selectedTask.map((task) => apiDelete(task.id));
+  const deleteTasks = async () => {
+    try {
+      setLoading(true);
+      if (selectedTask.length === 1) apiDelete(selectedTask[0].id);
+    else if (selectedTask.length > 1) {
+      await Promise.all(selectedTask.map((task) => apiDelete(task.id)));
     }
     toast.success(t("tools:tasks:delete-msg"));
     setSelectedTasks([]);
+    await mutate("/tools/tasks/user?limit=15&page=1");
     onCloseAlertDialog();
+    } catch (error) {
+      handleApiError(err.message);
+    } finally{
+      setLoading(false);
+    }
   };
 
   const apiDelete = async (id) => {
-    try {
-      setLoading(true);
-      const response = await deleteTask(id);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      handleApiError(err.message);
-    }
+      await deleteTask(id);
   };
 
   return {

@@ -3,6 +3,7 @@ import useSWR from "swr";
 import fetcher from "../fetcher";
 
 export const useTasks = ({ page = 1, limit = 15 }) => {
+  console.log("Solicitando", limit, page)
   const { data, error, isLoading } = useSWR(
     `/tools/tasks/user?limit=${limit}&page=${page}`,
     fetcher,

@@ -27,8 +27,9 @@ import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useTaskContactsPolizas } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
+import { useSWRConfig } from "swr";
 
-export default function TaskCreate({ edit }) {
+export default function TaskEditor({ edit, copy }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
@@ -36,19 +37,20 @@ export default function TaskCreate({ edit }) {
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
-  const [value, setValueText] = useState(edit ? edit.description : "");
+  const [value, setValueText] = useState((edit?.description ?? copy?.description) ?? "");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
   const [listField, setListField] = useState([]);
+  const { mutate } = useSWRConfig();
   const [openOptions, setOpenOptions] = useState({
     created: edit?.createdBy ? true : false,
-    participants: edit?.participants?.length > 0 ? true : false,
-    observers: edit?.observers?.length > 0 ? true : false,
-    time: edit?.deadline ? true : false,
-    options:
-      edit?.responsibleCanChangeDate || edit?.requireRevision ? true : false,
-    more: false,
+    participants: (edit?.participants?.length ?? copy?.participants?.length) > 0 ? true : false,
+    observers: (edit?.observers?.length ?? copy?.observers?.length) > 0 ? true : false,
+    time: (edit?.deadline ?? copy?.deadline) ? true : false,
+    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) || 
+                (edit?.requireRevision ?? copy?.requireRevision) ? true : false,
+    more: (edit?.crm?.length ?? copy?.crm?.length) ? true : false,
   });
 
   const {
@@ -75,7 +77,7 @@ export default function TaskCreate({ edit }) {
       }
       setSelectedOptions(optionsSelected);
     }
-  }, [edit, t]);
+  }, [edit, t]); //
 
   const optionsTime = [
     {
@@ -122,14 +124,25 @@ export default function TaskCreate({ edit }) {
     setValue,
   } = useForm({
     defaultValues: {
-      name: edit ? edit?.name : "",
-      limitDate: edit ? edit.deadline : "",
-      startDate: edit ? edit.startTime : "",
-      endDate: edit ? edit.deadline : "",
-      participants: edit ? edit.participants : [],
-      responsible: edit ? edit.responsible : [],
-      observers: edit ? edit.observers : [],
-      tags: edit ? edit.tags : [],
+      name: edit?.name ?? copy?.name ?? "",
+      limitDate: edit?.deadline ?? copy?.deadline ?? "",
+      startDate: edit?.startTime ?? copy?.startTime ?? "",
+      endDate: edit?.deadline ?? copy?.deadline ?? "",
+      participants: edit?.participants ?? copy?.participants ?? [],
+      responsible: edit?.responsible ?? copy?.responsible ?? [],
+      observers: edit?.observers ?? copy?.observers ?? [],
+      tags: edit?.tags ?? copy?.tags ?? [],
+      crm: edit?.crm?.length > 0 ? edit.crm.map(item=>({
+        id: item?.contact?.id ?? item?.poliza?.id,
+        type: item?.type,
+        name: item?.contact?.name,
+        title: item?.poliza?.title ?? item?.poliza?.noPoliza
+      })) : null ?? copy?.crm?.length > 0 ? copy.crm.map(item=>({
+        id: item?.contact?.id ?? item?.poliza?.id,
+        type: item?.type,
+        name: item?.contact?.name,
+        title: item?.poliza?.title ?? item?.poliza?.noPoliza
+      })) : null ?? [],
       createdBy: edit ? [edit.createdBy] : [],
     },
     resolver: yupResolver(schemaInputs),
@@ -148,8 +161,11 @@ export default function TaskCreate({ edit }) {
     if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
     let crm = [];
 
-    if (data?.crm?.length > 0)
+    if (data?.crm?.length > 0) {
       crm = data?.crm.map((item) => ({ id: item.id, type: item.type }))
+    }
+
+    console.log("###### CRM #######", crm)
 
 
     const body = {
@@ -212,15 +228,20 @@ export default function TaskCreate({ edit }) {
     try {
       setLoading(true);
       if (edit) {
-        const task = await putTaskId(edit.id, body);
+
+        console.log(body)
+        await putTaskId(edit.id, body);
         setLoading(false);
         toast.success(t("tools:tasks:update-msg"));
+        await mutate(`/tools/tasks/user?limit=15&page=1`);
         router.push("/tools/tasks?page=1");
       } else {
-        const task = await postTask(body);
+        await postTask(body);
         toast.success(t("tools:tasks:success-msg"));
         setLoading(false);
-        if (isNewTask) {
+        await mutate(`/tools/tasks/user?limit=15&page=1`);
+
+        if (isNewTask) {  
           reset();
           setValueText("");
           setValue("name", "");
@@ -248,7 +269,7 @@ export default function TaskCreate({ edit }) {
             } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? "sm:p-0" : "sm:p-4"
             }`}
         >
-          {!edit && (
+          {(!edit ?? !copy) && (
             <div className="flex justify-between items-center py-2">
               <h1 className="text-xl font-medium">
                 {t("tools:tasks:new:title")}
@@ -294,6 +315,7 @@ export default function TaskCreate({ edit }) {
               value={value}
               setListField={setListField}
               edit={edit}
+              copy={copy}
             />
             <div className="mt-6 flex flex-col gap-3">
               <div className="">
@@ -604,17 +626,18 @@ export default function TaskCreate({ edit }) {
           </div>
           <div className={`flex gap-4 flex-wrap mt-4 ${edit && "mb-4"}`}>
             <Button
-              label={t("tools:tasks:new:add-task")}
+              label={edit ? t("tools:tasks:new:update-task") : t("tools:tasks:new:add-task")}
               buttonStyle="primary"
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleSubmit((data) => createTask(data, false))}
             />
-            <Button
+            {!edit && <Button
               label={t("tools:tasks:new:add-create")}
               buttonStyle="secondary"
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleSubmit((data) => createTask(data, true))}
-            />
+            />}
+            
             <Button
               label={t("common:buttons:cancel")}
               buttonStyle="secondary"

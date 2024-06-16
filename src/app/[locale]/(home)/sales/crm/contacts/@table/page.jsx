@@ -73,7 +73,7 @@ export default function Page() {
   );
 
   useEffect(() => {
-    if (orderItems.length > 0)
+    if (orderItems?.length > 0)
       setContacts({ items: orderItems, meta: AppContacts?.meta });
   }, [orderItems, setContacts, AppContacts]);
 

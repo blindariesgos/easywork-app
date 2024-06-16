@@ -2,8 +2,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function TabTableObjections({ data }) {
-	const objections = data.data || [];
+export default function TabTableObjections() {
+	const objections = [];
 	const { t } = useTranslation();
 	return (
 		<div className="relative overflow-hidden sm:rounded-lg p-2">

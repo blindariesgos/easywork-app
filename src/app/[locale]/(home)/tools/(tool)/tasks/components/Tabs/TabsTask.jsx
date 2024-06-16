@@ -13,7 +13,7 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(' ');
 }
 
-export default function TabsTaskEdit({ data }) {
+export default function TabsTask({ data }) {
 	const { comments, isLoading, isError } = useTaskComments(data.id);
 
 	const { t } = useTranslation();

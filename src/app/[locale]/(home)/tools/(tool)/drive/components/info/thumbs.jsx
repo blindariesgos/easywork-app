@@ -10,7 +10,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Page() {
+export default function ThumbsInfo({files}) {
   const { t } = useTranslation();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const checkbox = useRef();
@@ -66,21 +66,21 @@ export default function Page() {
         </div>
       )}
       <div className="bg-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-5">
-        {Array.from({ length: 9 }).map((_, index) => (
+        {files.map((file) => (
           <div
-            key={index}
+            key={file.name}
             className="relative min-w-48 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 min-h-32 h-40 rounded-md flex justify-center items-center"
           >
             <input
               type="checkbox"
               className="absolute right-1 bottom-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-              value={index}
-              checked={selectedFiles.includes(index)}
+              value={file.email}
+              checked={selectedFiles.includes(file)}
               onChange={(e) =>
                 setSelectedFiles(
                   e.target.checked
-                    ? [...selectedFiles, index]
-                    : selectedFiles.filter((p) => p !== index)
+                    ? [...selectedFiles, file]
+                    : selectedFiles.filter((p) => p !== file)
                 )
               }
             />
@@ -154,13 +154,13 @@ export default function Page() {
             </Menu>
             <div className="flex flex-col items-center justify-center">
               <FolderIcon className="h-24 w-24 text-easywork-main" />
-              <p>Carpeta de tal cosa</p>
+              <p>{file.name}</p>
             </div>
           </div>
         ))}
       </div>
       <div className="flex bg-white w-full pb-2">
-        <div className="ml-6">Seleccionado: {selectedFiles.length}/50</div>
+        <div className="ml-6">Seleccionado: {selectedFiles.length}/{files.length}</div>
         <div className="ml-6">Pagina 1/2</div>
         <div className="ml-6">
           <div className="flex items-center ">

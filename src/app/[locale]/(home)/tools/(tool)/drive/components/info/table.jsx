@@ -52,13 +52,7 @@ export default function TableInfo({ files }) {
           <div className="inline-block min-w-full py-2 align-middle">
             <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
               {selectedFiles.length > 0 && (
-                <div className="absolute left-14 top-0 flex h-12 items-center space-x-3 bg-white sm:left-12">
-                  <button
-                    type="button"
-                    className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                  >
-                    {t("tools:drive:table:edit")}
-                  </button>
+                <div className="absolute left-16 top-0 flex h-12 items-center space-x-3 bg-white">
                   <button
                     type="button"
                     className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"

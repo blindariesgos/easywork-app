@@ -16,7 +16,12 @@
       "desktopApp": "Desktop App"
     },
     "organizer": {
-      "by-name": "By Name"
+      "by-name": "By name",
+      "by-id": "By ID",
+      "by-size": "By size",
+      "by-change-date": "By change date",
+      "reverse": "Reverse",
+      "mixed-classification": "Mixed classification"
     },
     "table": {
       "edit": "Bulk edit",

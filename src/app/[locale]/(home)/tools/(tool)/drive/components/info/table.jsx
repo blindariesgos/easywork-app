@@ -1,5 +1,5 @@
 "use client";
-import { getFileIcon } from "../../../../../../../lib/drive_helper";
+import { getFileIcon } from "../../../../../../../../lib/drive_helper";
 import clsx from "clsx";
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState, Fragment } from "react";
@@ -12,55 +12,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const files = [
-  {
-    name: "Lindsay Walton",
-    modifiedAt: "26/01/2024",
-    modifiedBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    size: "10 MB",
-    mimetype: "folder",
-  },
-  {
-    name: "Proyecto Easy",
-    modifiedAt: "26/01/2024",
-    modifiedBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    size: "1 MB",
-    mimetype: "document",
-  },
-  {
-    name: "Nuevo documento 1",
-    modifiedAt: "23/01/2024",
-    modifiedBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    size: "14 KB",
-    mimetype: "document",
-  },
-  {
-    name: "Curriculum",
-    modifiedAt: "23/01/2024",
-    modifiedBy: {
-      name: "Rosmer Campos",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=facearea&facepad=2&ixlib=rb-1.2.1&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    size: "512 KB",
-    mimetype: "pdf",
-  },
-  // More files...
-];
-
-export default function Page() {
+export default function TableInfo({ files }) {
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -313,7 +265,7 @@ export default function Page() {
                 <tfoot className="bg-white w-full h-10">
                   <tr>
                     <td></td>
-                    <td>Seleccionado: 0/50</td>
+                    <div className="ml-6">Seleccionado: {selectedFiles.length}/{files.length}</div>
                     <td>Pagina 1/2</td>
                     <td>
                       <div className="flex items-center ">

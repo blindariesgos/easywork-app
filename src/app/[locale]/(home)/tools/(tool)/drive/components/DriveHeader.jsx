@@ -30,6 +30,8 @@ export default function DriveHeader() {
     { name: t("tools:drive:organizer:by-change-date") },
     { name: t("tools:drive:organizer:reverse") },
     { name: t("tools:drive:organizer:mixed-classification") },
+    { name: "Ascendente" },
+    { name: "Descendientes" },
   ];
 
   return (

@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import ContactsHeader from "./components/ContactsHeader";
 import { useTranslation } from "react-i18next";
-import Header from "../../../../../../components/header/Header";
+import Header from "@/src/components/header/Header";
 import HeaderCrm from "../HeaderCrm";
-import useCrmContext from "../../../../../../context/crm";
+import useCrmContext from "@/src/context/crm";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 

@@ -57,6 +57,8 @@ export default function WebmailLayout({ children, table }) {
       const config = {
         headers: { Authorization: `Bearer ${session.data.user.access_token}` },
       };
+      let mails = null; // Inicializa mails como null
+  
       try {
         const userGoogle = await axios.get(
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
@@ -64,7 +66,7 @@ export default function WebmailLayout({ children, table }) {
         );
         setUserData(userGoogle.data);
   
-        const mails = await axios.get(
+        mails = await axios.get(
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
           config
         );
@@ -73,13 +75,23 @@ export default function WebmailLayout({ children, table }) {
           setFolders(res);
         });
       } catch (error) {
-        await deleteTokenGoogle(session.data.user.id);
-        router.push("/tools/mails");
+        console.error('Error al obtener datos', error);
+      }
+  
+      // Llamar a deleteTokenGoogle si no hay datos de correos o si mails es null
+      if (!mails || !mails.data || mails.data.length === 0) {
+        deleteTokenGoogle(session.data.user.id)
+        .then(() => {
+          router.push("/tools/mails");
+        })
+        .catch((err) => {
+          router.push("/tools/mails");
+        })
       }
     };
   
     fetchData();
-  }, []);
+  }, [session]);
 
   function backButton() {
     setSidebarOpenEmail(false);

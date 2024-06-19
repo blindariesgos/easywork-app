@@ -62,20 +62,22 @@ export default function WebmailLayout({ children, table }) {
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
           config
         );
-        console.log(userGoogle)
         setUserData(userGoogle.data);
   
         const mails = await axios.get(
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
           config
         );
+        if (mails.data.status === 400) {
+          router.push("/tools/mails");
+          return;
+        }
         setMails(mails.data);
-        console.log(mails);
         getFoldersSaved(session.data.user.id).then((res) => {
           setFolders(res);
         });
       } catch (error) {
-        console.error(error);
+        router.push("/tools/mails");
       }
     };
   

@@ -4,6 +4,7 @@ import CalendarHeader from "./components/CalendarHeader";
 import Link from "next/link";
 import { useCommon } from "../../../../../../hooks/useCommon";
 import Modal from "./@modal/page";
+import CalendarConfig from "./components/CalendarConfig"
 
 export default function CalendarLayout({
   children,
@@ -20,6 +21,7 @@ export default function CalendarLayout({
       <div className="flex flex-col flex-grow">
         <Modal />
         <CalendarHeader />
+        <CalendarConfig />
         <div className="h-[63vh] mb-10 overflow-auto">
           {children}
           {calendarView === calendarViews[0]

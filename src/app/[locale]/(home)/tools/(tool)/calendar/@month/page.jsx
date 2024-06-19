@@ -134,30 +134,52 @@ const selectedDay = days.find((day) => day.isSelected);
 
 export default function MonthView() {
   const { t } = useTranslation();
+
   return (
     <>
       <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none">
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:l')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:unes')}</span>
+            {t("tools:calendar:week-day:l")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:unes")}
+            </span>
           </div>
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:m')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:artes')}</span>
+            {t("tools:calendar:week-day:m")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:artes")}
+            </span>
           </div>
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:w')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:iercoles')}</span>
+            {t("tools:calendar:week-day:w")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:iercoles")}
+            </span>
           </div>
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:j')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:ueves')}</span>
+            {t("tools:calendar:week-day:j")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:ueves")}
+            </span>
           </div>
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:v')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:iernes')}</span>
+            {t("tools:calendar:week-day:v")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:iernes")}
+            </span>
           </div>
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:s')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:abado')}</span>
+            {t("tools:calendar:week-day:s")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:abado")}
+            </span>
           </div>
           <div className="bg-white py-2">
-            {t('tools:calendar:week-day:d')}<span className="sr-only sm:not-sr-only">{t('tools:calendar:week-day:omingo')}</span>
+            {t("tools:calendar:week-day:d")}
+            <span className="sr-only sm:not-sr-only">
+              {t("tools:calendar:week-day:omingo")}
+            </span>
           </div>
         </div>
         <div className="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
@@ -166,7 +188,7 @@ export default function MonthView() {
               <div
                 key={day.date}
                 className={clsx(
-                  day.isCurrentMonth ? "bg-white" : "bg-gray-50 text-gray-500",
+                  !day.isCurrentMonth || new Date(day.date).getDay() === 5 || new Date(day.date).getDay() === 6 ? "bg-gray-50 text-gray-500" : "bg-white",
                   "relative px-3 py-2"
                 )}
               >

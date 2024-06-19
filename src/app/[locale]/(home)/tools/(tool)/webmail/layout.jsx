@@ -28,7 +28,7 @@ import SliderOverEmail from "./components/SliderOverEmail";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getTokenGoogle, getFoldersSaved } from "../../../../../../lib/apis";
+import { getTokenGoogle, getFoldersSaved, deleteTokenGoogle } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
 
@@ -68,15 +68,12 @@ export default function WebmailLayout({ children, table }) {
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
           config
         );
-        if (mails.data.status === 400) {
-          router.push("/tools/mails");
-          return;
-        }
         setMails(mails.data);
         getFoldersSaved(session.data.user.id).then((res) => {
           setFolders(res);
         });
       } catch (error) {
+        await deleteTokenGoogle(session.data.user.id);
         router.push("/tools/mails");
       }
     };

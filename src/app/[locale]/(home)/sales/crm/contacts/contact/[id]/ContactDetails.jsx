@@ -1,4 +1,4 @@
-import SlideOver from '../../../../../../../../components/SlideOver'
+import SlideOver from '@/src/components/SlideOver'
 import React, { Suspense } from 'react'
 import CreateContact from '../../components/create_contact/CreateContact'
 

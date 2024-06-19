@@ -1155,7 +1155,7 @@ export const useContactTable = () => {
     {
       id: 1,
       name: t("contacts:table:contact"),
-      row: "fullName",
+      row: "contactName",
       order: "name",
       check: true,
       link: true,

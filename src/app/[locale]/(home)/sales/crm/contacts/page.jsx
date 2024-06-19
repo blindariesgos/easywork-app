@@ -1,8 +1,8 @@
 "use client";
-import useCrmContext from "../../../../../../context/crm";
-import { getContacts } from "../../../../../../lib/apis";
-import { handleApiError } from "../../../../../../utils/api/errors";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import useCrmContext from "@/src/context/crm";
+import { getContacts } from "@/src/lib/apis";
+import { handleApiError } from "@/src/utils/api/errors";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function Page() {

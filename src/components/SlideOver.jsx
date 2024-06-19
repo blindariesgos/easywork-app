@@ -19,11 +19,17 @@ export default function SlideOver({
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
+  const [taskId, setTaskId] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-
   // Nuevo estado para controlar la transición
   const [show, setShow] = useState(false);
+
+  useEffect(()=>{
+    if(params.get("prev") === "tasks"){
+      setTaskId(params.get("prev_id"));
+    }
+  }, [params]);
 
   useEffect(() => {
     // Parsear el valor de `show` del parámetro de consulta
@@ -109,6 +115,11 @@ export default function SlideOver({
 
   return (
     <Transition.Root show={show} as={Fragment} afterLeave={() => {
+      console.log("afterLeave", taskId);
+      if (taskId) {
+        router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
+        return;
+      }
       router.replace(`${samePage}`, undefined, { shallow: true });
     }}>
       <Dialog as="div" className="relative z-50" onClose={() => { }}>

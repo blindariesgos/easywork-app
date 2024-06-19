@@ -29,6 +29,7 @@ import { Transition } from '@headlessui/react';
 import { FaTimes } from 'react-icons/fa';
 import clsx from "clsx";
 import useAppContext from "@/src/context/app";
+import Link from "next/link";
 
 export default function TaskView({ id }) {
   const { task, isLoading, isError } = useTask(id);
@@ -132,11 +133,11 @@ export default function TaskView({ id }) {
                 {/* CRM */}
                 {task?.crm?.length > 0 && (
                   <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                    {task.crm[0]?.type === "contact" && <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+                    {task.crm[0]?.type === "contact" && <div className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex justify-between w-52">
                       <p className="text-sm text-white">
                         {t("tools:tasks:edit:contact")}:
                       </p>
-                      <p className="text-sm text-white">{task.crm[0].contact.fullName}</p>
+                      <Link href={`/sales/crm/contacts/contact/${task.crm[0].contact.id}?show=true&prev=tasks&prev_id=${task.id}`} className="text-sm text-white">{task.crm[0].contact.fullName}</Link>
                     </div>}
                     {task.crm[0]?.type === "poliza" && <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
                       <p className="text-sm text-white">

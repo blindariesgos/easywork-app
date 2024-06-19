@@ -327,8 +327,8 @@ export default function WeekView() {
               <div className="col-start-3 row-span-full" />
               <div className="col-start-4 row-span-full" />
               <div className="col-start-5 row-span-full" />
-              <div className="col-start-6 row-span-full" />
-              <div className="col-start-7 row-span-full" />
+              <div className="col-start-6 row-span-full bg-gray-50" />
+              <div className="col-start-7 row-span-full bg-gray-50" />
               <div className="col-start-8 row-span-full w-8" />
             </div>
 

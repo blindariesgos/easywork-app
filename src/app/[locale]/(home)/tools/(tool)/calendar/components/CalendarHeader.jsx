@@ -16,29 +16,38 @@ import ViewsOptions from "./ViewsOptions";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useCommon } from "../../../../../../../hooks/useCommon";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function CalendarHeader() {
   const { calendarView, setCalendarView } = useAppContext();
-  const { calendarViews } = useCommon()
+  const { calendarViews } = useCommon();
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const { replace } = useRouter();
+
+  const openConnect = () => {
+    params.set("connect", true);
+    replace(`/tools/calendar?${params.toString()}`);
+  };
 
   return (
     <header className="flex flex-col">
       <div className="lg:px-6 px-2 flex gap-3 items-center bg-white py-4 rounded-md">
         <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
-          {t('tools:calendar:name')}
+          {t("tools:calendar:name")}
         </h1>
         <CreateEventButton />
         <div className="flex-grow">
           <label htmlFor="search" className="sr-only">
-            {t('tools:calendar:search')}
+            {t("tools:calendar:search")}
           </label>
           <input
             type="search"
             name="search"
             id="search-cal"
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            placeholder={t('tools:calendar:search')}
+            placeholder={t("tools:calendar:search")}
           />
         </div>
         <CalendarButton />
@@ -57,14 +66,19 @@ export default function CalendarHeader() {
             <span className="inline-flex items-center rounded-full bg-zinc-200 px-2 py-1 text-xs font-medium text-zinc-700 ring-1 ring-inset ring-indigo-700/10">
               0
             </span>
-            <p className="text-xs text-gray-900 font-medium">{t('tools:calendar:invitations')}</p>
+            <p className="text-xs text-gray-900 font-medium">
+              {t("tools:calendar:invitations")}
+            </p>
           </div>
         </div>
         <button
           type="button"
           className="rounded-md bg-primary px-3 mr-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          onClick={() => {
+            openConnect();
+          }}
         >
-          {t('tools:calendar:connect')}
+          {t("tools:calendar:connect")}
         </button>
       </div>
       <div className="flex flex-none items-center justify-between border-b border-gray-200 py-4">
@@ -85,21 +99,23 @@ export default function CalendarHeader() {
               type="button"
               className="flex h-9 w-12 items-center justify-center rounded-l-md border-y border-l border-gray-300 pr-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pr-0 md:hover:bg-gray-50"
             >
-              <span className="sr-only">{t('tools:calendar:previous-day')}</span>
+              <span className="sr-only">
+                {t("tools:calendar:previous-day")}
+              </span>
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
             </button>
             <button
               type="button"
               className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
             >
-              {t('tools:calendar:today')}
+              {t("tools:calendar:today")}
             </button>
             <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
             <button
               type="button"
               className="flex h-9 w-12 items-center justify-center rounded-r-md border-y border-r border-gray-300 pl-1 text-gray-400 hover:text-gray-500 focus:relative md:w-9 md:pl-0 md:hover:bg-gray-50"
             >
-              <span className="sr-only">{t('tools:calendar:next-day')}</span>
+              <span className="sr-only">{t("tools:calendar:next-day")}</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
@@ -139,7 +155,7 @@ export default function CalendarHeader() {
                             "block px-4 py-2 text-sm"
                           )}
                         >
-                          {t('tools:calendar:day')}
+                          {t("tools:calendar:day")}
                         </a>
                       )}
                     </Menu.Item>
@@ -155,7 +171,7 @@ export default function CalendarHeader() {
                             "block px-4 py-2 text-sm"
                           )}
                         >
-                          {t('tools:calendar:week')}
+                          {t("tools:calendar:week")}
                         </a>
                       )}
                     </Menu.Item>
@@ -171,7 +187,7 @@ export default function CalendarHeader() {
                             "block px-4 py-2 text-sm"
                           )}
                         >
-                          {t('tools:calendar:month')}
+                          {t("tools:calendar:month")}
                         </a>
                       )}
                     </Menu.Item>
@@ -182,7 +198,7 @@ export default function CalendarHeader() {
           </div>
           <Menu as="div" className="relative ml-6 md:hidden">
             <Menu.Button className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-gray-400 hover:text-gray-500">
-              <span className="sr-only">{t('tools:calendar:open')}</span>
+              <span className="sr-only">{t("tools:calendar:open")}</span>
               <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
             </Menu.Button>
 
@@ -208,7 +224,7 @@ export default function CalendarHeader() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        {t('tools:calendar:create-event')}
+                        {t("tools:calendar:create-event")}
                       </Link>
                     )}
                   </Menu.Item>
@@ -225,7 +241,7 @@ export default function CalendarHeader() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        {t('tools:calendar:go-to-today')}
+                        {t("tools:calendar:go-to-today")}
                       </a>
                     )}
                   </Menu.Item>
@@ -242,7 +258,7 @@ export default function CalendarHeader() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        {t('tools:calendar:day')}
+                        {t("tools:calendar:day")}
                       </a>
                     )}
                   </Menu.Item>
@@ -257,7 +273,7 @@ export default function CalendarHeader() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        {t('tools:calendar:week')}
+                        {t("tools:calendar:week")}
                       </a>
                     )}
                   </Menu.Item>
@@ -272,7 +288,7 @@ export default function CalendarHeader() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        {t('tools:calendar:month')}
+                        {t("tools:calendar:month")}
                       </a>
                     )}
                   </Menu.Item>
@@ -287,7 +303,7 @@ export default function CalendarHeader() {
                           "block px-4 py-2 text-sm"
                         )}
                       >
-                        {t('tools:calendar:program')}
+                        {t("tools:calendar:program")}
                       </a>
                     )}
                   </Menu.Item>

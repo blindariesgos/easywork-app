@@ -11,7 +11,7 @@ import { useTasksConfigs } from "@/src/hooks/useCommon";
 import useToolsContext from "../../../../../../context/tools";
 
 export default function TaskLayout({ children, table }) {
-  const { selectedTasks, setSelectedTasks } = useToolsContext();
+  const { selectedTasks } = useToolsContext();
   const { t } = useTranslation();
   const { optionsSettings, optionsTrash } = useTasksConfigs();
 
@@ -27,10 +27,10 @@ export default function TaskLayout({ children, table }) {
             <IconDropdown
               icon={
                 selectedTasks[0]?.id && (
-                <TrashIcon
-                  className="h-8 w-8 text-primary"
-                  aria-hidden="true"
-                />)
+                  <TrashIcon
+                    className="h-8 w-8 text-primary"
+                    aria-hidden="true"
+                  />)
               }
               options={optionsTrash}
               width="w-72"

@@ -11,7 +11,7 @@ export function DocumentSelector({ onChange, files, disabled, setFiles, ...props
 	};
 
 	const deleteDocument = (indexToDelete) => {
-		const documents = files.filter((item, index) => index !== indexToDelete) ;
+		const documents = files.filter((item, index) => index !== indexToDelete);
 		setFiles(documents);
 	}
 
@@ -25,15 +25,15 @@ export function DocumentSelector({ onChange, files, disabled, setFiles, ...props
 				onDrop={handleDrop}
 				onDragOver={(event) => event.preventDefault()}
 			>
-			{disabled && <div className="inset-0 bg-white/75 w-full h-full z-10 absolute rounded-tr-lg" />}
+				{disabled && <div className="inset-0 bg-white/75 w-full h-full z-10 absolute rounded-tr-lg" />}
 				<div className="grid grid-cols-3 gap-x-2">
 					{files.length > 0 &&
 						files.map((file, index) => (
 							<div key={index} className="flex flex-col items-center">
 								<div className='flex'>
 									<DocumentTextIcon className="h-10 w-10 text-primary" />
-									<div onClick={() => deleteDocument(index)} className='cursor-pointer'>										
-										<XCircleIcon className='h-3 w-3 text-primary'/>
+									<div onClick={() => deleteDocument(index)} className='cursor-pointer'>
+										<XCircleIcon className='h-3 w-3 text-primary' />
 									</div>
 								</div>
 								<p className="text-[10px]">{file.name}</p>
@@ -68,7 +68,7 @@ export function DocumentSelector({ onChange, files, disabled, setFiles, ...props
 					<p className="text-xs leading-5 text-gray-600">{t('contacts:create:png')}</p>
 				</div>
 			</div>
-			{files.length === 0 && <p className="mt-1 text-xs text-red-600">{t('common:validations:file')}</p>}
+			{/* {files.length === 0 && <p className="mt-1 text-xs text-red-600">{t('common:validations:file')}</p>} */}
 		</div>
 	);
 }

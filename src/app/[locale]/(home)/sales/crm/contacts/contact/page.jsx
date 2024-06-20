@@ -1,6 +1,11 @@
 import React from 'react';
-import CreateContactModal from '../components/create_contact/CreateContactModal';
+import SlideOver from "@/src/components/SlideOver";
+import ContactEditor from '../components/create_contact/ContactEditor';
 
 export default async function page() {
-	return <CreateContactModal/>;
+	return (
+		<SlideOver colorTag="bg-easywork-main" labelTag="contact" samePage={`/sales/crm/contacts?page=1`}>
+			<ContactEditor />
+		</SlideOver>
+	)
 }

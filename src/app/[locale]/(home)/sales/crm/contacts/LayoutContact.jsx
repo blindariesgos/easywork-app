@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from "react";
+import React from "react";
 import ContactsHeader from "./components/ContactsHeader";
 import { useTranslation } from "react-i18next";
 import Header from "@/src/components/header/Header";
@@ -13,16 +13,16 @@ export default function LayoutContact({ children }) {
     const { contacts } = useCrmContext();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const { replace } = useRouter();  
+    const { replace } = useRouter();
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams);
         if (Number(params.get('page')) === 0 || !params.get('page')) {
-            params.set('page', 1); 
+            params.set('page', 1);
             replace(`${pathname}?${params.toString()}`);
         }
     }, [pathname, replace, searchParams])
-    
+
     const options = [
         {
             id: 1,
@@ -45,10 +45,10 @@ export default function LayoutContact({ children }) {
         <div className="bg-gray-100 h-full p-2 rounded-xl relative">
             <Header />
             <div className="flex flex-col w-full">
-                <HeaderCrm options={options}/>
-                <ContactsHeader/>
+                <HeaderCrm options={options} />
+                <ContactsHeader />
                 {children}
-            </div>  
+            </div>
         </div>
     );
 }

@@ -4,8 +4,9 @@ import CalendarHeader from "./components/CalendarHeader";
 import Link from "next/link";
 import { useCommon } from "../../../../../../hooks/useCommon";
 import Modal from "./@modal/page";
-import CalendarConfig from "./components/CalendarConfig"
-import CalendarConnect from "./components/CalendarConnect"
+import CalendarConfig from "./components/CalendarConfig";
+import CalendarConnect from "./components/CalendarConnect";
+import CalendarDisconnect from "./components/CalendarDisconnect";
 
 export default function CalendarLayout({
   children,
@@ -15,7 +16,7 @@ export default function CalendarLayout({
   programar,
 }) {
   const { calendarView } = useAppContext();
-  const { calendarViews } = useCommon()
+  const { calendarViews } = useCommon();
 
   return (
     <>
@@ -24,16 +25,17 @@ export default function CalendarLayout({
         <CalendarHeader />
         <CalendarConfig />
         <CalendarConnect />
+        <CalendarDisconnect />
         <div className="h-[63vh] mb-10 overflow-auto">
           {children}
           {calendarView === calendarViews[0]
             ? day
             : calendarView === calendarViews[1]
-            ? week
-            : calendarView === calendarViews[2]
-            ? month
-            : programar}
-          </div>
+              ? week
+              : calendarView === calendarViews[2]
+                ? month
+                : programar}
+        </div>
       </div>
     </>
   );

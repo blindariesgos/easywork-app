@@ -1,6 +1,6 @@
 "use client"; // Error components must be Client Components
 
-import { handleApiError } from "../../../../../../utils/api/errors";
+import { handleApiError } from "@/src/utils/api/errors";
 import {
   useParams,
   usePathname,
@@ -8,7 +8,6 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { toast } from "react-toastify";
 
 export default function Error({ error, reset }) {
   const params = useParams();

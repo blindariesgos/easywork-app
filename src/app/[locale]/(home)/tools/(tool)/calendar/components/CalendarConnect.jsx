@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -9,9 +10,10 @@ import { saveFolders } from "../../../../../../../lib/apis";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import Tag from "../../../../../../../components/Tag";
 import {
-  ChevronDownIcon,
   EllipsisHorizontalIcon,
   CalendarDaysIcon,
+  CheckCircleIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/20/solid";
 
 export default function CalendarConnect() {
@@ -19,6 +21,13 @@ export default function CalendarConnect() {
   const session = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const { replace } = useRouter();
+
+  const openDisconnect = () => {
+    params.set("disconnect", true);
+    replace(`/tools/calendar?${params.toString()}`);
+  };
+
 
   const closeConfig = () => {
     params.delete("connect");
@@ -41,80 +50,100 @@ export default function CalendarConnect() {
           </div>
         </div>
         <div className="m-3 py-5 bg-gray-100 rounded-2xl">
-          <div className="bg-white p-2 m-3">
-            <div className="mb-3 p-1">
-              <h1 className="font-medium">Mis Calendarios</h1>
+          <div className="bg-white p-2 m-3 flex justify-between">
+            <div className="flex">
+              <div className="rounded-full p-3 bg-slate-100">
+                <Image
+                  className="h-7 w-7"
+                  width={36}
+                  height={36}
+                  src={"/icons/googleCalendarIcon.svg"}
+                  alt=""
+                />
+              </div>
+              <div>
+                <div className="mb-3 p-1">
+                  <h1 className="text-sm">Calendario de Google</h1>
+                  <p className="text-xs">Hace 6 minutos atrás</p>
+                </div>
+              </div>
             </div>
-            <div className="text-sm">
-              <div className="flex ml-2 justify-between">
-                <div className="flex">
-                  <input type="checkbox" />
-                  <p className="ml-1">PERSONAL</p>
-                </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
+            <div className="flex items-center justify-end">
+              <CheckCircleIcon className="h-4 w-4 text-green-500" />
+              <p className="text-xs ml-2">Contectado</p>
+              <Cog6ToothIcon className="ml-2 h-4 w-4 text-gray-50 cursor-pointer" onClick={() => {openDisconnect()}} />
+            </div>
+          </div>
+          <div className="bg-white p-2 m-3 flex justify-between">
+            <div className="flex">
+              <div className="rounded-full p-3 bg-slate-100">
+                <Image
+                  className="h-7 w-7"
+                  width={36}
+                  height={36}
+                  src={"/icons/office365CalendarIcon.svg"}
+                  alt=""
+                />
               </div>
-              <div className="flex ml-2 mt-2 justify-between">
-                <div className="flex">
-                  <input type="checkbox" />
-                  <p className="ml-1">Soporte Principal</p>
+              <div>
+                <div className="mb-3 p-1">
+                  <h1 className="text-sm">Calendario de Office365</h1>
+                  <p className="text-xs"></p>
                 </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
               </div>
+            </div>
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                className="rounded-md bg-primary px-3 mr-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Conectar
+              </button>
+            </div>
+          </div>
+          <div className="bg-white p-2 m-3 flex justify-between">
+            <div className="flex">
+              <div className="rounded-full p-3 bg-slate-100">
+                <Image
+                  className="h-7 w-7"
+                  width={36}
+                  height={36}
+                  src={"/icons/icloudCalendarIcon.svg"}
+                  alt=""
+                />
+              </div>
+              <div>
+                <div className="mb-3 p-1">
+                  <h1 className="text-sm">Calendario de iCloud</h1>
+                  <p className="text-xs"></p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                className="rounded-md bg-primary px-3 mr-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Conectar
+              </button>
             </div>
           </div>
           <div className="bg-white p-2 m-3">
-            <div className="mb-3 p-1">
-              <h1 className="font-medium">
-                Google blindablindariesgos@gmail.com
-              </h1>
-            </div>
             <div className="text-sm">
               <div className="flex ml-2 mt-2 justify-between">
                 <div className="flex">
                   <input type="checkbox" />
-                  <p className="ml-1">Bitrix24 Eventos Generales</p>
+                  <p className="ml-1 text-xs text-gray-50">
+                    Optimice su trabajo conectando sus calendarios a EasyWork.
+                    Administre la participación de su equipo desde cualquier
+                    dispositivo.
+                  </p>
                 </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
-              </div>
-              <div className="flex ml-2 mt-2 justify-between">
-                <div className="flex">
-                  <input type="checkbox" />
-                  <p className="ml-1">Bitrix24 PERSONAL</p>
-                </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
-              </div>
-              <div className="flex ml-2 mt-2 justify-between">
-                <div className="flex">
-                  <input type="checkbox" />
-                  <p className="ml-1">Bitrix24 Soporte Principal</p>
-                </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
-              </div>
-              <div className="flex ml-2 mt-2 justify-between">
-                <div className="flex">
-                  <input type="checkbox" />
-                  <p className="ml-1">blindablindariesgos@gmail.com</p>
-                </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
               </div>
             </div>
-          </div>
-          <div className="bg-white p-2 m-3">
-            <div className="mb-3 p-1">
-              <h1 className="font-medium">Calendarios de Google</h1>
-            </div>
-            <div className="text-sm">
-              <div className="flex ml-2 mt-2 justify-between">
-                <div className="flex">
-                  <input type="checkbox" />
-                  <p className="ml-1">blindablindariesgos@gmail.com</p>
-                </div>
-                <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-center">
-              <p className="text-xs underline text-gray-50">
-                Configurar los ajustes de sincronización
+            <div className="mt-6 flex justify-start">
+              <p className="text-xs underline text-gray-50 ml-2">
+                Conectar otros calendarios
               </p>
             </div>
           </div>

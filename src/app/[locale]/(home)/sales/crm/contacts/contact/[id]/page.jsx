@@ -1,9 +1,8 @@
+"use client";
 import React from 'react';
 import ContactDetails from './ContactDetails';
-import { getContactId } from '../../../../../../../../lib/apis';
+import { useContact } from '@/src/lib/api/hooks/contacts';
 
 export default async function PageContactId({ params: { id } }) {
-	const contactInfo = await getContactId(id);
-
-	return <ContactDetails contactInfo={contactInfo} id={id} />;
+	return <ContactDetails id={id} />;
 }

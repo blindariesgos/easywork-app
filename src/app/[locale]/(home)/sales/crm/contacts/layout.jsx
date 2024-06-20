@@ -10,13 +10,13 @@ export default async function ContactLayout({ children, table }) {
       <LayoutContact>
         <Suspense
           fallback={
-            <LoaderSpinner/>
+            <LoaderSpinner />
           }
         >
-            {table}
-            {children}  
+          {table}
+          {children}
         </Suspense>
-      </LayoutContact> 
+      </LayoutContact>
     </div>
   );
 }

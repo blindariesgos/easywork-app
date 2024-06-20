@@ -40,113 +40,113 @@ const contactSources = [
 ];
 
 export default function CreateLead({ edit, id }) {
-    const { t } = useTranslation();
-    const [ openButtons, setOpenButtons ] = useState();
-    const [ selectedProfileImage, setSelectedProfileImage ] = useState(null);
-    const [ loading, setLoading ] = useState(false);
-    const [ files, setFiles ] = useState([]);
-    const { optionsHeader } = useLeads();
-    const router = useRouter();
+	const { t } = useTranslation();
+	const [openButtons, setOpenButtons] = useState();
+	const [selectedProfileImage, setSelectedProfileImage] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [files, setFiles] = useState([]);
+	const { optionsHeader } = useLeads();
+	const router = useRouter();
 	useEffect(() => {
 		setOpenButtons(id ? false : true)
 	}, [id])
-	
-  
-    const schema = Yup.object().shape({
-          email: Yup
-            .string()
-            .required(t('common:validations:required'))
-            .email(t('common:validations:email'))
-            .min(5,  t('common:validations:min', { min: 5 })),
-          name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', {min: 2})),
-          charge: Yup.string().required(t('common:validations:required')),
-          phone: Yup.string().required(t('common:validations:required')),
-          rfc: Yup.string().required(t('common:validations:required')),
-          typeContact: Yup.string().required(t('common:validations:required')),
-          otherType: Yup.string(),
-          origin: Yup.string().required(t('common:validations:required')),
-          address: Yup.string().required(t('common:validations:required')),
-          responsible: Yup.string().required(t('common:validations:required')),
-          amount: Yup.number()
-          .typeError(t('common:validations:number'))
-          .positive()
-          .transform((value, originalValue) => {
-            if (typeof value === 'string') {
-              const floatValue = parseFloat(value);
-              return isNaN(floatValue) ? originalValue : floatValue;
-            }
-            return value;
-          }).required(t('common:validations:required')),
 
-      });
-  
-      const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
-          defaultValues: {
-              name: id ? edit?.name : "",
-            //   charge: id ? "Programador" : "",
-            //   phone: id ? "5284791145" : "",
-            //   email: id ? "test@gmail.com" : "",
-            //   rfc: id ?  "fcdvv" : "",
-            //   amount: id ? "2022.00" : "",
-            //   typeContact: id ? "Amigo" : "",
-            //   otherType: id ? "" : "",
-            //   origin: id ? "Correo electrónico" : "",
-            //   responsible: id ? "Nathaly Polin": "",
-            //   address: id ? "Address": ""
-          },
-          mode: 'onChange',
-          resolver: yupResolver(schema)
-      });
-  
-      const handleProfileImageChange = useCallback((event) => {
-          const file = event.target.files[0];
-  
-          if (file) {
-              const reader = new FileReader();
-  
-              reader.onload = (e) => {
-                  setSelectedProfileImage({base64:e.target.result, file: file});
-              };
-  
-              reader.readAsDataURL(file);
-          }
-      }, []);
-    
-      const handleFilesUpload = (event, drop) => {
-          let uploadedImages = [ ...files ];
-          const fileList = drop ? event.dataTransfer.files : event.target.files;
-  
-          if (fileList) {
-              for (let i = 0; i < fileList.length; i++) {
-                  const file = fileList[i];
-                  if (file.size > 5 * 1024 * 1024) {
-                      toast.error(t('common:validations:size', { size: 5 }));
-                      return;
-                  } else {
-                      const reader = new FileReader();
-  
-                      reader.onload = (e) => {
-                          setTimeout(() => {
-                              const existFile = uploadedImages.some((item) => item.name === file.name);
-                              if (!existFile) {
-                                  uploadedImages = [
-                                      ...uploadedImages,
-                                      { base64: reader.result, type: file.type.split('/')[0], name: file.name }
-                                  ];
-                                  setFiles(uploadedImages);
-                              }
-                          }, 500);
-                      };
-                      reader.readAsDataURL(file);
-                  }
-              }
-          }
-      };
-  
-    const handleFormSubmit = async (data) => {
-        console.log('data', data);
-    };
-	
+
+	const schema = Yup.object().shape({
+		email: Yup
+			.string()
+			.required(t('common:validations:required'))
+			.email(t('common:validations:email'))
+			.min(5, t('common:validations:min', { min: 5 })),
+		name: Yup.string().required(t('common:validations:required')).min(2, t('common:validations:min', { min: 2 })),
+		position: Yup.string().required(t('common:validations:required')),
+		phone: Yup.string().required(t('common:validations:required')),
+		rfc: Yup.string().required(t('common:validations:required')),
+		typeContact: Yup.string().required(t('common:validations:required')),
+		otherType: Yup.string(),
+		origin: Yup.string().required(t('common:validations:required')),
+		address: Yup.string().required(t('common:validations:required')),
+		responsible: Yup.string().required(t('common:validations:required')),
+		amount: Yup.number()
+			.typeError(t('common:validations:number'))
+			.positive()
+			.transform((value, originalValue) => {
+				if (typeof value === 'string') {
+					const floatValue = parseFloat(value);
+					return isNaN(floatValue) ? originalValue : floatValue;
+				}
+				return value;
+			}).required(t('common:validations:required')),
+
+	});
+
+	const { register, handleSubmit, control, reset, setValue, watch, formState: { isValid, errors } } = useForm({
+		defaultValues: {
+			name: id ? edit?.name : "",
+			//   position: id ? "Programador" : "",
+			//   phone: id ? "5284791145" : "",
+			//   email: id ? "test@gmail.com" : "",
+			//   rfc: id ?  "fcdvv" : "",
+			//   amount: id ? "2022.00" : "",
+			//   typeContact: id ? "Amigo" : "",
+			//   otherType: id ? "" : "",
+			//   origin: id ? "Correo electrónico" : "",
+			//   responsible: id ? "Nathaly Polin": "",
+			//   address: id ? "Address": ""
+		},
+		mode: 'onChange',
+		resolver: yupResolver(schema)
+	});
+
+	const handleProfileImageChange = useCallback((event) => {
+		const file = event.target.files[0];
+
+		if (file) {
+			const reader = new FileReader();
+
+			reader.onload = (e) => {
+				setSelectedProfileImage({ base64: e.target.result, file: file });
+			};
+
+			reader.readAsDataURL(file);
+		}
+	}, []);
+
+	const handleFilesUpload = (event, drop) => {
+		let uploadedImages = [...files];
+		const fileList = drop ? event.dataTransfer.files : event.target.files;
+
+		if (fileList) {
+			for (let i = 0; i < fileList.length; i++) {
+				const file = fileList[i];
+				if (file.size > 5 * 1024 * 1024) {
+					toast.error(t('common:validations:size', { size: 5 }));
+					return;
+				} else {
+					const reader = new FileReader();
+
+					reader.onload = (e) => {
+						setTimeout(() => {
+							const existFile = uploadedImages.some((item) => item.name === file.name);
+							if (!existFile) {
+								uploadedImages = [
+									...uploadedImages,
+									{ base64: reader.result, type: file.type.split('/')[0], name: file.name }
+								];
+								setFiles(uploadedImages);
+							}
+						}, 500);
+					};
+					reader.readAsDataURL(file);
+				}
+			}
+		}
+	};
+
+	const handleFormSubmit = async (data) => {
+		console.log('data', data);
+	};
+
 	return (
 		<div className="flex flex-col h-screen relative w-full">
 			{/* Formulario Principal */}
@@ -168,9 +168,9 @@ export default function CreateLead({ edit, id }) {
 									<PencilIcon className="h-4 w-4 text-gray-200" />
 								</div>
 							</div>
-                            <div className='px-4 py-4'>
-                                <ProgressStages/>
-                            </div>
+							<div className='px-4 py-4'>
+								<ProgressStages />
+							</div>
 							<div className="mt-4 w-full px-4">
 								<HeaderCrm options={optionsHeader} />
 							</div>
@@ -203,15 +203,15 @@ export default function CreateLead({ edit, id }) {
 									register={register}
 									name="name"
 									disabled={!openButtons}
-									// value={watch('name')}
+								// value={watch('name')}
 								/>
 								<TextInput
-									label={t('leads:lead:fields:charge')}
-									placeholder={t('leads:lead:fields:charge')}
-									error={errors.charge}
+									label={t('leads:lead:fields:position')}
+									placeholder={t('leads:lead:fields:position')}
+									error={errors.position}
 									register={register}
-									// value={watch('charge')}
-									name="charge"
+									// value={watch('position')}
+									name="position"
 									disabled={!openButtons}
 								/>
 								<Controller
@@ -247,7 +247,7 @@ export default function CreateLead({ edit, id }) {
 									register={register}
 									name="rfc"
 									disabled={!openButtons}
-									// value={watch('rfc')}
+								// value={watch('rfc')}
 								/>
 								<TextInput
 									label={t('leads:lead:fields:address')}
@@ -256,18 +256,18 @@ export default function CreateLead({ edit, id }) {
 									name="address"
 									placeholder={t('leads:lead:fields:placeholder-address')}
 									disabled={!openButtons}
-									// value={watch('address')}
+								// value={watch('address')}
 								/>
 								<SelectInput
 									label={t('leads:lead:fields:contact-type')}
 									options={contactTypes}
-                                    selectedOption={contactTypes.filter(option => option.name === watch('typeContact'))[0]}
+									selectedOption={contactTypes.filter(option => option.name === watch('typeContact'))[0]}
 									name="typeContact"
 									error={!watch('typeContact') && errors.typeContact}
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
-									// value={watch('typeContact')}
+								// value={watch('typeContact')}
 								/>
 								{watch('typeContact') == 'Otro' ? (
 									<TextInput
@@ -277,7 +277,7 @@ export default function CreateLead({ edit, id }) {
 										register={register}
 										name="otherType"
 										disabled={!openButtons}
-										// value={watch('otherType')}
+									// value={watch('otherType')}
 									/>
 								) : null}
 								<SelectDropdown
@@ -286,21 +286,21 @@ export default function CreateLead({ edit, id }) {
 									options={responsible}
 									register={register}
 									disabled={!openButtons}
-                                    selectedOption={responsible.filter(option => option.name === watch('responsible'))[0]}
+									selectedOption={responsible.filter(option => option.name === watch('responsible'))[0]}
 									error={!watch('responsible') && errors.responsible}
 									setValue={setValue}
-									// value={watch('responsible')}
+								// value={watch('responsible')}
 								/>
 								<SelectInput
 									label={t('leads:lead:fields:origin')}
 									name="origin"
 									options={contactSources}
-                                    selectedOption={contactSources.filter(option => option.name === watch('origin'))[0]}
+									selectedOption={contactSources.filter(option => option.name === watch('origin'))[0]}
 									error={!watch('origin') && errors.origin}
 									register={register}
 									setValue={setValue}
 									disabled={!openButtons}
-									// value={watch('origin')}
+								// value={watch('origin')}
 								/>
 								<TextInput
 									label={t('leads:lead:fields:amount')}

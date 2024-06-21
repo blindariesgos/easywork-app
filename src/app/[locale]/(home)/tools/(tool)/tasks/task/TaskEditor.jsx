@@ -155,7 +155,7 @@ export default function TaskEditor({ edit, copy }) {
   useEffect(() => {
     if (params.get("prev") === "contact") {
       setContactCRM(params.get("prev_id"));
-      setValue("crm", [{ id: params.get("prev_id"), type: "contact", name: "Juan Hernandez" }]);
+      setValue("crm", [{ id: params.get("prev_id"), type: "contact" }]);
       setValue("name", "CRM: ")
       setOpenOptions({ ...openOptions, more: true })
     }

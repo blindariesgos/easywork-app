@@ -72,7 +72,7 @@ export default function CardTask({ data }) {
             className="h-6 w-6 rounded-full object-cover"
             width={36}
             height={36}
-            src="https://images.unsplash.com/photo-1542309667-2a115d1f54c6?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={data?.createdBy?.avatar}
             alt=""
           />
         </div>
@@ -82,11 +82,9 @@ export default function CardTask({ data }) {
           <div className="p-4 bg-gray-100 rounded-lg">
             <BsBriefcase className="h-12 w-12 text-black" />
           </div>
-          <div className="px-4 py-2 bg-gray-100 rounded-lg flex justify-center items-center">
-            <Link href={`/tools/tasks/task/${data.id}?show=true`} className="text-xs text-primary font-medium">
-              {t("contacts:panel:open")}
-            </Link>
-          </div>
+          <Link href={`/tools/tasks/task/${data.id}?show=true`} className="text-xs text-primary font-medium px-4 py-2 bg-gray-100 rounded-lg flex justify-center items-center hover:bg-gray-200/50">
+            {t("contacts:panel:open")}
+          </Link>
         </div>
         <div className="flex flex-col gap-2 w-full">
           <div className="flex gap-x-4 items-center">
@@ -111,7 +109,8 @@ export default function CardTask({ data }) {
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:responsible")}:
             </p>
-            <p className="text-xs text-black font-normal">Juanito Cruz</p>
+            <Link href={`/user/${data.id}?show=true`} className="text-sm text-blue-700 font-normal">
+              {data?.responsible[0]?.profile?.firstName ? `${data?.responsible[0]?.profile?.firstName} ${data?.responsible[0]?.profile?.lastName}` : data?.responsible[0]?.username}</Link>
           </div>
           <div className="flex justify-end mt-0 gap-2 items-center">
             <div className="cursor-pointer">

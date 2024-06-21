@@ -26,9 +26,13 @@ export default function SocketProvider({ children }) {
     socket.on("disconnect", onDisconnect);
 
     socket.on("notification", (data) => {
-      const parsedNotification = parse(data);
+      try {
+        console.log("Notification received", data);
 
-      toast.info(parsedNotification);
+        toast.info(<>{parse(data)}</>);
+      } catch (error) {
+        console.error("Error parsing notification", error);
+      }
     });
 
     return () => {

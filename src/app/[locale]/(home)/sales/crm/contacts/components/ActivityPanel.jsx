@@ -1,7 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ActivityHeader from './ActivityHeader';
-import { CameraIcon, ChatBubbleLeftRightIcon, UserIcon } from '@heroicons/react/20/solid';
+import { CameraIcon, ChatBubbleLeftRightIcon, CheckIcon, UserIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import CardVideo from './CardVideo';
 import CardTask from './CardTask';
@@ -11,6 +11,7 @@ import FilterPanel from './FilterPanel';
 import CardWhatsapp from './CardWhatsapp';
 import CardEmail from './CardEmail';
 import CardComment from './CardComment';
+import { useContactActivities } from '@/src/lib/api/hooks/contacts';
 
 const timeline = [
 	{
@@ -96,71 +97,118 @@ const timeline = [
 	},
 ];
 
-export default function ActivityPanel({ editing }) {
+function parseAndSortByDate(data) {
+	// Combine tasks and comments with their type
+	const combined = [
+		...data.tasks.map(task => ({ type: 'task', ...task })),
+	];
+
+	// Sort combined array by createdAt date
+	combined.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+	return combined;
+}
+
+export default function ActivityPanel({ contactId }) {
+	const [bulkActivity, setBulkActivity] = useState([]);
+	const { activities, isError, isLoading } = useContactActivities(contactId);
+
+
+
+	useEffect(() => {
+		if (activities) {
+			const sortedItems = parseAndSortByDate(activities);
+
+			setBulkActivity(sortedItems);
+		}
+	}, [activities]);
+
 	const { t } = useTranslation();
+	console.log("Activities", bulkActivity);
+
+	if (isError) {
+		return <div>Error</div>
+	}
+
+	if (isLoading) {
+		return <div>Loading</div>
+	}
+
 	return (
 		<div className="px-4 relative bg-gray-100 rounded-tr-lg w-full md:w-3/5 h-full overflow-y-auto">
 			<div className="w-full flex ">
-				{editing && (
-					<div className="inset-0 bg-white/75 w-full z-10 absolute rounded-tr-lg h-full md:h-[62vh]" />
-				)}
 				<div className="flow-root rounded-lg w-full">
 					<ul role="list" className="p-3">
-						{timeline.slice(0, editing ? 1 : timeline.length).map((event, eventIdx) => (
-							<li key={event.id} className="w-full">
-								<div className="relative">
-									{eventIdx !== timeline.length - 1 && !editing ? (
+						<li className="w-full">
+							<div className="relative">
+								<span
+									className="absolute left-5 top-4 -ml-px h-full w-0.5 bg-zinc-400"
+									aria-hidden="true"
+								/>
+								<div className="relative flex w-full">
+									<div className="lg:w-[7%] w-[10%] mt-4">
 										<span
-											className="absolute left-5 top-4 -ml-px h-full w-0.5 bg-zinc-400"
-											aria-hidden="true"
-										/>
-									) : null}
-									<div className="relative flex w-full">
-										{!editing && (
+											className={clsx(
+												'bg-gray-200 h-10 w-10 rounded-full flex items-center justify-center'
+											)}
+										>
+											<UserIcon className="h-5 w-5 text-white" aria-hidden="true" />
+										</span>
+									</div>
+
+									<div
+										className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg`}
+									>
+
+										<ActivityHeader className="w-full" />
+									</div>
+								</div>
+							</div>
+						</li>
+						{
+							bulkActivity.map((activity, activityIdx) => (
+								<li key={activity.id} className="w-full">
+									<div className="relative">
+										{activityIdx !== bulkActivity.length - 1 && (
+											<span
+												className="absolute left-5 top-4 -ml-px h-full w-0.5 bg-zinc-400"
+												aria-hidden="true"
+											/>)}
+										<div className="relative flex w-full">
 											<div className="lg:w-[7%] w-[10%] mt-4">
 												<span
 													className={clsx(
-														event.iconBackground,
-														'h-10 w-10 rounded-full flex items-center justify-center'
+														'h-10 w-10 rounded-full flex items-center justify-center bg-primary'
 													)}
 												>
-													<event.icon className="h-5 w-5 text-white" aria-hidden="true" />
+													{activity.type === 'task' && <CheckIcon className="h-5 w-5 text-white" aria-hidden="true" />}
 												</span>
 											</div>
-										)}
-										<div
-											className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${eventIdx === 0
-												? 'rounded-t-lg'
-												: eventIdx === timeline.length - 1 && 'rounded-b-lg'}`}
-										>
-											{event.toDo && (
-												<div className="flex gap-2 w-full items-center mb-2">
-													<div className="border-b border-yellow-100 w-full" />
-													<div className="text-[10px] py-1 px-2 bg-yellow-100  text-black rounded-xl w-56 flex ">
-														{t('tools:tasks:panel:todo')}
-													</div>
-													<div className="border-b border-yellow-100 w-full" />
-												</div>
-											)}
-											{event.more && (
-												<div className="flex gap-2 w-full items-center mb-2">
-													<div className="border-b border-primary w-full" />
-													<div className="text-[10px] py-1 px-2 bg-primary text-white rounded-xl">
-														20/10/10
-													</div>
-													<div className="border-b border-primary w-full" />
-													<div><FilterPanel/></div>
-												</div>
-											)}
-											{<event.child className="w-full" data={event} />}
+											<div
+												className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${activityIdx === timeline.length - 1 && 'rounded-b-lg'}`}
+											>
+												<ActivityCard activity={activity} />
+											</div>
 										</div>
 									</div>
-								</div>
-							</li>
-						))}
+								</li>
+							))
+						}
 					</ul>
 				</div>
 			</div>
 		</div>
 	);
+}
+
+function ActivityCard({ activity }) {
+
+	switch (activity.type) {
+		case "task":
+			return <CardTask data={activity} />
+
+		default:
+			<>Ok</>
+			break;
+	}
 }

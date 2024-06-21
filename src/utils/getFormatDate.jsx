@@ -2,8 +2,8 @@ import { format, formatDistanceStrict, formatISO, isBefore, parseISO } from "dat
 import { es } from 'date-fns/locale';
 
 export const getFormatDate = (date) => {
-	 const parsedDate = new Date(date);
-	 // Verificar si la fecha es válida
+  const parsedDate = new Date(date);
+  // Verificar si la fecha es válida
   if (isNaN(parsedDate)) {
     throw new Error('Fecha no válida');
   }
@@ -13,27 +13,32 @@ export const getFormatDate = (date) => {
 
 
 export const formatDate = (date, formato = "MMMM d, h:mm a") => {
-  return format(date, formato, { locale: es });
+  if (!date) return "";
+  try {
+    return format(date, formato, { locale: es });
+  } catch (error) {
+    return "";
+  }
 };
 
 export const isTaskOverdue = (task) => {
-	if (!task?.deadline) return false; // No hay fecha limite
-	const deadlineDate = parseISO(task.deadline);
-	const now = new Date();
+  if (!task?.deadline) return false; // No hay fecha limite
+  const deadlineDate = parseISO(task.deadline);
+  const now = new Date();
 
-	return isBefore(deadlineDate, now);
+  return isBefore(deadlineDate, now);
 }
 
 export const isDateOverdue = (date) => {
-	if (!date) return false; // No hay fecha limite
-	const deadlineDate = parseISO(date);
-	const now = new Date();
+  if (!date) return false; // No hay fecha limite
+  const deadlineDate = parseISO(date);
+  const now = new Date();
 
-	return isBefore(deadlineDate, now);
+  return isBefore(deadlineDate, now);
 }
 
 export const getTaskOverdueTimeDelta = (task) => {
-console.log("Deadlinetask ", task)
+  console.log("Deadlinetask ", task)
   if (!task?.deadline) {
     return null; // No hay fecha límite, no hay retraso
   }

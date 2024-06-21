@@ -412,7 +412,7 @@ export default function ContactEditor({ edit, id }) {
             </div>
 
             {/* Menu Derecha */}
-            <ActivityPanel editing={!id} />
+            {id && <ActivityPanel contactId={id} />}
           </div>
           {/* )} */}
 

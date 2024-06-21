@@ -11,7 +11,6 @@ import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { toast } from "react-toastify";
 import useAppContext from "../../../../../../../context/app";
 
 export default function OptionsTask({
@@ -68,9 +67,8 @@ export default function OptionsTask({
       onclick: () => {
         fields.length === 0 &&
           append({
-            name: `${t("tools:tasks:new:verification-list")} #${
-              fields.length + 1
-            }`,
+            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1
+              }`,
             subItems: [{ name: "", value: false, empty: true }],
           });
         setOpenList(!openList);
@@ -79,7 +77,7 @@ export default function OptionsTask({
     {
       id: 6,
       name: t("tools:tasks:new:add-list"),
-      onclick: () => {},
+      onclick: () => { },
       menu: true,
     },
   ];

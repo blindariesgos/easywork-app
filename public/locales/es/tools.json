@@ -34,7 +34,7 @@
   },
   "tasks": {
     "panel": {
-      "date": "Fecha limite",
+      "date": "Fecha límite",
       "title": "Título",
       "responsible": "Responsable",
       "todo": "Cosas por hacer"

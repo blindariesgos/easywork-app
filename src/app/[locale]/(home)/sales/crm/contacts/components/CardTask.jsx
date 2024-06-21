@@ -1,23 +1,25 @@
 "use client";
 import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
-import IconDropdown from "../../../../../../../components/SettingsButton";
+import IconDropdown from "@/src/components/SettingsButton";
+import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
 import {
+  ChevronDownIcon,
   EllipsisHorizontalIcon,
   PencilIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BsBriefcase } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
 //is a component that must recieve its props
-export default function CardTask() {
+export default function CardTask({ data }) {
   const { t } = useTranslation();
   const [value, setValueText] = useState("");
   const quillRef = useRef(null);
-  const [openEdit, setOpenEdit] = useState(false);
 
   const handleComment = async (e) => {
     if (e.key === "Enter") {
@@ -33,12 +35,12 @@ export default function CardTask() {
     {
       value: 0,
       name: t("common:buttons:edit"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 0,
       name: t("common:buttons:delete"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -58,11 +60,11 @@ export default function CardTask() {
           <p className="text-xs text-primary font-medium">
             {t("tools:tasks:task")}
           </p>
-          <div className="flex justify-center items-center p-1 bg-red-300 rounded-md">
-            <p className="text-xs text-primary font-medium">Vencida</p>
-          </div>
-          <p className="text-xs text-primary font-medium">
-            {t("contacts:panel:date")}: 02/02/2024 13:33 pm
+          {isTaskOverdue(data) && (<span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+            Vencida
+          </span>)}
+          <p className="text-xs text-slate-500/60 font-medium">
+            {formatDate(data.createdAt)}
           </p>
         </div>
         <div>
@@ -81,9 +83,9 @@ export default function CardTask() {
             <BsBriefcase className="h-12 w-12 text-black" />
           </div>
           <div className="px-4 py-2 bg-gray-100 rounded-lg flex justify-center items-center">
-            <p className="text-xs text-primary font-medium">
+            <Link href={`/tools/tasks/task/${data.id}?show=true`} className="text-xs text-primary font-medium">
               {t("contacts:panel:open")}
-            </p>
+            </Link>
           </div>
         </div>
         <div className="flex flex-col gap-2 w-full">
@@ -91,49 +93,25 @@ export default function CardTask() {
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:date")}:
             </p>
-            <p className="text-xs text-black font-normal">Lun, En 10, 8:00pm</p>
+            {data?.deadline ? (<p className="text-xs font-normal bg-yellow-200 rounded-xl px-2 py-1 text-slate-500 flex items-center cursor-pointer">{formatDate(data.deadline)}
+              <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
+            </p>) : (<p className="text-xs font-normal bg-blue-200 rounded-xl px-2 py-1 text-slate-600 flex items-center cursor-pointer">Ninguna
+              <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
+            </p>)}
           </div>
           <div className="flex gap-x-4 items-center">
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:title")}:
             </p>
-            <p className="text-xs text-black font-normal">Seguimiento póliza</p>
+            <p className="text-sm text-blue-700 font-normal">
+              <Link href={`/tools/tasks/task/${data.id}?show=true`}>{data.name}</Link>
+            </p>
           </div>
           <div className="flex gap-x-4 items-center">
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:responsible")}:
             </p>
             <p className="text-xs text-black font-normal">Juanito Cruz</p>
-          </div>
-          <div className="p-2 bg-yellow-50 rounded-md flex gap-2 w-full justify-between items-center">
-            {!openEdit ? (
-              <div className="flex gap-2 items-center">
-                <div className="flex justify-center items-center p-1 bg-red-300 rounded-full">
-                  <UserIcon className="h-3 w-3 text-white" />
-                </div>
-                <p className="text-sm text-black">Test</p>
-              </div>
-            ) : (
-              <div className="border rounded-md h-28">
-                {TextEditorComponent()}
-              </div>
-            )}
-            <div className="flex gap-1 items-center">
-              {!openEdit && (
-                <div
-                  className="cursor-pointer"
-                  onClick={() => setOpenEdit(true)}
-                >
-                  <PencilIcon className="h-4 w-4 text-black" />
-                </div>
-              )}
-              <div
-                className="cursor-pointer"
-                onClick={() => setOpenEdit(false)}
-              >
-                <XMarkIcon className="h-4 w-4 text-black" />
-              </div>
-            </div>
           </div>
           <div className="flex justify-end mt-0 gap-2 items-center">
             <div className="cursor-pointer">

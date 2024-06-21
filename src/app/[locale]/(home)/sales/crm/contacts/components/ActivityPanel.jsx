@@ -104,7 +104,7 @@ function parseAndSortByDate(data) {
 	];
 
 	// Sort combined array by createdAt date
-	combined.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+	combined.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
 	return combined;
 }

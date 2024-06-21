@@ -160,7 +160,7 @@ export default function ActivityPanel({ contactId }) {
 										className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg`}
 									>
 
-										<ActivityHeader className="w-full" />
+										<ActivityHeader contactId={contactId} className="w-full" />
 									</div>
 								</div>
 							</div>

@@ -1,6 +1,6 @@
 "use client";
 import { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -20,19 +20,23 @@ export default function SlideOver({
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
   const [taskId, setTaskId] = useState(null);
+  const [contactId, setContactId] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   // Nuevo estado para controlar la transición
   const [show, setShow] = useState(false);
 
-  useEffect(()=>{
-    if(params.get("prev") === "tasks"){
+  useEffect(() => {
+    if (params.get("prev") === "tasks") {
       setTaskId(params.get("prev_id"));
+    } else if (params.get("prev") === "contact") {
+      setContactId(params.get("prev_id"));
     }
   }, [params]);
 
   useEffect(() => {
     // Parsear el valor de `show` del parámetro de consulta
+    console.log("show", params.get("show"));
     setShow(params.get("show") === "true");
   }, []); // Dependencia del parámetro de consulta 'show'
 
@@ -114,11 +118,14 @@ export default function SlideOver({
   };
 
   return (
-    <Transition.Root show={show} as={Fragment} afterLeave={() => {
+    <Transition show={show} as={Fragment} afterLeave={() => {
       console.log("afterLeave", taskId);
       if (taskId) {
         router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
         return;
+      } else if (contactId) {
+        router.replace(`/sales/crm/contacts/contact/${contactId}?show=true`, undefined, { shallow: true });
+        return
       }
       router.replace(`${samePage}`, undefined, { shallow: true });
     }}>
@@ -127,7 +134,7 @@ export default function SlideOver({
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
-              <Transition.Child
+              <TransitionChild
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
                 enterFrom="translate-x-full"
@@ -136,7 +143,7 @@ export default function SlideOver({
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel
+                <DialogPanel
                   className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
                 >
                   <div className="flex justify-end h-screen">
@@ -157,12 +164,12 @@ export default function SlideOver({
                     </div>
                     {children}
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                </DialogPanel>
+              </TransitionChild>
             </div>
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition>
   );
 }

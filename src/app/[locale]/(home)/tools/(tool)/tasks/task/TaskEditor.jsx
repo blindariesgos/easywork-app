@@ -16,7 +16,7 @@ import DateTimeCalculator from "../components/DateTimeCalculator";
 import CkeckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
 import InputCheckBox from "@/src/components/form/InputCheckBox";
 import Button from "@/src/components/form/Button";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
@@ -42,14 +42,17 @@ export default function TaskEditor({ edit, copy }) {
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
   const [listField, setListField] = useState([]);
+  const [contactCRM, setContactCRM] = useState(null);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const { mutate } = useSWRConfig();
   const [openOptions, setOpenOptions] = useState({
     created: edit?.createdBy ? true : false,
     participants: (edit?.participants?.length ?? copy?.participants?.length) > 0 ? true : false,
     observers: (edit?.observers?.length ?? copy?.observers?.length) > 0 ? true : false,
     time: (edit?.deadline ?? copy?.deadline) ? true : false,
-    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) || 
-                (edit?.requireRevision ?? copy?.requireRevision) ? true : false,
+    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) ||
+      (edit?.requireRevision ?? copy?.requireRevision) ? true : false,
     more: (edit?.crm?.length ?? copy?.crm?.length) ? true : false,
   });
 
@@ -58,6 +61,7 @@ export default function TaskEditor({ edit, copy }) {
     isLoading,
     isError,
   } = useTaskContactsPolizas();
+
 
   useEffect(() => {
     if (edit) {
@@ -132,21 +136,30 @@ export default function TaskEditor({ edit, copy }) {
       responsible: edit?.responsible ?? copy?.responsible ?? [],
       observers: edit?.observers ?? copy?.observers ?? [],
       tags: edit?.tags ?? copy?.tags ?? [],
-      crm: edit?.crm?.length > 0 ? edit.crm.map(item=>({
+      crm: edit?.crm?.length > 0 ? edit.crm.map(item => ({
         id: item?.contact?.id ?? item?.poliza?.id,
         type: item?.type,
         name: item?.contact?.name,
         title: item?.poliza?.title ?? item?.poliza?.noPoliza
-      })) : null ?? copy?.crm?.length > 0 ? copy.crm.map(item=>({
+      })) : null ?? copy?.crm?.length > 0 ? copy.crm.map(item => ({
         id: item?.contact?.id ?? item?.poliza?.id,
         type: item?.type,
         name: item?.contact?.name,
         title: item?.poliza?.title ?? item?.poliza?.noPoliza
-      })) : null ?? [],
+      })) : null ?? contactCRM ? [{ id: contactCRM, type: "contact", name: "Juan Hernandez" }] : null ?? [],
       createdBy: edit ? [edit.createdBy] : [],
     },
     resolver: yupResolver(schemaInputs),
   });
+
+  useEffect(() => {
+    if (params.get("prev") === "contact") {
+      setContactCRM(params.get("prev_id"));
+      setValue("crm", [{ id: params.get("prev_id"), type: "contact", name: "Juan Hernandez" }]);
+      setValue("name", "CRM: ")
+      setOpenOptions({ ...openOptions, more: true })
+    }
+  }, [params]);
 
   useEffect(() => {
     if (session)
@@ -241,7 +254,7 @@ export default function TaskEditor({ edit, copy }) {
         setLoading(false);
         await mutate(`/tools/tasks/user?limit=15&page=1`);
 
-        if (isNewTask) {  
+        if (isNewTask) {
           reset();
           setValueText("");
           setValue("name", "");
@@ -637,7 +650,7 @@ export default function TaskEditor({ edit, copy }) {
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleSubmit((data) => createTask(data, true))}
             />}
-            
+
             <Button
               label={t("common:buttons:cancel")}
               buttonStyle="secondary"

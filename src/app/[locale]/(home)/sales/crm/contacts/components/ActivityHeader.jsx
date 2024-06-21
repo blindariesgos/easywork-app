@@ -2,76 +2,77 @@ import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import AppointmentMenu from "./AppointmentMenu";
+import Link from "next/link";
 
-export default function ActivityHeader() {
+export default function ActivityHeader({ contactId }) {
   const { t } = useTranslation();
   const tabs = [
     { name: t('contacts:create:activities:email'), href: "/tools/mails", current: true, disabled: false },
-    { name: t('contacts:create:activities:tasks'), href: "#", current: false, disabled: true },
+    { name: t('contacts:create:activities:tasks'), href: `/tools/tasks/task?show=true&prev=contact&prev_id=${contactId}`, current: false, disabled: true },
     { name: t('contacts:create:activities:whatsapp'), href: "#", current: false, disabled: true },
     { name: t('contacts:create:activities:comment'), href: "#", current: false, disabled: true },
-    { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true, menu: true, children: [{ name: t('contacts:create:activities:zoom')},{ name: t('contacts:create:activities:call')}] },
+    { name: t('contacts:create:activities:appointments'), href: "#", current: false, disabled: true, menu: true, children: [{ name: t('contacts:create:activities:zoom') }, { name: t('contacts:create:activities:call') }] },
   ];
   const settings = [
     {
       value: 0,
       name: t("contacts:header:settings:vcard"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: t("contacts:header:settings:gmail"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 2,
       name: t("contacts:header:settings:outlook"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 3,
       name: t("contacts:header:settings:yahoo"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 4,
       name: t("contacts:header:settings:import"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 5,
       name: t("contacts:header:settings:crm"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 8,
       name: t("contacts:header:settings:export"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 9,
       name: t("contacts:header:settings:control"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ]
   return (
@@ -91,7 +92,7 @@ export default function ActivityHeader() {
                         />
                       </div>
                     ) : (
-                      <a
+                      <Link
                         key={tab.name}
                         href={tab.href}
                         className={clsx(
@@ -103,7 +104,7 @@ export default function ActivityHeader() {
                         aria-current={tab.current ? "page" : undefined}
                       >
                         {tab.name}
-                      </a>
+                      </Link>
                     )}
                   </div>
                 ))}

@@ -50,7 +50,7 @@ const MultipleSelectWithFilters = ({
     // Determine the type based on filterSelect
     const type = filterSelect === 1 ? "contact" : "poliza";
 
-    const newOption = { 
+    const newOption = {
       id: option.id,
       name: option.name,
       username: option.username,
@@ -78,10 +78,10 @@ const MultipleSelectWithFilters = ({
     return query === ""
       ? selectedData
       : selectedData.filter((opt) =>
-          `${opt.username} ${opt.name}`
-            .toLowerCase()
-            .includes(query.toLowerCase())
-        );
+        `${opt.username} ${opt.name}`
+          .toLowerCase()
+          .includes(query.toLowerCase())
+      );
   }, [data, filterSelect, query]);
 
   return (
@@ -136,7 +136,6 @@ const MultipleSelectWithFilters = ({
                 </div>
                 {filterData?.length === 0 && query !== "" ? (
                   <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                    caracas
                     {t("common:not-found")}
                   </div>
                 ) : (
@@ -144,12 +143,11 @@ const MultipleSelectWithFilters = ({
                   filterData.map((option) => (
                     <div
                       key={option.id}
-                      className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                        getValues(name) &&
-                        getValues(name).some((res) => res.id === option.id)
+                      className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${getValues(name) &&
+                          getValues(name).some((res) => res.id === option.id)
                           ? "bg-primary"
                           : "hover:bg-primary/5"
-                      }`}
+                        }`}
                       onClick={() => handleSelect(option)}
                     >
                       {option.avatar && (
@@ -162,12 +160,11 @@ const MultipleSelectWithFilters = ({
                         />
                       )}
                       <span
-                        className={`text-xs ${
-                          getValues(name) &&
-                          getValues(name).some((res) => res.id === option.id)
+                        className={`text-xs ${getValues(name) &&
+                            getValues(name).some((res) => res.id === option.id)
                             ? "text-white"
                             : "text-black"
-                        }`}
+                          }`}
                       >
                         {option.name ||
                           option.username ||

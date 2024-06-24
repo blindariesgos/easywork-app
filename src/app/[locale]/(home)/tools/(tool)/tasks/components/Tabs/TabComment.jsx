@@ -31,9 +31,6 @@ export default function TabComment({ info }) {
 
   const handleComment = async (_, id) => {
     if (quillRef.current) {
-      //const quillEditor = quillRef.current.getEditor();
-      //const currentContents = quillEditor.getContents();
-      //const text = currentContents.ops.map((op) => op.insert).join("");
       const body = {
         comment: value,
         isSummary: info.requireSummary,

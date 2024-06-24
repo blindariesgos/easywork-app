@@ -79,7 +79,7 @@ useEffect(() => {
       } else if (selectedTasks.length > 1) {
         await Promise.all(selectedTasks.map((task) => apiDeleteTask(task.id)));
       }
-      toast.success("Tarea(s) eliminada(s) con éxito");
+      toast.success(t("tools:tasks:delete-msg"));
       setSelectedTasks([]);
       await mutate(`/tools/tasks/user?limit=15&page=1`);
     } catch (error) {
@@ -296,16 +296,20 @@ const renderCellContent = (column, task, t) => {
 
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
-      return task.crm[0]?.type === "contact" && <div className="flex gap-x-2 items-center justify-left">
-        <Image
+      return task.crm[0]?.type === "contact" && 
+        <Link href={`/sales/crm/contacts/contact/${task.crm[0]?.contact.id}?show=true&prev=tasks`}>
+          <div className="flex gap-x-2 items-center justify-left">
+          <Image
             className="h-6 w-6 rounded-full bg-zinc-200"
             width={30}
             height={30}
             src={taskValue?.avatar || "/img/avatar.svg"}
             alt="avatar"
           />
-{task.crm[0]?.contact?.fullName}
-      </div>  || "No especificado";
+          {task.crm[0]?.contact?.fullName}
+          </div>
+        </Link>
+        || "No especificado";
 
     case "policy":
       return taskValue || "No especificado";

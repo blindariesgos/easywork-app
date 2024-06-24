@@ -1,22 +1,23 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from './form/Button';
-import { ChevronDownIcon, Cog8ToothIcon, TrashIcon } from '@heroicons/react/20/solid';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import IconDropdown from './SettingsButton';
-import { FaMagnifyingGlass } from 'react-icons/fa6';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { CgSpinner } from "react-icons/cg";
 
 export default function ToolHeader({ title, children, route, Filters, toolButtons }) {
 	const { t } = useTranslation();
+	const [loading, setLoading] = React.useState(false);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
-	const pathname = usePathname();
 	const { replace } = useRouter();
 
 	const handlePathname = () => {
+		setLoading(true);
 		params.delete('page');
 		params.set('show', true);
 		replace(`${route}?${params.toString()}`);
+		setLoading(false);
 	};
 	return (
 		<header className="flex flex-col">
@@ -27,7 +28,7 @@ export default function ToolHeader({ title, children, route, Filters, toolButton
 					type="button"
 					onclick={() => handlePathname()}
 					buttonStyle={'primary'}
-					icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
+					icon={loading ? <CgSpinner className="ml-2 h-5 w-5 text-white animate-spin" /> : <ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
 					className="px-3 py-2"
 				/>
 				<div className="flex-grow">

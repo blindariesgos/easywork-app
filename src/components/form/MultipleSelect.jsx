@@ -8,13 +8,21 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import TextInput from "./TextInput";
 
+const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
+  if (tagLabel) return onlyOne ? itemsLength > 0 ? t("common:buttons:change") : tagLabel : tagLabel;
+
+  return onlyOne ? itemsLength > 0 ? t("common:buttons:change") : t("common:buttons:add") : t("common:buttons:add")
+};
+
 const MultipleSelect = ({
   options,
   getValues,
   setValue,
   name,
   label,
+  disabled,
   error,
+  tagLabel,
   onlyOne,
 }) => {
   const { t } = useTranslation();
@@ -79,10 +87,11 @@ const MultipleSelect = ({
       <label className="text-sm font-medium leading-6 text-gray-900">
         {label}
       </label>
-      <div className="relative mt-1">
+      <div className="relative">
         <button
           type="button"
           onClick={handleToggle}
+          disabled={disabled}
           className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
@@ -90,7 +99,7 @@ const MultipleSelect = ({
               getValues(name).map((res) => (
                 <div
                   key={res.id}
-                  className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
+                  className="bg-primary p-1 rounded-sm text-white flex gap-1 items-center text-xs"
                 >
                   {res.name || res.username}
                   <button
@@ -104,7 +113,7 @@ const MultipleSelect = ({
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
               <PlusIcon className="h-3 w-3" />
-              <p className="text-xs">{onlyOne ? t("common:buttons:change") : t("common:buttons:add")}</p>
+              <p className="text-xs hover:text-primary/80">{getTextLabel(tagLabel, onlyOne, getValues(name)?.length, t)}</p>
             </div>
           </span>
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
@@ -132,7 +141,7 @@ const MultipleSelect = ({
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
+                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
                       getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
                         ? "bg-primary"

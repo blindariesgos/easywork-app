@@ -31,6 +31,7 @@ const IconDropdown = ({options, width, icon, colorIcon = "text-primary", disable
                                             active ? (opt.disabled ? 'bg-gray-200 text-white' : 'bg-easy-600 text-white') : 'text-primary'
                                         }`}
                                         disabled={disabled}
+                                        onClick={opt.onClick}
                                     >
                                         {opt.icon && <opt.icon className={`h-4 w-4 ${active ? "text-white" : `${colorIcon}`}`}/>}
                                         {opt.name}

@@ -17,7 +17,7 @@ export default function Button({
 			case 'primary':
 				return 'bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm text-sm';
 			case 'secondary':
-				return 'text-primary bg-gray-500 shadow-sm text-sm hover:text-white';
+				return 'text-primary bg-zinc-200 shadow-xs text-sm hover:text-white';
 			case 'text':
 				return `text-gray-400 bg-transparent ${fontSize}`;
 			case 'outlined':

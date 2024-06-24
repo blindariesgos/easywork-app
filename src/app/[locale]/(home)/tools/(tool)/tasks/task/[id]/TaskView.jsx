@@ -14,6 +14,7 @@ import DropdownSelect from "../../components/DropdownSelect";
 import Button from "@/src/components/form/Button";
 import ButtonMore from "../../components/ButtonMore";
 import TabsTask from "../../components/Tabs/TabsTask";
+import * as yup from "yup";
 import moment from "moment";
 import TaskEditor from "../TaskEditor";
 import { putTaskCompleted } from "@/src/lib/apis";
@@ -30,6 +31,9 @@ import { FaTimes } from 'react-icons/fa';
 import clsx from "clsx";
 import useAppContext from "@/src/context/app";
 import Link from "next/link";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import MultipleSelect from "@/src/components/form/MultipleSelect";
 
 export default function TaskView({ id }) {
   const { task, isLoading, isError } = useTask(id);
@@ -41,6 +45,7 @@ export default function TaskView({ id }) {
   const [value, setValueText] = useState(task ? task.description : "");
   const [openEdit, setOpenEdit] = useState(null);
   const { mutate } = useSWRConfig();
+  const [isDelegating, setIsDelegating] = useState(false);
 
   const handleDateChange = (date) => {
     console.log('Nueva fecha:', date);
@@ -91,21 +96,16 @@ export default function TaskView({ id }) {
         className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
       >
         {openEdit?.mode !== "copy" && <div className="flex justify-between items-center py-2">
-          <h1 className="text-xl font-medium">{task?.name}</h1>
+          <h1 className="text-xl font-medium">{openEdit?.mode === "subtask"? <span>Creando subtarea para: <span className="text-primary italic underline decoration-indigo-600">{task?.name}</span></span> : task?.name}</h1>
           <IconDropdown
-            icon={
-              <Cog8ToothIcon
-                className="h-8 w-8 text-primary"
-                aria-hidden="true"
-              />
-            }
+            icon={openEdit?.mode === "edit" ? <Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" /> : null}
             options={settings}
             width="w-44"
           />
         </div>}
         <div className="w-full flex gap-2 sm:gap-4 sm:flex-row flex-col h-full">
           {openEdit ? (
-            <TaskEditor edit={openEdit.mode === "edit" && task} copy={openEdit.mode === "copy" && task} />
+            <TaskEditor edit={openEdit?.mode === "edit" && task} copy={openEdit?.mode === "copy" && task} subtask={openEdit?.mode === "subtask" && task}/>
           ) : (
             <div className={`w-full ${!openEdit ? "sm:w-9/12" : "sm:w-full"}`}>
               <div className="bg-white rounded-lg">
@@ -137,7 +137,7 @@ export default function TaskView({ id }) {
                       <p className="text-sm text-white">
                         {t("tools:tasks:edit:contact")}:
                       </p>
-                      <Link href={`/sales/crm/contacts/contact/${task.crm[0].contact.id}?show=true&prev=tasks&prev_id=${task.id}`} className="text-sm text-white">{task.crm[0].contact.fullName}</Link>
+                      <Link href={`/sales/crm/contacts/contact/${task.crm[0].contact.id}?show=true&prev=task&prev_id=${task.id}`} className="text-sm text-white">{task.crm[0].contact.fullName}</Link>
                     </div>}
                     {task.crm[0]?.type === "poliza" && <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
                       <p className="text-sm text-white">
@@ -158,19 +158,25 @@ export default function TaskView({ id }) {
                       />
                     )} */}
                     {!task.isCompleted && (
-                      <Button
-                        label={t("tools:tasks:edit:end")}
-                        buttonStyle="green"
-                        className="px-3 py-2"
-                        fontSize="text-xs"
-                        onclick={() => getCompletedTask()}
-                      />
+                      <button
+                        type="button"
+                        className="rounded-md disabled:cursor-not-allowed disabled:bg-zinc-200 bg-green-primary hover:bg-green-100 px-3 py-2 text-xs font-medium text-primary shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => getCompletedTask()}
+                        disabled={isDelegating}
+                      >
+                        {t("tools:tasks:edit:end")}
+                      </button>
+       
                     )}
                     <ButtonMore
                       setOpenEdit={setOpenEdit}
                       openEdit={openEdit}
                       data={task}
+                      setIsDelegating={setIsDelegating}
                     />
+                    {isDelegating && (
+                      <TaskDelegate lists={lists} t={t} setIsDelegating={setIsDelegating}/>
+                    )}
                     {/* <div className="flex gap-2 items-center">
                       <BsStopwatchFill className="h-4 w-4 text-easy-400" />
                       <p className="text-easy-400 text-xs">00:00:00</p>
@@ -319,6 +325,74 @@ export default function TaskView({ id }) {
       </div>
     </div>
   );
+}
+
+const TaskDelegate = ({ lists, t, setIsDelegating }) => {
+
+  const schemaInputs = yup.object().shape({
+    participants: yup.array(),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid, errors },
+    control,
+    getValues,
+    watch,
+    reset,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      responsible: [],
+    },
+    resolver: yupResolver(schemaInputs),
+  });
+
+  return (
+    <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+      <p className="text-sm text-left shrink-0 w-auto">
+        {t("tools:tasks:delegate-to")}
+      </p>
+      <div className="w-full shrink-0">
+        <Controller
+          name="responsible"
+          control={control}
+          defaultValue={[]}
+          render={({ field }) => (
+            <MultipleSelect
+              {...field}
+              options={lists?.users || []}
+              getValues={getValues}
+              setValue={setValue}
+              name="responsible"
+              tagLabel="Seleccionar"
+              error={errors.responsible}
+              onlyOne
+            />
+          )}
+        />
+      </div>
+      <button
+        type="button"
+        disabled={getValues("responsible").length === 0}
+        className="rounded-md disabled:cursor-not-allowed bg-primary px-3 py-1.5 text-sm text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        Delegar
+      </button>
+
+      <button
+        type="button"
+        className="rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        onClick={() => {
+          setIsDelegating(false);
+          reset();
+        }}
+      >
+        Cancelar
+      </button>
+    </div>
+  )
 }
 
 const TaskDeadLine = ({task, onDateChange, t, onDateRemove})=>{

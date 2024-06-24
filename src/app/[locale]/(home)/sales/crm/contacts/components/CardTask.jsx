@@ -91,7 +91,7 @@ export default function CardTask({ data }) {
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:date")}:
             </p>
-            {data?.deadline ? (<p className="text-xs font-normal bg-yellow-200 rounded-xl px-2 py-1 text-slate-500 flex items-center cursor-pointer">{formatDate(data.deadline)}
+            {data?.deadline ? (<p className="text-xs font-normal bg-yellow-200 rounded-xl px-2 py-1 text-slate-500 flex items-center cursor-pointer align-middle lining-nums"><span className="leading-none align-middle">{formatDate(data.deadline)}</span>
               <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
             </p>) : (<p className="text-xs font-normal bg-blue-200 rounded-xl px-2 py-1 text-slate-600 flex items-center cursor-pointer">Ninguna
               <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />

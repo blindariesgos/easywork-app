@@ -7,7 +7,6 @@ import CardVideo from './CardVideo';
 import CardTask from './CardTask';
 import { ChatBubbleBottomCenterIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
-import FilterPanel from './FilterPanel';
 import CardWhatsapp from './CardWhatsapp';
 import CardEmail from './CardEmail';
 import CardComment from './CardComment';

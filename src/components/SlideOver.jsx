@@ -21,16 +21,19 @@ export default function SlideOver({
   const [subLabel, setSubLabel] = useState("");
   const [taskId, setTaskId] = useState(null);
   const [contactId, setContactId] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   // Nuevo estado para controlar la transición
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (params.get("prev") === "tasks") {
+    if (params.get("prev") === "task") {
       setTaskId(params.get("prev_id"));
     } else if (params.get("prev") === "contact") {
       setContactId(params.get("prev_id"));
+    } else if (params.get("prev") === "tasks") {
+      setPreviousPage("tasks");
     }
   }, [params]);
 
@@ -119,14 +122,19 @@ export default function SlideOver({
 
   return (
     <Transition show={show} as={Fragment} afterLeave={() => {
-      console.log("afterLeave", taskId);
       if (taskId) {
         router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
         return;
       } else if (contactId) {
         router.replace(`/sales/crm/contacts/contact/${contactId}?show=true`, undefined, { shallow: true });
-        return
+        return;
       }
+
+      if (previousPage === "tasks") {
+        router.replace(`/tools/tasks`, undefined, { shallow: true });
+        return;
+      }
+
       router.replace(`${samePage}`, undefined, { shallow: true });
     }}>
       <Dialog as="div" className="relative z-50" onClose={() => { }}>

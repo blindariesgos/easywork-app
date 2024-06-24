@@ -50,3 +50,16 @@ export const useTaskContactsPolizas = () => {
     isError: error,
   };
 };
+
+export const useTasksList = () => {
+  const { data, error, isLoading } = useSWR(
+    `/tools/tasks/helpers/tasks_list`,
+    fetcher,
+  );
+
+  return {
+    tasksList: data,
+    isLoading,
+    isError: error,
+  };
+};

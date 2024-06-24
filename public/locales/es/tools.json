@@ -45,6 +45,8 @@
     "status": {
       "pending": "Pendiente"
     },
+    "delegate-to": "Delegar a:",
+    "delegate": "Delegar",
     "template": "Tare usando una plantilla",
     "span": "Abrir opciones",
     "list": "Lista",
@@ -111,6 +113,7 @@
       "add-list": "Agregar lista de verificación",
       "responsible": "Persona Responsable:",
       "created-by": "Creado por ",
+      "subtask": "Subtarea de ",
       "participants": "Participantes",
       "observers": "Observadores",
       "limit-date": "Fecha límite",

@@ -1,9 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+
+import React, { useEffect, useState, useCallback, useRef, forwardRef, useImperativeHandle } from "react";
+import dynamic from "next/dynamic";
 import DropdownVisibleUsers from "./DropdownVisibleUsers";
-import useAppContext from "../../../../../../../context/app";
+import useAppContext from "@/src/context/app";
+import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const modules = {
   toolbar: [
@@ -43,22 +46,25 @@ const formats = [
   "direction",
 ];
 
-const TextEditor = ({
+const TextEditor = forwardRef(({
   value,
   onChange,
   className,
   onChangeSelection,
-  quillRef,
   setValue,
-  disabled,
+  disabled = false,
   handleKeyDown,
-}) => {
+}, ref) => {
   const { lists } = useAppContext();
+  const localQuillRef = useRef(null); // Local ref to manage dynamic component ref
   const [arroba, setArroba] = useState(false);
-  const [dataUsers, setDataUsers] = useState();
+  const [dataUsers, setDataUsers] = useState([]);
   const [userSelected, setUserSelected] = useState(null);
-  const [selectText, setSelectText] = useState("");
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+
+  useImperativeHandle(ref, () => ({
+    getEditor: () => localQuillRef.current?.getEditor(),
+  }));
 
   const handleChange = (newValue, delta, source, editor) => {
     setArroba(false);
@@ -69,7 +75,7 @@ const TextEditor = ({
           const atIndex = text.indexOf("@");
           const range = editor.getBounds(atIndex);
           setModalPosition({ x: range.left, y: range.bottom });
-          return setArroba(true);
+          setArroba(true);
         }
       });
     }
@@ -78,40 +84,43 @@ const TextEditor = ({
 
   const onChangeCustom = (event) => {
     const { value } = event.target;
-    const filterData = lists.users.filter((user) => {
-      return user.name.toLowerCase().includes(value.toLowerCase());
-    });
-    setDataUsers(filterData);
+    const filteredData = lists.users.filter((user) =>
+      user.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setDataUsers(filteredData);
   };
 
   useEffect(() => {
-    if (lists?.users) setDataUsers(lists.users);
+    if (lists?.users) {
+      setDataUsers(lists.users);
+    }
   }, [lists]);
 
   useEffect(() => {
     const addUserSelected = (name) => {
-      if (quillRef.current) {
-        const quillEditor = quillRef.current.getEditor();
+      const editor = localQuillRef.current?.getEditor();
+      if (editor) {
+        const quillEditor = editor;
         const currentContents = quillEditor.getContents();
-        let newContent = [];
-        currentContents.ops.length > 0 &&
-          currentContents.ops.map((op) => {
-            newContent.push({
-              insert: op.insert.replace(/\n$/, "").replace("@", ""),
-              attributes: { ...op.attributes },
-            });
-          });
+        const newContent = currentContents.ops.map((op) => ({
+          insert: op.insert.replace(/\n$/, "").replace("@", ""),
+          attributes: { ...op.attributes },
+        }));
 
         quillEditor.setContents([
           ...newContent,
           { insert: name, attributes: { color: "#86BEDF", underline: true } },
           { insert: " " },
         ]);
-        setUserSelected("");
+        setUserSelected(null);
       }
     };
-    if (userSelected) addUserSelected(userSelected.username);
-  }, [userSelected, quillRef]);
+
+    if (userSelected) {
+      addUserSelected(userSelected.username);
+    }
+  }, [userSelected]);
+
   const dropdownUsers = () => (
     <DropdownVisibleUsers
       mentionButtonRef={null}
@@ -127,9 +136,9 @@ const TextEditor = ({
   return (
     <div className="w-full relative">
       <ReactQuill
-        ref={quillRef}
+        ref={localQuillRef}
         value={value}
-        onChange={onChange ? onChange : handleChange}
+        onChange={onChange || handleChange}
         modules={modules}
         formats={formats}
         theme="snow"
@@ -141,6 +150,8 @@ const TextEditor = ({
       {arroba && dropdownUsers()}
     </div>
   );
-};
+});
+
+TextEditor.displayName = "TextEditor";
 
 export default TextEditor;

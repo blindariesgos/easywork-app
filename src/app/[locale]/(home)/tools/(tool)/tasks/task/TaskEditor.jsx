@@ -16,7 +16,7 @@ import DateTimeCalculator from "../components/DateTimeCalculator";
 import CkeckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
 import InputCheckBox from "@/src/components/form/InputCheckBox";
 import Button from "@/src/components/form/Button";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
@@ -24,12 +24,12 @@ import { postTask, putTaskId } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import { useTaskContactsPolizas } from "@/src/lib/api/hooks/tasks";
+import { useTaskContactsPolizas, useTasksList } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
 
-export default function TaskEditor({ edit, copy }) {
+export default function TaskEditor({ edit, copy, subtask }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function TaskEditor({ edit, copy }) {
     time: (edit?.deadline ?? copy?.deadline) ? true : false,
     options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) ||
       (edit?.requireRevision ?? copy?.requireRevision) ? true : false,
-    more: (edit?.crm?.length ?? copy?.crm?.length) ? true : false,
+    more: (edit?.crm?.length ?? copy?.crm?.length ?? subtask) ? true : false,
   });
 
   const {
@@ -61,6 +61,10 @@ export default function TaskEditor({ edit, copy }) {
     isLoading,
     isError,
   } = useTaskContactsPolizas();
+
+  const {tasksList, isLoading: isLoadingList, isError: isErrorList} = useTasksList();
+
+  console.log(tasksList)
 
 
   useEffect(() => {
@@ -106,6 +110,7 @@ export default function TaskEditor({ edit, copy }) {
     name: yup.string(),
     responsible: yup.array(),
     createdBy: yup.array(),
+    subTask: yup.array(),
     participants: yup.array(),
     observers: yup.array(),
     limitDate: yup.string(),
@@ -136,6 +141,7 @@ export default function TaskEditor({ edit, copy }) {
       responsible: edit?.responsible ?? copy?.responsible ?? [],
       observers: edit?.observers ?? copy?.observers ?? [],
       tags: edit?.tags ?? copy?.tags ?? [],
+      subTask: subtask ? [subtask] : [],
       crm: edit?.crm?.length > 0 ? edit.crm.map(item => ({
         id: item?.contact?.id ?? item?.poliza?.id,
         type: item?.type,
@@ -178,9 +184,6 @@ export default function TaskEditor({ edit, copy }) {
       crm = data?.crm.map((item) => ({ id: item.id, type: item.type }))
     }
 
-    console.log("###### CRM #######", crm)
-
-
     const body = {
       name: data.name,
       description: value,
@@ -211,12 +214,21 @@ export default function TaskEditor({ edit, copy }) {
       });
       body.responsibleIds = responsibleIds || [];
     }
+
+    if (data.subTask && data.subTask.length > 0) {
+      const subTaskIds = data.subTask.map((sub) => {
+        return sub.id;
+      });
+      body.parentId = subTaskIds[0];
+    }
+
     if (data.tags && data.tags.length > 0) {
       const tagsIds = data.tags.map((tag) => {
         return tag.id;
       });
       body.tagsIds = tagsIds || [];
     }
+
     if (listField && listField.length > 0) {
       const outputArray = listField.map((item) => {
         const child = item.subItems
@@ -331,7 +343,7 @@ export default function TaskEditor({ edit, copy }) {
               copy={copy}
             />
             <div className="mt-6 flex flex-col gap-3">
-              <div className="">
+              <div>
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                   <p className="text-sm text-left w-full md:w-36">
                     {t("tools:tasks:new:responsible")}
@@ -347,6 +359,7 @@ export default function TaskEditor({ edit, copy }) {
                           options={lists?.users || []}
                           getValues={getValues}
                           setValue={setValue}
+                          onlyOne
                           name="responsible"
                           error={errors.responsible}
                         />
@@ -590,6 +603,31 @@ export default function TaskEditor({ edit, copy }) {
                       />
                     </div>
                   </div>
+                  {/* Sub Task */}
+                  <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                    <p className="text-sm text-left w-full md:w-36">
+                      {t("tools:tasks:new:subtask")}
+                    </p>
+                    <div className="w-full md:w-[40%]">
+                      <Controller
+                        name="subTask"
+                        control={control}
+                        defaultValue={[]}
+                        render={({ field }) => (
+                          <MultipleSelect
+                            {...field}
+                            options={tasksList || []}
+                            getValues={getValues}
+                            setValue={setValue}
+                            name="subTask"
+                            disabled={subtask}
+                            error={errors.subTask}
+                            onlyOne
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
                   <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
@@ -639,14 +677,16 @@ export default function TaskEditor({ edit, copy }) {
           </div>
           <div className={`flex gap-4 flex-wrap mt-4 ${edit && "mb-4"}`}>
             <Button
-              label={edit ? t("tools:tasks:new:update-task") : t("tools:tasks:new:add-task")}
+              label={loading ? t("common:saving") : edit ? t("tools:tasks:new:update-task") : t("tools:tasks:new:add-task")}
               buttonStyle="primary"
+              disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleSubmit((data) => createTask(data, false))}
             />
             {!edit && <Button
               label={t("tools:tasks:new:add-create")}
               buttonStyle="secondary"
+              disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleSubmit((data) => createTask(data, true))}
             />}
@@ -654,6 +694,7 @@ export default function TaskEditor({ edit, copy }) {
             <Button
               label={t("common:buttons:cancel")}
               buttonStyle="secondary"
+              disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
               onclick={() => router.push(`/tools/tasks?page=1`)}
             />

@@ -5,7 +5,7 @@ import { DocumentDuplicateIcon, PencilIcon } from '@heroicons/react/24/outline';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function ButtonMore({ setOpenEdit, openEdit, data }) {
+export default function ButtonMore({ setOpenEdit, openEdit, data, setIsDelegating }) {
     const { t } = useTranslation();
     const [options, setOptions] = useState([
         {
@@ -17,12 +17,14 @@ export default function ButtonMore({ setOpenEdit, openEdit, data }) {
         {
             id: 2,
             name: t("tools:tasks:edit:subtask"),
-            icon: PlusIcon
+            icon: PlusIcon,
+			onclick: () => setOpenEdit({mode: "subtask"})
         },
         {
             id: 2,
             name: t("tools:tasks:edit:delegate"),
-            icon: UserPlusIcon
+            icon: UserPlusIcon,
+			onclick: () => setIsDelegating(true)
         },
     ])
 

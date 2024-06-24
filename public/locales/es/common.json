@@ -1,5 +1,6 @@
 {
   "loading": "Cargando...",
+  "saving": "Guardando...",
   "save": "¡Salvado con éxito!",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",

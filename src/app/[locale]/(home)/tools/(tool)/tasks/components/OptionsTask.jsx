@@ -210,9 +210,9 @@ export default function OptionsTask({
     <div>
       <div className="bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative">
         <TextEditor
-          quillRef={quillRef}
+          ref={quillRef}
           value={value}
-          // onChange={handleChange}
+          //onChange={handleChange}
           className="sm:h-36 h-52 w-full"
           onChangeSelection={handleTextSelection}
           setValue={setValueText}

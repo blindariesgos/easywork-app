@@ -132,7 +132,7 @@ export default function SendMessage({
                               <TextEditor
                                 className="w-full bg-white h-full"
                                 theme="snow"
-                                quillRef={quillRef}
+                                ref={quillRef}
                                 value={value}
                                 setValue={setValueText}
                               />

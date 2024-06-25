@@ -16,7 +16,6 @@ export const useTasks = ({ page = 1, limit = 15 }) => {
 };
 
 export const useTask = (id) => {
-  console.log("Obteniendo tarea", `/tools/tasks/${id}`);
   const { data, error, isLoading } = useSWR(`/tools/tasks/${id}`, fetcher);
 
   return {

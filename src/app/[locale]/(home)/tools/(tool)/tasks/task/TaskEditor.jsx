@@ -253,8 +253,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     try {
       setLoading(true);
       if (edit) {
-
-        console.log(body)
         await putTaskId(edit.id, body);
         setLoading(false);
         toast.success(t("tools:tasks:update-msg"));

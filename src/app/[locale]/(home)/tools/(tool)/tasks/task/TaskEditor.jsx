@@ -29,6 +29,22 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
 
+const schemaInputs = yup.object().shape({
+  name: yup.string().required(),
+  responsible: yup.array(),
+  createdBy: yup.array(),
+  subTask: yup.array(),
+  participants: yup.array(),
+  observers: yup.array(),
+  limitDate: yup.string().nullable(),
+  startDate: yup.string(),
+  duration: yup.string(),
+  endDate: yup.string(),
+  crm: yup.array(),
+  tags: yup.array(),
+  listField: yup.array(),
+});
+
 export default function TaskEditor({ edit, copy, subtask }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
@@ -37,7 +53,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
-  const [value, setValueText] = useState((edit?.description ?? copy?.description) ?? "");
+  const [value, setValueText] = useState(edit?.description ?? copy?.description ?? "");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
@@ -47,45 +63,16 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const params = new URLSearchParams(searchParams);
   const { mutate } = useSWRConfig();
   const [openOptions, setOpenOptions] = useState({
-    created: edit?.createdBy ? true : false,
-    participants: (edit?.participants?.length ?? copy?.participants?.length) > 0 ? true : false,
-    observers: (edit?.observers?.length ?? copy?.observers?.length) > 0 ? true : false,
-    time: (edit?.deadline ?? copy?.deadline) ? true : false,
-    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) ||
-      (edit?.requireRevision ?? copy?.requireRevision) ? true : false,
-    more: (edit?.crm?.length ?? copy?.crm?.length ?? subtask) ? true : false,
+    created: !!edit?.createdBy,
+    participants: (edit?.participants?.length ?? copy?.participants?.length) > 0,
+    observers: (edit?.observers?.length ?? copy?.observers?.length) > 0,
+    time: !!(edit?.deadline ?? copy?.deadline),
+    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) || (edit?.requireRevision ?? copy?.requireRevision),
+    more: (edit?.crm?.length ?? copy?.crm?.length ?? subtask) > 0,
   });
 
-  const {
-    data: listContactsPolizas,
-    isLoading,
-    isError,
-  } = useTaskContactsPolizas();
-
-  const {tasksList, isLoading: isLoadingList, isError: isErrorList} = useTasksList();
-
-  console.log(tasksList)
-
-
-  useEffect(() => {
-    if (edit) {
-      setCheckedTime(edit.requireSummary);
-      const optionsSelected = [];
-      if (edit?.requireRevision) {
-        optionsSelected.push({
-          id: 2,
-          name: t("tools:tasks:new:review-task"),
-        });
-      }
-      if (edit?.responsibleCanChangeDate) {
-        optionsSelected.push({
-          id: 1,
-          name: t("tools:tasks:new:person-responsible"),
-        });
-      }
-      setSelectedOptions(optionsSelected);
-    }
-  }, [edit, t]); //
+  const { data: listContactsPolizas, isLoading, isError } = useTaskContactsPolizas();
+  const { tasksList, isLoading: isLoadingList, isError: isErrorList } = useTasksList();
 
   const optionsTime = [
     {
@@ -106,22 +93,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     },
   ];
 
-  const schemaInputs = yup.object().shape({
-    name: yup.string(),
-    responsible: yup.array(),
-    createdBy: yup.array(),
-    subTask: yup.array(),
-    participants: yup.array(),
-    observers: yup.array(),
-    limitDate: yup.string(),
-    startDate: yup.string(),
-    duration: yup.string(),
-    endDate: yup.string(),
-    crm: yup.array(),
-    tags: yup.array(),
-    listField: yup.array(),
-  });
-
   const {
     register,
     handleSubmit,
@@ -136,23 +107,13 @@ export default function TaskEditor({ edit, copy, subtask }) {
       name: edit?.name ?? copy?.name ?? "",
       limitDate: edit?.deadline ?? copy?.deadline ?? "",
       startDate: edit?.startTime ?? copy?.startTime ?? "",
-      endDate: edit?.deadline ?? copy?.deadline ?? "",
+      endDate: (edit?.startTime || copy?.startTime) ? edit?.deadline ?? copy?.deadline ?? "" : "",
       participants: edit?.participants ?? copy?.participants ?? [],
       responsible: edit?.responsible ?? copy?.responsible ?? [],
       observers: edit?.observers ?? copy?.observers ?? [],
       tags: edit?.tags ?? copy?.tags ?? [],
       subTask: subtask ? [subtask] : [],
-      crm: edit?.crm?.length > 0 ? edit.crm.map(item => ({
-        id: item?.contact?.id ?? item?.poliza?.id,
-        type: item?.type,
-        name: item?.contact?.name,
-        title: item?.poliza?.title ?? item?.poliza?.noPoliza
-      })) : null ?? copy?.crm?.length > 0 ? copy.crm.map(item => ({
-        id: item?.contact?.id ?? item?.poliza?.id,
-        type: item?.type,
-        name: item?.contact?.name,
-        title: item?.poliza?.title ?? item?.poliza?.noPoliza
-      })) : null ?? contactCRM ? [{ id: contactCRM, type: "contact", name: "Juan Hernandez" }] : null ?? [],
+      crm: formatCrmData(edit?.crm ?? copy?.crm ?? contactCRM),
       createdBy: edit ? [edit.createdBy] : [],
     },
     resolver: yupResolver(schemaInputs),
@@ -160,119 +121,60 @@ export default function TaskEditor({ edit, copy, subtask }) {
 
   useEffect(() => {
     if (params.get("prev") === "contact") {
-      setContactCRM(params.get("prev_id"));
-      setValue("crm", [{ id: params.get("prev_id"), type: "contact" }]);
-      setValue("name", "CRM: ")
-      setOpenOptions({ ...openOptions, more: true })
+      const prevId = params.get("prev_id");
+      setContactCRM(prevId);
+      setValue("crm", [{ id: prevId, type: "contact" }]);
+      setValue("name", "CRM: ");
+      setOpenOptions((prev) => ({ ...prev, more: true }));
     }
   }, [params]);
 
   useEffect(() => {
-    if (session)
+    if (session) {
       setValue(
         "createdBy",
         lists?.users.filter((user) => user.id === session.user?.id)
       );
+    }
   }, [session, lists?.users, setValue]);
+
+  useEffect(() => {
+    if (edit) {
+      setCheckedTime(edit.requireSummary);
+      const optionsSelected = getSelectedOptions(edit, t);
+      setSelectedOptions(optionsSelected);
+    }
+  }, [edit, t]);
 
   const createTask = async (data, isNewTask) => {
     if (value === "") return toast.error(t("tools:tasks:description"));
     if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
-    let crm = [];
 
-    if (data?.crm?.length > 0) {
-      crm = data?.crm.map((item) => ({ id: item.id, type: item.type }))
-    }
+    const crm = data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
+    const body = buildTaskBody(data, value, selectedOptions, session, crm, listField, t);
 
-    const body = {
-      name: data.name,
-      description: value,
-      requireRevision:
-        selectedOptions.filter((sel) => sel.id === 2).length > 0 ? true : false,
-      requireSummary: checkedTime,
-      responsibleCanChangeDate:
-        selectedOptions.filter((sel) => sel.id === 1).length > 0 ? true : false,
-      createdById: session.user?.id,
-      crm,
-    };
-
-    if (data.observers && data.observers.length > 0) {
-      const observersIds = data.observers.map((obs) => {
-        return obs.id;
-      });
-      body.observersIds = observersIds || [];
-    }
-    if (data.participants && data.participants.length > 0) {
-      const participantsIds = data.participants.map((part) => {
-        return part.id;
-      });
-      body.participantsIds = participantsIds || [];
-    }
-    if (data.responsible && data.responsible.length > 0) {
-      const responsibleIds = data.responsible.map((resp) => {
-        return resp.id;
-      });
-      body.responsibleIds = responsibleIds || [];
-    }
-
-    if (data.subTask && data.subTask.length > 0) {
-      const subTaskIds = data.subTask.map((sub) => {
-        return sub.id;
-      });
-      body.parentId = subTaskIds[0];
-    }
-
-    if (data.tags && data.tags.length > 0) {
-      const tagsIds = data.tags.map((tag) => {
-        return tag.id;
-      });
-      body.tagsIds = tagsIds || [];
-    }
-
-    if (listField && listField.length > 0) {
-      const outputArray = listField.map((item) => {
-        const child = item.subItems
-          .filter((subItem) => subItem.name !== "")
-          .map((subItem) => ({
-            text: subItem.name,
-            completed: subItem.value,
-          }));
-        const completed = child.every((subItem) => subItem.completed);
-        return {
-          text: item.name,
-          completed,
-          child,
-        };
-      });
-      body.listField = outputArray || [];
-    }
-    if (data?.limitDate || data?.endDate)
-      body.deadline =
-        getFormatDate(data?.limitDate) || getFormatDate(data?.endDate);
-    if (data?.startDate) body.startTime = getFormatDate(data?.startDate);
     try {
       setLoading(true);
       if (edit) {
         await putTaskId(edit.id, body);
-        setLoading(false);
         toast.success(t("tools:tasks:update-msg"));
         await mutate(`/tools/tasks/user?limit=15&page=1`);
         router.push("/tools/tasks?page=1");
       } else {
         await postTask(body);
         toast.success(t("tools:tasks:success-msg"));
-        setLoading(false);
-        await mutate(`/tools/tasks/user?limit=15&page=1`);
-
         if (isNewTask) {
           reset();
           setValueText("");
           setValue("name", "");
-        } else router.push("/tools/tasks?page=1");
+        } else {
+          router.push("/tools/tasks?page=1");
+        }
       }
     } catch (error) {
-      setLoading(false);
       handleApiError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -702,3 +604,78 @@ export default function TaskEditor({ edit, copy, subtask }) {
     </>
   );
 }
+
+const formatCrmData = (crmData) => {
+  if (!crmData) return [];
+  return crmData.map((item) => ({
+    id: item?.contact?.id ?? item?.poliza?.id,
+    type: item?.type,
+    name: item?.contact?.name,
+    title: item?.poliza?.title ?? item?.poliza?.noPoliza,
+  }));
+};
+
+const getSelectedOptions = (edit, t) => {
+  const optionsSelected = [];
+  if (edit?.requireRevision) {
+    optionsSelected.push({
+      id: 2,
+      name: t("tools:tasks:new:review-task"),
+    });
+  }
+  if (edit?.responsibleCanChangeDate) {
+    optionsSelected.push({
+      id: 1,
+      name: t("tools:tasks:new:person-responsible"),
+    });
+  }
+  return optionsSelected;
+};
+
+const buildTaskBody = (data, description, selectedOptions, session, crm, listField, t) => {
+  const body = {
+    name: data.name,
+    description,
+    requireRevision: selectedOptions.some((sel) => sel.id === 2),
+    requireSummary: data.requireSummary,
+    responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
+    createdById: session.user?.id,
+    crm,
+  };
+
+  if (data.observers?.length) {
+    body.observersIds = data.observers.map((obs) => obs.id);
+  }
+  if (data.participants?.length) {
+    body.participantsIds = data.participants.map((part) => part.id);
+  }
+  if (data.responsible?.length) {
+    body.responsibleIds = data.responsible.map((resp) => resp.id);
+  }
+  if (data.subTask?.length) {
+    body.parentId = data.subTask[0].id;
+  }
+  if (data.tags?.length) {
+    body.tagsIds = data.tags.map((tag) => tag.id);
+  }
+  if (listField?.length) {
+    body.listField = listField.map((item) => ({
+      text: item.name,
+      completed: item.subItems.every((subItem) => subItem.value),
+      child: item.subItems.filter((subItem) => subItem.name).map((subItem) => ({
+        text: subItem.name,
+        completed: subItem.value,
+      })),
+    }));
+  }
+
+
+  body.deadline = getFormatDate(data.limitDate ?? data.endDate) ?? null;
+  body.startTime = getFormatDate(data.startDate) ?? null;
+
+  console.log("body", body);
+  console.log(data.limitDate);
+  console.log(data.endDate);
+
+  return body;
+};

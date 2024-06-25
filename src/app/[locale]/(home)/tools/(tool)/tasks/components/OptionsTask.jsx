@@ -11,16 +11,9 @@ import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import useAppContext from "../../../../../../../context/app";
+import useAppContext from "@/src/context/app";
 
-export default function OptionsTask({
-  edit,
-  copy,
-  value,
-  setValueText,
-  disabled,
-  setListField,
-}) {
+const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const quillRef = useRef(null);
@@ -55,22 +48,16 @@ export default function OptionsTask({
       onclick: () => setDropdownVisible(!dropdownVisible),
       disabled: arroba,
     },
-    // {
-    // 	id: 4,
-    // 	name: t('tools:tasks:new:appointment'),
-    // 	icon: RiDoubleQuotesL,
-    // 	onclick: () => addQuote()
-    // },
     {
       id: 5,
       name: t("tools:tasks:new:verification-list"),
       onclick: () => {
-        fields.length === 0 &&
+        if (fields.length === 0) {
           append({
-            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1
-              }`,
+            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
             subItems: [{ name: "", value: false, empty: true }],
           });
+        }
         setOpenList(!openList);
       },
     },
@@ -81,7 +68,7 @@ export default function OptionsTask({
       menu: true,
     },
   ];
-  //FUNCTIONS TO CHECKLIST
+
   const schema = yup.object().shape({
     items: yup.array().of(
       yup.object().shape({
@@ -95,11 +82,11 @@ export default function OptionsTask({
     ),
   });
 
-  const { register, handleSubmit, control, getValues, setValue, watch } =
-    useForm({
-      defaultValues: {},
-      resolver: yupResolver(schema),
-    });
+  const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
+    defaultValues: {},
+    resolver: yupResolver(schema),
+  });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
@@ -107,85 +94,77 @@ export default function OptionsTask({
 
   useEffect(() => {
     setListField && setListField(watch("items"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch()]);
+  }, [watch, setListField]);
 
   useEffect(() => {
-    if (edit && edit.listField && edit.listField.length > 0) {
-      const outputArray = edit?.listField.map((item) => {
-        const subItems = item.child.map((subItem) => ({
+    if (edit?.listField?.length > 0) {
+      const outputArray = edit.listField.map(item => ({
+        name: item.text,
+        subItems: item.child.map(subItem => ({
           name: subItem.text,
           value: subItem.completed,
           empty: false,
-        }));
-        return {
-          name: item.text,
-          subItems,
-        };
-      });
+        })),
+      }));
       setValue("items", outputArray);
     }
   }, [edit, setValue]);
 
   useEffect(() => {
-    if (copy && copy.listField && copy.listField.length > 0) {
-      const outputArray = copy?.listField.map((item) => {
-        const subItems = item.child.map((subItem) => ({
+    if (copy?.listField?.length > 0) {
+      const outputArray = copy.listField.map(item => ({
+        name: item.text,
+        subItems: item.child.map(subItem => ({
           name: subItem.text,
           value: subItem.completed,
           empty: false,
-        }));
-        return {
-          name: item.text,
-          subItems,
-        };
-      });
+        })),
+      }));
       setValue("items", outputArray);
     }
   }, [copy, setValue]);
 
-  /*-------------------------------------------------------------*/
-
   const handleTextSelection = (selection, source, editor) => {
-    selection &&
+    if (selection) {
       setSelectText(editor.getText(selection.index, selection.length));
+    }
   };
 
   useEffect(() => {
-    if (lists?.users) setDataUsers(lists?.users);
+    if (lists?.users) {
+      setDataUsers(lists.users);
+    }
   }, [lists]);
 
   useEffect(() => {
-    if (userSelected) addUserSelected(userSelected.username);
+    if (userSelected) {
+      addUserSelected(userSelected.username);
+    }
   }, [userSelected]);
 
   const addUserSelected = (name) => {
     if (quillRef.current) {
       const quillEditor = quillRef.current.getEditor();
       const currentContents = quillEditor.getContents();
-      let newContent = [];
-      currentContents.ops.length > 0 &&
-        currentContents.ops.map((op) => {
-          newContent.push({
-            insert: op.insert.replace(/\n$/, "").replace("@", ""),
-            attributes: { ...op.attributes },
-          });
-        });
+      const newContent = currentContents.ops.map(op => ({
+        insert: op.insert.replace(/\n$/, "").replace("@", ""),
+        attributes: { ...op.attributes },
+      }));
 
       quillEditor.setContents([
         ...newContent,
         { insert: name, attributes: { color: "#86BEDF", underline: true } },
         { insert: " " },
       ]);
-      setUserSelected("");
+      setUserSelected(null);
     }
   };
 
   const onChangeCustom = (event) => {
     const { value } = event.target;
-    const filterData = lists?.users.filter((user) => {
-      return user.name.toLowerCase().includes(value.toLowerCase());
-    });
+    const filterData = lists?.users.filter(user =>
+      user.name.toLowerCase().includes(value.toLowerCase())
+    );
     setDataUsers(filterData);
   };
 
@@ -202,7 +181,7 @@ export default function OptionsTask({
   );
 
   const deleteFiles = (indexToDelete) => {
-    const documents = files.filter((item, index) => index !== indexToDelete);
+    const documents = files.filter((_, index) => index !== indexToDelete);
     setFiles(documents);
   };
 
@@ -212,7 +191,6 @@ export default function OptionsTask({
         <TextEditor
           ref={quillRef}
           value={value}
-          //onChange={handleChange}
           className="sm:h-36 h-52 w-full"
           onChangeSelection={handleTextSelection}
           setValue={setValueText}
@@ -221,9 +199,9 @@ export default function OptionsTask({
         {arroba && dropdownUsers(true)}
       </div>
       <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
-        {options.map((opt, index) => (
+        {options.map((opt) => (
           <div
-            key={index}
+            key={opt.id}
             className="flex gap-1 items-center cursor-pointer"
             onClick={opt.onclick}
             ref={opt.id === 3 ? mentionButtonRef : null}
@@ -237,18 +215,16 @@ export default function OptionsTask({
                 <p className="text-sm">{opt.name}</p>
               </button>
             ) : (
-              <div>
-                <AddListSeLectingText
-                  text={opt.name}
-                  fields={fields}
-                  append={append}
-                  setValue={setValue}
-                  value={selectText}
-                  getValues={getValues}
-                  watch={watch}
-                  setOpenList={setOpenList}
-                />
-              </div>
+              <AddListSeLectingText
+                text={opt.name}
+                fields={fields}
+                append={append}
+                setValue={setValue}
+                value={selectText}
+                getValues={getValues}
+                watch={watch}
+                setOpenList={setOpenList}
+              />
             )}
           </div>
         ))}
@@ -278,4 +254,6 @@ export default function OptionsTask({
       )}
     </div>
   );
-}
+};
+
+export default OptionsTask;

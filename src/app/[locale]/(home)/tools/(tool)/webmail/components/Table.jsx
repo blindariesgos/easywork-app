@@ -12,8 +12,9 @@ import {
 import { useSession } from "next-auth/react";
 import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
+import { Pagination } from "../../../../../../../components/pagination/Pagination";
 
-export default function Table({ mails, selectedFolder = 'INBOX' }) {
+export default function Table({ mails, selectedFolder = "INBOX" }) {
   const router = useRouter();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -25,8 +26,9 @@ export default function Table({ mails, selectedFolder = 'INBOX' }) {
   const session = useSession();
 
   useEffect(() => {
-    console.log(selectedFolder)
-    const filteredMails = mails.filter(mail => mail.labelIds && mail.labelIds.includes(selectedFolder));
+    const filteredMails = mails.filter(
+      (mail) => mail.labelIds && mail.labelIds.includes(selectedFolder)
+    );
     setMailsData(filteredMails);
   }, [mails, selectedFolder]);
 
@@ -116,7 +118,10 @@ export default function Table({ mails, selectedFolder = 'INBOX' }) {
                     return (
                       <div
                         key={mail.id}
-                        onClick={() => {setSelectMail(mail); router.push("/tools/webmail/?detail=true")}}
+                        onClick={() => {
+                          setSelectMail(mail);
+                          router.push("/tools/webmail/?detail=true");
+                        }}
                         className={clsx(
                           selectedTasks.includes(mail)
                             ? "bg-gray-50"
@@ -185,6 +190,9 @@ export default function Table({ mails, selectedFolder = 'INBOX' }) {
             </div>
           </div>
         </div>
+      </div>
+      <div className="flex justify-center">
+        <Pagination totalPages={10} bgColor="bg-gray-300" />
       </div>
     </div>
   );

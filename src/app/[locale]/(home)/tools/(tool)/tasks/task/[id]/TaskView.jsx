@@ -7,11 +7,10 @@ import {
   FireIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
-import DropdownSelect from "../../components/DropdownSelect";
-import Button from "@/src/components/form/Button";
+import TaskEntity from "../../components/TaskEntity";
 import ButtonMore from "../../components/ButtonMore";
 import TabsTask from "../../components/Tabs/TabsTask";
 import * as yup from "yup";
@@ -34,6 +33,7 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import DropdownSelect from "../../components/DropdownSelect";
 
 export default function TaskView({ id }) {
   const { task, isLoading, isError } = useTask(id);
@@ -96,7 +96,7 @@ export default function TaskView({ id }) {
         className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
       >
         {openEdit?.mode !== "copy" && <div className="flex justify-between items-center py-2">
-          <h1 className="text-xl font-medium">{openEdit?.mode === "subtask"? <span>Creando subtarea para: <span className="text-primary italic underline decoration-indigo-600">{task?.name}</span></span> : task?.name}</h1>
+          <h1 className="text-xl font-medium">{openEdit?.mode === "subtask" ? <span>Creando subtarea para: <span className="text-primary italic underline decoration-indigo-600">{task?.name}</span></span> : task?.name}</h1>
           <IconDropdown
             icon={openEdit?.mode === "edit" ? <Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" /> : null}
             options={settings}
@@ -105,7 +105,7 @@ export default function TaskView({ id }) {
         </div>}
         <div className="w-full flex gap-2 sm:gap-4 sm:flex-row flex-col h-full">
           {openEdit ? (
-            <TaskEditor edit={openEdit?.mode === "edit" && task} copy={openEdit?.mode === "copy" && task} subtask={openEdit?.mode === "subtask" && task}/>
+            <TaskEditor edit={openEdit?.mode === "edit" && task} copy={openEdit?.mode === "copy" && task} subtask={openEdit?.mode === "subtask" && task} />
           ) : (
             <div className={`w-full ${!openEdit ? "sm:w-9/12" : "sm:w-full"}`}>
               <div className="bg-white rounded-lg">
@@ -166,7 +166,7 @@ export default function TaskView({ id }) {
                       >
                         {t("tools:tasks:edit:end")}
                       </button>
-       
+
                     )}
                     <ButtonMore
                       setOpenEdit={setOpenEdit}
@@ -175,7 +175,7 @@ export default function TaskView({ id }) {
                       setIsDelegating={setIsDelegating}
                     />
                     {isDelegating && (
-                      <TaskDelegate lists={lists} t={t} setIsDelegating={setIsDelegating} responsibleId={task?.responsible[0]?.id} taskId={task?.id}/>
+                      <TaskDelegate lists={lists} t={t} setIsDelegating={setIsDelegating} responsibleId={task?.responsible[0]?.id} taskId={task?.id} />
                     )}
                     {/* <div className="flex gap-2 items-center">
                       <BsStopwatchFill className="h-4 w-4 text-easy-400" />
@@ -234,71 +234,27 @@ export default function TaskView({ id }) {
                 <TaskResponsible
                   task={task}
                   lists={lists}
-                  getValues={getValues}
-                  setValue={setValue}
                   field={field}
-                  errors={errors}
+                  t={t}
+                />
+                <TaskParticipants
+                  task={task}
+                  lists={lists}
+                  field={field}
+                  t={t}
+                />
+                <TaskObservers
+                  task={task}
+                  lists={lists}
+                  field={field}
                   t={t}
                 />
                 <div className="mb-4">
                   <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
-                  <p className="text-sm text-black">
-                    {t("tools:tasks:edit:participants")}
-                  </p>
-                  <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
-                      {t('tools:tasks:edit:add')}
-                    </p>
-                  </div>
-                  
-                  {task?.participants?.length > 0 &&
-                    task.participants.map((part, index) => (
-                      <div className="flex gap-2 items-center mt-3" key={index}>
-                        <Image
-                          className="h-8 w-8 rounded-full object-fill"
-                          width={50}
-                          height={50}
-                          src={part?.avatar || "/img/avatar.svg"}
-                          alt=""
-                          objectFit="cover"
-                        />
-                        <p className="font-semibold text-blue-800 text-sm">
-                          {part?.username}
-                        </p>
-                      </div>
-                    ))}
-                </div>
-                <div className="mb-4">
-                  <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
                     <p className="text-sm text-black">
-                      {t("tools:tasks:edit:observers")}
+                      {t("tools:tasks:edit:tags")}
                     </p>
                     <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
-                      {t('tools:tasks:edit:add')}
-                    </p>
-                  </div>
-                  {task?.observers?.length > 0 &&
-                    task.observers.map((obs, index) => (
-                      <div className="flex gap-2 items-center mt-3" key={index}>
-                        <Image
-                          className="h-8 w-8 rounded-full object-cover"
-                          width={50}
-                          height={50}
-                          src={obs?.avatar || "/img/avatar.svg"}
-                          alt=""
-                          objectFit="contain"
-                        />
-                        <p className="font-semibold text-blue-800 text-sm">
-                          {obs?.name}
-                        </p>
-                      </div>
-                    ))}
-                </div>
-                <div className="mb-4">
-                  <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
-                  <p className="text-sm text-black">
-                    {t("tools:tasks:edit:tags")}
-                  </p>
-                  <p className="text-xs text-slate-400 cursor-pointer hover:text-slate-500">
                       {task?.tags?.length > 0 ? t('tools:tasks:edit:editTag') : t('tools:tasks:edit:addTag')}
                     </p>
                   </div>
@@ -330,7 +286,7 @@ export default function TaskView({ id }) {
 const TaskDelegate = ({ lists, t, setIsDelegating, responsibleId, taskId }) => {
   const { mutate } = useSWRConfig();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const schema = yup.object().shape({
     participants: yup.array(),
   });
@@ -341,20 +297,20 @@ const TaskDelegate = ({ lists, t, setIsDelegating, responsibleId, taskId }) => {
     const body = {};
 
     const responsibleIds = data.responsible.map((resp) => {
-        return resp.id;
-      });
-      body.responsibleIds = responsibleIds || [];
+      return resp.id;
+    });
+    body.responsibleIds = responsibleIds || [];
 
-      try {
-        await putTaskId(taskId, body);
-        toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${taskId}`);
-        setIsDelegating(false);
-      } catch (error) {
-        handleApiError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
+    try {
+      await putTaskId(taskId, body);
+      toast.success(t("tools:tasks:update-msg"));
+      await mutate(`/tools/tasks/${taskId}`);
+      setIsDelegating(false);
+    } catch (error) {
+      handleApiError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const { register, handleSubmit, formState: { errors }, control, getValues, reset, setValue, watch } = useForm({
@@ -413,91 +369,63 @@ const TaskDelegate = ({ lists, t, setIsDelegating, responsibleId, taskId }) => {
   );
 };
 
-const TaskDeadLine = ({task, onDateChange, t, onDateRemove})=>{
+const TaskResponsible = ({ task, lists, field, t }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(task?.deadline ? parseISO(task.deadline) : new Date());
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const containerRef = useRef(null);
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    setIsEditing(false);
-    onDateChange(formatISO(date));
-  };
-
-  const handleDateRemove = () => {
-    setSelectedDate(null);
-    onDateRemove();
-  };
-
-
-  const handleDateClick = (e) => {
-    if (task.completedTime) return;
-    setIsEditing(true);
-    const containerRect = containerRef.current.getBoundingClientRect();
-    setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
-  };
-
-   return (
-    <div className="relative" ref={containerRef}>
-      <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
-        <p className="text-sm text-black">
-          {t("tools:tasks:edit:limit-date")}:
-        </p>
-        <div className="flex items-center"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}>
-          <p
-          className={clsx(!task.completedTime && "underline decoration-dotted cursor-pointer font-semibold", "text-sm text-black")}
-          onClick={handleDateClick}
-        >
-          {task?.deadline ? formatDate(task?.deadline, 'dd/MM/yyyy hh:mm a') : 'Ninguna'}
-        </p>
-          {task?.deadline && (
-            <FaTimes 
-              className={`ml-2 text-red-500 hover:text-red-700 cursor-pointer ${isHovering ? 'visible' : 'invisible'}`}
-              onClick={handleDateRemove}
-            />
-          )}
-        </div>
-      </div>
-       <Transition
-        show={isEditing}
-        enter="transition ease-out duration-200"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-150"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <div
-          className="absolute z-10 bg-white shadow-lg rounded-md"
-          style={{ top: position.top + 20, left: 'auto', right: `calc(90% - ${position.left}px)` }}
-        >
-          <DatePicker
-            selected={selectedDate}
-            onChange={handleDateChange}
-            onClickOutside={() => setIsEditing(false)}
-            inline
-          />
-        </div>
-      </Transition>
-    </div>
-  );
-}
-
-const TaskResponsible = ({task, lists, getValues, setValue, field, errors, t})=>{
-  const [isEditing, setIsEditing] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const { mutate } = useSWRConfig();
+
+  const schema = yup.object().shape({
+    responsible: yup.array(),
+  });
 
   const handleEditClick = (e) => {
     setIsEditing(true);
     const containerRect = containerRef.current.getBoundingClientRect();
     setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
   };
+
+  const { register, handleSubmit, formState: { errors }, control, getValues, reset, setValue, watch } = useForm({
+    defaultValues: {
+      responsible: [],
+    },
+    resolver: yupResolver(schema),
+  });
+
+  const handleDateChange = async (name, value) => {
+    setIsLoading(true);
+    setValue('responsible', value, { shouldValidate: true });
+
+    await handleSubmit(async (data) => {
+      const responsibleIds = data.responsible.map((resp) => {
+        return resp.id;
+      });
+
+      if (responsibleIds.length !== 1) return;
+
+      const body = {
+        responsibleIds
+      };
+
+      try {
+        await putTaskId(task.id, body);
+        toast.success(t("tools:tasks:update-msg"));
+        await mutate(`/tools/tasks/${task.id}`);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        reset();
+        setIsLoading(false);
+        setIsEditing(false);
+      }
+    })({ preventDefault: () => { } });
+  };
+
+  // Filtrar usuarios para excluir el responsable actual
+  const filteredUsers = lists?.users.filter(user => user.id !== task.responsible[0]?.id) || [];
+
 
   const handleDateRemove = (id) => {
     const updatedResponsible = getValues('responsible').filter((res) => res.id !== id);
@@ -513,9 +441,9 @@ const TaskResponsible = ({task, lists, getValues, setValue, field, errors, t})=>
         </p>
         <p
           className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
-          onClick={handleEditClick}
+          onClick={isLoading ? () => { } : handleEditClick}
         >
-          {t('tools:tasks:edit:change')}
+          {isLoading ? t('tools:tasks:delegating') : t('tools:tasks:edit:change')}
         </p>
       </div>
       {task?.responsible?.length > 0 &&
@@ -555,16 +483,106 @@ const TaskResponsible = ({task, lists, getValues, setValue, field, errors, t})=>
         leaveTo="transform opacity-0 scale-95"
       >
         <div className="absolute w-full z-50 bg-white shadow-lg rounded-md"
-        style={{ top: position.top + 20, left: 'auto', right: `auto` }}>
+          style={{ top: position.top + 20, left: 'auto', right: `auto` }}>
           <DropdownSelect
             {...field}
-            options={lists?.users || []}
+            options={filteredUsers}
             getValues={getValues}
-            setValue={setValue}
+            setValue={handleDateChange}
             name="responsible"
             error={errors.responsible}
             isOpen={isEditing}
             setIsOpen={setIsEditing}
+          />
+        </div>
+      </Transition>
+    </div>
+  );
+}
+
+
+const TaskParticipants = (props) => {
+  const getFilteredUsers = (lists, task) => lists?.users?.filter(user => !task?.participants?.find(part => part.id === user.id));
+  const updateTaskBody = (entityIds) => ({ participantsIds: entityIds });
+
+  return <TaskEntity {...props} entityKey="participants" label="tools:tasks:edit:participants" getFilteredUsers={getFilteredUsers} updateTaskBody={updateTaskBody} />;
+};
+
+const TaskObservers = (props) => {
+  const getFilteredUsers = (lists, task) => lists?.users?.filter(user => !task?.observers?.find(observer => observer.id === user.id));
+  const updateTaskBody = (entityIds) => ({ observersIds: entityIds });
+
+  return <TaskEntity {...props} entityKey="observers" label="tools:tasks:edit:observers" getFilteredUsers={getFilteredUsers} updateTaskBody={updateTaskBody} />;
+};
+
+
+const TaskDeadLine = ({ task, onDateChange, t, onDateRemove }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(task?.deadline ? parseISO(task.deadline) : new Date());
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const containerRef = useRef(null);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setIsEditing(false);
+    onDateChange(formatISO(date));
+  };
+
+  const handleDateRemove = () => {
+    setSelectedDate(null);
+    onDateRemove();
+  };
+
+
+  const handleDateClick = (e) => {
+    if (task.completedTime) return;
+    setIsEditing(true);
+    const containerRect = containerRef.current.getBoundingClientRect();
+    setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
+  };
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
+        <p className="text-sm text-black">
+          {t("tools:tasks:edit:limit-date")}:
+        </p>
+        <div className="flex items-center"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}>
+          <p
+            className={clsx(!task.completedTime && "underline decoration-dotted cursor-pointer font-semibold", "text-sm text-black")}
+            onClick={handleDateClick}
+          >
+            {task?.deadline ? formatDate(task?.deadline, 'dd/MM/yyyy hh:mm a') : 'Ninguna'}
+          </p>
+          {task?.deadline && (
+            <FaTimes
+              className={`ml-2 text-red-500 hover:text-red-700 cursor-pointer ${isHovering ? 'visible' : 'invisible'}`}
+              onClick={handleDateRemove}
+            />
+          )}
+        </div>
+      </div>
+      <Transition
+        show={isEditing}
+        enter="transition ease-out duration-200"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-150"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <div
+          className="absolute z-10 bg-white shadow-lg rounded-md"
+          style={{ top: position.top + 20, left: 'auto', right: `calc(90% - ${position.left}px)` }}
+        >
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            onClickOutside={() => setIsEditing(false)}
+            inline
           />
         </div>
       </Transition>

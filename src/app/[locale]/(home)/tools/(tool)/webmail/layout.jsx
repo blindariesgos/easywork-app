@@ -28,7 +28,11 @@ import SliderOverEmail from "./components/SliderOverEmail";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getTokenGoogle, getFoldersSaved, deleteTokenGoogle } from "../../../../../../lib/apis";
+import {
+  getTokenGoogle,
+  getFoldersSaved,
+  deleteTokenGoogle,
+} from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
 
@@ -53,45 +57,45 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const config = {
-        headers: { Authorization: `Bearer ${session.data.user.access_token}` },
-      };
-      let mails = null; // Inicializa mails como null
-  
-      try {
-        const userGoogle = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
-          config
-        );
-        setUserData(userGoogle.data);
-  
-        mails = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
-          config
-        );
-        setMails(mails.data);
-        getFoldersSaved(session.data.user.id).then((res) => {
-          setFolders(res);
-        });
-      } catch (error) {
-        console.error('Error al obtener datos', error);
-      }
-  
-      // Llamar a deleteTokenGoogle si no hay datos de correos o si mails es null
-      if (!mails || !mails.data || mails.data.length === 0) {
-        deleteTokenGoogle(session.data.user.id)
+    fetchData();
+  }, [session]);
+
+  const fetchData = async () => {
+    const config = {
+      headers: { Authorization: `Bearer ${session.data.user.access_token}` },
+    };
+    let mails = null; // Inicializa mails como null
+
+    try {
+      const userGoogle = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
+        config
+      );
+      setUserData(userGoogle.data);
+
+      mails = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
+        config
+      );
+      setMails(mails.data);
+      getFoldersSaved(session.data.user.id).then((res) => {
+        setFolders(res);
+      });
+    } catch (error) {
+      console.error("Error al obtener datos", error);
+    }
+
+    // Llamar a deleteTokenGoogle si no hay datos de correos o si mails es null
+    if (!mails || !mails.data || mails.data.length === 0) {
+      deleteTokenGoogle(session.data.user.id)
         .then(() => {
           router.push("/tools/mails");
         })
         .catch((err) => {
           router.push("/tools/mails");
-        })
-      }
-    };
-  
-    fetchData();
-  }, [session]);
+        });
+    }
+  };
 
   function backButton() {
     setSidebarOpenEmail(false);
@@ -166,7 +170,10 @@ export default function WebmailLayout({ children, table }) {
                     <ChevronUpIcon className="ml-2 h-5 w-5 text-white" />
                   </div>
                 </div>
-                <div className="flex items-center justify-center ml-1.5 border border-white rounded-full">
+                <div
+                  className="flex items-center justify-center ml-1.5 border border-white rounded-full cursor-pointer"
+                  onClick={() => fetchData()}
+                >
                   <ArrowPathIcon className="m-1 h-6 w-6 text-white" />
                 </div>
               </div>

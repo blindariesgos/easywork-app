@@ -102,7 +102,6 @@ export default function TaskEntiy({ task, lists, entityKey, label, t, field, get
             onMouseEnter={() => setIsHovering(index)}
             onMouseLeave={() => setIsHovering(false)}
           >
-            {console.log(entity)}
             <Image
               className="h-8 w-8 rounded-full object-cover"
               width={50}
@@ -114,7 +113,7 @@ export default function TaskEntiy({ task, lists, entityKey, label, t, field, get
             <p className="font-semibold text-blue-800 text-sm">{entity?.name || entity?.username}</p>
             {isHovering === index && (
               <FaTimes
-                className="ml-2 text-red-500 cursor-pointer"
+                className="ml-2 text-indigo-500 cursor-pointer"
                 onClick={() => handleDateRemove(entity.id)}
               />
             )}

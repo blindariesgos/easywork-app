@@ -5,7 +5,7 @@ export const getFormatDate = (date) => {
   const parsedDate = new Date(date);
   // Verificar si la fecha es válida
   if (isNaN(parsedDate)) {
-    throw new Error('Fecha no válida');
+    return null;
   }
 
   return formatISO(parsedDate, { representation: 'complete' });

@@ -6,41 +6,41 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function ButtonMore({ setOpenEdit, openEdit, data, setIsDelegating }) {
-    const { t } = useTranslation();
-    const [options, setOptions] = useState([
-        {
-            id: 1,
-            name: t("tools:tasks:edit:copy"),
-            icon: DocumentDuplicateIcon,
-			onclick: () => setOpenEdit({mode: "copy"})
-        },
-        {
-            id: 2,
-            name: t("tools:tasks:edit:subtask"),
-            icon: PlusIcon,
-			onclick: () => setOpenEdit({mode: "subtask"})
-        },
-        {
-            id: 2,
-            name: t("tools:tasks:edit:delegate"),
-            icon: UserPlusIcon,
+	const { t } = useTranslation();
+	const [options, setOptions] = useState([
+		{
+			id: 1,
+			name: t("tools:tasks:edit:copy"),
+			icon: DocumentDuplicateIcon,
+			onclick: () => setOpenEdit({ mode: "copy" })
+		},
+		{
+			id: 2,
+			name: t("tools:tasks:edit:subtask"),
+			icon: PlusIcon,
+			onclick: () => setOpenEdit({ mode: "subtask" })
+		},
+		{
+			id: 2,
+			name: t("tools:tasks:edit:delegate"),
+			icon: UserPlusIcon,
 			onclick: () => setIsDelegating(true)
-        },
-    ])
+		},
+	])
 
 	useEffect(() => {
-		if (data && !data.isCompleted ){
+		if (data && !data.isCompleted && !options.find(option => option.name === t("tools:tasks:edit:edit"))) {
 			setOptions([...options, {
 				id: 32,
 				name: t("tools:tasks:edit:edit"),
 				icon: PencilIcon,
-				onclick: () => setOpenEdit({mode: "edit"})
+				onclick: () => setOpenEdit({ mode: "edit" })
 			}]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data])
-	
-    
+
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
@@ -67,7 +67,7 @@ export default function ButtonMore({ setOpenEdit, openEdit, data, setIsDelegatin
 										onClick={opt.onclick}
 										className={`group flex w-full text-gray-400 data-[focus]:bg-primary data-[focus]:text-white items-center gap-1 rounded-md px-2 py-2 text-xs`}
 									>
-                                        <opt.icon className={`h-4 w-4 data-[focus]:text-white text-black"}`}/>
+										<opt.icon className={`h-4 w-4 data-[focus]:text-white text-black"}`} />
 										{opt.name}
 									</button>
 								)}

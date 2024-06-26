@@ -22,7 +22,7 @@ import { handleApiError } from "@/src/utils/api/errors";
 import { useTask } from "@/src/lib/api/hooks/tasks";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useSWRConfig } from "swr";
-import { formatDate } from "@/src/utils/getFormatDate";
+import { formatDate, getFormatDate } from "@/src/utils/getFormatDate";
 import DatePicker from 'react-datepicker';
 import { formatISO, parseISO } from "date-fns";
 import { Transition } from '@headlessui/react';
@@ -521,17 +521,51 @@ const TaskDeadLine = ({ task, onDateChange, t, onDateRemove }) => {
   const [isHovering, setIsHovering] = useState(false);
   const [selectedDate, setSelectedDate] = useState(task?.deadline ? parseISO(task.deadline) : new Date());
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const { mutate } = useSWRConfig();
   const containerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    setIsEditing(false);
-    onDateChange(formatISO(date));
+  const schema = yup.object().shape({
+    deadline: yup.string().nullable(),
+  });
+
+  const handleDateChange = async (date) => {
+    setIsLoading(true);
+    const body = {
+      deadline: getFormatDate(date),
+    };
+
+    try {
+      await putTaskId(task?.id, body);
+      toast.success(t("tools:tasks:update-msg"));
+      await mutate(`/tools/tasks/${task?.id}`);
+    } catch (error) {
+      handleApiError(error.message);
+    } finally {
+      setIsLoading(false);
+      setIsEditing(false);
+    }
   };
 
-  const handleDateRemove = () => {
+  const handleDateRemove = async () => {
+    setIsLoading(true);
+
+    const body = {
+      deadline: null,
+    };
+
+    try {
+      await putTaskId(task?.id, body);
+      toast.success(t("tools:tasks:update-msg"));
+      await mutate(`/tools/tasks/${task?.id}`);
+    } catch (error) {
+      handleApiError(error.message);
+    } finally {
+      setIsLoading(false);
+      setIsEditing(false);
+    }
+
     setSelectedDate(null);
-    onDateRemove();
   };
 
 
@@ -559,7 +593,7 @@ const TaskDeadLine = ({ task, onDateChange, t, onDateRemove }) => {
           </p>
           {task?.deadline && (
             <FaTimes
-              className={`ml-2 text-red-500 hover:text-red-700 cursor-pointer ${isHovering ? 'visible' : 'invisible'}`}
+              className={`ml-2 text-indigo-500 hover:text-indigo-700 cursor-pointer ${isHovering ? 'visible' : 'invisible'}`}
               onClick={handleDateRemove}
             />
           )}

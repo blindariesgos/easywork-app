@@ -89,7 +89,7 @@ export default function AppContextProvider({ children }) {
       openModalFolders,
       userGoogle,
       filter,
-    ]
+    ],
   );
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

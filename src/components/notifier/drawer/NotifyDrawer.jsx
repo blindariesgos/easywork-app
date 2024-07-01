@@ -2,6 +2,7 @@
 import { useNotifyContext } from '@/src/context/notify';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import NotifyList from './NotifyList';
 
 export default function NotifyDrawer() {
   const { isOpen, setIsOpen } = useNotifyContext();
@@ -10,7 +11,7 @@ export default function NotifyDrawer() {
     <Dialog className="relative z-10" open={isOpen} onClose={setIsOpen}>
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
+        className="fixed inset-0 bg-gray-100 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
       />
 
       <div className="fixed inset-0 overflow-hidden">
@@ -33,13 +34,15 @@ export default function NotifyDrawer() {
                   </button>
                 </div>
               </TransitionChild>
-              <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+              <div className="flex h-full flex-col overflow-y-scroll bg-zinc-200 py-6 shadow-xl">
                 <div className="px-4 sm:px-6">
                   <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                    <div>Notifications</div>
+                    <div>Notificaciones</div>
                   </DialogTitle>
                 </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6">{/* Your content */}</div>
+                <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                  <NotifyList />
+                </div>
               </div>
             </DialogPanel>
           </div>

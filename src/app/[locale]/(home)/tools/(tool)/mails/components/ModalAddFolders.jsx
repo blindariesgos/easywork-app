@@ -15,7 +15,6 @@ export default function ModalAddFolders({ children }) {
   const [folderData, setFolderData] = useState([]);
   useEffect(() => {
     getTokenGoogle(session.data.user.id).then((res) => {
-      console.log(res);
       const config = {
         headers: { Authorization: `Bearer ${res.access_token}` },
       };
@@ -33,8 +32,13 @@ export default function ModalAddFolders({ children }) {
           setFolderData(updatedLabels);
         });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function saveMails() {
+    axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}`
+    );
+  }
 
   async function saveFoldersData() {
     const folders = [];
@@ -50,8 +54,9 @@ export default function ModalAddFolders({ children }) {
     });
     try {
       await saveFolders(folders);
+      await saveMails();
       setOpenModalFolders(false);
-      router.push("/tools/webmail");
+      router.push("/tools/webmail?page=1");
     } catch (error) {}
   }
 

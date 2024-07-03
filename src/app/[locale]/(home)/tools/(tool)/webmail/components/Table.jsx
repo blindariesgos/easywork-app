@@ -27,7 +27,7 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
 
   useEffect(() => {
     const filteredMails = mails.filter(
-      (mail) => mail.labelIds && mail.labelIds.includes(selectedFolder)
+      (mail) => mail.email.folder && mail.email.folder.includes(selectedFolder)
     );
     setMailsData(filteredMails);
   }, [mails, selectedFolder]);
@@ -79,70 +79,70 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
             <div className="divide-y divide-gray-300">
               <div className="divide-y divide-gray-200 bg-white">
                 {mailsData &&
-                  mailsData.map((mail) => {
-                    const subjectHeader = mail.payload.headers.find(
-                      (header) => header.name === "Subject"
-                    );
-                    const fromHeader = mail.payload.headers.find(
-                      (header) => header.name === "From"
-                    );
-                    const dateHeader = mail.payload.headers.find(
-                      (header) => header.name === "Date"
-                    );
+                  mailsData.map((item) => {
+                    // const subjectHeader = mail.payload.headers.find(
+                    //   (header) => header.name === "Subject"
+                    // );
+                    // const fromHeader = mail.payload.headers.find(
+                    //   (header) => header.name === "From"
+                    // );
+                    // const dateHeader = mail.payload.headers.find(
+                    //   (header) => header.name === "Date"
+                    // );
 
-                    let subject = subjectHeader ? subjectHeader.value : "";
-                    let from = fromHeader
-                      ? fromHeader.value.split(" <")[0]
+                    let subjectFormat = item.email.subject ? item.email.subject : "";
+                    let fromFormat =item.email.from
+                      ? item.email.from.split(" <")[0]
                       : "";
-                    let date = dateHeader
-                      ? new Date(dateHeader.value)
+                    let date = item.email.date
+                      ? new Date(item.email.date)
                       : new Date();
 
-                    subject =
-                      subject.length > 80
-                        ? `${subject.substring(0, 80)}...`
-                        : subject;
+                    subjectFormat =
+                      subjectFormat.length > 80
+                        ? `${subjectFormat.substring(0, 80)}...`
+                        : subjectFormat;
 
                     const now = new Date();
-                    let formattedDate;
+                    let dateFormat;
                     if (
                       date.getDate() === now.getDate() &&
                       date.getMonth() === now.getMonth() &&
                       date.getFullYear() === now.getFullYear()
                     ) {
-                      formattedDate = date.toLocaleTimeString();
+                      dateFormat = date.toLocaleTimeString();
                     } else {
-                      formattedDate = date.toLocaleDateString();
+                      dateFormat = date.toLocaleDateString();
                     }
 
                     return (
                       <div
-                        key={mail.id}
+                        key={item.id}
                         onClick={() => {
-                          setSelectMail(mail);
+                          setSelectMail(item.email);
                           router.push("/tools/webmail/?detail=true");
                         }}
                         className={clsx(
-                          selectedTasks.includes(mail)
+                          selectedTasks.includes(item)
                             ? "bg-gray-50"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default grid grid-cols-9 gap-2 p-4"
                         )}
                       >
                         <div className="relative px-7 sm:w-12 sm:px-6 col-span-1">
-                          {selectedTasks.includes(mail) && (
+                          {selectedTasks.includes(item) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <input
                             type="checkbox"
                             className="..."
-                            value={mail.id}
-                            checked={selectedTasks.includes(mail)}
+                            value={item.id}
+                            checked={selectedTasks.includes(item)}
                             onChange={(e) =>
                               setSelectedTasks(
                                 e.target.checked
-                                  ? [...selectedTasks, mail]
-                                  : selectedTasks.filter((p) => p !== mail)
+                                  ? [...selectedTasks, item]
+                                  : selectedTasks.filter((p) => p !== item)
                               )
                             }
                           />
@@ -151,37 +151,37 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                           className={
                             clsx(
                               "whitespace-nowrap py-1 pr-3 text-sm font-medium",
-                              selectedTasks.includes(mail)
+                              selectedTasks.includes(item)
                                 ? "text-indigo-600"
                                 : "text-gray-900"
                             ) + " col-span-5"
                           }
                         >
-                          {subject}
+                          {subjectFormat}
                         </div>
                         <div
                           className={
                             clsx(
                               "whitespace-nowrap py-1 pr-3 text-sm font-medium",
-                              selectedTasks.includes(mail)
+                              selectedTasks.includes(item)
                                 ? "text-indigo-600"
                                 : "text-gray-900"
                             ) + " col-span-2"
                           }
                         >
-                          {from}
+                          {fromFormat}
                         </div>
                         <div
                           className={
                             clsx(
                               "whitespace-nowrap py-1 pr-3 text-sm font-medium",
-                              selectedTasks.includes(mail)
+                              selectedTasks.includes(item)
                                 ? "text-indigo-600"
                                 : "text-gray-900"
                             ) + " col-span-1 text-right"
                           }
                         >
-                          {formattedDate}
+                          {dateFormat}
                         </div>
                       </div>
                     );

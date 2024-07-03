@@ -27,11 +27,12 @@ import { useTranslation } from "react-i18next";
 import SliderOverEmail from "./components/SliderOverEmail";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   getTokenGoogle,
   getFoldersSaved,
   deleteTokenGoogle,
+  getMails,
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
@@ -39,10 +40,12 @@ import ModalAddGmail from "../mails/components/ModalAddGmail";
 export default function WebmailLayout({ children, table }) {
   const session = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { query } = router;
   const { sidebarOpenEmail, setSidebarOpenEmail } = useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
-  const [mails, setMails] = useState(null);
+  const [dmails, setDMails] = useState(null);
   const [gmailState, setGmailState] = useState(false);
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
@@ -60,40 +63,48 @@ export default function WebmailLayout({ children, table }) {
     fetchData();
   }, [session]);
 
-  const fetchData = async () => {
+  const fetchData = () => {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
-    let mails = null; // Inicializa mails como null
 
     try {
-      const userGoogle = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
-        config
+      axios
+        .get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
+          config
+        )
+        .then((res) => {
+          setUserData(res.data);
+        });
+      getMails(session.data.user.id, searchParams.get("page"), 10).then(
+        (res) => {
+          axios
+            .get(
+              `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}`
+            )
+            .then(() => {
+              setDMails(res);
+            })
+            .catch(() => {
+              setDMails(res);
+            });
+        }
       );
-      setUserData(userGoogle.data);
-
-      mails = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/mails/${session.data.user.id}`,
-        config
-      );
-      setMails(mails.data);
       getFoldersSaved(session.data.user.id).then((res) => {
         setFolders(res);
       });
     } catch (error) {
       console.error("Error al obtener datos", error);
-    }
-
-    // Llamar a deleteTokenGoogle si no hay datos de correos o si mails es null
-    if (!mails || !mails.data || mails.data.length === 0) {
-      deleteTokenGoogle(session.data.user.id)
-        .then(() => {
-          router.push("/tools/mails");
-        })
-        .catch((err) => {
-          router.push("/tools/mails");
-        });
+      if (!dmails || dmails.length === 0) {
+        deleteTokenGoogle(session.data.user.id)
+          .then(() => {
+            router.push("/tools/mails");
+          })
+          .catch((err) => {
+            router.push("/tools/mails");
+          });
+      }
     }
   };
 
@@ -289,7 +300,7 @@ export default function WebmailLayout({ children, table }) {
             </ul>
           </div>
         </SliderOverEmail>
-        {mails && <Table mails={mails} selectedFolder={selectedFolder} />}
+        {dmails && <Table mails={dmails} selectedFolder={selectedFolder} />}
         {children}
       </div>
     </>

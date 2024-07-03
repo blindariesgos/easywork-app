@@ -71,7 +71,7 @@ export default function IngresarEmail() {
       const responseImap = await getTokenGoogle(session.data.user.id);
       console.log(responseImap);
       if (responseImap) {
-        router.push("/tools/webmail");
+        router.push("/tools/webmail?page=1");
       } else {
         setGmailState(true);
       }
@@ -128,7 +128,7 @@ export default function IngresarEmail() {
         <h1
           className="ml-3 w-full py-5 text-center font-medium text-xl"
           onClick={() => {
-            router.push("/tools/webmail");
+            router.push("/tools/webmail?page=1");
           }}
         >
           Use y gestione su buzón

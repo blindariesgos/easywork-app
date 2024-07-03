@@ -46,17 +46,17 @@ export default function EmailBody({
   };
 
   useEffect(() => {
-    let mailData = "";
+    // let mailData = "";
   
-    if (selectMail?.payload?.parts) {
-      mailData = getParts(selectMail.payload.parts);
-    } else if (selectMail?.payload?.body?.data) {
-      let bytes = base64.toByteArray(selectMail?.payload?.body?.data);
-      mailData = new TextDecoder().decode(bytes);
-    }
+    // if (selectMail?.payload?.parts) {
+    //   mailData = getParts(selectMail.payload.parts);
+    // } else if (selectMail?.payload?.body?.data) {
+    // let bytes = base64.toByteArray(selectMail.body);
+    // let mailData = new TextDecoder().decode(selectMail.body);
+    // console.log(mailData);
+    // }
   
-    setDecodedMailData(decode(mailData));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setDecodedMailData(selectMail.body);
   }, [selectMail]);
   
     
@@ -98,35 +98,18 @@ export default function EmailBody({
                         {subLabelTag && (
                           <Tag
                             title={subLabel}
-                            className="bg-green-primary pl-2"
+                            className="bg-easywork-main pl-2"
                             closeIcon
                             second
                           />
                         )}
                       </div>
                       <div className="bg-gray-100 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
-                        {selectMail?.payload?.headers?.map((element, index) => {
-                          if (element.name === "Subject") {
-                            return (
-                              <h1 key={index} className="text-lg mb-4">{element.value}</h1>
-                            );
-                          }
-                          return null;
-                        })}
+                          <h1 className="text-lg mb-4">{selectMail?.subject}</h1>
                         <div className="bg-white text-sm p-5 h-5/6">
                           <div className="pb-2 border-b-2">
-                            {selectMail?.payload?.headers?.map((element, index) => {
-                              if (element.name === "From") {
-                                return <p key={index}>{element.value}</p>;
-                              }
-                              return null;
-                            })}
-                            {selectMail?.payload?.headers?.map((element, index) => {
-                              if (element.name === "To") {
-                                return <p key={index}>Para: {element.value}</p>;
-                              }
-                              return null;
-                            })}
+                            <p>{selectMail?.subject}</p>
+                            {/* <p>Para: {selectMail?.to[0]}</p> */}
                             <div className="w-full flex justify-center items-center">
                               <p className="m-2 text-xs font-semibold">RESPUESTA</p>
                               <p className="m-2 text-xs font-semibold">RESPONDER A TODOS</p>

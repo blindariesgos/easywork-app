@@ -149,8 +149,7 @@ export const postTask = async (body) => {
 };
 
 export const putTaskId = async (id, body) => {
-
-  console.log("Updating task")
+  console.log("Updating task");
   const response = await axios().put(`/tools/tasks/${id}`, body);
   return response;
 };

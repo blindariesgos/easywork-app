@@ -52,10 +52,8 @@ export default function SendMessage({
       console.error("Failed to send email:", error);
     }
   }
-
-  if (params.get("send"))
     return (
-      <Transition.Root show={JSON.parse(params.get("send"))} as={Fragment}>
+      <Transition.Root show={params.get("send")} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={() => {}}>
           <div className="fixed inset-0" />
           <div className="fixed inset-0 overflow-hidden">

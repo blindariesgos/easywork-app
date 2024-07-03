@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
 import { Pagination } from "../../../../../../../components/pagination/Pagination";
+import { deleteMails } from "../../../../../../../lib/apis";
 
 export default function Table({ mails, selectedFolder = "INBOX" }) {
   const router = useRouter();
@@ -38,6 +39,16 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
     setIndeterminate(false);
   }
 
+  async function deleteEmails() {
+    let emailForDelete = [];
+    selectedTasks.forEach((element) => {
+      emailForDelete.push(element.email.id);
+    });
+    console.log(emailForDelete);
+
+    // await deleteMails();
+  }
+
   return (
     <div className="flow-root">
       <EmailBody colorTag="bg-green-100" selectMail={selectMail} />
@@ -49,7 +60,7 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                 <div className="relative w-12 px-6">
                   <input
                     type="checkbox"
-                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
                     ref={checkbox}
                     checked={checked}
                     onChange={toggleAll}
@@ -59,19 +70,24 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                   Seleccionar todo
                 </div>
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
                 <EnvelopeOpenIcon className="h-5 w-5" />
                 Leer
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
                 <FolderArrowDownIcon className="h-5 w-5" />
                 Mover a carpeta
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
                 <ExclamationCircleIcon className="h-5 w-5" />
                 Marcar como correo no deseado
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex">
+              <div
+                className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer"
+                onClick={() => {
+                  deleteEmails();
+                }}
+              >
                 <TrashIcon className="h-5 w-5" />
                 Eliminar
               </div>
@@ -90,8 +106,10 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                     //   (header) => header.name === "Date"
                     // );
 
-                    let subjectFormat = item.email.subject ? item.email.subject : "";
-                    let fromFormat =item.email.from
+                    let subjectFormat = item.email.subject
+                      ? item.email.subject
+                      : "";
+                    let fromFormat = item.email.from
                       ? item.email.from.split(" <")[0]
                       : "";
                     let date = item.email.date
@@ -118,10 +136,6 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                     return (
                       <div
                         key={item.id}
-                        onClick={() => {
-                          setSelectMail(item.email);
-                          router.push("/tools/webmail/?detail=true");
-                        }}
                         className={clsx(
                           selectedTasks.includes(item)
                             ? "bg-gray-50"
@@ -148,6 +162,10 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                           />
                         </div>
                         <div
+                          onClick={() => {
+                            setSelectMail(item.email);
+                            router.push("/tools/webmail/?detail=true");
+                          }}
                           className={
                             clsx(
                               "whitespace-nowrap py-1 pr-3 text-sm font-medium",
@@ -160,6 +178,10 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                           {subjectFormat}
                         </div>
                         <div
+                          onClick={() => {
+                            setSelectMail(item.email);
+                            router.push("/tools/webmail/?detail=true");
+                          }}
                           className={
                             clsx(
                               "whitespace-nowrap py-1 pr-3 text-sm font-medium",
@@ -172,6 +194,10 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                           {fromFormat}
                         </div>
                         <div
+                          onClick={() => {
+                            setSelectMail(item.email);
+                            router.push("/tools/webmail/?detail=true");
+                          }}
                           className={
                             clsx(
                               "whitespace-nowrap py-1 pr-3 text-sm font-medium",

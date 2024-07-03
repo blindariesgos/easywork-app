@@ -59,12 +59,8 @@ export default function EmailBody({
     setDecodedMailData(selectMail.body);
   }, [selectMail]);
   
-    
-  
-
-  if (params.get("detail"))
     return (
-      <Transition.Root show={JSON.parse(params.get("detail"))} as={Fragment}>
+      <Transition.Root show={params.get("detail")} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={() => {}}>
           <div className="fixed inset-0" />
           <div className="fixed inset-0 overflow-hidden">

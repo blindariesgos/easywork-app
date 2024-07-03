@@ -283,6 +283,11 @@ export const getFilters = async (idUser) => {
 
 export const getMails = async (idUser, page, perPage) => {
   const response = await axios().get(`/oauth/email/get/${idUser}?page=${page}&perPage=${perPage}`);
-  console.log("response", response);
   return response;
 };
+
+export const deleteMails = async (idUser) => {
+  const response = await axios().delete(`/oauth/email/delete${idUser}`);
+  return response;
+};
+

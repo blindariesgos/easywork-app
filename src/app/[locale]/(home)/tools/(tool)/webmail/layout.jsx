@@ -45,7 +45,7 @@ export default function WebmailLayout({ children, table }) {
   const { sidebarOpenEmail, setSidebarOpenEmail } = useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
-  const [dmails, setDMails] = useState(null);
+  const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
@@ -62,6 +62,12 @@ export default function WebmailLayout({ children, table }) {
   useEffect(() => {
     fetchData();
   }, [session]);
+
+  async function saveMails() {
+    axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}`
+    );
+  }
 
   const fetchData = () => {
     const config = {
@@ -84,10 +90,22 @@ export default function WebmailLayout({ children, table }) {
               `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}`
             )
             .then(() => {
-              setDMails(res);
+              console.log("res", res);
+              if (res.length !== 0) {
+                console.log("yes");
+                setDMails(res);
+              } else {
+                saveMails().then(() => {
+                  fetchData();
+                });
+              }
             })
             .catch(() => {
               setDMails(res);
+              if (dmails.length == 0)
+                saveMails().then(() => {
+                  fetchData();
+                });
             });
         }
       );

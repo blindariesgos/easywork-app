@@ -134,9 +134,9 @@ export default function WebmailLayout({ children, table }) {
   return (
     <>
       <ModalAddGmail state={gmailState} from={"buzon"}>
-        <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
+        <Tag onclick={() => setGmailState(false)} className="bg-easywork-main" />
       </ModalAddGmail>
-      <SendMessage colorTag="bg-green-100" />
+      <SendMessage colorTag="bg-easywork-main" userData={userData} />
       <div className="flex flex-col flex-grow">
         <EmailHeader
           title="Tareas"
@@ -145,7 +145,7 @@ export default function WebmailLayout({ children, table }) {
               <button
                 type="button"
                 className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-md font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
-                onClick={() => router.push("/tools/webmail/?send=true")}
+                onClick={() => router.push(`/tools/webmail/?page=${searchParams.get("page")}&send=true`)}
               >
                 Nuevo mensaje
               </button>

@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ToolContextProvider from "@/src/context/tools";
-import {  useTasksConfigs} from "@/src/hooks/useCommon";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { Pagination } from "@/src/components/pagination/Pagination";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
@@ -41,11 +41,11 @@ export default function TableTask({ data }) {
   );
   const { t } = useTranslation();
 
-useEffect(() => {
+  useEffect(() => {
     if (data) setDataTask(data);
   }, [data]);
 
-   useEffect(
+  useEffect(
     () => {
       if (orderItems.length > 0)
         setDataTask({ items: orderItems, meta: data?.meta });
@@ -54,7 +54,7 @@ useEffect(() => {
     [orderItems]
   );
 
-    useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (selectedTasks.length > 0) {
       const isIndeterminate =
         selectedTasks.length > 0 &&
@@ -91,7 +91,7 @@ useEffect(() => {
     }
   };
 
-    const optionsCheckBox = [
+  const optionsCheckBox = [
     {
       id: 1,
       name: t("common:table:checkbox:complete"),
@@ -136,11 +136,11 @@ useEffect(() => {
                     <tr>
                       <th
                         scope="col"
-                        className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5"
+                        className="flex justify-center items-center gap-2 ml-1.5 px-7 sm:px-6 rounded-s-xl py-5"
                       >
                         <input
                           type="checkbox"
-                          className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           ref={checkbox}
                           checked={checked}
                           onChange={toggleAll}
@@ -272,7 +272,7 @@ const renderCellContent = (column, task, t) => {
       return taskValue ? (
         <div className="flex">
           <span className={clsx(isDateOverdue(taskValue) ? "bg-red-200 text-red-900" : "bg-blue-200", "p-1 px-2 rounded-full text-sm w-auto")}>
-          {getTaskOverdueTimeDelta(task)}
+            {getTaskOverdueTimeDelta(task)}
           </span>
         </div>
       ) : (
@@ -282,7 +282,6 @@ const renderCellContent = (column, task, t) => {
           </span>
         </div>
       );
-       
 
     case "activity":
       return (
@@ -290,29 +289,34 @@ const renderCellContent = (column, task, t) => {
           {getLastActivity(task)}
         </div>
       );
-        
+
     case "startTime":
       return taskValue ? formatDate(taskValue, "dd/MM/yyyy hh:mm:ss a") : "";
 
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
-      return task.crm[0]?.type === "contact" && 
-        <Link href={`/sales/crm/contacts/contact/${task.crm[0]?.contact.id}?show=true&prev=tasks`}>
+      const contact = task.crm.find(item => item.type == "contact")
+      return contact &&
+        <Link href={`/sales/crm/contacts/contact/${contact.contact.id}?show=true&prev=tasks`}>
           <div className="flex gap-x-2 items-center justify-left">
-          <Image
-            className="h-6 w-6 rounded-full bg-zinc-200"
-            width={30}
-            height={30}
-            src={taskValue?.avatar || "/img/avatar.svg"}
-            alt="avatar"
-          />
-          {task.crm[0]?.contact?.fullName}
+            <Image
+              className="h-6 w-6 rounded-full bg-zinc-200"
+              width={30}
+              height={30}
+              src={taskValue?.avatar || "/img/avatar.svg"}
+              alt="avatar"
+            />
+            {contact.contact?.fullName}
           </div>
         </Link>
         || "No especificado";
 
     case "policy":
-      return taskValue || "No especificado";
+      if (task?.crm?.length === 0) return "No especificado";
+      const policy = task.crm.find(item => item.type == "poliza")
+
+      return policy?.poliza?.title
+        || "No especificado";
 
     default:
       return link ? (
@@ -325,7 +329,7 @@ const renderCellContent = (column, task, t) => {
   }
 };
 
-const getLastActivity = (task) =>{
+const getLastActivity = (task) => {
   if (task.completedTime) return formatDate(task.createdAt);
   return formatDate(task.createdAt);
 }

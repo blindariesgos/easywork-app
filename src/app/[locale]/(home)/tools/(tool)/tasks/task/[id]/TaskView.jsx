@@ -78,6 +78,30 @@ export default function TaskView({ id }) {
     }
   };
 
+  const getCMRView = (data) => {
+    if (data.type === "contact") {
+      return (
+        <div className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex justify-between w-52">
+          <p className="text-sm text-white">
+            {t("tools:tasks:edit:contact")}:
+          </p>
+          <Link href={`/sales/crm/contacts/contact/${data.contact.id}?show=true&prev=task&prev_id=${task.id}`} className="text-sm text-white">{data.contact.fullName}</Link>
+        </div>
+      )
+    }
+
+    if (data.type === "poliza") {
+      return (
+        <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+          <p className="text-sm text-white">
+            {t("tools:tasks:edit:policy")}:
+          </p>
+          <p className="text-sm text-white">{data.poliza.noPoliza}</p>
+        </div>
+      )
+    }
+  }
+
   if (isLoading)
     return (
       <div className="flex flex-col h-screen relative w-full overflow-y-auto">
@@ -103,16 +127,15 @@ export default function TaskView({ id }) {
             width="w-44"
           />
         </div>}
-        <div className="w-full flex gap-2 sm:gap-4 sm:flex-row flex-col h-full">
+        <div className="w-full grid gap-2 sm:gap-4 grid-cols-1 md:grid-cols-12 h-full">
           {openEdit ? (
             <TaskEditor edit={openEdit?.mode === "edit" && task} copy={openEdit?.mode === "copy" && task} subtask={openEdit?.mode === "subtask" && task} />
           ) : (
-            <div className={`w-full ${!openEdit ? "sm:w-9/12" : "sm:w-full"}`}>
+            <div className={`w-full ${!openEdit ? "col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9" : "col-span-12"}`}>
               <div className="bg-white rounded-lg">
                 <div className="flex justify-between gap-2 items-center bg-gray-300 p-2">
                   <p className="text-xs">
-                    {t("tools:tasks:task")} -{" "}
-                    {t(`tools:tasks:status:${task?.status}`)}
+                    {`${t("tools:tasks:task")} - ${t(`tools:tasks:status:${task?.status}`)}`}
                   </p>
                   <div className="flex gap-2 items-center">
                     <FireIcon
@@ -133,18 +156,11 @@ export default function TaskView({ id }) {
                 {/* CRM */}
                 {task?.crm?.length > 0 && (
                   <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                    {task.crm[0]?.type === "contact" && <div className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex justify-between w-52">
-                      <p className="text-sm text-white">
-                        {t("tools:tasks:edit:contact")}:
-                      </p>
-                      <Link href={`/sales/crm/contacts/contact/${task.crm[0].contact.id}?show=true&prev=task&prev_id=${task.id}`} className="text-sm text-white">{task.crm[0].contact.fullName}</Link>
-                    </div>}
-                    {task.crm[0]?.type === "poliza" && <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
-                      <p className="text-sm text-white">
-                        {t("tools:tasks:edit:policy")}:
-                      </p>
-                      <p className="text-sm text-white">{task.crm[0].poliza.noPoliza}</p>
-                    </div>}
+                    {
+                      task.crm.map(info => {
+                        return getCMRView(info)
+                      })
+                    }
                   </div>
                 )}
                 <div className="p-2 sm:p-4">
@@ -190,7 +206,7 @@ export default function TaskView({ id }) {
             </div>
           )}
           {!openEdit && (
-            <div className="w-full sm:w-3/12 bg-white rounded-lg h-full">
+            <div className="w-full col-span-12 md:col-span-5 lg:col-span-4 xl:col-span-3 bg-white rounded-lg h-full">
               <div className="bg-primary rounded-t-lg p-4 text-center">
                 <TaskHeaderStatus task={task} />
               </div>

@@ -19,6 +19,7 @@ import MultipleSelect from "../../../../../../../../components/form/MultipleSele
 import InputDateFilter from "./InputDateFilter";
 import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
 import useAppContext from "../../../../../../../../context/app";
+import MultiSelectTags from "../MultiSelectTags";
 
 const contactSources = [
   { id: 1, name: "Correo electrónico" },
@@ -54,6 +55,7 @@ const FormFilters = () => {
     closedThe: yup.object(),
     newDate2: yup.string(),
     labels: yup.array(),
+    tags: yup.array(),
     fields: yup.array().of(yup.object().shape()),
   });
   const [dateRange, setDateRange] = useState([null, null]);
@@ -183,6 +185,22 @@ const FormFilters = () => {
                       <MultipleSelect
                         {...field}
                         options={dataField.options}
+                        getValues={getValues}
+                        setValue={setValue}
+                        name={`fields[${index}].value`}
+                        label={dataField.name}
+                      />
+                    )}
+                  />
+                )}
+                {dataField.type === "tags" && (
+                  <Controller
+                    name={`fields[${index}].value`}
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <MultiSelectTags
+                        {...field}
                         getValues={getValues}
                         setValue={setValue}
                         name={`fields[${index}].value`}

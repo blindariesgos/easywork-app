@@ -13,7 +13,6 @@ export default function TabTableTime() {
 	const [showIcon, setShowIcon] = useState({});
 	const { t } = useTranslation();
 
-	//FUNCTIONS TO ADD TIME
 	const schema = yup.object().shape({
 		queues: yup.array().of(
 			yup.object().shape(
@@ -39,6 +38,7 @@ export default function TabTableTime() {
 		name: 'queues'
 	});
 
+	//TODO: Agregar logica para guardado de tiempo transcurrido
 	console.log('fields', watch('queues'));
 	/*-------------------------------------------------------------*/
 	return (

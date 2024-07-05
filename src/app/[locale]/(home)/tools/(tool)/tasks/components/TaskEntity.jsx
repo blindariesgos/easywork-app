@@ -9,12 +9,14 @@ import DropdownSelect from './DropdownSelect';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import { putTaskId } from '@/src/lib/apis';
+import { useTranslation } from 'react-i18next';
 
 const schema = yup.object().shape({
   entities: yup.array(),
 });
 
-export default function TaskEntiy({ task, lists, entityKey, label, t, field, getFilteredUsers, updateTaskBody }) {
+export default function TaskEntiy({ task, lists, entityKey, label, field, getFilteredUsers, updateTaskBody }) {
+  const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

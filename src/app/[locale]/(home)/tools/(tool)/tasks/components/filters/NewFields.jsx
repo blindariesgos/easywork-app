@@ -61,7 +61,7 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
     {
       id: 6,
       name: t("tools:tasks:filters:fields:tag"),
-      type: "input",
+      type: "tags",
       check: false,
       code: "labels",
     },

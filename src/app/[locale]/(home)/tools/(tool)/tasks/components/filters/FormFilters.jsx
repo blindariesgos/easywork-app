@@ -44,7 +44,6 @@ const FormFilters = () => {
 
   const schema = yup.object().shape({
     role: yup.string(),
-    // status: yup.array().min(1, t('common:validations:min-array', { min: 1 })),
     status: yup.array(),
     responsible: yup.string(),
     limitDate: yup.object(),
@@ -79,14 +78,18 @@ const FormFilters = () => {
           options: [
             {
               name: "Participante",
+              id: 1,
             },
             {
               name: "Creador",
+              id: 2
             },
             {
               name: "Responsable",
+              id: 3
             },
             {
+              id: 4,
               name: "Observador",
             },
           ],

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { Tab, TabList, TabGroup, TabPanels, TabPanel } from '@headlessui/react';
 import { useTranslation } from 'react-i18next';
 import TabComment from './TabComment';
 import TabTableHistory from './TabTableHistory';
@@ -122,8 +122,8 @@ export default function TabsTask({ data }) {
 
 	return (
 		<div className="w-full">
-			<Tab.Group>
-				<Tab.List className="flex space-x-1 rounded-xl bg-transparent p-1 w-full">
+			<TabGroup>
+				<TabList className="rounded-xl bg-transparent p-1 w-full gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 					{categories && Object.keys(categories).map((category) => (
 						<Tab
 							key={category}
@@ -142,10 +142,10 @@ export default function TabsTask({ data }) {
 							</div>
 						</Tab>
 					))}
-				</Tab.List>
-				<Tab.Panels className="mt-2 w-full">
+				</TabList>
+				<TabPanels className="mt-2 w-full">
 					{categories && Object.values(categories).map((categ, idx) => (
-						<Tab.Panel
+						<TabPanel
 							key={idx}
 							className={classNames(
 								`rounded-xl ${idx === 0 ? "bg-white" : "bg-gray-100"}`,
@@ -153,10 +153,10 @@ export default function TabsTask({ data }) {
 							)}
 						>
 							<categ.component info={data} />
-						</Tab.Panel>
+						</TabPanel>
 					))}
-				</Tab.Panels>
-			</Tab.Group>
+				</TabPanels>
+			</TabGroup>
 		</div>
 	);
 }

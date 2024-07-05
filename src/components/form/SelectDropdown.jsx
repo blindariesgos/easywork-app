@@ -13,7 +13,8 @@ function SelectDropdown({
   register,
   name,
   error,
-  setValue
+  setValue,
+  className
 }) {
   const registerInput = register && register(name);
   const [selected, setSelected] = useState(selectedOption);
@@ -38,7 +39,7 @@ function SelectDropdown({
       });
       
   return (
-    <div className="">
+    <div className={className}>
       <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
         <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}

@@ -19,6 +19,7 @@ import MultipleSelect from "../../../../../../../../components/form/MultipleSele
 import InputDateFilter from "./InputDateFilter";
 import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
 import useAppContext from "../../../../../../../../context/app";
+import MultiSelectTags from "../MultiSelectTags";
 
 const contactSources = [
   { id: 1, name: "Correo electrónico" },
@@ -44,7 +45,6 @@ const FormFilters = () => {
 
   const schema = yup.object().shape({
     role: yup.string(),
-    // status: yup.array().min(1, t('common:validations:min-array', { min: 1 })),
     status: yup.array(),
     responsible: yup.string(),
     limitDate: yup.object(),
@@ -55,6 +55,7 @@ const FormFilters = () => {
     closedThe: yup.object(),
     newDate2: yup.string(),
     labels: yup.array(),
+    tags: yup.array(),
     fields: yup.array().of(yup.object().shape()),
   });
   const [dateRange, setDateRange] = useState([null, null]);
@@ -79,14 +80,18 @@ const FormFilters = () => {
           options: [
             {
               name: "Participante",
+              id: 1,
             },
             {
               name: "Creador",
+              id: 2
             },
             {
               name: "Responsable",
+              id: 3
             },
             {
+              id: 4,
               name: "Observador",
             },
           ],
@@ -180,6 +185,22 @@ const FormFilters = () => {
                       <MultipleSelect
                         {...field}
                         options={dataField.options}
+                        getValues={getValues}
+                        setValue={setValue}
+                        name={`fields[${index}].value`}
+                        label={dataField.name}
+                      />
+                    )}
+                  />
+                )}
+                {dataField.type === "tags" && (
+                  <Controller
+                    name={`fields[${index}].value`}
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <MultiSelectTags
+                        {...field}
                         getValues={getValues}
                         setValue={setValue}
                         name={`fields[${index}].value`}

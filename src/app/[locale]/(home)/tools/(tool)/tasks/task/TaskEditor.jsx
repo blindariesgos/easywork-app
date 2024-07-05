@@ -186,7 +186,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     <>
       {loading || (isLoading && <LoaderSpinner />)}
       <div
-        className={`flex flex-col ${edit ? "h-full" : "h-screen"
+        className={`col-span-12 flex flex-col ${edit ? "h-full" : "h-screen"
           } relative w-full ${!edit && "overflow-y-auto"}`}
       >
         <div

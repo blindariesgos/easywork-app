@@ -61,10 +61,9 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
     {
       id: 6,
       name: t("tools:tasks:filters:fields:tag"),
-      type: "multipleSelect",
+      type: "tags",
       check: false,
       code: "labels",
-      options: status,
     },
     {
       id: 7,

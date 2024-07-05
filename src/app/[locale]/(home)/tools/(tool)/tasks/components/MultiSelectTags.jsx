@@ -63,10 +63,10 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
       value === ""
         ? options
         : options.filter((opt) => {
-            return `${opt.username} ${opt.name}`
-              .toLowerCase()
-              .includes(value.toLowerCase());
-          });
+          return `${opt.username} ${opt.name}`
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        });
     setFilterData(filterData);
   };
 
@@ -101,7 +101,7 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
         <button
           type="button"
           onClick={handleToggle}
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
+          className="text-left min-h-[36px] w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
@@ -120,10 +120,10 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
                   </button>
                 </div>
               ))}
-            <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
+            {/* <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
               <PlusIcon className="h-3 w-3" />
               <p className="text-xs">{t("common:buttons:add")}</p>
-            </div>
+            </div> */}
           </span>
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
             <ChevronDownIcon className="h-4 w-4" />
@@ -151,12 +151,11 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex justify-between px-4 py-2 text-sm cursor-pointer rounded-md hover:bg-primary hover:text-white ${
-                      getValues(name) &&
+                    className={`flex justify-between px-4 py-2 text-sm cursor-pointer rounded-md hover:bg-primary hover:text-white ${getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
-                        ? "bg-primary text-white"
-                        : " text-black bg-white"
-                    }`}
+                      ? "bg-primary text-white"
+                      : " text-black bg-white"
+                      }`}
                     onClick={(e) => {
                       e.preventDefault();
                       handleSelect(option);

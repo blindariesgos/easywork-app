@@ -116,11 +116,11 @@ export default function TabComment({ info }) {
                     alt=""
                   />
                   <div className="flex flex-col gap-2">
-                    <div className="border rounded-md w-full h-28">
+                    <div className="border rounded-md w-full">
                       <TextEditor
                         ref={quillRef}
                         value={value}
-                        className="sm:h-16 h-30  w-full"
+                        className="w-full"
                         setValue={setValueText}
                         disabled={disabled}
                       />
@@ -201,11 +201,11 @@ export default function TabComment({ info }) {
             alt=""
           />
           <div className="flex gap-2 flex-col">
-            <div className="border rounded-md w-full h-28">
+            <div className="border rounded-md w-full">
               <TextEditor
                 ref={quillRef}
                 value={value}
-                className="sm:h-16 h-30  w-full"
+                className=" w-full"
                 setValue={setValueText}
               />
             </div>

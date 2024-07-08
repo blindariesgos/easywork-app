@@ -33,6 +33,7 @@ import {
   getFoldersSaved,
   deleteTokenGoogle,
   getMails,
+  deleteFoldersMail,
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
@@ -69,60 +70,34 @@ export default function WebmailLayout({ children, table }) {
     );
   }
 
-  const fetchData = () => {
+  const updateData = async () => {
+    await axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}`
+    );
+    fetchData();
+  };
+
+  const fetchData = async () => {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
-
-    try {
-      axios
-        .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
-          config
-        )
-        .then((res) => {
-          setUserData(res.data);
-        });
-      getMails(session.data.user.id, searchParams.get("page"), 10).then(
-        (res) => {
-          axios
-            .get(
-              `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}`
-            )
-            .then(() => {
-              console.log("res", res);
-              if (res.length !== 0) {
-                console.log("yes");
-                setDMails(res);
-              } else {
-                saveMails().then(() => {
-                  fetchData();
-                });
-              }
-            })
-            .catch(() => {
-              setDMails(res);
-              if (dmails.length == 0)
-                saveMails().then(() => {
-                  fetchData();
-                });
-            });
-        }
-      );
-      getFoldersSaved(session.data.user.id).then((res) => {
-        setFolders(res);
-      });
-    } catch (error) {
-      console.error("Error al obtener datos", error);
-      if (!dmails || dmails.length === 0) {
-        deleteTokenGoogle(session.data.user.id)
-          .then(() => {
-            router.push("/tools/mails");
-          })
-          .catch((err) => {
-            router.push("/tools/mails");
-          });
-      }
+    const axiosUserData = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
+      config
+    );
+    setUserData(axiosUserData.data);
+    const axiosMails = await getMails(
+      session.data.user.id,
+      searchParams.get("page"),
+      12
+    );
+    setDMails(axiosMails);
+    const axiosFolders = await getFoldersSaved(session.data.user.id);
+    setFolders(axiosFolders);
+    if (!axiosMails || axiosMails?.length === 0) {
+      await deleteTokenGoogle(session.data.user.id);
+      await deleteFoldersMail(session.data.user.id);
+      router.push("/tools/mails");
     }
   };
 
@@ -134,7 +109,10 @@ export default function WebmailLayout({ children, table }) {
   return (
     <>
       <ModalAddGmail state={gmailState} from={"buzon"}>
-        <Tag onclick={() => setGmailState(false)} className="bg-easywork-main" />
+        <Tag
+          onclick={() => setGmailState(false)}
+          className="bg-easywork-main"
+        />
       </ModalAddGmail>
       <SendMessage colorTag="bg-easywork-main" userData={userData} />
       <div className="flex flex-col flex-grow">
@@ -145,7 +123,11 @@ export default function WebmailLayout({ children, table }) {
               <button
                 type="button"
                 className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-md font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
-                onClick={() => router.push(`/tools/webmail/?page=${searchParams.get("page")}&send=true`)}
+                onClick={() =>
+                  router.push(
+                    `/tools/webmail/?page=${searchParams.get("page")}&send=true`
+                  )
+                }
               >
                 Nuevo mensaje
               </button>
@@ -201,7 +183,7 @@ export default function WebmailLayout({ children, table }) {
                 </div>
                 <div
                   className="flex items-center justify-center ml-1.5 border border-white rounded-full cursor-pointer"
-                  onClick={() => fetchData()}
+                  onClick={() => updateData()}
                 >
                   <ArrowPathIcon className="m-1 h-6 w-6 text-white" />
                 </div>

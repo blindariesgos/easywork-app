@@ -48,25 +48,25 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
       onclick: () => setDropdownVisible(!dropdownVisible),
       disabled: arroba,
     },
-    {
-      id: 5,
-      name: t("tools:tasks:new:verification-list"),
-      onclick: () => {
-        if (fields.length === 0) {
-          append({
-            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
-            subItems: [{ name: "", value: false, empty: true }],
-          });
-        }
-        setOpenList(!openList);
-      },
-    },
-    {
-      id: 6,
-      name: t("tools:tasks:new:add-list"),
-      onclick: () => { },
-      menu: true,
-    },
+    // {
+    //   id: 5,
+    //   name: t("tools:tasks:new:verification-list"),
+    //   onclick: () => {
+    //     if (fields.length === 0) {
+    //       append({
+    //         name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
+    //         subItems: [{ name: "", value: false, empty: true }],
+    //       });
+    //     }
+    //     setOpenList(!openList);
+    //   },
+    // },
+    // {
+    //   id: 6,
+    //   name: t("tools:tasks:new:add-list"),
+    //   onclick: () => { },
+    //   menu: true,
+    // },
   ];
 
   const schema = yup.object().shape({
@@ -206,26 +206,13 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
             onClick={opt.onclick}
             ref={opt.id === 3 ? mentionButtonRef : null}
           >
-            {!opt.menu ? (
-              <button
-                className="flex gap-2 items-center focus:ring-0"
-                disabled={opt.disabled}
-              >
-                {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
-                <p className="text-sm">{opt.name}</p>
-              </button>
-            ) : (
-              <AddListSeLectingText
-                text={opt.name}
-                fields={fields}
-                append={append}
-                setValue={setValue}
-                value={selectText}
-                getValues={getValues}
-                watch={watch}
-                setOpenList={setOpenList}
-              />
-            )}
+            <button
+              className="flex gap-2 items-center focus:ring-0"
+              disabled={opt.disabled}
+            >
+              {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
+              <p className="text-sm">{opt.name}</p>
+            </button>
           </div>
         ))}
         {dropdownVisible && mentionButtonRef.current && dropdownUsers()}

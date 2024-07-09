@@ -7,7 +7,7 @@ import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import TextEditor from "../../tasks/components/TextEditor";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
-import SelectDropdown from "../../../../../../../components/form/SelectDropdown";
+import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,6 +34,7 @@ export default function SendMessage({
   const [subject, setSubject] = useState("");
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
+  const [valueTest, setValue] = useState("");
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -50,23 +51,24 @@ export default function SendMessage({
     });
   }, []);
 
-  const {
-    setValue,
-    formState: { isValid, errors },
-  } = useForm({
-    defaultValues: {
-      range: [null, null],
-    },
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
+  // const {
+  //   setValue,
+  //   formState: { isValid, errors },
+  // } = useForm({
+  //   defaultValues: {
+  //     range: [null, null],
+  //   },
+  //   mode: "onChange",
+  //   resolver: yupResolver(schema),
+  // });
 
   async function sendEmail() {
+    console.log(valueTest);
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}`,
         {
-          to: recipient,
+          to: valueTest,
           subject: subject,
           body: value,
         }

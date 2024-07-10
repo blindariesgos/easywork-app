@@ -25,7 +25,7 @@ export const handleApiError = async (error, errorsDuplicated) => {
   if (!errorsDuplicated?.current) {
     switch (errorObject?.statusCode) {
       case 403:
-        isServerSide 
+        isServerSide
           ? logger.error("Forbidden Access (403):", errorObject)
           : toastError(errorObject?.message || errorObject);
         logout();
@@ -33,7 +33,7 @@ export const handleApiError = async (error, errorsDuplicated) => {
       case 401:
         isServerSide
           ? logger.error("Unauthorized (401):", errorObject)
-          : logout(); 
+          : logout();
         break;
       default:
         isServerSide

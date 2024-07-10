@@ -52,6 +52,14 @@ export const isDateTodayOverdue = (date) => {
   return isSameDay(deadlineDate, now);
 }
 
+export const isDateMoreFiveDayOverdue = (date) => {
+  if (!date) return false; // No hay fecha limite
+  const deadlineDate = parseISO(date);
+  const now = new Date()
+
+  return differenceInDays(deadlineDate, now) >= 5 && differenceInDays(deadlineDate, now) <= 10;
+}
+
 export const getTaskOverdueTimeDelta = (task) => {
   console.log("Deadlinetask ", task)
   if (!task?.deadline) {

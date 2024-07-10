@@ -7,7 +7,7 @@ import range from 'lodash/range';
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 
-const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate, border, time }) => {
+const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate, border, time, ...props }) => {
 	const { t } = useTranslation();
 	const { months } = useCommon();
 	const years = range(1990, getYear(new Date()) + 1, 1);
@@ -88,6 +88,7 @@ const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate
 					timeInputLabel={time && t('common:time')}
 					dateFormat={time ? "MM/dd/yyyy h:mm aa" : "MM/dd/yyyy"}
 					showTimeInput={time}
+					{...props}
 				/>
 			</div>
 			{error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}

@@ -49,6 +49,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
+  const { mutate } = useSWRConfig();
   const { lists } = useAppContext();
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
@@ -152,14 +153,12 @@ export default function TaskEditor({ edit, copy, subtask }) {
     const crm = data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
     const body = buildTaskBody(data, value, selectedOptions, session, crm, listField, t);
 
-    console.log({ body })
-
     try {
       setLoading(true);
       if (edit) {
         await putTaskId(edit.id, body);
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/user?limit=15&page=1`);
+        await mutate(`/tools/tasks/${edit.id}`);
         router.push("/tools/tasks?page=1");
       } else {
         await postTask(body);

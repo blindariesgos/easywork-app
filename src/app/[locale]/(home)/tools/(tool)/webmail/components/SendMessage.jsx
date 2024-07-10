@@ -9,8 +9,7 @@ import TextEditor from "../../tasks/components/TextEditor";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import axios from "axios";
 
@@ -63,7 +62,6 @@ export default function SendMessage({
   // });
 
   async function sendEmail() {
-    console.log(valueTest);
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}`,
@@ -73,6 +71,8 @@ export default function SendMessage({
           body: value,
         }
       );
+      toast.success("Correo enviado");
+      router.back();
     } catch (error) {
       console.error("Failed to send email:", error);
     }
@@ -185,7 +185,7 @@ export default function SendMessage({
                         </div>
                         <div className="py-2">
                           <TextEditor
-                            className="h-72 w-full bg-white pb-12"
+                            className="h-96 w-full bg-white pb-12"
                             theme="snow"
                             ref={quillRef}
                             value={value}

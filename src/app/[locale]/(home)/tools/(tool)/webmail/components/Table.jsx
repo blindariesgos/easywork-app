@@ -42,7 +42,7 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
 
   return (
     <div className="flow-root">
-      <EmailBody colorTag="bg-green-100" selectMail={selectMail} />
+      <EmailBody colorTag="bg-easywork-main" selectMail={selectMail} />
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden sm:rounded-lg">

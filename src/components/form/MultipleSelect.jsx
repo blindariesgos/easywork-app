@@ -77,10 +77,10 @@ const MultipleSelect = ({
     query === ""
       ? options
       : options.filter((opt) => {
-          return `${opt.username} ${opt.name}`
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        });
+        return `${opt.username} ${opt.name}`
+          .toLowerCase()
+          .includes(query.toLowerCase());
+      });
 
   return (
     <div>
@@ -102,13 +102,12 @@ const MultipleSelect = ({
                   className="bg-primary p-1 rounded-sm text-white flex gap-1 items-center text-xs"
                 >
                   {res.name || res.username}
-                  <button
-                    type="button"
+                  <div
                     onClick={() => handleRemove(res.id)}
-                    className="text-white"
+                    className="text-white cursor-pointer"
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
-                  </button>
+                  </div>
                 </div>
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
@@ -141,12 +140,11 @@ const MultipleSelect = ({
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
-                      getValues(name) &&
-                      getValues(name).some((res) => res.id === option.id)
+                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${getValues(name) &&
+                        getValues(name).some((res) => res.id === option.id)
                         ? "bg-primary"
                         : "hover:bg-primary/10"
-                    }`}
+                      }`}
                     onClick={() => handleSelect(option)}
                   >
                     {option.avatar && (
@@ -159,12 +157,11 @@ const MultipleSelect = ({
                       />
                     )}
                     <span
-                      className={`text-xs ${
-                        getValues(name) &&
-                        getValues(name).some((res) => res.id === option.id)
+                      className={`text-xs ${getValues(name) &&
+                          getValues(name).some((res) => res.id === option.id)
                           ? "text-white"
                           : "text-black"
-                      }`}
+                        }`}
                     >
                       {option.name || option.username}
                     </span>

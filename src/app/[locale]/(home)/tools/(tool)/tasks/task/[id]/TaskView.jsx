@@ -4,6 +4,7 @@ import IconDropdown from "@/src/components/SettingsButton";
 import {
   Cog8ToothIcon,
   FireIcon,
+  LinkIcon
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -104,6 +105,11 @@ export default function TaskView({ id }) {
     }
   }
 
+  const handleCopyUrl = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Copiado en el Portapapeles");
+  }
+
   if (isLoading)
     return (
       <div className="flex flex-col h-screen relative w-full overflow-y-auto">
@@ -124,20 +130,33 @@ export default function TaskView({ id }) {
         className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
       >
         {openEdit?.mode !== "copy" && <div className="flex justify-between items-center py-2">
-          <h1 className="text-xl font-medium">
+          <div className="flex gap-3 items-center">
+            <h1 className="text-xl font-medium">
+              {
+                openEdit?.mode === "subtask"
+                  ? <span>Creando subtarea para: <span className="text-primary italic underline decoration-indigo-600">{task?.name}</span></span>
+                  : task?.name
+              }
+            </h1>
             {
-              openEdit?.mode === "subtask"
-                ? <span>Creando subtarea para: <span className="text-primary italic underline decoration-indigo-600">{task?.name}</span></span>
-                : task?.name
+              !openEdit && (
+                <LinkIcon
+                  className="h-4 w-4 text-[#4f4f4f] opacity-50 hover:opacity-100 cursor-pointer"
+                  title="Copiar enlace de tarea en Portapapeles"
+                  aria-hidden="true"
+                  onClick={handleCopyUrl}
+                />
+              )
             }
-          </h1>
+
+          </div>
           <IconDropdown
             icon={openEdit?.mode === "edit" ? <Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" /> : null}
             options={settings}
             width="w-44"
           />
         </div>}
-        <div className="w-full grid gap-2 sm:gap-4 grid-cols-1 md:grid-cols-12 h-full">
+        <div className="w-full grid gap-2 sm:gap-4 grid-cols-1 md:grid-cols-12 h-full max-h-[calc(100vh-50px)] overflow-y-auto pr-2">
           {openEdit ? (
             <TaskEditor edit={openEdit?.mode === "edit" && task} copy={openEdit?.mode === "copy" && task} subtask={openEdit?.mode === "subtask" && task} />
           ) : (
@@ -176,14 +195,14 @@ export default function TaskView({ id }) {
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
                     {/* TODO: Boton para dar inicio a la logica de cronometrar tarea */}
-                    {/* {!task.isCompleted && (
+                    {!task.isCompleted && (
                       <Button
                         label={t("tools:tasks:edit:init")}
                         buttonStyle="green"
                         className="px-3 py-2"
                         fontSize="text-xs"
                       />
-                    )} */}
+                    )}
                     {!task.isCompleted && (
                       <button
                         type="button"

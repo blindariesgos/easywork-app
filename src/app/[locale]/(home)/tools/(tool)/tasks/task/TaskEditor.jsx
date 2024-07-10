@@ -61,7 +61,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [contactCRM, setContactCRM] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { mutate } = useSWRConfig();
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
     participants: (edit?.participants?.length ?? copy?.participants?.length) > 0,
@@ -152,6 +151,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
 
     const crm = data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
     const body = buildTaskBody(data, value, selectedOptions, session, crm, listField, t);
+
+    console.log({ body })
 
     try {
       setLoading(true);

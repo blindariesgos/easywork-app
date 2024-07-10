@@ -16,7 +16,7 @@ import { useSWRConfig } from "swr";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
-import { formatDate, getTaskOverdueTimeDelta, isDateOverdue } from "@/src/utils/getFormatDate";
+import { formatDate, getTaskOverdueTimeDelta, isDateOverdue, isDateTomorrowOverdue, isDateTodayOverdue } from "@/src/utils/getFormatDate";
 
 export default function TableTask({ data }) {
   const checkbox = useRef();
@@ -271,7 +271,11 @@ const renderCellContent = (column, task, t) => {
     case "deadline":
       return taskValue ? (
         <div className="flex">
-          <span className={clsx(isDateOverdue(taskValue) ? "bg-red-200 text-red-900" : "bg-blue-200", "p-1 px-2 rounded-full text-sm w-auto")}>
+          <span className={clsx("bg-blue-200 p-1 px-2 rounded-full text-sm w-auto", {
+            "bg-red-200 text-red-900": isDateOverdue(taskValue),
+            "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue),
+            "bg-orange-200 text-orange-900": isDateTodayOverdue(taskValue)
+          })}>
             {getTaskOverdueTimeDelta(task)}
           </span>
         </div>

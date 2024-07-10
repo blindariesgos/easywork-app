@@ -1,37 +1,58 @@
 'use client';
-import React, { useEffect, useState, Fragment } from 'react';
-import { Controller } from 'react-hook-form';
+import React, { useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { ChevronUpIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import Button from '@/src/components/form/Button';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+import { putTaskId } from "@/src/lib/apis";
+import { toast } from "react-toastify";
+import { useSWRConfig } from "swr";
 
-
-export default function CheckList({ handleSubmit, append, remove, fields, setValue, watch, getValues, control, register }) {
+export default function CheckList({ handleSubmit, append, remove, fields, setValue, watch, getValues, control, register, task, setListField }) {
     const { t } = useTranslation();
     const [editTitleList, setEditTitleList] = useState({});
     const [showIcon, setShowIcon] = useState({});
     const [showSave, setShowSave] = useState(false);
+    const [loading, setLoading] = useState(false)
+    const { mutate } = useSWRConfig();
 
-    const onSubmit = () => {
+    const onSubmit = async (check) => {
+        setLoading(true)
         const items = watch("items").map(x => {
             return {
                 text: x.name,
-                completed: x.value,
+                completed: !!x.value,
                 child: x.subItems.map(subItem => {
                     return {
                         text: subItem.name,
-                        completed: subItem.value,
+                        completed: !!subItem.value,
                     }
                 })
             }
         })
-        setEditTitleList(Object.keys(editTitleList).reduce((acc, key) => ({
-            ...acc,
-            [key]: false
-        }), {}))
-        setShowSave(false)
+
+        const body = {
+            listField: items
+        }
+
+        try {
+            await putTaskId(task.id, body);
+            !check && toast.success(t("tools:tasks:update-msg"));
+            await mutate(`/tools/tasks/${task.id}`);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setEditTitleList(Object.keys(editTitleList).reduce((acc, key) => ({
+                ...acc,
+                [key]: false
+            }), {}))
+            setShowSave(false)
+            setLoading(false)
+        }
+
+
     }
 
     const handleCancel = () => {
@@ -55,18 +76,17 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
             const indexNameEmpty = existingSubItems.findIndex((subItem) => subItem.name === "");
             const arrayDataCorrect = watch(`items.${index}.subItems`).filter((_, index) => index !== indexNameEmpty);
             return setValue(`items.${index}.subItems`, arrayDataCorrect.filter((_, index) => index !== subIndex));
-        } else return setValue(`items.${index}.subItems`, watch(`items.${index}.subItems`).filter((_, index) => index !== subIndex));
+        } else
+            return setValue(`items.${index}.subItems`, watch(`items.${index}.subItems`).filter((_, index) => index !== subIndex));
     }
 
     const addSubItems = (index, isNew) => {
         const existingSubItems = getValues(`items.${index}.subItems`);
         const endIndex = existingSubItems.length > 0 ? existingSubItems.length - 1 : 0;
-        console.log({ existingSubItems, endIndex })
         if (!existingSubItems.some((subItem) => subItem.name === "")) {
 
             if (existingSubItems.length > 0) {
                 setValue(`items.${index}.subItems.${endIndex}.empty`, false)
-                console.log("paso aqui")
             };
             if (isNew) {
                 setValue(
@@ -74,6 +94,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                     [...getValues(`items.${index}.subItems`), { name: "", value: false, empty: true }]
                 );
             }
+            setListField && setListField(watch("items"))
         }
     }
 
@@ -82,15 +103,19 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
         const { checked } = e.target;
         if (checked) {
             if (existingSubItems.some((subItem, index) => index === subIndex && subItem.name === "")) {
-                return removeSubItem(index, subIndex, true);
+                removeSubItem(index, subIndex, true);
+                setListField && setListField(watch("items"))
+                return
             }
         }
         setValue(`items.${index}.subItems.${subIndex}.value`, checked)
+        !setListField && onSubmit(true)
     }
 
     const addList = () => {
         append({ name: `${t('tools:tasks:new:verification-list')} #${fields.length + 1}`, subItems: [{ name: "", value: false, empty: true }] });
         setEditTitleList({ ...editTitleList, [fields.length]: true })
+        setListField && setListField(watch("items"))
         setShowSave(true)
     }
 
@@ -100,6 +125,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} >
+            {loading && <LoaderSpinner />}
             <ul>
                 {/* {errors && errors?.items &&
                 errors?.items.forEach((error, index) => (
@@ -163,12 +189,16 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                                                 return (
                                                     <li key={subIndex} className='group'>
                                                         <div className='flex gap-2 items-center mt-2' onKeyPress={(e) => handleKeyPress(e, index)}>
-                                                            <input
-                                                                type='checkbox'
-                                                                className="h-4 w-4 rounded-full border-gray-300 text-primary focus:ring-primary"
-                                                                {...register(`items.${index}.subItems.${subIndex}.value`)}
-                                                                onChange={(e) => onChangeCheckBox(e, index, subIndex)}
-                                                            />
+                                                            {
+                                                                !editTitleList[index] && (
+                                                                    <input
+                                                                        type='checkbox'
+                                                                        className="h-4 w-4 rounded-full border-gray-300 text-primary focus:ring-primary"
+                                                                        {...register(`items.${index}.subItems.${subIndex}.value`)}
+                                                                        onChange={(e) => onChangeCheckBox(e, index, subIndex)}
+                                                                    />
+                                                                )
+                                                            }
                                                             <div className='w-full' >
                                                                 {subField.empty ? (
                                                                     <input
@@ -229,7 +259,7 @@ export default function CheckList({ handleSubmit, append, remove, fields, setVal
                     {t('tools:tasks:new:add-lists')}
                 </button>
                 {
-                    showSave && fields.length > 0 && (
+                    !setListField && showSave && fields.length > 0 && (
                         <Fragment>
                             <Button buttonStyle="secondary" type="button" onclick={handleCancel} className="px-2 py-1" label={t("common:buttons:cancel")} />
                             <Button buttonStyle="secondary" type="button" onclick={onSubmit} className="px-2 py-1" label={t("common:buttons:save")} />

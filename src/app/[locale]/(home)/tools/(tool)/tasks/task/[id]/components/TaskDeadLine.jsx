@@ -74,6 +74,14 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
         setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
     };
 
+    const ExampleCustomTimeInput = ({ date, value, onChange }) => (
+        <input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ border: "solid 1px pink" }}
+        />
+    );
+
     return (
         <div className="relative" ref={containerRef}>
             <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
@@ -115,6 +123,8 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
                         onChange={handleDateChange}
                         onClickOutside={() => setIsEditing(false)}
                         inline
+                        showTimeSelect
+                        customTimeInput={<ExampleCustomTimeInput />}
                     />
                 </div>
             </Transition>

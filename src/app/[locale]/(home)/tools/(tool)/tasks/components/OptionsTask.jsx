@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import TextEditor from "./TextEditor";
-import AddListSeLectingText from "./AddListSeLectingText";
 import UploadDocuments from "./UploadDocuments";
 import CheckList from "./CheckList";
 import DropdownVisibleUsers from "./DropdownVisibleUsers";
@@ -19,7 +18,6 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
   const quillRef = useRef(null);
   const mentionButtonRef = useRef(null);
   const [arroba, setArroba] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState([]);
   const [files, setFiles] = useState([]);
   const [dataUsers, setDataUsers] = useState();
   const [userSelected, setUserSelected] = useState(null);
@@ -48,19 +46,19 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
       onclick: () => setDropdownVisible(!dropdownVisible),
       disabled: arroba,
     },
-    // {
-    //   id: 5,
-    //   name: t("tools:tasks:new:verification-list"),
-    //   onclick: () => {
-    //     if (fields.length === 0) {
-    //       append({
-    //         name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
-    //         subItems: [{ name: "", value: false, empty: true }],
-    //       });
-    //     }
-    //     setOpenList(!openList);
-    //   },
-    // },
+    {
+      id: 5,
+      name: t("tools:tasks:new:verification-list"),
+      onclick: () => {
+        if (fields.length === 0) {
+          append({
+            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
+            subItems: [{ name: "", value: false, empty: true }],
+          });
+        }
+        setOpenList(!openList);
+      },
+    },
     // {
     //   id: 6,
     //   name: t("tools:tasks:new:add-list"),
@@ -236,6 +234,8 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
             getValues={getValues}
             control={control}
             register={register}
+            task={edit}
+            setListField={setListField}
           />
         </div>
       )}

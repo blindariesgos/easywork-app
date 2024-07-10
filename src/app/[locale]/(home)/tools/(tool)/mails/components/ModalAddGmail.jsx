@@ -339,7 +339,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                 )}
               </div>
               <div className="flex mt-4 justify-end">
-                {userGoogle && from == "buzon" ? (
+                {from == "buzon" ? (
                   <>
                     <button
                       type="button"

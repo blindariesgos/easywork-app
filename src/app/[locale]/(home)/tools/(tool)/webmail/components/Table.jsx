@@ -12,8 +12,6 @@ import {
 import { useSession } from "next-auth/react";
 import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
-import { Pagination } from "../../../../../../../components/pagination/Pagination";
-import { deleteMails } from "../../../../../../../lib/apis";
 
 export default function Table({ mails, selectedFolder = "INBOX" }) {
   const router = useRouter();
@@ -25,13 +23,6 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
   const [mailsData, setMailsData] = useState(mails);
   const [selectMail, setSelectMail] = useState(mails);
   const session = useSession();
-
-  useEffect(() => {
-    const filteredMails = mails.filter(
-      (mail) => mail.email.folder && mail.email.folder.includes(selectedFolder)
-    );
-    setMailsData(filteredMails);
-  }, [mails, selectedFolder]);
 
   function toggleAll() {
     setSelectedTasks(checked || indeterminate ? [] : mails);
@@ -94,8 +85,7 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
             </div>
             <div className="divide-y divide-gray-300">
               <div className="divide-y divide-gray-200 bg-white">
-                {mailsData &&
-                  mailsData.map((item) => {
+                {mails?.map((item) => {
                     // const subjectHeader = mail.payload.headers.find(
                     //   (header) => header.name === "Subject"
                     // );
@@ -216,9 +206,6 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex justify-center">
-        <Pagination totalPages={10} bgColor="bg-gray-300" />
       </div>
     </div>
   );

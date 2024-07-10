@@ -281,8 +281,8 @@ export const getFilters = async (idUser) => {
   return response;
 };
 
-export const getMails = async (idUser, page, perPage) => {
-  const response = await axios().get(`/oauth/email/get/${idUser}?page=${page}&perPage=${perPage}`);
+export const getMails = async (idUser, page, perPage, folder) => {
+  const response = await axios().get(`/oauth/email/get/${idUser}?page=${page}&perPage=${perPage}&folder=${folder}`);
   return response;
 };
 

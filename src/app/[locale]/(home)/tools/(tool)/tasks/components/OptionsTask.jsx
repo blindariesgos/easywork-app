@@ -189,7 +189,7 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
         <TextEditor
           ref={quillRef}
           value={value}
-          className="sm:h-36 h-52 w-full"
+          className="sm:h-36 h-52 w-full prueba"
           onChangeSelection={handleTextSelection}
           setValue={setValueText}
           disabled={disabled}

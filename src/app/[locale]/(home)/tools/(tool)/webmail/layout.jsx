@@ -37,6 +37,7 @@ import {
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
+import { Pagination } from "../../../../../../components/pagination/Pagination";
 
 export default function WebmailLayout({ children, table }) {
   const session = useSession();
@@ -64,6 +65,17 @@ export default function WebmailLayout({ children, table }) {
     fetchData();
   }, [session]);
 
+  useEffect(() => {
+    getMails(
+      session.data.user.id,
+      searchParams.get("page"),
+      10,
+      selectedFolder
+    ).then((res) => {
+      setDMails(res);
+    })
+  }, [searchParams.get("page"), selectedFolder]);
+
   async function saveMails() {
     axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}`
@@ -89,7 +101,8 @@ export default function WebmailLayout({ children, table }) {
     const axiosMails = await getMails(
       session.data.user.id,
       searchParams.get("page"),
-      12
+      10,
+      selectedFolder
     );
     setDMails(axiosMails);
     const axiosFolders = await getFoldersSaved(session.data.user.id);
@@ -302,6 +315,9 @@ export default function WebmailLayout({ children, table }) {
         </SliderOverEmail>
         {dmails && <Table mails={dmails} selectedFolder={selectedFolder} />}
         {children}
+        <div className="flex justify-center">
+          <Pagination totalPages={10} bgColor="bg-gray-300" />
+        </div>
       </div>
     </>
   );

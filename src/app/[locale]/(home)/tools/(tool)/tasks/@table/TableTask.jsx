@@ -22,7 +22,8 @@ import {
   isDateOverdue,
   isDateTomorrowOverdue,
   isDateTodayOverdue,
-  isDateMoreFiveDayOverdue
+  isDateMoreFiveDayOverdue,
+  isDateMoreTenDayOverdue
 } from "@/src/utils/getFormatDate";
 
 export default function TableTask({ data }) {
@@ -283,7 +284,7 @@ const renderCellContent = (column, task, t) => {
             "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue),
             "bg-orange-300 text-orange-900": isDateTodayOverdue(taskValue),
             "bg-blue-300 text-blue-900": isDateMoreFiveDayOverdue(taskValue),
-            "bg-gray-300": !taskValue
+            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue)
           })}>
             {getTaskOverdueTimeDelta(task)}
           </span>

@@ -1,4 +1,4 @@
-import { format, formatDistanceStrict, formatISO, isBefore, parseISO } from "date-fns";
+import { format, formatDistanceStrict, formatISO, isBefore, parseISO, differenceInDays, isTomorrow, isSameDay, endOfToday, startOfDay } from "date-fns";
 import { es } from 'date-fns/locale';
 
 export const getFormatDate = (date) => {
@@ -35,6 +35,37 @@ export const isDateOverdue = (date) => {
   const now = new Date();
 
   return isBefore(deadlineDate, now);
+}
+
+export const isDateTomorrowOverdue = (date) => {
+  if (!date) return false; // No hay fecha limite
+  const deadlineDate = parseISO(date);
+
+  return isTomorrow(deadlineDate);
+}
+
+export const isDateTodayOverdue = (date) => {
+  if (!date) return false; // No hay fecha limite
+  const deadlineDate = parseISO(date);
+  const now = new Date()
+
+  return isSameDay(deadlineDate, now);
+}
+
+export const isDateMoreFiveDayOverdue = (date) => {
+  if (!date) return false; // No hay fecha limite
+  const deadlineDate = parseISO(date);
+  const now = new Date()
+
+  return differenceInDays(deadlineDate, now) >= 5 && differenceInDays(deadlineDate, now) <= 10;
+}
+
+export const isDateMoreTenDayOverdue = (date) => {
+  if (!date) return false; // No hay fecha limite
+  const deadlineDate = parseISO(date);
+  const now = new Date()
+
+  return differenceInDays(deadlineDate, now) > 10;
 }
 
 export const getTaskOverdueTimeDelta = (task) => {

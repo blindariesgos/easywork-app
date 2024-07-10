@@ -49,6 +49,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
+  const { mutate } = useSWRConfig();
   const { lists } = useAppContext();
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
@@ -61,7 +62,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [contactCRM, setContactCRM] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { mutate } = useSWRConfig();
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
     participants: (edit?.participants?.length ?? copy?.participants?.length) > 0,
@@ -158,7 +158,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       if (edit) {
         await putTaskId(edit.id, body);
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/user?limit=15&page=1`);
+        await mutate(`/tools/tasks/${edit.id}`);
         router.push("/tools/tasks?page=1");
       } else {
         await postTask(body);

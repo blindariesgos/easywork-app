@@ -16,7 +16,15 @@ import { useSWRConfig } from "swr";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
-import { formatDate, getTaskOverdueTimeDelta, isDateOverdue } from "@/src/utils/getFormatDate";
+import {
+  formatDate,
+  getTaskOverdueTimeDelta,
+  isDateOverdue,
+  isDateTomorrowOverdue,
+  isDateTodayOverdue,
+  isDateMoreFiveDayOverdue,
+  isDateMoreTenDayOverdue
+} from "@/src/utils/getFormatDate";
 
 export default function TableTask({ data }) {
   const checkbox = useRef();
@@ -128,10 +136,15 @@ export default function TableTask({ data }) {
       {selectedColumns && selectedColumns.length > 0 && (
         <div className="flow-root">
           {loading && <LoaderSpinner />}
-          <div className="overflow-x-auto">
-            <div className="inline-block min-w-full py-2 align-middle">
-              <div className="relative sm:rounded-lg h-[60vh]">
-                <table className="min-w-full rounded-md bg-gray-100 table-auto ">
+          <div className="min-w-full py-2">
+            {selectedTasks.length > 0 && (
+              <div className="p-2 flex">
+                <SelectedOptionsTable options={optionsCheckBox} />
+              </div>
+            )}
+            <div className="sm:rounded-lg ">
+              <div className="overflow-x-auto min-h-[60vh] h-full">
+                <table className="min-w-full rounded-md bg-gray-100 table-auto  ">
                   <thead className="text-sm bg-white drop-shadow-sm">
                     <tr>
                       <th
@@ -191,7 +204,7 @@ export default function TableTask({ data }) {
                             "hover:bg-indigo-100/40 cursor-default"
                           )}
                         >
-                          <td className=" px-7 sm:w-12 sm:px-6">
+                          <td className="relative px-7 sm:w-12 sm:px-6">
                             {selectedTasks.includes(task) && (
                               <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                             )}
@@ -227,11 +240,6 @@ export default function TableTask({ data }) {
           <div className="w-full mt-2">
             <div className="flex justify-center">
               <Pagination totalPages={dataTask?.meta?.totalPages || 0} />
-            </div>
-            <div className="flex">
-              {selectedTasks.length > 0 && (
-                <SelectedOptionsTable options={optionsCheckBox} />
-              )}
             </div>
           </div>
         </div>
@@ -271,7 +279,13 @@ const renderCellContent = (column, task, t) => {
     case "deadline":
       return taskValue ? (
         <div className="flex">
-          <span className={clsx(isDateOverdue(taskValue) ? "bg-red-200 text-red-900" : "bg-blue-200", "p-1 px-2 rounded-full text-sm w-auto")}>
+          <span className={clsx("p-1 px-2 rounded-full text-sm w-auto", {
+            "bg-red-200 text-red-900": isDateOverdue(taskValue),
+            "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue),
+            "bg-orange-300 text-orange-900": isDateTodayOverdue(taskValue),
+            "bg-blue-300 text-blue-900": isDateMoreFiveDayOverdue(taskValue),
+            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue)
+          })}>
             {getTaskOverdueTimeDelta(task)}
           </span>
         </div>

@@ -12,6 +12,7 @@ import { parseISO } from "date-fns";
 import { Transition } from '@headlessui/react';
 import { FaTimes } from 'react-icons/fa';
 import clsx from "clsx";
+import InputDate from "@/src/components/form/InputDate";
 
 const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
     const { t } = useTranslation()
@@ -74,6 +75,14 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
         setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
     };
 
+    const ExampleCustomTimeInput = ({ date, value, onChange }) => (
+        <input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ border: "solid 1px pink" }}
+        />
+    );
+
     return (
         <div className="relative" ref={containerRef}>
             <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
@@ -110,12 +119,13 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
                     className="absolute z-10 bg-white shadow-lg rounded-md"
                     style={{ top: position.top + 20, left: 'auto', right: `calc(90% - ${position.left}px)` }}
                 >
-                    <DatePicker
-                        selected={selectedDate}
+                    <InputDate
                         onChange={handleDateChange}
-                        onClickOutside={() => setIsEditing(false)}
+                        value={selectedDate}
+                        time
                         inline
                     />
+
                 </div>
             </Transition>
         </div>

@@ -8,20 +8,18 @@ import "react-quill/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-const modules = {
-  toolbar: [
-    ["bold", "italic", "underline", "strike"],
-    ["clean"],
-    [{ color: [] }],
-    [{ font: [] }],
-    [{ size: ["small", false, "large", "huge"] }],
-    ["code-block", "blockquote"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ indent: "-1" }, { indent: "+1" }],
-    [{ align: [] }],
-    ["link", "image", "video"],
-  ],
-};
+const toolbar = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote'],
+  ['link', 'image', 'video'],
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
+  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+  ['clean']                                         // remove formatting button
+]
 
 const formats = [
   "header",
@@ -41,7 +39,6 @@ const formats = [
   "color",
   "background",
   "align",
-  "script",
   "header",
   "direction",
 ];
@@ -139,7 +136,9 @@ const TextEditor = forwardRef(({
         ref={localQuillRef}
         value={value}
         onChange={onChange || handleChange}
-        modules={modules}
+        modules={{
+          toolbar: disabled ? null : toolbar
+        }}
         formats={formats}
         theme="snow"
         className={className}

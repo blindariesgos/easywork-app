@@ -1,5 +1,5 @@
 "use client";
-import React, {Fragment} from "react";
+import React, { Fragment } from "react";
 import CreateDocumentButton from "./CreateDocument";
 import { Cog8ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
 import DriveBreadcrumb from "./DriveBreadcrumb";
@@ -13,7 +13,7 @@ import Image from "next/image";
 import useAppContext from "../../../../../../../context/app";
 import FiltersContact from "./filters/FiltersContact";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -75,47 +75,47 @@ export default function DriveHeader() {
           <TrashIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
         </button> */}
         <Menu as="div" className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg">
-            <Menu.Button className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-            </Menu.Button>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-          
-                  <Menu.Item>
-                    {({ active }) => (
-                      <div
-                        className={classNames(
-                          active ? "bg-gray-50" : "",
-                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                        )}
-                      >
-                        Asignar permisos
-                      </div>
+          <MenuButton className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
+          </MenuButton>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <MenuItems className="absolute right-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+
+              <MenuItem>
+                {({ active }) => (
+                  <div
+                    className={classNames(
+                      active ? "bg-gray-50" : "",
+                      "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                     )}
-                  </Menu.Item>
-              </Menu.Items>
-            </Transition>
-          </Menu>
+                  >
+                    Asignar permisos
+                  </div>
+                )}
+              </MenuItem>
+            </MenuItems>
+          </Transition>
+        </Menu>
       </div>
 
       <div className="flex-none items-center justify-between border-b border-gray-200 py-4 hidden lg:flex">
         <DriveBreadcrumb />
         <div className="flex mr-3">
           <Menu as="div" className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg">
-            <Menu.Button className="flex text-gray-400 border-r-2 pr-2">
+            <MenuButton className="flex text-gray-400 border-r-2 pr-2">
               <p className="text-nowrap">
                 {t("tools:drive:organizer:by-name")}
               </p>
               <ChevronDownIcon className="h-6 w-6" />
-            </Menu.Button>
+            </MenuButton>
             <Transition
               as={Fragment}
               enter="transition ease-out duration-100"
@@ -125,9 +125,9 @@ export default function DriveHeader() {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute left-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+              <MenuItems className="absolute left-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                 {itemOptions.map((item) => (
-                  <Menu.Item key={item.name}>
+                  <MenuItem key={item.name}>
                     {({ active }) => (
                       <div
                         className={classNames(
@@ -138,22 +138,22 @@ export default function DriveHeader() {
                         {item.name}
                       </div>
                     )}
-                  </Menu.Item>
+                  </MenuItem>
                 ))}
-              </Menu.Items>
+              </MenuItems>
             </Transition>
           </Menu>
           <div className="flex text-easywork-main">
             <Bars3Icon
-              className="h-6 w-6 ml-1"
+              className="h-6 w-6 ml-1 cursor-pointer"
               onClick={() => setDriveView("table")}
             />
             <Squares2X2Icon
-              className="h-6 w-6 ml-1"
+              className="h-6 w-6 ml-1 cursor-pointer"
               onClick={() => setDriveView("icon")}
             />
             <Image
-              className="h-6 w-5 ml-1 fill-easywork-main"
+              className="h-6 w-5 ml-1 fill-easywork-main cursor-pointer"
               src="/icons/grid-3x3.svg"
               alt="big icons"
               width={18}

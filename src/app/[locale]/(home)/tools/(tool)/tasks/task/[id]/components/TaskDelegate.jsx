@@ -8,11 +8,12 @@ import { useSWRConfig } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import { useTranslation } from "react-i18next";
 
-const TaskDelegate = ({ lists, t, setIsDelegating, responsibleId, taskId }) => {
+const TaskDelegate = ({ lists, setIsDelegating, responsibleId, taskId }) => {
     const { mutate } = useSWRConfig();
     const [isLoading, setIsLoading] = useState(false);
-
+    const { t } = useTranslation()
     const schema = yup.object().shape({
         participants: yup.array(),
     });

@@ -43,7 +43,8 @@
     "create": "Crear",
     "task": "Tarea",
     "status": {
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "pending_review": "Pendiente por revisión"
     },
     "delegate-to": "Delegar a:",
     "delegate": "Delegar",
@@ -65,6 +66,7 @@
     "success-msg": "Tarea creado exitosamente!",
     "update-msg": "Tarea actualizada exitosamente!",
     "completed-success": "Tarea completada, debe esperar aprobación del supervisor",
+    "restart-success": "Tarea reanudada con exito!",
     "table": {
       "name": "Nombre",
       "activity": "Actividad",
@@ -192,6 +194,7 @@
       "objections": "Objeciones",
       "pings": "Mostrar pings ({{qty}})",
       "edit": "Editar",
+      "restart": "Reanudar",
       "comment": {
         "send": "Enviar"
       },

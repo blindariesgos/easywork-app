@@ -31,6 +31,8 @@ export default function NotifyList() {
         };
     }, [notifications, markAsRead]);
 
+    console.log('notifications', notifications)
+
     useEffect(() => {
         const loadMoreObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && hasMore && !isLoading) {

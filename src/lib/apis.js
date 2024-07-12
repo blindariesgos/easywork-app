@@ -159,6 +159,11 @@ export const putTaskCompleted = async (id) => {
   return response;
 };
 
+export const putTaskRestart = async (id) => {
+  const response = await axios().put(`/tools/tasks/${id}/continue`);
+  return response;
+};
+
 export const postComment = async (body, id) => {
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;

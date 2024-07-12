@@ -1,14 +1,8 @@
 "use client";
 import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, Transition, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import {
-  ArchiveBoxIcon,
-  ArrowRightCircleIcon,
   ChevronDownIcon,
-  DocumentDuplicateIcon,
-  HeartIcon,
-  TrashIcon,
-  UserPlusIcon,
 } from "@heroicons/react/20/solid";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import {
@@ -17,23 +11,21 @@ import {
   TbAppWindow,
   TbCloudUpload,
 } from "react-icons/tb";
-import { SiMicrosoftoffice } from "react-icons/si";
+// import { SiMicrosoftoffice } from "react-icons/si";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 
-export default function CreateDocumentButton() {
+const CreateDocumentButton = () => {
   const { t } = useTranslation();
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10">
-          {t('tools:drive:add:name')}
-          <ChevronDownIcon
-            className="-mr-1 h-5 w-5 text-white"
-            aria-hidden="true"
-          />
-        </Menu.Button>
-      </div>
+    <Menu>
+      <MenuButton className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10">
+        {t('tools:drive:add:name')}
+        <ChevronDownIcon
+          className="-mr-1 h-5 w-5 text-white"
+          aria-hidden="true"
+        />
+      </MenuButton>
 
       <Transition
         as={Fragment}
@@ -44,9 +36,9 @@ export default function CreateDocumentButton() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <MenuItems anchor="bottom start" className="divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            <Menu.Item>
+            <MenuItem>
               {({ active }) => (
                 <a
                   href="#"
@@ -62,8 +54,8 @@ export default function CreateDocumentButton() {
                   {t('tools:drive:add:document')}
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
+            </MenuItem>
+            <MenuItem>
               {({ active }) => (
                 <a
                   href="#"
@@ -79,10 +71,10 @@ export default function CreateDocumentButton() {
                   {t('tools:drive:add:folder')}
                 </a>
               )}
-            </Menu.Item>
+            </MenuItem>
           </div>
           <div className="py-1">
-            <Menu.Item>
+            <MenuItem>
               {({ active }) => (
                 <a
                   href="#"
@@ -98,8 +90,8 @@ export default function CreateDocumentButton() {
                   {t('tools:drive:add:bitrixDocs')}
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
+            </MenuItem>
+            <MenuItem>
               {({ active }) => (
                 <a
                   href="#"
@@ -115,16 +107,16 @@ export default function CreateDocumentButton() {
                   {t('tools:drive:add:googleDocs')}
                 </a>
               )}
-            </Menu.Item>
+            </MenuItem>
           </div>
           <div className="py-1">
-            <Menu.Item>
+            <MenuItem disabled>
               {({ active }) => (
                 <a
                   href="#"
                   className={clsx(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "group flex items-center px-4 py-2 text-sm"
+                    "group flex items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
                   )}
                 >
                   <TbBrandOffice
@@ -134,46 +126,48 @@ export default function CreateDocumentButton() {
                   {t('tools:drive:add:msOfficeOnline')}
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
+            </MenuItem>
+            <MenuItem disabled>
               {({ active }) => (
                 <a
                   href="#"
                   className={clsx(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "group flex items-center px-4 py-2 text-sm"
+                    "group flex items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
                   )}
                 >
-                  <SiMicrosoftoffice
+                  {/* <SiMicrosoftoffice
                     className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                     aria-hidden="true"
-                  />
+                  /> */}
                   {t('tools:drive:add:office365')}
                 </a>
               )}
-            </Menu.Item>
+            </MenuItem>
           </div>
           <div className="py-1">
-            <Menu.Item>
+            <MenuItem disabled>
               {({ active }) => (
                 <a
                   href="#"
                   className={clsx(
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "group flex items-center px-4 py-2 text-sm"
+                    "group flex items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
                   )}
                 >
-                  <TbAppWindow
+                  {/* <TbAppWindow
                     className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                     aria-hidden="true"
-                  />
+                  /> */}
                   {t('tools:drive:add:desktopApp')}
                 </a>
               )}
-            </Menu.Item>
+            </MenuItem>
           </div>
-        </Menu.Items>
+        </MenuItems>
       </Transition>
     </Menu>
   );
 }
+
+export default CreateDocumentButton;

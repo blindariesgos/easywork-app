@@ -1,7 +1,7 @@
 "use client";
 import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import CreateTaskButton from "./components/CreateTaskButton";
 import SendMessage from "./components/SendMessage";
 import Tag from "../../../../../../components/Tag";
@@ -22,6 +22,7 @@ import {
   ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { Menu, Transition } from "@headlessui/react";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
 import SliderOverEmail from "./components/SliderOverEmail";
@@ -38,6 +39,10 @@ import {
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
 import { Pagination } from "../../../../../../components/pagination/Pagination";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function WebmailLayout({ children, table }) {
   const session = useSession();
@@ -73,7 +78,7 @@ export default function WebmailLayout({ children, table }) {
       selectedFolder
     ).then((res) => {
       setDMails(res);
-    })
+    });
   }, [searchParams.get("page"), selectedFolder]);
 
   async function saveMails() {
@@ -174,33 +179,61 @@ export default function WebmailLayout({ children, table }) {
               />
             </Link>
             <div className="mt-3">
-              {/* image */}
-              <div className="flex items-center">
-                <div className="flex border border-white p-1.5 rounded-lg text-white">
-                  <Image
-                    width={45}
-                    height={45}
-                    alt="img"
-                    className="rounded-full"
-                    src={userData?.picture}
-                  />
-                  <div className="ml-2">
-                    <h1 className="font-bold">
-                      {userData?.given_name} {userData?.family_name}
-                    </h1>
-                    <p className="text-xs">info</p>
+              <Menu as="div" className="flex items-center relative">
+                <Menu.Button>
+                  <div className="flex border border-white p-1.5 rounded-lg text-white">
+                    <Image
+                      width={45}
+                      height={45}
+                      alt="img"
+                      className="rounded-full"
+                      src={userData?.picture}
+                    />
+                    <div className="ml-2">
+                      <h1 className="font-bold">
+                        {userData?.given_name} {userData?.family_name}
+                      </h1>
+                      <p className="text-xs">info</p>
+                    </div>
+                    <div className="flex items-center mb-1">
+                      <ChevronUpIcon className="ml-2 h-5 w-5 text-white" />
+                    </div>
                   </div>
-                  <div className="flex items-center mb-1">
-                    <ChevronUpIcon className="ml-2 h-5 w-5 text-white" />
-                  </div>
-                </div>
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-56 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <div
+                          className={classNames(
+                            active ? "bg-gray-50" : "",
+                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                          )}
+                        >
+                          test
+                        </div>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2">
+                      <div>Conectar nuevo</div>
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
                 <div
                   className="flex items-center justify-center ml-1.5 border border-white rounded-full cursor-pointer"
                   onClick={() => updateData()}
                 >
                   <ArrowPathIcon className="m-1 h-6 w-6 text-white" />
                 </div>
-              </div>
+              </Menu>
             </div>
             <div className="w-full my-4">
               <p className="text-xs text-white text-left">

@@ -29,7 +29,8 @@
       "name": "Nombre",
       "modified": "Modificado",
       "modified-by": "Modificado por",
-      "size": "Tamaño"
+      "size": "Tamaño",
+      "link-to": "Vincular a"
     }
   },
   "tasks": {

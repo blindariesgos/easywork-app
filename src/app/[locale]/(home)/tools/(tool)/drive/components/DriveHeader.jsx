@@ -13,7 +13,9 @@ import Image from "next/image";
 import useAppContext from "../../../../../../../context/app";
 import FiltersContact from "./filters/FiltersContact";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { CgMenuGridR } from "react-icons/cg";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import clsx from "clsx";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -21,7 +23,7 @@ function classNames(...classes) {
 
 export default function DriveHeader() {
   const { t } = useTranslation();
-  const { setDriveView } = useAppContext();
+  const { setDriveView, driveView } = useAppContext();
 
   const itemOptions = [
     { name: t("tools:drive:organizer:by-name") },
@@ -143,21 +145,26 @@ export default function DriveHeader() {
               </MenuItems>
             </Transition>
           </Menu>
-          <div className="flex text-easywork-main">
+          <div className="flex gap-1 items-center">
             <Bars3Icon
-              className="h-6 w-6 ml-1 cursor-pointer"
+              className={clsx("h-6 w-6 cursor-pointer ", {
+                "text-easywork-main": driveView == "table",
+                "text-[#A5A5A5]": driveView != "table"
+              })}
               onClick={() => setDriveView("table")}
             />
             <Squares2X2Icon
-              className="h-6 w-6 ml-1 cursor-pointer"
+              className={clsx("h-6 w-6 cursor-pointer", {
+                "text-easywork-main": driveView == "icon",
+                "text-[#A5A5A5]": driveView != "icon"
+              })}
               onClick={() => setDriveView("icon")}
             />
-            <Image
-              className="h-6 w-5 ml-1 fill-easywork-main cursor-pointer"
-              src="/icons/grid-3x3.svg"
-              alt="big icons"
-              width={18}
-              height={18}
+            <CgMenuGridR
+              className={clsx("h-7 w-7 cursor-pointer", {
+                "text-easywork-main": driveView == "thumb",
+                "text-[#A5A5A5]": driveView != "thumb"
+              })}
               onClick={() => setDriveView("thumb")}
             />
           </div>

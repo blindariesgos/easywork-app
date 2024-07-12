@@ -10,53 +10,22 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ThumbsInfo({ files }) {
+export default function ThumbsInfo({
+  files,
+  selectedFiles,
+  checkbox,
+  shareOptions,
+  itemOptions,
+  toggleAll,
+  setSelectedFiles,
+  checked,
+}) {
   const { t } = useTranslation();
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const checkbox = useRef();
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
-
-  useLayoutEffect(() => {
-    const isIndeterminate =
-      selectedFiles.length > 0 && selectedFiles.length < 9;
-    setChecked(selectedFiles.length === 9);
-    setIndeterminate(isIndeterminate);
-    if (checkbox.current) {
-      checkbox.current.indeterminate = isIndeterminate;
-    }
-  }, [selectedFiles]);
-
-  function toggleAll() {
-    setSelectedFiles(
-      checked || indeterminate ? [] : Array.from({ length: 9 }, (_, i) => i)
-    );
-    setChecked(!checked && !indeterminate);
-    setIndeterminate(false);
-  }
-
-  const itemOptions = [
-    { name: "Abrir" },
-    { name: "Compartir" },
-    { name: "Renombrar" },
-    { name: "Copiar" },
-  ];
-
-  const shareOptions = [
-    { name: "Compartir enlace interno" },
-    { name: "Compartir con otros usuarios" },
-  ];
 
   return (
     <div className="relative">
       {selectedFiles.length > 0 && (
         <div className="flex h-12 items-center space-x-3 bg-white">
-          <button
-            type="button"
-            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-          >
-            {t("tools:drive:table:edit")}
-          </button>
           <button
             type="button"
             className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
@@ -85,7 +54,7 @@ export default function ThumbsInfo({ files }) {
                   )
                 }
               />
-              <Menu as="div" className="relative inline-block text-left">
+              <Menu>
                 <MenuButton className="flex items-center">
                   <Bars3Icon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </MenuButton>
@@ -98,7 +67,7 @@ export default function ThumbsInfo({ files }) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <MenuItems className="absolute left-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                  <MenuItems anchor="right start" className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {itemOptions.map((item) => (
                       <MenuItem key={item.name}>
                         {({ active }) => (
@@ -111,11 +80,11 @@ export default function ThumbsInfo({ files }) {
                             {item.name !== "Compartir" ? (
                               item.name
                             ) : (
-                              <Menu as="div" className="relative inline-block text-left">
-                                <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <Menu>
+                                <MenuButton className="flex items-center">
                                   <div className="w-full flex items-center justify-between">
                                     {item.name}
-                                    <ChevronRightIcon className="h-6 w-6 ml-14" />
+                                    <ChevronRightIcon className="h-6 w-6 ml-4" />
                                   </div>
                                 </MenuButton>
                                 <Transition
@@ -127,7 +96,7 @@ export default function ThumbsInfo({ files }) {
                                   leaveFrom="transform opacity-100 scale-100"
                                   leaveTo="transform opacity-0 scale-95"
                                 >
-                                  <MenuItems className="absolute left-32 z-50 mt-2.5 w-56 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                  <MenuItems anchor={{ to: 'right start', gap: '12px' }} className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                                     {shareOptions.map((item) => (
                                       <MenuItem key={item.name}>
                                         {({ active }) => (

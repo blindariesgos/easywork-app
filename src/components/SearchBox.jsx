@@ -47,18 +47,18 @@ export default function SearchBox() {
     query === ""
       ? people
       : people.filter((person) => {
-          return person.name.toLowerCase().includes(query.toLowerCase());
-        });
+        return person.name.toLowerCase().includes(query.toLowerCase());
+      });
 
   const filteredProjects =
     query === ""
       ? []
       : projects.filter((project) => {
-          return project.name.toLowerCase().includes(query.toLowerCase());
-        });
+        return project.name.toLowerCase().includes(query.toLowerCase());
+      });
 
   return (
-    <form className="relative flex lg:min-w-96 " action="#" method="GET">
+    <form className="relative flex w-full" action="#" method="GET">
       <input
         id="search-field"
         className=" w-full h-8 my-auto rounded-xl border-0 py-0 pl-2 pr-8 text-black placeholder:text-primary focus:ring-0 sm:text-sm bg-gray-200 font-medium"

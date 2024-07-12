@@ -1,5 +1,5 @@
 "use client";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, Transition, MenuItems, TransitionChild } from "@headlessui/react";
 import React, { Fragment, useState, useRef, useEffect } from "react";
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
@@ -46,27 +46,21 @@ const FiltersContact = () => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block">
-      <div>
-        {/* <Menu.Button className="inline-flex w-full bg-primary hover:bg-easy-500 text-white rounded-md text-xs px-1.5 py-1 gap-1">
-					{t('contacts:filters:name')}
-					<ChevronDownIcon className="h-4 w-4 -rotate-180" />
-				</Menu.Button> */}
-        <div className="flex items-center w-full">
-          <FaMagnifyingGlass className="h-4 w-4 text-primary" />
-          <input
-            type="search"
-            name="search"
-            id="search-cal"
-            className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
-            placeholder={t("contacts:header:search")}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onClick={() => setSearchInput("")}
-          />
-        </div>
-      </div>
-      <Transition.Root show={searchInput === ""} as={Fragment}>
-        <Transition.Child
+    <Menu>
+      <MenuButton className="flex items-center w-full">
+        <FaMagnifyingGlass className="h-4 w-4 text-primary" />
+        <input
+          type="search"
+          name="search"
+          id="search-cal"
+          className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
+          placeholder={t("contacts:header:search")}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onClick={() => setSearchInput("")}
+        />
+      </MenuButton>
+      <Transition show={searchInput === ""} as={Fragment}>
+        <TransitionChild
           as={Fragment}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
@@ -75,8 +69,9 @@ const FiltersContact = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items
-            className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-fit`}
+          <MenuItems
+            anchor="bottom end"
+            className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none w-fit`}
           >
             <div className="p-4" ref={ref}>
               <div className="flex gap-4 flex-col sm:flex-row">
@@ -93,11 +88,10 @@ const FiltersContact = () => {
                           onClick={() => handleSelected(cont.id)}
                         >
                           <p
-                            className={`text-sm uppercase  ${
-                              cont.selected
-                                ? "text-primary font-medium"
-                                : "text-gray-60"
-                            }`}
+                            className={`text-sm uppercase  ${cont.selected
+                              ? "text-primary font-medium"
+                              : "text-gray-60"
+                              }`}
                           >
                             {cont.name}
                           </p>
@@ -116,9 +110,9 @@ const FiltersContact = () => {
                 <FormFilters />
               </div>
             </div>
-          </Menu.Items>
-        </Transition.Child>
-      </Transition.Root>
+          </MenuItems>
+        </TransitionChild>
+      </Transition>
     </Menu>
   );
 };

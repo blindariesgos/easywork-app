@@ -34,6 +34,9 @@ export default function SendMessage({
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
   const [valueTest, setValue] = useState("");
+  const [contactsArray, setContactsArray] = useState(null);
+  const [BCCArray, setBCCArray] = useState(null);
+  const [CCArray, setCCArray] = useState(null);
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -50,30 +53,28 @@ export default function SendMessage({
     });
   }, []);
 
-  // const {
-  //   setValue,
-  //   formState: { isValid, errors },
-  // } = useForm({
-  //   defaultValues: {
-  //     range: [null, null],
-  //   },
-  //   mode: "onChange",
-  //   resolver: yupResolver(schema),
-  // });
-
   async function sendEmail() {
+    const data = {
+      to: contactsArray,
+      cc: CCArray,
+      bcc: BCCArray,
+      subject: subject,
+      body: value,
+    }
+    console.log(data);
     try {
+      if(!data.to){
+        toast.error("Debes colocar destinatario");
+        return
+      }
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}`,
-        {
-          to: valueTest,
-          subject: subject,
-          body: value,
-        }
+        data
       );
       toast.success("Correo enviado");
       router.back();
     } catch (error) {
+      toast.error("Error al enviar correo");
       console.error("Failed to send email:", error);
     }
   }
@@ -132,6 +133,7 @@ export default function SendMessage({
                               options={lists?.users}
                               setValue={setValue}
                               className="ml-2 w-full"
+                              setContactsArray={setContactsArray}
                             />
                             <p
                               className="ml-2 hover:underline cursor-pointer"
@@ -158,6 +160,7 @@ export default function SendMessage({
                                 options={lists?.users}
                                 setValue={setValue}
                                 className="ml-2 w-10/12"
+                                setContactsArray={setCCArray}
                               />
                             </div>
                           )}
@@ -169,6 +172,7 @@ export default function SendMessage({
                                 options={lists?.users}
                                 setValue={setValue}
                                 className="ml-2 w-10/12"
+                                setContactsArray={setBCCArray}
                               />
                             </div>
                           )}

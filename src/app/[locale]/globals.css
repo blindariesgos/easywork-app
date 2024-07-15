@@ -66,6 +66,11 @@ body {
   border-radius: "20px";
 }
 
+.ql-container.ql-snow {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
 .react-datepicker__day--selected {
   background-color: #241F61 !important;
   color: white !important;

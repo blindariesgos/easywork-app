@@ -21,7 +21,7 @@ export default function HomeLayout({ children }) {
 
               <div className="flex h-screen">
                 <Sidebar />
-                <div className="flex flex-col flex-grow w-full p-0.5 sm:p-0 md:p-4 overflow-y-auto">
+                <div className="flex flex-col flex-grow w-full p-0.5 sm:p-0 md:p-4 lg:pl-80">
                   {/* Contenedor principal flexible */}
                   <main className="flex-grow">
                     {/* Contenido creciente */}

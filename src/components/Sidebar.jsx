@@ -1,6 +1,6 @@
 "use client";
 import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, TransitionChild, DialogPanel } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import useAppContext from "../context/app/index";
@@ -21,13 +21,13 @@ export default function Sidebar() {
 
   return (
     <>
-      <Transition.Root show={sidebarOpen} as={Fragment}>
+      <Transition show={sidebarOpen} as={Fragment}>
         <Dialog
           as="div"
           className="relative z-50 lg:hidden"
           onClose={setSidebarOpen}
         >
-          <Transition.Child
+          <TransitionChild
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
             enterFrom="opacity-0"
@@ -37,10 +37,10 @@ export default function Sidebar() {
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-gray-900/80" />
-          </Transition.Child>
+          </TransitionChild>
 
           <div className="fixed inset-0 flex">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="transition ease-in-out duration-300 transform"
               enterFrom="-translate-x-full"
@@ -49,8 +49,8 @@ export default function Sidebar() {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                <Transition.Child
+              <DialogPanel className="relative mr-16 flex w-full max-w-xs flex-1">
+                <TransitionChild
                   as={Fragment}
                   enter="ease-in-out duration-300"
                   enterFrom="opacity-0"
@@ -72,7 +72,7 @@ export default function Sidebar() {
                       />
                     </button>
                   </div>
-                </Transition.Child>
+                </TransitionChild>
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-6 pb-4 ring-1 ring-white/10 rounded-tr-[50px] rounded-br-[50px]">
                   <div className="flex h-16 shrink-0 items-center">
@@ -86,16 +86,15 @@ export default function Sidebar() {
                   </div>
                   <SidebarMenu />
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </Dialog>
-      </Transition.Root>
-      <div
-        className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${
-          sidebarOpenDesktop2 ? "lg:w-96" : "lg:w-24"
-        }`}
-      ></div>
+      </Transition>
+      {/* <div
+        className={`hidden lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop2 ? "lg:w-96" : "lg:w-24"
+          }`}
+      ></div> */}
       <div
         onMouseEnter={() => {
           if (!sidebarOpenDesktop1) {
@@ -107,16 +106,14 @@ export default function Sidebar() {
             setSidebarOpenDesktop1(false);
           }
         }}
-        className={`hidden fixed lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${
-          sidebarOpenDesktop1 ? "lg:w-72" : "lg:w-24"
-        }`}
+        className={`hidden fixed lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop1 ? "lg:w-72" : "lg:w-24"
+          }`}
       >
         <div
-          className={`flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-4 pb-4 rounded-tr-[50px] rounded-br-[50px] ${
-            sidebarOpenDesktop1 && !sidebarOpenDesktop2
-              ? "hover:opacity-85"
-              : "opacity-100"
-          }`}
+          className={`flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-4 pb-4 rounded-tr-[50px] rounded-br-[50px] ${sidebarOpenDesktop1 && !sidebarOpenDesktop2
+            ? "hover:opacity-85"
+            : "opacity-100"
+            }`}
         >
           <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
             <Link href="/home">

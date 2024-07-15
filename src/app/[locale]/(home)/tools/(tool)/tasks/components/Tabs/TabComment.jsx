@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { es } from 'date-fns/locale'; // Importa el locale español
 import { useSWRConfig } from "swr";
 import parse from "html-react-parser";
+import Button from "@/src/components/form/Button";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
@@ -28,6 +29,7 @@ export default function TabComment({ info }) {
   const [openActions, setOpenActions] = useState({});
   const [editComment, setEditComment] = useState({});
   const { mutate } = useSWRConfig();
+  const [isAddComment, setIsAddComment] = useState(false)
 
   const handleComment = async (_, id) => {
     if (quillRef.current) {
@@ -48,6 +50,7 @@ export default function TabComment({ info }) {
         handleApiError(error.message);
         setDisabled(false);
       }
+      setIsAddComment(false)
     }
   };
 
@@ -94,7 +97,7 @@ export default function TabComment({ info }) {
         </p>
       </div>
       {comments?.length > 0 && (
-        <div className="gap-4 flex flex-col w-full">
+        <div className="gap-4 flex flex-col-reverse w-full">
           {comments?.map((dat, index) => (
             <div
               className="flex gap-2 mt-4 items-center w-full"
@@ -120,7 +123,7 @@ export default function TabComment({ info }) {
                       <TextEditor
                         ref={quillRef}
                         value={value}
-                        className="w-full"
+                        className="w-full max-h-[100px] overflow-y-auto"
                         setValue={setValueText}
                         disabled={disabled}
                       />
@@ -200,26 +203,48 @@ export default function TabComment({ info }) {
             src={"/img/avatar.svg"}
             alt=""
           />
-          <div className="flex gap-2 flex-col">
-            <div className="border rounded-md w-full">
-              <TextEditor
-                ref={quillRef}
-                value={value}
-                className=" w-full"
-                setValue={setValueText}
-              />
-            </div>
-            <div className="flex justify-start items-center gap-2">
-              <button
-                type="button"
-                onClick={handleComment}
-                disabled={disabled}
-                className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                {disabled ? <InlineSpinner /> : t("tools:tasks:edit:comment:send")}
-              </button>
-            </div>
-          </div>
+          {
+            isAddComment
+              ? (
+                <div className="flex gap-2 flex-col">
+                  <div className="border rounded-md w-full">
+                    <TextEditor
+                      ref={quillRef}
+                      value={value}
+                      className="w-full"
+                      setValue={setValueText}
+                    />
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <Button
+                      type="button"
+                      onclick={handleComment}
+                      disabled={disabled}
+                      label={t("tools:tasks:edit:comment:send")}
+                      buttonStyle="primary"
+                      className="px-3 py-2"
+                    />
+                    <Button
+                      disabled={disabled}
+                      buttonStyle="secondary"
+                      label={t("common:buttons:cancel")}
+                      className="px-3 py-2"
+                      onclick={() => {
+                        setIsAddComment(false)
+                        setValueText("")
+                      }}
+                    />
+
+
+                  </div>
+                </div>
+              )
+              : (
+                <div className="w-full border rounded-full px-4 py-2 text-gray-50 text-sm cursor-pointer" onClick={() => setIsAddComment(true)}>
+                  Agregar comentario
+                </div>
+              )
+          }
 
         </div>
       )}

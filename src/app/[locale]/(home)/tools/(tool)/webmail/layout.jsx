@@ -51,7 +51,7 @@ export default function WebmailLayout({ children, table }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { query } = router;
-  const { sidebarOpenEmail, setSidebarOpenEmail } = useAppContext();
+  const { sidebarOpenEmail, setSidebarOpenEmail, selectOauth, setSelectOauth } = useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
@@ -73,9 +73,12 @@ export default function WebmailLayout({ children, table }) {
   useEffect(() => {
     fetchData();
     getAllOauth(session.data.user.id).then((res) => {
+      console.log(res);
+      if (!selectOauth)
+        setSelectOauth(res[0])
       setAllOauth(res);
     });
-  }, [session]);
+  }, [session, selectOauth]);
 
   useEffect(() => {
     getMails(
@@ -90,13 +93,13 @@ export default function WebmailLayout({ children, table }) {
 
   async function saveMails() {
     axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth.id}`
     );
   }
 
   const updateData = async () => {
     await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}/${selectOauth.id}`
     );
     fetchData();
   };
@@ -106,7 +109,7 @@ export default function WebmailLayout({ children, table }) {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
     const axiosUserData = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}`,
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth.id}`,
       config
     );
     setUserData(axiosUserData.data);
@@ -114,7 +117,8 @@ export default function WebmailLayout({ children, table }) {
       session.data.user.id,
       searchParams.get("page"),
       10,
-      selectedFolder
+      selectedFolder,
+      selectOauth.id
     );
     setDMails(axiosMails);
     const axiosFolders = await getFoldersSaved(session.data.user.id);
@@ -231,6 +235,7 @@ export default function WebmailLayout({ children, table }) {
                               active ? "bg-gray-50" : "",
                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
+                            onClick={() => {setSelectOauth(oauth)}}
                           >
                             {oauth.email}
                           </div>

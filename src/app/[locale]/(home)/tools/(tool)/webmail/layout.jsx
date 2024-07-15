@@ -35,9 +35,11 @@ import {
   deleteTokenGoogle,
   getMails,
   deleteFoldersMail,
+  getAllOauth,
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalAddGmail from "../mails/components/ModalAddGmail";
+import ModalAddOtherGmail from "../mails/components/ModalAddOtherGmail";
 import { Pagination } from "../../../../../../components/pagination/Pagination";
 
 function classNames(...classes) {
@@ -54,8 +56,10 @@ export default function WebmailLayout({ children, table }) {
   const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
+  const [otherGmailState, setOtherGmailState] = useState(false);
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
+  const [allOauth, setAllOauth] = useState(null);
 
   useEffect(() => {
     if (window.innerWidth > 1023) {
@@ -68,6 +72,9 @@ export default function WebmailLayout({ children, table }) {
 
   useEffect(() => {
     fetchData();
+    getAllOauth(session.data.user.id).then((res) => {
+      setAllOauth(res);
+    });
   }, [session]);
 
   useEffect(() => {
@@ -132,6 +139,12 @@ export default function WebmailLayout({ children, table }) {
           className="bg-easywork-main"
         />
       </ModalAddGmail>
+      <ModalAddOtherGmail state={otherGmailState} from={"buzon"}>
+        <Tag
+          onclick={() => setOtherGmailState(false)}
+          className="bg-easywork-main"
+        />
+      </ModalAddOtherGmail>
       <SendMessage colorTag="bg-easywork-main" userData={userData} />
       <div className="flex flex-col flex-grow">
         <EmailHeader
@@ -210,20 +223,22 @@ export default function WebmailLayout({ children, table }) {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-56 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <div
-                          className={classNames(
-                            active ? "bg-gray-50" : "",
-                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                          )}
-                        >
-                          test
-                        </div>
-                      )}
-                    </Menu.Item>
+                    {allOauth?.map((oauth) => (
+                      <Menu.Item>
+                        {({ active }) => (
+                          <div
+                            className={classNames(
+                              active ? "bg-gray-50" : "",
+                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                            )}
+                          >
+                            {oauth.email}
+                          </div>
+                        )}
+                      </Menu.Item>
+                    ))}
                     <Menu.Item className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2">
-                      <div>Conectar nuevo</div>
+                      <div onClick={() => {setOtherGmailState(true)}}>Conectar nuevo</div>
                     </Menu.Item>
                   </Menu.Items>
                 </Transition>

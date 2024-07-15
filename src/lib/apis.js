@@ -286,6 +286,11 @@ export const getMails = async (idUser, page, perPage, folder) => {
   return response;
 };
 
+export const getAllOauth = async (idUser) => {
+  const response = await axios().get(`/oauth/alloAuth/${idUser}`);
+  return response;
+};
+
 export const deleteMails = async (idUser) => {
   const response = await axios().delete(`/oauth/email/delete${idUser}`);
   return response;

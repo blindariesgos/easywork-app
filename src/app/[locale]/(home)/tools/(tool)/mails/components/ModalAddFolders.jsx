@@ -5,26 +5,28 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import useAppContext from "../../../../../../../context/app/index";
 import { useRouter } from "next/navigation";
-import { saveFolders } from "../../../../../../../lib/apis";
-import { getTokenGoogle } from "../../../../../../../lib/apis";
+import { saveFolders, getAllOauth } from "../../../../../../../lib/apis";
 
 export default function ModalAddFolders({ children }) {
   const router = useRouter();
   const session = useSession();
   const { setOpenModalFolders, openModalFolders } = useAppContext();
   const [folderData, setFolderData] = useState([]);
+  const [userData, setUserData] = useState(null);
+
   useEffect(() => {
-    getTokenGoogle(session.data.user.id).then((res) => {
+    getAllOauth(session.data.user.id).then((res) => {
+      setUserData(res.slice(-1).pop());
+      console.log(res.slice(-1).pop());
       const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
+        headers: { Authorization: `Bearer ${res.slice(-1).pop().access_token}` },
       };
       axios
         .get(
-          `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/labels`,
+          `https://www.googleapis.com/gmail/v1/users/${res.slice(-1).pop().usergoogle_id}/labels`,
           config
         )
         .then((labels) => {
-          // Set system folders to true by default
           const updatedLabels = labels.data.labels.map((label) => ({
             ...label,
             state: label.type === "system" ? true : label.state,
@@ -36,7 +38,7 @@ export default function ModalAddFolders({ children }) {
 
   async function saveMails() {
     axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${userData?.id}`
     );
   }
 

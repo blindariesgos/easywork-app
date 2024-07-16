@@ -4,6 +4,7 @@ import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect, Fragment } from "react";
 import CreateTaskButton from "./components/CreateTaskButton";
 import SendMessage from "./components/SendMessage";
+import ModalAddFolders from "../mails/components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
 import Table from "./components/Table";
 import axios from "axios";
@@ -38,8 +39,7 @@ import {
   getAllOauth,
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
-import ModalAddGmail from "../mails/components/ModalAddGmail";
-import ModalAddOtherGmail from "../mails/components/ModalAddOtherGmail";
+import ModalConfigGmail from "../mails/components/ModalConfigGmail";
 import { Pagination } from "../../../../../../components/pagination/Pagination";
 
 function classNames(...classes) {
@@ -51,12 +51,14 @@ export default function WebmailLayout({ children, table }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { query } = router;
-  const { sidebarOpenEmail, setSidebarOpenEmail, selectOauth, setSelectOauth } = useAppContext();
+  const { sidebarOpenEmail, setSidebarOpenEmail, selectOauth, setSelectOauth, setOpenModalFolders, openModalFolders } = useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
   const [otherGmailState, setOtherGmailState] = useState(false);
+  const [motivo, setMotivo] = useState("");
+  const [addOtherOauth, setAddOtherOauth] = useState(false);
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
@@ -71,14 +73,13 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
-    fetchData();
     getAllOauth(session.data.user.id).then((res) => {
-      console.log(res);
       if (!selectOauth)
         setSelectOauth(res[0])
       setAllOauth(res);
+      fetchData();
     });
-  }, [session, selectOauth]);
+  }, [selectOauth]);
 
   useEffect(() => {
     getMails(
@@ -109,7 +110,7 @@ export default function WebmailLayout({ children, table }) {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
     const axiosUserData = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth.id}`,
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
       config
     );
     setUserData(axiosUserData.data);
@@ -130,6 +131,12 @@ export default function WebmailLayout({ children, table }) {
     }
   };
 
+  function openModal(motivo, state, add) {
+    setMotivo(motivo); 
+    setAddOtherOauth(add)
+    setGmailState(state); 
+  }
+
   function backButton() {
     setSidebarOpenEmail(false);
     router.push("/tools/mails");
@@ -137,18 +144,20 @@ export default function WebmailLayout({ children, table }) {
 
   return (
     <>
-      <ModalAddGmail state={gmailState} from={"buzon"}>
+      <ModalConfigGmail state={gmailState} addOtherOauth={addOtherOauth} motivo={motivo}>
         <Tag
           onclick={() => setGmailState(false)}
           className="bg-easywork-main"
         />
-      </ModalAddGmail>
-      <ModalAddOtherGmail state={otherGmailState} from={"buzon"}>
-        <Tag
-          onclick={() => setOtherGmailState(false)}
-          className="bg-easywork-main"
-        />
-      </ModalAddOtherGmail>
+      </ModalConfigGmail>
+      {openModalFolders && (
+        <ModalAddFolders state={true} addOtherOauth={addOtherOauth}>
+          <Tag
+            onclick={() => setOpenModalFolders(false)}
+            className="bg-green-500"
+          />
+        </ModalAddFolders>
+      )}
       <SendMessage colorTag="bg-easywork-main" userData={userData} />
       <div className="flex flex-col flex-grow">
         <EmailHeader
@@ -173,7 +182,7 @@ export default function WebmailLayout({ children, table }) {
               <button
                 type="button"
                 className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => setGmailState(true)}
+                onClick={() => { openModal("edit", true, false)}}
               >
                 <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
               </button>
@@ -228,7 +237,7 @@ export default function WebmailLayout({ children, table }) {
                 >
                   <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-56 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {allOauth?.map((oauth) => (
-                      <Menu.Item>
+                      <Menu.Item key={oauth.id}>
                         {({ active }) => (
                           <div
                             className={classNames(
@@ -243,7 +252,7 @@ export default function WebmailLayout({ children, table }) {
                       </Menu.Item>
                     ))}
                     <Menu.Item className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2">
-                      <div onClick={() => {setOtherGmailState(true)}}>Conectar nuevo</div>
+                      <div onClick={() => { openModal("add", true, true)}}>Conectar nuevo</div>
                     </Menu.Item>
                   </Menu.Items>
                 </Transition>

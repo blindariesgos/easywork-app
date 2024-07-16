@@ -12,21 +12,33 @@ import {
   getTokenGoogle,
   deleteTokenGoogle,
   deleteFoldersMail,
+  getAllOauth,
 } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ModalAddGmail({ children, state, from, edit }) {
+export default function ModalConfigGmail({
+  children,
+  state,
+  motivo,
+  edit,
+  addOtherOauth,
+}) {
   const router = useRouter();
   const session = useSession();
-  const { setOpenModalFolders, openModalFolders, userGoogle, setUserGoogle } =
-    useAppContext();
+  const {
+    lists,
+    selectOauth,
+    setOpenModalFolders,
+    openModalFolders,
+    userGoogle,
+    setUserGoogle,
+  } = useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
-  const { lists } = useAppContext();
 
   const schemaInputs = yup.object().shape({
     name: yup.string(),
@@ -69,8 +81,9 @@ export default function ModalAddGmail({ children, state, from, edit }) {
 
   async function deleteOauth() {
     try {
-      await deleteTokenGoogle(session.data.user.id);
-      await deleteFoldersMail(session.data.user.id);
+      console.log(selectOauth.id);
+      await deleteTokenGoogle(session.data.user.id, selectOauth.id);
+      // await deleteFoldersMail(session.data.user.id);
       router.push("/tools/mails");
     } catch (error) {}
   }
@@ -93,19 +106,28 @@ export default function ModalAddGmail({ children, state, from, edit }) {
     }, 1000);
   }
 
+  useEffect(() => {
+    getDataGoogleUser();
+    console.log(addOtherOauth);
+  }, [state]);
+
   async function getDataGoogleUser() {
-    try {
-      const res = await getTokenGoogle(session.data.user.id);
-      const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
-      };
-      const userInfo = await axios.get(
-        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
-        config
-      );
-      setUserGoogle(userInfo.data, ...res.access_token);
-    } catch (error) {
-      setUserGoogle(null);
+    if (!addOtherOauth) {
+      try {
+        const res = await getAllOauth(session.data.user.id);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
+          },
+        };
+        const userInfo = await axios.get(
+          "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
+          config
+        );
+        setUserGoogle(userInfo.data, ...res.slice(-1).pop().access_token);
+      } catch (error) {
+        setUserGoogle(null);
+      }
     }
   }
 
@@ -116,10 +138,6 @@ export default function ModalAddGmail({ children, state, from, edit }) {
     { name: "3 meses", onClick: "" },
     { name: "todo el tiempo", onClick: "" },
   ];
-
-  useEffect(() => {
-    getDataGoogleUser();
-  }, []);
 
   return (
     <>
@@ -141,7 +159,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                 <h1 className="text-gray-400 font-medium text-lg ml-1">
                   Gmail
                 </h1>
-                {userGoogle ? (
+                {!addOtherOauth && userGoogle ? (
                   <div className="flex ml-2 items-center">
                     <Image
                       src={userGoogle.picture}
@@ -195,7 +213,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                 </p>
               </Menu>
               <div className="mt-2">
-                {!userGoogle && from == "lobby" ? (
+                {motivo == "add" ? (
                   editParams ? (
                     <>
                       <p className="ml-2 mb-1">Nombre del buzón</p>
@@ -339,7 +357,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                 )}
               </div>
               <div className="flex mt-4 justify-end">
-                {from == "buzon" ? (
+                {motivo == "edit" ? (
                   <>
                     <button
                       type="button"

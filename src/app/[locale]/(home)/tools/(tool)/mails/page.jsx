@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { createImap, getTokenGoogle } from "../../../../../../lib/apis";
+import { createImap, getAllOauth } from "../../../../../../lib/apis";
 import { handleApiError } from "../../../../../../utils/api/errors";
 import axios from "axios";
-import ModalAddGmail from "./components/ModalAddGmail";
+import ModalConfigGmail from "./components/ModalConfigGmail";
 import ModalAddFolders from "./components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
 import useAppContext from "../../../../../../context/app/index";
@@ -68,15 +68,14 @@ export default function IngresarEmail() {
 
   async function toKnowEmail() {
     try {
-      const responseImap = await getTokenGoogle(session.data.user.id);
-      console.log(responseImap);
-      if (responseImap) {
+      const response = await getAllOauth(session.data.user.id);
+      console.log(response.length);
+      if (response.length > 0) {
         router.push("/tools/webmail?page=1");
       } else {
         setGmailState(true);
       }
     } catch (error) {
-      console.log("quetal");
       setGmailState(true);
     }
   }
@@ -158,9 +157,9 @@ export default function IngresarEmail() {
           ))}
         </ul>
       </div>
-      <ModalAddGmail state={gmailState} from={"lobby"}>
+      <ModalConfigGmail state={gmailState} motivo={"add"} addOtherOauth={false}>
         <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
-      </ModalAddGmail>
+      </ModalConfigGmail>
       {openModalFolders && (
         <ModalAddFolders state={true}>
           <Tag

@@ -68,9 +68,7 @@ function SelectDropdown({
       name: firstName,
       lastName,
       emails_dto: query,
-      sourceId: "b9814931-b559-4f60-9780-5370dae35622",
-      assignedById: session.data.user.id,
-      typeId: "58f73829-88cd-4b42-8671-7125a77f51c2",
+      sourceId: "f3b92514-b763-4967-b46b-ac1ef323a2e6",
     };
     const response = await postLead(data);
     console.log(response);

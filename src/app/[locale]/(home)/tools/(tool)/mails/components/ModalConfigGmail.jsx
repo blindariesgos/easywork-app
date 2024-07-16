@@ -81,7 +81,6 @@ export default function ModalConfigGmail({
     try {
       console.log(selectOauth.id);
       await deleteTokenGoogle(session.data.user.id, selectOauth.id);
-      // await deleteFoldersMail(session.data.user.id);
       router.push("/tools/mails");
     } catch (error) {}
   }
@@ -97,7 +96,7 @@ export default function ModalConfigGmail({
     );
 
     const checkWindowClosed = setInterval(async function () {
-      if (oauthWindow.closed) {
+      if (oauthWindow.closed && state) {
         clearInterval(checkWindowClosed);
         getDataGoogleUser();
       }
@@ -105,11 +104,13 @@ export default function ModalConfigGmail({
   }
 
   useEffect(() => {
-    getDataGoogleUser();
+    if (state)
+      getDataGoogleUser();
   }, [state]);
 
   async function getDataGoogleUser() {
     if (!addOtherOauth){
+      setUserGoogle(null);
       const config = {
         headers: { Authorization: `Bearer ${session.data.user.access_token}` },
       };

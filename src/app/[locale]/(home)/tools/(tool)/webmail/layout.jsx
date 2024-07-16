@@ -51,7 +51,14 @@ export default function WebmailLayout({ children, table }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { query } = router;
-  const { sidebarOpenEmail, setSidebarOpenEmail, selectOauth, setSelectOauth, setOpenModalFolders, openModalFolders } = useAppContext();
+  const {
+    sidebarOpenEmail,
+    setSidebarOpenEmail,
+    selectOauth,
+    setSelectOauth,
+    setOpenModalFolders,
+    openModalFolders,
+  } = useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
@@ -73,13 +80,25 @@ export default function WebmailLayout({ children, table }) {
   }, [setSidebarOpenEmail]);
 
   useEffect(() => {
+    allOauthPromise();
+  }, [selectOauth]);
+
+  useEffect(() => {
+    allOauthPromise();
+  }, [openModalFolders]);
+
+  useEffect(() => {
+    setSelectOauth(null);
+    allOauthPromise();
+  }, []);
+
+  function allOauthPromise() {
     getAllOauth(session.data.user.id).then((res) => {
-      if (!selectOauth)
-        setSelectOauth(res[0])
+      if (!selectOauth) setSelectOauth(res[0]);
       setAllOauth(res);
       fetchData();
     });
-  }, [selectOauth]);
+  }
 
   useEffect(() => {
     getMails(
@@ -109,6 +128,7 @@ export default function WebmailLayout({ children, table }) {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
+    console.log(`${session.data.user.id}/${selectOauth?.id}`);
     const axiosUserData = await axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
       config
@@ -132,9 +152,9 @@ export default function WebmailLayout({ children, table }) {
   };
 
   function openModal(motivo, state, add) {
-    setMotivo(motivo); 
-    setAddOtherOauth(add)
-    setGmailState(state); 
+    setMotivo(motivo);
+    setAddOtherOauth(add);
+    setGmailState(state);
   }
 
   function backButton() {
@@ -144,7 +164,11 @@ export default function WebmailLayout({ children, table }) {
 
   return (
     <>
-      <ModalConfigGmail state={gmailState} addOtherOauth={addOtherOauth} motivo={motivo}>
+      <ModalConfigGmail
+        state={gmailState}
+        addOtherOauth={addOtherOauth}
+        motivo={motivo}
+      >
         <Tag
           onclick={() => setGmailState(false)}
           className="bg-easywork-main"
@@ -182,7 +206,9 @@ export default function WebmailLayout({ children, table }) {
               <button
                 type="button"
                 className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => { openModal("edit", true, false)}}
+                onClick={() => {
+                  openModal("edit", true, false);
+                }}
               >
                 <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
               </button>
@@ -244,7 +270,9 @@ export default function WebmailLayout({ children, table }) {
                               active ? "bg-gray-50" : "",
                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
-                            onClick={() => {setSelectOauth(oauth)}}
+                            onClick={() => {
+                              setSelectOauth(oauth);
+                            }}
                           >
                             {oauth.email}
                           </div>
@@ -252,7 +280,13 @@ export default function WebmailLayout({ children, table }) {
                       </Menu.Item>
                     ))}
                     <Menu.Item className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2">
-                      <div onClick={() => { openModal("add", true, true)}}>Conectar nuevo</div>
+                      <div
+                        onClick={() => {
+                          openModal("add", true, true);
+                        }}
+                      >
+                        Conectar nuevo
+                      </div>
                     </Menu.Item>
                   </Menu.Items>
                 </Transition>

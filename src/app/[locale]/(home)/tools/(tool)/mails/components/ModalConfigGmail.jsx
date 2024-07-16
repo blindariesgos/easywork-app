@@ -9,9 +9,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import {
-  getTokenGoogle,
   deleteTokenGoogle,
-  deleteFoldersMail,
   getAllOauth,
 } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
@@ -108,13 +106,22 @@ export default function ModalConfigGmail({
 
   useEffect(() => {
     getDataGoogleUser();
-    console.log(addOtherOauth);
   }, [state]);
 
   async function getDataGoogleUser() {
-    if (!addOtherOauth) {
+    if (!addOtherOauth){
+      const config = {
+        headers: { Authorization: `Bearer ${session.data.user.access_token}` },
+      };
+      const axiosUserData = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
+        config
+      );
+      setUserGoogle(axiosUserData.data);
+    } else {
       try {
         const res = await getAllOauth(session.data.user.id);
+        console.log(res);
         const config = {
           headers: {
             Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
@@ -129,6 +136,7 @@ export default function ModalConfigGmail({
         setUserGoogle(null);
       }
     }
+
   }
 
   const timeMails = [

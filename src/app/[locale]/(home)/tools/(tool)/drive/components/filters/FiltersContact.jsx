@@ -5,11 +5,11 @@ import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-
+import { IoIosArrowDown } from "react-icons/io";
 const FiltersContact = () => {
   const { t } = useTranslation();
   const ref = useRef(null);
-  const [searchInput, setSearchInput] = useState(" ");
+  const [searchInput, setSearchInput] = useState("");
   const [contacts, setContacts] = useState([
     {
       id: 1,
@@ -23,18 +23,6 @@ const FiltersContact = () => {
     },
   ]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setSearchInput(" ");
-      }
-    };
-
-    document.body.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.body.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref]);
 
   const handleSelected = (id) => {
     const updateSelection = contacts.map((cont) => {
@@ -47,19 +35,25 @@ const FiltersContact = () => {
 
   return (
     <Menu>
-      <MenuButton className="flex items-center w-full">
-        <FaMagnifyingGlass className="h-4 w-4 text-primary" />
-        <input
-          type="search"
-          name="search"
-          id="search-cal"
-          className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
-          placeholder={t("contacts:header:search")}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onClick={() => setSearchInput("")}
-        />
-      </MenuButton>
-      <Transition show={searchInput === ""} as={Fragment}>
+      <div className="flex items-center w-full justify-between">
+        <div className="flex items-center w-full">
+          <FaMagnifyingGlass className="h-4 w-4 text-primary" />
+          <input
+            type="search"
+            name="search"
+            id="search-cal"
+            className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
+            value={searchInput}
+            placeholder={t("contacts:header:search")}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onClick={() => setSearchInput("")}
+          />
+        </div>
+        <MenuButton className="pr-2" onClick={() => setSearchInput("")}>
+          <IoIosArrowDown className="h-4 w-4 text-primary" />
+        </MenuButton>
+      </div>
+      <Transition as={Fragment}>
         <TransitionChild
           as={Fragment}
           enter="transition ease-out duration-100"
@@ -71,9 +65,9 @@ const FiltersContact = () => {
         >
           <MenuItems
             anchor="bottom end"
-            className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none w-fit`}
+            className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none w-fit h-auto`}
           >
-            <div className="p-4" ref={ref}>
+            <div className="p-4">
               <div className="flex gap-4 flex-col sm:flex-row">
                 <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
                   <p className="text-xs text-gray-60 text-center">

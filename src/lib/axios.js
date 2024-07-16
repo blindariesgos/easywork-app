@@ -7,11 +7,11 @@ import { getLogger } from "@/src/utils/logger";
 
 const logger = getLogger("axios");
 
-const createAxiosInstance = (contentType = "application/json") => {
+const createAxiosInstance = (props) => {
   const axiosInstance = axios.create({
-    baseURL: process.env.API_HOST,
+    baseURL: props?.baseURL ? props?.baseURL : process.env.API_HOST,
     headers: {
-      "Content-Type": contentType,
+      "Content-Type": props?.contentType ? props?.contentType : "application/json",
     },
   });
 

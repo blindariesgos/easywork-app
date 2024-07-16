@@ -44,7 +44,7 @@ export default function IconsInfo({
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-5">
-        {files.map((file) => (
+        {files && files.map((file) => (
           <div
             key={file.name}
             className={clsx("w-full h-full rounded-xl flex flex-col bg-[#E9E9E9] p-6", {
@@ -80,7 +80,7 @@ export default function IconsInfo({
                 >
                   <MenuItems anchor={{ to: 'right start' }} className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {itemOptions.map((item) => (
-                      <MenuItem key={item.name}>
+                      <MenuItem key={item.name} onClick={() => item.onClick && item.onClick(file)}>
                         {({ active }) => (
                           <div
                             className={classNames(
@@ -108,8 +108,8 @@ export default function IconsInfo({
                                   leaveTo="transform opacity-0 scale-95"
                                 >
                                   <MenuItems anchor={{ to: 'right start', gap: '12px' }} className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                                    {shareOptions.map((item) => (
-                                      <MenuItem key={item.name}>
+                                    {shareOptions.map((subitem) => (
+                                      <MenuItem key={subitem.name}>
                                         {({ active }) => (
                                           <div
                                             className={classNames(
@@ -117,7 +117,7 @@ export default function IconsInfo({
                                               "block px-3 py-1 text-sm leading-6  cursor-pointer"
                                             )}
                                           >
-                                            {item.name}
+                                            {subitem.name}
                                           </div>
                                         )}
                                       </MenuItem>
@@ -136,27 +136,10 @@ export default function IconsInfo({
             </div>
             <div className="flex flex-col items-center justify-center">
               <FolderIcon className="h-24 w-24 text-easywork-main" />
-
             </div>
             <p>{file.name}</p>
           </div>
         ))}
-      </div>
-      <div className="flex bg-white w-full pb-2">
-        <div className="ml-6">Seleccionado: {selectedFiles.length}/{files.length}</div>
-        <div className="ml-6">Pagina 1/2</div>
-        <div className="ml-6">
-          <div className="flex items-center ">
-            <div className="flex">
-              <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
-              anterior
-            </div>
-            <div className="ml-4 flex">
-              siguiente
-              <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

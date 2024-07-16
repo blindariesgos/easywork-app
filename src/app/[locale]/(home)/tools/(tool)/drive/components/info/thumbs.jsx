@@ -25,7 +25,14 @@ export default function ThumbsInfo({
   return (
     <div className="relative">
       {selectedFiles.length > 0 && (
-        <div className="flex h-12 items-center space-x-3 bg-white">
+        <div className="flex h-12 items-center px-3 gap-2">
+          <input
+            type="checkbox"
+            className=" h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+            ref={checkbox}
+            checked={checked}
+            onChange={toggleAll}
+          />
           <button
             type="button"
             className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
@@ -35,7 +42,7 @@ export default function ThumbsInfo({
         </div>
       )}
       <div className="bg-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-5">
-        {files.map((file) => (
+        {files && files.map((file) => (
           <div
             key={file.name}
             className="relative rounded-lg flex flex-col bg-[#E9E9E9] p-3 w-full"
@@ -69,7 +76,7 @@ export default function ThumbsInfo({
                 >
                   <MenuItems anchor="right start" className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {itemOptions.map((item) => (
-                      <MenuItem key={item.name}>
+                      <MenuItem key={item.name} onClick={() => item.onClick && item.onClick(file)}>
                         {({ active }) => (
                           <div
                             className={classNames(
@@ -97,8 +104,8 @@ export default function ThumbsInfo({
                                   leaveTo="transform opacity-0 scale-95"
                                 >
                                   <MenuItems anchor={{ to: 'right start', gap: '12px' }} className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                                    {shareOptions.map((item) => (
-                                      <MenuItem key={item.name}>
+                                    {shareOptions.map((subItem) => (
+                                      <MenuItem key={subItem.name}>
                                         {({ active }) => (
                                           <div
                                             className={classNames(
@@ -106,7 +113,7 @@ export default function ThumbsInfo({
                                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                                             )}
                                           >
-                                            {item.name}
+                                            {subItem.name}
                                           </div>
                                         )}
                                       </MenuItem>
@@ -125,27 +132,10 @@ export default function ThumbsInfo({
             </div>
             <div className="flex flex-col items-center justify-center">
               <FolderIcon className="h-12 w-12 text-easywork-main" />
-
             </div>
             <p className="text-xs">{file.name}</p>
           </div>
         ))}
-      </div>
-      <div className="flex bg-white w-full pb-2">
-        <div className="ml-6">Seleccionado: {selectedFiles.length}/{files.length}</div>
-        <div className="ml-6">Pagina 1/2</div>
-        <div className="ml-6">
-          <div className="flex items-center ">
-            <div className="flex">
-              <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
-              anterior
-            </div>
-            <div className="ml-4 flex">
-              siguiente
-              <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

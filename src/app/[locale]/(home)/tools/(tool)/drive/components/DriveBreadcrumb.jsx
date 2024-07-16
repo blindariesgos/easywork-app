@@ -1,3 +1,4 @@
+import useDriveContext from "@/src/context/drive";
 import { HomeIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { FiHardDrive } from "react-icons/fi";
@@ -6,27 +7,22 @@ import { FiHardDrive } from "react-icons/fi";
 
 export default function DriveBreadcrumb() {
   const { t } = useTranslation();
-  const pages = [
-    { name: t('tools:drive:my-unit'), href: "#", current: false },
-    { name: "Rosmer Campos", href: "#", current: true },
-  ];
+  const { pages, returnFolder } = useDriveContext()
   return (
     <nav className="flex ml-3" aria-label="Breadcrumb">
-      <ol role="list" className="flex items-center space-x-4">
+      <ol role="list" className="flex items-center gap-x-2">
         <li>
-          <div>
-            <a href="#" className="text-gray-400 hover:text-gray-500">
-              <FiHardDrive
-                className="h-5 w-5 flex-shrink-0"
-                aria-hidden="true"
-              />
-              <span className="sr-only">{t('tools:drive:home')}</span>
-            </a>
+          <div className="text-gray-400 hover:text-gray-500 cursor-pointer" onClick={() => returnFolder(-1)}>
+            <FiHardDrive
+              className="h-5 w-5 flex-shrink-0"
+              aria-hidden="true"
+            />
+            <span className="sr-only">{t('tools:drive:home')}</span>
           </div>
         </li>
-        {pages.map((page) => (
-          <li key={page.name}>
-            <div className="flex items-center">
+        {pages.length > 0 && pages.map((page, index) => (
+          <li key={page.id}>
+            <div className="flex items-center cursor-pointer">
               <svg
                 className="h-5 w-5 flex-shrink-0 text-gray-400"
                 fill="currentColor"
@@ -35,13 +31,12 @@ export default function DriveBreadcrumb() {
               >
                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
               </svg>
-              <a
-                href={page.href}
-                className="ml-4 text-sm font-medium text-gray-400 hover:text-gray-700"
-                aria-current={page.current ? "page" : undefined}
+              <p
+                className="text-sm font-medium text-gray-400 hover:text-gray-700"
+                onClick={() => returnFolder(index)}
               >
                 {page.name}
-              </a>
+              </p>
             </div>
           </li>
         ))}

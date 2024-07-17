@@ -46,7 +46,7 @@ export const getDataPassword = async (email) => {
   return response.data;
 };
 export const createContact = async (data) => {
-  const response = await axios("multipart/form-data").post(
+  const response = await axios({ contentType: "multipart/form-data" }).post(
     "/sales/crm/contacts/new",
     data,
   );
@@ -58,7 +58,7 @@ export const updateContact = async (data, id) => {
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {
-  const response = await axios("multipart/form-data").put(
+  const response = await axios({ contentType: "multipart/form-data" }).put(
     `/sales/crm/contacts/${id}/photo`,
     photo,
   );

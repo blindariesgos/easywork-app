@@ -105,7 +105,8 @@ export default function WebmailLayout({ children, table }) {
       session.data.user.id,
       searchParams.get("page"),
       10,
-      selectedFolder
+      selectedFolder,
+      selectOauth.id,
     ).then((res) => {
       setDMails(res);
     });

@@ -9,10 +9,6 @@ import { ChevronRightIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import Button from "@/src/components/form/Button";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function TableInfo({
   files,
   selectedFiles,
@@ -87,9 +83,9 @@ export default function TableInfo({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {files.map((file) => (
+                    {files && files.map((file) => (
                       <tr
-                        key={file.name}
+                        key={file.id}
                         className={clsx(
                           {
                             "bg-zinc-100": selectedFiles.includes(file)
@@ -105,7 +101,7 @@ export default function TableInfo({
                             <input
                               type="checkbox"
                               className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                              value={file.email}
+                              value={file.name}
                               checked={selectedFiles.includes(file)}
                               onChange={(e) =>
                                 setSelectedFiles(
@@ -136,15 +132,23 @@ export default function TableInfo({
                               >
                                 <MenuItems anchor="right start" className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                                   {itemOptions.map((item) => (
-                                    <MenuItem key={item.name}>
-                                      {({ active }) => (
+                                    <MenuItem
+                                      key={item.name}
+                                      onClick={() => item.onClick && item.onClick(file)}
+                                      disabled={item.disabled}
+                                    >
+                                      {({ active, disabled }) => (
                                         <div
-                                          className={classNames(
-                                            active ? "bg-gray-50" : "",
-                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                          className={clsx(
+                                            "block px-3 py-1 text-sm leading-6  ",
+                                            {
+                                              "bg-gray-50": active,
+                                              "cursor-pointer text-black": !disabled,
+                                              "cursor-no-drop text-gray-600": disabled
+                                            }
                                           )}
                                         >
-                                          {item.name !== "Compartir" ? (
+                                          {(item.name !== "Compartir" || item.disabled) ? (
                                             item.name
                                           ) : (
                                             <Menu>
@@ -168,11 +172,11 @@ export default function TableInfo({
                                                     <MenuItem key={item.name}>
                                                       {({ active }) => (
                                                         <div
-                                                          className={classNames(
-                                                            active
-                                                              ? "bg-gray-50"
-                                                              : "",
-                                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                                          className={clsx(
+                                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer",
+                                                            {
+                                                              "bg-gray-50": active
+                                                            }
                                                           )}
                                                         >
                                                           {item.name}
@@ -204,12 +208,12 @@ export default function TableInfo({
                           <div className="flex items-center">
                             <div className="h-11 w-11 flex-shrink-0">
                               {getFileIcon(
-                                file.mimetype,
+                                "folder",
                                 "h-11 w-11 text-indigo-800"
                               )}
                             </div>
                             <div className="ml-4">
-                              <div className="font-medium text-gray-900 cursor-pointer hover:underline">
+                              <div className="font-medium text-gray-900">
                                 {file.name}
                               </div>
                             </div>
@@ -220,7 +224,7 @@ export default function TableInfo({
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           <div className="flex items-center">
-                            <div className="h-9 w-9 flex-shrink-0">
+                            {/* <div className="h-9 w-9 flex-shrink-0">
                               <Image
                                 className="h-9 w-9 rounded-full"
                                 width={36}
@@ -228,10 +232,10 @@ export default function TableInfo({
                                 src={file.modifiedBy.image}
                                 alt=""
                               />
-                            </div>
+                            </div> */}
                             <div className="ml-4">
                               <div className="font-medium text-gray-900">
-                                {file.modifiedBy.name}
+                                {file?.modifiedBy?.name ?? "N/P"}
                               </div>
                             </div>
                           </div>
@@ -249,26 +253,6 @@ export default function TableInfo({
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-white w-full h-10">
-                    <tr>
-                      <td></td>
-                      <div className="ml-6">Seleccionado: {selectedFiles.length}/{files.length}</div>
-                      <td>Pagina 1/2</td>
-                      <td>
-                        <div className="flex items-center ">
-                          <div className="flex">
-                            <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
-                            anterior
-                          </div>
-                          <div className="ml-4 flex">
-                            siguiente
-                            <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
-                          </div>
-                        </div>
-                      </td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
             </div>

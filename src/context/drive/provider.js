@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import { DriveContext } from "..";
-import { createFolder, getFolder, getFolders, updateFolder } from "../../lib/api/drive";
+import { copyFolder, createFolder, getFolder, getFolders, updateFolder } from "../../lib/api/drive";
 
 export default function DriveContextProvider({ children }) {
   const [folders, setFolders] = useState()
@@ -70,6 +70,19 @@ export default function DriveContextProvider({ children }) {
   const renameFolder = async (id, name) => {
     setLoading(true)
     const response = await updateFolder(id, { name }).catch((error) => {
+      console.log(error)
+      return { error: true }
+    })
+    if (response.error) {
+      return setLoading(false)
+    }
+    await getItems()
+    setLoading(false)
+  }
+
+  const duplicateFolder = async (id, name, destinationId = null) => {
+    setLoading(true)
+    const response = await copyFolder(id, { name }, destinationId).catch((error) => {
       console.log(error)
       return { error: true }
     })

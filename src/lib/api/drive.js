@@ -21,8 +21,9 @@ export const updateFolder = async (id, data) => {
     return response;
 };
 
-export const copyFolder = async (id, data) => {
-    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).put(`/folders/${id}/copy`, data);
+export const copyFolder = async (id, data, destinationId) => {
+    const url = `/folders/${id}/copy${destinationId ? `?destinationId=${destinationId}` : ""}`
+    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).put(url, data);
     return response;
 };
 

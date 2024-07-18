@@ -10,7 +10,7 @@ import { postLead } from "../../../../../../../lib/apis";
 function SelectDropdown({
   label,
   selectedOption,
-  options,
+  options = [],
   disabled,
   register,
   name,

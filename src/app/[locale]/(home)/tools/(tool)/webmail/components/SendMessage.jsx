@@ -51,7 +51,7 @@ export default function SendMessage({
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
-  }, []);
+  }, [params.get("send")]);
 
   async function sendEmail() {
     const data = {
@@ -121,7 +121,7 @@ export default function SendMessage({
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
                       <h1 className="text-lg mb-4">Nuevo mensaje</h1>
-                      <div className="bg-gray-100 text-sm p-5 h-5/6">
+                      <div className="bg-gray-100 text-sm p-5 h-auto">
                         <div className="pb-2 border-b-2">
                           <p>De: {userData.email}</p>
                         </div>

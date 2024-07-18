@@ -8,10 +8,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import {
-  deleteTokenGoogle,
-  getAllOauth,
-} from "../../../../../../../lib/apis";
+import { deleteTokenGoogle, getAllOauth } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
@@ -98,19 +95,36 @@ export default function ModalConfigGmail({
     const checkWindowClosed = setInterval(async function () {
       if (oauthWindow.closed && state) {
         clearInterval(checkWindowClosed);
-        getDataGoogleUser();
+        getDataNewGoogleUser();
       }
     }, 1000);
   }
 
   useEffect(() => {
-    if (state)
-      getDataGoogleUser();
+    if (state) getDataGoogleUser();
   }, [state]);
 
+  async function getDataNewGoogleUser() {
+    setUserGoogle(null);
+    try {
+      const res = await getAllOauth(session.data.user.id);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
+        },
+      };
+      const userInfo = await axios.get(
+        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
+        config
+      );
+      setUserGoogle(userInfo.data, ...res.slice(-1).pop().access_token);
+    } catch (error) {}
+  }
+
   async function getDataGoogleUser() {
-    if (!addOtherOauth){
-      setUserGoogle(null);
+    setUserGoogle(null);
+    if (addOtherOauth) return;
+    try {
       const config = {
         headers: { Authorization: `Bearer ${session.data.user.access_token}` },
       };
@@ -119,25 +133,7 @@ export default function ModalConfigGmail({
         config
       );
       setUserGoogle(axiosUserData.data);
-    } else {
-      try {
-        const res = await getAllOauth(session.data.user.id);
-        console.log(res);
-        const config = {
-          headers: {
-            Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
-          },
-        };
-        const userInfo = await axios.get(
-          "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
-          config
-        );
-        setUserGoogle(userInfo.data, ...res.slice(-1).pop().access_token);
-      } catch (error) {
-        setUserGoogle(null);
-      }
-    }
-
+    } catch (error) {}
   }
 
   const timeMails = [
@@ -168,7 +164,7 @@ export default function ModalConfigGmail({
                 <h1 className="text-gray-400 font-medium text-lg ml-1">
                   Gmail
                 </h1>
-                {!addOtherOauth && userGoogle ? (
+                {userGoogle ? (
                   <div className="flex ml-2 items-center">
                     <Image
                       src={userGoogle.picture}

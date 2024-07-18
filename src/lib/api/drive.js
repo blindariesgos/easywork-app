@@ -1,8 +1,14 @@
 "use server";
 import axios from '../axios'
 
-export const getFolders = async () => {
-    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).get(`/folders`);
+export const getExplorer = async (config, id) => {
+    const queries = Object.keys(config).map(key => `${key}=${config[key]}`).join('&')
+    const url = `/folders/explorer?${queries}${id ? `&fid=${id}` : ""}`
+    console.log(url)
+    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).get(url).catch(error => {
+        console.log(error)
+        return { error: true }
+    });
     return response;
 };
 

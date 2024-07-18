@@ -4,7 +4,7 @@ import DriveHeader from "./components/DriveHeader";
 import ThumbsInfo from "./components/info/thumbs";
 import TableInfo from "./components/info/table";
 import IconsInfo from "./components/info/icons";
-import { useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import useDriveContext from "@/src/context/drive";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
@@ -13,30 +13,43 @@ import TextInput from "@/src/components/form/TextInput";
 import Button from "@/src/components/form/Button";
 import SelectInput from "@/src/components/form/SelectInput";
 import DialogCopyFolder from "./components/dialogs/CopyFolder";
+import DriveFooter from "./components/DriveFooter";
+import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 
 export default function DrivePage({ children }) {
   const { driveView } = useAppContext();
+  const { t } = useTranslation()
+  const checkboxTable = useRef();
   const checkbox = useRef();
-  const { folders, config, loading, addPage, renameFolder } = useDriveContext();
+  const {
+    folders,
+    loading,
+    addPage,
+    renameFolder,
+    folderCopy,
+    setFolderCopy,
+    isOpenCopy,
+    setIsOpenCopy
+  } = useDriveContext();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isOpenRename, setIsOpenRename] = useState(false)
-  const [isOpenCopy, setIsOpenCopy] = useState(false)
   const [folderName, setFolderName] = useState("")
   const [idFolderEdit, setIdFolderEdit] = useState("")
-  const [folderEdit, setFolderEdit] = useState()
 
   useLayoutEffect(() => {
     const isIndeterminate =
       selectedFiles.length > 0 && selectedFiles.length < folders?.length;
     setChecked(selectedFiles.length === folders?.length);
     setIndeterminate(isIndeterminate);
-    checkbox.current.indeterminate = isIndeterminate;
+    if (checkboxTable?.current) checkboxTable.current.indeterminate = isIndeterminate;
+    if (checkbox?.current) checkbox.current.indeterminate = isIndeterminate;
   }, [selectedFiles]);
 
   const toggleAll = () => {
-    setSelectedFiles(checked || indeterminate ? [] : folders ?? []);
+    setSelectedFiles(checked || indeterminate ? [] : folders.map(x => x.id) ?? []);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
@@ -61,8 +74,7 @@ export default function DrivePage({ children }) {
     {
       name: "Copiar",
       onClick: (page) => {
-        setIsOpenCopy(true)
-        setFolderEdit(page)
+        setFolderCopy(page)
       }
     },
   ];
@@ -87,7 +99,45 @@ export default function DrivePage({ children }) {
     <div className="flex flex-col flex-grow">
       {loading && <LoaderSpinner />}
       <DriveHeader />
-      {children}
+
+      <div className={clsx("flex items-center gap-2", { "p-2": selectedFiles.length > 0 || folderCopy })}>
+        {
+          selectedFiles.length > 0 && (
+            <Fragment>
+              {
+                driveView !== "table" && (
+                  < input
+                    type="checkbox"
+                    className=" h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    ref={checkbox}
+                    checked={checked}
+                    onChange={toggleAll}
+                    indeterminate={true}
+                  />
+                )
+              }
+              <button
+                type="button"
+                className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+              >
+                {t("tools:drive:table:delete")}
+              </button>
+            </Fragment>
+          )
+        }
+        {
+          folderCopy && (
+            <button
+              type="button"
+              className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+              title={folderCopy?.name}
+              onClick={() => setIsOpenCopy(true)}
+            >
+              {t("tools:drive:table:paste")}
+            </button>
+          )
+        }
+      </div>
       {
         driveView === "table" && (
           <TableInfo
@@ -96,7 +146,7 @@ export default function DrivePage({ children }) {
             itemOptions={itemOptions}
             shareOptions={shareOptions}
             selectedFiles={selectedFiles}
-            checkbox={checkbox}
+            checkbox={checkboxTable}
             setSelectedFiles={setSelectedFiles}
             checked={checked}
           />)}
@@ -108,7 +158,7 @@ export default function DrivePage({ children }) {
             itemOptions={itemOptions}
             shareOptions={shareOptions}
             selectedFiles={selectedFiles}
-            checkbox={checkbox}
+            checkbox={checkboxTable}
             setSelectedFiles={setSelectedFiles}
             checked={checked}
           />)
@@ -121,25 +171,12 @@ export default function DrivePage({ children }) {
             itemOptions={itemOptions}
             shareOptions={shareOptions}
             selectedFiles={selectedFiles}
-            checkbox={checkbox}
+            checkbox={checkboxTable}
             setSelectedFiles={setSelectedFiles}
             checked={checked}
           />)
       }
-      <div className="flex justify-between items-center">
-        <div className="ml-6">Seleccionado: {selectedFiles.length}/{config.totalItems}</div>
-        <p>{`Página ${config.currentPage}/${config.totalPages}`}</p>
-        <div className="flex items-center ">
-          <div className="flex">
-            <ChevronLeftIcon className="h-6 w-6 mr-2 text-easywork-main" />
-            anterior
-          </div>
-          <div className="ml-4 flex">
-            siguiente
-            <ChevronRightIcon className="h-6 w-6 ml-2 text-easywork-main" />
-          </div>
-        </div>
-      </div>
+      <DriveFooter selectedFiles={selectedFiles.length} />
       <Dialog open={isOpenRename} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpenRename(false)}>
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -187,7 +224,7 @@ export default function DrivePage({ children }) {
               className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
             >
               <DialogTitle as="h3" className="text-base font-medium">
-                {`Copiar Carpeta (${folderEdit?.name})`}
+                {`Copiar Carpeta (${folderCopy?.name})`}
               </DialogTitle>
               <form className="py-10 px-2 bg-[#F2F6F7] mt-4 flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
                 <TextInput
@@ -221,11 +258,7 @@ export default function DrivePage({ children }) {
           </div>
         </div>
       </Dialog>
-      <DialogCopyFolder
-        isOpen={isOpenCopy}
-        close={() => setIsOpenCopy(false)}
-        folder={folderEdit}
-      />
+      <DialogCopyFolder />
     </div>
   );
 }

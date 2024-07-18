@@ -6,9 +6,9 @@
     "home": "Home",
     "my-unit": "My unit",
     "add": {
-      "name": "Add",
-      "document": "Archive",
-      "folder": "File",
+      "name": "Agregar",
+      "document": "Archivo",
+      "folder": "Carpeta",
       "bitrixDocs": "Easy-Drive",
       "googleDocs": "Google Docs",
       "msOfficeOnline": "MS Office Online",
@@ -16,20 +16,21 @@
       "desktopApp": "Desktop application"
     },
     "organizer": {
-      "by-name": "By name",
-      "by-change-date": "By change date",
-      "by-id": "By ID",
-      "by-size": "By Size",
+      "by-name": "Por nombre",
+      "by-change-date": "Por fecha de modificación",
+      "by-id": "Por ID",
+      "by-size": "Por Tamaño",
       "reverse": "Reverse",
       "mixed-classification": "By name"
     },
     "table": {
       "edit": "Bulk edit",
-      "delete": "Delete all",
-      "name": "Name",
-      "modified": "Modified",
-      "modified-by": "Modified by",
-      "size": "Size"
+      "delete": "Eliminar todo",
+      "paste": "Pegar",
+      "name": "Nombre",
+      "modified": "Modificado",
+      "modified-by": "Modificado por",
+      "size": "Tamaño"
     }
   },
   "tasks": {

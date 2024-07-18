@@ -19,7 +19,9 @@ export default function ModalAddFolders({ children }) {
       setUserData(res.slice(-1).pop());
       console.log(res.slice(-1).pop());
       const config = {
-        headers: { Authorization: `Bearer ${res.slice(-1).pop().access_token}` },
+        headers: {
+          Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
+        },
       };
       axios
         .get(
@@ -62,6 +64,14 @@ export default function ModalAddFolders({ children }) {
     } catch (error) {}
   }
 
+  function checkAll() {
+    const newFolderData = folderData.map((folder) => ({
+      ...folder,
+      state: true,
+    }));
+    setFolderData(newFolderData);
+  }  
+
   return (
     <SliderOverShort openModal={openModalFolders}>
       {children}
@@ -76,30 +86,32 @@ export default function ModalAddFolders({ children }) {
             </div>
             <div className="text-xs">
               <div className="flex ml-2">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  onClick={() => {
+                    checkAll();
+                  }}
+                />
                 <p className="ml-1">Select all</p>
               </div>
               <div className="mt-4 ml-4">
-                {folderData?.map(
-                  (data, index) =>
-                    data.type !== "system" && (
-                      <div className="flex mt-4 ml-2" key={index}>
-                        <input
-                          type="checkbox"
-                          checked={data.state}
-                          onChange={(e) => {
-                            const newFolderData = [...folderData];
-                            newFolderData[index] = {
-                              ...newFolderData[index],
-                              state: e.target.checked,
-                            };
-                            setFolderData(newFolderData);
-                          }}
-                        />
-                        <p className="ml-1">{data.name}</p>
-                      </div>
-                    )
-                )}
+                {folderData?.map((data, index) => (
+                  <div className="flex mt-4 ml-2" key={index}>
+                    <input
+                      type="checkbox"
+                      checked={data.state}
+                      onChange={(e) => {
+                        const newFolderData = [...folderData];
+                        newFolderData[index] = {
+                          ...newFolderData[index],
+                          state: e.target.checked,
+                        };
+                        setFolderData(newFolderData);
+                      }}
+                    />
+                    <p className="ml-1">{data.name}</p>
+                  </div>
+                ))}
               </div>
               <div className="m-3 text-xs my-4 w-80">
                 <h1 className="font-medium text-lg border-b-4 border-black pb-1">

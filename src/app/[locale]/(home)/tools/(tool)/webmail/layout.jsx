@@ -23,7 +23,13 @@ import {
   ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Menu,
+  Transition,
+} from "@headlessui/react";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
 import SliderOverEmail from "./components/SliderOverEmail";
@@ -71,6 +77,11 @@ export default function WebmailLayout({ children, table }) {
   const [allOauth, setAllOauth] = useState(null);
 
   useEffect(() => {
+    setSelectOauth(null);
+    allOauthPromise();
+  }, []);
+
+  useEffect(() => {
     if (window.innerWidth > 1023) {
       setTimeout(() => {
         setSidebarOpenEmail(true);
@@ -88,35 +99,16 @@ export default function WebmailLayout({ children, table }) {
   }, [openModalFolders]);
 
   useEffect(() => {
-    setSelectOauth(null);
-    allOauthPromise();
-  }, []);
-
-  function allOauthPromise() {
-    getAllOauth(session.data.user.id).then((res) => {
-      if (!selectOauth) setSelectOauth(res[0]);
-      setAllOauth(res);
-      fetchData();
-    });
-  }
-
-  useEffect(() => {
     getMails(
       session.data.user.id,
       searchParams.get("page"),
       10,
       selectedFolder,
-      selectOauth.id,
+      selectOauth?.id
     ).then((res) => {
       setDMails(res);
     });
-  }, [searchParams.get("page"), selectedFolder]);
-
-  async function saveMails() {
-    axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth.id}`
-    );
-  }
+  }, [selectOauth, searchParams.get("page"), selectedFolder]);
 
   const updateData = async () => {
     await axios.get(
@@ -129,28 +121,39 @@ export default function WebmailLayout({ children, table }) {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
-    console.log(`${session.data.user.id}/${selectOauth?.id}`);
-    const axiosUserData = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
-      config
-    );
-    setUserData(axiosUserData.data);
-    const axiosMails = await getMails(
-      session.data.user.id,
-      searchParams.get("page"),
-      10,
-      selectedFolder,
-      selectOauth.id
-    );
-    setDMails(axiosMails);
-    const axiosFolders = await getFoldersSaved(session.data.user.id);
-    setFolders(axiosFolders);
-    if (!axiosMails || axiosMails?.length === 0) {
-      await deleteTokenGoogle(session.data.user.id);
-      await deleteFoldersMail(session.data.user.id);
-      router.push("/tools/mails");
+    if (session.data.user.id && selectOauth?.id) {
+      const axiosUserData = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
+        config
+      );
+      setUserData(axiosUserData.data);
+      const axiosMails = await getMails(
+        session.data.user.id,
+        searchParams.get("page"),
+        10,
+        selectedFolder,
+        selectOauth.id
+      );
+      setDMails(axiosMails);
+      const axiosFolders = await getFoldersSaved(session.data.user.id);
+      setFolders(axiosFolders);
+      if (!axiosMails || axiosMails?.length === 0) {
+        await deleteTokenGoogle(session.data.user.id);
+        await deleteFoldersMail(session.data.user.id);
+        router.push("/tools/mails");
+      }
     }
   };
+
+  function allOauthPromise() {
+    getAllOauth(session.data.user.id).then((res) => {
+      if (!selectOauth) {
+        setSelectOauth(res[0]);
+      }
+      setAllOauth(res);
+      fetchData();
+    });
+  }
 
   function openModal(motivo, state, add) {
     setMotivo(motivo);
@@ -162,6 +165,20 @@ export default function WebmailLayout({ children, table }) {
     setSidebarOpenEmail(false);
     router.push("/tools/mails");
   }
+
+  const itemOptions = [
+    { name: "Volver a la lista", onClick: "" },
+    { name: "Contactos", onClick: "" },
+    { name: "Editar firmas", onClick: "" },
+    { name: "Configuración del buzón", onClick: () => openModal("edit", true, false) },
+    { name: "Abrir email", onClick: "" },
+  ];
+
+  // async function saveMails() {
+  //   axios.get(
+  //     `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth.id}`
+  //   );
+  // }
 
   return (
     <>
@@ -179,7 +196,7 @@ export default function WebmailLayout({ children, table }) {
         <ModalAddFolders state={true} addOtherOauth={addOtherOauth}>
           <Tag
             onclick={() => setOpenModalFolders(false)}
-            className="bg-green-500"
+            className="bg-easywork-main"
           />
         </ModalAddFolders>
       )}
@@ -203,17 +220,46 @@ export default function WebmailLayout({ children, table }) {
             </>
           }
           ToolsButtons={
-            <>
-              <button
-                type="button"
-                className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => {
-                  openModal("edit", true, false);
-                }}
+            <Menu as="div" className="relative">
+              <Menu.Button>
+                <div
+                  type="button"
+                  className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  <Cog8ToothIcon
+                    className="-ml-0.5 h-5 w-5"
+                    aria-hidden="true"
+                  />
+                </div>
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
               >
-                <Cog8ToothIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-              </button>
-            </>
+                <MenuItems className="absolute right-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                  {itemOptions.map((item, index) => (
+                    <MenuItem key={index}>
+                      {({ active }) => (
+                        <div
+                          onClick={item.onClick}
+                          className={classNames(
+                            active ? "bg-gray-50" : "",
+                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                          )}
+                        >
+                          {item.name}
+                        </div>
+                      )}
+                    </MenuItem>
+                  ))}
+                </MenuItems>
+              </Transition>
+            </Menu>
           }
         >
           <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">

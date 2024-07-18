@@ -48,9 +48,14 @@ function SelectInput({
   return (
     <div className="w-full">
       <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
-        <label className={`block text-sm font-medium leading-6 text-gray-900`}>
-          {label}
-        </label>
+        {
+          label && (
+            <label className={`block text-sm font-medium leading-6 text-gray-900`}>
+              {label}
+            </label>
+          )
+        }
+
         <div className={`relative ${label ? "mt-1" : "mt-0"}`}>
           <ComboboxInput
             // {...register && register(name)}
@@ -76,7 +81,7 @@ function SelectInput({
             leaveTo="opacity-0"
             afterLeave={() => setQuery && setQuery('')}
           >
-            <ComboboxOptions className="absolute z-50 top-2 mb-8 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            <ComboboxOptions anchor="bottom start" className=" overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {filteredElements?.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                   {t('common:not-found')}

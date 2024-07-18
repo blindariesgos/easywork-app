@@ -2,37 +2,37 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import { DriveContext } from "..";
-import { copyFolder, createFolder, getFolder, getFolders, updateFolder } from "../../lib/api/drive";
+import { createFolder, copyFolder, getExplorer, updateFolder } from "../../lib/api/drive";
 
 export default function DriveContextProvider({ children }) {
   const [folders, setFolders] = useState()
   const [loading, setLoading] = useState(true)
+  const [folderCopy, setFolderCopy] = useState()
+  const [isOpenCopy, setIsOpenCopy] = useState(false)
   const [config, setConfig] = useState({
+    limit: 25,
+    page: 1,
+    sortField: 'name',
+    sortOrder: 'ASC'
+  })
+  const [totals, setTotals] = useState({
     totalItems: 0,
     itemCount: 0,
-    itemsPerPage: 25,
     totalPages: 1,
-    currentPage: 1
   })
 
   const [pages, setPages] = useState([])
 
   const getItems = async () => {
     setLoading(true)
-    const response = pages.length == 0
-      ? await getFolders().catch((error) => {
-        return { error: true }
-      })
-      : await getFolder(pages[pages.length - 1]?.id).catch((error) => {
-        return { error: true }
-      })
+    const response = await getExplorer(config, pages.length == 0 ? "" : pages[pages.length - 1]?.id)
 
     if (response.error) {
       return setLoading(false)
     };
 
     setFolders(response.items ?? [])
-    setConfig({
+    setTotals({
       ...config,
       ...response.meta
     })
@@ -80,9 +80,9 @@ export default function DriveContextProvider({ children }) {
     setLoading(false)
   }
 
-  const duplicateFolder = async (id, name, destinationId = null) => {
+  const duplicateFolder = async (id, newName, destinationId = null) => {
     setLoading(true)
-    const response = await copyFolder(id, { name }, destinationId).catch((error) => {
+    const response = await copyFolder(id, { newName }, destinationId).catch((error) => {
       console.log(error)
       return { error: true }
     })
@@ -113,19 +113,27 @@ export default function DriveContextProvider({ children }) {
 
   useEffect(() => {
     getItems()
-  }, [pages])
+  }, [pages, config])
 
   const values = useMemo(() => ({
     config,
     loading,
     folders,
     pages,
+    totals,
+    folderCopy,
+    isOpenCopy,
+    currentFolder: pages[pages.length - 1],
+    setIsOpenCopy,
+    setFolderCopy,
+    setConfig,
     returnFolder,
     renameFolder,
     addPage,
     addFolder,
-    updateFolders: getItems
-  }), [folders, config, loading, pages]);
+    updateFolders: getItems,
+    duplicateFolder
+  }), [folders, config, loading, pages, totals, folderCopy, isOpenCopy]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;
 }

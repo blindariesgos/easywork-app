@@ -125,14 +125,12 @@ function SelectDropdown({
                       type="text"
                       className="py-2 text-sm rounded-md ml-2 w-full focus:text-gray-900 placeholder-slate-600"
                       placeholder="Primer nombre"
-                      autoComplete="off"
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                     <input
                       type="text"
                       className="ml-3 py-2 text-sm rounded-md w-full focus:text-gray-900 placeholder-slate-600"
                       placeholder="Apellido"
-                      autoComplete="off"
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>

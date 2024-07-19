@@ -14,41 +14,20 @@ function classNames(...classes) {
 export default function IconsInfo({
   files,
   selectedFiles,
-  checkbox,
   shareOptions,
   itemOptions,
-  toggleAll,
   setSelectedFiles,
-  checked,
 }) {
   const { t } = useTranslation();
 
   return (
     <div className="relative">
-      {selectedFiles.length > 0 && (
-        <div className="flex h-12 items-center px-3 gap-2">
-          <input
-            type="checkbox"
-            className=" h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-            ref={checkbox}
-            checked={checked}
-            onChange={toggleAll}
-          />
-          <button
-            type="button"
-            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-          >
-            {t("tools:drive:table:delete")}
-          </button>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-5">
         {files && files.map((file) => (
           <div
             key={file.name}
             className={clsx("w-full h-full rounded-xl flex flex-col bg-[#E9E9E9] p-6", {
-              "border-2 border-primary": selectedFiles.includes(file)
+              "border-2 border-primary": selectedFiles.includes(file.id)
             })}
           >
             <div className="flex gap-2 items-center">
@@ -56,12 +35,12 @@ export default function IconsInfo({
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                 value={file.email}
-                checked={selectedFiles.includes(file)}
+                checked={selectedFiles.includes(file.id)}
                 onChange={(e) =>
                   setSelectedFiles(
                     e.target.checked
-                      ? [...selectedFiles, file]
-                      : selectedFiles.filter((p) => p !== file)
+                      ? [...selectedFiles, file.id]
+                      : selectedFiles.filter((p) => p !== file.id)
                   )
                 }
               />
@@ -80,7 +59,11 @@ export default function IconsInfo({
                 >
                   <MenuItems anchor={{ to: 'right start' }} className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {itemOptions.map((item) => (
-                      <MenuItem key={item.name} onClick={() => item.onClick && item.onClick(file)}>
+                      <MenuItem
+                        key={item.name}
+                        onClick={() => item.onClick && item.onClick(file)}
+                        disabled={item.disabled}
+                      >
                         {({ active }) => (
                           <div
                             className={classNames(

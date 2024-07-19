@@ -12,7 +12,7 @@ import { Dialog, DialogTitle, DialogPanel, DialogBackdrop } from "@headlessui/re
 import TextInput from "@/src/components/form/TextInput";
 import Button from "@/src/components/form/Button";
 import SelectInput from "@/src/components/form/SelectInput";
-import DialogCopyFolder from "./components/dialogs/CopyFolder";
+import DialogCopyFolder from "./components/dialogs/CopyItem";
 import DriveFooter from "./components/DriveFooter";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -57,7 +57,13 @@ export default function DrivePage({ children }) {
   const itemOptions = [
     {
       name: "Abrir",
-      onClick: (page) => addPage(page)
+      onClick: (item) => {
+        if (item.type == "folder") {
+          addPage(item)
+          return
+        }
+        window.open(item.url, "self", "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500")
+      }
     },
     {
       name: "Compartir",

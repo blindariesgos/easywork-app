@@ -16,6 +16,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { CgMenuGridR } from "react-icons/cg";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import clsx from "clsx";
+import useDriveContext from "@/src/context/drive";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -24,17 +25,49 @@ function classNames(...classes) {
 export default function DriveHeader() {
   const { t } = useTranslation();
   const { setDriveView, driveView } = useAppContext();
+  const { config, setConfig } = useDriveContext();
 
   const itemOptions = [
-    { name: t("tools:drive:organizer:by-name") },
-    { name: t("tools:drive:organizer:by-id") },
-    { name: t("tools:drive:organizer:by-size") },
-    { name: t("tools:drive:organizer:by-change-date") },
-    { name: t("tools:drive:organizer:reverse") },
-    { name: t("tools:drive:organizer:mixed-classification") },
-    { name: "Ascendente" },
-    { name: "Descendientes" },
+    {
+      name: t("tools:drive:organizer:by-name"),
+      value: "name",
+      type: "sortField"
+    },
+    {
+      name: t("tools:drive:organizer:by-id"),
+      value: "id",
+      type: "sortField"
+    },
+    {
+      name: t("tools:drive:organizer:by-size"),
+      value: "size",
+      type: "sortField"
+    },
+    {
+      name: t("tools:drive:organizer:by-change-date"),
+      value: "updatedat",
+      type: "sortField"
+    },
+    // { name: t("tools:drive:organizer:reverse") },
+    // { name: t("tools:drive:organizer:mixed-classification") },
+    {
+      name: "Ascendente",
+      value: "ASC",
+      type: "sortOrder"
+    },
+    {
+      name: "Descendente",
+      value: "DESC",
+      type: "sortOrder"
+    },
   ];
+
+  const handleChangeConfig = (data) => {
+    setConfig({
+      ...config,
+      [data.type]: data.value
+    })
+  }
 
   return (
     <header className="flex flex-col">
@@ -94,9 +127,9 @@ export default function DriveHeader() {
         <DriveBreadcrumb />
         <div className="flex mr-3">
           <Menu as="div" className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg">
-            <MenuButton className="flex text-gray-400 border-r-2 pr-2">
-              <p className="text-nowrap">
-                {t("tools:drive:organizer:by-name")}
+            <MenuButton className="flex text-gray-400 border-r-2 pr-2 items-center">
+              <p className="text-nowrap text-sm">
+                {itemOptions.find(x => x.value == config.sortField).name}
               </p>
               <ChevronDownIcon className="h-6 w-6" />
             </MenuButton>
@@ -109,14 +142,16 @@ export default function DriveHeader() {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <MenuItems className="absolute left-0 z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+              <MenuItems anchor="bottom end" className=" rounded-md bg-white py-2 shadow-lg focus:outline-none">
                 {itemOptions.map((item) => (
-                  <MenuItem key={item.name}>
+                  <MenuItem key={item.name} onClick={() => handleChangeConfig(item)}>
                     {({ active }) => (
                       <div
-                        className={classNames(
-                          active ? "bg-gray-50" : "",
-                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                        className={clsx(
+                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer text-nowrap", {
+                          "bg-gray-50 text-white": active,
+                          "font-semibold": item.value === config.sortOrder || item.value === config.sortField
+                        }
                         )}
                       >
                         {item.name}

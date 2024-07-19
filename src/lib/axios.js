@@ -27,7 +27,10 @@ const createAxiosInstance = (props) => {
         return Promise.reject(error);
       }
     },
-    (error) => Promise.reject(error),
+    (error) => {
+
+      return Promise.reject(error)
+    },
   );
 
   axiosInstance.interceptors.response.use(
@@ -35,7 +38,7 @@ const createAxiosInstance = (props) => {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 403 && !originalRequest._retry) {
         originalRequest._retry = true;
 
         try {

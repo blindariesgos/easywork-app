@@ -2,7 +2,8 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import { DriveContext } from "..";
-import { createFolder, copyFolder, getExplorer, updateFolder } from "../../lib/api/drive";
+import { createFolder, copyFolder, getExplorer, updateFolder, uploadFiles, copyFile } from "../../lib/api/drive";
+import { toast } from "react-toastify";
 
 export default function DriveContextProvider({ children }) {
   const [folders, setFolders] = useState()
@@ -28,6 +29,7 @@ export default function DriveContextProvider({ children }) {
     const response = await getExplorer(config, pages.length == 0 ? "" : pages[pages.length - 1]?.id)
 
     if (response.error) {
+      toast.error(response.message)
       return setLoading(false)
     };
 
@@ -80,15 +82,25 @@ export default function DriveContextProvider({ children }) {
     setLoading(false)
   }
 
-  const duplicateFolder = async (id, newName, destinationId = null) => {
+  const duplicateFolder = async (newName) => {
     setLoading(true)
-    const response = await copyFolder(id, { newName }, destinationId).catch((error) => {
-      console.log(error)
-      return { error: true }
-    })
+    const response = folderCopy.type === "folder"
+      ? await copyFolder(folderCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
+      : await copyFile(folderCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
+
     if (response.error) {
+      toast.error(response.message)
       return setLoading(false)
     }
+
+    if (response.errors) {
+      response.errors.forEach(error => {
+        toast.error(error)
+      })
+      return setLoading(false)
+    }
+
+    setFolderCopy()
     await getItems()
     setLoading(false)
   }
@@ -105,6 +117,31 @@ export default function DriveContextProvider({ children }) {
         id: data.id
       }
     ])
+  }
+
+  const addFiles = async (files) => {
+    setLoading(true)
+    const formData = new FormData()
+    files.forEach((file) => {
+      formData.append('files', file, file.name)
+    })
+
+    const response = await uploadFiles(pages[pages.length - 1]?.id, formData)
+      .catch((error) => {
+        return {
+          error: true,
+          message: error.message
+        }
+      })
+
+    if (response.error) {
+      toast.error(response.message)
+      setLoading(false);
+      return
+    }
+
+    await getItems()
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -124,6 +161,7 @@ export default function DriveContextProvider({ children }) {
     folderCopy,
     isOpenCopy,
     currentFolder: pages[pages.length - 1],
+    addFiles,
     setIsOpenCopy,
     setFolderCopy,
     setConfig,

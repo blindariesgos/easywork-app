@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Menu, Transition, MenuButton, MenuItems, MenuItem, Dialog, DialogTitle, DialogPanel, DialogBackdrop } from "@headlessui/react";
 import {
   ChevronDownIcon,
@@ -20,9 +20,11 @@ import useDriveContext from "@/src/context/drive";
 
 const CreateDocumentButton = () => {
   const { t } = useTranslation();
-  const { addFolder } = useDriveContext()
+  const { addFolder, pages, addFiles } = useDriveContext()
   const [isOpenAdd, setIsOpenAdd] = useState(false)
+  const [isOpenAddFile, setIsOpenAddFile] = useState(false)
   const [folderName, setFolderName] = useState("")
+  const [files, setFiles] = useState([])
 
   const handleChangeFolderName = (e) => {
     setFolderName(e.target.value)
@@ -34,6 +36,32 @@ const CreateDocumentButton = () => {
     setFolderName("")
   }
 
+  const handleChangeFiles = (e) => {
+    const files = e.target.files
+
+    if (!files) {
+      return
+    }
+
+    // if (file.size > MAX_FILE_SIZE) {
+    //   toast.error('The document must be less than 7MB in size.')
+    //   return
+    // }
+
+    // setFilePrev1({
+    //   url: URL.createObjectURL(file),
+    //   number: 1,
+    // })
+
+    setFiles(Array.from(files))
+  }
+
+  const handleSaveFiles = async () => {
+    console.log({ files })
+    const response = await addFiles(files)
+    setIsOpenAddFile(false)
+    setFiles([])
+  }
 
   return (
     <Fragment>
@@ -57,10 +85,9 @@ const CreateDocumentButton = () => {
         >
           <MenuItems anchor="bottom start" className="divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1">
-              <MenuItem disabled>
+              <MenuItem disabled={pages.length === 0} onClick={() => setIsOpenAddFile(true)}>
                 {({ active }) => (
-                  <a
-                    href="#"
+                  <p
                     className={clsx(
                       active ? "bg-easy-600 text-white" : "text-gray-700",
                       "group flex items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
@@ -71,7 +98,7 @@ const CreateDocumentButton = () => {
                       aria-hidden="true"
                     />
                     {t('tools:drive:add:document')}
-                  </a>
+                  </p>
                 )}
               </MenuItem>
               <MenuItem onClick={() => setIsOpenAdd(true)}>
@@ -218,6 +245,38 @@ const CreateDocumentButton = () => {
                   buttonStyle="secondary"
                   className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
                   onclick={() => setIsOpenAdd(false)}
+                  label="Cerrar"
+                />
+              </div>
+            </DialogPanel>
+          </div>
+        </div>
+      </Dialog>
+      <Dialog open={isOpenAddFile} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpenAddFile(false)}>
+        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <DialogPanel
+              transition
+              className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+            >
+              <DialogTitle as="h3" className="text-base font-medium">
+                Agregar Archivos
+              </DialogTitle>
+              <form className="py-10 px-2 bg-[#F2F6F7] mt-4" onSubmit={e => e.preventDefault()}>
+                <input type="file" multiple onChange={handleChangeFiles} />
+              </form>
+              <div className="mt-4 flex justify-center gap-4">
+                <Button
+                  buttonStyle="primary"
+                  className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
+                  onclick={handleSaveFiles}
+                  label="Agregar"
+                />
+                <Button
+                  buttonStyle="secondary"
+                  className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
+                  onclick={() => setIsOpenAddFile(false)}
                   label="Cerrar"
                 />
               </div>

@@ -1,35 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useDriveContext from "@/src/context/drive";
 import { Dialog, DialogTitle, DialogPanel, DialogBackdrop } from "@headlessui/react";
 import TextInput from "@/src/components/form/TextInput";
 import Button from "@/src/components/form/Button";
-import SelectInput from "@/src/components/form/SelectInput";
+import { useTranslation } from "react-i18next";
 
-const CopyFolder = () => {
+const CopyItem = () => {
+    const { t } = useTranslation()
     const {
         duplicateFolder,
         folderCopy,
-        setFolderCopy,
         currentFolder,
         isOpenCopy,
         setIsOpenCopy
     } = useDriveContext();
-    const [folderName, setFolderName] = useState("")
+    const [folderName, setFolderName] = useState()
 
     const handleClose = () => {
         setIsOpenCopy(false)
     }
 
     const handleCopyFolder = async () => {
-        await duplicateFolder(folderCopy?.id, folderName, currentFolder?.id)
-        setFolderCopy()
+        await duplicateFolder(folderName)
         handleClose()
     }
 
     const handleChangeFolderName = (e) => {
         setFolderName(e.target.value)
     }
+
+    useEffect(() => {
+        setFolderName(folderCopy?.name)
+    }, [folderCopy])
 
     return (
         <Dialog open={isOpenCopy} as="div" className="relative z-10 focus:outline-none" onClose={handleClose}>
@@ -41,12 +44,12 @@ const CopyFolder = () => {
                         className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
                     >
                         <DialogTitle as="h3" className="text-base font-medium">
-                            {`Copiar Carpeta (${folderCopy?.name})`}
+                            {`Copiar ${t(`tools:drive:${folderCopy?.type}`)} (${folderCopy?.name})`}
                         </DialogTitle>
                         <form className="py-10 px-2 bg-[#F2F6F7] mt-4 flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
                             <TextInput
                                 type="text"
-                                label={"Nombre de carpeta"}
+                                label={`Nombre de ${t(`tools:drive:${folderCopy?.type}`)}`}
                                 name="responsible"
                                 value={folderName}
                                 onChangeCustom={handleChangeFolderName}
@@ -82,4 +85,4 @@ const CopyFolder = () => {
     );
 }
 
-export default CopyFolder
+export default CopyItem

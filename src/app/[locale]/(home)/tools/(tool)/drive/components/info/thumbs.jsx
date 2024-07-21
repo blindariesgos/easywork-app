@@ -5,6 +5,7 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import clsx from "clsx";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

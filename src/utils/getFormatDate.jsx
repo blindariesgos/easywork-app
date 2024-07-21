@@ -69,7 +69,6 @@ export const isDateMoreTenDayOverdue = (date) => {
 }
 
 export const getTaskOverdueTimeDelta = (task) => {
-  console.log('task', task)
   if (!task?.deadline) {
     return null; // No hay fecha límite, no hay retraso
   }

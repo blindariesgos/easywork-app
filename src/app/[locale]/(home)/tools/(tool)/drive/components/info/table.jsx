@@ -199,8 +199,7 @@ export default function TableInfo({
                       >
                         <div className="flex items-center">
                           <div className="h-11 w-11 flex-shrink-0">
-                            {getFileIcon(
-                              file.type == "folder" ? "folder" : file.mimetype,
+                            {getFileIcon(file,
                               "h-11 w-11 text-indigo-800"
                             )}
                           </div>
@@ -237,7 +236,7 @@ export default function TableInfo({
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         <Button
-                          label="CMR"
+                          label="CRM"
                           buttonStyle="secondary"
                           className="px-2 py-1"
                         />

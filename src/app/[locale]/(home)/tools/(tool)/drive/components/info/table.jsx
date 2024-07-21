@@ -1,5 +1,5 @@
 "use client";
-import { getFileIcon } from "../../../../../../../../lib/drive_helper";
+import { getFileIcon, getFileSize } from "@/src/lib/drive_helper";
 import clsx from "clsx";
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState, Fragment } from "react";
@@ -232,7 +232,7 @@ export default function TableInfo({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                        {file.size ?? 0}
+                        {getFileSize(file.size) ?? "-"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         <Button

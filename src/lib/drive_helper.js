@@ -4,6 +4,9 @@ import {
   BsFiletypePdf,
   BsFillFolderFill,
 } from "react-icons/bs";
+
+import { MdFolderShared } from "react-icons/md";
+
 import Image from "next/image";
 
 export const getFileIcon = (file, className) => {
@@ -32,6 +35,17 @@ export const getFileIcon = (file, className) => {
     default:
       return <BsFileEarmark className={className} />;
   }
+};
+
+export const getFileSize = (bytes) => {
+  if (!bytes) return "-";
+  if (bytes === 0) return "0 Bytes";
+
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 const getFileType = (mimetype) => {

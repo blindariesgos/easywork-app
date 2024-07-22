@@ -233,7 +233,7 @@ export default function TableInfo({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                        {file.size ?? 0}
+                        {`${file.type === "folder" ? "" : file.size}`}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         <Button

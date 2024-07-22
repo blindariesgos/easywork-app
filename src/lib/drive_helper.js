@@ -35,6 +35,7 @@ export const getFileIcon = (file, className) => {
           alt={file.name}
           width={36}
           height={36}
+          className={className}
           quality={30}
         />
       );

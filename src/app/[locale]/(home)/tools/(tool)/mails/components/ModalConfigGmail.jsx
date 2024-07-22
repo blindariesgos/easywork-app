@@ -8,25 +8,32 @@ import Image from "next/image";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import {
-  getTokenGoogle,
-  deleteTokenGoogle,
-  deleteFoldersMail,
-} from "../../../../../../../lib/apis";
+import { deleteTokenGoogle, getAllOauth } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ModalAddGmail({ children, state, from, edit }) {
+export default function ModalConfigGmail({
+  children,
+  state,
+  motivo,
+  edit,
+  addOtherOauth,
+}) {
   const router = useRouter();
   const session = useSession();
-  const { setOpenModalFolders, openModalFolders, userGoogle, setUserGoogle } =
-    useAppContext();
+  const {
+    lists,
+    selectOauth,
+    setOpenModalFolders,
+    openModalFolders,
+    userGoogle,
+    setUserGoogle,
+  } = useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
-  const { lists } = useAppContext();
 
   const schemaInputs = yup.object().shape({
     name: yup.string(),
@@ -69,8 +76,8 @@ export default function ModalAddGmail({ children, state, from, edit }) {
 
   async function deleteOauth() {
     try {
-      await deleteTokenGoogle(session.data.user.id);
-      await deleteFoldersMail(session.data.user.id);
+      console.log(selectOauth.id);
+      await deleteTokenGoogle(session.data.user.id, selectOauth.id);
       router.push("/tools/mails");
     } catch (error) {}
   }
@@ -86,27 +93,47 @@ export default function ModalAddGmail({ children, state, from, edit }) {
     );
 
     const checkWindowClosed = setInterval(async function () {
-      if (oauthWindow.closed) {
+      if (oauthWindow.closed && state) {
         clearInterval(checkWindowClosed);
-        getDataGoogleUser();
+        getDataNewGoogleUser();
       }
     }, 1000);
   }
 
-  async function getDataGoogleUser() {
+  useEffect(() => {
+    if (state) getDataGoogleUser();
+  }, [state]);
+
+  async function getDataNewGoogleUser() {
+    setUserGoogle(null);
     try {
-      const res = await getTokenGoogle(session.data.user.id);
+      const res = await getAllOauth(session.data.user.id);
       const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
+        headers: {
+          Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
+        },
       };
       const userInfo = await axios.get(
         "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
         config
       );
-      setUserGoogle(userInfo.data, ...res.access_token);
-    } catch (error) {
-      setUserGoogle(null);
-    }
+      setUserGoogle(userInfo.data, ...res.slice(-1).pop().access_token);
+    } catch (error) {}
+  }
+
+  async function getDataGoogleUser() {
+    setUserGoogle(null);
+    if (addOtherOauth) return;
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${session.data.user.access_token}` },
+      };
+      const axiosUserData = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
+        config
+      );
+      setUserGoogle(axiosUserData.data);
+    } catch (error) {}
   }
 
   const timeMails = [
@@ -116,10 +143,6 @@ export default function ModalAddGmail({ children, state, from, edit }) {
     { name: "3 meses", onClick: "" },
     { name: "todo el tiempo", onClick: "" },
   ];
-
-  useEffect(() => {
-    getDataGoogleUser();
-  }, []);
 
   return (
     <>
@@ -195,7 +218,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                 </p>
               </Menu>
               <div className="mt-2">
-                {!userGoogle && from == "lobby" ? (
+                {motivo == "add" ? (
                   editParams ? (
                     <>
                       <p className="ml-2 mb-1">Nombre del buzón</p>
@@ -339,7 +362,7 @@ export default function ModalAddGmail({ children, state, from, edit }) {
                 )}
               </div>
               <div className="flex mt-4 justify-end">
-                {userGoogle && from == "buzon" ? (
+                {motivo == "edit" ? (
                   <>
                     <button
                       type="button"

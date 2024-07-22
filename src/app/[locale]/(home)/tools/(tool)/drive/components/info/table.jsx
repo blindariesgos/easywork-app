@@ -1,5 +1,5 @@
 "use client";
-import { getFileIcon } from "../../../../../../../../lib/drive_helper";
+import { getFileIcon, getFileSize } from "@/src/lib/drive_helper";
 import clsx from "clsx";
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState, Fragment } from "react";
@@ -199,8 +199,7 @@ export default function TableInfo({
                       >
                         <div className="flex items-center">
                           <div className="h-11 w-11 flex-shrink-0">
-                            {getFileIcon(
-                              file.type == "folder" ? "folder" : file.mimetype,
+                            {getFileIcon(file,
                               "h-11 w-11 text-indigo-800"
                             )}
                           </div>
@@ -233,11 +232,11 @@ export default function TableInfo({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                        {`${file.type === "folder" ? "" : file.size}`}
+                        {getFileSize(file.size) ?? ""}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         <Button
-                          label="CMR"
+                          label="CRM"
                           buttonStyle="secondary"
                           className="px-2 py-1"
                         />

@@ -256,13 +256,13 @@ export const googleCallback = async (data, state) => {
   return response;
 };
 
-export const getTokenGoogle = async (id) => {
-  const response = await axios().get(`/oauth/${id}`);
+export const getTokenGoogle = async (userId, oauthId) => {
+  const response = await axios().get(`/oauth/config/${userId}/${oauthId}`);
   return response;
 };
 
-export const deleteTokenGoogle = async (id) => {
-  const response = await axios().delete(`/oauth/${id}`);
+export const deleteTokenGoogle = async (userId, oauthId) => {
+  const response = await axios().delete(`/oauth/${userId}/${oauthId}`);
   return response;
 };
 
@@ -286,8 +286,13 @@ export const getFilters = async (idUser) => {
   return response;
 };
 
-export const getMails = async (idUser, page, perPage) => {
-  const response = await axios().get(`/oauth/email/get/${idUser}?page=${page}&perPage=${perPage}`);
+export const getMails = async (idUser, page, perPage, folder, oauthId) => {
+  const response = await axios().get(`/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`);
+  return response;
+};
+
+export const getAllOauth = async (idUser) => {
+  const response = await axios().get(`/oauth/all/${idUser}`);
   return response;
 };
 

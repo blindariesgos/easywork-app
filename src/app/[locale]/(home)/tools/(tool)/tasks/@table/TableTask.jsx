@@ -280,11 +280,11 @@ const renderCellContent = (column, task, t) => {
       return taskValue ? (
         <div className="flex">
           <span className={clsx("p-1 px-2 rounded-full text-sm w-auto", {
-            "bg-red-200 text-red-900": isDateOverdue(taskValue),
-            "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue),
-            "bg-orange-300 text-orange-900": isDateTodayOverdue(taskValue),
-            "bg-blue-300 text-blue-900": isDateMoreFiveDayOverdue(taskValue),
-            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue)
+            "bg-red-200 text-red-900": isDateOverdue(taskValue) && !task.completedTime,
+            "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue) && !task.completedTime,
+            "bg-orange-300 text-orange-900": isDateTodayOverdue(taskValue) && !task.completedTime,
+            "bg-blue-300 text-blue-900": isDateMoreFiveDayOverdue(taskValue) && !task.completedTime,
+            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue) && !task.completedTime
           })}>
             {getTaskOverdueTimeDelta(task)}
           </span>

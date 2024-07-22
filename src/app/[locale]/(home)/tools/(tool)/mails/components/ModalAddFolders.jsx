@@ -5,26 +5,30 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import useAppContext from "../../../../../../../context/app/index";
 import { useRouter } from "next/navigation";
-import { saveFolders } from "../../../../../../../lib/apis";
-import { getTokenGoogle } from "../../../../../../../lib/apis";
+import { saveFolders, getAllOauth } from "../../../../../../../lib/apis";
 
 export default function ModalAddFolders({ children }) {
   const router = useRouter();
   const session = useSession();
   const { setOpenModalFolders, openModalFolders } = useAppContext();
   const [folderData, setFolderData] = useState([]);
+  const [userData, setUserData] = useState(null);
+
   useEffect(() => {
-    getTokenGoogle(session.data.user.id).then((res) => {
+    getAllOauth(session.data.user.id).then((res) => {
+      setUserData(res.slice(-1).pop());
+      console.log(res.slice(-1).pop());
       const config = {
-        headers: { Authorization: `Bearer ${res.access_token}` },
+        headers: {
+          Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
+        },
       };
       axios
         .get(
-          `https://www.googleapis.com/gmail/v1/users/${res.usergoogle_id}/labels`,
+          `https://www.googleapis.com/gmail/v1/users/${res.slice(-1).pop().usergoogle_id}/labels`,
           config
         )
         .then((labels) => {
-          // Set system folders to true by default
           const updatedLabels = labels.data.labels.map((label) => ({
             ...label,
             state: label.type === "system" ? true : label.state,
@@ -36,7 +40,7 @@ export default function ModalAddFolders({ children }) {
 
   async function saveMails() {
     axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${userData?.id}`
     );
   }
 
@@ -60,6 +64,14 @@ export default function ModalAddFolders({ children }) {
     } catch (error) {}
   }
 
+  function checkAll() {
+    const newFolderData = folderData.map((folder) => ({
+      ...folder,
+      state: true,
+    }));
+    setFolderData(newFolderData);
+  }  
+
   return (
     <SliderOverShort openModal={openModalFolders}>
       {children}
@@ -74,30 +86,32 @@ export default function ModalAddFolders({ children }) {
             </div>
             <div className="text-xs">
               <div className="flex ml-2">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  onClick={() => {
+                    checkAll();
+                  }}
+                />
                 <p className="ml-1">Select all</p>
               </div>
               <div className="mt-4 ml-4">
-                {folderData?.map(
-                  (data, index) =>
-                    data.type !== "system" && (
-                      <div className="flex mt-4 ml-2" key={index}>
-                        <input
-                          type="checkbox"
-                          checked={data.state}
-                          onChange={(e) => {
-                            const newFolderData = [...folderData];
-                            newFolderData[index] = {
-                              ...newFolderData[index],
-                              state: e.target.checked,
-                            };
-                            setFolderData(newFolderData);
-                          }}
-                        />
-                        <p className="ml-1">{data.name}</p>
-                      </div>
-                    )
-                )}
+                {folderData?.map((data, index) => (
+                  <div className="flex mt-4 ml-2" key={index}>
+                    <input
+                      type="checkbox"
+                      checked={data.state}
+                      onChange={(e) => {
+                        const newFolderData = [...folderData];
+                        newFolderData[index] = {
+                          ...newFolderData[index],
+                          state: e.target.checked,
+                        };
+                        setFolderData(newFolderData);
+                      }}
+                    />
+                    <p className="ml-1">{data.name}</p>
+                  </div>
+                ))}
               </div>
               <div className="m-3 text-xs my-4 w-80">
                 <h1 className="font-medium text-lg border-b-4 border-black pb-1">

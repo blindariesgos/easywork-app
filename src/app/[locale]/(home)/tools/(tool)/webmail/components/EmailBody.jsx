@@ -104,7 +104,7 @@ export default function EmailBody({
                           <h1 className="text-lg mb-4">{selectMail?.subject}</h1>
                         <div className="bg-white text-sm p-5 h-5/6">
                           <div className="pb-2 border-b-2">
-                            <p>{selectMail?.subject}</p>
+                            <p>{selectMail?.from}</p>
                             {/* <p>Para: {selectMail?.to[0]}</p> */}
                             <div className="w-full flex justify-center items-center">
                               <p className="m-2 text-xs font-semibold">RESPUESTA</p>

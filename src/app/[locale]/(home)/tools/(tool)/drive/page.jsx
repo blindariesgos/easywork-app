@@ -13,7 +13,7 @@ import DriveFooter from "./components/DriveFooter";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 
-export default function DrivePage({ children }) {
+export default function DrivePage() {
   const { driveView } = useAppContext();
   const { t } = useTranslation()
   const checkboxTable = useRef();

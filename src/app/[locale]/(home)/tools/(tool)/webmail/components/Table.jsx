@@ -1,7 +1,7 @@
 "use client";
 import clsx from "clsx";
 import Image from "next/image";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ExclamationCircleIcon,
@@ -12,8 +12,18 @@ import {
 import { useSession } from "next-auth/react";
 import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
-import { Pagination } from "../../../../../../../components/pagination/Pagination";
-import { deleteMails } from "../../../../../../../lib/apis";
+import { Bars3Icon } from "@heroicons/react/20/solid";
+import {
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Menu,
+  Transition,
+} from "@headlessui/react";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function Table({ mails, selectedFolder = "INBOX" }) {
   const router = useRouter();
@@ -25,13 +35,6 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
   const [mailsData, setMailsData] = useState(mails);
   const [selectMail, setSelectMail] = useState(mails);
   const session = useSession();
-
-  useEffect(() => {
-    const filteredMails = mails.filter(
-      (mail) => mail.email.folder && mail.email.folder.includes(selectedFolder)
-    );
-    setMailsData(filteredMails);
-  }, [mails, selectedFolder]);
 
   function toggleAll() {
     setSelectedTasks(checked || indeterminate ? [] : mails);
@@ -49,9 +52,20 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
     // await deleteMails();
   }
 
+  const itemOptions = [
+    { name: "Marcar como no leido", onClick: "" },
+    { name: "Mover a la carpeta", onClick: "" },
+    { name: "Marcar como correo no deseado", onClick: "" },
+    { name: "Eliminar", onClick: "" },
+    { name: "Excluir de CRM", onClick: "" },
+    { name: "Crear tareas", onClick: "" },
+    { name: "Crear eventos", onClick: "" },
+    { name: "Eliminar permanentemente", onClick: "" },
+  ];
+
   return (
     <div className="flow-root">
-      <EmailBody colorTag="bg-green-100" selectMail={selectMail} />
+      <EmailBody colorTag="bg-easywork-main" selectMail={selectMail} />
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden sm:rounded-lg">
@@ -94,131 +108,170 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
             </div>
             <div className="divide-y divide-gray-300">
               <div className="divide-y divide-gray-200 bg-white">
-                {mailsData &&
-                  mailsData.map((item) => {
-                    // const subjectHeader = mail.payload.headers.find(
-                    //   (header) => header.name === "Subject"
-                    // );
-                    // const fromHeader = mail.payload.headers.find(
-                    //   (header) => header.name === "From"
-                    // );
-                    // const dateHeader = mail.payload.headers.find(
-                    //   (header) => header.name === "Date"
-                    // );
+                {mails?.map((item) => {
+                  let subjectFormat = item.email.subject
+                    ? item.email.subject
+                    : "";
+                  let fromFormat = item.email.from
+                    ? item.email.from.split(" <")[0]
+                    : "";
+                  let date = item.email.date
+                    ? new Date(item.email.date)
+                    : new Date();
 
-                    let subjectFormat = item.email.subject
-                      ? item.email.subject
-                      : "";
-                    let fromFormat = item.email.from
-                      ? item.email.from.split(" <")[0]
-                      : "";
-                    let date = item.email.date
-                      ? new Date(item.email.date)
-                      : new Date();
+                  subjectFormat =
+                    subjectFormat.length > 70
+                      ? `${subjectFormat.substring(0, 70)}...`
+                      : subjectFormat;
 
-                    subjectFormat =
-                      subjectFormat.length > 80
-                        ? `${subjectFormat.substring(0, 80)}...`
-                        : subjectFormat;
+                  const now = new Date();
+                  let dateFormat;
+                  if (
+                    date.getDate() === now.getDate() &&
+                    date.getMonth() === now.getMonth() &&
+                    date.getFullYear() === now.getFullYear()
+                  ) {
+                    dateFormat = date.toLocaleTimeString();
+                  } else {
+                    dateFormat = date.toLocaleDateString();
+                  }
 
-                    const now = new Date();
-                    let dateFormat;
-                    if (
-                      date.getDate() === now.getDate() &&
-                      date.getMonth() === now.getMonth() &&
-                      date.getFullYear() === now.getFullYear()
-                    ) {
-                      dateFormat = date.toLocaleTimeString();
-                    } else {
-                      dateFormat = date.toLocaleDateString();
-                    }
-
-                    return (
-                      <div
-                        key={item.id}
-                        className={clsx(
-                          selectedTasks.includes(item)
-                            ? "bg-gray-50"
-                            : undefined,
-                          "hover:bg-indigo-100/40 cursor-default grid grid-cols-9 gap-2 p-4"
+                  return (
+                    <div
+                      key={item.id}
+                      className={clsx(
+                        selectedTasks.includes(item) ? "bg-gray-50" : undefined,
+                        "hover:bg-indigo-100/40 cursor-default grid grid-cols-12 gap-2 p-4"
+                      )}
+                    >
+                      <div className="relative px-2 w-full h-full col-span-1">
+                        {selectedTasks.includes(item) && (
+                          <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
-                      >
-                        <div className="relative px-7 sm:w-12 sm:px-6 col-span-1">
-                          {selectedTasks.includes(item) && (
-                            <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                          )}
-                          <input
-                            type="checkbox"
-                            className="..."
-                            value={item.id}
-                            checked={selectedTasks.includes(item)}
-                            onChange={(e) =>
-                              setSelectedTasks(
-                                e.target.checked
-                                  ? [...selectedTasks, item]
-                                  : selectedTasks.filter((p) => p !== item)
-                              )
-                            }
-                          />
-                        </div>
-                        <div
-                          onClick={() => {
-                            setSelectMail(item.email);
-                            router.push("/tools/webmail/?detail=true");
-                          }}
-                          className={
-                            clsx(
-                              "whitespace-nowrap py-1 pr-3 text-sm font-medium",
-                              selectedTasks.includes(item)
-                                ? "text-indigo-600"
-                                : "text-gray-900"
-                            ) + " col-span-5"
+                        <div className="flex items-center h-full">
+                        <input
+                          type="checkbox"
+                          className="..."
+                          value={item.id}
+                          checked={selectedTasks.includes(item)}
+                          onChange={(e) =>
+                            setSelectedTasks(
+                              e.target.checked
+                                ? [...selectedTasks, item]
+                                : selectedTasks.filter((p) => p !== item)
+                            )
                           }
+                        />
+                        <Menu
+                          as="div"
+                          className="hover:bg-slate-50/30 w-10 md:w-auto rounded-lg"
                         >
-                          {subjectFormat}
+                          <MenuButton className="-m-1.5 flex items-center p-1.5">
+                            <Bars3Icon
+                              className="ml-3 h-4 w-4 text-gray-400"
+                              aria-hidden="true"
+                            />
+                          </MenuButton>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <MenuItems className="absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                              {itemOptions.map((item, index) => (
+                                <MenuItem key={index}>
+                                  {({ active }) => (
+                                    <div
+                                      onClick={item.onClick}
+                                      className={classNames(
+                                        active ? "bg-gray-50" : "",
+                                        "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                      )}
+                                    >
+                                      {item.name}
+                                    </div>
+                                  )}
+                                </MenuItem>
+                              ))}
+                            </MenuItems>
+                          </Transition>
+                        </Menu>
                         </div>
-                        <div
-                          onClick={() => {
-                            setSelectMail(item.email);
-                            router.push("/tools/webmail/?detail=true");
-                          }}
-                          className={
-                            clsx(
-                              "whitespace-nowrap py-1 pr-3 text-sm font-medium",
-                              selectedTasks.includes(item)
-                                ? "text-indigo-600"
-                                : "text-gray-900"
-                            ) + " col-span-2"
-                          }
-                        >
-                          {fromFormat}
-                        </div>
-                        <div
-                          onClick={() => {
-                            setSelectMail(item.email);
-                            router.push("/tools/webmail/?detail=true");
-                          }}
-                          className={
-                            clsx(
-                              "whitespace-nowrap py-1 pr-3 text-sm font-medium",
-                              selectedTasks.includes(item)
-                                ? "text-indigo-600"
-                                : "text-gray-900"
-                            ) + " col-span-1 text-right"
-                          }
-                        >
-                          {dateFormat}
-                        </div>
+
                       </div>
-                    );
-                  })}
+                      <div
+                        onClick={() => {
+                          setSelectMail(item.email);
+                          router.push("/tools/webmail/?detail=true");
+                        }}
+                        className={
+                          clsx(
+                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-6"
+                        }
+                      >
+                        {subjectFormat}
+                      </div>
+                      <div
+                        onClick={() => {
+                          setSelectMail(item.email);
+                          router.push("/tools/webmail/?detail=true");
+                        }}
+                        className={
+                          clsx(
+                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-3"
+                        }
+                      >
+                        {fromFormat}
+                      </div>
+                      <div
+                        onClick={() => {
+                          setSelectMail(item.email);
+                          router.push("/tools/webmail/?detail=true");
+                        }}
+                        className={
+                          clsx(
+                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-1 text-right"
+                        }
+                      >
+                        {dateFormat}
+                      </div>
+                      <div
+                        className={
+                          clsx(
+                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-1"
+                        }
+                      >
+                        <button className="border-2 border-gray-950 px-0.5 rounded-md text-xs">
+                          CRM
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex justify-center">
-        <Pagination totalPages={10} bgColor="bg-gray-300" />
       </div>
     </div>
   );

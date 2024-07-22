@@ -232,7 +232,7 @@ export default function TableInfo({
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                        {getFileSize(file.size) ?? "-"}
+                        {getFileSize(file.size) ?? ""}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                         <Button

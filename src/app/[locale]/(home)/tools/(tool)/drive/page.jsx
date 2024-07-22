@@ -7,12 +7,8 @@ import IconsInfo from "./components/info/icons";
 import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import useDriveContext from "@/src/context/drive";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
-import { Dialog, DialogTitle, DialogPanel, DialogBackdrop } from "@headlessui/react";
-import TextInput from "@/src/components/form/TextInput";
-import Button from "@/src/components/form/Button";
-import SelectInput from "@/src/components/form/SelectInput";
-import DialogCopyFolder from "./components/dialogs/CopyFolder";
+import DialogCopyItem from "./components/dialogs/CopyItem";
+import DialogRenameItem from "./components/dialogs/RenameItem";
 import DriveFooter from "./components/DriveFooter";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -26,18 +22,16 @@ export default function DrivePage() {
     folders,
     loading,
     addPage,
-    renameFolder,
     folderCopy,
     setFolderCopy,
-    isOpenCopy,
-    setIsOpenCopy
+    setIsOpenCopy,
+    setIsOpenRename,
+    setItemEdit
   } = useDriveContext();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [isOpenRename, setIsOpenRename] = useState(false)
-  const [folderName, setFolderName] = useState("")
-  const [idFolderEdit, setIdFolderEdit] = useState("")
+
 
   useLayoutEffect(() => {
     const isIndeterminate =
@@ -57,7 +51,13 @@ export default function DrivePage() {
   const itemOptions = [
     {
       name: "Abrir",
-      onClick: (page) => addPage(page)
+      onClick: (item) => {
+        if (item.type == "folder") {
+          addPage(item)
+          return
+        }
+        window.open(item.url, "self", "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500")
+      }
     },
     {
       name: "Compartir",
@@ -65,10 +65,9 @@ export default function DrivePage() {
     },
     {
       name: "Renombrar",
-      onClick: (page) => {
-        setFolderName(page.name)
+      onClick: (item) => {
+        setItemEdit(item)
         setIsOpenRename(true)
-        setIdFolderEdit(page.id)
       }
     },
     {
@@ -84,19 +83,9 @@ export default function DrivePage() {
     { name: "Compartir con otros usuarios" },
   ];
 
-  const handleRenameFolder = async () => {
-    await renameFolder(idFolderEdit, folderName)
-    setIsOpenRename(false)
-    setFolderName("")
-    setIdFolderEdit("")
-  }
-
-  const handleChangeFolderName = (e) => {
-    setFolderName(e.target.value)
-  }
 
   return (
-    <div className="flex flex-col flex-grow">
+    <div className="flex flex-col flex-grow md:pb-10 pb-16">
       {loading && <LoaderSpinner />}
       <DriveHeader />
 
@@ -177,88 +166,9 @@ export default function DrivePage() {
           />)
       }
       <DriveFooter selectedFiles={selectedFiles.length} />
-      <Dialog open={isOpenRename} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpenRename(false)}>
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <DialogPanel
-              transition
-              className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
-            >
-              <DialogTitle as="h3" className="text-base font-medium">
-                Renombrar Carpeta
-              </DialogTitle>
-              <form className="py-10 px-2 bg-[#F2F6F7] mt-4" onSubmit={e => e.preventDefault()}>
-                <TextInput
-                  type="text"
-                  label={"Nombre de carpeta"}
-                  name="responsible"
-                  value={folderName}
-                  onChangeCustom={handleChangeFolderName}
-                />
-              </form>
-              <div className="mt-4 flex justify-center gap-4">
-                <Button
-                  buttonStyle="primary"
-                  className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
-                  onclick={handleRenameFolder}
-                  label="Renombrar"
-                />
-                <Button
-                  buttonStyle="secondary"
-                  className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
-                  onclick={() => setIsOpenRename(false)}
-                  label="Cerrar"
-                />
-              </div>
-            </DialogPanel>
-          </div>
-        </div>
-      </Dialog>
-      <Dialog open={isOpenCopy} as="div" className="relative z-10 focus:outline-none" onClose={() => setIsOpenCopy(false)}>
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <DialogPanel
-              transition
-              className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
-            >
-              <DialogTitle as="h3" className="text-base font-medium">
-                {`Copiar Carpeta (${folderCopy?.name})`}
-              </DialogTitle>
-              <form className="py-10 px-2 bg-[#F2F6F7] mt-4 flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
-                <TextInput
-                  type="text"
-                  label={"Nombre de carpeta"}
-                  name="responsible"
-                  value={folderName}
-                  onChangeCustom={handleChangeFolderName}
-                />
-                <SelectInput
-                  options={folders}
-                  label="Copiar en"
-                  setSelectedOption={(option) => console.log(option)}
-                />
-              </form>
-              <div className="mt-4 flex justify-center gap-4">
-                <Button
-                  buttonStyle="primary"
-                  className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
-                  onclick={handleRenameFolder}
-                  label="Renombrar"
-                />
-                <Button
-                  buttonStyle="secondary"
-                  className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold "
-                  onclick={() => setIsOpenCopy(false)}
-                  label="Cerrar"
-                />
-              </div>
-            </DialogPanel>
-          </div>
-        </div>
-      </Dialog>
-      <DialogCopyFolder />
+
+      <DialogRenameItem />
+      <DialogCopyItem />
     </div>
   );
 }

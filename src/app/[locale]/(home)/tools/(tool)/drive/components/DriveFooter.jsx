@@ -58,8 +58,8 @@ const DriveFooter = ({ selectedFiles }) => {
     }, [selected])
 
     return (
-        <div className="flex justify-between items-center">
-            <div className="ml-6">Seleccionado: {selectedFiles}/{totals.totalItems}</div>
+        <div className="flex justify-between items-center flex-wrap gap-2">
+            <div>Seleccionado: {selectedFiles}/{totals.totalItems}</div>
             <div className="flex gap-1 items-center">
                 <p>Mostrar:</p>
                 <Listbox value={selected} onChange={setSelected} as="div">

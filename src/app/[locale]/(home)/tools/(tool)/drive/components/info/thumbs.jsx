@@ -1,15 +1,11 @@
 "use client";
-import React, { useState, useLayoutEffect, useRef, Fragment } from "react";
-import { FolderIcon } from "@heroicons/react/20/solid";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import React, { Fragment } from "react";
 import { ChevronRightIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import clsx from "clsx";
+import { getFileIcon } from "../../../../../../../../lib/drive_helper";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function ThumbsInfo({
   files,
@@ -121,9 +117,12 @@ export default function ThumbsInfo({
               </Menu>
             </div>
             <div className="flex flex-col items-center justify-center">
-              <FolderIcon className="h-12 w-12 text-easywork-main" />
+              {getFileIcon(
+                file.type == "folder" ? "folder" : file.mimetype,
+                "h-12 w-12 text-indigo-800"
+              )}
             </div>
-            <p className="text-xs">{file.name}</p>
+            <p className="text-xs overflow-hidden whitespace-nowrap text-ellipsis w-full pt-4" title={file.name}>{file.name}</p>
           </div>
         ))}
       </div>

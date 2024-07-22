@@ -3,6 +3,8 @@ import {
   BsFileEarmark,
   BsFiletypePdf,
   BsFillFolderFill,
+  BsFiletypePng,
+  BsFiletypeJpg
 } from "react-icons/bs";
 
 import { MdFolderShared } from "react-icons/md";
@@ -22,6 +24,10 @@ export const getFileIcon = (file, className) => {
       return <BsFiletypeDoc className={className} />;
     case "folder":
       return <BsFillFolderFill className={className} />;
+    case "image/png":
+      return <BsFiletypePng className={className} />;
+    case "image/jpeg":
+      return <BsFiletypeJpg className={className} />;
     case "image":
       return (
         <Image

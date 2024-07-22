@@ -5,6 +5,8 @@
     "filter": "Filtrar y Buscar",
     "home": "Hogar",
     "my-unit": "Mi unidad",
+    "file": "Archivo",
+    "folder": "Carpeta",
     "add": {
       "name": "Agregar",
       "document": "Archivo",

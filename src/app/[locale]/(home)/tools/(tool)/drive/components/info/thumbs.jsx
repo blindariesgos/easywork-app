@@ -65,7 +65,7 @@ export default function ThumbsInfo({
                       >
                         {({ active }) => (
                           <div
-                            className={classNames(
+                            className={clsx(
                               active ? "bg-gray-50 text-white" : "text-black",
                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
@@ -94,7 +94,7 @@ export default function ThumbsInfo({
                                       <MenuItem key={subItem.name}>
                                         {({ active }) => (
                                           <div
-                                            className={classNames(
+                                            className={clsx(
                                               active ? "bg-gray-50" : "",
                                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                                             )}
@@ -118,7 +118,7 @@ export default function ThumbsInfo({
             </div>
             <div className="flex flex-col items-center justify-center">
               {getFileIcon(
-                file.type == "folder" ? "folder" : file.mimetype,
+                file,
                 "h-12 w-12 text-indigo-800"
               )}
             </div>

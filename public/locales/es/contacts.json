@@ -312,6 +312,7 @@
     "save": "Guardar Filtro",
     "responsible": "Persona Responsable",
     "created": "Creado el",
+    "modified": "Modificado el",
     "origin": "Origen",
     "created-by": "Creado por",
     "add-field": "Agregar campo",
@@ -320,6 +321,7 @@
     "restart": "Reiniciar",
     "cua": "Código CUA",
     "fullname": "Nombre y Apellido",
+    "item-name": "Nombre",
     "contact-type": "Tipo de contacto",
     "rfc": "RFC",
     "date": {

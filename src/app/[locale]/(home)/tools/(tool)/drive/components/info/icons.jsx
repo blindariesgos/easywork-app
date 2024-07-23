@@ -1,54 +1,29 @@
 "use client";
-import React, { useState, useLayoutEffect, useRef, Fragment } from "react";
-import { FolderIcon } from "@heroicons/react/20/solid";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import React, { Fragment } from "react";
 import { ChevronRightIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import clsx from "clsx";
+import { getFileIcon } from "../../../../../../../../lib/drive_helper";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function IconsInfo({
   files,
   selectedFiles,
-  checkbox,
   shareOptions,
   itemOptions,
-  toggleAll,
   setSelectedFiles,
-  checked,
 }) {
   const { t } = useTranslation();
 
   return (
     <div className="relative">
-      {selectedFiles.length > 0 && (
-        <div className="flex h-12 items-center px-3 gap-2">
-          <input
-            type="checkbox"
-            className=" h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-            ref={checkbox}
-            checked={checked}
-            onChange={toggleAll}
-          />
-          <button
-            type="button"
-            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-          >
-            {t("tools:drive:table:delete")}
-          </button>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-5">
         {files && files.map((file) => (
           <div
             key={file.name}
             className={clsx("w-full h-full rounded-xl flex flex-col bg-[#E9E9E9] p-6", {
-              "border-2 border-primary": selectedFiles.includes(file)
+              "border-2 border-primary": selectedFiles.includes(file.id)
             })}
           >
             <div className="flex gap-2 items-center">
@@ -56,12 +31,12 @@ export default function IconsInfo({
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                 value={file.email}
-                checked={selectedFiles.includes(file)}
+                checked={selectedFiles.includes(file.id)}
                 onChange={(e) =>
                   setSelectedFiles(
                     e.target.checked
-                      ? [...selectedFiles, file]
-                      : selectedFiles.filter((p) => p !== file)
+                      ? [...selectedFiles, file.id]
+                      : selectedFiles.filter((p) => p !== file.id)
                   )
                 }
               />
@@ -80,10 +55,14 @@ export default function IconsInfo({
                 >
                   <MenuItems anchor={{ to: 'right start' }} className="rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {itemOptions.map((item) => (
-                      <MenuItem key={item.name} onClick={() => item.onClick && item.onClick(file)}>
+                      <MenuItem
+                        key={item.name}
+                        onClick={() => item.onClick && item.onClick(file)}
+                        disabled={item.disabled}
+                      >
                         {({ active }) => (
                           <div
-                            className={classNames(
+                            className={clsx(
                               active ? "bg-gray-50 text-white" : "text-black",
                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
@@ -112,7 +91,7 @@ export default function IconsInfo({
                                       <MenuItem key={subitem.name}>
                                         {({ active }) => (
                                           <div
-                                            className={classNames(
+                                            className={clsx(
                                               active ? "bg-gray-50 text-white" : "text-black",
                                               "block px-3 py-1 text-sm leading-6  cursor-pointer"
                                             )}
@@ -135,9 +114,12 @@ export default function IconsInfo({
               </Menu>
             </div>
             <div className="flex flex-col items-center justify-center">
-              <FolderIcon className="h-24 w-24 text-easywork-main" />
+              {getFileIcon(
+                file,
+                "h-24 w-24 text-indigo-800"
+              )}
             </div>
-            <p>{file.name}</p>
+            <p className="overflow-hidden whitespace-nowrap text-ellipsis w-full pt-4" title={file.name}>{file.name}</p>
           </div>
         ))}
       </div>

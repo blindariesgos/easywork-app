@@ -2,37 +2,49 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import { DriveContext } from "..";
-import { createFolder, getFolder, getFolders, updateFolder } from "../../lib/api/drive";
+import {
+  createFolder,
+  copyFolder,
+  getExplorer,
+  uploadFiles,
+  copyFile,
+  renameFolder,
+  renameFile,
+} from "../../lib/api/drive";
+import { toast } from "react-toastify";
 
 export default function DriveContextProvider({ children }) {
   const [folders, setFolders] = useState()
   const [loading, setLoading] = useState(true)
+  const [itemCopy, setItemCopy] = useState()
+  const [itemEdit, setItemEdit] = useState()
+  const [isOpenCopy, setIsOpenCopy] = useState(false)
+  const [isOpenRename, setIsOpenRename] = useState(false)
   const [config, setConfig] = useState({
+    limit: 25,
+    page: 1,
+    sortField: 'name',
+    sortOrder: 'ASC'
+  })
+  const [totals, setTotals] = useState({
     totalItems: 0,
     itemCount: 0,
-    itemsPerPage: 25,
     totalPages: 1,
-    currentPage: 1
   })
 
   const [pages, setPages] = useState([])
 
   const getItems = async () => {
     setLoading(true)
-    const response = pages.length == 0
-      ? await getFolders().catch((error) => {
-        return { error: true }
-      })
-      : await getFolder(pages[pages.length - 1]?.id).catch((error) => {
-        return { error: true }
-      })
+    const response = await getExplorer(config, pages.length == 0 ? "" : pages[pages.length - 1]?.id)
 
     if (response.error) {
+      toast.error(response.message)
       return setLoading(false)
     };
 
     setFolders(response.items ?? [])
-    setConfig({
+    setTotals({
       ...config,
       ...response.meta
     })
@@ -51,14 +63,9 @@ export default function DriveContextProvider({ children }) {
     }
 
     const response = await createFolder(data)
-      .catch((error) => {
-        console.log({ error })
-        return {
-          error: true
-        }
-      })
 
     if (response.error) {
+      toast.error(response.message)
       return setLoading(false)
     }
 
@@ -67,15 +74,41 @@ export default function DriveContextProvider({ children }) {
 
   }
 
-  const renameFolder = async (id, name) => {
+  const renameItem = async (newName) => {
     setLoading(true)
-    const response = await updateFolder(id, { name }).catch((error) => {
-      console.log(error)
-      return { error: true }
-    })
+    const response = itemEdit.type === "folder"
+      ? await renameFolder(itemEdit.id, { newName })
+      : await renameFile(itemEdit.id, { newName })
+
     if (response.error) {
+      toast.error(response.message)
       return setLoading(false)
     }
+
+    setIsOpenRename(false)
+    await getItems()
+    setLoading(false)
+  }
+
+  const duplicateFolder = async (newName) => {
+    setLoading(true)
+    const response = itemCopy.type === "folder"
+      ? await copyFolder(itemCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
+      : await copyFile(itemCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
+
+    if (response.error) {
+      toast.error(response.message)
+      return setLoading(false)
+    }
+
+    if (response.errors) {
+      response.errors.forEach(error => {
+        toast.error(error)
+      })
+      return setLoading(false)
+    }
+
+    setItemCopy()
     await getItems()
     setLoading(false)
   }
@@ -94,25 +127,67 @@ export default function DriveContextProvider({ children }) {
     ])
   }
 
+  const addFiles = async (files) => {
+    setLoading(true)
+    const formData = new FormData()
+    files.forEach((file) => {
+      formData.append('files', file, file.name)
+    })
+
+    const response = await uploadFiles(pages[pages.length - 1]?.id, formData)
+
+    if (response.error) {
+      toast.error(response.message)
+      setLoading(false);
+      return
+    }
+
+    await getItems()
+    setLoading(false)
+  }
+
   useEffect(() => {
     getItems()
   }, [])
 
   useEffect(() => {
     getItems()
-  }, [pages])
+  }, [pages, config])
 
   const values = useMemo(() => ({
     config,
     loading,
     folders,
     pages,
+    totals,
+    folderCopy: itemCopy,
+    isOpenCopy,
+    currentFolder: pages[pages.length - 1],
+    isOpenRename,
+    itemEdit,
+    setItemEdit,
+    setIsOpenRename,
+    addFiles,
+    setIsOpenCopy,
+    setFolderCopy: setItemCopy,
+    setConfig,
     returnFolder,
-    renameFolder,
+    renameItem,
     addPage,
     addFolder,
-    updateFolders: getItems
-  }), [folders, config, loading, pages]);
+    updateFolders: getItems,
+    duplicateFolder
+  }), [
+    folders,
+    config,
+    loading,
+    pages,
+    totals,
+    itemCopy,
+    isOpenCopy,
+    itemEdit,
+    isOpenRename
+  ]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;
 }

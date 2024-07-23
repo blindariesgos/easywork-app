@@ -69,10 +69,11 @@ export const isDateMoreTenDayOverdue = (date) => {
 }
 
 export const getTaskOverdueTimeDelta = (task) => {
-  console.log("Deadlinetask ", task)
   if (!task?.deadline) {
     return null; // No hay fecha límite, no hay retraso
   }
+
+  if (task.completedTime) return formatDate(task.deadline);
 
 
   const deadlineDate = parseISO(task.deadline);

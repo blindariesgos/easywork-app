@@ -5,6 +5,8 @@
     "filter": "Filtrar y Buscar",
     "home": "Hogar",
     "my-unit": "Mi unidad",
+    "file": "Archivo",
+    "folder": "Carpeta",
     "add": {
       "name": "Agregar",
       "document": "Archivo",
@@ -30,6 +32,7 @@
       "modified": "Modificado",
       "modified-by": "Modificado por",
       "size": "Tamaño",
+      "paste": "Pegar",
       "link-to": "Vincular a"
     }
   },

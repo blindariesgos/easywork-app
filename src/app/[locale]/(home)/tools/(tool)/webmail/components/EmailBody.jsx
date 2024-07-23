@@ -31,12 +31,9 @@ export default function EmailBody({
     if (parts) {
       parts.forEach((part) => {
         if (part.parts) {
-          // Si la parte actual tiene más partes, recurre a ellas
           message += getParts(part.parts);
         } else if (part.mimeType === "text/html") {
-          // Si la parte es HTML, decodifica y agrega al mensaje
           let data = part.body.data;
-          // Decodifica los datos con base64-js
           let bytes = base64.toByteArray(data);
           message += new TextDecoder().decode(bytes);
         }
@@ -46,16 +43,6 @@ export default function EmailBody({
   };
 
   useEffect(() => {
-    // let mailData = "";
-  
-    // if (selectMail?.payload?.parts) {
-    //   mailData = getParts(selectMail.payload.parts);
-    // } else if (selectMail?.payload?.body?.data) {
-    // let bytes = base64.toByteArray(selectMail.body);
-    // let mailData = new TextDecoder().decode(selectMail.body);
-    // console.log(mailData);
-    // }
-  
     setDecodedMailData(selectMail.body);
   }, [selectMail]);
   

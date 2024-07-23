@@ -47,6 +47,7 @@ import {
 import { useSession } from "next-auth/react";
 import ModalConfigGmail from "../mails/components/ModalConfigGmail";
 import { Pagination } from "../../../../../../components/pagination/Pagination";
+import Signature from "./components/Signature";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -121,29 +122,37 @@ export default function WebmailLayout({ children, table }) {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
-    if (session.data.user.id && selectOauth?.id) {
-      const axiosUserData = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
-        config
-      );
-      setUserData(axiosUserData.data);
-      const axiosMails = await getMails(
-        session.data.user.id,
-        searchParams.get("page"),
-        10,
-        selectedFolder,
-        selectOauth.id
-      );
-      setDMails(axiosMails);
-      const axiosFolders = await getFoldersSaved(session.data.user.id);
-      setFolders(axiosFolders);
-      if (!axiosMails || axiosMails?.length === 0) {
-        await deleteTokenGoogle(session.data.user.id);
-        await deleteFoldersMail(session.data.user.id);
-        router.push("/tools/mails");
+    try {
+      if (session.data.user.id && selectOauth?.id) {
+        const axiosUserData = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
+          config
+        );
+        setUserData(axiosUserData.data);
+        const axiosMails = await getMails(
+          session.data.user.id,
+          searchParams.get("page"),
+          10,
+          selectedFolder,
+          selectOauth.id
+        );
+        setDMails(axiosMails);
+        const axiosFolders = await getFoldersSaved(session.data.user.id);
+        setFolders(axiosFolders);
+        if (!axiosMails || axiosMails?.length === 0) {
+          await deleteOauth() 
+        }
       }
+    } catch (errr) {
+      await deleteOauth() 
     }
   };
+
+  async function deleteOauth() {
+    await deleteTokenGoogle(session.data.user.id);
+    await deleteFoldersMail(session.data.user.id);
+    router.push("/tools/mails");
+  }
 
   function allOauthPromise() {
     getAllOauth(session.data.user.id).then((res) => {
@@ -182,6 +191,7 @@ export default function WebmailLayout({ children, table }) {
 
   return (
     <>
+      <Signature />
       <ModalConfigGmail
         state={gmailState}
         addOtherOauth={addOtherOauth}
@@ -200,7 +210,7 @@ export default function WebmailLayout({ children, table }) {
           />
         </ModalAddFolders>
       )}
-      <SendMessage colorTag="bg-easywork-main" userData={userData} />
+      <SendMessage colorTag="bg-easywork-main" userData={userData} selectOauth={selectOauth} />
       <div className="flex flex-col flex-grow">
         <EmailHeader
           title="Tareas"

@@ -9,12 +9,14 @@ import TextEditor from "../../tasks/components/TextEditor";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
+import { PaperClipIcon } from "@heroicons/react/20/solid";
+import { DocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import axios from "axios";
 
 export default function SendMessage({
-  openModal,
+  selectOauth,
   setOpenModal,
   children,
   colorTag,
@@ -60,15 +62,16 @@ export default function SendMessage({
       bcc: BCCArray,
       subject: subject,
       body: value,
-    }
+      attachments: null,
+    };
     console.log(data);
     try {
-      if(!data.to){
+      if (!data.to) {
         toast.error("Debes colocar destinatario");
-        return
+        return;
       }
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
         data
       );
       toast.success("Correo enviado");
@@ -195,6 +198,27 @@ export default function SendMessage({
                             value={value}
                             setValue={setValueText}
                           />
+                          <div className="flex mt-2">
+                            <div className="flex text-slate-400 cursor-pointer">
+                              <PaperClipIcon className="h-5 w-5" />
+                              <p className="ml-1">Archivo</p>
+                            </div>
+                            <div className="ml-2 flex text-slate-400 cursor-pointer">
+                              <DocumentIcon className="h-5 w-5" />
+                              <p className="ml-1">Crear documento</p>
+                            </div>
+                            <div
+                              className="ml-2 flex text-slate-400 cursor-pointer"
+                              onClick={() => {
+                                router.push(
+                                  `/tools/webmail/?page=${searchParams.get("page")}&send=true&signature=true`
+                                );
+                              }}
+                            >
+                              <PencilIcon className="h-5 w-5" />
+                              <p className="ml-1">Firma</p>
+                            </div>
+                          </div>
                           <div className="mt-8">
                             <button
                               className="bg-easywork-main text-white p-3 rounded-md"

@@ -1,9 +1,10 @@
 "use server";
 import axios from '../axios'
 
-export const getExplorer = async (config, id) => {
+export const getExplorer = async (config, filters, id) => {
+    const filterQueries = Object.keys(filters).filter(key => filters[key].length > 0).map(key => `${key}=${filters[key]}`).join('&')
     const queries = Object.keys(config).map(key => `${key}=${config[key]}`).join('&')
-    const url = `/folders/explorer?${queries}${id ? `&fid=${id}` : ""}`
+    const url = `/folders/explorer?${queries}${id ? `&fid=${id}` : ""}${filterQueries.length > 0 ? `&${filterQueries}` : ""}`
     const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).get(url).catch(error => error);
     return response;
 };

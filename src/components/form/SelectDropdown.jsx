@@ -1,6 +1,6 @@
 // SelectDropdown.js
 "use client";
-import { Combobox, Transition } from "@headlessui/react";
+import { Combobox, Transition, ComboboxButton, ComboboxOptions, ComboboxOption, ComboboxInput, Label } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import React, { Fragment, useEffect, useState } from "react";
@@ -19,50 +19,48 @@ function SelectDropdown({
   const registerInput = register && register(name);
   const [selected, setSelected] = useState(selectedOption);
   const [query, setQuery] = useState("");
-  
 
-  useEffect(()=>{
+
+  useEffect(() => {
     if (selectedOption) {
       setSelected(selectedOption)
-    }  
-  },  [selectedOption])
+    }
+  }, [selectedOption])
 
   useEffect(() => {
     if (selected) setValue && setValue(name, selected?.id);
   }, [selected, setValue, name])
 
   const filteredElements =
-  query === ""
-    ? options
-    : options.filter((element) => {
+    query === ""
+      ? options
+      : options.filter((element) => {
         return `${element.name} ${element.username}`.toLowerCase().includes(query.toLowerCase());
       });
-      
+
   return (
     <div className={className}>
-      <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled}>
-        <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
+      <Combobox as="div" value={selected} onChange={setSelected} disabled={disabled} className="relative">
+        <Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
-        </Combobox.Label>
+        </Label>
         <div className="relative mt-1">
-          <div className="">
-            <Combobox.Input
-              // {...registerInput}
-              className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
-              displayValue={(person) => person?.name || person?.username}
-              onChange={(event) => {
-                  // registerInput && registerInput.onChange(event);
-                  setQuery(event.target.value);
-                }
-              }
+          <ComboboxInput
+            // {...registerInput}
+            className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
+            displayValue={(person) => person?.name || person?.username}
+            onChange={(event) => {
+              // registerInput && registerInput.onChange(event);
+              setQuery(event.target.value);
+            }
+            }
+          />
+          <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+            <ChevronDownIcon
+              className="h-5 w-5 text-gray-400"
+              aria-hidden="true"
             />
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
-            </Combobox.Button>
-          </div>
+          </ComboboxButton>
           <Transition
             as={Fragment}
             leave="transition ease-in duration-100"
@@ -70,18 +68,17 @@ function SelectDropdown({
             leaveTo="opacity-0"
             afterLeave={() => setQuery('')}
           >
-            <Combobox.Options className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            <ComboboxOptions anchor="bottom end" className="z-50 max-h-[400px] mt-1 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {filteredElements?.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                   Nothing found.
                 </div>
               ) : (
                 filteredElements && filteredElements.map((option) => (
-                  <Combobox.Option                    
+                  <ComboboxOption
                     key={option.id}
                     className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-6 pr-4 ${
-                        active ? 'bg-primary text-white rounded-md' : 'text-gray-900'
+                      `relative cursor-default select-none py-2 pl-6 pr-4 ${active ? 'bg-primary text-white rounded-md' : 'text-gray-900'
                       }`
                     }
                     value={option}
@@ -89,9 +86,8 @@ function SelectDropdown({
                     {({ selected, active }) => (
                       <>
                         <span
-                          className={`flex items-center gap-2 w-full${
-                            selected ? 'font-medium' : 'font-normal'
-                          }`}
+                          className={`flex items-center gap-2 w-full${selected ? 'font-medium' : 'font-normal'
+                            }`}
                         >
                           <div className="w-[20%]">
                             <Image
@@ -101,7 +97,7 @@ function SelectDropdown({
                               width={500}
                               layout="fixed"
                               objectFit="cover"
-											        className="h-6 w-6 rounded-full"
+                              className="h-6 w-6 rounded-full"
                             />
                           </div>
                           <div className={`flex flex-col leading-3 w-[80%]`}>
@@ -112,21 +108,20 @@ function SelectDropdown({
                         </span>
                         {selected ? (
                           <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-1 ${
-                              active ? 'text-white' : 'text-primary'
-                            }`}
+                            className={`absolute inset-y-0 left-0 flex items-center pl-1 ${active ? 'text-white' : 'text-primary'
+                              }`}
                           >
                             <CheckIcon className="h-4 w-4" aria-hidden="true" />
                           </span>
                         ) : null}
                       </>
                     )}
-                  </Combobox.Option>
+                  </ComboboxOption>
                 ))
               )}
-            </Combobox.Options>
+            </ComboboxOptions>
           </Transition>
-        </div>        
+        </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
       </Combobox>
     </div>

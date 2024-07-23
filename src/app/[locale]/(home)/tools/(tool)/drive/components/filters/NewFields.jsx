@@ -1,40 +1,12 @@
+import { MenuItem } from '@headlessui/react';
 import { contactTypes } from '../../../../../../../../lib/common';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useDriveContext from '@/src/context/drive';
 
-const NewFields = ({ append, remove, fields: selectFields}) => {
+const NewFields = ({ append, remove, fields: selectFields }) => {
 	const { t } = useTranslation();
-	const [ fields, setFields ] = useState([
-		{
-			id: 1,
-			name: t('contacts:filters:fullname'),
-			type: 'input',
-			check: false,
-            code: "name"
-		},
-		{
-			id: 2,
-			name: t('contacts:filters:contact-type'),
-			type: 'select',
-			options: contactTypes,
-			check: false,
-            code: "typeContact"
-		},
-		{
-			id: 3,
-			name: t('contacts:filters:cua'),
-			type: 'input',
-			check: false,
-            code: "cua"
-		},
-		{
-			id: 4,
-			name: t('contacts:filters:rfc'),
-			type: 'input',
-			check: false,
-            code: "rfc"
-		}
-	]);
+	const { filters, filterFields: fields, setFilterFields: setFields } = useDriveContext()
 
 	useEffect(() => {
 		const updatedFields = fields.map((field) => {
@@ -42,7 +14,7 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 			if (correspondingItem) return { ...field, check: true };
 			return field;
 		});
-	
+
 		// Verificar si hay cambios antes de actualizar 'fields'
 		if (!fields.every((field, index) => field.check === updatedFields[index].check)) {
 			setFields(updatedFields);
@@ -52,19 +24,19 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 	const handleAddField = (e) => {
 		const { value, checked } = e.target;
 		const field = fields.filter((fld) => fld.id === parseInt(value))[0] || fields[0];
-		if (checked) append({ ...field, value: '' });
+		if (checked) append({ ...field, value: "" });
 		else {
 			const fieldIndex = selectFields.indexOf((item) => item.id == value);
 			if (fieldIndex) remove(fieldIndex);
 		}
-        const updatedFields = fields.map((field) => {
-            return field.id == value ? { ...field, check: !field.check } : field;
-        })
-        setFields(updatedFields);
+		const updatedFields = fields.map((field) => {
+			return field.id == value ? { ...field, check: checked } : field;
+		})
+		setFields(updatedFields);
 	};
 
 	return (
-		<div className="p-4">
+		<MenuItem className="p-4">
 			<div className="flex gap-4 flex-col">
 				{fields.map((field, index) => (
 					<div key={index} className="flex gap-2">
@@ -79,7 +51,7 @@ const NewFields = ({ append, remove, fields: selectFields}) => {
 					</div>
 				))}
 			</div>
-		</div>
+		</MenuItem>
 	);
 };
 

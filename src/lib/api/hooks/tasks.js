@@ -3,7 +3,7 @@ import useSWR from "swr";
 import fetcher from "../fetcher";
 
 export const useTasks = ({ page = 1, limit = 15 }) => {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/tools/tasks/user?limit=${limit}&page=${page}`,
     fetcher,
   );
@@ -12,16 +12,18 @@ export const useTasks = ({ page = 1, limit = 15 }) => {
     tasks: data,
     isLoading,
     isError: error,
+    mutate
   };
 };
 
 export const useTask = (id) => {
-  const { data, error, isLoading } = useSWR(`/tools/tasks/${id}`, fetcher);
+  const { data, error, isLoading, mutate } = useSWR(`/tools/tasks/${id}`, fetcher);
 
   return {
     task: data,
     isLoading,
     isError: error,
+    mutate
   };
 };
 

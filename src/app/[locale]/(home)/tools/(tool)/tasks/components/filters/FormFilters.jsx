@@ -21,21 +21,6 @@ import SelectDropdown from "../../../../../../../../components/form/SelectDropdo
 import useAppContext from "../../../../../../../../context/app";
 import MultiSelectTags from "../MultiSelectTags";
 
-const contactSources = [
-  { id: 1, name: "Correo electrónico" },
-  { id: 2, name: "Maratón de llamadas" },
-  { id: 3, name: "Formulario de CRM" },
-  { id: 4, name: "Formulario de devolución de llamada" },
-  { id: 5, name: "Gestión del agente" },
-  { id: 6, name: "Red social - LinkedIn" },
-  { id: 7, name: "Red social - Instagram" },
-  { id: 8, name: "Red social - Facebook" },
-  { id: 9, name: "Red social - Otra" },
-  { id: 10, name: "Otro CRM" },
-  { id: 11, name: "Página de ventas" },
-  { id: 12, name: "Teléfono" },
-  { id: 13, name: "WhatsApp" },
-];
 
 const FormFilters = () => {
   const { t } = useTranslation();

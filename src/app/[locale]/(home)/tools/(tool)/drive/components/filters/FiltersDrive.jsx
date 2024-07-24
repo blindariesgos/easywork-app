@@ -47,11 +47,19 @@ const FiltersDrive = () => {
   }, [searchInput])
 
   const getFilterValue = (item) => {
-    return item.type === "date" ? formatDate(item.value, "MM/dd/yyyy") : item.value;
+    if (item.type == "date") {
+      return formatDate(item.value, "MM/dd/yyyy")
+    }
+
+    if (item.type == "select") {
+      return item.options.find(option => option.id == item.value)?.name
+    }
+
+    return item.value
   }
 
   return (
-    <Menu>
+    <Menu className="relative w-full" as="div">
       <div className="flex items-center w-full justify-between gap-2">
         {
           displayFilters.length > 0 && displayFilters?.map(item => {
@@ -90,23 +98,13 @@ const FiltersDrive = () => {
           <IoIosArrowDown className="h-4 w-4 text-primary" />
         </MenuButton>
       </div>
-      <Transition as={Fragment}>
-        <TransitionChild
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <MenuItems
-            anchor="bottom end"
-            className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none`}
-          >
-            <div className="p-4">
-              <div className="flex gap-4 flex-col sm:flex-row">
-                {/* <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
+      <MenuItems
+        transition
+        className={`absolute right-0 top-full mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50`}
+      >
+        <div className="p-4">
+          <div className="flex gap-4 flex-col sm:flex-row">
+            {/* <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
                   <p className="text-xs text-gray-60 text-center">
                     {t("contacts:filters:name")}
                   </p>
@@ -138,12 +136,10 @@ const FiltersDrive = () => {
                     </div>
                   </div>
                 </div> */}
-                <FormFilters />
-              </div>
-            </div>
-          </MenuItems>
-        </TransitionChild>
-      </Transition>
+            <FormFilters />
+          </div>
+        </div>
+      </MenuItems>
     </Menu>
   );
 };

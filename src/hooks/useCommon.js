@@ -1070,12 +1070,13 @@ export const useTasksActions = (selectedTask, setSelectedTasks, setLoading) => {
       }
       toast.success(t("tools:tasks:delete-msg"));
       setSelectedTasks([]);
-      await mutate("/tools/tasks/user?limit=15&page=1");
+
       onCloseAlertDialog();
     } catch (error) {
       handleApiError(err.message);
     } finally {
       setLoading(false);
+      mutate("/tools/tasks/user?limit=15&page=1");
     }
   };
 

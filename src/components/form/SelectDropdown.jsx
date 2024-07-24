@@ -68,7 +68,7 @@ function SelectDropdown({
             leaveTo="opacity-0"
             afterLeave={() => setQuery('')}
           >
-            <ComboboxOptions anchor="bottom end" className="z-50 max-h-[400px] mt-1 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            <ComboboxOptions anchor="bottom end" className="z-50 max-h-[400px] mt-1 w-[var(--input-width)] rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {filteredElements?.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
                   Nothing found.

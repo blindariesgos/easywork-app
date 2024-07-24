@@ -17,7 +17,7 @@ const AddFields = ({ append, remove, fields }) => {
 			<MenuItems
 				transition
 				anchor="top start"
-				className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none `}
+				className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50`}
 			>
 				<NewFields append={append} remove={remove} fields={fields} />
 			</MenuItems>

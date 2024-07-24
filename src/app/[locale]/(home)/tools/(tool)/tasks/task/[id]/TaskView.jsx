@@ -33,7 +33,7 @@ import BannerStatus from "./components/BannerStatus";
 import Button from "@/src/components/form/Button";
 
 export default function TaskView({ id }) {
-  const { task, isLoading, isError } = useTask(id);
+  const { task, isLoading, isError, mutate: mutateTask } = useTask(id);
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const { settings } = useTasksConfigs();
@@ -68,7 +68,8 @@ export default function TaskView({ id }) {
       await putTaskCompleted(task.id);
       toast.success(t("tools:tasks:completed-success"));
       setLoading(false);
-      await mutate(`/tools/tasks/${task.id}`);
+      mutateTask();
+      mutate("/tools/tasks/user?limit=15&page=1")
     } catch (error) {
       setLoading(false);
       handleApiError(error.message);

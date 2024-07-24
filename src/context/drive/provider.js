@@ -38,13 +38,32 @@ export default function DriveContextProvider({ children }) {
   const [filterFields, setFilterFields] = useState([
     {
       id: 2,
+      name: t('contacts:filters:currentFolder'),
+      type: 'select',
+      options: [
+        {
+          name: "Si",
+          id: 0,
+          value: true
+        },
+        {
+          name: "No",
+          id: 1,
+          value: false
+        }
+      ],
+      check: false,
+      code: "currentFolder"
+    },
+    {
+      id: 3,
       name: t('contacts:filters:created'),
       type: 'date',
       check: false,
       code: "createdDate"
     },
     {
-      id: 3,
+      id: 4,
       name: t('contacts:filters:modified'),
       type: 'date',
       check: false,

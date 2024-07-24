@@ -1,20 +1,16 @@
+"use server"
 import { getLogger } from "@/src/utils/logger";
-
-const BASE_URL = "/api/data"
+import axios from "../axios";
 
 const logger = getLogger("Fetcher")
 
-const fetcher = async (endpoint, options = {}) => {
-    let response = await fetch(`${BASE_URL}${endpoint}`, {
-        ...options,
-    });
+const methods = {
+    GET: (endpoint) => axios().get(endpoint),
+    PUT: (endpoint) => axios().put(endpoint),
+}
 
-    if (!response.ok) {
-        const error = new Error('An error occurred while fetching the data.');
-      logger.error(error)
-        throw error;
-    }
-    return response.json(); 
+const fetcher = async (endpoint, options = {}) => {
+    return await methods[options?.method ?? "GET"](endpoint).catch(error => error)
 }
 
 export default fetcher;

@@ -2,7 +2,7 @@ import { useTasksConfigs } from "@/src/hooks/useCommon";
 import useAppContext from "../../../../../../../../context/app";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { MenuItem } from "@headlessui/react";
 const NewFields = ({ append, remove, fields: selectFields }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
@@ -135,9 +135,9 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
 
   return (
     <div className="p-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {fields.map((field, index) => (
-          <div key={index} className="flex gap-2">
+          <MenuItem key={index} className="flex gap-2" as="div">
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
@@ -146,7 +146,7 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
               onChange={(e) => handleAddField(e)}
             />
             <p className="text-sm">{field.name}</p>
-          </div>
+          </MenuItem>
         ))}
       </div>
     </div>

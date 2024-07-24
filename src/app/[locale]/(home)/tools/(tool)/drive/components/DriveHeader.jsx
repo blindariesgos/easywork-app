@@ -1,7 +1,7 @@
 "use client";
 import React, { Fragment } from "react";
 import CreateDocumentButton from "./CreateDocument";
-import { Cog8ToothIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import DriveBreadcrumb from "./DriveBreadcrumb";
 import { useTranslation } from "react-i18next";
 import {
@@ -9,10 +9,8 @@ import {
   Bars3Icon,
   Squares2X2Icon,
 } from "@heroicons/react/16/solid";
-import Image from "next/image";
 import useAppContext from "../../../../../../../context/app";
-import FiltersContact from "./filters/FiltersContact";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import FiltersDrive from "./filters/FiltersDrive";
 import { CgMenuGridR } from "react-icons/cg";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import clsx from "clsx";
@@ -78,17 +76,7 @@ export default function DriveHeader() {
         <CreateDocumentButton />
         <div className="flex-grow">
           <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
-            <FiltersContact />
-            {/* <div className="flex items-center w-full">
-							<FaMagnifyingGlass className="h-4 w-4 text-primary" />
-							<input
-								type="search"
-								name="search"
-								id="search-cal"
-								className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
-								placeholder={t('contacts:header:search')}
-							/>
-						</div> */}
+            <FiltersDrive />
           </div>
         </div>
         <Menu as="div" className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg">

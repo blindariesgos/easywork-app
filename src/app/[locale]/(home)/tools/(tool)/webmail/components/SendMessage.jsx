@@ -39,11 +39,13 @@ export default function SendMessage({
   const [contactsArray, setContactsArray] = useState(null);
   const [BCCArray, setBCCArray] = useState(null);
   const [CCArray, setCCArray] = useState(null);
+  const [files, setFiles] = useState([]);
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const quillRef = useRef(null);
   const { lists, setFilter } = useAppContext();
+  const fileInputRef = useRef(null);
 
   const schema = yup.object().shape({
     responsible: yup.string(),
@@ -55,6 +57,15 @@ export default function SendMessage({
     });
   }, [params.get("send")]);
 
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+  };
+
   async function sendEmail() {
     const data = {
       to: contactsArray,
@@ -62,7 +73,13 @@ export default function SendMessage({
       bcc: BCCArray,
       subject: subject,
       body: value,
-      attachments: null,
+      attachments: [
+        {
+          "filename": "test.pdf",
+          "mimeType": "application/pdf",
+          "path": "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf"
+        }
+      ],
     };
     console.log(data);
     try {
@@ -198,10 +215,34 @@ export default function SendMessage({
                             value={value}
                             setValue={setValueText}
                           />
+                          <div className="mt-2">
+                            {files &&
+                              files.map((file, index) => (
+                                <div
+                                  key={index}
+                                  className="flex flex-col gap-2"
+                                >
+                                  <p className="text-sm">
+                                    {file.name}
+                                  </p>
+                                </div>
+                              ))}
+                          </div>
                           <div className="flex mt-2">
-                            <div className="flex text-slate-400 cursor-pointer">
-                              <PaperClipIcon className="h-5 w-5" />
-                              <p className="ml-1">Archivo</p>
+                            <div>
+                              <div
+                                className="flex text-slate-400 cursor-pointer"
+                                onClick={handleFileClick}
+                              >
+                                <PaperClipIcon className="h-5 w-5" />
+                                <p className="ml-1">Archivo</p>
+                              </div>
+                              <input
+                                type="file"
+                                ref={fileInputRef}
+                                style={{ display: "none" }}
+                                onChange={handleFileChange}
+                              />
                             </div>
                             <div className="ml-2 flex text-slate-400 cursor-pointer">
                               <DocumentIcon className="h-5 w-5" />

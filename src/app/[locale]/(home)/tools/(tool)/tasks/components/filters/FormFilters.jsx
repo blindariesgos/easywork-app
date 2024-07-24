@@ -12,7 +12,6 @@ import {
 import SelectInput from "../../../../../../../../components/form/SelectInput";
 import TextInput from "../../../../../../../../components/form/TextInput";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from "./AddFields";
 import MultipleSelect from "../../../../../../../../components/form/MultipleSelect";
@@ -54,7 +53,6 @@ const FormFilters = () => {
     setValue,
     getValues,
     watch,
-    formState: { isValid, errors },
   } = useForm({
     defaultValues: {
       range: [null, null],
@@ -199,7 +197,7 @@ const FormFilters = () => {
           })}
         </div>
       </div>
-      <div className="my-2 flex gap-2 items-center">
+      <div className="my-2 flex gap-2 items-center flex-wrap">
         <AddFields append={append} remove={remove} fields={fields} />
         <Button
           type="button"

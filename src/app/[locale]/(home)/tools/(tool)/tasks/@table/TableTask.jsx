@@ -26,14 +26,13 @@ import {
   isDateMoreTenDayOverdue
 } from "@/src/utils/getFormatDate";
 
-export default function TableTask({ data }) {
+export default function TableTask({ data, mutateTasks }) {
   const checkbox = useRef();
   const { onCloseAlertDialog } = useAlertContext();
   const {
     selectedTasks,
     setSelectedTasks
   } = ToolContextProvider();
-  const { mutate } = useSWRConfig();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [dataTask, setDataTask] = useState();
@@ -55,7 +54,7 @@ export default function TableTask({ data }) {
 
   useEffect(
     () => {
-      if (orderItems.length > 0)
+      if (orderItems?.length > 0)
         setDataTask({ items: orderItems, meta: data?.meta });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,13 +88,12 @@ export default function TableTask({ data }) {
       }
       toast.success(t("tools:tasks:delete-msg"));
       setSelectedTasks([]);
-      await mutate(`/tools/tasks/user?limit=15&page=1`);
     } catch (error) {
-      console.error(error.message);
       toast.error("Error al eliminar la(s) tarea(s)");
     } finally {
       setLoading(false);
       onCloseAlertDialog();
+      mutateTasks && mutateTasks();
     }
   };
 
@@ -284,7 +282,9 @@ const renderCellContent = (column, task, t) => {
             "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue) && !task.completedTime,
             "bg-orange-300 text-orange-900": isDateTodayOverdue(taskValue) && !task.completedTime,
             "bg-blue-300 text-blue-900": isDateMoreFiveDayOverdue(taskValue) && !task.completedTime,
-            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue) && !task.completedTime
+            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue) && !task.completedTime,
+            "text-gray-800/45 line-through": task.isCompleted,
+
           })}>
             {getTaskOverdueTimeDelta(task)}
           </span>

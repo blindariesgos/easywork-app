@@ -53,17 +53,32 @@ const FormFilters = () => {
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "fields",
+  });
+
   const handleFormFilters = (data) => {
+    console.log({ data })
     if (data.fields.length == 0) return
 
     const newFilters = data.fields.reduce((acc, field) => {
-      const value = field.type == "date" ? formatDate(field.value, "MM/dd/yyyy") : field.value
+      let value = field.value;
+
+      if (field.type == "date") {
+        value = formatDate(field.value, "MM/dd/yyyy")
+      }
+
+      if (field.type == "select") {
+        value = field.options.find(option => option.id == field.value).value
+      }
+
       return {
         ...acc,
         [field.code]: value
       }
     }, {})
-    setDisplayFilters(data.fields)
+    setDisplayFilters(data.fields.filter(field => field.value !== ""))
     setFilters(newFilters)
   };
 
@@ -71,24 +86,26 @@ const FormFilters = () => {
     reset();
   }, [reset]);
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "fields",
-  });
+
 
   useEffect(() => {
-    Object.keys(filters).forEach(key => {
-      const index = fields.findIndex(x => x.code == key);
-      if (index == -1) {
+    Object.keys(filters).length > 0
+      && Object.keys(filters).filter(key => filters[key] !== "").forEach(key => {
+        const index = fields.findIndex(x => x.code == key);
         const filterField = filterFields.find(field => field.code == key)
-        append({
-          ...filterField,
-          value: filters[key]
-        })
-      } else {
-        setValue(`fields[${index}].value`, filters[key])
-      }
-    })
+        const value = filterField?.type == "select"
+          ? filterField.options.find(option => option.value == filters[key]).id
+          : filters[key]
+
+        if (index == -1) {
+          append({
+            ...filterField,
+            value: value
+          })
+        } else {
+          setValue(`fields[${index}].value`, value)
+        }
+      })
   }, [filters])
 
   const handleReset = () => {

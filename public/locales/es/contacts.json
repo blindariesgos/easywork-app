@@ -318,6 +318,7 @@
     "add-field": "Agregar campo",
     "restore": "Restaurar campos predeterminados",
     "search": "Buscar",
+    "currentFolder": "En la carpeta actual",
     "restart": "Reiniciar",
     "cua": "Código CUA",
     "fullname": "Nombre y Apellido",

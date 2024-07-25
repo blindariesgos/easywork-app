@@ -9,12 +9,14 @@ import LoaderSpinner from '@/src/components/LoaderSpinner';
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSWRConfig } from "swr";
 import { toast } from 'react-toastify';
+import { useTask, useTasks } from '@/src/lib/api/hooks/tasks';
 
 
 export default function ButtonMore({ setOpenEdit, openEdit, data, setIsDelegating }) {
 	const { t } = useTranslation();
 	const [loading, setLoading] = useState(false)
-	const { mutate } = useSWRConfig();
+	const { mutate: mutateTask } = useTask(data.id)
+	const { mutate: mutateTasks } = useTasks({})
 
 	const [options, setOptions] = useState([
 		{
@@ -42,8 +44,8 @@ export default function ButtonMore({ setOpenEdit, openEdit, data, setIsDelegatin
 			setLoading(true);
 			await putTaskRestart(data.id);
 			toast.success(t("tools:tasks:restart-success"));
-			await mutate(`/tools/tasks/${data.id}`);
-			await mutate("/tools/tasks/user?limit=1&page=15")
+			mutateTask();
+			mutateTasks()
 			setLoading(false);
 		} catch (error) {
 			setLoading(false);
@@ -77,13 +79,10 @@ export default function ButtonMore({ setOpenEdit, openEdit, data, setIsDelegatin
 		<Fragment>
 			{loading && <LoaderSpinner />}
 			<Menu as="div" className="relative inline-block text-left">
-
-				<div>
-					<MenuButton className="flex items-center justify-center w-full rounded-md text-xs font-medium text-black focus:outline-none bg-gray-200 py-2 px-3">
-						{t('tools:tasks:edit:more')}
-						<ChevronDownIcon className="ml-1 h-5 w-5 text-gray-800" />
-					</MenuButton>
-				</div>
+				<MenuButton className="flex items-center justify-center w-full rounded-md text-xs font-medium text-black focus:outline-none bg-gray-200 py-2 px-3">
+					{t('tools:tasks:edit:more')}
+					<ChevronDownIcon className="ml-1 h-5 w-5 text-gray-800" />
+				</MenuButton>
 				<Transition
 					as={Fragment}
 					enter="transition ease-out duration-100"

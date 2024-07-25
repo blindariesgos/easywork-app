@@ -19,7 +19,7 @@ export default function Page({ params, searchParams }) {
     setLimit(searchParams.limit || 15);
   }, [searchParams.limit]);
 
-  const { tasks, isLoading, isError } = useTasks({ page, limit });
+  const { tasks, isLoading, isError, mutate } = useTasks({ page, limit });
 
   if (isLoading) return <LoaderSpinner />;
   if (isError || !tasks)
@@ -42,7 +42,7 @@ export default function Page({ params, searchParams }) {
 
   return (
     <div className="relative h-full">
-      <TableTask data={tasks}/>
+      <TableTask data={tasks} mutateTasks={mutate} />
     </div>
   );
 }

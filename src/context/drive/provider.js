@@ -12,14 +12,18 @@ import {
   renameFile,
 } from "../../lib/api/drive";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 export default function DriveContextProvider({ children }) {
+  const { t } = useTranslation()
   const [folders, setFolders] = useState()
   const [loading, setLoading] = useState(true)
   const [itemCopy, setItemCopy] = useState()
   const [itemEdit, setItemEdit] = useState()
   const [isOpenCopy, setIsOpenCopy] = useState(false)
   const [isOpenRename, setIsOpenRename] = useState(false)
+  const [filters, setFilters] = useState({})
+  const [displayFilters, setDisplayFilters] = useState({})
   const [config, setConfig] = useState({
     limit: 25,
     page: 1,
@@ -31,12 +35,47 @@ export default function DriveContextProvider({ children }) {
     itemCount: 0,
     totalPages: 1,
   })
+  const [filterFields, setFilterFields] = useState([
+    {
+      id: 2,
+      name: t('contacts:filters:currentFolder'),
+      type: 'select',
+      options: [
+        {
+          name: "Si",
+          id: 0,
+          value: true
+        },
+        {
+          name: "No",
+          id: 1,
+          value: false
+        }
+      ],
+      check: false,
+      code: "currentFolder"
+    },
+    {
+      id: 3,
+      name: t('contacts:filters:created'),
+      type: 'date',
+      check: false,
+      code: "createdDate"
+    },
+    {
+      id: 4,
+      name: t('contacts:filters:modified'),
+      type: 'date',
+      check: false,
+      code: "modifiedDate"
+    },
+  ]);
 
   const [pages, setPages] = useState([])
 
   const getItems = async () => {
     setLoading(true)
-    const response = await getExplorer(config, pages.length == 0 ? "" : pages[pages.length - 1]?.id)
+    const response = await getExplorer(config, filters, pages.length == 0 ? "" : pages[pages.length - 1]?.id)
 
     if (response.error) {
       toast.error(response.message)
@@ -152,7 +191,22 @@ export default function DriveContextProvider({ children }) {
 
   useEffect(() => {
     getItems()
-  }, [pages, config])
+  }, [pages, config, filters])
+
+  const removeFilter = (filterName) => {
+    const newFilters = Object.keys(filters)
+      .filter((key) => key !== filterName)
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+
+    setFilters(newFilters)
+    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
+    const newFilterFields = filterFields.map(field => {
+      return filterName !== field.code
+        ? field
+        : { ...field, check: false }
+    })
+    setFilterFields(newFilterFields)
+  }
 
   const values = useMemo(() => ({
     config,
@@ -165,6 +219,12 @@ export default function DriveContextProvider({ children }) {
     currentFolder: pages[pages.length - 1],
     isOpenRename,
     itemEdit,
+    filters,
+    displayFilters,
+    filterFields,
+    setFilterFields,
+    setDisplayFilters,
+    setFilters,
     setItemEdit,
     setIsOpenRename,
     addFiles,
@@ -176,7 +236,8 @@ export default function DriveContextProvider({ children }) {
     addPage,
     addFolder,
     updateFolders: getItems,
-    duplicateFolder
+    duplicateFolder,
+    removeFilter
   }), [
     folders,
     config,
@@ -186,7 +247,10 @@ export default function DriveContextProvider({ children }) {
     itemCopy,
     isOpenCopy,
     itemEdit,
-    isOpenRename
+    isOpenRename,
+    filters,
+    displayFilters,
+    filterFields
   ]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;

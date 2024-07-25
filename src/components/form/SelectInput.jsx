@@ -74,51 +74,44 @@ function SelectInput({
               aria-hidden="true"
             />
           </ComboboxButton>
-          <Transition
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            afterLeave={() => setQuery && setQuery('')}
-          >
-            <ComboboxOptions anchor="bottom start" className=" overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {filteredElements?.length === 0 && query !== '' ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                  {t('common:not-found')}
-                </div>
-              ) : (
-                filteredElements && filteredElements.map((person) => (
-                  <ComboboxOption
-                    key={person.id}
-                    className={({ active }) =>
-                      `relative cursor-default select-none py-2 px-2 ${active ? 'bg-primary text-white' : 'text-gray-900'
-                      }`
-                    }
-                    value={person}
-                  >
-                    {({ selected, active }) => (
-                      <>
+
+          <ComboboxOptions transition anchor="bottom end" className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            {filteredElements?.length === 0 && query !== '' ? (
+              <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                {t('common:not-found')}
+              </div>
+            ) : (
+              filteredElements && filteredElements.map((person) => (
+                <ComboboxOption
+                  key={person.id}
+                  className={({ active }) =>
+                    `relative cursor-default select-none py-2 px-2 ${active ? 'bg-primary text-white' : 'text-gray-900'
+                    }`
+                  }
+                  value={person}
+                >
+                  {({ selected, active }) => (
+                    <>
+                      <span
+                        className={`block truncate pl-6 ${selected ? 'font-medium' : 'font-normal'
+                          }`}
+                      >
+                        {person.name}
+                      </span>
+                      {selected ? (
                         <span
-                          className={`block truncate pl-6 ${selected ? 'font-medium' : 'font-normal'
+                          className={`absolute inset-y-0 left-0 flex items-center pl-2 ${active ? 'text-white' : 'text-primary'
                             }`}
                         >
-                          {person.name}
+                          <CheckIcon className="h-4 w-4" aria-hidden="true" />
                         </span>
-                        {selected ? (
-                          <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-2 ${active ? 'text-white' : 'text-primary'
-                              }`}
-                          >
-                            <CheckIcon className="h-4 w-4" aria-hidden="true" />
-                          </span>
-                        ) : null}
-                      </>
-                    )}
-                  </ComboboxOption>
-                ))
-              )}
-            </ComboboxOptions>
-          </Transition>
+                      ) : null}
+                    </>
+                  )}
+                </ComboboxOption>
+              ))
+            )}
+          </ComboboxOptions>
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
       </Combobox>

@@ -13,7 +13,10 @@ import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import dynamic from "next/dynamic";
 import axios from "axios";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function SendMessage({
   selectOauth,
@@ -75,10 +78,10 @@ export default function SendMessage({
       body: value,
       attachments: [
         {
-          "filename": "test.pdf",
-          "mimeType": "application/pdf",
-          "path": "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf"
-        }
+          filename: "test.pdf",
+          mimeType: "application/pdf",
+          path: "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf",
+        },
       ],
     };
     console.log(data);
@@ -98,6 +101,41 @@ export default function SendMessage({
       console.error("Failed to send email:", error);
     }
   }
+
+  const toolbar = [
+    ["bold", "italic", "underline", "strike"],
+    ["blockquote"],
+    ["link", "image"],
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ size: ["small", false, "large", "huge"] }],
+    [{ color: [] }, { background: [] }],
+    [{ font: [] }],
+    [{ align: [] }],
+  ];
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+    "size",
+    "font",
+    "color",
+    "background",
+    "align",
+    "header",
+    "direction",
+  ];
+
   return (
     <Transition.Root show={params.get("send")} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>
@@ -208,13 +246,21 @@ export default function SendMessage({
                           />
                         </div>
                         <div className="py-2">
-                          <TextEditor
+                          <ReactQuill
+                            className="h-96 w-full bg-white pb-12"
+                            theme="snow"
+                            value={value}
+                            onChange={setValueText}
+                            formats={formats}
+                            modules={{ toolbar }}
+                          />
+                          {/* <TextEditor
                             className="h-96 w-full bg-white pb-12"
                             theme="snow"
                             ref={quillRef}
                             value={value}
                             setValue={setValueText}
-                          />
+                          /> */}
                           <div className="mt-2">
                             {files &&
                               files.map((file, index) => (
@@ -222,9 +268,7 @@ export default function SendMessage({
                                   key={index}
                                   className="flex flex-col gap-2"
                                 >
-                                  <p className="text-sm">
-                                    {file.name}
-                                  </p>
+                                  <p className="text-sm">{file.name}</p>
                                 </div>
                               ))}
                           </div>

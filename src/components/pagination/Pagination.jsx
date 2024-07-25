@@ -5,8 +5,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export const Pagination = ({ totalPages, bgColor }) => {
-	const [ Pagination, setPagination ] = useState([]);
+export const Pagination = ({ totalPages, bgColor, }) => {
+	const [Pagination, setPagination] = useState([]);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
 	const pathname = usePathname();
@@ -25,33 +25,33 @@ export const Pagination = ({ totalPages, bgColor }) => {
 				if (totalPagesPages > 5) pagination.push(getPages(totalPagesPages));
 				setPagination(pagination);
 			};
-			
+
 			const getPages = (i) => {
 				return (
 					<div
 						key={i}
 						className={clsx(
 							'px-2 cursor-pointer font-medium text-xs flex items-center justify-center rounded-full w-6 h-6',
-								Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
+							Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
 						)}
-						onClick={() => {handlePathnamePage(i)}}
+						onClick={() => { handlePathnamePage(i) }}
 					>
 						{i}
 					</div>
 				);
 			};
 			const handlePathnamePage = (page) => {
-				params.set('page', page); 
+				params.set('page', page);
 				replace(`${pathname}?${params.toString()}`);
 			}
-		
+
 			CreatePagination();
 		},
-		[ totalPages, pathname, replace, searchParams]
+		[totalPages, pathname, replace, searchParams]
 	);
 
 	const handlePathname = (page) => {
-		params.set('page', page); 
+		params.set('page', page);
 		replace(`${pathname}?${params.toString()}`);
 	}
 

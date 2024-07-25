@@ -53,7 +53,8 @@ const DriveFooter = ({ selectedFiles }) => {
     useEffect(() => {
         setConfig({
             ...config,
-            limit: selected
+            limit: selected,
+            page: 1
         })
     }, [selected])
 

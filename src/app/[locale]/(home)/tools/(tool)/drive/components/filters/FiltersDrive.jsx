@@ -1,14 +1,16 @@
 "use client";
 import { Menu, MenuButton, Transition, MenuItems, TransitionChild } from "@headlessui/react";
-import React, { Fragment, useState, useRef, useEffect } from "react";
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
-const FiltersContact = () => {
+import useDriveContext from "@/src/context/drive";
+import { formatDate } from "@/src/utils/getFormatDate";
+
+const FiltersDrive = () => {
+  const { setFilters, filters, displayFilters, removeFilter } = useDriveContext()
   const { t } = useTranslation();
-  const ref = useRef(null);
   const [searchInput, setSearchInput] = useState("");
   const [contacts, setContacts] = useState([
     {
@@ -33,9 +35,50 @@ const FiltersContact = () => {
     setContacts(updateSelection);
   };
 
+  React.useEffect(() => {
+    const getData = setTimeout(() => {
+      setFilters({
+        ...filters,
+        name: searchInput
+      })
+    }, 500)
+
+    return () => clearTimeout(getData)
+  }, [searchInput])
+
+  const getFilterValue = (item) => {
+    if (item.type == "date") {
+      return formatDate(item.value, "MM/dd/yyyy")
+    }
+
+    if (item.type == "select") {
+      return item.options.find(option => option.id == item.value)?.name
+    }
+
+    return item.value
+  }
+
   return (
-    <Menu>
-      <div className="flex items-center w-full justify-between">
+    <Menu className="relative w-full" as="div">
+      <div className="flex items-center w-full justify-between gap-2">
+        {
+          displayFilters.length > 0 && displayFilters?.map(item => {
+            return (
+              <div
+                className="p-2 border bg-easy-200 border-primary text-sm overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] w-full pr-4 relative"
+                key={item.id}
+                title={`${item.name}: ${getFilterValue(item)}`} >
+                {`${item.name}: ${getFilterValue(item)}`}
+                <p
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-primary font-semibold"
+                  onClick={() => removeFilter(item.code)}>
+                  x
+                </p>
+              </div>
+            )
+          }
+          )
+        }
         <div className="flex items-center w-full">
           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
           <input
@@ -47,29 +90,21 @@ const FiltersContact = () => {
             placeholder={t("contacts:header:search")}
             onChange={(e) => setSearchInput(e.target.value)}
             onClick={() => setSearchInput("")}
+            autoComplete="false"
+            disabled={displayFilters.length > 0}
           />
         </div>
         <MenuButton className="pr-2" onClick={() => setSearchInput("")}>
           <IoIosArrowDown className="h-4 w-4 text-primary" />
         </MenuButton>
       </div>
-      <Transition as={Fragment}>
-        <TransitionChild
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <MenuItems
-            anchor="bottom end"
-            className={` mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none w-fit h-auto`}
-          >
-            <div className="p-4">
-              <div className="flex gap-4 flex-col sm:flex-row">
-                <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
+      <MenuItems
+        transition
+        className={`absolute right-0 top-full mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50`}
+      >
+        <div className="p-4">
+          <div className="flex gap-4 flex-col sm:flex-row">
+            {/* <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
                   <p className="text-xs text-gray-60 text-center">
                     {t("contacts:filters:name")}
                   </p>
@@ -100,15 +135,13 @@ const FiltersContact = () => {
                       </p>
                     </div>
                   </div>
-                </div>
-                <FormFilters />
-              </div>
-            </div>
-          </MenuItems>
-        </TransitionChild>
-      </Transition>
+                </div> */}
+            <FormFilters />
+          </div>
+        </div>
+      </MenuItems>
     </Menu>
   );
 };
 
-export default FiltersContact;
+export default FiltersDrive;

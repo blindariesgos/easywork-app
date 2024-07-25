@@ -90,7 +90,7 @@ const CreateDocumentButton = () => {
                   <p
                     className={clsx(
                       active ? "bg-easy-600 text-white" : "text-gray-700",
-                      "group flex items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
+                      "group flex items-center cursor-pointer px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
                     )}
                   >
                     <DocumentIcon
@@ -103,11 +103,10 @@ const CreateDocumentButton = () => {
               </MenuItem>
               <MenuItem onClick={() => setIsOpenAdd(true)}>
                 {({ active }) => (
-                  <a
-                    href="#"
+                  <div
                     className={clsx(
                       active ? "bg-easy-600 text-white" : "text-gray-700",
-                      "group flex items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
+                      "group flex cursor-pointer items-center px-4 py-2 text-sm data-[disabled]:cursor-no-drop data-[disabled]:opacity-50"
                     )}
                   >
                     <FolderIcon
@@ -115,7 +114,7 @@ const CreateDocumentButton = () => {
                       aria-hidden="true"
                     />
                     {t('tools:drive:add:folder')}
-                  </a>
+                  </div>
                 )}
               </MenuItem>
             </div>

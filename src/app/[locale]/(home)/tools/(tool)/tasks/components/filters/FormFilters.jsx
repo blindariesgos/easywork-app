@@ -19,6 +19,7 @@ import InputDateFilter from "./InputDateFilter";
 import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
 import useAppContext from "../../../../../../../../context/app";
 import MultiSelectTags from "../MultiSelectTags";
+import useTasksContext from "@/src/context/tasks";
 
 
 const FormFilters = () => {
@@ -26,7 +27,7 @@ const FormFilters = () => {
   const { statusLead, stagesLead } = useCommon();
   const { lists } = useAppContext();
   const { status } = useTasksConfigs();
-
+  const { setFilters } = useTasksContext()
   const schema = yup.object().shape({
     role: yup.string(),
     status: yup.array(),
@@ -226,6 +227,7 @@ const FormFilters = () => {
           onclick={() => {
             setValue("fields", []);
             reset();
+            setFilters({})
           }}
         />
       </div>

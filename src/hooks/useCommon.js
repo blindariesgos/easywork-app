@@ -907,16 +907,19 @@ export const useTasksConfigs = () => {
     {
       id: 1,
       name: t("tools:tasks:filters:closed"),
+      value: "completed",
       selected: false,
     },
     {
       id: 2,
       name: t("tools:tasks:filters:expirated"),
+      value: "overdue",
       selected: false,
     },
     {
       id: 3,
       name: t("tools:tasks:filters:pending"),
+      value: "pending",
       selected: false,
     },
   ]);

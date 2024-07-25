@@ -1,15 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import TableTask from "./TableTask";
-import { useTasks } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
+import useTasksContext from "../../../../../../../context/tasks"
 
-export default function Page({ params, searchParams }) {
+export default function Page({ searchParams }) {
   const { t } = useTranslation();
-  const [page, setPage] = useState(searchParams.page || 1);
-  const [limit, setLimit] = useState(searchParams.limit || 15);
+  const { tasks, isLoading, isError, setPage, setLimit } = useTasksContext()
 
   useEffect(() => {
     setPage(searchParams.page || 1);
@@ -19,7 +18,6 @@ export default function Page({ params, searchParams }) {
     setLimit(searchParams.limit || 15);
   }, [searchParams.limit]);
 
-  const { tasks, isLoading, isError, mutate } = useTasks({ page, limit });
 
   if (isLoading) return <LoaderSpinner />;
   if (isError || !tasks)
@@ -42,7 +40,7 @@ export default function Page({ params, searchParams }) {
 
   return (
     <div className="relative h-full">
-      <TableTask data={tasks} mutateTasks={mutate} />
+      <TableTask />
     </div>
   );
 }

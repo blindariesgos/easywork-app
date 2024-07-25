@@ -4,6 +4,7 @@ import { auth } from "../../auth";
 import { updateSession, clearSession } from "./session";
 import { refreshAuthToken } from "./helpers/refresh_auth_token";
 import { getLogger } from "@/src/utils/logger";
+import { logout } from "./api/hooks/auths";
 
 const logger = getLogger("axios");
 
@@ -57,6 +58,7 @@ const createAxiosInstance = (props) => {
         } catch (tokenError) {
           console.log("@@@@ Cerrando sesion");
           await clearSession();
+          await logout()
           throw tokenError;
         }
       }

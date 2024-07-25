@@ -13,9 +13,13 @@ import { Transition } from '@headlessui/react';
 import { FaTimes } from 'react-icons/fa';
 import clsx from "clsx";
 import InputDate from "@/src/components/form/InputDate";
+import { useTasks } from "@/src/lib/api/hooks/tasks";
+import useTasksContext from "@/src/context/tasks";
 
 const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
     const { t } = useTranslation()
+    const { mutate: mutateTasks } = useTasksContext()
+
     const [isEditing, setIsEditing] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
     const [selectedDate, setSelectedDate] = useState(task?.deadline ? parseISO(task.deadline) : new Date());
@@ -38,6 +42,7 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
             await putTaskId(task?.id, body);
             toast.success(t("tools:tasks:update-msg"));
             await mutate(`/tools/tasks/${task?.id}`);
+            mutateTasks()
         } catch (error) {
             handleApiError(error.message);
         } finally {

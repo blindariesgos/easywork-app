@@ -39,7 +39,6 @@ export default function SlideOver({
 
   useEffect(() => {
     // Parsear el valor de `show` del parámetro de consulta
-    console.log("show", params.get("show"));
     setShow(params.get("show") === "true");
   }, []); // Dependencia del parámetro de consulta 'show'
 

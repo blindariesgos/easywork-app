@@ -8,12 +8,13 @@ import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 // import FormFilters from './FormFilters';
 import { IoIosArrowDown } from "react-icons/io";
+import useTasksContext from "@/src/context/tasks";
 
 const FiltersTasks = () => {
   const { t } = useTranslation();
   const { status, setStatus } = useTasksConfigs();
-  const [searchInput, setSearchInput] = useState(" ");
-
+  const [searchInput, setSearchInput] = useState("");
+  const { filters, setFilters } = useTasksContext()
 
   const handleSelected = (id) => {
     const updateSelection = status.map((cont) => {
@@ -23,6 +24,18 @@ const FiltersTasks = () => {
     });
     setStatus(updateSelection);
   };
+
+  useEffect(() => {
+    if (searchInput.length > 0) {
+      setFilters({
+        ...filters,
+        name: searchInput
+      })
+    } else {
+      const { name, ...otherFilters } = filters;
+      setFilters(otherFilters)
+    }
+  }, [searchInput])
 
   return (
     <Menu as="div" className="relative inline-block w-full">

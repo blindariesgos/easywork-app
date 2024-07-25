@@ -24,6 +24,7 @@ export default function DriveContextProvider({ children }) {
   const [isOpenRename, setIsOpenRename] = useState(false)
   const [filters, setFilters] = useState({})
   const [displayFilters, setDisplayFilters] = useState({})
+  const [deleteItem, setDeleteItem] = useState()
   const [config, setConfig] = useState({
     limit: 25,
     page: 1,
@@ -185,14 +186,6 @@ export default function DriveContextProvider({ children }) {
     setLoading(false)
   }
 
-  useEffect(() => {
-    getItems()
-  }, [])
-
-  useEffect(() => {
-    getItems()
-  }, [pages, config, filters])
-
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
@@ -207,6 +200,16 @@ export default function DriveContextProvider({ children }) {
     })
     setFilterFields(newFilterFields)
   }
+
+  useEffect(() => {
+    getItems()
+  }, [])
+
+  useEffect(() => {
+    getItems()
+  }, [pages, config, filters])
+
+
 
   const values = useMemo(() => ({
     config,
@@ -237,20 +240,23 @@ export default function DriveContextProvider({ children }) {
     addFolder,
     updateFolders: getItems,
     duplicateFolder,
-    removeFilter
+    removeFilter,
+    deleteItem,
+    setDeleteItem
   }), [
-    folders,
     config,
     loading,
+    folders,
     pages,
     totals,
     itemCopy,
     isOpenCopy,
-    itemEdit,
     isOpenRename,
+    itemEdit,
     filters,
     displayFilters,
-    filterFields
+    filterFields,
+    deleteItem
   ]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;

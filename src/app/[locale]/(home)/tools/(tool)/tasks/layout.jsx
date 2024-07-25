@@ -15,6 +15,7 @@ import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { deleteTask as apiDeleteTask } from '@/src/lib/apis'; // Ajusta el path según sea necesario
 import { useAlertContext } from "@/src/context/common/AlertContext";
+import TasksContextProvider from "@/src/context/tasks/provider";
 
 export default function TaskLayout({ children, table }) {
   const [loading, setLoading] = React.useState(false);
@@ -37,12 +38,12 @@ export default function TaskLayout({ children, table }) {
     } catch (error) {
       console.log(error);
       handleApiError("Error al eliminar la(s) tarea(s)");
-    } finally{
+    } finally {
       setLoading(false);
       onCloseAlertDialog();
     }
   };
-  
+
   const optionsTrash = [
     {
       value: 0,
@@ -60,47 +61,49 @@ export default function TaskLayout({ children, table }) {
 
   return (
     <div className="flex flex-col flex-grow h-full">
-      {/* <Header /> */}
-      <ToolHeader
-        title={t("tools:tasks:name")}
-        route="/tools/tasks/task"
-        Filters={FiltersTasks}
-        toolButtons={
-          <>
-            <IconDropdown
-              icon={
-                selectedTasks[0]?.id && (
-                  <TrashIcon
+      <TasksContextProvider>
+        {/* <Header /> */}
+        <ToolHeader
+          title={t("tools:tasks:name")}
+          route="/tools/tasks/task"
+          Filters={FiltersTasks}
+          toolButtons={
+            <>
+              <IconDropdown
+                icon={
+                  selectedTasks[0]?.id && (
+                    <TrashIcon
+                      className="h-8 w-8 text-primary"
+                      aria-hidden="true"
+                    />)
+                }
+                options={optionsTrash}
+                width="w-72"
+              />
+              <IconDropdown
+                icon={
+                  <Cog8ToothIcon
                     className="h-8 w-8 text-primary"
                     aria-hidden="true"
-                  />)
-              }
-              options={optionsTrash}
-              width="w-72"
-            />
-            <IconDropdown
-              icon={
-                <Cog8ToothIcon
-                  className="h-8 w-8 text-primary"
-                  aria-hidden="true"
-                />
-              }
-              options={optionsSettings}
-              width="w-[340px]"
-              colorIcon="text-green-100"
-              excel={t("tools:tasks:header:excel:export")}
-            />
-          </>
-        }
-      >
-        <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
-          <TaskSubMenu />
-        </div>
-      </ToolHeader>
-      <Suspense fallback={<LoaderSpinner />}>
-        {table}
-        {children}
-      </Suspense>
+                  />
+                }
+                options={optionsSettings}
+                width="w-[340px]"
+                colorIcon="text-green-100"
+                excel={t("tools:tasks:header:excel:export")}
+              />
+            </>
+          }
+        >
+          <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
+            <TaskSubMenu />
+          </div>
+        </ToolHeader>
+        <Suspense fallback={<LoaderSpinner />}>
+          {table}
+          {children}
+        </Suspense>
+      </TasksContextProvider>
     </div>
   );
 }

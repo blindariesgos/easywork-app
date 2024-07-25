@@ -2,9 +2,14 @@
 import useSWR from "swr";
 import fetcher from "../fetcher";
 
-export const useTasks = ({ page = 1, limit = 15 }) => {
+export const useTasks = ({ filters = {}, page = 1, limit = 15 }) => {
+  const urlFilter = Object.keys(filters).length > 0
+    ? Object.keys(filters).map(key => `${key}=${filters[key]}`).join('&')
+    : ""
+  const url = `/tools/tasks/user?limit=${limit}&page=${page}${urlFilter.length > 0 ? `&${urlFilter}` : ""}`
+  console.log({ url })
   const { data, error, isLoading, mutate } = useSWR(
-    `/tools/tasks/user?limit=${limit}&page=${page}`,
+    url,
     fetcher,
   );
 

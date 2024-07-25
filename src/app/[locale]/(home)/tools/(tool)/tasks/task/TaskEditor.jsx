@@ -24,7 +24,7 @@ import { postTask, putTaskId } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import { useTaskContactsPolizas, useTasksList } from "@/src/lib/api/hooks/tasks";
+import { useTaskContactsPolizas, useTasks, useTasksList } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
@@ -62,6 +62,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [contactCRM, setContactCRM] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const { mutate: mutateTasks } = useTasks({})
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
     participants: (edit?.participants?.length ?? copy?.participants?.length) > 0,
@@ -158,11 +159,12 @@ export default function TaskEditor({ edit, copy, subtask }) {
       if (edit) {
         await putTaskId(edit.id, body);
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${edit.id}`);
+        mutate(`/tools/tasks/${edit.id}`);
         router.push("/tools/tasks?page=1");
       } else {
         await postTask(body);
         toast.success(t("tools:tasks:success-msg"));
+
         if (isNewTask) {
           reset();
           setValueText("");
@@ -174,6 +176,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     } catch (error) {
       handleApiError(error.message);
     } finally {
+      mutateTasks()
       setLoading(false);
     }
   };

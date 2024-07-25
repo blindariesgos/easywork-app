@@ -1,28 +1,54 @@
 "use client";
-import { Menu, MenuButton, MenuItems, Transition, TransitionChild } from "@headlessui/react";
-import React, { Fragment, useState, useEffect, useRef } from "react";
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { Menu, MenuButton, MenuItems } from "@headlessui/react";
+import React, { useState, useEffect, } from "react";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-// import FormFilters from './FormFilters';
 import { IoIosArrowDown } from "react-icons/io";
+import useTasksContext from "@/src/context/tasks";
+import { useDebouncedCallback } from 'use-debounce';
 
 const FiltersTasks = () => {
   const { t } = useTranslation();
   const { status, setStatus } = useTasksConfigs();
-  const [searchInput, setSearchInput] = useState(" ");
-
+  const [searchInput, setSearchInput] = useState("");
+  const { filters, setFilters } = useTasksContext()
 
   const handleSelected = (id) => {
+    const selection = status.find(item => item.id == id)
     const updateSelection = status.map((cont) => {
       return cont.id === id
         ? { ...cont, selected: !cont.selected }
         : { ...cont, selected: false };
     });
     setStatus(updateSelection);
+    if (selection.selected) {
+
+    } else {
+      setFilters({
+        ...filters,
+        status: selection.value
+      })
+    }
   };
+
+  useEffect(() => {
+    if (searchInput.length > 0) {
+      setFilters({
+        ...filters,
+        name: searchInput
+      })
+    } else {
+      const { name, ...otherFilters } = filters;
+      setFilters(otherFilters)
+    }
+  }, [searchInput])
+
+  const handleSearch = useDebouncedCallback((e) => {
+    setSearchInput(e.target.value)
+  }, 500);
 
   return (
     <Menu as="div" className="relative inline-block w-full">
@@ -35,7 +61,7 @@ const FiltersTasks = () => {
             id="search-cal"
             className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
             placeholder={t("contacts:header:search")}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={handleSearch}
           />
         </div>
         <MenuButton className="pr-2" onClick={() => setSearchInput("")}>

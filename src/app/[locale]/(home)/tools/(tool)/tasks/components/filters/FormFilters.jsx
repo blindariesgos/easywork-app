@@ -12,7 +12,6 @@ import {
 import SelectInput from "../../../../../../../../components/form/SelectInput";
 import TextInput from "../../../../../../../../components/form/TextInput";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from "./AddFields";
 import MultipleSelect from "../../../../../../../../components/form/MultipleSelect";
@@ -20,6 +19,7 @@ import InputDateFilter from "./InputDateFilter";
 import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
 import useAppContext from "../../../../../../../../context/app";
 import MultiSelectTags from "../MultiSelectTags";
+import useTasksContext from "@/src/context/tasks";
 
 
 const FormFilters = () => {
@@ -27,7 +27,7 @@ const FormFilters = () => {
   const { statusLead, stagesLead } = useCommon();
   const { lists } = useAppContext();
   const { status } = useTasksConfigs();
-
+  const { setFilters } = useTasksContext()
   const schema = yup.object().shape({
     role: yup.string(),
     status: yup.array(),
@@ -54,7 +54,6 @@ const FormFilters = () => {
     setValue,
     getValues,
     watch,
-    formState: { isValid, errors },
   } = useForm({
     defaultValues: {
       range: [null, null],
@@ -199,7 +198,7 @@ const FormFilters = () => {
           })}
         </div>
       </div>
-      <div className="my-2 flex gap-2 items-center">
+      <div className="my-2 flex gap-2 items-center flex-wrap">
         <AddFields append={append} remove={remove} fields={fields} />
         <Button
           type="button"
@@ -228,6 +227,7 @@ const FormFilters = () => {
           onclick={() => {
             setValue("fields", []);
             reset();
+            setFilters({})
           }}
         />
       </div>

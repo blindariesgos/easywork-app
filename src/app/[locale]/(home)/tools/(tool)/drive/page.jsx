@@ -9,9 +9,13 @@ import useDriveContext from "@/src/context/drive";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import DialogCopyItem from "./components/dialogs/CopyItem";
 import DialogRenameItem from "./components/dialogs/RenameItem";
+import DialogDeleteItem from "./components/dialogs/DeleteItem";
+import DialogMoveItem from "./components/dialogs/MoveItem";
 import DriveFooter from "./components/DriveFooter";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
+import Button from "@/src/components/form/Button";
+import { toast } from "react-toastify";
 
 export default function DrivePage() {
   const { driveView } = useAppContext();
@@ -27,7 +31,10 @@ export default function DrivePage() {
     setIsOpenCopy,
     setIsOpenRename,
     setItemEdit,
-    setDeleteItem
+    setDeleteItem,
+    setItemMove,
+    setIsOpenMove,
+    itemMove
   } = useDriveContext();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
@@ -49,16 +56,18 @@ export default function DrivePage() {
     setIndeterminate(false);
   }
 
+  const handleOpenItem = (item) => {
+    if (item.type == "folder") {
+      addPage(item)
+      return
+    }
+    window.open(item.url, "self", "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500")
+  }
+
   const itemOptions = [
     {
       name: "Abrir",
-      onClick: (item) => {
-        if (item.type == "folder") {
-          addPage(item)
-          return
-        }
-        window.open(item.url, "self", "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500")
-      }
+      onClick: handleOpenItem
     },
     {
       name: "Compartir",
@@ -75,14 +84,21 @@ export default function DrivePage() {
       name: "Copiar",
       onClick: (page) => {
         setFolderCopy(page)
+        toast.success("El elemento se ha copiado correctamente, navegue por las carpetas y pulse el botón PEGAR en el destino final.", { autoClose: 10000, })
       }
     },
     {
       name: "Eliminar",
-      // onClick: (page) => {
-      //   setDeleteItem(page)
-      // },
-      disabled: true
+      onClick: (page) => {
+        setDeleteItem(page)
+      },
+    },
+    {
+      name: "Mover",
+      onClick: (page) => {
+        setItemMove(page)
+        toast.success("El elemento se ha seleccionado correctamente, navegue por las carpetas y pulse el botón MOVER en el destino final.", { autoClose: 10000, })
+      }
     },
   ];
 
@@ -124,16 +140,27 @@ export default function DrivePage() {
         }
         {
           folderCopy && (
-            <button
-              type="button"
-              className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+            <Button
+              label={"PEGAR"}
               title={folderCopy?.name}
-              onClick={() => setIsOpenCopy(true)}
-            >
-              {t("tools:drive:table:paste")}
-            </button>
+              buttonStyle="primary"
+              className="px-4 py-2"
+              onclick={() => setIsOpenCopy(true)}
+            />
           )
         }
+        {
+          itemMove && (
+            <Button
+              label={"MOVER"}
+              title={itemMove?.name}
+              buttonStyle="primary"
+              className="px-4 py-2"
+              onclick={() => setIsOpenMove(true)}
+            />
+          )
+        }
+
       </div>
       {
         driveView === "table" && (
@@ -146,6 +173,7 @@ export default function DrivePage() {
             checkbox={checkboxTable}
             setSelectedFiles={setSelectedFiles}
             checked={checked}
+            handleOpenItem={handleOpenItem}
           />)}
       {
         driveView === "icon" && (
@@ -158,6 +186,7 @@ export default function DrivePage() {
             checkbox={checkboxTable}
             setSelectedFiles={setSelectedFiles}
             checked={checked}
+            handleOpenItem={handleOpenItem}
           />)
       }
       {
@@ -171,12 +200,15 @@ export default function DrivePage() {
             checkbox={checkboxTable}
             setSelectedFiles={setSelectedFiles}
             checked={checked}
+            handleOpenItem={handleOpenItem}
           />)
       }
       <DriveFooter selectedFiles={selectedFiles.length} />
 
       <DialogRenameItem />
       <DialogCopyItem />
+      <DialogDeleteItem />
+      <DialogMoveItem />
     </div>
   );
 }

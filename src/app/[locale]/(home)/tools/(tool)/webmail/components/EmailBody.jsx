@@ -1,11 +1,15 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
-import { decode } from "he";
 import base64 from "base64-js";
+import { PaperClipIcon } from "@heroicons/react/20/solid";
+import { DocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function EmailBody({
   selectMail,
@@ -21,10 +25,14 @@ export default function EmailBody({
   const { t } = useTranslation();
   const router = useRouter();
   const [label, setLabel] = useState("");
+  const [value, setValueText] = useState("");
   const [subLabel, setSubLabel] = useState("");
+  const [reply, setReply] = useState(false);
   const [decodedMailData, setDecodedMailData] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const fileInputRef = useRef(null);
+  const [files, setFiles] = useState([]);
 
   const getParts = (parts) => {
     let message = "";
@@ -45,77 +53,234 @@ export default function EmailBody({
   useEffect(() => {
     setDecodedMailData(selectMail.body);
   }, [selectMail]);
-  
-    return (
-      <Transition.Root show={params.get("detail")} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => {}}>
-          <div className="fixed inset-0" />
-          <div className="fixed inset-0 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
-                <Transition.Child
-                  as={Fragment}
-                  enter="transform transition ease-in-out duration-500 sm:duration-700"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-500 sm:duration-700"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
+
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+  };
+
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const toolbar = [
+    ["bold", "italic", "underline", "strike"],
+    ["blockquote"],
+    ["link", "image"],
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ size: ["small", false, "large", "huge"] }],
+    [{ color: [] }, { background: [] }],
+    [{ font: [] }],
+    [{ align: [] }],
+  ];
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+    "size",
+    "font",
+    "color",
+    "background",
+    "align",
+    "header",
+    "direction",
+  ];
+
+  return (
+    <Transition.Root show={params.get("detail")} as={Fragment}>
+      {/* <ReplyEmail colorTag="bg-easywork-main" userData={userData} selectOauth={selectOauth} /> */}
+      <Dialog as="div" className="relative z-50" onClose={() => {}}>
+        <div className="fixed inset-0" />
+        <div className="fixed inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <Dialog.Panel
+                  className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
                 >
-                  <Dialog.Panel
-                    className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
-                  >
-                    <div className="flex justify-end h-screen">
-                      <div className={`flex flex-col`}>
-                        <Tag
-                          title={label}
-                          onclick={() => {
-                            setOpenModal
-                              ? setOpenModal(false)
-                              : samePage
+                  <div className="flex justify-end h-screen">
+                    <div className={`flex flex-col`}>
+                      <Tag
+                        title={label}
+                        onclick={() => {
+                          setOpenModal
+                            ? setOpenModal(false)
+                            : samePage
                               ? router.replace(samePage)
                               : router.back();
-                          }}
-                          className={colorTag}
+                        }}
+                        className={colorTag}
+                      />
+                      {subLabelTag && (
+                        <Tag
+                          title={subLabel}
+                          className="bg-easywork-main pl-2"
+                          closeIcon
+                          second
                         />
-                        {subLabelTag && (
-                          <Tag
-                            title={subLabel}
-                            className="bg-easywork-main pl-2"
-                            closeIcon
-                            second
-                          />
-                        )}
-                      </div>
-                      <div className="bg-gray-100 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
-                          <h1 className="text-lg mb-4">{selectMail?.subject}</h1>
-                        <div className="bg-white text-sm p-5 h-5/6">
-                          <div className="pb-2 border-b-2">
-                            <p>{selectMail?.from}</p>
-                            {/* <p>Para: {selectMail?.to[0]}</p> */}
-                            <div className="w-full flex justify-center items-center">
-                              <p className="m-2 text-xs font-semibold">RESPUESTA</p>
-                              <p className="m-2 text-xs font-semibold">RESPONDER A TODOS</p>
-                              <p className="m-2 text-xs font-semibold">REENVIAR</p>
-                              <p className="m-2 text-xs font-semibold">MARCAR COMO CORREO NO DESEADO</p>
-                              <p className="m-2 text-xs font-semibold">ELIMINAR</p>
-                            </div>
-                          </div>
-                          <div className="flex h-full py-2 w-full">
-                            <iframe
-                              className="w-full"
-                              srcDoc={decodedMailData}
-                            />
+                      )}
+                    </div>
+                    <div className="bg-gray-100 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
+                      <h1 className="text-lg mb-4">{selectMail?.subject}</h1>
+                      <div className="bg-white text-sm p-5">
+                        <div className="pb-2 border-b-2">
+                          <p>{selectMail?.from}</p>
+                          {/* <p>Para: {selectMail?.to[0]}</p> */}
+                          <div className="w-full flex justify-center items-center">
+                            <p
+                              className="m-2 text-xs font-semibold cursor-pointer"
+                              onClick={() => {
+                                setReply(true);
+                              }}
+                            >
+                              RESPUESTA
+                            </p>
+                            <p
+                              className="m-2 text-xs font-semibold cursor-pointer"
+                              onClick={() => {
+                                setReply(true);
+                              }}
+                            >
+                              RESPONDER A TODOS
+                            </p>
+                            <p className="m-2 text-xs font-semibold cursor-pointer">
+                              REENVIAR
+                            </p>
+                            <p className="m-2 text-xs font-semibold cursor-pointer">
+                              MARCAR COMO CORREO NO DESEADO
+                            </p>
+                            <p className="m-2 text-xs font-semibold cursor-pointer">
+                              ELIMINAR
+                            </p>
                           </div>
                         </div>
+                        <iframe
+                          className="w-full h-screen"
+                          srcDoc={decodedMailData}
+                        />
+                        {reply && (
+                          <div className="bg-white max-md:w-screen rounded-l-2xl overflow-y-auto h-auto p-7 w-full">
+                            <div className="bg-gray-100 text-sm p-5 h-auto">
+                              <div className="pb-2 border-b-2">
+                                <p>Responder: {selectMail?.from}</p>
+                              </div>
+                              <div className="flex py-2 items-center">
+                                <p>Asunto</p>
+                                <input
+                                  type="text"
+                                  className="py-2 text-sm rounded-md ml-2 w-full focus:text-gray-900 placeholder-slate-600"
+                                  placeholder="Ingrese el asunto del mensaje"
+                                  autoComplete="off"
+                                  onChange={(e) => setSubject(e.target.value)}
+                                />
+                              </div>
+                              <div className="py-2">
+                                <ReactQuill
+                                  className="h-96 w-full bg-white pb-12"
+                                  theme="snow"
+                                  value={value}
+                                  onChange={setValueText}
+                                  formats={formats}
+                                  modules={{ toolbar }}
+                                />
+                                {/* <TextEditor
+                                                  className="h-96 w-full bg-white pb-12"
+                                                  theme="snow"
+                                                  ref={quillRef}
+                                                  value={value}
+                                                  setValue={setValueText}
+                                                /> */}
+                                <div className="mt-2">
+                                  {files &&
+                                    files.map((file, index) => (
+                                      <div
+                                        key={index}
+                                        className="flex flex-col gap-2"
+                                      >
+                                        <p className="text-sm">{file.name}</p>
+                                      </div>
+                                    ))}
+                                </div>
+                                <div className="flex mt-2">
+                                  <div>
+                                    <div
+                                      className="flex text-slate-400 cursor-pointer"
+                                      onClick={handleFileClick}
+                                    >
+                                      <PaperClipIcon className="h-5 w-5" />
+                                      <p className="ml-1">Archivo</p>
+                                    </div>
+                                    <input
+                                      type="file"
+                                      ref={fileInputRef}
+                                      style={{ display: "none" }}
+                                      onChange={handleFileChange}
+                                    />
+                                  </div>
+                                  <div className="ml-2 flex text-slate-400 cursor-pointer">
+                                    <DocumentIcon className="h-5 w-5" />
+                                    <p className="ml-1">Crear documento</p>
+                                  </div>
+                                  <div
+                                    className="ml-2 flex text-slate-400 cursor-pointer"
+                                    onClick={() => {
+                                      router.push(
+                                        `/tools/webmail/?page=${searchParams.get("page")}&send=true&signature=true`
+                                      );
+                                    }}
+                                  >
+                                    <PencilIcon className="h-5 w-5" />
+                                    <p className="ml-1">Firma</p>
+                                  </div>
+                                </div>
+                                <div className="mt-8">
+                                  <button
+                                    className="bg-easywork-main text-white p-3 rounded-md"
+                                    onClick={() => sendEmail()}
+                                  >
+                                    Enviar
+                                  </button>
+                                  <button
+                                    className="bg-gray-300 m-2 p-3 rounded-md"
+                                    onClick={() => {
+                                      setReply(false);
+                                    }}
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
           </div>
-        </Dialog>
-      </Transition.Root>
-    );
+        </div>
+      </Dialog>
+    </Transition.Root>
+  );
 }

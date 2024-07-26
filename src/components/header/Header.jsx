@@ -43,7 +43,7 @@ export default function Header() {
   ];
 
   return (
-    <div className="rounded-md flex h-16 shrink-0 items-center gap-x-4 bg-white opacity-90 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 w-full">
+    <div className="rounded-md flex h-16 shrink-0 items-center gap-x-4 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 w-full">
       {ifWebmailPath() ? (
         <button
           type="button"
@@ -110,33 +110,26 @@ export default function Header() {
                 />
               </span>
             </MenuButton>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <MenuItems className="absolute right-0 z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                {userNavigation.map((item) => (
-                  <MenuItem key={item.name}>
-                    {({ active }) => (
-                      <div
-                        onClick={item.onClick}
-                        className={classNames(
-                          active ? "bg-gray-50" : "",
-                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                        )}
-                      >
-                        {item.name}
-                      </div>
-                    )}
-                  </MenuItem>
-                ))}
-              </MenuItems>
-            </Transition>
+            <MenuItems
+              transition
+              anchor="bottom end"
+              className=" z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+              {userNavigation.map((item) => (
+                <MenuItem key={item.name}>
+                  {({ active }) => (
+                    <div
+                      onClick={item.onClick}
+                      className={classNames(
+                        active ? "bg-gray-50" : "",
+                        "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                      )}
+                    >
+                      {item.name}
+                    </div>
+                  )}
+                </MenuItem>
+              ))}
+            </MenuItems>
           </Menu>
           {/* Separator */}
           <div

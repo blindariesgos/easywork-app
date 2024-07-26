@@ -26,7 +26,8 @@ export default function DrivePage() {
     setFolderCopy,
     setIsOpenCopy,
     setIsOpenRename,
-    setItemEdit
+    setItemEdit,
+    setDeleteItem
   } = useDriveContext();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
@@ -75,6 +76,13 @@ export default function DrivePage() {
       onClick: (page) => {
         setFolderCopy(page)
       }
+    },
+    {
+      name: "Eliminar",
+      // onClick: (page) => {
+      //   setDeleteItem(page)
+      // },
+      disabled: true
     },
   ];
 

@@ -1,38 +1,56 @@
 "use client";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import Link from "next/link";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import ToolContextProvider from "@/src/context/tools";
+import React, { useEffect, useLayoutEffect, useRef, useState, Fragment } from "react";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import { Pagination } from "@/src/components/pagination/Pagination";
+import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import Image from "next/image";
 import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
 import { deleteTask as apiDeleteTask } from '@/src/lib/apis'; // Ajusta el path según sea necesario
-import { useSWRConfig } from "swr";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
-import {
-  formatDate,
-  getTaskOverdueTimeDelta,
-  isDateOverdue,
-  isDateTomorrowOverdue,
-  isDateTodayOverdue,
-  isDateMoreFiveDayOverdue,
-  isDateMoreTenDayOverdue
-} from "@/src/utils/getFormatDate";
+import useTasksContext from "@/src/context/tasks";
+import { renderCellContent } from "./utils"
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 
-export default function TableTask({ data, mutateTasks }) {
+const itemsByPage = [
+  {
+    id: 5,
+    name: "5"
+  },
+  {
+    id: 10,
+    name: "10"
+  },
+  {
+    id: 25,
+    name: "25"
+  },
+  {
+    id: 50,
+    name: "50"
+  },
+  {
+    id: 100,
+    name: "100"
+  }
+]
+
+export default function TableTask() {
   const checkbox = useRef();
   const { onCloseAlertDialog } = useAlertContext();
   const {
+    tasks: data,
+    mutate: mutateTasks,
     selectedTasks,
-    setSelectedTasks
-  } = ToolContextProvider();
+    setSelectedTasks,
+    limit, setLimit,
+    page, setPage
+  } = useTasksContext()
+
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [dataTask, setDataTask] = useState();
@@ -130,7 +148,7 @@ export default function TableTask({ data, mutateTasks }) {
   ];
 
   return (
-    <>
+    <Fragment>
       {selectedColumns && selectedColumns.length > 0 && (
         <div className="flow-root">
           {loading && <LoaderSpinner />}
@@ -237,113 +255,47 @@ export default function TableTask({ data, mutateTasks }) {
           </div>
           <div className="w-full mt-2">
             <div className="flex justify-center">
-              <Pagination totalPages={dataTask?.meta?.totalPages || 0} />
+              <div className="flex gap-1 items-center">
+                <p>Mostrar:</p>
+                <Listbox value={limit} onChange={setLimit} as="div">
+                  <ListboxButton
+                    className={clsx(
+                      'relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6',
+                      'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2'
+                    )}
+                  >
+                    {limit}
+                    <ChevronDownIcon
+                      className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
+                      aria-hidden="true"
+                    />
+                  </ListboxButton>
+                  <ListboxOptions
+                    anchor="bottom"
+                    transition
+                    className={clsx(
+                      'rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl',
+                      'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                    )}
+                  >
+                    {itemsByPage.map((page) => (
+                      <ListboxOption
+                        key={page.name}
+                        value={page.id}
+                        className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
+                      >
+                        <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
+                        <div className="text-sm/6">{page.name}</div>
+                      </ListboxOption>
+                    ))}
+                  </ListboxOptions>
+                </Listbox>
+              </div>
+              <PaginationV2 totalPages={dataTask?.meta?.totalPages || 0} currentPage={page} setPage={setPage} />
             </div>
           </div>
         </div>
       )}
-    </>
+    </Fragment>
   );
-}
-
-const renderCellContent = (column, task, t) => {
-  const { row, link } = column;
-  const taskValue = task[row];
-
-  switch (row) {
-    case "responsible":
-      return (
-        <div className="flex items-center justify-center">
-          <div className="font-medium text-black">
-            {taskValue.length > 0 ? taskValue.map((item) => item.username).join(", ") : ""}
-          </div>
-        </div>
-      );
-    case "createdBy":
-      return (
-        <div className="flex gap-x-2 items-center justify-left">
-          <Image
-            className="h-6 w-6 rounded-full bg-zinc-200"
-            width={30}
-            height={30}
-            src={taskValue?.avatar || "/img/avatar.svg"}
-            alt="avatar"
-          />
-          <div className="font-medium text-black">
-            {taskValue?.name}
-          </div>
-        </div>
-      );
-    case "deadline":
-      return taskValue ? (
-        <div className="flex">
-          <span className={clsx("p-1 px-2 rounded-full text-sm w-auto", {
-            "bg-red-200 text-red-900": isDateOverdue(taskValue) && !task.completedTime,
-            "bg-green-200 text-green-900": isDateTomorrowOverdue(taskValue) && !task.completedTime,
-            "bg-orange-300 text-orange-900": isDateTodayOverdue(taskValue) && !task.completedTime,
-            "bg-blue-300 text-blue-900": isDateMoreFiveDayOverdue(taskValue) && !task.completedTime,
-            "bg-gray-300": !taskValue || isDateMoreTenDayOverdue(taskValue) && !task.completedTime,
-            "text-gray-800/45 line-through": task.isCompleted,
-
-          })}>
-            {getTaskOverdueTimeDelta(task)}
-          </span>
-        </div>
-      ) : (
-        <div className="flex">
-          <span className="p-1 px-2 bg-gray-300 rounded-full text-sm w-auto">
-            {t("tools:tasks:table:no-deadline")}
-          </span>
-        </div>
-      );
-
-    case "activity":
-      return (
-        <div className="p-1 px-2 text-sm font-normal">
-          {getLastActivity(task)}
-        </div>
-      );
-
-    case "startTime":
-      return taskValue ? formatDate(taskValue, "dd/MM/yyyy hh:mm:ss a") : "";
-
-    case "contact":
-      if (task?.crm?.length === 0) return "No especificado";
-      const contact = task.crm.find(item => item.type == "contact")
-      return contact &&
-        <Link href={`/sales/crm/contacts/contact/${contact.contact.id}?show=true&prev=tasks`}>
-          <div className="flex gap-x-2 items-center justify-left">
-            <Image
-              className="h-6 w-6 rounded-full bg-zinc-200"
-              width={30}
-              height={30}
-              src={taskValue?.avatar || "/img/avatar.svg"}
-              alt="avatar"
-            />
-            {contact.contact?.fullName}
-          </div>
-        </Link>
-        || "No especificado";
-
-    case "policy":
-      if (task?.crm?.length === 0) return "No especificado";
-      const policy = task.crm.find(item => item.type == "poliza")
-
-      return policy?.poliza?.title
-        || "No especificado";
-
-    default:
-      return link ? (
-        <Link className={clsx(task.status === "pending_review" ? "text-gray-800/45 line-through" : "text-black")} href={`/tools/tasks/task/${task.id}?show=true`}>
-          {taskValue}
-        </Link>
-      ) : (
-        taskValue
-      );
-  }
-};
-
-const getLastActivity = (task) => {
-  if (task.completedTime) return formatDate(task.createdAt);
-  return formatDate(task.createdAt);
 }

@@ -13,6 +13,7 @@ export default function IconsInfo({
   shareOptions,
   itemOptions,
   setSelectedFiles,
+  handleOpenItem
 }) {
   const { t } = useTranslation();
 
@@ -119,7 +120,13 @@ export default function IconsInfo({
                 "h-24 w-24 text-indigo-800"
               )}
             </div>
-            <p className="overflow-hidden whitespace-nowrap text-ellipsis w-full pt-4" title={file.name}>{file.name}</p>
+            <p
+              className="overflow-hidden whitespace-nowrap text-ellipsis w-full pt-4 cursor-pointer"
+              title={file.name}
+              onClick={() => handleOpenItem(file)}
+            >
+              {file.name}
+            </p>
           </div>
         ))}
       </div>

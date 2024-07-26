@@ -21,6 +21,7 @@ export default function TableInfo({
   toggleAll,
   setSelectedFiles,
   checked,
+  handleOpenItem
 }) {
   const { t } = useTranslation();
 
@@ -204,7 +205,11 @@ export default function TableInfo({
                             )}
                           </div>
                           <div className="ml-4">
-                            <div className="font-medium text-gray-900">
+                            <div
+                              className="font-medium text-gray-900 cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis max-w-[220px]"
+                              onClick={() => handleOpenItem(file)}
+                              title={file.name}
+                            >
                               {file.name}
                             </div>
                           </div>

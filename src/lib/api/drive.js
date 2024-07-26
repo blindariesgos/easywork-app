@@ -29,15 +29,15 @@ export const renameFolder = async (id, data) => {
     return response;
 };
 
-export const copyFolder = async (id, data, destinationId) => {
-    const url = `/folders/${id}/copy${destinationId ? `?destinationId=${destinationId}` : ""}`
+export const copyItem = async (itemType, id, data, destinationId) => {
+    const url = `/${itemType}/${id}/copy${destinationId ? `?destinationId=${destinationId}` : ""}`
     const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).put(url, data).catch(error => error);
     return response;
 };
 
-export const copyFile = async (id, data, destinationId) => {
-    const url = `/files/${id}/copy${destinationId ? `?destinationId=${destinationId}` : ""}`
-    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).put(url, data).catch(error => error);
+export const moveItem = async (itemType, id, destinationId) => {
+    const url = `/${itemType}/${id}/move${destinationId ? `?destinationId=${destinationId}` : ""}`
+    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).put(url).catch(error => error);
     return response;
 };
 
@@ -52,6 +52,12 @@ export const uploadFiles = async (folderId, data) => {
         contentType: "multipart/form-data"
     })
         .post(`/files/upload?folderId=${folderId}`, data).catch(error => error);
+    return response;
+};
+
+export const deleteItem = async (type, id) => {
+    const url = `/${type}/${id}`
+    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).delete(url).catch(error => error);
     return response;
 };
 

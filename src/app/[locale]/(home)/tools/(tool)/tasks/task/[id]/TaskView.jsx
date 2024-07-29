@@ -7,7 +7,7 @@ import {
   LinkIcon
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
 import ButtonMore from "../../components/ButtonMore";
@@ -39,7 +39,7 @@ export default function TaskView({ id }) {
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(true);
-  const [value, setValueText] = useState(task ? task.description : "");
+  const [taskDescription, setTaskDescription] = useState("");
   const [openEdit, setOpenEdit] = useState(null);
   const { mutate } = useSWRConfig();
   const [isDelegating, setIsDelegating] = useState(false);
@@ -105,6 +105,12 @@ export default function TaskView({ id }) {
       )
     }
   }
+
+  useEffect(() => {
+    if (task) {
+      setTaskDescription(task.description)
+    }
+  }, [task])
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -178,8 +184,8 @@ export default function TaskView({ id }) {
                 <div className="p-2 sm:p-4">
                   <OptionsTask
                     edit={task}
-                    setValueText={setValueText}
-                    value={value}
+                    setValueText={setTaskDescription}
+                    value={taskDescription}
                     disabled={task ? true : false}
                   />
                 </div>
@@ -238,7 +244,7 @@ export default function TaskView({ id }) {
           )}
           {!openEdit && (
             <div className="w-full col-span-12 md:col-span-5 lg:col-span-4 xl:col-span-3 bg-white rounded-lg h-full">
-              <div className="bg-primary rounded-t-lg p-4 text-center">
+              <div className="bg-primary rounded-t-lg p-4">
                 <TaskHeaderStatus task={task} />
               </div>
               <div className="p-2 sm:p-4">

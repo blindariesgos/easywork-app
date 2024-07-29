@@ -4,12 +4,13 @@ import React, { useMemo, useState, useEffect } from "react";
 import { DriveContext } from "..";
 import {
   createFolder,
-  copyFolder,
   getExplorer,
   uploadFiles,
-  copyFile,
+  copyItem,
   renameFolder,
   renameFile,
+  deleteItem,
+  moveItem
 } from "../../lib/api/drive";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -19,12 +20,14 @@ export default function DriveContextProvider({ children }) {
   const [folders, setFolders] = useState()
   const [loading, setLoading] = useState(true)
   const [itemCopy, setItemCopy] = useState()
+  const [itemMove, setItemMove] = useState()
   const [itemEdit, setItemEdit] = useState()
   const [isOpenCopy, setIsOpenCopy] = useState(false)
+  const [isOpenMove, setIsOpenMove] = useState(false)
   const [isOpenRename, setIsOpenRename] = useState(false)
   const [filters, setFilters] = useState({})
   const [displayFilters, setDisplayFilters] = useState({})
-  const [deleteItem, setDeleteItem] = useState()
+  const [itemDelete, setItemDelete] = useState()
   const [config, setConfig] = useState({
     limit: 25,
     page: 1,
@@ -132,9 +135,9 @@ export default function DriveContextProvider({ children }) {
 
   const duplicateFolder = async (newName) => {
     setLoading(true)
-    const response = itemCopy.type === "folder"
-      ? await copyFolder(itemCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
-      : await copyFile(itemCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
+
+    const itemType = itemCopy.type === "folder" ? "folders" : "files";
+    const response = await copyItem(itemType, itemCopy.id, { newName }, pages[pages.length - 1]?.id ?? null)
 
     if (response.error) {
       toast.error(response.message)
@@ -148,7 +151,32 @@ export default function DriveContextProvider({ children }) {
       return setLoading(false)
     }
 
+    setIsOpenCopy(false)
     setItemCopy()
+    await getItems()
+    setLoading(false)
+  }
+
+  const moveFolder = async () => {
+    setLoading(true)
+
+    const itemType = itemMove.type === "folder" ? "folders" : "files";
+    const response = await moveItem(itemType, itemMove.id, pages[pages.length - 1]?.id ?? null)
+
+    if (response.error) {
+      toast.error(response.message)
+      return setLoading(false)
+    }
+
+    if (response.errors) {
+      response.errors.forEach(error => {
+        toast.error(error)
+      })
+      return setLoading(false)
+    }
+
+    setIsOpenMove(false)
+    setItemMove()
     await getItems()
     setLoading(false)
   }
@@ -201,6 +229,28 @@ export default function DriveContextProvider({ children }) {
     setFilterFields(newFilterFields)
   }
 
+  const deleteFolder = async () => {
+    setLoading(true)
+    const itemType = itemDelete.type === "folder" ? "folders" : "files";
+    const response = await deleteItem(itemType, itemDelete.id)
+
+    if (response.error) {
+      toast.error(response.message)
+      return setLoading(false)
+    }
+
+    if (response.errors) {
+      response.errors.forEach(error => {
+        toast.error(error)
+      })
+      return setLoading(false)
+    }
+
+    setItemDelete()
+    await getItems()
+    setLoading(false)
+  }
+
   useEffect(() => {
     getItems()
   }, [])
@@ -225,6 +275,12 @@ export default function DriveContextProvider({ children }) {
     filters,
     displayFilters,
     filterFields,
+    itemMove,
+    isOpenMove,
+    setIsOpenMove,
+    moveFolder,
+    setItemMove,
+    deleteFolder,
     setFilterFields,
     setDisplayFilters,
     setFilters,
@@ -241,8 +297,8 @@ export default function DriveContextProvider({ children }) {
     updateFolders: getItems,
     duplicateFolder,
     removeFilter,
-    deleteItem,
-    setDeleteItem
+    deleteItem: itemDelete,
+    setDeleteItem: setItemDelete
   }), [
     config,
     loading,
@@ -256,7 +312,9 @@ export default function DriveContextProvider({ children }) {
     filters,
     displayFilters,
     filterFields,
-    deleteItem
+    itemDelete,
+    itemMove,
+    isOpenMove,
   ]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;

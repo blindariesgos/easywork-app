@@ -22,10 +22,18 @@ export const renderCellContent = (column, task, t) => {
 
     switch (row) {
         case "responsible":
+            if (taskValue.length === 0) return "No especificado";
             return (
-                <div className="flex items-center justify-center">
+                <div className="flex gap-x-2 items-center justify-left">
+                    <Image
+                        className="h-6 w-6 rounded-full bg-zinc-200"
+                        width={30}
+                        height={30}
+                        src={taskValue[0]?.avatar || "/img/avatar.svg"}
+                        alt="avatar"
+                    />
                     <div className="font-medium text-black">
-                        {taskValue.length > 0 ? taskValue.map((item) => item.username).join(", ") : ""}
+                        {taskValue[0]?.name}
                     </div>
                 </div>
             );

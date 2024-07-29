@@ -11,6 +11,7 @@ import { FaTimes } from 'react-icons/fa';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DropdownSelect from "../../../components/DropdownSelect";
+import { useTasks } from "@/src/lib/api/hooks/tasks";
 
 const TaskResponsible = ({ task, lists, field }) => {
     const { t } = useTranslation()
@@ -20,6 +21,7 @@ const TaskResponsible = ({ task, lists, field }) => {
     const containerRef = useRef(null);
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const { mutate } = useSWRConfig();
+    const { mutate: mutateTasks } = useTasks({})
 
     const schema = yup.object().shape({
         responsible: yup.array(),
@@ -57,12 +59,14 @@ const TaskResponsible = ({ task, lists, field }) => {
                 await putTaskId(task.id, body);
                 toast.success(t("tools:tasks:update-msg"));
                 await mutate(`/tools/tasks/${task.id}`);
+                mutateTasks()
             } catch (error) {
                 console.log(error);
             } finally {
                 reset();
                 setIsLoading(false);
                 setIsEditing(false);
+
             }
         })({ preventDefault: () => { } });
     };

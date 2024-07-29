@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import { putTaskId } from '@/src/lib/apis';
 import { useTranslation } from 'react-i18next';
+import { useTasks } from '@/src/lib/api/hooks/tasks';
 
 const schema = yup.object().shape({
   entities: yup.array(),
@@ -23,6 +24,7 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
+  const { mutate: mutateTasks } = useTasks({})
 
   const { register, handleSubmit, formState: { errors }, control, getValues, reset, setValue, watch } = useForm({
     defaultValues: {
@@ -57,6 +59,7 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
         reset();
         setIsLoading(false);
         setIsEditing(false);
+        mutateTasks()
       }
     })({ preventDefault: () => { } });
   };

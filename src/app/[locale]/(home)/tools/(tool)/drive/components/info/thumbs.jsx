@@ -10,12 +10,10 @@ import { getFileIcon } from "../../../../../../../../lib/drive_helper";
 export default function ThumbsInfo({
   files,
   selectedFiles,
-  checkbox,
   shareOptions,
   itemOptions,
-  toggleAll,
   setSelectedFiles,
-  checked,
+  handleOpenItem
 }) {
   const { t } = useTranslation();
 
@@ -122,7 +120,13 @@ export default function ThumbsInfo({
                 "h-12 w-12 text-indigo-800"
               )}
             </div>
-            <p className="text-xs overflow-hidden whitespace-nowrap text-ellipsis w-full pt-4" title={file.name}>{file.name}</p>
+            <p
+              className="text-xs overflow-hidden whitespace-nowrap text-ellipsis w-full pt-4 cursor-pointer"
+              title={file.name}
+              onClick={() => handleOpenItem(file)}
+            >
+              {file.name}
+            </p>
           </div>
         ))}
       </div>

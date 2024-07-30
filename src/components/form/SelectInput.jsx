@@ -2,6 +2,7 @@
 "use client";
 import { Combobox, Transition, ComboboxInput, ComboboxButton, ComboboxOption, ComboboxOptions } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import clsx from "clsx";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -58,22 +59,30 @@ function SelectInput({
 
         <div className={`relative ${label ? "mt-1" : "mt-0"}`}>
           <ComboboxInput
-            // {...register && register(name)}
-            className={`z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md drop-shadow-sm placeholder:text-xs text-sm ${border ? "border border-gray-200 focus:ring-gray-200 focus:outline-0" : "border-none focus:ring-0 "}`}
+            className={clsx(
+              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ", {
+              "border border-gray-200 focus:ring-gray-200 focus:outline-0": border,
+              "border-none focus:ring-0 ": !border,
+              "bg-gray-100": disabled,
+              "drop-shadow-sm": !disabled
+            }
+            )}
             displayValue={(person) => person?.name}
-            // value={value}           
             onChange={(event) => {
-              // register && register(name).onChange(event);
               setQuery && setQuery(event.target.value);
             }
             }
           />
-          <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronDownIcon
-              className="h-5 w-5 text-primary"
-              aria-hidden="true"
-            />
-          </ComboboxButton>
+          {
+            !disabled && (
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDownIcon
+                  className="h-5 w-5 text-primary"
+                  aria-hidden="true"
+                />
+              </ComboboxButton>
+            )
+          }
 
           <ComboboxOptions transition anchor="bottom end" className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredElements?.length === 0 && query !== '' ? (

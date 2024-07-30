@@ -33,7 +33,7 @@ export default function ContactsHeader() {
 
   return (
     <header className="flex flex-col">
-      <div className="px-4 flex gap-3 items-center bg-white py-4 rounded-md flex-wrap">
+      <div className="px-4 flex gap-3 items-center bg-white py-4 rounded-md flex-wrap shadow-sm">
         <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
           {t("contacts:header:contact")}
         </h1>

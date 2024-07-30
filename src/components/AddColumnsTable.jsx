@@ -1,6 +1,6 @@
 'use client';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Menu, Transition } from '@headlessui/react';
+import { Menu, MenuButton, MenuItems, Transition } from '@headlessui/react';
 import { Cog8ToothIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 
@@ -24,9 +24,9 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data, }) => {
 	return (
 		<Menu as="div" className="relative inline-block">
 			<div>
-				<Menu.Button className="inline-flex text-gray-60 bg-transparent text-xs font-semibold gap-2 mt-1.5 focus:ring-0">
+				<MenuButton className="inline-flex text-gray-60 bg-transparent text-xs font-semibold gap-2 mt-1.5 focus:ring-0">
 					<Cog8ToothIcon className="h-5 w-5 text-primary " aria-hidden="true" />
-				</Menu.Button>
+				</MenuButton>
 			</div>
 			<Transition
 				as={Fragment}
@@ -37,7 +37,8 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data, }) => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items
+				<MenuItems
+					anchor="bottom start"
 					className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-96 p-2`}
 				>
 					<div className='grid grid-cols-2 gap-4'>
@@ -53,7 +54,7 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data, }) => {
 							</div>
 						))}
 					</div>
-				</Menu.Items>
+				</MenuItems>
 			</Transition>
 		</Menu>
 	);

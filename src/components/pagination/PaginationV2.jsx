@@ -28,12 +28,22 @@ export const PaginationV2 = ({ totalPages, bgColor, currentPage, setPage }) => {
 		};
 		const buildPagination = () => {
 			const pagination = [];
-			const totalPagesPages = Number(totalPages);
-			for (let i = 0; i < totalPagesPages; i++) {
-				i <= 4 && pagination.push(getPages(i + 1));
+			const total = Number(totalPages);
+			if (currentPage > 5 && total > 6 && currentPage < total) {
+				pagination.push(getPages(1))
+				pagination.push(<div>...</div>)
+				const numberPage = currentPage - 1;
+				for (let i = numberPage; i < (numberPage + 3); i++) {
+					pagination.push(getPages(i));
+				}
+			} else {
+				for (let i = 0; i < total; i++) {
+					i <= 4 && pagination.push(getPages(i + 1));
+				}
 			}
-			if (totalPagesPages > 4) pagination.push(<div>....</div>);
-			if (totalPagesPages > 5) pagination.push(getPages(totalPagesPages));
+
+			if (total > 4) pagination.push(<div>...</div>);
+			if (total > 5) pagination.push(getPages(total));
 			setPages(pagination);
 		};
 

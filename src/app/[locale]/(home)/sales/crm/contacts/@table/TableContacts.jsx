@@ -5,6 +5,7 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
+  CheckIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -30,17 +31,33 @@ import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions
+} from "@headlessui/react";
+import { formatDate } from "@/src/utils/getFormatDate";
+import useContactContext from "@/src/context/contacts";
+import { itemsByPage } from "@/src/lib/common";
+import { useRouter } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function TableContacts({ data }) {
+export default function TableContacts() {
+  const { data, limit, setLimit } = useContactContext()
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
+  const router = useRouter()
   const {
     setLastContactsUpdate,
     selectedContacts,
@@ -146,7 +163,10 @@ export default function TableContacts({ data }) {
   }
 
   const itemOptions = [
-    { name: "Ver" },
+    {
+      name: "Ver",
+      handleClick: (id) => router.push(`/sales/crm/contacts/contact/${id}?show=true`)
+    },
     { name: "Editar" },
     { name: "Copiar" },
     { name: "Eliminar" },
@@ -212,8 +232,6 @@ export default function TableContacts({ data }) {
                 {selectedColumns.length > 0 &&
                   dataContacts?.items &&
                   dataContacts?.items.map((contact, index) => {
-                    console.log(`Contacto #${index}`, contact);
-
                     return (
                       <tr
                         key={index}
@@ -266,7 +284,7 @@ export default function TableContacts({ data }) {
                               >
                                 <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                                   {itemOptions.map((item) => (
-                                    <MenuItem key={item.name}>
+                                    <MenuItem key={item.name} onClick={() => item.handleClick && item.handleClick(contact.id)}>
                                       {({ active }) => (
                                         <div
                                           // onClick={item.onClick}
@@ -357,22 +375,20 @@ export default function TableContacts({ data }) {
                                   contact.emails?.length > 0 ? (
                                     contact.emails[0].email.email
                                   ) : (
-                                    ""
+                                    "-"
                                   )
                                 ) : column.row === "phone" ? (
                                   contact.phones?.length > 0 ? (
                                     `+${contact.phones[0].phone.number}`
                                   ) : (
-                                    ""
+                                    "-"
                                   )
                                 ) : column.row === "birthdate" ? (
-                                  new Date(
-                                    contact.birthdate
-                                  ).toLocaleDateString() ?? null
+                                  formatDate(contact.birthdate, "dd/MM/yyyy")
+                                  ?? null
                                 ) : column.row === "createdAt" ? (
-                                  new Date(
-                                    contact.createdAt
-                                  ).toLocaleDateString() ?? null
+                                  formatDate(contact.createdAt, "dd/MM/yyyy")
+                                  ?? null
                                 ) : (
                                   contact[column.row] || "-"
                                 )}
@@ -389,6 +405,42 @@ export default function TableContacts({ data }) {
       </div>
       <div className="w-full mt-1 pt-4 sm:pt-0">
         <div className="flex justify-center">
+          <div className="flex gap-1 items-center">
+            <p>Mostrar:</p>
+            <Listbox value={limit} onChange={setLimit} as="div">
+              <ListboxButton
+                className={clsx(
+                  'relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6',
+                  'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2'
+                )}
+              >
+                {limit}
+                <ChevronDownIcon
+                  className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
+                  aria-hidden="true"
+                />
+              </ListboxButton>
+              <ListboxOptions
+                anchor="bottom"
+                transition
+                className={clsx(
+                  'rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl',
+                  'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                )}
+              >
+                {itemsByPage.map((page) => (
+                  <ListboxOption
+                    key={page.name}
+                    value={page.id}
+                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
+                  >
+                    <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
+                    <div className="text-sm/6">{page.name}</div>
+                  </ListboxOption>
+                ))}
+              </ListboxOptions>
+            </Listbox>
+          </div>
           <Pagination totalPages={dataContacts?.meta?.totalPages || 0} />
         </div>
         <div className="flex">

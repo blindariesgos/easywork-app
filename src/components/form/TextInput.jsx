@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 
 function TextInput({
@@ -34,7 +35,11 @@ function TextInput({
 						placeholder={placeholder}
 						rows={5}
 						{...props}
-						className="w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
+						className={clsx(
+							"w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm", {
+							"bg-gray-100": disabled
+						}
+						)}
 					/>
 				) : (
 					<input
@@ -52,7 +57,14 @@ function TextInput({
 						multiple={multiple}
 						rows={5}
 						{...props}
-						className={`w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md drop-shadow-sm placeholder:text-xs text-sm focus:ring-0 ${border ? "border border-gray-200 focus:ring-gray-200" : "border-none focus:ring-0 "} `}
+						className={clsx(
+							`w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md  placeholder:text-xs text-sm focus:ring-0 `, {
+							"border border-gray-200 focus:ring-gray-200": border,
+							"border-none focus:ring-0": !border,
+							"bg-gray-100": disabled,
+							"drop-shadow-sm": !disabled
+						}
+						)}
 					/>
 				)}
 

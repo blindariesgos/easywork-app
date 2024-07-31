@@ -39,16 +39,15 @@ export default function LayoutContact({ children }) {
         {
             id: 4,
             name: t("contacts:create:tabs:documents"),
+            href: "/tools/drive"
         }
     ]
     return (
-        <div className="bg-gray-100 h-full p-2 rounded-xl relative">
+        <div className="bg-gray-100 h-full p-2 rounded-xl relative flex flex-col gap-4">
             <Header />
-            <div className="flex flex-col w-full">
-                <HeaderCrm options={options} />
-                <ContactsHeader />
-                {children}
-            </div>
+            <HeaderCrm options={options} />
+            <ContactsHeader />
+            {children}
         </div>
     );
 }

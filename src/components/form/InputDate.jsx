@@ -6,11 +6,12 @@ import { getMonth, getYear } from 'date-fns';
 import range from 'lodash/range';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate, border, time, ...props }) => {
 	const { t } = useTranslation();
 	const { months } = useCommon();
-	const years = range(1990, getYear(new Date()) + 1, 1);
+	const years = range(1924, getYear(new Date()) + 1, 1);
 
 	return (
 		<div className="flex flex-col gap-y-2 w-full">
@@ -31,7 +32,7 @@ const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate
 								style={{
 									margin: 0,
 									display: 'flex',
-									justifyContent: 'center'
+									justifyContent: 'center',
 								}}
 							>
 								<button type="button" onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
@@ -79,8 +80,14 @@ const InputDate = ({ label, value, onChange, icon, error, disabled, inactiveDate
 					onChange={onChange}
 					// onBlur={onBlur}
 					icon={icon ? icon : undefined}
-					className={`w-full rounded-md text-sm h-9 shadow-sm focus:ring-0 z-50 ${border ? "border border-gray-200 focus:ring-gray-200 outline-none focus:outline-none" : "border-none focus:ring-0 "}`}
-					isClearable
+					className={clsx(
+						`w-full rounded-md text-sm h-9 focus:ring-0 z-50`, {
+						"border border-gray-200 focus:ring-gray-200 outline-none focus:outline-none": border,
+						"border-none focus:ring-0 ": !border,
+						"bg-gray-100": disabled,
+						"shadow-sm ": !disabled
+					})}
+					isClearable={!disabled}
 					disabled={disabled}
 					filterDate={date => {
 						return inactiveDate ? date <= inactiveDate : date;

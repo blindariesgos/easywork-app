@@ -27,11 +27,12 @@ import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter } from "next/navigation";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
+import Image from "next/image";
 
-export default function ContactEditor({ edit, id }) {
+export default function ContactEditor({ contact, id }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
-  const [openButtons, setOpenButtons] = useState(!edit);
+  const [isEdit, setIsEdit] = useState(false);
   const [contactType, setContactType] = useState(null);
   const [contactSource, setContactSource] = useState(null);
   const [contactResponsible] = useState(null);
@@ -43,22 +44,22 @@ export default function ContactEditor({ edit, id }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (edit) {
+    if (contact) {
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
           lists?.listContact?.contactTypes.filter(
-            (option) => option.id === edit?.type?.id
+            (option) => option.id === contact?.type?.id
           )[0]
         );
       lists?.listContact?.contactSources.length > 0 &&
         setContactSource(
           lists?.listContact?.contactSources.filter(
-            (option) => option.id === edit?.source?.id
+            (option) => option.id === contact?.source?.id
           )[0]
         );
-      setSelectedProfileImage({ base64: edit?.photo || null, file: null });
+      setSelectedProfileImage({ base64: contact?.photo || null, file: null });
     }
-  }, [edit, lists]);
+  }, [contact, lists]);
 
   const schema = Yup.object().shape({
     email: Yup.string()
@@ -68,16 +69,15 @@ export default function ContactEditor({ edit, id }) {
     name: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
-    // position: Yup.string().required(t("common:validations:required")),
+    position: Yup.string(),
     phone: Yup.string().required(t("common:validations:required")),
-    // rfc: Yup.string().required(t("common:validations:required")),
-    // cua: Yup.string().required(t("common:validations:required")),
-    // typeContact: Yup.string().required(t("common:validations:required"))
-    // otherType: Yup.string(),
-    // origin: Yup.string().required(t("common:validations:required")),
-    // address: Yup.string().required(t("common:validations:required")),
-    // responsible: Yup.string().required(t("common:validations:required"))
-    // birthday: Yup.string().required(t("common:validations:required")),
+    rfc: Yup.string(),
+    cua: Yup.string(),
+    typeContact: Yup.string(),
+    origin: Yup.string(),
+    address: Yup.string(),
+    responsible: Yup.string(),
+    birthday: Yup.string(),
   });
 
   const {
@@ -89,21 +89,29 @@ export default function ContactEditor({ edit, id }) {
     watch,
     formState: { isValid, errors },
   } = useForm({
-    defaultValues: {
-      name: edit ? edit?.fullName : "",
-      position: edit ? edit?.cargo : "",
-      phone: edit ? edit?.phones[0]?.phone?.number : "",
-      email: edit ? edit?.emails[0]?.email?.email : "",
-      rfc: edit ? edit?.curp : "",
-      cua: edit ? edit?.cua : "",
-      typeContact: edit ? edit?.type?.id : "",
-      origin: edit ? edit?.source?.id : "",
-      birthday: edit ? edit?.birthdate : "",
-      address: edit ? edit?.address : "",
-    },
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+
+    if (!id) {
+      setIsEdit(true)
+      return
+    }
+
+    if (contact?.fullName) setValue("name", contact?.fullName)
+    if (contact?.cargo) setValue("position", contact?.cargo)
+    if (contact?.phones[0]?.phone?.number) setValue("phone", contact?.phones[0]?.phone?.number)
+    if (contact?.emails[0]?.email?.email) setValue("email", contact?.emails[0]?.email?.email)
+    if (contact?.curp) setValue("rfc", contact?.curp)
+    if (contact?.cua) setValue("cua", contact?.cua)
+    if (contact?.type?.id) setValue("typeContact", contact?.type?.id)
+    if (contact?.source?.id) setValue("origin", contact?.source?.id)
+    if (contact?.birthdate) setValue("birthday", contact?.birthdate)
+    if (contact?.address) setValue("address", contact?.address)
+
+  }, [contact, id])
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -190,12 +198,12 @@ export default function ContactEditor({ edit, id }) {
 
     try {
       setLoading(true);
-      if (!edit) {
+      if (!contact) {
         await createContact(formData);
         await mutate(`/sales/crm/contacts?limit=10&page=1`);
         toast.success(t("contacts:create:msg"));
       } else {
-        await updateContact(formData, id);
+        await updateContact(body, id);
         if (selectedProfileImage.file) {
           const photo = new FormData();
           photo.append("photo", selectedProfileImage.file);
@@ -234,7 +242,7 @@ export default function ContactEditor({ edit, id }) {
               )}
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl sm:pl-6 pl-2">
-                  {edit ? edit.fullName ?? edit.name : t("leads:create:client")}
+                  {contact ? contact.fullName ?? contact.name : t("leads:create:client")}
                 </h1>
 
               </div>
@@ -249,20 +257,41 @@ export default function ContactEditor({ edit, id }) {
             <div className="md:w-2/5 bg-gray-100 md:overflow-y-scroll rounded-lg">
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("contacts:create:data")}</h1>
-                <button
-                  type="button"
-                  disabled={!id}
-                  onClick={() => setOpenButtons(!openButtons)}
-                >
-                  <PencilIcon className="h-6 w-6 text-primary" />
-                </button>
+                {
+                  contact && (
+                    <button
+                      type="button"
+                      disabled={!id}
+                      onClick={() => setIsEdit(!isEdit)}
+                      title="Editar"
+                    >
+                      <PencilIcon className="h-6 w-6 text-primary" />
+                    </button>
+                  )
+                }
               </div>
               <div className="flex justify-center">
-                <ProfileImageInput
-                  selectedProfileImage={selectedProfileImage}
-                  onChange={handleProfileImageChange}
-                  disabled={!openButtons}
-                />
+                {
+                  isEdit
+                    ? (
+                      <ProfileImageInput
+                        selectedProfileImage={selectedProfileImage}
+                        onChange={handleProfileImageChange}
+                        disabled={!isEdit}
+                      />
+                    ) : (
+                      <div className="p-2">
+                        <Image
+                          width={96}
+                          height={96}
+                          src={selectedProfileImage?.base64 || "/img/avatar.svg"}
+                          alt="Profile picture"
+                          className="h-16 w-16 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                          objectFit="fill"
+                        />
+                      </div>
+                    )
+                }
               </div>
               <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl px-5 mb-10 mt-8">
                 <TextInput
@@ -272,17 +301,15 @@ export default function ContactEditor({ edit, id }) {
                   error={errors.name}
                   register={register}
                   name="name"
-                  disabled={!openButtons}
-                //value={watch('name')}
+                  disabled={!isEdit}
                 />
                 <TextInput
                   label={t("contacts:create:position")}
                   placeholder={t("contacts:create:position")}
                   error={errors.position}
                   register={register}
-                  //value={watch('position')}
                   name="position"
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 />
                 <Controller
                   render={({ field: { ref, ...field } }) => {
@@ -293,7 +320,7 @@ export default function ContactEditor({ edit, id }) {
                         error={errors.phone}
                         label={t("contacts:create:phone")}
                         defaultValue={field.value}
-                        disabled={!openButtons}
+                        disabled={!isEdit}
                       />
                     );
                   }}
@@ -310,11 +337,11 @@ export default function ContactEditor({ edit, id }) {
                         onChange={onChange}
                         onBlur={onBlur}
                         icon={
-                          <FaCalendarDays className="h-3 w-3 text-primary pr-4" />
+                          <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                         }
                         error={errors.birthday}
-                        disabled={!openButtons}
-                        inactiveDate={eighteenYearsAgo}
+                        disabled={!isEdit}
+                      // inactiveDate={eighteenYearsAgo}
                       />
                     );
                   }}
@@ -328,8 +355,7 @@ export default function ContactEditor({ edit, id }) {
                   error={errors.email}
                   register={register}
                   name="email"
-                  //value={watch('email')}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 />
                 <TextInput
                   label={t("contacts:create:rfc")}
@@ -337,8 +363,7 @@ export default function ContactEditor({ edit, id }) {
                   error={errors.rfc}
                   register={register}
                   name="rfc"
-                  disabled={!openButtons}
-                //value={watch('rfc')}
+                  disabled={!isEdit}
                 />
                 <SelectInput
                   label={t("contacts:create:contact-type")}
@@ -348,7 +373,7 @@ export default function ContactEditor({ edit, id }) {
                   error={!watch("typeContact") && errors.typeContact}
                   register={register}
                   setValue={setValue}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 />
                 {watch("typeContact") == "Otro" ? (
                   <TextInput
@@ -357,7 +382,7 @@ export default function ContactEditor({ edit, id }) {
                     error={errors.otherType}
                     register={register}
                     name="otherType"
-                    disabled={!openButtons}
+                    disabled={!isEdit}
                   //value={watch('otherType')}
                   />
                 ) : null}
@@ -367,7 +392,7 @@ export default function ContactEditor({ edit, id }) {
                   register={register}
                   name="address"
                   placeholder={t("contacts:create:placeholder-address")}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 //value={watch('address')}
                 />
                 <SelectInput
@@ -378,7 +403,7 @@ export default function ContactEditor({ edit, id }) {
                   error={!watch("origin") && errors.origin}
                   register={register}
                   setValue={setValue}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 //value={watch('origin')}
                 />
                 <SelectDropdown
@@ -387,7 +412,7 @@ export default function ContactEditor({ edit, id }) {
                   options={lists?.users}
                   selectedOption={contactResponsible}
                   register={register}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                   error={!watch("responsible") && errors.responsible}
                   setValue={setValue}
                 // //value={watch('responsible')}
@@ -397,17 +422,22 @@ export default function ContactEditor({ edit, id }) {
                   error={errors.cua}
                   register={register}
                   name="cua"
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 //value={watch('cua')}
                 // placeholder={t('contacts:create:placeholder-address')}
                 />
-                <DocumentSelector
-                  name="files"
-                  onChange={handleFilesUpload}
-                  files={files}
-                  disabled={!openButtons}
-                  setFiles={setFiles}
-                />
+                {
+                  isEdit && (
+                    <DocumentSelector
+                      name="files"
+                      onChange={handleFilesUpload}
+                      files={files}
+                      disabled={!isEdit}
+                      setFiles={setFiles}
+                    />
+
+                  )
+                }
               </div>
             </div>
 
@@ -417,8 +447,8 @@ export default function ContactEditor({ edit, id }) {
           {/* )} */}
 
           {/* Botones de acción */}
-          {(openButtons || !edit) && (
-            <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
+          {(isEdit || !contact) && (
+            <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
               <Button
                 type="submit"
                 label={

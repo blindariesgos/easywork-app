@@ -16,7 +16,7 @@ export default function ContactDetails({ id }) {
     </SlideOver>
   }
 
-  if (isLoading) <LoaderSpinner />
+  if (isLoading) (<LoaderSpinner />)
 
   console.log("Contact", contact);
 
@@ -26,7 +26,7 @@ export default function ContactDetails({ id }) {
         fallback={<LoaderSpinner />
         }
       >
-        <ContactEditor edit={contact} id={id} />
+        <ContactEditor contact={contact} id={id} />
       </Suspense>
     </SlideOver>
   )

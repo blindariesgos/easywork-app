@@ -15,29 +15,8 @@ import { useAlertContext } from "@/src/context/common/AlertContext";
 import useTasksContext from "@/src/context/tasks";
 import { renderCellContent } from "./utils"
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { itemsByPage } from "@/src/lib/common";
 
-const itemsByPage = [
-  {
-    id: 5,
-    name: "5"
-  },
-  {
-    id: 10,
-    name: "10"
-  },
-  {
-    id: 25,
-    name: "25"
-  },
-  {
-    id: 50,
-    name: "50"
-  },
-  {
-    id: 100,
-    name: "100"
-  }
-]
 
 export default function TableTask() {
   const checkbox = useRef();

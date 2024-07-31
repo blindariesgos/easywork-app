@@ -52,7 +52,7 @@ export default function TableLeads({ data }) {
 
   useEffect(
     () => {
-      if (orderItems.length > 0)
+      if (orderItems?.length > 0)
         setDataLeads({ items: orderItems, meta: data?.meta });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

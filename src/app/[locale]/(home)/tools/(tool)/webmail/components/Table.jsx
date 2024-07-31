@@ -1,6 +1,7 @@
 "use client";
 import clsx from "clsx";
 import Image from "next/image";
+import axios from "axios";
 import React, { useRef, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +14,7 @@ import { useSession } from "next-auth/react";
 import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
 import { Bars3Icon } from "@heroicons/react/20/solid";
+import useAppContext from "../../../../../../../context/app";
 import {
   MenuButton,
   MenuItem,
@@ -35,6 +37,7 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
   const [mailsData, setMailsData] = useState(mails);
   const [selectMail, setSelectMail] = useState(mails);
   const session = useSession();
+  const { selectOauth } = useAppContext();
 
   function toggleAll() {
     setSelectedTasks(checked || indeterminate ? [] : mails);
@@ -48,15 +51,25 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
       emailForDelete.push(element.email.id);
     });
     console.log(emailForDelete);
+  }
 
-    // await deleteMails();
+  async function deleteEmail(item) {
+    const array = [];
+    array.push(item.email.googleId);
+    console.log(array);
+    await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/deleteemail/${session.data.user.id}/${selectOauth?.id}`,
+      {
+        data: array,
+      }
+    );
   }
 
   const itemOptions = [
     { name: "Marcar como no leido", onClick: "" },
     { name: "Mover a la carpeta", onClick: "" },
     { name: "Marcar como correo no deseado", onClick: "" },
-    { name: "Eliminar", onClick: "" },
+    { name: "Eliminar", onClick: (item) => deleteEmail(item) },
     { name: "Excluir de CRM", onClick: "" },
     { name: "Crear tareas", onClick: "" },
     { name: "Crear eventos", onClick: "" },
@@ -149,59 +162,58 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
                         <div className="flex items-center h-full">
-                        <input
-                          type="checkbox"
-                          className="..."
-                          value={item.id}
-                          checked={selectedTasks.includes(item)}
-                          onChange={(e) =>
-                            setSelectedTasks(
-                              e.target.checked
-                                ? [...selectedTasks, item]
-                                : selectedTasks.filter((p) => p !== item)
-                            )
-                          }
-                        />
-                        <Menu
-                          as="div"
-                          className="hover:bg-slate-50/30 w-10 md:w-auto rounded-lg"
-                        >
-                          <MenuButton className="-m-1.5 flex items-center p-1.5">
-                            <Bars3Icon
-                              className="ml-3 h-4 w-4 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </MenuButton>
-                          <Transition
-                            as={Fragment}
-                            enter="transition ease-out duration-100"
-                            enterFrom="transform opacity-0 scale-95"
-                            enterTo="transform opacity-100 scale-100"
-                            leave="transition ease-in duration-75"
-                            leaveFrom="transform opacity-100 scale-100"
-                            leaveTo="transform opacity-0 scale-95"
+                          <input
+                            type="checkbox"
+                            className="..."
+                            value={item.id}
+                            checked={selectedTasks.includes(item)}
+                            onChange={(e) =>
+                              setSelectedTasks(
+                                e.target.checked
+                                  ? [...selectedTasks, item]
+                                  : selectedTasks.filter((p) => p !== item)
+                              )
+                            }
+                          />
+                          <Menu
+                            as="div"
+                            className="hover:bg-slate-50/30 w-10 md:w-auto rounded-lg"
                           >
-                            <MenuItems className="absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                              {itemOptions.map((item, index) => (
-                                <MenuItem key={index}>
-                                  {({ active }) => (
-                                    <div
-                                      onClick={item.onClick}
-                                      className={classNames(
-                                        active ? "bg-gray-50" : "",
-                                        "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                                      )}
-                                    >
-                                      {item.name}
-                                    </div>
-                                  )}
-                                </MenuItem>
-                              ))}
-                            </MenuItems>
-                          </Transition>
-                        </Menu>
+                            <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <Bars3Icon
+                                className="ml-3 h-4 w-4 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </MenuButton>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <MenuItems className="absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                {itemOptions.map((itemOp, index) => (
+                                  <MenuItem key={index}>
+                                    {({ active }) => (
+                                      <div
+                                        onClick={() => itemOp.onClick(item)}
+                                        className={classNames(
+                                          active ? "bg-gray-50" : "",
+                                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                        )}
+                                      >
+                                        {itemOp.name}
+                                      </div>
+                                    )}
+                                  </MenuItem>
+                                ))}
+                              </MenuItems>
+                            </Transition>
+                          </Menu>
                         </div>
-
                       </div>
                       <div
                         onClick={() => {

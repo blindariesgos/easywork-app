@@ -2,6 +2,7 @@
 "use client";
 import { Combobox, Transition, ComboboxButton, ComboboxOptions, ComboboxOption, ComboboxInput, Label } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import clsx from "clsx";
 import Image from "next/image";
 import React, { Fragment, useEffect, useState } from "react";
 
@@ -14,7 +15,8 @@ function SelectDropdown({
   name,
   error,
   setValue,
-  className
+  className,
+  border
 }) {
   const registerInput = register && register(name);
   const [selected, setSelected] = useState(selectedOption);
@@ -46,8 +48,14 @@ function SelectDropdown({
         </Label>
         <div className="relative mt-1">
           <ComboboxInput
-            // {...registerInput}
-            className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
+            className={clsx(
+              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ", {
+              "border border-gray-200 focus:ring-gray-200 focus:outline-0": border,
+              "border-none focus:ring-0 ": !border,
+              "bg-gray-100": disabled,
+              "drop-shadow-sm": !disabled
+            }
+            )}
             displayValue={(person) => person?.name || person?.username}
             onChange={(event) => {
               // registerInput && registerInput.onChange(event);
@@ -55,12 +63,17 @@ function SelectDropdown({
             }
             }
           />
-          <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronDownIcon
-              className="h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
-          </ComboboxButton>
+          {
+            !disabled && (
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDownIcon
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </ComboboxButton>
+
+            )
+          }
           <Transition
             as={Fragment}
             leave="transition ease-in duration-100"

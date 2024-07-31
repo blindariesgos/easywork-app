@@ -2,15 +2,16 @@
 import useSWR from "swr";
 import fetcher from "../fetcher";
 
-export const useContacts = ({ page = 1 }) => {
-  const { data, error, isLoading } = useSWR(
-    `/sales/crm/contacts?limit=10&page=${page}`,
+export const useContacts = ({ page = 1, limit = 15 }) => {
+  const { data, error, isLoading, mutate } = useSWR(
+    `/sales/crm/contacts?limit=${limit}&page=${page}`,
     fetcher,
   );
   return {
     contacts: data,
     isLoading,
     isError: error,
+    mutate
   };
 };
 

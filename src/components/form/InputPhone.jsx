@@ -10,7 +10,7 @@ const InputPhone = ({
     field,
     disabled,
     ...props
-  }) => {
+}) => {
     return (
         <div className="flex flex-col gap-y-2">
             {label && (
@@ -33,8 +33,13 @@ const InputPhone = ({
                             borderRadius: "0.5rem",
                             outline: "none",
                             fontSize: "14px",
-                            boxShadow: "0 1px 1px rgb(0 0 0 / 0.05)",
+                            boxShadow: disabled ? "" : "0 1px 1px rgb(0 0 0 / 0.05)",
+                            background: disabled ? "#f2f6f7" : ""
+
                         }}
+                        inputClass={clsx({
+                            "bg-gray-100": disabled,
+                        })}
                         buttonStyle={{
                             borderRadius: "0.5rem 0 0 0.5rem",
                             border: "none"
@@ -55,7 +60,7 @@ const InputPhone = ({
                         value={defaultValue}
                         disabled={disabled}
                     />
-                </div>    
+                </div>
                 {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
             </div>
         </div>

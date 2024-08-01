@@ -74,7 +74,7 @@ export const useSidebar = () => {
         },
         {
           name: t("common:menu:tools:email"),
-          href: "/tools//mails",
+          href: "/tools//mails/middleware",
           image: "/img/herramientas/correo.png",
           iconShortBar: InboxArrowDownIcon,
         },

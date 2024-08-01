@@ -466,7 +466,7 @@ export default function WebmailLayout({ children, table }) {
             </ul>
           </div>
         </SliderOverEmail>
-        {dmails && <Table mails={dmails} selectedFolder={selectedFolder} />}
+        {dmails && <Table mails={dmails} fetchData={fetchData} selectedFolder={selectedFolder} />}
         {children}
         <div className="flex justify-center">
           <Pagination totalPages={10} bgColor="bg-gray-300" />

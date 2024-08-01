@@ -13,7 +13,7 @@ import {
 import { useSession } from "next-auth/react";
 import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
-import { Bars3Icon } from "@heroicons/react/20/solid";
+import { Bars3Icon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import useAppContext from "../../../../../../../context/app";
 import {
   MenuButton,
@@ -27,7 +27,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Table({ mails, selectedFolder = "INBOX" }) {
+export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   const router = useRouter();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -57,12 +57,13 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
     const array = [];
     array.push(item.email.googleId);
     console.log(array);
-    await axios.delete(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/deleteemail/${session.data.user.id}/${selectOauth?.id}`,
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/labeltrash/${session.data.user.id}/${selectOauth?.id}`,
       {
         data: array,
       }
     );
+    fetchData();
   }
 
   const itemOptions = [
@@ -74,6 +75,11 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
     { name: "Crear tareas", onClick: "" },
     { name: "Crear eventos", onClick: "" },
     { name: "Eliminar permanentemente", onClick: "" },
+  ];
+
+  const folderOptions = [
+    { name: "Spam", onClick: "" },
+    { name: "Archivados", onClick: "" },
   ];
 
   return (
@@ -205,7 +211,57 @@ export default function Table({ mails, selectedFolder = "INBOX" }) {
                                           "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                                         )}
                                       >
-                                        {itemOp.name}
+                                        {itemOp.name !==
+                                        "Mover a la carpeta" ? (
+                                          itemOp.name
+                                        ) : (
+                                          <Menu>
+                                            <MenuButton className="flex items-center">
+                                              <div className="w-full flex items-center justify-between">
+                                                {itemOp.name}
+                                                <ChevronRightIcon className="h-6 w-6 ml-4" />
+                                              </div>
+                                            </MenuButton>
+                                            <Transition
+                                              as={Fragment}
+                                              enter="transition ease-out duration-100"
+                                              enterFrom="transform opacity-0 scale-95"
+                                              enterTo="transform opacity-100 scale-100"
+                                              leave="transition ease-in duration-75"
+                                              leaveFrom="transform opacity-100 scale-100"
+                                              leaveTo="transform opacity-0 scale-95"
+                                            >
+                                              <MenuItems
+                                                anchor={{
+                                                  to: "right start",
+                                                  gap: "12px",
+                                                }}
+                                                className="rounded-md bg-white py-2 z-50 shadow-lg focus:outline-none"
+                                              >
+                                                {folderOptions.map(
+                                                  (subitem) => (
+                                                    <MenuItem
+                                                      key={subitem.name}
+                                                    >
+                                                      {({ active }) => (
+                                                        <div
+                                                          className={clsx(
+                                                            active
+                                                              ? "bg-gray-50 text-white"
+                                                              : "text-black",
+                                                            "block px-3 py-1 text-sm leading-6  cursor-pointer"
+                                                          )}
+                                                        >
+                                                          {subitem.name}
+                                                        </div>
+                                                      )}
+                                                    </MenuItem>
+                                                  )
+                                                )}
+                                              </MenuItems>
+                                            </Transition>
+                                          </Menu>
+                                        )}
                                       </div>
                                     )}
                                   </MenuItem>

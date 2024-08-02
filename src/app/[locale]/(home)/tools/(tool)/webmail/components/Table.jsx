@@ -46,23 +46,44 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   }
 
   async function deleteEmails() {
-    let emailForDelete = [];
-    selectedTasks.forEach((element) => {
-      emailForDelete.push(element.email.id);
+    const array = [];
+    selectedTasks.forEach(element => {
+      array.push(element.email.googleId);
     });
-    console.log(emailForDelete);
+    updateLabelId(array, 'trash');
   }
 
-  async function deleteEmail(item) {
-    const array = [];
-    array.push(item.email.googleId);
-    console.log(array);
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/labeltrash/${session.data.user.id}/${selectOauth?.id}`,
-      {
-        data: array,
-      }
-    );
+  async function updateLabelId(array, label) {
+    if (label === "trash"){
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/trash/${session.data.user.id}/${selectOauth?.id}`,
+        {
+          data: array,
+        }
+      );
+    } else if (label === "spam"){
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/spam/${session.data.user.id}/${selectOauth?.id}`,
+        {
+          data: array,
+        }
+      );
+    } else if (label === "archived"){
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/archived/${session.data.user.id}/${selectOauth?.id}`,
+        {
+          data: array,
+        }
+      );
+    } else {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
+        {
+          data: array,
+        }
+      );
+    }
+
     fetchData();
   }
 
@@ -70,7 +91,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     { name: "Marcar como no leido", onClick: "" },
     { name: "Mover a la carpeta", onClick: "" },
     { name: "Marcar como correo no deseado", onClick: "" },
-    { name: "Eliminar", onClick: (item) => deleteEmail(item) },
+    { name: "Eliminar", onClick: (item) => updateLabelId([item], 'trash') },
     { name: "Excluir de CRM", onClick: "" },
     { name: "Crear tareas", onClick: "" },
     { name: "Crear eventos", onClick: "" },
@@ -78,8 +99,9 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   ];
 
   const folderOptions = [
-    { name: "Spam", onClick: "" },
-    { name: "Archivados", onClick: "" },
+    { name: "Inbox", onClick: (item) => updateLabelId([item], 'inbox') },
+    { name: "Spam", onClick: (item) => updateLabelId([item], 'spam') },
+    { name: "Archivados", onClick: (item) => updateLabelId([item], 'archived') },
   ];
 
   return (
@@ -205,7 +227,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                   <MenuItem key={index}>
                                     {({ active }) => (
                                       <div
-                                        onClick={() => itemOp.onClick(item)}
+                                        onClick={() => itemOp.onClick(item.email.googleId)}
                                         className={classNames(
                                           active ? "bg-gray-50" : "",
                                           "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
@@ -251,6 +273,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                                               : "text-black",
                                                             "block px-3 py-1 text-sm leading-6  cursor-pointer"
                                                           )}
+                                                          onClick={() => subitem.onClick(item.email.googleId)}
                                                         >
                                                           {subitem.name}
                                                         </div>

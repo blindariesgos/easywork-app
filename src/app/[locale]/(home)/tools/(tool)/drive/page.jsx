@@ -40,7 +40,6 @@ export default function DrivePage() {
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-
   useLayoutEffect(() => {
     const isIndeterminate =
       selectedFiles.length > 0 && selectedFiles.length < folders?.length;

@@ -95,9 +95,14 @@
       },
       "marketing": {
         "name": "Marketing"
-      },
-      "control": {
-        "name": "Cobranza"
+      }
+    },
+    "control": {
+      "name": "Cobranza",
+      "portfolio": {
+        "name": "Control de Cartera",
+        "control": "Cobranza",
+        "receipts": "Recibos"
       }
     },
     "services": {

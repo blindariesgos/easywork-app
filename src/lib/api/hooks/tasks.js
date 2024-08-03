@@ -7,7 +7,6 @@ export const useTasks = ({ filters = {}, page = 1, limit = 15 }) => {
     ? Object.keys(filters).map(key => `${key}=${filters[key]}`).join('&')
     : ""
   const url = `/tools/tasks/user?limit=${limit}&page=${page}${urlFilter.length > 0 ? `&${urlFilter}` : ""}`
-  console.log({ url })
   const { data, error, isLoading, mutate } = useSWR(
     url,
     fetcher,

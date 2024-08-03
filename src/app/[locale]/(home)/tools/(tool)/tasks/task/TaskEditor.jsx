@@ -123,12 +123,13 @@ export default function TaskEditor({ edit, copy, subtask }) {
   useEffect(() => {
     if (params.get("prev") === "contact") {
       const prevId = params.get("prev_id");
-      setContactCRM(prevId);
-      setValue("crm", [{ id: prevId, type: "contact" }]);
+      if (!listContactsPolizas || !listContactsPolizas?.contacts) return;
+      const contact = listContactsPolizas.contacts.find(contact => contact.id == prevId)
+      setValue("crm", [{ id: contact.id, type: "contact", name: contact.name }]);
       setValue("name", "CRM: ");
       setOpenOptions((prev) => ({ ...prev, more: true }));
     }
-  }, [params]);
+  }, [params.get("prev"), listContactsPolizas]);
 
   useEffect(() => {
     if (session) {
@@ -183,6 +184,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
 
   if (isError) {
     console.log("Error al cargar lista de contactos y tasks");
+  }
+
+  const handleCancel = () => {
+    if (params.get("prev")) {
+      router.back()
+    } else {
+      router.push(`/tools/tasks?page=1`)
+    }
   }
 
   return (
@@ -536,20 +545,12 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       {t("tools:tasks:new:crm")}
                     </p>
                     <div className="w-full md:w-[40%]">
-                      <Controller
+                      <MultipleSelectWithFilters
+                        data={listContactsPolizas || {}}
+                        getValues={getValues}
+                        setValue={setValue}
                         name="crm"
-                        control={control}
-                        defaultValue={[]}
-                        render={({ field }) => (
-                          <MultipleSelectWithFilters
-                            {...field}
-                            data={listContactsPolizas || {}}
-                            getValues={getValues}
-                            setValue={setValue}
-                            name="crm"
-                            error={errors.crm}
-                          />
-                        )}
+                        error={errors.crm}
                       />
                     </div>
                   </div>
@@ -558,19 +559,11 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       {t("tools:tasks:new:tags")}
                     </p>
                     <div className="w-full md:w-[40%]">
-                      <Controller
+                      <MultiSelectTags
+                        getValues={getValues}
+                        setValue={setValue}
                         name="tags"
-                        control={control}
-                        defaultValue={[]}
-                        render={({ field }) => (
-                          <MultiSelectTags
-                            {...field}
-                            getValues={getValues}
-                            setValue={setValue}
-                            name="tags"
-                            error={errors.tags}
-                          />
-                        )}
+                        error={errors.tags}
                       />
                     </div>
                   </div>
@@ -599,7 +592,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
               buttonStyle="secondary"
               disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
-              onclick={() => router.push(`/tools/tasks?page=1`)}
+              onclick={handleCancel}
             />
           </div>
         </div>

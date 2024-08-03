@@ -8,13 +8,13 @@ import { FiHardDrive } from "react-icons/fi";
 
 export default function DriveBreadcrumb() {
   const { t } = useTranslation();
-  const { pages, returnFolder } = useDriveContext()
+  const { pages, returnFolder, externalFolderInfo } = useDriveContext()
   return (
     <nav className="flex ml-3" aria-label="Breadcrumb">
       <ol role="list" className="flex items-center gap-x-2">
         <li>
           <div className={clsx(
-            "text-gray-400  ",
+            "text-gray-400  flex gap-2",
             {
               "hover:text-gray-500 cursor-pointer": pages.length > 0
             }
@@ -23,7 +23,11 @@ export default function DriveBreadcrumb() {
               className="h-5 w-5 flex-shrink-0"
               aria-hidden="true"
             />
-            <span className="sr-only">{t('tools:drive:home')}</span>
+            {
+              externalFolderInfo && (
+                <span className="text-sm font-medium text-gray-400">{externalFolderInfo.name}</span>
+              )
+            }
           </div>
         </li>
         {pages.length > 0 && pages.map((page, index) => (

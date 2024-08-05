@@ -37,10 +37,10 @@ const FiltersContact = () => {
         setSearchInput(" ");
       }
     };
-  
-    document.body.addEventListener("mousedown", handleClickOutside);
+
+    document?.body?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.body.removeEventListener("mousedown", handleClickOutside);
+      document?.body?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref]);
 
@@ -114,11 +114,10 @@ const FiltersContact = () => {
                           onClick={() => handleSelected(cont.id)}
                         >
                           <p
-                            className={`text-sm uppercase  ${
-                              cont.selected
+                            className={`text-sm uppercase  ${cont.selected
                                 ? "text-primary font-medium"
                                 : "text-gray-60"
-                            }`}
+                              }`}
                           >
                             {cont.name}
                           </p>

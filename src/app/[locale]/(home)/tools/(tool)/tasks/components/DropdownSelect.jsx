@@ -32,9 +32,9 @@ const DropdownSelect = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -60,10 +60,10 @@ const DropdownSelect = ({
     query === ""
       ? options
       : options.filter((opt) => {
-          return `${opt.username} ${opt.name}`
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        });
+        return `${opt.username} ${opt.name}`
+          .toLowerCase()
+          .includes(query.toLowerCase());
+      });
 
   return (
     <div>
@@ -93,12 +93,11 @@ const DropdownSelect = ({
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                      getValues(name) &&
-                      getValues(name).some((res) => res.id === option.id)
+                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${getValues(name) &&
+                        getValues(name).some((res) => res.id === option.id)
                         ? "bg-primary"
                         : "hover:bg-primary/10"
-                    }`}
+                      }`}
                     onClick={() => handleSelect(option)}
                   >
                     {option.avatar && (
@@ -111,12 +110,11 @@ const DropdownSelect = ({
                       />
                     )}
                     <span
-                      className={`text-xs ${
-                        getValues(name) &&
-                        getValues(name).some((res) => res.id === option.id)
+                      className={`text-xs ${getValues(name) &&
+                          getValues(name).some((res) => res.id === option.id)
                           ? "text-white"
                           : "text-black"
-                      }`}
+                        }`}
                     >
                       {option.name || option.username}
                     </span>

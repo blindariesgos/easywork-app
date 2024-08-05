@@ -24,7 +24,11 @@ import { postTask, putTaskId } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import { useTaskContactsPolizas, useTasks, useTasksList } from "@/src/lib/api/hooks/tasks";
+import {
+  useTaskContactsPolizas,
+  useTasks,
+  useTasksList,
+} from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
@@ -54,7 +58,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
-  const [value, setValueText] = useState(edit?.description ?? copy?.description ?? "");
+  const [value, setValueText] = useState(
+    edit?.description ?? copy?.description ?? ""
+  );
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
@@ -62,18 +68,29 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [contactCRM, setContactCRM] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { mutate: mutateTasks } = useTasks({})
+  const { mutate: mutateTasks } = useTasks({});
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
-    participants: (edit?.participants?.length ?? copy?.participants?.length) > 0,
+    participants:
+      (edit?.participants?.length ?? copy?.participants?.length) > 0,
     observers: (edit?.observers?.length ?? copy?.observers?.length) > 0,
     time: !!(edit?.deadline ?? copy?.deadline),
-    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) || (edit?.requireRevision ?? copy?.requireRevision),
+    options:
+      (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) ||
+      (edit?.requireRevision ?? copy?.requireRevision),
     more: (edit?.crm?.length ?? copy?.crm?.length ?? subtask) > 0,
   });
 
-  const { data: listContactsPolizas, isLoading, isError } = useTaskContactsPolizas();
-  const { tasksList, isLoading: isLoadingList, isError: isErrorList } = useTasksList();
+  const {
+    data: listContactsPolizas,
+    isLoading,
+    isError,
+  } = useTaskContactsPolizas();
+  const {
+    tasksList,
+    isLoading: isLoadingList,
+    isError: isErrorList,
+  } = useTasksList();
 
   const optionsTime = [
     {
@@ -108,7 +125,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
       name: edit?.name ?? copy?.name ?? "",
       limitDate: edit?.deadline ?? copy?.deadline ?? "",
       startDate: edit?.startTime ?? copy?.startTime ?? "",
-      endDate: (edit?.startTime || copy?.startTime) ? edit?.deadline ?? copy?.deadline ?? "" : "",
+      endDate:
+        edit?.startTime || copy?.startTime
+          ? edit?.deadline ?? copy?.deadline ?? ""
+          : "",
       participants: edit?.participants ?? copy?.participants ?? [],
       responsible: edit?.responsible ?? copy?.responsible ?? [],
       observers: edit?.observers ?? copy?.observers ?? [],
@@ -120,12 +140,18 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
+  console.log("Edit", edit);
+
   useEffect(() => {
     if (params.get("prev") === "contact") {
       const prevId = params.get("prev_id");
       if (!listContactsPolizas || !listContactsPolizas?.contacts) return;
-      const contact = listContactsPolizas.contacts.find(contact => contact.id == prevId)
-      setValue("crm", [{ id: contact.id, type: "contact", name: contact.name }]);
+      const contact = listContactsPolizas.contacts.find(
+        (contact) => contact.id == prevId
+      );
+      setValue("crm", [
+        { id: contact.id, type: "contact", name: contact.name },
+      ]);
       setValue("name", "CRM: ");
       setOpenOptions((prev) => ({ ...prev, more: true }));
     }
@@ -152,8 +178,17 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (value === "") return toast.error(t("tools:tasks:description"));
     if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
-    const crm = data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
-    const body = buildTaskBody(data, value, selectedOptions, session, crm, listField, t);
+    const crm =
+      data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
+    const body = buildTaskBody(
+      data,
+      value,
+      selectedOptions,
+      session,
+      crm,
+      listField,
+      t
+    );
 
     try {
       setLoading(true);
@@ -177,7 +212,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     } catch (error) {
       handleApiError(error.message);
     } finally {
-      mutateTasks()
+      mutateTasks();
       setLoading(false);
     }
   };
@@ -188,23 +223,26 @@ export default function TaskEditor({ edit, copy, subtask }) {
 
   const handleCancel = () => {
     if (params.get("prev")) {
-      router.back()
+      router.back();
     } else {
-      router.push(`/tools/tasks?page=1`)
+      router.push(`/tools/tasks?page=1`);
     }
-  }
+  };
 
   return (
     <>
       {loading || (isLoading && <LoaderSpinner />)}
       <div
-        className={`col-span-12 flex flex-col ${edit ? "h-full" : "h-screen"
-          } relative w-full ${!edit && "overflow-y-auto"}`}
+        className={`col-span-12 flex flex-col ${
+          edit ? "h-full" : "h-screen"
+        } relative w-full ${!edit && "overflow-y-auto"}`}
       >
         <div
-          className={`flex flex-col flex-1 ${!edit && "bg-gray-600 shadow-xl"
-            } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? "sm:p-0" : "sm:p-4"
-            }`}
+          className={`flex flex-col flex-1 ${
+            !edit && "bg-gray-600 shadow-xl"
+          } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${
+            edit ? "sm:p-0" : "sm:p-4"
+          }`}
         >
           {(!edit ?? !copy) && (
             <div className="flex justify-between items-center py-2">
@@ -242,8 +280,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
                 />
                 <p className="text-sm">{t("tools:tasks:new:high")}</p>
                 <FireIcon
-                  className={`h-5 w-5 ${check ? "text-orange-400" : "text-gray-200"
-                    }`}
+                  className={`h-5 w-5 ${
+                    check ? "text-orange-400" : "text-gray-200"
+                  }`}
                 />
               </div>
             </div>
@@ -490,8 +529,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
               >
                 <div>
                   <ChevronDownIcon
-                    className={`w-4 h-4 ${openOptions.more && "rotate-180"
-                      } text-primary`}
+                    className={`w-4 h-4 ${
+                      openOptions.more && "rotate-180"
+                    } text-primary`}
                   />
                 </div>
                 <div className="flex gap-2 text-sm">
@@ -573,19 +613,27 @@ export default function TaskEditor({ edit, copy, subtask }) {
           </div>
           <div className={`flex gap-4 flex-wrap mt-4 ${edit && "mb-4"}`}>
             <Button
-              label={loading ? t("common:saving") : edit ? t("tools:tasks:new:update-task") : t("tools:tasks:new:add-task")}
+              label={
+                loading
+                  ? t("common:saving")
+                  : edit
+                    ? t("tools:tasks:new:update-task")
+                    : t("tools:tasks:new:add-task")
+              }
               buttonStyle="primary"
               disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleSubmit((data) => createTask(data, false))}
             />
-            {!edit && <Button
-              label={t("tools:tasks:new:add-create")}
-              buttonStyle="secondary"
-              disabled={loading}
-              className="px-3 py-2 drop-shadow-lg"
-              onclick={handleSubmit((data) => createTask(data, true))}
-            />}
+            {!edit && (
+              <Button
+                label={t("tools:tasks:new:add-create")}
+                buttonStyle="secondary"
+                disabled={loading}
+                className="px-3 py-2 drop-shadow-lg"
+                onclick={handleSubmit((data) => createTask(data, true))}
+              />
+            )}
 
             <Button
               label={t("common:buttons:cancel")}
@@ -602,13 +650,18 @@ export default function TaskEditor({ edit, copy, subtask }) {
 }
 
 const formatCrmData = (crmData) => {
+  console.log("crmData", crmData);
   if (!crmData) return [];
-  return crmData.map((item) => ({
-    id: item?.contact?.id ?? item?.poliza?.id,
-    type: item?.type,
-    name: item?.contact?.name,
-    title: item?.poliza?.title ?? item?.poliza?.noPoliza,
-  }));
+
+  if (Array.isArray(crmData))
+    return crmData.map((item) => ({
+      id: item?.contact?.id ?? item?.poliza?.id,
+      type: item?.type,
+      name: item?.contact?.name,
+      title: item?.poliza?.title ?? item?.poliza?.noPoliza,
+    }));
+
+  return [{ id: crmData, type: "contact", name: "" }];
 };
 
 const getSelectedOptions = (edit, t) => {
@@ -628,7 +681,15 @@ const getSelectedOptions = (edit, t) => {
   return optionsSelected;
 };
 
-const buildTaskBody = (data, description, selectedOptions, session, crm, listField, t) => {
+const buildTaskBody = (
+  data,
+  description,
+  selectedOptions,
+  session,
+  crm,
+  listField,
+  t
+) => {
   const body = {
     name: data.name,
     description,
@@ -658,13 +719,14 @@ const buildTaskBody = (data, description, selectedOptions, session, crm, listFie
     body.listField = listField.map((item) => ({
       text: item.name,
       completed: item.subItems.every((subItem) => subItem.value),
-      child: item.subItems.filter((subItem) => subItem.name).map((subItem) => ({
-        text: subItem.name,
-        completed: subItem.value,
-      })),
+      child: item.subItems
+        .filter((subItem) => subItem.name)
+        .map((subItem) => ({
+          text: subItem.name,
+          completed: subItem.value,
+        })),
     }));
   }
-
 
   body.deadline = getFormatDate(data.limitDate ?? data.endDate) ?? null;
   body.startTime = getFormatDate(data.startDate) ?? null;

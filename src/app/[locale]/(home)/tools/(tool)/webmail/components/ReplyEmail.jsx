@@ -18,7 +18,7 @@ import axios from "axios";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-export default function SendMessage({
+export default function ReplyEmail({
   selectOauth,
   setOpenModal,
   children,
@@ -58,7 +58,7 @@ export default function SendMessage({
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
-  }, [params.get("send")]);
+  }, [params.get("reply")]);
 
   const handleFileClick = () => {
     fileInputRef.current.click();
@@ -137,20 +137,20 @@ export default function SendMessage({
   ];
 
   return (
-    <Transition.Root show={params.get("send")} as={Fragment}>
+    <Transition.Root show={params.get("reply")} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>
-        <div className="fixed inset-0" />
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
+        <div className="fixed inset-96" />
+        <div className="fixed inset-96 overflow-hidden">
+          <div className="absolute inset-96 overflow-hidden">
+            <div className="pointer-events-none fixed inset-y-96 right-0 flex max-w-full pl-0 2xl:pl-52">
               <Transition.Child
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
-                enterFrom="translate-x-full"
-                enterTo="translate-x-0"
+                enterFrom="translate-y-full"
+                enterTo="translate-y-96"
                 leave="transform transition ease-in-out duration-500 sm:duration-700"
-                leaveFrom="translate-x-0"
-                leaveTo="translate-x-full"
+                leaveFrom="translate-y-96"
+                leaveTo="translate-y-full"
               >
                 <Dialog.Panel
                   className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
@@ -177,7 +177,7 @@ export default function SendMessage({
                         />
                       )}
                     </div>
-                    <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
+                    <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-96 p-7 md:w-3/4 lg:w-3/4">
                       <h1 className="text-lg mb-4">Nuevo mensaje</h1>
                       <div className="bg-gray-100 text-sm p-5 h-auto">
                         <div className="pb-2 border-b-2">

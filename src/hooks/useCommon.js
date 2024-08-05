@@ -74,13 +74,13 @@ export const useSidebar = () => {
         },
         {
           name: t("common:menu:tools:email"),
-          href: "/tools//mails",
+          href: "/tools/mails/middleware",
           image: "/img/herramientas/correo.png",
           iconShortBar: InboxArrowDownIcon,
         },
         {
           name: t("common:menu:tools:calendar"),
-          href: "/tools//calendar",
+          href: "/tools/calendar",
           image: "/img/herramientas/calendario.png",
           iconShortBar: CalendarDaysIcon,
         },
@@ -315,25 +315,67 @@ export const useSidebar = () => {
     },
     {
       name: t("common:menu:settings:name"),
-      href: "/",
+      href: "/settings",
       icon: ChevronRightIcon,
       current: false,
       iconShortBar: ArrowDownCircleIcon,
       children: [
         {
           name: t("common:menu:settings:permissions"),
-          href: "/sd",
+          href: "/settings/permissions",
           iconShortBar: ArrowDownCircleIcon,
+          image: "/img/settings/permissions.png",
+          children: [
+            {
+              name: t("common:menu:settings:invite"),
+              href: "/settings/invite",
+              image: "/img/settings/invitar.png",
+              iconShortBar: ArchiveBoxIcon,
+            },
+            {
+              name: t("common:menu:settings:user-list"),
+              href: "/settings/userlist",
+              image: "/img/settings/listausuarios.png",
+              iconShortBar: BookOpenIcon,
+            },
+            {
+              name: t("common:menu:settings:other-notifications"),
+              href: "/settings/othernotifications",
+              image: "/img/settings/otrasnotificaciones.png",
+              iconShortBar: InboxArrowDownIcon,
+            },
+          ]
         },
-        {
-          name: t("common:menu:settings:password"),
-          href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
+        // {
+        //   name: t("common:menu:settings:password"),
+        //   href: "/sd",
+        //   iconShortBar: ArrowDownCircleIcon,
+        // },
         {
           name: t("common:menu:settings:others"),
-          href: "/sd",
+          href: "/settings/others",
           iconShortBar: ArrowDownCircleIcon,
+          image: "/img/settings/others.png",
+          children: [
+            {
+              name: t("common:menu:settings:subscriptions"),
+              href: "/settings/subscriptions",
+              image: "/img/settings/subscriptions.png",
+              iconShortBar: ArchiveBoxIcon,
+            },
+            {
+              name: t("common:menu:settings:other-settings"),
+              href: "/settings/othersettings",
+              image: "/img/settings/othersettings.png",
+              iconShortBar: BookOpenIcon,
+            },
+            {
+              name: t("common:menu:settings:change-password"),
+              href: "/settings/mails/changepassword",
+              image: "/img/settings/changepassword.png",
+              iconShortBar: InboxArrowDownIcon,
+            },
+          ]
         },
       ],
     },

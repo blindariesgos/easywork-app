@@ -132,7 +132,13 @@
       "name": "Settings and Configurations",
       "permissions": "Permissions and access to users",
       "others": "Others",
-      "password": "Change of password"
+      "password": "Change of password",
+      "invite": "Invite user",
+      "user-list": "List of users",
+      "other-notifications": "Other notifications",
+      "subscriptions": "Subscriptions",
+      "other-settings": "Settings",
+      "change-password": "Change password"
     }
   },
   "header": {

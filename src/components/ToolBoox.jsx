@@ -31,7 +31,7 @@ const ToolBox = () => {
       <Header />
       <div className='flex justify-center items-center h-full py-8'>
         <div className='sm:w-1/2 w-full bg-white rounded-xl drop-shadow-md px-8 py-10 flex items-center flex-col gap-4'>
-          <h1 className='text-4xl font-bold text-primary uppercase mb-4'>{options?.name}</h1>
+          <h1 className='text-4xl font-bold text-primary text-center uppercase mb-4'>{options?.name}</h1>
           <ul className={`grid grid-cols-1 gap-6 ${options?.children?.length <= 4 ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
             {options && options?.children && options?.children?.map((opt, index) => (
               <div className="col-span-1 rounded-lg bg-white text-center shadow relative w-full" key={index}>

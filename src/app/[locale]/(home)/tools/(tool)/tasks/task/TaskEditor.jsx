@@ -120,12 +120,13 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
+  console.log("Edit", edit);
+
   useEffect(() => {
     if (params.get("prev") === "contact") {
       const prevId = params.get("prev_id");
       setContactCRM(prevId);
       setValue("crm", [{ id: prevId, type: "contact" }]);
-      setValue("name", "CRM: ");
       setOpenOptions((prev) => ({ ...prev, more: true }));
     }
   }, [params]);
@@ -609,13 +610,19 @@ export default function TaskEditor({ edit, copy, subtask }) {
 }
 
 const formatCrmData = (crmData) => {
+  console.log("crmData", crmData);
   if (!crmData) return [];
-  return crmData.map((item) => ({
+
+  if (Array.isArray(crmData)) return crmData.map((item) => ({
     id: item?.contact?.id ?? item?.poliza?.id,
     type: item?.type,
     name: item?.contact?.name,
     title: item?.poliza?.title ?? item?.poliza?.noPoliza,
   }));
+
+  return [{ id: crmData, type: "contact", name: "" }];
+
+
 };
 
 const getSelectedOptions = (edit, t) => {

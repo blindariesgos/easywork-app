@@ -34,9 +34,9 @@ export default function ToolHeader({
       }
     };
 
-    document.body.addEventListener("mousedown", handleClickOutside);
+    document?.body?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.body.removeEventListener("mousedown", handleClickOutside);
+      document?.body?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref]);
 
@@ -110,11 +110,10 @@ export default function ToolHeader({
                                 onClick={() => handleSelected(cont.id)}
                               >
                                 <p
-                                  className={`text-sm uppercase  ${
-                                    cont.selected
+                                  className={`text-sm uppercase  ${cont.selected
                                       ? "text-primary font-medium"
                                       : "text-gray-60"
-                                  }`}
+                                    }`}
                                 >
                                   {cont.name}
                                 </p>

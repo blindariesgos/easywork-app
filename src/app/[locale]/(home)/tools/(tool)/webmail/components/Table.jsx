@@ -47,37 +47,23 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
 
   async function deleteEmails() {
     const array = [];
-    selectedTasks.forEach(element => {
+    selectedTasks.forEach((element) => {
       array.push(element.email.googleId);
     });
-    updateLabelId(array, 'trash');
+    updateLabelId(array, "trash");
   }
 
   async function updateLabelId(array, label) {
-    if (label === "trash"){
+    if (label === "inbox") {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/trash/${session.data.user.id}/${selectOauth?.id}`,
-        {
-          data: array,
-        }
-      );
-    } else if (label === "spam"){
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/spam/${session.data.user.id}/${selectOauth?.id}`,
-        {
-          data: array,
-        }
-      );
-    } else if (label === "archived"){
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/archived/${session.data.user.id}/${selectOauth?.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
         {
           data: array,
         }
       );
     } else {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`,
         {
           data: array,
         }
@@ -91,7 +77,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     { name: "Marcar como no leido", onClick: "" },
     { name: "Mover a la carpeta", onClick: "" },
     { name: "Marcar como correo no deseado", onClick: "" },
-    { name: "Eliminar", onClick: (item) => updateLabelId([item], 'trash') },
+    { name: "Eliminar", onClick: (item) => updateLabelId([item], "trash") },
     { name: "Excluir de CRM", onClick: "" },
     { name: "Crear tareas", onClick: "" },
     { name: "Crear eventos", onClick: "" },
@@ -99,14 +85,22 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   ];
 
   const folderOptions = [
-    { name: "Inbox", onClick: (item) => updateLabelId([item], 'inbox') },
-    { name: "Spam", onClick: (item) => updateLabelId([item], 'spam') },
-    { name: "Archivados", onClick: (item) => updateLabelId([item], 'archived') },
+    { name: "Inbox", onClick: (item) => updateLabelId([item], "inbox") },
+    { name: "Spam", onClick: (item) => updateLabelId([item], "spam") },
+    {
+      name: "Archivados",
+      onClick: (item) => updateLabelId([item], "archived"),
+    },
   ];
 
   return (
     <div className="flow-root">
-      <EmailBody colorTag="bg-easywork-main" selectMail={selectMail} />
+      <EmailBody
+        colorTag="bg-easywork-main"
+        selectMail={selectMail}
+        updateLabelId={updateLabelId}
+        fetchData={fetchData}
+      />
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden sm:rounded-lg">
@@ -182,6 +176,9 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                       key={item.id}
                       className={clsx(
                         selectedTasks.includes(item) ? "bg-gray-50" : undefined,
+                        item.email.folder.includes("UNREAD")
+                          ? "font-medium"
+                          : "",
                         "hover:bg-indigo-100/40 cursor-default grid grid-cols-12 gap-2 p-4"
                       )}
                     >
@@ -205,7 +202,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                           />
                           <Menu
                             as="div"
-                            className="hover:bg-slate-50/30 w-10 md:w-auto rounded-lg"
+                            className="hover:bg-slate-50/30 w-10 md:w-auto rounded-lg font-normal"
                           >
                             <MenuButton className="-m-1.5 flex items-center p-1.5">
                               <Bars3Icon
@@ -227,7 +224,9 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                   <MenuItem key={index}>
                                     {({ active }) => (
                                       <div
-                                        onClick={() => itemOp.onClick(item.email.googleId)}
+                                        onClick={() =>
+                                          itemOp.onClick(item.email.googleId)
+                                        }
                                         className={classNames(
                                           active ? "bg-gray-50" : "",
                                           "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
@@ -273,7 +272,12 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                                               : "text-black",
                                                             "block px-3 py-1 text-sm leading-6  cursor-pointer"
                                                           )}
-                                                          onClick={() => subitem.onClick(item.email.googleId)}
+                                                          onClick={() =>
+                                                            subitem.onClick(
+                                                              item.email
+                                                                .googleId
+                                                            )
+                                                          }
                                                         >
                                                           {subitem.name}
                                                         </div>
@@ -301,7 +305,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                         }}
                         className={
                           clsx(
-                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            "whitespace-nowrap py-1 pr-3 text-sm ",
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
@@ -317,7 +321,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                         }}
                         className={
                           clsx(
-                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            "whitespace-nowrap py-1 pr-3 text-sm ",
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
@@ -333,7 +337,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                         }}
                         className={
                           clsx(
-                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            "whitespace-nowrap py-1 pr-3 text-sm ",
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
@@ -345,7 +349,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                       <div
                         className={
                           clsx(
-                            "whitespace-nowrap py-1 pr-3 text-sm font-medium",
+                            "whitespace-nowrap py-1 pr-3 text-sm ",
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"

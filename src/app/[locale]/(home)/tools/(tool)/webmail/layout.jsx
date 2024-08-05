@@ -382,14 +382,14 @@ export default function WebmailLayout({ children, table }) {
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "ARCHIVED"
+                  selectedFolder === "ALL"
                     ? "bg-violet-500 transition-colors duration-200 rounded-lg"
                     : ""
                 }`}
-                onClick={() => setSelectedFolder("ARCHIVED")}
+                onClick={() => setSelectedFolder("ALL")}
               >
                 <BookmarkIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Archivados</h3>
+                <h3 className="ml-4 text-md">Todos</h3>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${

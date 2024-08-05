@@ -2,15 +2,17 @@ import SelectInput from "../../../../../../../../components/form/SelectInput"
 import PhysicalContactForm from "../physicalContactForm"
 import MoralContactForm from "../moralContactForm"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 const Contact = () => {
+    const {t} = useTranslation()
     const [type, setType] = useState()
     return (
         <div className="py-4">
             <div className="grid grid-cols-3">
                 <div className="bg-gray-100 p-4">
                     <SelectInput
-                        label="Tipo de persona"
+                        label={t("tools:portafolio:control:form:typePerson")}
                         options={[
                             {
                                 name: "Fisica",

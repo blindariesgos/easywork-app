@@ -6,22 +6,24 @@ import Contact from "./components/panels/contact"
 import Policy from "./components/panels/policy"
 import Control from "./components/panels/control"
 import MoralContactForm from "./components/moralContactForm"
+import { useTranslation } from "react-i18next";
 const Page = () => {
+    const {t} = useTranslation()
     const tabs = [
         {
-            name: "Contacto",
+            name: t("tools:portafolio:control:tabs:contact"),
             component: () => (<Contact />)
         },
         {
-            name: "Compañia",
+            name: t("tools:portafolio:control:tabs:company"),
             component: () => (<MoralContactForm />)
         },
         {
-            name: "Póliza",
+            name: t("tools:portafolio:control:tabs:policy"),
             component: () => (<Policy />)
         },
         {
-            name: "Cobranza",
+            name: t("tools:portafolio:control:tabs:control"),
             component: () => (<Control />)
         },
     ]
@@ -29,7 +31,7 @@ const Page = () => {
         <Fragment>
             <div className='bg-white rounded-md shadow-sm'>
                 <div className='flex gap-6 py-4 px-4'>
-                    <h2 className="text-primary text-2xl">Control de Cartera</h2>
+                    <h2 className="text-primary text-2xl">{t("tools:portafolio:control:title")}</h2>
                 </div>
             </div>
             <div className='bg-white rounded-md shadow-sm'>

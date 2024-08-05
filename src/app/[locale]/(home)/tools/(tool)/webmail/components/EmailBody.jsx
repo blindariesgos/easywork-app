@@ -21,6 +21,8 @@ export default function EmailBody({
   samePage,
   previousModalPadding,
   subLabelTag,
+  updateLabelId,
+  fetchData,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -49,6 +51,12 @@ export default function EmailBody({
     }
     return message;
   };
+
+  useEffect(() => {
+    if(selectMail?.folder?.includes("UNREAD")){
+      updateLabelId([selectMail.googleId], "unread");
+    }
+  }, [params.get("detail")]);
 
   useEffect(() => {
     setDecodedMailData(selectMail.body);

@@ -33,7 +33,7 @@ const MultipleSelectWithFilters = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document?.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -144,9 +144,9 @@ const MultipleSelectWithFilters = ({
                     <div
                       key={option.id}
                       className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${getValues(name) &&
-                          getValues(name).some((res) => res.id === option.id)
-                          ? "bg-primary"
-                          : "hover:bg-primary/5"
+                        getValues(name).some((res) => res.id === option.id)
+                        ? "bg-primary"
+                        : "hover:bg-primary/5"
                         }`}
                       onClick={() => handleSelect(option)}
                     >
@@ -161,9 +161,9 @@ const MultipleSelectWithFilters = ({
                       )}
                       <span
                         className={`text-xs ${getValues(name) &&
-                            getValues(name).some((res) => res.id === option.id)
-                            ? "text-white"
-                            : "text-black"
+                          getValues(name).some((res) => res.id === option.id)
+                          ? "text-white"
+                          : "text-black"
                           }`}
                       >
                         {option.name ||

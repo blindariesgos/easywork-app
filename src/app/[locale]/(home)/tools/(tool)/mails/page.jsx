@@ -19,6 +19,12 @@ export default function IngresarEmail() {
   const [gmailState, setGmailState] = useState(false);
   const { setOpenModalFolders, openModalFolders } = useAppContext();
 
+  // getAllOauth(session.data.user.id).then((response) => {
+  //   if (response.length > 0) {
+  //     router.push("/tools/webmail?page=1");
+  //   } 
+  // })
+
   const [ImapData, setImapData] = useState({
     host: null,
     port: null,

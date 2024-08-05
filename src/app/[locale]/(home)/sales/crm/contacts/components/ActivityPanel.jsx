@@ -100,7 +100,7 @@ const timeline = [
 function parseAndSortByDate(data) {
 	// Combine tasks and comments with their type
 	const combined = [
-		...data.tasks.map(task => ({ type: 'task', ...task })),
+		...data?.tasks?.map(task => ({ type: 'task', ...task })),
 	];
 
 	// Sort combined array by createdAt date

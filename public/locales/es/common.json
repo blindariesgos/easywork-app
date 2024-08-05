@@ -137,7 +137,13 @@
       "name": "Ajustes y Configuraciones",
       "permissions": "Permisos y accesos a usuarios",
       "others": "Otros",
-      "password": "Cambio de contraseña"
+      "password": "Cambio de contraseña",
+      "invite": "Invitar usuario",
+      "user-list": "Lista de usuarios",
+      "other-notifications": "Otras notificaciones",
+      "suscripciones": "Suscripciones",
+      "other-settings": "Ajustes",
+      "change-password": "Cambio de contraseña"
     }
   },
   "header": {

@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ["app.easywork.com.mx", "localhost"],
+      allowedOrigins: ["app.easywork.com.mx", "localhost", "192.168.0.106"],
     },
   },
   typescript: {

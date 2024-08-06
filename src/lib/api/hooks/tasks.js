@@ -22,10 +22,8 @@ const getQueries = (filters, userId) => {
 }
 
 export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "" }) => {
-
   const queries = getQueries(filters, userId)
 
-  console.log({ filters, queries })
   const url = `/tools/tasks/user?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`
   const { data, error, isLoading, mutate } = useSWR(
     url,

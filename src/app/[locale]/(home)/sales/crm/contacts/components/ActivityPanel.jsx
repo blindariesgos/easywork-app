@@ -12,6 +12,7 @@ import CardEmail from './CardEmail';
 import CardComment from './CardComment';
 import { useContactActivities } from '@/src/lib/api/hooks/contacts';
 
+
 const timeline = [
 	{
 		id: 1,
@@ -123,7 +124,6 @@ export default function ActivityPanel({ contactId }) {
 	}, [activities]);
 
 	const { t } = useTranslation();
-	console.log("Activities", bulkActivity);
 
 	if (isError) {
 		return <div>Error</div>
@@ -180,11 +180,11 @@ export default function ActivityPanel({ contactId }) {
 														'h-10 w-10 rounded-full flex items-center justify-center bg-primary'
 													)}
 												>
-													{activity.type === 'task' && <CheckIcon className="h-5 w-5 text-white" aria-hidden="true" />}
+													{activity.type === 'task' && <EnvelopeIcon className="h-5 w-5 text-white" aria-hidden="true" />}
 												</span>
 											</div>
 											<div
-												className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${activityIdx === timeline.length - 1 && 'rounded-b-lg'}`}
+												className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${activityIdx === bulkActivity.length - 1 && 'rounded-b-lg'}`}
 											>
 												<ActivityCard activity={activity} />
 											</div>

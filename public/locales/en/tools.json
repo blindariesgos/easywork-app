@@ -286,5 +286,15 @@
       "abado": "Saturday",
       "omingo": "omingo"
     }
+  },
+  "portafolio": {
+    "control": {
+      "tabs": {
+        "contact": "Contacto",
+        "company": "Compañia",
+        "policy": "Póliza",
+        "control": "Cobranza"
+      }
+    }
   }
 }

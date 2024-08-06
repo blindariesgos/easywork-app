@@ -1,6 +1,6 @@
 "use client";
 import { useCommon } from "../../hooks/useCommon";
-import React from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import { getMonth, getYear } from "date-fns";
 import range from "lodash/range";
@@ -23,7 +23,17 @@ const InputDate = ({
   const { t } = useTranslation();
   const { months } = useCommon();
   const years = range(1924, getYear(new Date()) + 1, 1);
+  const [selected, setSelected] = useState(value);
 
+  const handleChange = (e) => {
+    setSelected(e);
+    onChange &&
+      onChange({
+        target: {
+          value: e,
+        },
+      });
+  };
   return (
     <div className="flex flex-col w-full">
       {label && (
@@ -99,8 +109,8 @@ const InputDate = ({
             );
           }}
           showIcon={icon ? true : false}
-          selected={value}
-          onChange={onChange}
+          selected={selected}
+          onChange={handleChange}
           // onBlur={onBlur}
           icon={icon ? icon : undefined}
           className={clsx(`w-full rounded-md text-sm h-9 focus:ring-0 z-50`, {
@@ -116,7 +126,7 @@ const InputDate = ({
             return inactiveDate ? date <= inactiveDate : date;
           }}
           timeInputLabel={time && t("common:time")}
-          dateFormat={time ? "MM/dd/yyyy h:mm aa" : "MM/dd/yyyy"}
+          // dateFormat={time ? "MM/dd/yyyy h:mm aa" : "MM/dd/yyyy"}
           showTimeInput={time}
           {...props}
         />

@@ -2,11 +2,31 @@
 import useSWR from "swr";
 import fetcher from "../fetcher";
 
-export const useTasks = ({ filters = {}, page = 1, limit = 15 }) => {
-  const urlFilter = Object.keys(filters).length > 0
-    ? Object.keys(filters).map(key => `${key}=${filters[key]}`).join('&')
-    : ""
-  const url = `/tools/tasks/user?limit=${limit}&page=${page}${urlFilter.length > 0 ? `&${urlFilter}` : ""}`
+const getQueries = (filters, userId) => {
+  const getRepitKeys = (key, arr) => arr.map(item => `${key}=${item.id}`).join('&')
+  if (Object.keys(filters).length == 0) return ""
+
+  const getValue = (key, userId) => {
+    switch (key) {
+      case "role":
+        return `${filters[key]}=${userId}`
+      default:
+        return `${key}=${filters[key]}`
+    }
+  }
+
+  return Object.keys(filters).map(key =>
+    Array.isArray(filters[key])
+      ? getRepitKeys(key, filters[key])
+      : getValue(key, userId)).join('&')
+}
+
+export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "" }) => {
+
+  const queries = getQueries(filters, userId)
+
+  console.log({ filters, queries })
+  const url = `/tools/tasks/user?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`
   const { data, error, isLoading, mutate } = useSWR(
     url,
     fetcher,

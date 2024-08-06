@@ -34,15 +34,6 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
     if (checked) append({ ...field, value: "", newValue: "" });
     else {
       const fieldIndex = selectFields.map((item) => item.code).indexOf(name);
-      console.log({
-        value,
-        checked,
-        name,
-        field,
-        filterFields,
-        selectFields,
-        fieldIndex,
-      });
       if (fieldIndex) remove(fieldIndex);
     }
     const updatedFields = filterFields.map((field) => {

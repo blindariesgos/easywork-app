@@ -311,7 +311,7 @@ export const useSidebar = () => {
             },
             {
               name: t("common:menu:settings:user-list"),
-              href: "/settings/userlist",
+              href: "/settings/permissions/users",
               image: "/img/settings/listausuarios.png",
               iconShortBar: BookOpenIcon,
             },

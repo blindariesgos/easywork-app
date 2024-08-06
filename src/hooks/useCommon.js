@@ -970,19 +970,19 @@ export const useTasksConfigs = () => {
   const { t } = useTranslation();
   const [status, setStatus] = useState([
     {
-      id: 1,
+      id: "completed",
       name: t("tools:tasks:filters:closed"),
       value: "completed",
       selected: false,
     },
     {
-      id: 2,
+      id: "overdue",
       name: t("tools:tasks:filters:expirated"),
       value: "overdue",
       selected: false,
     },
     {
-      id: 3,
+      id: "pending",
       name: t("tools:tasks:filters:pending"),
       value: "pending",
       selected: false,

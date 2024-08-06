@@ -350,7 +350,11 @@
         "policy-low": "Derecho de Póliza",
         "amount-to-pay": "Importe a Pagar",
         "forms-of-payment": "Formas de Cobro",
-        "related-agent": "Agente Relacionado"
+        "related-agent": "Agente Relacionado",
+        "insurance-company": "Compañia Aseguradora",
+        "category": "Categoría o Plan",
+        "branch": "Sub - Ramo",
+        "health-branch": "Sub - Ramo Salud"
       },
       "cards": {
         "by-overcoming": "Por Vencer 5 Días",

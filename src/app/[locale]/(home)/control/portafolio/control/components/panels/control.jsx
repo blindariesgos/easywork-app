@@ -5,6 +5,7 @@ import { ImCheckmark } from "react-icons/im";
 import Button from "@/src/components/form/Button";
 import ControlTable from "../controlTable";
 import { useTranslation } from "react-i18next";
+import { FaChevronDown } from "react-icons/fa";
 
 const currencies = [
   { name: "Todas las monedas", value: "ALL" },
@@ -15,43 +16,43 @@ const currencies = [
 const cards = (t) => [
   {
     name: t("tools:portafolio:control:cards:by-overcoming"),
-    type: 1,
+    id: 1,
     color: "#DFE3E6",
     value: "23412",
   },
   {
     name: t("tools:portafolio:control:cards:overdue"),
-    type: 2,
+    id: 2,
     color: "#FFEB04",
     value: "324",
   },
   {
     name: t("tools:portafolio:control:cards:urgent"),
-    type: 3,
+    id: 3,
     color: "#86BEDF",
     value: "23",
   },
   {
     name: t("tools:portafolio:control:cards:delay"),
-    type: 4,
+    id: 4,
     color: "#A9EA44",
     value: "212",
   },
   {
     name: t("tools:portafolio:control:cards:on-time"),
-    type: 5,
+    id: 5,
     color: "#8D9194",
     value: "43",
   },
   {
     name: t("tools:portafolio:control:cards:trash"),
-    type: 6,
+    id: 6,
     color: "#AF8764",
     value: "2",
   },
   {
     name: t("tools:portafolio:control:cards:cancelled"),
-    type: 7,
+    id: 7,
     color: "#0F8BBF",
     value: "24",
   },
@@ -65,9 +66,9 @@ const Control = () => {
   const [isSearch, setIsSearch] = useState(false);
 
   return (
-    <div className="py-4 grid grid-cols-1 gap-4">
-      <div className="grid grid-cols-3">
-        <div className="bg-gray-100 p-4 grid grid-cols-1 gap-4">
+    <Fragment>
+      <div className="bg-white rounded-md shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 gap-6 py-4 px-4 ">
           <SelectInput
             label={t("tools:portafolio:control:form:agent")}
             options={[
@@ -103,49 +104,72 @@ const Control = () => {
               </Radio>
             ))}
           </RadioGroup>
+          <div className="flex items-center justify-center md:justify-start col-span-1 sm:col-span-2 md:col-span-1">
+            <Button
+              label="Buscar"
+              className="py-2 px-4"
+              buttonStyle="primary"
+              onclick={() => setIsSearch(true)}
+            />
+          </div>
         </div>
       </div>
-      <div className="flex justify-start">
-        <Button
-          label="Buscar"
-          className="py-2 px-4"
-          buttonStyle="primary"
-          onclick={() => setIsSearch(true)}
-        />
-      </div>
       {isSearch && type && (
-        <Fragment>
-          <RadioGroup
-            by="name"
-            value={cardSelected}
-            onChange={setCardSelected}
-            className="py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-4"
-          >
-            {cards(t).map((card) => (
-              <Radio
-                key={card.type}
-                value={card}
-                className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
-              >
-                <div
-                  className={`absolute w-full h-[7px] top-0 left-0`}
-                  style={{ background: card.color }}
-                />
-                <p className="text-sm">{card.name}</p>
-                <p className="text-4xl text-right">{card.value}</p>
-              </Radio>
-            ))}
-          </RadioGroup>
+        <div className="bg-white rounded-md shadow-sm">
+          <div className="flex gap-6 py-4 px-4">
+            <div className="flex min-h-screen w-full px-4">
+              <div className="w-full ">
+                <div className="py-4 grid grid-cols-1 gap-4">
+                  <Fragment>
+                    <RadioGroup
+                      by="name"
+                      value={cardSelected}
+                      onChange={setCardSelected}
+                      className="hidden py-2 md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-4"
+                    >
+                      {cards(t).map((card) => (
+                        <Radio
+                          key={card.type}
+                          value={card}
+                          className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
+                        >
+                          <div
+                            className={`absolute w-full h-[7px] top-0 left-0`}
+                            style={{ background: card.color }}
+                          />
+                          <p className="text-sm">{card.name}</p>
+                          <p className="text-4xl text-right">{card.value}</p>
+                        </Radio>
+                      ))}
+                    </RadioGroup>
+                    <div className="md:hidden flex flex-col gap-4">
+                      <SelectInput
+                        // label={t("tools:portafolio:control:form:agent")}
+                        options={cards(t)}
+                        placeholder="- Seleccionar -"
+                        setSelectedOption={setCardSelected}
+                      />
+                      <div className="group px-2 pb-2 pt-4 relative select-none grid grid-cols-1 gap-6  cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary">
+                        <div
+                          className={`absolute w-full h-[7px] top-0 left-0`}
+                          style={{ background: cardSelected.color }}
+                        />
+                        <p className="text-sm">{cardSelected.name}</p>
+                        <p className="text-4xl text-right">
+                          {cardSelected.value}
+                        </p>
+                      </div>
+                    </div>
 
-          {cardSelected && (
-            <div>
-              <h2 className="text-xl font-bold">{cardSelected.name}</h2>
-              <ControlTable />
+                    {cardSelected && <ControlTable name={cardSelected.name} />}
+                  </Fragment>
+                </div>
+              </div>
             </div>
-          )}
-        </Fragment>
+          </div>
+        </div>
       )}
-    </div>
+    </Fragment>
   );
 };
 

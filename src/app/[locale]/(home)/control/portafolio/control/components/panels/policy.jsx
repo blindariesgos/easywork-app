@@ -62,7 +62,7 @@ const Policy = () => {
               },
               {
                 name: "PRO SALUD",
-                id: "moral",
+                id: "moralw",
               },
             ]}
             placeholder="- Seleccionar -"
@@ -83,19 +83,19 @@ const Policy = () => {
               },
               {
                 name: "Diversos",
-                id: "moral",
+                id: "morale",
               },
               {
                 name: "GMM",
-                id: "moral",
+                id: "moral4",
               },
               {
                 name: "Salud",
-                id: "moral",
+                id: "moral5",
               },
               {
                 name: "Vida",
-                id: "moral",
+                id: "moraly",
               },
             ]}
             placeholder="- Seleccionar -"
@@ -197,15 +197,15 @@ const Policy = () => {
               },
               {
                 name: "Trimestral",
-                id: "moral",
+                id: "moral1",
               },
               {
                 name: "Mensual",
-                id: "moral",
+                id: "moral2",
               },
               {
                 name: "Contado",
-                id: "moral",
+                id: "moral3",
               },
             ]}
             placeholder="- Seleccionar -"
@@ -310,7 +310,7 @@ const Policy = () => {
               },
               {
                 name: "CUT",
-                id: "moral",
+                id: "moral4",
               },
             ]}
             placeholder="- Seleccionar -"

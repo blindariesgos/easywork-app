@@ -18,7 +18,8 @@ function SelectInput({
   object,
   border,
   value,
-  setSelectedOption
+  setSelectedOption,
+  placeholder
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -59,6 +60,7 @@ function SelectInput({
 
         <div className={`relative ${label ? "mt-1" : "mt-0"}`}>
           <ComboboxInput
+            placeholder={placeholder}
             className={clsx(
               "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ", {
               "border border-gray-200 focus:ring-gray-200 focus:outline-0": border,

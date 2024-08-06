@@ -10,10 +10,12 @@ import {
   renameFolder,
   renameFile,
   deleteItem,
-  moveItem
+  moveItem,
+  getFolder
 } from "../../lib/api/drive";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "next/navigation";
 
 export default function DriveContextProvider({ children }) {
   const { t } = useTranslation()
@@ -28,6 +30,8 @@ export default function DriveContextProvider({ children }) {
   const [filters, setFilters] = useState({})
   const [displayFilters, setDisplayFilters] = useState({})
   const [itemDelete, setItemDelete] = useState()
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const [config, setConfig] = useState({
     limit: 25,
     page: 1,
@@ -74,12 +78,28 @@ export default function DriveContextProvider({ children }) {
       code: "modifiedDate"
     },
   ]);
+  const [externalFolderInfo, setExternalFolderInfo] = useState()
 
   const [pages, setPages] = useState([])
 
+  const getExternalFolderInfo = async (folderId) => {
+    const response = await getFolder(folderId)
+    if (response.error) {
+      toast.error(response.message)
+      return setLoading(false)
+    };
+    setExternalFolderInfo(response)
+  }
+
   const getItems = async () => {
     setLoading(true)
-    const response = await getExplorer(config, filters, pages.length == 0 ? "" : pages[pages.length - 1]?.id)
+    const externalFolder = params.get("folder")
+    const folder = externalFolder && pages.length == 0
+      ? externalFolder
+      : pages.length == 0
+        ? ""
+        : pages[pages.length - 1]?.id
+    const response = await getExplorer(config, filters, folder)
 
     if (response.error) {
       toast.error(response.message)
@@ -91,6 +111,10 @@ export default function DriveContextProvider({ children }) {
       ...config,
       ...response.meta
     })
+
+    if (externalFolder && !externalFolderInfo) {
+      await getExternalFolderInfo(externalFolder)
+    }
     setLoading(false)
   }
 
@@ -277,6 +301,7 @@ export default function DriveContextProvider({ children }) {
     filterFields,
     itemMove,
     isOpenMove,
+    externalFolderInfo,
     setIsOpenMove,
     moveFolder,
     setItemMove,
@@ -315,6 +340,7 @@ export default function DriveContextProvider({ children }) {
     itemDelete,
     itemMove,
     isOpenMove,
+    externalFolderInfo
   ]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;

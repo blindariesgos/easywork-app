@@ -14,6 +14,11 @@ export const getFolder = async (id) => {
     return response;
 };
 
+export const getFoldersByContact = async (id) => {
+    const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).get(`/folders/by-contact/${id}`).catch(error => error);
+    return response;
+};
+
 export const createFolder = async (data) => {
     const response = await axios({ baseURL: process.env.API_DRIVE_HOST }).post(`/folders`, data).catch(error => error);
     return response;

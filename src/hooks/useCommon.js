@@ -317,7 +317,7 @@ export const useSidebar = () => {
             },
             {
               name: t("common:menu:settings:other-notifications"),
-              href: "/settings/othernotifications",
+              href: `${window.location.pathname}?othernotifications=true`,
               image: "/img/settings/otrasnotificaciones.png",
               iconShortBar: InboxArrowDownIcon,
             },

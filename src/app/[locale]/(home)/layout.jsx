@@ -8,6 +8,7 @@ import HelpChat from "../../../components/HelpChat";
 import FirebaseMessaging from "@/src/components/FirebaseMessaging";
 import { NotifyContextProvider } from "@/src/context/notify";
 import NotifyDrawer from "@/src/components/notifier/drawer/NotifyDrawer";
+import OtherNotifications from "../../../components/OtherNotifications";
 
 export default function HomeLayout({ children }) {
   return (
@@ -30,6 +31,7 @@ export default function HomeLayout({ children }) {
                   <Footer /> {/* Footer fuera del main */}
                 </div>
                 <HelpChat />
+                <OtherNotifications colorTag="bg-easywork-main" />
               </div>
             </NotifyContextProvider>
           </SocketProvider>

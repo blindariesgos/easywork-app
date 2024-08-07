@@ -348,7 +348,7 @@ export const useSidebar = () => {
             },
             {
               name: t("common:menu:settings:change-password"),
-              href: "/settings/mails/changepassword",
+              href: `${window.location.pathname}?changepassword=true`,
               image: "/img/settings/changepassword.png",
               iconShortBar: InboxArrowDownIcon,
             },

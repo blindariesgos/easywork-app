@@ -9,6 +9,7 @@ import FirebaseMessaging from "@/src/components/FirebaseMessaging";
 import { NotifyContextProvider } from "@/src/context/notify";
 import NotifyDrawer from "@/src/components/notifier/drawer/NotifyDrawer";
 import OtherNotifications from "../../../components/OtherNotifications";
+import ChangePassword from "../../../components/ChangePassword";
 
 export default function HomeLayout({ children }) {
   return (
@@ -32,6 +33,7 @@ export default function HomeLayout({ children }) {
                 </div>
                 <HelpChat />
                 <OtherNotifications colorTag="bg-easywork-main" />
+                <ChangePassword colorTag="bg-easywork-main" />
               </div>
             </NotifyContextProvider>
           </SocketProvider>

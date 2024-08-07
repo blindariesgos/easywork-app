@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/src/components/form/Button";
 import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
 import IconDropdown from "@/src/components/SettingsButton";
 import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
@@ -11,25 +12,16 @@ import {
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BsBriefcase } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react'
+import { postComment } from "@/src/lib/apis";
+import { toast } from "react-toastify";
 //is a component that must recieve its props
 export default function CardTask({ data }) {
   const { t } = useTranslation();
-  const [value, setValueText] = useState("");
-  const quillRef = useRef(null);
-
-  const handleComment = async (e) => {
-    if (e.key === "Enter") {
-      if (quillRef.current) {
-        const quillEditor = quillRef.current.getEditor();
-        const currentContents = quillEditor.getContents();
-        const text = currentContents.ops.map((op) => op.insert).join("");
-      }
-    }
-  };
 
   const options = [
     {
@@ -44,15 +36,6 @@ export default function CardTask({ data }) {
     },
   ];
 
-  const TextEditorComponent = () => (
-    <TextEditor
-      quillRef={quillRef}
-      value={value}
-      className="sm:h-16 h-30  w-full"
-      setValue={setValueText}
-      handleKeyDown={(e) => handleComment(e)}
-    />
-  );
   return (
     <div className="bg-white px-4 py-3 rounded-lg w-full">
       <div className="flex justify-between items-center">
@@ -60,9 +43,13 @@ export default function CardTask({ data }) {
           <p className="text-xs text-primary font-medium">
             {t("tools:tasks:task")}
           </p>
-          {isTaskOverdue(data) && (<span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
-            Vencida
-          </span>)}
+          {
+            isTaskOverdue(data) && (
+              <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+                Vencida
+              </span>
+            )
+          }
           <p className="text-xs text-slate-500/60 font-medium">
             {formatDate(data.createdAt)}
           </p>
@@ -113,29 +100,99 @@ export default function CardTask({ data }) {
               {data?.responsible[0]?.profile?.firstName ? `${data?.responsible[0]?.profile?.firstName} ${data?.responsible[0]?.profile?.lastName}` : data?.responsible[0]?.username}</Link>
           </div>
           <div className="flex justify-end mt-0 gap-2 items-center">
-            <div className="cursor-pointer">
-              <IconDropdown
-                icon={<RiFileEditLine className="h-4 w-4 text-black" />}
-                width="w-[300px] md:w-[500px] p-2"
-              >
-                <div className="border rounded-md w-full h-28">
-                  {TextEditorComponent()}
-                </div>
-              </IconDropdown>
+            <div className="cursor-pointer" title="Agregar Comentario">
+              <Menu as="div" className="relative inline-block text-left mt-1">
+                {({ close }) => (
+                  <Fragment>
+                    <MenuButton className="inline-flex w-full focus:ring-0 outline-none focus:outline-none">
+                      <RiFileEditLine className="h-4 w-4 text-black" />
+                    </MenuButton>
+                    <MenuItems
+                      transition
+                      anchor="bottom end"
+                      className={`absolute right-0 mt-2 rounded-md  shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-[300px] md:w-[500px] p-2 bg-white`}
+                    >
+                      <div className="px-1 py-1 ">
+                        <AddTaskComment close={close} task={data} />
+                      </div>
+                    </MenuItems>
+                  </Fragment>
+                )}
+              </Menu>
             </div>
-            <IconDropdown
-              icon={
-                <EllipsisHorizontalIcon
-                  className="h-4 w-4 text-black"
-                  aria-hidden="true"
-                />
-              }
-              options={options}
-              width="w-[100px]"
-            />
+            <div title="Ver Opciones">
+              <IconDropdown
+                icon={
+                  <EllipsisHorizontalIcon
+                    className="h-4 w-4 text-black"
+                    aria-hidden="true"
+                  />
+                }
+                options={options}
+                width="w-[100px]"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+const AddTaskComment = ({ close, task }) => {
+  const [value, setValueText] = useState("");
+  const quillRef = useRef(null);
+  const [loading, setLoading] = useState(false)
+
+  const handleAdd = async () => {
+    setLoading(true)
+    const body = {
+      comment: value,
+      isSummary: task.requireSummary,
+      taskId: task.id,
+    };
+    const response = await postComment(body, task.id).catch(() => ({ error: true }))
+
+    if (response.error) {
+      toast.error("Se ha producido un error al crear el comentario, inténtelo de nuevo.")
+      setLoading(false)
+
+      return;
+    }
+    toast.success("El comentario se ha añadido correctamente")
+    close()
+    setLoading(false)
+  }
+
+  return (
+    <div>
+      <div className="border rounded-md w-full h-full">
+        <TextEditor
+          quillRef={quillRef}
+          value={value}
+          className="h-full  w-full"
+          setValue={(e) => {
+            setValueText(e)
+          }}
+        />
+      </div>
+      <div className="pt-2 flex justify-end gap-2">
+        <Button
+          label={loading ? "Loading..." : "Guardar"}
+          className="text-sm px-2 py-1"
+          buttonStyle="primary"
+          disabled={loading}
+          onclick={handleAdd}
+        />
+        <Button
+          label="Cancelar"
+          className="text-sm px-2 py-1"
+          buttonStyle="secondary"
+          disabled={loading}
+          onclick={close}
+        />
+      </div>
+    </div>
+
+  )
 }

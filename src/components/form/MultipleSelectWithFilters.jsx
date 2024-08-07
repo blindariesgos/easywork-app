@@ -59,6 +59,7 @@ const MultipleSelectWithFilters = ({
     };
 
     const index = currentValues.findIndex(res => res.id === option.id);
+    console.log(currentValues, type, newOption, index)
 
     if (index === -1) {
       setValue(name, [...currentValues, newOption], { shouldValidate: true });
@@ -103,13 +104,13 @@ const MultipleSelectWithFilters = ({
                   className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
                 >
                   {res.name || res.username || res.title || res.id}
-                  <button
+                  <div
                     type="button"
                     onClick={() => handleRemove(res.id)}
                     className="text-white"
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
-                  </button>
+                  </div>
                 </div>
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">

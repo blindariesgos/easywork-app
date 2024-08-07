@@ -13,7 +13,7 @@ import { useSWRConfig } from "swr";
 import { deleteTask } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { deleteTask as apiDeleteTask } from '@/src/lib/apis'; // Ajusta el path según sea necesario
+import { deleteTask as apiDeleteTask } from "@/src/lib/apis"; // Ajusta el path según sea necesario
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import TasksContextProvider from "@/src/context/tasks/provider";
 
@@ -75,7 +75,8 @@ export default function TaskLayout({ children, table }) {
                     <TrashIcon
                       className="h-8 w-8 text-primary"
                       aria-hidden="true"
-                    />)
+                    />
+                  )
                 }
                 options={optionsTrash}
                 width="w-72"

@@ -154,12 +154,35 @@ export const useSidebar = () => {
           image: "/img/ventas/marketing.png",
           iconShortBar: MegaphoneIcon,
         },
+      ],
+    },
+    {
+      name: t("common:menu:control:name"),
+      icon: ChevronRightIcon,
+      current: false,
+      href: "/control",
+      iconShortBar: WalletIcon,
+      children: [
         {
-          name: t("common:menu:sales:control:name"),
-          href: "/sd",
-          image: "/img/ventas/cobranza.png",
-          iconShortBar: WalletIcon,
-        },
+          name: t("common:menu:control:portfolio:name"),
+          href: "/control/portafolio",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+          children: [
+            {
+              name: t("common:menu:control:portfolio:control"),
+              href: "/control/portafolio/control",
+              image: "/img/cobranza/cobranzasub.png",
+              iconShortBar: GlobeAltIcon,
+            },
+            {
+              name: t("common:menu:control:portfolio:receipts"),
+              href: "/control/portafolio/receipts",
+              image: "/img/cobranza/recibos.png",
+              iconShortBar: GlobeAltIcon,
+            }
+          ]
+        }
       ],
     },
     {
@@ -947,19 +970,19 @@ export const useTasksConfigs = () => {
   const { t } = useTranslation();
   const [status, setStatus] = useState([
     {
-      id: 1,
+      id: "completed",
       name: t("tools:tasks:filters:closed"),
       value: "completed",
       selected: false,
     },
     {
-      id: 2,
+      id: "overdue",
       name: t("tools:tasks:filters:expirated"),
       value: "overdue",
       selected: false,
     },
     {
-      id: 3,
+      id: "pending",
       name: t("tools:tasks:filters:pending"),
       value: "pending",
       selected: false,

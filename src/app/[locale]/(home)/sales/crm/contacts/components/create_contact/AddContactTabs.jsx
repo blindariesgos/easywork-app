@@ -7,31 +7,56 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link"
 import IconDropdown from "../../../../../../../../components/SettingsButton";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function AddContactTabs({ id }) {
+export default function AddContactTabs({ id, tab }) {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const tabs = [
-    { name: t("contacts:create:tabs:general"), value: 0 },
+    { name: t("contacts:create:tabs:general"), value: 0, module: "general" },
     { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/contact/policies/${id}?show=true` },
     { name: t("contacts:create:tabs:activities"), value: 2 },
     { name: t("contacts:create:tabs:reports"), value: 3 },
-    { name: t("contacts:create:tabs:documents"), value: 4, link: `/tools/drive` },
+    { name: t("contacts:create:tabs:documents"), value: 4, module: "documents" },
   ];
 
   const settings = [
     {
       value: 0,
       name: t("contacts:create:download"),
-      onclick: () => {},
+      onclick: () => { },
       icon: ArrowDownTrayIcon
     },
     {
       value: 0,
       name: t("contacts:create:print"),
-      onclick: () => {},
+      onclick: () => { },
       icon: DocumentTextIcon
     }
   ]
+
+  const renderTab = (item) => (
+    <div
+      className={clsx(item.module === tab && "border-indigo-500 text-white bg-blue-100 rounded-md focus:outline-none focus:ring-0",
+        item.disabled
+          ? "border-transparent text-gray-300 cursor-default"
+          : "border-transparent text-gray-400",
+        "whitespace-nowrap p-2 text-sm font-medium cursor-pointer focus:outline-none focus:ring-0"
+      )}
+      aria-current={item.current ? "page" : undefined}
+      onClick={() => {
+        if (!item.module) return;
+        params.set("tab", item.module)
+        replace(`${pathname}?${params.toString()}`)
+      }}
+      key={item.name}
+    >
+      {item.name}
+    </div>
+  )
 
   return (
     <div className="bg-white px-4 w-full rounded-lg">
@@ -53,37 +78,33 @@ export default function AddContactTabs({ id }) {
       <div className="">
         <div className="flex justify-between items-center">
           <nav className="-mb-px flex space-x-8 p-2 flex-wrap justify-start" aria-label="Tabs">
-            {tabs.map((tab) => (
-              <Link
-                key={tab.name}
-                href={tab.link || ""}
-                className="ring-0 focus:outline-none focus:ring-0"
-              >
-                <div
-                  className={clsx(tab.value === 0 && "border-indigo-500 text-white bg-blue-100 rounded-md focus:outline-none focus:ring-0",
-                      tab.disabled
-                      ? "border-transparent text-gray-300 cursor-default"
-                      : "border-transparent text-gray-400",
-                    "whitespace-nowrap p-2 text-sm font-medium cursor-pointer focus:outline-none focus:ring-0"
-                  )}
-                  aria-current={tab.current ? "page" : undefined}
-                >
-                  {tab.name}
-                </div>
-              </Link>
-            ))}
+            {tabs.map((tab) => {
+              if (tab.link) {
+                return (
+                  <Link
+                    key={tab.name}
+                    href={tab.link || ""}
+                    className="ring-0 focus:outline-none focus:ring-0"
+                  >
+                    {renderTab(tab)}
+                  </Link>
+                )
+              }
+
+              return renderTab(tab);
+            })}
             <Button
               label={t("contacts:create:add")}
               buttonStyle="primary"
-              icon={<PlusIcon className="h-4 w-4 text-white"/>}
+              icon={<PlusIcon className="h-4 w-4 text-white" />}
               className="py-2 px-3"
             />
           </nav>
           <div>
             <IconDropdown
-              icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true"/>}
-              options={settings} 
-              width="w-44" 
+              icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" />}
+              options={settings}
+              width="w-44"
             />
           </div>
         </div>

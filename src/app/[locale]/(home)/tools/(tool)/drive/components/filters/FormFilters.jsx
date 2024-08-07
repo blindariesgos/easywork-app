@@ -17,7 +17,13 @@ import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
 
 const FormFilters = () => {
   const { t } = useTranslation();
-  const { setFilters, filters, setDisplayFilters, filterFields, setFilterFields } = useDriveContext()
+  const {
+    setFilters,
+    filters,
+    setDisplayFilters,
+    filterFields,
+    setFilterFields,
+  } = useDriveContext();
 
   const schema = yup.object().shape({
     date: yup.object(),
@@ -31,23 +37,17 @@ const FormFilters = () => {
     fields: yup.array().of(yup.object().shape({})),
   });
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-  } = useForm({
+  const { register, handleSubmit, control, reset, setValue } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
       fields: [
         {
           id: 1,
-          name: t('contacts:filters:item-name'),
-          type: 'input',
+          name: t("contacts:filters:item-name"),
+          type: "input",
           check: true,
-          code: "name"
+          code: "name",
         },
       ],
     },
@@ -59,61 +59,63 @@ const FormFilters = () => {
   });
 
   const handleFormFilters = (data) => {
-    console.log({ data })
-    if (data.fields.length == 0) return
+    if (data.fields.length == 0) return;
 
     const newFilters = data.fields.reduce((acc, field) => {
       let value = field.value;
 
       if (field.type == "date") {
-        value = formatDate(field.value, "MM/dd/yyyy")
+        value = formatDate(field.value, "MM/dd/yyyy");
       }
 
       if (field.type == "select") {
-        value = field.options.find(option => option.id == field.value).value
+        value = field.options.find((option) => option.id == field.value).value;
       }
 
       return {
         ...acc,
-        [field.code]: value
-      }
-    }, {})
-    setDisplayFilters(data.fields.filter(field => field.value !== ""))
-    setFilters(newFilters)
+        [field.code]: value,
+      };
+    }, {});
+    setDisplayFilters(data.fields.filter((field) => field.value !== ""));
+    setFilters(newFilters);
   };
 
   useEffect(() => {
     reset();
   }, [reset]);
 
-
-
   useEffect(() => {
-    Object.keys(filters).length > 0
-      && Object.keys(filters).filter(key => filters[key] !== "").forEach(key => {
-        const index = fields.findIndex(x => x.code == key);
-        const filterField = filterFields.find(field => field.code == key)
-        const value = filterField?.type == "select"
-          ? filterField.options.find(option => option.value == filters[key]).id
-          : filters[key]
+    Object.keys(filters).length > 0 &&
+      Object.keys(filters)
+        .filter((key) => filters[key] !== "")
+        .forEach((key) => {
+          const index = fields.findIndex((x) => x.code == key);
+          const filterField = filterFields.find((field) => field.code == key);
+          const value =
+            filterField?.type == "select"
+              ? filterField.options.find(
+                  (option) => option.value == filters[key]
+                ).id
+              : filters[key];
 
-        if (index == -1) {
-          append({
-            ...filterField,
-            value: value
-          })
-        } else {
-          setValue(`fields[${index}].value`, value)
-        }
-      })
-  }, [filters])
+          if (index == -1) {
+            append({
+              ...filterField,
+              value: value,
+            });
+          } else {
+            setValue(`fields[${index}].value`, value);
+          }
+        });
+  }, [filters]);
 
   const handleReset = () => {
-    reset()
-    setFilters({})
-    setDisplayFilters([])
-    setFilterFields(filterFields.map(field => ({ ...field, check: false })))
-  }
+    reset();
+    setFilters({});
+    setDisplayFilters([]);
+    setFilterFields(filterFields.map((field) => ({ ...field, check: false })));
+  };
 
   return (
     <form

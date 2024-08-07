@@ -1,0 +1,12 @@
+{
+    "portafolio": {
+        "controls": {
+            "tabs": {
+                "contact": "Contacto",
+                "company": "Compañia",
+                "policy": "Póliza",
+                "control": "Cobranza"
+            }
+        }
+    }
+}

@@ -1,5 +1,16 @@
-import { format, formatDistanceStrict, formatISO, isBefore, parseISO, differenceInDays, isTomorrow, isSameDay, endOfToday, startOfDay } from "date-fns";
-import { es } from 'date-fns/locale';
+import {
+  format,
+  formatDistanceStrict,
+  formatISO,
+  isBefore,
+  parseISO,
+  differenceInDays,
+  isTomorrow,
+  isSameDay,
+  endOfToday,
+  startOfDay,
+} from "date-fns";
+import { es } from "date-fns/locale";
 
 export const getFormatDate = (date) => {
   const parsedDate = new Date(date);
@@ -8,9 +19,8 @@ export const getFormatDate = (date) => {
     return null;
   }
 
-  return formatISO(parsedDate, { representation: 'complete' });
+  return formatISO(parsedDate, { representation: "complete" });
 };
-
 
 export const formatDate = (date, formato = "MMMM d, h:mm a") => {
   if (!date) return "";
@@ -27,7 +37,7 @@ export const isTaskOverdue = (task) => {
   const now = new Date();
 
   return isBefore(deadlineDate, now);
-}
+};
 
 export const isDateOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
@@ -35,38 +45,41 @@ export const isDateOverdue = (date) => {
   const now = new Date();
 
   return isBefore(deadlineDate, now);
-}
+};
 
 export const isDateTomorrowOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
   const deadlineDate = parseISO(date);
 
   return isTomorrow(deadlineDate);
-}
+};
 
 export const isDateTodayOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
   const deadlineDate = parseISO(date);
-  const now = new Date()
+  const now = new Date();
 
   return isSameDay(deadlineDate, now);
-}
+};
 
 export const isDateMoreFiveDayOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
   const deadlineDate = parseISO(date);
-  const now = new Date()
+  const now = new Date();
 
-  return differenceInDays(deadlineDate, now) >= 5 && differenceInDays(deadlineDate, now) <= 10;
-}
+  return (
+    differenceInDays(deadlineDate, now) >= 5 &&
+    differenceInDays(deadlineDate, now) <= 10
+  );
+};
 
 export const isDateMoreTenDayOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
   const deadlineDate = parseISO(date);
-  const now = new Date()
+  const now = new Date();
 
   return differenceInDays(deadlineDate, now) > 10;
-}
+};
 
 export const getTaskOverdueTimeDelta = (task) => {
   if (!task?.deadline) {
@@ -74,7 +87,6 @@ export const getTaskOverdueTimeDelta = (task) => {
   }
 
   if (task.completedTime) return formatDate(task.deadline);
-
 
   const deadlineDate = parseISO(task.deadline);
   const now = new Date();

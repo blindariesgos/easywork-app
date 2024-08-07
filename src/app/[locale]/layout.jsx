@@ -31,7 +31,6 @@ export default async function RootLayout({ children, params: { locale } }) {
             <CrmContextProvider>
               <ToolContextProvider>
                 <ToastContainer stacked />
-                <ModalAlert />
                 {children}
               </ToolContextProvider>
             </CrmContextProvider>

@@ -10,6 +10,7 @@ import { NotifyContextProvider } from "@/src/context/notify";
 import NotifyDrawer from "@/src/components/notifier/drawer/NotifyDrawer";
 import OtherNotifications from "../../../components/OtherNotifications";
 import ChangePassword from "../../../components/ChangePassword";
+import InviteUser from "../../../components/InviteUser";
 
 export default function HomeLayout({ children }) {
   return (
@@ -20,7 +21,6 @@ export default function HomeLayout({ children }) {
             <NotifyContextProvider>
               <FirebaseMessaging />
               <NotifyDrawer />
-
               <div className="flex h-screen">
                 <Sidebar />
                 <div className="flex flex-col flex-grow w-full p-0.5 sm:p-0 md:p-4 lg:pl-80">
@@ -34,6 +34,7 @@ export default function HomeLayout({ children }) {
                 <HelpChat />
                 <OtherNotifications colorTag="bg-easywork-main" />
                 <ChangePassword colorTag="bg-easywork-main" />
+                <InviteUser colorTag="bg-easywork-main" />
               </div>
             </NotifyContextProvider>
           </SocketProvider>

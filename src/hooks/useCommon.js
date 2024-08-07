@@ -305,7 +305,7 @@ export const useSidebar = () => {
           children: [
             {
               name: t("common:menu:settings:invite"),
-              href: "/settings/invite",
+              href: `${window.location.pathname}?inviteuser=true`,
               image: "/img/settings/invitar.png",
               iconShortBar: ArchiveBoxIcon,
             },

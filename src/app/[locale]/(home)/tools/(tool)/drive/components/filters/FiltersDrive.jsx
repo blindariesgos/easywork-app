@@ -1,5 +1,11 @@
 "use client";
-import { Menu, MenuButton, Transition, MenuItems, TransitionChild } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  Transition,
+  MenuItems,
+  TransitionChild,
+} from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
@@ -7,9 +13,12 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
 import useDriveContext from "@/src/context/drive";
 import { formatDate } from "@/src/utils/getFormatDate";
+import useAppContext from "@/src/context/app";
 
 const FiltersDrive = () => {
-  const { setFilters, filters, displayFilters, removeFilter } = useDriveContext()
+  const { setFilters, filters, displayFilters, removeFilter } =
+    useDriveContext();
+  const { lists } = useAppContext();
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [contacts, setContacts] = useState([
@@ -25,7 +34,6 @@ const FiltersDrive = () => {
     },
   ]);
 
-
   const handleSelected = (id) => {
     const updateSelection = contacts.map((cont) => {
       return cont.id === id
@@ -39,46 +47,52 @@ const FiltersDrive = () => {
     const getData = setTimeout(() => {
       setFilters({
         ...filters,
-        name: searchInput
-      })
-    }, 500)
+        name: searchInput,
+      });
+    }, 500);
 
-    return () => clearTimeout(getData)
-  }, [searchInput])
+    return () => clearTimeout(getData);
+  }, [searchInput]);
 
   const getFilterValue = (item) => {
+    if (["createdby"].includes(item.code)) {
+      return (
+        lists?.users?.find((user) => user.id == item.value)?.name ?? item.value
+      );
+    }
+
     if (item.type == "date") {
-      return formatDate(item.value, "MM/dd/yyyy")
+      return formatDate(item.value, "MM/dd/yyyy");
     }
 
     if (item.type == "select") {
-      return item.options.find(option => option.id == item.value)?.name
+      return item.options.find((option) => option.id == item.value)?.name;
     }
 
-    return item.value
-  }
+    return item.value;
+  };
 
   return (
     <Menu className="relative w-full" as="div">
       <div className="flex items-center w-full justify-between gap-2">
-        {
-          displayFilters.length > 0 && displayFilters?.map(item => {
+        {displayFilters.length > 0 &&
+          displayFilters?.map((item) => {
             return (
               <div
                 className="p-2 border bg-easy-200 border-primary text-sm overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] w-full pr-4 relative"
                 key={item.id}
-                title={`${item.name}: ${getFilterValue(item)}`} >
+                title={`${item.name}: ${getFilterValue(item)}`}
+              >
                 {`${item.name}: ${getFilterValue(item)}`}
                 <p
                   className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-primary font-semibold"
-                  onClick={() => removeFilter(item.code)}>
+                  onClick={() => removeFilter(item.code)}
+                >
                   x
                 </p>
               </div>
-            )
-          }
-          )
-        }
+            );
+          })}
         <div className="flex items-center w-full">
           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
           <input

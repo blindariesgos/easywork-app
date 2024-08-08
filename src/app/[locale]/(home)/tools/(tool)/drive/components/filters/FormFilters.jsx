@@ -12,6 +12,7 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from "./AddFields";
 import InputDate from "@/src/components/form/InputDate";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
 import useDriveContext from "@/src/context/drive";
 import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
 
@@ -37,7 +38,7 @@ const FormFilters = () => {
     fields: yup.array().of(yup.object().shape({})),
   });
 
-  const { register, handleSubmit, control, reset, setValue } = useForm({
+  const { register, handleSubmit, control, reset, setValue, watch } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
@@ -158,6 +159,15 @@ const FormFilters = () => {
                 name={`fields[${index}].value`}
                 control={control}
                 defaultValue=""
+              />
+            )}
+            {field.type === "dropdown" && (
+              <SelectDropdown
+                label={field.name}
+                name={`fields[${index}].value`}
+                options={field.options}
+                setValue={setValue}
+                watch={watch}
               />
             )}
           </div>

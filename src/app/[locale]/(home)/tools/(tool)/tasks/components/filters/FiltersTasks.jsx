@@ -14,7 +14,6 @@ import { formatDate } from "@/src/utils/getFormatDate";
 
 const FiltersTasks = () => {
   const { t } = useTranslation();
-  const { status, setStatus } = useTasksConfigs();
   const [searchInput, setSearchInput] = useState("");
   const { filters, setFilters, displayFilters, removeFilter } =
     useTasksContext();

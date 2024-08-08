@@ -301,3 +301,8 @@ export const deleteMails = async (idUser) => {
   return response;
 };
 
+export const addContactComment = async (body) => {
+  const response = await axios().post(`/sales/crm/contacts/comments`, body);
+  return response;
+};
+

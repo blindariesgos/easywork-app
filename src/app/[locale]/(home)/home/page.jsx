@@ -1,20 +1,29 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Header from "../../../../components/header/Header";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { getCookie } from "cookies-next";
-
+import { useTasks } from "../../../../lib/api/hooks/tasks";
+import LoaderSpinner, {
+  LoadingSpinnerSmall,
+} from "@/src/components/LoaderSpinner";
+import { formatDate } from "@/src/utils/getFormatDate";
+import clsx from "clsx";
 const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
-
-const TASKS = [
-  { title: "Seguimiento prospecto", dueDate: "10/07/2025" },
-  { title: "Cristian llamada", dueDate: "20/05/2025" },
-  { title: "Enviar correo electrónico a Carlos", dueDate: "14/12/2025" },
-];
+import TaskList from "./components/taskList";
 
 export default function Page() {
+  const { tasks: overdueTasks, isLoading: isLoadingOverdueTasks } = useTasks({
+    filters: { status: "overdue" },
+  });
+
+  const { tasks: deadlineTodayTasks, isLoading: isLoadingDeadlineTodayTasks } =
+    useTasks({
+      filters: { deadline: formatDate(new Date(), "yyyy-MM-dd") },
+    });
+
   useEffect(() => {
     const fromUrl = document.referrer ? new URL(document.referrer) : null; // Validador para document.referrer
     const urlParams = window.location.search
@@ -54,25 +63,66 @@ export default function Page() {
       <div className="w-full p-4  h-full grid grid-cols-1 gap-4">
         <Header />
         <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4  gap-4">
-          <div className="h-64 bg-white rounded-lg p-2">
-            <h1 className="h-1/4 font-medium">Actividades vencidas</h1>
-            <div className="h-2/4 flex justify-center">
-              <ClockIcon className="h-16 w-16 text-slate-400" />
-            </div>
-            <div className="h-1/4 flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg">
-              <h1 className="text-sm">
-                ¡Buen trabajo! No tienes actividades vencidas
-              </h1>
-            </div>
+          <div
+            className={clsx(
+              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
+              {
+                "justify-between": !overdueTasks?.items?.length,
+              }
+            )}
+          >
+            <h1 className="font-medium w-full">Actividades vencidas</h1>
+
+            {isLoadingOverdueTasks ? (
+              <LoadingSpinnerSmall color="primary" />
+            ) : (
+              <Fragment>
+                {overdueTasks.items && overdueTasks.items.length ? (
+                  <TaskList tasks={overdueTasks.items} />
+                ) : (
+                  <Fragment>
+                    <div className=" flex justify-center">
+                      <ClockIcon className="h-16 w-16 text-slate-400" />
+                    </div>
+                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                      <h1 className="text-sm p-2">
+                        ¡Buen trabajo! No tienes actividades vencidas
+                      </h1>
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
+            )}
           </div>
-          <div className="h-64 bg-white rounded-lg p-2 ">
-            <h1 className="h-1/4 font-medium">Actividades de hoy</h1>
-            <div className="h-2/4 flex justify-center">
-              <CalendarIcon className="h-16 w-16 text-slate-400" />
-            </div>
-            <div className="h-1/4 flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg">
-              <h1 className="text-sm">No tienes actividades para hoy</h1>
-            </div>
+          <div
+            className={clsx(
+              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
+              {
+                "justify-between": !deadlineTodayTasks?.items?.length,
+              }
+            )}
+          >
+            <h1 className="font-medium w-full">Actividades de hoy</h1>
+            {isLoadingDeadlineTodayTasks ? (
+              <LoadingSpinnerSmall color="primary" />
+            ) : (
+              <Fragment>
+                {deadlineTodayTasks.items && deadlineTodayTasks.items.length ? (
+                  <TaskList tasks={deadlineTodayTasks.items} />
+                ) : (
+                  <Fragment>
+                    <div className=" flex justify-center">
+                      <CalendarIcon className="h-16 w-16 text-slate-400" />
+                    </div>
+                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                      <h1 className="text-sm p-2 ">
+                        No tienes actividades para hoy
+                      </h1>
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
+            )}
           </div>
           <div className="h-64 bg-white rounded-lg p-2 ">
             <h1 className="h-1/6 font-medium">Actividades próximas</h1>
@@ -260,7 +310,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

@@ -3,7 +3,7 @@ import Sidebar from "../../../components/Sidebar";
 import LoggedInProvider from "../../../components/Providers/LoggedInProvider";
 import SocketProvider from "../../../components/Providers/SocketProvider";
 import { SessionProvider } from "next-auth/react";
-import Footer from "../../../components/Footer";
+import PageBody from "../../../components/PageBody";
 import HelpChat from "../../../components/HelpChat";
 import FirebaseMessaging from "@/src/components/FirebaseMessaging";
 import { NotifyContextProvider } from "@/src/context/notify";
@@ -23,14 +23,7 @@ export default function HomeLayout({ children }) {
               <NotifyDrawer />
               <div className="flex h-screen">
                 <Sidebar />
-                <div className="flex flex-col flex-grow w-full p-0.5 sm:p-0 md:p-4 lg:pl-80">
-                  {/* Contenedor principal flexible */}
-                  <main className="flex-grow">
-                    {/* Contenido creciente */}
-                    {children}
-                  </main>
-                  <Footer /> {/* Footer fuera del main */}
-                </div>
+                <PageBody>{children}</PageBody>
                 <HelpChat />
                 <OtherNotifications colorTag="bg-easywork-main" />
                 <ChangePassword colorTag="bg-easywork-main" />

@@ -3,7 +3,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import React from "react";
 
-export default function DropdownVisibleUsers({
+const DropdownVisibleUsers = ({
   dataUsers,
   onChangeCustom,
   setUserSelected,
@@ -11,7 +11,7 @@ export default function DropdownVisibleUsers({
   setDropdownVisible,
   mentionButtonRef,
   modalPosition,
-}) {
+}) => {
   const handleSelected = (user) => {
     setUserSelected(user);
     setDropdownVisible(false);
@@ -53,7 +53,7 @@ export default function DropdownVisibleUsers({
                 onClick={() => handleSelected(user)}
               >
                 <Image
-                  src={user.avatar}
+                  src={user.avatar || "/img/avatar.svg"}
                   alt=""
                   height={300}
                   width={300}
@@ -76,4 +76,6 @@ export default function DropdownVisibleUsers({
       </div>
     </div>
   );
-}
+};
+
+export default DropdownVisibleUsers;

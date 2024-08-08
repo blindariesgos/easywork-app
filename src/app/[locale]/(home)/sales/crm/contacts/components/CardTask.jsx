@@ -16,7 +16,7 @@ import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BsBriefcase } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react'
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { postComment } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 //is a component that must recieve its props
@@ -27,12 +27,12 @@ export default function CardTask({ data }) {
     {
       value: 0,
       name: t("common:buttons:edit"),
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 0,
       name: t("common:buttons:delete"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -43,13 +43,11 @@ export default function CardTask({ data }) {
           <p className="text-xs text-primary font-medium">
             {t("tools:tasks:task")}
           </p>
-          {
-            isTaskOverdue(data) && (
-              <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
-                Vencida
-              </span>
-            )
-          }
+          {isTaskOverdue(data) && (
+            <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
+              Vencida
+            </span>
+          )}
           <p className="text-xs text-slate-500/60 font-medium">
             {formatDate(data.createdAt)}
           </p>
@@ -69,7 +67,10 @@ export default function CardTask({ data }) {
           <div className="p-4 bg-gray-100 rounded-lg">
             <BsBriefcase className="h-12 w-12 text-black" />
           </div>
-          <Link href={`/tools/tasks/task/${data.id}?show=true`} className="text-xs text-primary font-medium px-4 py-2 bg-gray-100 rounded-lg flex justify-center items-center hover:bg-gray-200/50">
+          <Link
+            href={`/tools/tasks/task/${data.id}?show=true`}
+            className="text-xs text-primary font-medium px-4 py-2 bg-gray-100 rounded-lg flex justify-center items-center hover:bg-gray-200/50"
+          >
             {t("contacts:panel:open")}
           </Link>
         </div>
@@ -78,29 +79,45 @@ export default function CardTask({ data }) {
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:date")}:
             </p>
-            {data?.deadline ? (<p className="text-xs font-normal bg-yellow-200 rounded-xl px-2 py-1 text-slate-500 flex items-center cursor-pointer align-middle lining-nums"><span className="leading-none align-middle">{formatDate(data.deadline)}</span>
-              <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
-            </p>) : (<p className="text-xs font-normal bg-blue-200 rounded-xl px-2 py-1 text-slate-600 flex items-center cursor-pointer">Ninguna
-              <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
-            </p>)}
+            {data?.deadline ? (
+              <p className="text-xs font-normal bg-yellow-200 rounded-xl px-2 py-1 text-slate-500 flex items-center cursor-pointer align-middle lining-nums">
+                <span className="leading-none align-middle">
+                  {formatDate(data.deadline)}
+                </span>
+                <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
+              </p>
+            ) : (
+              <p className="text-xs font-normal bg-blue-200 rounded-xl px-2 py-1 text-slate-600 flex items-center cursor-pointer">
+                Ninguna
+                <ChevronDownIcon className="h-4 w-4 text-slate-500 ml-1" />
+              </p>
+            )}
           </div>
           <div className="flex gap-x-4 items-center">
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:title")}:
             </p>
             <p className="text-sm text-blue-700 font-normal">
-              <Link href={`/tools/tasks/task/${data.id}?show=true`}>{data.name}</Link>
+              <Link href={`/tools/tasks/task/${data.id}?show=true`}>
+                {data.name}
+              </Link>
             </p>
           </div>
           <div className="flex gap-x-4 items-center">
             <p className="text-sm text-black font-medium">
               {t("tools:tasks:panel:responsible")}:
             </p>
-            <Link href={`/user/${data.id}?show=true`} className="text-sm text-blue-700 font-normal">
-              {data?.responsible[0]?.profile?.firstName ? `${data?.responsible[0]?.profile?.firstName} ${data?.responsible[0]?.profile?.lastName}` : data?.responsible[0]?.username}</Link>
+            <Link
+              href={`/user/${data.id}?show=true`}
+              className="text-sm text-blue-700 font-normal"
+            >
+              {data?.responsible[0]?.profile?.firstName
+                ? `${data?.responsible[0]?.profile?.firstName} ${data?.responsible[0]?.profile?.lastName}`
+                : data?.responsible[0]?.username}
+            </Link>
           </div>
           <div className="flex justify-end mt-0 gap-2 items-center">
-            <div className="cursor-pointer" title="Agregar Comentario">
+            {/* <div className="cursor-pointer" title="Agregar Comentario">
               <Menu as="div" className="relative inline-block text-left mt-1">
                 {({ close }) => (
                   <Fragment>
@@ -119,7 +136,7 @@ export default function CardTask({ data }) {
                   </Fragment>
                 )}
               </Menu>
-            </div>
+            </div> */}
             <div title="Ver Opciones">
               <IconDropdown
                 icon={
@@ -142,27 +159,31 @@ export default function CardTask({ data }) {
 const AddTaskComment = ({ close, task }) => {
   const [value, setValueText] = useState("");
   const quillRef = useRef(null);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleAdd = async () => {
-    setLoading(true)
+    setLoading(true);
     const body = {
       comment: value,
       isSummary: task.requireSummary,
       taskId: task.id,
     };
-    const response = await postComment(body, task.id).catch(() => ({ error: true }))
+    const response = await postComment(body, task.id).catch(() => ({
+      error: true,
+    }));
 
     if (response.error) {
-      toast.error("Se ha producido un error al crear el comentario, inténtelo de nuevo.")
-      setLoading(false)
+      toast.error(
+        "Se ha producido un error al crear el comentario, inténtelo de nuevo."
+      );
+      setLoading(false);
 
       return;
     }
-    toast.success("El comentario se ha añadido correctamente")
-    close()
-    setLoading(false)
-  }
+    toast.success("El comentario se ha añadido correctamente");
+    close();
+    setLoading(false);
+  };
 
   return (
     <div>
@@ -172,7 +193,7 @@ const AddTaskComment = ({ close, task }) => {
           value={value}
           className="h-full  w-full"
           setValue={(e) => {
-            setValueText(e)
+            setValueText(e);
           }}
         />
       </div>
@@ -193,6 +214,5 @@ const AddTaskComment = ({ close, task }) => {
         />
       </div>
     </div>
-
-  )
-}
+  );
+};

@@ -12,7 +12,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import useAppContext from "@/src/context/app";
 
-const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }) => {
+const OptionsTask = ({
+  edit,
+  copy,
+  value,
+  setValueText,
+  disabled,
+  setListField,
+}) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const quillRef = useRef(null);
@@ -23,7 +30,7 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
   const [userSelected, setUserSelected] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectText, setSelectText] = useState();
-  const [openList, setOpenList] = useState((edit ?? copy) ? true : false);
+  const [openList, setOpenList] = useState(edit ?? copy ? true : false);
   const [openFiles, setOpenFiles] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
@@ -44,7 +51,7 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
       name: t("tools:tasks:new:mention"),
       icon: AtSymbolIcon,
       onclick: () => setDropdownVisible(!dropdownVisible),
-      disabled: arroba,
+      disabled: arroba || disabled,
     },
     {
       id: 5,
@@ -80,10 +87,11 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
     ),
   });
 
-  const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
-    defaultValues: {},
-    resolver: yupResolver(schema),
-  });
+  const { register, handleSubmit, control, getValues, setValue, watch } =
+    useForm({
+      defaultValues: {},
+      resolver: yupResolver(schema),
+    });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -96,9 +104,9 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
 
   useEffect(() => {
     if (edit?.listField?.length > 0) {
-      const outputArray = edit.listField.map(item => ({
+      const outputArray = edit.listField.map((item) => ({
         name: item.text,
-        subItems: item.child.map(subItem => ({
+        subItems: item.child.map((subItem) => ({
           name: subItem.text,
           value: subItem.completed,
           empty: false,
@@ -110,9 +118,9 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
 
   useEffect(() => {
     if (copy?.listField?.length > 0) {
-      const outputArray = copy.listField.map(item => ({
+      const outputArray = copy.listField.map((item) => ({
         name: item.text,
-        subItems: item.child.map(subItem => ({
+        subItems: item.child.map((subItem) => ({
           name: subItem.text,
           value: subItem.completed,
           empty: false,
@@ -136,7 +144,7 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
 
   useEffect(() => {
     if (userSelected) {
-      addUserSelected(userSelected.username);
+      addUserSelected(userSelected.name);
     }
   }, [userSelected]);
 
@@ -144,7 +152,7 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
     if (quillRef.current) {
       const quillEditor = quillRef.current.getEditor();
       const currentContents = quillEditor.getContents();
-      const newContent = currentContents.ops.map(op => ({
+      const newContent = currentContents.ops.map((op) => ({
         insert: op.insert.replace(/\n$/, "").replace("@", ""),
         attributes: { ...op.attributes },
       }));
@@ -160,7 +168,7 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
 
   const onChangeCustom = (event) => {
     const { value } = event.target;
-    const filterData = lists?.users.filter(user =>
+    const filterData = lists?.users.filter((user) =>
       user.name.toLowerCase().includes(value.toLowerCase())
     );
     setDataUsers(filterData);
@@ -194,25 +202,26 @@ const OptionsTask = ({ edit, copy, value, setValueText, disabled, setListField }
           setValue={setValueText}
           disabled={disabled}
         />
-        {arroba && dropdownUsers(true)}
       </div>
       <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
-        {options.map((opt) => (
-          <div
-            key={opt.id}
-            className="flex gap-1 items-center cursor-pointer"
-            onClick={opt.onclick}
-            ref={opt.id === 3 ? mentionButtonRef : null}
-          >
-            <button
-              className="flex gap-2 items-center focus:ring-0"
-              disabled={opt.disabled}
+        {options
+          .filter((opt) => !opt.disabled)
+          .map((opt) => (
+            <div
+              key={opt.id}
+              className="flex gap-1 items-center cursor-pointer"
+              onClick={opt.onclick}
+              ref={opt.id === 3 ? mentionButtonRef : null}
             >
-              {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
-              <p className="text-sm">{opt.name}</p>
-            </button>
-          </div>
-        ))}
+              <button
+                className="flex gap-2 items-center focus:ring-0"
+                disabled={opt.disabled}
+              >
+                {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
+                <p className="text-sm">{opt.name}</p>
+              </button>
+            </div>
+          ))}
         {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
       </div>
       {openFiles && (

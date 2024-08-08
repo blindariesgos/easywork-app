@@ -1,7 +1,11 @@
 "use client";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Disclosure } from "@headlessui/react";
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from "@headlessui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useSidebar } from "../hooks/useCommon";
@@ -14,8 +18,10 @@ function classNames(...classes) {
 const SidebarMenu = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const paramsPathname = `${pathname}?${
-    new URLSearchParams(searchParams).toString() || ""
+  const paramsPathname = `${pathname}${
+    new URLSearchParams(searchParams).toString().length
+      ? `?${new URLSearchParams(searchParams).toString().length}`
+      : ""
   }`;
   const { sidebarNavigation } = useSidebar();
   const { width, height, ref } = useResizeDetector();
@@ -29,26 +35,29 @@ const SidebarMenu = () => {
               <li key={item.name}>
                 {!item.children ? (
                   <Link
-                    href={item.href}
+                    href={item.href.length ? item.href : "/construction"}
                     className={classNames(
-                      item.current
+                      item.href === pathname
                         ? "bg-primary text-white"
-                        : "text-slate-50 hover:text-white hover:bg-easy-800",
-                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                        : "text-slate-50 hover:text-white hover:bg-easy-300",
+                      "flex items-center w-full text-left rounded-md p-2 gap-x-1 text-sm leading-6 font-semibold uppercase"
                     )}
                   >
-                    <item.icon
-                      className="h-6 w-6 shrink-0"
-                      aria-hidden="true"
-                    />
-                    {item.name}
+                    <div className="h-6 w-6" />
+                    {width < 100 ? (
+                      <item.iconShortBar className="h-7 w-7 shrink-0" />
+                    ) : (
+                      item.name
+                    )}
                   </Link>
                 ) : (
                   <Disclosure as="div">
                     {({ open }) => (
                       <>
-                        <Link href={item.href}>
-                          <Disclosure.Button
+                        <Link
+                          href={item.href.length ? item.href : "/construction"}
+                        >
+                          <DisclosureButton
                             className={classNames(
                               item.href === pathname
                                 ? "bg-primary text-white"
@@ -71,14 +80,18 @@ const SidebarMenu = () => {
                             ) : (
                               item.name
                             )}
-                          </Disclosure.Button>
+                          </DisclosureButton>
                         </Link>
-                        <Disclosure.Panel as="ul" className="mt-1 px-2">
+                        <DisclosurePanel as="ul" className="mt-1 px-2">
                           {item.children.map((subItem) => (
                             <li key={subItem.name}>
                               {!subItem.children ? (
                                 <Link
-                                  href={subItem.href}
+                                  href={
+                                    subItem.href.length
+                                      ? subItem.href
+                                      : "/construction"
+                                  }
                                   className={classNames(
                                     subItem.href === pathname
                                       ? "bg-primary text-white"
@@ -100,8 +113,14 @@ const SidebarMenu = () => {
                                 <Disclosure as={"div"}>
                                   {({ open }) => (
                                     <>
-                                      <Link href={subItem.href}>
-                                        <Disclosure.Button
+                                      <Link
+                                        href={
+                                          subItem.href.length
+                                            ? subItem.href
+                                            : "/construction"
+                                        }
+                                      >
+                                        <DisclosureButton
                                           className={classNames(
                                             subItem.href === pathname
                                               ? "bg-primary text-white"
@@ -126,19 +145,22 @@ const SidebarMenu = () => {
                                           ) : (
                                             subItem.name
                                           )}
-                                        </Disclosure.Button>
+                                        </DisclosureButton>
                                       </Link>
-                                      <Disclosure.Panel
+                                      <DisclosurePanel
                                         as="ul"
                                         className="mt-1 px-2"
                                       >
                                         {subItem.children.map((subSubItem) => (
                                           <li key={subSubItem.name}>
                                             <Link
-                                              href={subSubItem.href}
+                                              href={
+                                                subSubItem.href.length
+                                                  ? subSubItem.href
+                                                  : "/construction"
+                                              }
                                               className={classNames(
-                                                subSubItem.href ===
-                                                  paramsPathname
+                                                subSubItem.href === pathname
                                                   ? "bg-primary text-white"
                                                   : "text-slate-50 hover:text-white hover:bg-easy-300",
                                                 "block rounded-md py-2 pr-2 text-sm leading-6 ml-6",
@@ -155,14 +177,14 @@ const SidebarMenu = () => {
                                             </Link>
                                           </li>
                                         ))}
-                                      </Disclosure.Panel>
+                                      </DisclosurePanel>
                                     </>
                                   )}
                                 </Disclosure>
                               )}
                             </li>
                           ))}
-                        </Disclosure.Panel>
+                        </DisclosurePanel>
                       </>
                     )}
                   </Disclosure>

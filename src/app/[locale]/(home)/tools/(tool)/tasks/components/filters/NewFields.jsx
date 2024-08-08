@@ -51,7 +51,7 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
               type="checkbox"
               className="h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
               value={field.id}
-              checked={field.check}
+              checked={selectFields.some((x) => x.code == field.code)}
               name={field.code}
               onChange={(e) => handleAddField(e)}
             />

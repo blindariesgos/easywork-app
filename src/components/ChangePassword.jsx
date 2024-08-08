@@ -71,7 +71,7 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
                         <div className="h-full bg-white mt-3 rounded-lg p-5">
                           <div className="flex justify-between border-b-2 pb-1">
                             <h2>Cambiar la contraseña</h2>
-                            <p>cancelar</p>
+                            <p>Cancelar</p>
                           </div>
                           <div className="mt-12">
                             <p className="text-sm">Nueva contraseña</p>

@@ -94,7 +94,7 @@
         "agent": "Rendimiento de agente"
       },
       "marketing": {
-        "name": "Marketing"
+        "name": "MARKETING"
       }
     },
     "control": {
@@ -125,7 +125,7 @@
     "companies": {
       "name": "Compañías",
       "gnp": "GNP (Próximamente)",
-      "axxa": "AXXA (Próximamente)",
+      "axa": "AXA (Próximamente)",
       "banorte": "Banorte (Próximamente)",
       "atlas": "Atlas (Próximamente)",
       "zurich": "Zurich (Próximamente)",

@@ -82,7 +82,7 @@ export default function Header() {
       <div className="flex justify-between flex-1 gap-x-4 lg:gap-x-6">
         {/*  */}
         <SearchBox />
-        <div className="flex items-center gap-x-2 lg:gap-x-6">
+        <div className="flex items-center gap-x-2 lg:gap-x-5">
           {/* Profile dropdown */}
           <Menu
             as="div"
@@ -99,13 +99,13 @@ export default function Header() {
               />
               <span className="hidden lg:flex lg:items-center">
                 <span
-                  className="ml-4 text-sm font-semibold leading-6 text-black"
+                  className="ml-2 text-sm whitespace-nowrap font-semibold leading-6 text-black"
                   aria-hidden="true"
                 >
                   {`${session?.user?.name}`}
                 </span>
                 <ChevronDownIcon
-                  className="ml-2 h-5 w-5 text-gray-400"
+                  className="ml-1 h-5 w-5 text-gray-400"
                   aria-hidden="true"
                 />
               </span>

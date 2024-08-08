@@ -165,7 +165,7 @@ export default function TableContacts() {
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) => router.push(`/sales/crm/contacts/contact/${id}?show=true`)
+      handleClick: (id) => router.push(`/sales/crm/permissions/user/${id}?show=true`)
     },
     { name: "Editar" },
     { name: "Copiar" },

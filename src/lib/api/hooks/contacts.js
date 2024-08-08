@@ -29,7 +29,7 @@ export const useContact = (id) => {
 };
 
 export const useContactActivities = (id) => {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/sales/crm/contacts/${id}/activities`,
     fetcher,
   );
@@ -37,5 +37,6 @@ export const useContactActivities = (id) => {
     activities: data,
     isLoading,
     isError: error,
+    mutate
   };
 };

@@ -94,7 +94,7 @@
         "agent": "Agent performance"
       },
       "marketing": {
-        "name": "Marketing"
+        "name": "MARKETING"
       },
       "control": {
         "name": "Collection"
@@ -120,7 +120,7 @@
     "companies": {
       "name": "Companies",
       "gnp": "GNP (Coming soon)",
-      "axxa": "AXXA (Coming soon)",
+      "axa": "AXA (Coming soon)",
       "banorte": "Banorte (Coming soon)",
       "atlas": "Atlas (Coming soon)",
       "zurich": "Zurich (Coming soon)",

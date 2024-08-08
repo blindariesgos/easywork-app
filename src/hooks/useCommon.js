@@ -148,12 +148,12 @@ export const useSidebar = () => {
             },
           ],
         },
-        {
-          name: t("common:menu:sales:marketing:name"),
-          href: "/sd",
-          image: "/img/ventas/marketing.png",
-          iconShortBar: MegaphoneIcon,
-        },
+        // {
+        //   name: t("common:menu:sales:marketing:name"),
+        //   href: "/sd",
+        //   image: "/img/ventas/marketing.png",
+        //   iconShortBar: MegaphoneIcon,
+        // },
       ],
     },
     {
@@ -184,6 +184,96 @@ export const useSidebar = () => {
           ]
         }
       ],
+    },
+    {
+      name: "OPERACIONES",
+      icon: ChevronRightIcon,
+      current: false,
+      href: "/operations",
+      iconShortBar: WalletIcon,
+      children: [
+        {
+          name: "Pólizas",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name:"Renovaciones",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Siniestros",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Reembolsos",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Rescate de Fondos",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+      ],
+    },
+    {
+      name: t("common:menu:sales:marketing:name"),
+      icon: ChevronRightIcon,
+      current: false,
+      href: "/marketing",
+      iconShortBar: PuzzlePieceIcon,
+      children: [
+        {
+          name: "Canales (REDES SOCIALES)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Telefonía (PRÓXIMAMENTE)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "SMS (PRÓXIMAMENTE)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "WIDGETS (PRÓXIMAMENTE)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Formularios (PRÓXIMAMENTE)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Sitios Web (PRÓXIMAMENTE)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          name: "Landing (PRÓXIMAMENTE)",
+          href: "/sd",
+          image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+        },
+      ]
     },
     {
       name: t("common:menu:services:name"),
@@ -277,7 +367,7 @@ export const useSidebar = () => {
           iconShortBar: ArrowDownCircleIcon,
         },
         {
-          name: t("common:menu:companies:axxa"),
+          name: t("common:menu:companies:axa"),
           href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },

@@ -16,6 +16,7 @@ import {
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
+import useAppContext from "../app";
 
 export default function DriveContextProvider({ children }) {
   const { t } = useTranslation()
@@ -31,6 +32,7 @@ export default function DriveContextProvider({ children }) {
   const [displayFilters, setDisplayFilters] = useState({})
   const [itemDelete, setItemDelete] = useState()
   const searchParams = useSearchParams();
+  const { lists } = useAppContext();
   const params = new URLSearchParams(searchParams);
   const [config, setConfig] = useState({
     limit: 25,
@@ -43,44 +45,56 @@ export default function DriveContextProvider({ children }) {
     itemCount: 0,
     totalPages: 1,
   })
-  const [filterFields, setFilterFields] = useState([
-    {
-      id: 2,
-      name: t('contacts:filters:currentFolder'),
-      type: 'select',
-      options: [
-        {
-          name: "Si",
-          id: 0,
-          value: true
-        },
-        {
-          name: "No",
-          id: 1,
-          value: false
-        }
-      ],
-      check: false,
-      code: "currentFolder"
-    },
-    {
-      id: 3,
-      name: t('contacts:filters:created'),
-      type: 'date',
-      check: false,
-      code: "createdDate"
-    },
-    {
-      id: 4,
-      name: t('contacts:filters:modified'),
-      type: 'date',
-      check: false,
-      code: "modifiedDate"
-    },
-  ]);
+  const [filterFields, setFilterFields] = useState([]);
   const [externalFolderInfo, setExternalFolderInfo] = useState()
 
   const [pages, setPages] = useState([])
+
+  useEffect(() => {
+    setFilterFields([
+      {
+        id: 2,
+        name: t('contacts:filters:currentFolder'),
+        type: 'select',
+        options: [
+          {
+            name: "Si",
+            id: 0,
+            value: true
+          },
+          {
+            name: "No",
+            id: 1,
+            value: false
+          }
+        ],
+        check: false,
+        code: "currentFolder"
+      },
+      {
+        id: 3,
+        name: t('contacts:filters:created'),
+        type: 'date',
+        check: false,
+        code: "createdDate"
+      },
+      {
+        id: 4,
+        name: t('contacts:filters:modified'),
+        type: 'date',
+        check: false,
+        code: "modifiedDate"
+      },
+      {
+        id: 5,
+        name: t('contacts:filters:created-by'),
+        type: 'dropdown',
+        check: false,
+        code: "createdby",
+        options: lists?.users,
+      },
+    ])
+  }, [lists?.users])
 
   const getExternalFolderInfo = async (folderId) => {
     const response = await getFolder(folderId)

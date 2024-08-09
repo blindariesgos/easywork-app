@@ -14,7 +14,6 @@ import { formatDate } from "@/src/utils/getFormatDate";
 
 const FiltersTasks = () => {
   const { t } = useTranslation();
-  const { status, setStatus } = useTasksConfigs();
   const [searchInput, setSearchInput] = useState("");
   const { filters, setFilters, displayFilters, removeFilter } =
     useTasksContext();
@@ -53,40 +52,40 @@ const FiltersTasks = () => {
     handleSearch();
   }, [searchInput]);
 
-  const getFilterValue = (item) => {
-    if (
-      ["responsible", "participants", "createdBy", "observers"].includes(
-        item.code
-      )
-    ) {
-      return (
-        lists?.users?.find((user) => user.id == item.value)?.name ?? item.value
-      );
-    }
+  // const getFilterValue = (item) => {
+  //   if (
+  //     ["responsible", "participants", "createdBy", "observers"].includes(
+  //       item.code
+  //     )
+  //   ) {
+  //     return (
+  //       lists?.users?.find((user) => user.id == item.value)?.name ?? item.value
+  //     );
+  //   }
 
-    if (item.code == "status") {
-      return item.value.map((value) => value.name).join(", ");
-    }
+  //   if (item.code == "status") {
+  //     return item.value.map((value) => value.name).join(", ");
+  //   }
 
-    if (item.type == "date") {
-      return formatDate(item.value, "yyyy-MM-dd");
-    }
+  //   if (item.type == "date") {
+  //     return formatDate(item.value, "yyyy-MM-dd");
+  //   }
 
-    if (item.type == "select") {
-      return item.options.find((option) => option.id == item.value)?.name;
-    }
+  //   if (item.type == "select") {
+  //     return item.options.find((option) => option.id == item.value)?.name;
+  //   }
 
-    if (item.type == "tags") {
-      return item.value.map((x) => x.name).join(", ");
-    }
+  //   if (item.type == "tags") {
+  //     return item.value.map((x) => x.name).join(", ");
+  //   }
 
-    return item.value;
-  };
+  //   return item.value;
+  // };
 
   return (
     <Menu as="div" className="relative inline-block w-full">
       <div className="w-full flex justify-between items-center gap-2">
-        {displayFilters.length > 0 &&
+        {/* {displayFilters.length > 0 &&
           displayFilters?.map((item) => {
             return (
               <div
@@ -103,7 +102,7 @@ const FiltersTasks = () => {
                 </p>
               </div>
             );
-          })}
+          })} */}
         <div className="flex items-center w-full">
           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
           <input

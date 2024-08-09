@@ -2,9 +2,30 @@
 import useSWR from "swr";
 import fetcher from "../fetcher";
 
-export const useContacts = ({ page = 1, limit = 15 }) => {
+const getQueries = (filters) => {
+  const getRepitKeys = (key, arr) => arr.map(item => `${key}=${item.id}`).join('&')
+  if (Object.keys(filters).length == 0) return ""
+
+  const getValue = (key) => {
+    switch (key) {
+      default:
+        return `${key}=${filters[key]}`
+    }
+  }
+
+  return Object.keys(filters).map(key =>
+    Array.isArray(filters[key])
+      ? getRepitKeys(key, filters[key])
+      : getValue(key)).join('&')
+}
+
+export const useContacts = ({ page = 1, limit = 15, filters = {} }) => {
+  const queries = getQueries(filters)
+
+  const url = `/sales/crm/contacts?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`
+  console.log({ url })
   const { data, error, isLoading, mutate } = useSWR(
-    `/sales/crm/contacts?limit=${limit}&page=${page}`,
+    url,
     fetcher,
   );
   return {

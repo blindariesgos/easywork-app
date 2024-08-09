@@ -54,10 +54,10 @@ function SelectInput({
         });
 
   useEffect(() => {
-    if (!watch) return;
+    if (!watch || selected) return;
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
-  }, []);
+  }, [watch && watch(name)]);
 
   return (
     <div className="w-full">

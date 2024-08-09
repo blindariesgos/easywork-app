@@ -21,8 +21,7 @@ const FiltersContact = () => {
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [contacts, setContacts] = useState();
-  const { filters, setFilters, displayFilters, removeFilter } =
-    useContactContext();
+  const { filters, setFilters } = useContactContext();
   // const handleSelected = (id) => {
   //   const updateSelection = contacts.map((cont) => {
   //     return cont.id === id
@@ -70,43 +69,9 @@ const FiltersContact = () => {
   //   });
   // };
 
-  const getFilterValue = (item) => {
-    if (item.type == "date") {
-      return formatDate(item.value, "yyyy-MM-dd");
-    }
-
-    if (item.type == "select" || item.type == "dropdown") {
-      return item.options.find((option) => option.id == item.value)?.name;
-    }
-
-    if (item.type == "tags") {
-      return item.value.map((x) => x.name).join(", ");
-    }
-
-    return item.value;
-  };
-
   return (
     <Menu as="div" className="relative inline-block w-full">
       <div className="w-full flex justify-between items-center gap-2">
-        {displayFilters.length > 0 &&
-          displayFilters?.map((item) => {
-            return (
-              <div
-                className="p-2 border bg-easy-200 border-primary text-xs overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px] pr-4 relative"
-                key={item.id}
-                title={`${item.name}: ${getFilterValue(item)}`}
-              >
-                {`${item.name}: ${getFilterValue(item)}`}
-                <p
-                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-primary font-semibold"
-                  onClick={() => removeFilter(item.code)}
-                >
-                  x
-                </p>
-              </div>
-            );
-          })}
         <div className="flex items-center w-full">
           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
           <input

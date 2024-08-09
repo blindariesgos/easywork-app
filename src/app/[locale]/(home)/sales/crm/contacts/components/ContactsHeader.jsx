@@ -15,6 +15,9 @@ import { useCommon } from "../../../../../../../hooks/useCommon";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
+import useContactContext from "@/src/context/contacts";
+import { formatDate } from "@/src/utils/getFormatDate";
+import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 
 export default function ContactsHeader() {
   const { t } = useTranslation();
@@ -24,6 +27,7 @@ export default function ContactsHeader() {
   const pathname = usePathname();
   const { replace } = useRouter();
   const { selectedContacts } = useCrmContext();
+  const { filters, displayFilters, removeFilter } = useContactContext();
 
   const handlePathname = () => {
     params.delete("page");
@@ -33,42 +37,52 @@ export default function ContactsHeader() {
 
   return (
     <header className="flex flex-col">
-      <div className="px-4 flex gap-3 items-center bg-white py-4 rounded-md flex-wrap shadow-sm">
-        <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
-          {t("contacts:header:contact")}
-        </h1>
-        <Button
-          label={t("contacts:header:create")}
-          type="button"
-          onclick={() => handlePathname()}
-          buttonStyle={"primary"}
-          icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
-          className="px-3 py-2"
-        />
-        <div className="flex-grow">
-          <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
-            <FiltersContact />
+      <div className="px-4 flex gap-3 flex-col items-center bg-white py-4 rounded-md  shadow-sm">
+        <div className="flex gap-3 flex-wrap items-center w-full">
+          <h1 className="text-2xl font-semibold leading-6 text-gray-900 ">
+            {t("contacts:header:contact")}
+          </h1>
+          <Button
+            label={t("contacts:header:create")}
+            type="button"
+            onclick={() => handlePathname()}
+            buttonStyle={"primary"}
+            icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
+            className="px-3 py-2"
+          />
+          <div className="flex-grow">
+            <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+              <FiltersContact />
+            </div>
           </div>
-        </div>
-        {selectedContacts[0]?.id && (
+          {selectedContacts[0]?.id && (
+            <IconDropdown
+              icon={
+                <TrashIcon
+                  className="h-8 w-8 text-primary"
+                  aria-hidden="true"
+                />
+              }
+              options={trash}
+              width="w-72"
+            />
+          )}
+
           <IconDropdown
             icon={
-              <TrashIcon className="h-8 w-8 text-primary" aria-hidden="true" />
+              <Cog8ToothIcon
+                className="h-8 w-8 text-primary"
+                aria-hidden="true"
+              />
             }
-            options={trash}
-            width="w-72"
+            options={settings}
+            width="w-[340px]"
           />
-        )}
-
-        <IconDropdown
-          icon={
-            <Cog8ToothIcon
-              className="h-8 w-8 text-primary"
-              aria-hidden="true"
-            />
-          }
-          options={settings}
-          width="w-[340px]"
+        </div>
+        <ActiveFiltersDrawer
+          filters={filters}
+          displayFilters={displayFilters}
+          removeFilter={removeFilter}
         />
       </div>
       <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">

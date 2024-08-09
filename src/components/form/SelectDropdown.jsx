@@ -50,10 +50,10 @@ function SelectDropdown({
         });
 
   useEffect(() => {
-    if (!watch) return;
+    if (!watch || selected) return;
     const id = watch(name);
     setSelected(options.find((option) => option.id == id));
-  }, []);
+  }, [watch && watch(name)]);
 
   return (
     <div className={className}>

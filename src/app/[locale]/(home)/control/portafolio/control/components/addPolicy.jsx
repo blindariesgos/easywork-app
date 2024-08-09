@@ -49,7 +49,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   return (
     <SliderOverShord openModal={isOpen}>
       <Tag onclick={() => setIsOpen(false)} className="bg-easywork-main" />
-      <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px]">
+      <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
         <div className="bg-gray-100 rounded-md p-2">
           <h4 className="text-2xl pb-4">Datos</h4>
           <div className="bg-white rounded-md p-4 flex justify-between items-center">
@@ -57,6 +57,20 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
             <RiPencilFill className="w-4 h-4 text-primary" />
           </div>
           <div className="px-8 pt-4 grid grid-cols-1 gap-4">
+            <SelectInput
+              label={t("tools:portafolio:control:form:typePerson")}
+              options={[
+                {
+                  name: "Fisica",
+                  id: "physical",
+                },
+                {
+                  name: "Moral",
+                  id: "moral",
+                },
+              ]}
+              placeholder="- Seleccionar -"
+            />
             <SelectInput
               label={t("tools:portafolio:control:form:insurance-company")}
               options={[
@@ -189,20 +203,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                 {
                   name: "EJECUTIVOS",
                   id: "moralw",
-                },
-              ]}
-              placeholder="- Seleccionar -"
-            />
-            <SelectInput
-              label={t("tools:portafolio:control:form:typePerson")}
-              options={[
-                {
-                  name: "Fisica",
-                  id: "physical",
-                },
-                {
-                  name: "Moral",
-                  id: "moral",
                 },
               ]}
               placeholder="- Seleccionar -"

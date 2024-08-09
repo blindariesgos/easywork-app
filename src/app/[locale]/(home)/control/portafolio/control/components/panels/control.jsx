@@ -60,115 +60,63 @@ const cards = (t) => [
 
 const Control = () => {
   const { t } = useTranslation();
-  const [type, setType] = useState();
-  const [currencySelected, setCurrendySelected] = useState(currencies[0]);
   const [cardSelected, setCardSelected] = useState(cards(t)[0]);
-  const [isSearch, setIsSearch] = useState(false);
 
   return (
     <Fragment>
       <div className="bg-white rounded-md shadow-sm">
-        <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 gap-6 py-4 px-4 ">
-          <SelectInput
-            label={t("tools:portafolio:control:form:agent")}
-            options={[
-              {
-                name: "Soporte It",
-                id: "physical",
-              },
-              {
-                name: "Soporte DE",
-                id: "moral",
-              },
-            ]}
-            placeholder="- Seleccionar -"
-            setSelectedOption={(e) => setType(e.id)}
-          />
-          <RadioGroup
-            by="name"
-            value={currencySelected}
-            onChange={setCurrendySelected}
-            aria-label="Server size"
-            className="py-2 grid grid-cols-1 gap-2"
-          >
-            {currencies.map((currency) => (
-              <Radio
-                key={currency.name}
-                value={currency}
-                className="group relative flex cursor-pointer transition focus:outline-none  "
-              >
-                <div className="flex items-center gap-x-2">
-                  <ImCheckmark className="size-4 fill-primary opacity-0 transition group-data-[checked]:opacity-100" />
-                  <p className="text-sm">{currency.name}</p>
-                </div>
-              </Radio>
-            ))}
-          </RadioGroup>
-          <div className="flex items-center justify-center md:justify-start col-span-1 sm:col-span-2 md:col-span-1">
-            <Button
-              label="Buscar"
-              className="py-2 px-4"
-              buttonStyle="primary"
-              onclick={() => setIsSearch(true)}
-            />
-          </div>
-        </div>
-      </div>
-      {isSearch && type && (
-        <div className="bg-white rounded-md shadow-sm">
-          <div className="flex gap-6 py-4 px-4">
-            <div className="flex min-h-screen w-full px-4">
-              <div className="w-full ">
-                <div className="py-4 grid grid-cols-1 gap-4">
-                  <Fragment>
-                    <RadioGroup
-                      by="name"
-                      value={cardSelected}
-                      onChange={setCardSelected}
-                      className="hidden py-2 md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-4"
-                    >
-                      {cards(t).map((card) => (
-                        <Radio
-                          key={card.type}
-                          value={card}
-                          className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
-                        >
-                          <div
-                            className={`absolute w-full h-[7px] top-0 left-0`}
-                            style={{ background: card.color }}
-                          />
-                          <p className="text-sm">{card.name}</p>
-                          <p className="text-4xl text-right">{card.value}</p>
-                        </Radio>
-                      ))}
-                    </RadioGroup>
-                    <div className="md:hidden flex flex-col gap-4">
-                      <SelectInput
-                        // label={t("tools:portafolio:control:form:agent")}
-                        options={cards(t)}
-                        placeholder="- Seleccionar -"
-                        setSelectedOption={setCardSelected}
-                      />
-                      <div className="group px-2 pb-2 pt-4 relative select-none grid grid-cols-1 gap-6  cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary">
+        <div className="flex gap-6 py-4 px-4">
+          <div className="flex min-h-screen w-full px-4">
+            <div className="w-full ">
+              <div className="py-4 grid grid-cols-1 gap-4">
+                <Fragment>
+                  <RadioGroup
+                    by="name"
+                    value={cardSelected}
+                    onChange={setCardSelected}
+                    className="hidden py-2 md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-4"
+                  >
+                    {cards(t).map((card) => (
+                      <Radio
+                        key={card.type}
+                        value={card}
+                        className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
+                      >
                         <div
                           className={`absolute w-full h-[7px] top-0 left-0`}
-                          style={{ background: cardSelected.color }}
+                          style={{ background: card.color }}
                         />
-                        <p className="text-sm">{cardSelected.name}</p>
-                        <p className="text-4xl text-right">
-                          {cardSelected.value}
-                        </p>
-                      </div>
+                        <p className="text-sm">{card.name}</p>
+                        <p className="text-4xl text-right">{card.value}</p>
+                      </Radio>
+                    ))}
+                  </RadioGroup>
+                  <div className="md:hidden flex flex-col gap-4">
+                    <SelectInput
+                      // label={t("tools:portafolio:control:form:agent")}
+                      options={cards(t)}
+                      placeholder="- Seleccionar -"
+                      setSelectedOption={setCardSelected}
+                    />
+                    <div className="group px-2 pb-2 pt-4 relative select-none grid grid-cols-1 gap-6  cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary">
+                      <div
+                        className={`absolute w-full h-[7px] top-0 left-0`}
+                        style={{ background: cardSelected.color }}
+                      />
+                      <p className="text-sm">{cardSelected.name}</p>
+                      <p className="text-4xl text-right">
+                        {cardSelected.value}
+                      </p>
                     </div>
+                  </div>
 
-                    {cardSelected && <ControlTable name={cardSelected.name} />}
-                  </Fragment>
-                </div>
+                  {cardSelected && <ControlTable name={cardSelected.name} />}
+                </Fragment>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </Fragment>
   );
 };

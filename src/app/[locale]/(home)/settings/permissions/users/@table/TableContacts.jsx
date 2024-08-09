@@ -165,7 +165,7 @@ export default function TableContacts() {
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) => router.push(`/sales/crm/permissions/user/${id}?show=true`)
+      handleClick: (id) => router.push(`/settings/permissions/permissions/user/${id}?show=true`)
     },
     { name: "Editar" },
     { name: "Copiar" },
@@ -309,7 +309,7 @@ export default function TableContacts() {
                               <div className="font-medium text-sm text-black hover:text-primary capitalize">
                                 {column.link ? (
                                   <Link
-                                    href={`/sales/crm/contacts/contact/${contact.id}?show=true`}
+                                    href={`/settings/permissions/users/user/${contact.id}?show=true`}
                                     className="flex gap-3 items-center"
                                   >
                                     <Image

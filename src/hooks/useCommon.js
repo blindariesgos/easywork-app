@@ -340,6 +340,18 @@ export const useSidebar = () => {
       iconShortBar: IdentificationIcon,
       children: [
         {
+          name: t("common:menu:agent-management:accompaniment"),
+          href: "",
+          // // href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
+        },
+        {
+          name: t("common:menu:agent-management:learning"),
+          href: "",
+          // // href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
+        },
+        {
           name: t("common:menu:agent-management:recruitement"),
           href: "",
           // // href: "/sd",
@@ -364,10 +376,16 @@ export const useSidebar = () => {
           iconShortBar: SparklesIcon,
         },
         {
-          name: t("common:menu:agent-management:learning"),
+          name: t("common:menu:agent-management:team-meetings"),
           href: "",
           // // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
+          iconShortBar: SparklesIcon,
+        },
+        {
+          name: t("common:menu:agent-management:individual-meetings"),
+          href: "",
+          // // href: "/sd",
+          iconShortBar: SparklesIcon,
         },
       ],
     },

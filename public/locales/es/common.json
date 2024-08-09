@@ -116,11 +116,15 @@
     },
     "agent-management": {
       "name": "Gestión de agentes",
-      "recruitement": "Reclutamiento y selección",
-      "capacitations": "Capacitaciones",
-      "conections": "Conexiones",
-      "development-agents": "Desarrollo de agentes",
-      "learning": "E-Learning (Próximamente)"
+      "learning": "E-Learning (Próximamente)",
+      "accompaniment": "Acompañamiento",
+      "recruitement": "Embudo de reclutamiento y selección",
+      "capacitations": "Embudo de capacitaciones",
+      "conections": "Embudo de conexiones",
+      "development-agents": "Embudo de desarrollo de agentes",
+      "team-meetings": "Juntas de equipo",
+      "individual-meetings": "Juntas individuales"
+      
     },
     "companies": {
       "name": "Compañías",

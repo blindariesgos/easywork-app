@@ -111,11 +111,14 @@
     },
     "agent-management": {
       "name": "Agent management",
-      "recruitement": "Recruitment and selection",
-      "capacitations": "Trainings",
-      "conections": "Connections",
-      "development-agents": "Agent development",
-      "learning": "E-Learning (Coming soon)"
+      "learning": "E-Learning (Coming soon)",
+      "accompaniment": "Accompaniment",
+      "recruitement": "Funnel of Recruitment and selection",
+      "capacitations": "Funnel of Trainings",
+      "conections": "Funnel of Connections",
+      "development-agents": "Funnel of Agent development",
+      "team-meetings": "Team meetings",
+      "individual-meetings": "Individual meetings"
     },
     "companies": {
       "name": "Companies",

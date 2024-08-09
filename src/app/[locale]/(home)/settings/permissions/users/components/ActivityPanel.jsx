@@ -114,13 +114,13 @@ export default function ActivityPanel({ contactId }) {
 
 
 
-	useEffect(() => {
-		if (activities) {
-			const sortedItems = parseAndSortByDate(activities);
+	// useEffect(() => {
+	// 	if (activities) {
+	// 		const sortedItems = parseAndSortByDate(activities);
 
-			setBulkActivity(sortedItems);
-		}
-	}, [activities]);
+	// 		setBulkActivity(sortedItems);
+	// 	}
+	// }, [activities]);
 
 	const { t } = useTranslation();
 	console.log("Activities", bulkActivity);

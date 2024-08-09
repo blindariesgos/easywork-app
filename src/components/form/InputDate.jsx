@@ -1,6 +1,6 @@
 "use client";
 import { useCommon } from "../../hooks/useCommon";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { getMonth, getYear } from "date-fns";
 import range from "lodash/range";
@@ -34,6 +34,13 @@ const InputDate = ({
         },
       });
   };
+
+  useEffect(() => {
+    if (value && !selected) {
+      setSelected(value);
+    }
+  }, [value]);
+
   return (
     <div className="flex flex-col w-full">
       {label && (

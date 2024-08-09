@@ -11,11 +11,10 @@ import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
-import useDriveContext from "@/src/context/drive";
-import useAppContext from "@/src/context/app";
+import useControlContext from "../../../../../../../../context/control";
 
-const FiltersDrive = () => {
-  const { setFilters, filters, displayFilters } = useDriveContext();
+const FiltersControl = () => {
+  const { setFilters, filters, displayFilters } = useControlContext();
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
 
@@ -98,4 +97,4 @@ const FiltersDrive = () => {
   );
 };
 
-export default FiltersDrive;
+export default FiltersControl;

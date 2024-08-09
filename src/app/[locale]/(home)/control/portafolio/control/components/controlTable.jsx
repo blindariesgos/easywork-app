@@ -157,10 +157,6 @@ export default function ControlTable({ name }) {
               <h2 className="text-xl font-bold text-primary hidden md:block">
                 {name}
               </h2>
-              <div className="flex gap-2 items-center">
-                <label htmlFor="">Buscar:</label>
-                <TextInput border />
-              </div>
             </div>
             <div className="overflow-x-auto min-h-[60vh] h-full">
               <table className="min-w-full rounded-md bg-gray-100 table-auto  ">

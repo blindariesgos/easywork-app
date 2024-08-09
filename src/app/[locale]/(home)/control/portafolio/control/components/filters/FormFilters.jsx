@@ -1,20 +1,18 @@
-import Button from "../../../../../../../../components/form/Button";
 import React, { useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
-
+import Button from "@/src/components/form/Button";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import SelectInput from "../../../../../../../../components/form/SelectInput";
-import TextInput from "../../../../../../../../components/form/TextInput";
-import { PlusIcon } from "@heroicons/react/20/solid";
+import SelectInput from "@/src/components/form/SelectInput";
+import TextInput from "@/src/components/form/TextInput";
 import "react-datepicker/dist/react-datepicker.css";
-import AddFields from "./AddFields";
 import InputDate from "@/src/components/form/InputDate";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
-import useDriveContext from "@/src/context/drive";
-import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
+import { formatDate } from "@/src/utils/getFormatDate";
+import useControlContext from "../../../../../../../../context/control";
+import useAppContext from "@/src/context/app";
 
 const FormFilters = () => {
   const { t } = useTranslation();
@@ -24,8 +22,8 @@ const FormFilters = () => {
     setDisplayFilters,
     filterFields,
     setFilterFields,
-  } = useDriveContext();
-
+  } = useControlContext();
+  const { lists } = useAppContext();
   const schema = yup.object().shape({
     fields: yup.array().of(yup.object().shape({})),
   });
@@ -37,10 +35,41 @@ const FormFilters = () => {
       fields: [
         {
           id: 1,
-          name: t("contacts:filters:item-name"),
-          type: "input",
+          name: t("tools:portafolio:control:form:agent"),
+          options: lists?.users,
+          type: "select",
           check: true,
-          code: "name",
+          code: "user",
+          default: lists?.users[0],
+        },
+        {
+          id: 2,
+          name: "Moneda",
+          type: "select",
+          check: false,
+          code: "currency",
+          options: [
+            {
+              name: "Todas",
+              value: "ALL",
+              id: 1,
+            },
+            {
+              name: "Peso",
+              value: "PESO",
+              id: 2,
+            },
+            {
+              name: "Dolar",
+              value: "DOLLAR",
+              id: 3,
+            },
+          ],
+          default: {
+            name: "Todas",
+            value: "ALL",
+            id: 1,
+          },
         },
       ],
     },
@@ -63,12 +92,6 @@ const FormFilters = () => {
           value = formatDate(field.value, "MM/dd/yyyy");
         }
 
-        if (field.type == "select") {
-          value = field.options.find(
-            (option) => option.id == field.value
-          ).value;
-        }
-
         return {
           ...acc,
           [field.code]: value,
@@ -89,30 +112,16 @@ const FormFilters = () => {
         .forEach((key) => {
           const index = fields.findIndex((x) => x.code == key);
           const filterField = filterFields.find((field) => field.code == key);
-          const value =
-            filterField?.type == "select"
-              ? filterField.options.find(
-                  (option) => option.value == filters[key]
-                ).id
-              : filters[key];
-
           if (index == -1) {
             append({
               ...filterField,
-              value: value,
+              value: filters[key],
             });
           } else {
-            setValue(`fields[${index}].value`, value);
+            setValue(`fields[${index}].value`, filters[key]);
           }
         });
   }, [filters]);
-
-  const handleReset = () => {
-    reset();
-    setFilters({});
-    setDisplayFilters([]);
-    setFilterFields(filterFields.map((field) => ({ ...field, check: false })));
-  };
 
   return (
     <form
@@ -122,14 +131,14 @@ const FormFilters = () => {
       {fields.map((field, index) => {
         return (
           <div key={field.id}>
-            {field.type === "input" && (
+            {/* {field.type === "input" && (
               <TextInput
                 label={field.name}
                 type="text"
                 name={`fields[${index}].value`}
                 register={register}
               />
-            )}
+            )} */}
             {field.type === "select" && (
               <SelectInput
                 {...field}
@@ -138,9 +147,10 @@ const FormFilters = () => {
                 options={field.options}
                 register={register}
                 setValue={setValue}
+                selectedOption={field.default}
               />
             )}
-            {field.type === "date" && (
+            {/* {field.type === "date" && (
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -165,13 +175,13 @@ const FormFilters = () => {
                 setValue={setValue}
                 watch={watch}
               />
-            )}
+            )} */}
           </div>
         );
       })}
       <div className="my-2 flex gap-2 items-center">
-        <AddFields append={append} remove={remove} fields={fields} />
-        <Button
+        {/* <AddFields append={append} remove={remove} fields={fields} /> */}
+        {/* <Button
           type="button"
           label={t("contacts:filters:restore")}
           buttonStyle="text"
@@ -180,7 +190,7 @@ const FormFilters = () => {
             setValue("fields", []);
             reset();
           }}
-        />
+        /> */}
       </div>
       <div className="flex gap-2 justify-center mt-4">
         <Button
@@ -190,13 +200,13 @@ const FormFilters = () => {
           className="py-1 px-3"
           iconLeft={<FaMagnifyingGlass className="h-4 w-4 text-white" />}
         />
-        <Button
+        {/* <Button
           type="button"
           label={t("contacts:filters:restart")}
           buttonStyle="secondary"
           className="py-1 px-3"
           onclick={handleReset}
-        />
+        /> */}
       </div>
     </form>
   );

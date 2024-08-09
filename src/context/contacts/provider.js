@@ -23,7 +23,7 @@ export default function ContactsContextProvider({ children }) {
         id: 1,
         name: t("contacts:filters:responsible"),
         type: "dropdown",
-        check: false,
+        check: true,
         code: "responsible",
         options: lists?.users
       },
@@ -31,7 +31,7 @@ export default function ContactsContextProvider({ children }) {
         id: 2,
         name: t("contacts:filters:created"),
         type: "date",
-        check: false,
+        check: true,
         code: "createdAt",
       },
       {
@@ -39,14 +39,14 @@ export default function ContactsContextProvider({ children }) {
         name: t("contacts:filters:origin"),
         type: "select",
         options: lists?.listContact?.contactSources || [],
-        check: false,
+        check: true,
         code: "origin",
       },
       {
         id: 4,
         name: t("contacts:filters:created-by"),
         type: "dropdown",
-        check: false,
+        check: true,
         code: "createdby",
         options: lists?.users
       },

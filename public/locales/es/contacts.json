@@ -49,6 +49,7 @@
   "table": {
     "not-data": "No hay contactos",
     "contact": "Contacto",
+    "user": "Usuario",
     "birthday": "Cumpleaños",
     "responsible": "Responsable",
     "email": "Correo electrónico",

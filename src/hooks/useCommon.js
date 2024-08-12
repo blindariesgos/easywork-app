@@ -725,6 +725,22 @@ export const useCommon = () => {
     },
   ];
 
+  const settingsUser = [
+    {
+      value: 6,
+      name: t("contacts:header:settings:csv"),
+      onclick: () => { },
+      disabled: false,
+    },
+    {
+      value: 7,
+      name: t("contacts:header:settings:excel"),
+      onclick: () => { },
+      disabled: false,
+    },
+  ];
+
+
   const settingsPolicies = [
     {
       value: 0,
@@ -825,6 +841,7 @@ export const useCommon = () => {
     trash: trashContact,
     trashLead,
     settingsContact,
+    settingsUser,
     settingsPolicies,
     months,
     settingsPolicy,
@@ -1407,6 +1424,66 @@ export const useContactTable = () => {
       row: "activities",
       check: true,
       activities: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useUserTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 1,
+      name: t("contacts:table:user"),
+      row: "contactName",
+      order: "name",
+      check: true,
+      link: true,
+      permanent: true,
+      photo: true,
+    },
+    {
+      id: 2,
+      name: t("contacts:table:birthday"),
+      row: "birthdate",
+      order: "birthdate",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("contacts:table:responsible"),
+      row: "responsible",
+      order: "responsible",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 4,
+      name: t("contacts:table:email"),
+      row: "email",
+      order: "emails[0].email.email",
+      check: true,
+    },
+    {
+      id: 5,
+      name: t("contacts:table:phone"),
+      row: "phone",
+      order: "phones[0].phone.number",
+      check: true,
+    },
+    {
+      id: 6,
+      name: t("contacts:table:created"),
+      row: "createdAt",
+      order: "createdAt",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("contacts:table:origin"),
+      row: "source",
+      order: "source",
+      check: true,
     },
   ];
   return { columnTable };

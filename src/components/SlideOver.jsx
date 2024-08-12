@@ -1,6 +1,11 @@
 "use client";
 import { Fragment, useEffect, useState } from "react";
-import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -120,23 +125,29 @@ export default function SlideOver({
   };
 
   return (
-    <Transition show={show} as={Fragment} afterLeave={() => {
-      if (taskId) {
-        router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
-        return;
-      } else if (contactId) {
-        router.replace(`/sales/crm/contacts/contact/${contactId}?show=true`, undefined, { shallow: true });
-        return;
-      }
+    <Transition
+      show={show}
+      as={Fragment}
+      afterLeave={() => {
+        console.log("qlqlqlqlqlql");
+        router.back();
+        // if (taskId) {
+        //   router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
+        //   return;
+        // } else if (contactId) {
+        //   router.replace(`/sales/crm/contacts/contact/${contactId}?show=true`, undefined, { shallow: true });
+        //   return;
+        // }
 
-      if (previousPage === "tasks") {
-        router.replace(`/tools/tasks`, undefined, { shallow: true });
-        return;
-      }
+        // if (previousPage === "tasks") {
+        //   router.replace(`/tools/tasks`, undefined, { shallow: true });
+        //   return;
+        // }
 
-      router.replace(`${samePage}`, undefined, { shallow: true });
-    }}>
-      <Dialog as="div" className="relative z-50" onClose={() => { }}>
+        // router.replace(`${samePage}`, undefined, { shallow: true });
+      }}
+    >
+      <Dialog as="div" className="relative z-50" onClose={() => {}}>
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">

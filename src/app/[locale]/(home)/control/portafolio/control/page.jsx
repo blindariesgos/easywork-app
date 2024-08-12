@@ -1,23 +1,18 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import { TabGroup, TabList, TabPanels, TabPanel, Tab } from "@headlessui/react";
-import Contact from "./components/panels/contact";
-import Policy from "./components/panels/policy";
 import Control from "./components/panels/control";
-import MoralContactForm from "./components/moralContactForm";
 import { useTranslation } from "react-i18next";
-import SliderOverShord from "../../../../../../components/SliderOverShort";
 import Button from "../../../../../../components/form/Button";
 import { FaChevronDown } from "react-icons/fa";
-import Tag from "@/src/components/Tag";
-import { RiPencilFill } from "react-icons/ri";
-import SelectInput from "../../../../../../components/form/SelectInput";
 import AddPolicy from "./components/addPolicy";
-
+import FiltersControl from "./components/filters/FiltersControl";
+import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
+import useControlContext from "@/src/context/control";
 const Page = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const { filters, displayFilters, removeFilter } = useControlContext();
   // const tabs = [
   //   {
   //     name: t("tools:portafolio:control:tabs:contact"),
@@ -38,8 +33,8 @@ const Page = () => {
   // ];
   return (
     <Fragment>
-      <div className="bg-white rounded-md shadow-sm">
-        <div className="flex gap-6 py-4 px-4 items-center">
+      <div className="bg-white rounded-md shadow-sm py-4 px-4 grid grid-cols-1 gap-2">
+        <div className="flex gap-3 items-center">
           <h2 className="text-primary text-2xl">
             {t("tools:portafolio:control:title")}
           </h2>
@@ -50,7 +45,17 @@ const Page = () => {
             className="py-2 px-4"
             onclick={() => setIsOpen(true)}
           />
+          <div className="flex-grow">
+            <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+              <FiltersControl />
+            </div>
+          </div>
         </div>
+        <ActiveFiltersDrawer
+          displayFilters={displayFilters}
+          removeFilter={removeFilter}
+          notRemove
+        />
       </div>
       <Control />
       {/* <div className="bg-white rounded-md shadow-sm">

@@ -15,6 +15,7 @@
   "table": {
     "not-data": "No contacts available",
     "contact": "Contact",
+    "user": "User",
     "birthday": "Birthday",
     "responsible": "Responsible",
     "email": "Email",

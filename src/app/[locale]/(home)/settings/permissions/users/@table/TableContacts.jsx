@@ -26,7 +26,7 @@ import { deleteContactId } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
-import { useContactTable } from "@/src/hooks/useCommon";
+import { useUserTable } from "@/src/hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
@@ -63,7 +63,7 @@ export default function TableContacts() {
     selectedContacts,
     setSelectedContacts,
   } = useCrmContext();
-  const { columnTable } = useContactTable();
+  const { columnTable } = useUserTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
@@ -170,8 +170,8 @@ export default function TableContacts() {
     { name: "Editar" },
     { name: "Copiar" },
     { name: "Eliminar" },
-    { name: "Agregar Evento" },
-    { name: "Nuevo correo electrónico" },
+    // { name: "Agregar Evento" },
+    // { name: "Nuevo correo electrónico" },
   ];
 
   return (

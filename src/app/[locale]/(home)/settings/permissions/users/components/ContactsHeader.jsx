@@ -18,7 +18,7 @@ import useCrmContext from "../../../../../../../context/crm";
 
 export default function ContactsHeader() {
   const { t } = useTranslation();
-  const { trash, settingsContact: settings } = useCommon();
+  const { trash, settingsUser: settings } = useCommon();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();

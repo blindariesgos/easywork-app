@@ -1,53 +1,37 @@
-'use client';
-import React from "react";
-import LeadsHeader from "./components/LeadsHeader";
-import { useTranslation } from "react-i18next";
-import Header from "@/src/components/header/Header";
+"use client";
+import Header from "../../../../../../components/header/Header";
+import { Suspense, useEffect } from "react";
 import HeaderCrm from "../HeaderCrm";
-import useCrmContext from "@/src/context/crm";
-import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import LeadsHeader from "./components/LeadsHeader";
+import LoaderSpinner from "../../../../../../components/LoaderSpinner";
+import { useLeads } from "../../../../../../hooks/useCommon";
 
-export default function LayoutLead({ children }) {
-    const { t } = useTranslation();
-    const { contacts } = useCrmContext();
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const { replace } = useRouter();
+export default function LayoutLeads({ table, children }) {
+  const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const { optionsHeader } = useLeads();
 
-    useEffect(() => {
-        const params = new URLSearchParams(searchParams);
-        if (Number(params.get('page')) === 0 || !params.get('page')) {
-            params.set('page', 1);
-            replace(`${pathname}?${params.toString()}`);
-        }
-    }, [pathname, replace, searchParams])
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (Number(params.get("page")) === 0 || !params.get("page")) {
+      params.set("page", 1);
+      replace(`${pathname}?${params.toString()}`);
+    }
+  }, [searchParams, replace, pathname]);
 
-    const options = [
-        {
-            id: 1,
-            name: t("contacts:create:tabs:policies"),
-        },
-        {
-            id: 2,
-            name: t("contacts:create:tabs:activities"),
-        },
-        {
-            id: 3,
-            name: t("contacts:create:tabs:reports"),
-        },
-        {
-            id: 4,
-            name: t("contacts:create:tabs:documents"),
-            href: "/tools/drive"
-        }
-    ]
-    return (
-        <div className="bg-gray-100 h-full p-2 rounded-xl relative flex flex-col gap-4">
-            <Header />
-            <HeaderCrm options={options} />
-            <LeadsHeader />
-            {children}
-        </div>
-    );
+  return (
+    <div className="bg-gray-100 h-full p-2 rounded-xl relative">
+      <Header />
+      <div className="flex flex-col w-full">
+        <HeaderCrm options={optionsHeader} />
+        <LeadsHeader />
+        <Suspense fallback={<LoaderSpinner />}>{table}</Suspense>
+        {children}
+      </div>
+    </div>
+  );
 }

@@ -33,7 +33,7 @@
       "policy-issuance": "Emisión de Poliza"
     },
     "created": "Creado el",
-    "status": "Estado",
+    "status": "Estatus",
     "add-field": "Agregar campo",
     "restore-fields": "Restaurar campos predeterminados",
     "search": "Buscar",

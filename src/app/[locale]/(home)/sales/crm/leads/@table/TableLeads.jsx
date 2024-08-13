@@ -10,7 +10,7 @@ import {
   Listbox,
   ListboxButton,
   ListboxOption,
-  ListboxOptions
+  ListboxOptions,
 } from "@headlessui/react";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -26,13 +26,13 @@ import { useLeadDetete, useLeads } from "../../../../../../../hooks/useCommon";
 import SelectedOptionsTable from "../../../../../../../components/SelectedOptionsTable";
 import moment from "moment";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
+import useLeadContext from "@/src/context/leads";
+import { CheckIcon } from "@heroicons/react/24/outline";
+import { itemsByPage } from "@/src/lib/common";
 
 export default function TableLeads() {
-  const params = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-  const { data, limit, setLimit } = useLeadContext()
-  //   const currentPage = Number(params?.page) || 1;
+  const { data, limit, setLimit, orderBy, setOrderBy, order } =
+    useLeadContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -58,15 +58,6 @@ export default function TableLeads() {
     if (data) setDataLeads(data);
   }, [data]);
 
-  useEffect(
-    () => {
-      if (orderItems?.length > 0)
-        setDataLeads({ items: orderItems, meta: data?.meta });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [orderItems]
-  );
-
   useLayoutEffect(() => {
     if (checkbox.current) {
       const isIndeterminate =
@@ -89,33 +80,6 @@ export default function TableLeads() {
   const capitalizedText = (text) => {
     return text.charAt(0).toUpperCase() + text.slice(1);
   };
-
-  if (dataLeads && dataLeads.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("leads:table:not-data")}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   const ColorDivisionsStages = (data) => {
     const colorGreen = ["etapa1", "etapa2", "etapa3", "etapa4"];
@@ -168,11 +132,11 @@ export default function TableLeads() {
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5"
+                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5 flex items-center gap-2"
                   >
                     <input
                       type="checkbox"
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                       ref={checkbox}
                       checked={checked}
                       onChange={toggleAll}
@@ -191,7 +155,7 @@ export default function TableLeads() {
                           index === selectedColumns.length - 1 && "rounded-e-xl"
                         }`}
                         onClick={() => {
-                          column.order && handleSorting(column.order);
+                          column.order && setOrderBy(column.order);
                         }}
                       >
                         <div className="flex justify-center items-center gap-2">
@@ -199,12 +163,10 @@ export default function TableLeads() {
                           <div>
                             {column.order && (
                               <ChevronDownIcon
-                                className={`h-6 w-6 text-primary ${
-                                  fieldClicked.field === column.order &&
-                                  fieldClicked.sortDirection === "desc"
-                                    ? "transform rotate-180"
-                                    : ""
-                                }`}
+                                className={clsx("h-6 w-6", {
+                                  "text-primary": orderBy === column.order,
+                                  "transform rotate-180": order === "ASC",
+                                })}
                               />
                             )}
                           </div>
@@ -214,9 +176,33 @@ export default function TableLeads() {
                 </tr>
               </thead>
               <tbody className="bg-gray-100">
+                {(!data || data?.items?.length === 0) && (
+                  <div className="flex items-center justify-center h-96">
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-10 h-10 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          />
+                        </svg>
+                      </div>
+                      <p className="text-lg font-medium text-gray-400">
+                        {t("leads:table:not-data")}
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {selectedColumns.length > 0 &&
-                  dataLeads?.items?.length > 0 &&
-                  dataLeads?.items?.map((lead, index) => (
+                  data?.items?.length > 0 &&
+                  data?.items?.map((lead, index) => (
                     <tr
                       key={index}
                       className={clsx(
@@ -268,7 +254,7 @@ export default function TableLeads() {
                                   {/* <p className='mt-1 text-xs text-gray-200 font-semibold'>{lead.stages.name}</p> */}
                                 </div>
                               ) : column.activities ? (
-                                <div className="flex gap-2">
+                                <div className="flex justify-center gap-2">
                                   <button
                                     type="button"
                                     className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -331,8 +317,8 @@ export default function TableLeads() {
             <Listbox value={limit} onChange={setLimit} as="div">
               <ListboxButton
                 className={clsx(
-                  'relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6',
-                  'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2'
+                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
+                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
                 )}
               >
                 {limit}
@@ -345,8 +331,8 @@ export default function TableLeads() {
                 anchor="bottom"
                 transition
                 className={clsx(
-                  'rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl',
-                  'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
+                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
                 )}
               >
                 {itemsByPage.map((page) => (
@@ -362,12 +348,10 @@ export default function TableLeads() {
               </ListboxOptions>
             </Listbox>
           </div>
-          <Pagination totalPages={dataContacts?.meta?.totalPages || 0} />
+          <Pagination totalPages={data?.meta?.totalPages || 0} />
         </div>
         <div className="flex">
-          {selectedLeads.length > 0 && (
-            <SelectedOptionsTable options={10} />
-          )}
+          {selectedLeads.length > 0 && <SelectedOptionsTable options={10} />}
         </div>
       </div>
       {/* <div className="w-full mt-2">

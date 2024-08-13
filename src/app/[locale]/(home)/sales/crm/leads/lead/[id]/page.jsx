@@ -1,18 +1,29 @@
-import React from "react";
+"use client";
+import React, { Fragment, useEffect, useState } from "react";
 import LeadDetails from "./LeadDetails";
 import { getLeadById } from "../../../../../../../../lib/apis";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
-async function getLeadId(id) {
-	try {
-		const lead = await getLeadById(id);
-		return lead;
-	} catch (error) {		
-		throw new Error(error);
-	}
-}
+export default function PageContactId({ params: { id } }) {
+  const [lead, setLead] = useState();
 
-export default async function PageContactId({ params: { id } }) {
-  const data = await getLeadId(id);
+  useEffect(() => {
+    const getLeadId = async (id) => {
+      try {
+        const lead = await getLeadById(id);
+        setLead(lead);
+      } catch (error) {
+        throw new Error(error);
+      }
+    };
+    if (!id || lead) return;
+    getLeadId(id);
+  }, []);
 
-  return <LeadDetails leadInfo={data} id={id}/>
+  return (
+    <Fragment>
+      {!lead && <LoaderSpinner />}
+      {lead && <LeadDetails leadInfo={lead} id={id} />}
+    </Fragment>
+  );
 }

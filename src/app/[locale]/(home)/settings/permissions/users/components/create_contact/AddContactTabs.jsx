@@ -12,10 +12,11 @@ export default function AddContactTabs({ id }) {
   const { t } = useTranslation();
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0 },
-    { name: t("contacts:create:tabs:policies"), value: 1, link: `/sales/crm/contacts/contact/policies/${id}?show=true` },
-    { name: t("contacts:create:tabs:activities"), value: 2 },
-    { name: t("contacts:create:tabs:reports"), value: 3 },
-    { name: t("contacts:create:tabs:documents"), value: 4, link: `/tools/drive` },
+    { name: "Tareas", value: 1, link: `/tools/tasks?page=1` },
+    { name: "Calendario", value: 2, link: `/tools/calendar` },
+    { name: "Acompañamiento", value: 3 },
+    { name: "Flujo de comunicación", value: 4 },
+    { name: "mas", value: 5 },
   ];
 
   const settings = [
@@ -72,20 +73,20 @@ export default function AddContactTabs({ id }) {
                 </div>
               </Link>
             ))}
-            <Button
+            {/* <Button
               label={t("contacts:create:add")}
               buttonStyle="primary"
               icon={<PlusIcon className="h-4 w-4 text-white"/>}
               className="py-2 px-3"
-            />
+            /> */}
           </nav>
-          <div>
+          {/* <div>
             <IconDropdown
               icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true"/>}
               options={settings} 
               width="w-44" 
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ export default function ContactDetails({ id }) {
   const { contact, isLoading, isError } = useContact(id);
 
   if (isError) {
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="contact" samePage={`/sales/crm/contacts?page=1`}>
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user" samePage={`/settings/permissions/users?page=1`}>
       <div>
         <p>Error</p>
       </div>
@@ -18,10 +18,10 @@ export default function ContactDetails({ id }) {
 
   if (isLoading) (<LoaderSpinner />)
 
-  console.log("Contact", contact);
+  console.log("User", contact);
 
   return (
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="contact" samePage={`/sales/crm/contacts?page=1`}>
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user" samePage={`/settings/permissions/users?page=1`}>
       <Suspense
         fallback={<LoaderSpinner />
         }

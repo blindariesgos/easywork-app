@@ -1,6 +1,7 @@
 "use client";
 import {
   ChatBubbleBottomCenterIcon,
+  CheckIcon,
   ChevronDownIcon,
   EnvelopeIcon,
   PhoneIcon,

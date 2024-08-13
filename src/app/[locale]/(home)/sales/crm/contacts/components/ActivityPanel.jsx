@@ -109,38 +109,39 @@ export default function ActivityPanel({ contactId }) {
                 </div>
               </div>
             </li>
-            {bulkActivity.map((activity, activityIdx) => (
-              <li key={activity.id} className="w-full">
-                <div className="relative">
-                  {activityIdx !== bulkActivity.length - 1 && (
-                    <span
-                      className="absolute left-5 top-4 -ml-px h-full w-0.5 bg-zinc-400"
-                      aria-hidden="true"
-                    />
-                  )}
-                  <div className="relative flex w-full">
-                    <div className="lg:w-[7%] w-[10%] mt-4">
+            {bulkActivity.length > 0 &&
+              bulkActivity.map((activity, activityIdx) => (
+                <li key={activity.id} className="w-full">
+                  <div className="relative">
+                    {activityIdx !== bulkActivity.length - 1 && (
                       <span
-                        className={clsx(
-                          "h-10 w-10 rounded-full flex items-center justify-center ",
-                          {
-                            "bg-primary": activity.type == "task",
-                            "bg-gray-200": activity.type == "comment",
-                          }
-                        )}
+                        className="absolute left-5 top-4 -ml-px h-full w-0.5 bg-zinc-400"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="relative flex w-full">
+                      <div className="lg:w-[7%] w-[10%] mt-4">
+                        <span
+                          className={clsx(
+                            "h-10 w-10 rounded-full flex items-center justify-center ",
+                            {
+                              "bg-primary": activity.type == "task",
+                              "bg-gray-200": activity.type == "comment",
+                            }
+                          )}
+                        >
+                          {getActivityIcon(activity.type)}
+                        </span>
+                      </div>
+                      <div
+                        className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${activityIdx === bulkActivity.length - 1 && "rounded-b-lg"}`}
                       >
-                        {getActivityIcon(activity.type)}
-                      </span>
-                    </div>
-                    <div
-                      className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${activityIdx === bulkActivity.length - 1 && "rounded-b-lg"}`}
-                    >
-                      <ActivityCard activity={activity} />
+                        <ActivityCard activity={activity} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ))}
           </ul>
         </div>
       </div>

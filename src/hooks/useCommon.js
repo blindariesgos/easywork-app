@@ -205,7 +205,7 @@ export const useSidebar = () => {
           iconShortBar: GlobeAltIcon,
         },
         {
-          name:"Renovaciones",
+          name: "Renovaciones",
           href: "/sd",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
@@ -1081,7 +1081,6 @@ export const useLeads = () => {
       id: 2,
       name: t("leads:table:stages"),
       row: "stages",
-      order: "stages.name",
       check: true,
     },
     {
@@ -1095,15 +1094,15 @@ export const useLeads = () => {
       id: 4,
       name: t("leads:table:origin"),
       row: "origin",
-      order: "origin",
-      check: false,
+      check: true,
     },
     {
       id: 5,
       name: t("leads:table:activities"),
       row: "activities",
-      check: false,
+      check: true,
       activities: true,
+
     },
   ];
   return {

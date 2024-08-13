@@ -27,7 +27,6 @@ import SelectedOptionsTable from "../../../../../../../components/SelectedOption
 import moment from "moment";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 import useLeadContext from "@/src/context/leads";
-import { CheckIcon } from "@heroicons/react/24/outline";
 import { itemsByPage } from "@/src/lib/common";
 
 export default function TableLeads() {

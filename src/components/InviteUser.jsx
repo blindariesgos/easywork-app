@@ -119,7 +119,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                                 </div>
                               </div>
                               <p className="underline ml-3 text-gray-50 text-sm mt-2">
-                                Acutalizar enlace
+                                Actualizar enlace
                               </p>
                               <div className="flex mt-2 items-center">
                                 <input type="checkbox" />

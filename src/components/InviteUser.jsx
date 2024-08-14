@@ -61,13 +61,14 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                     </div>
                     <div className="h-screen rounded-lg bg-gray-300 p-6 flex max-md:w-full w-1/2">
                       <div className="mr-3 w-full">
-                        <h1 className="text-xl">Invitar</h1>
+                        {/* <h1 className="text-xl">Invitar</h1> */}
                         <div className="relative">
                           <Select
                             className="bg-easywork-main hover:bg-easywork-mainhover w-full text-white rounded-md"
                             onChange={(e) => setInvite(e.target.value)} // Maneja el evento onChange
                             value={invite} // Asigna el valor actual del estado
                           >
+                            <option value="1">Invitar...</option>
                             <option value="1">Mediante enlace</option>
                             <option value="2">
                               Mediante correo electrónico o número de teléfono
@@ -77,7 +78,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                           </Select>
                         </div>
                         <div>
-                        <div className="bg-white mt-12 rounded-lg p-5">
+                        <div className="bg-white mt-8 rounded-lg p-5">
                           {invite == 1 && (
                             <div>
                               <div className="flex border-b-2 pb-1">
@@ -89,7 +90,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                                 </h2>
                               </div>
                               <div className="flex justify-between py-1.5 px-2 my-2 w-full bg-green-500 bg-opacity-20 rounded-md">
-                                <p>Permitir registro rápido</p>
+                                <p className="ml-1">Permitir registro rápido</p>
                                 <Switch
                                   checked={enabled}
                                   onChange={setEnabled}
@@ -102,7 +103,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                                 </Switch>
                               </div>
                               <div>
-                                <p className="text-xs">
+                                <p className="text-xs ml-3">
                                   Enlace de registro rápido
                                 </p>
                                 <div className="flex items-center">
@@ -117,7 +118,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                                   </div>
                                 </div>
                               </div>
-                              <p className="underline text-gray-50 text-sm mt-2">
+                              <p className="underline ml-3 text-gray-50 text-sm mt-2">
                                 Acutalizar enlace
                               </p>
                               <div className="flex mt-2 items-center">
@@ -278,58 +279,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                           )}
                         </div>
                       </div>
-                        {/* <ul className="mt-5">
-                          <li
-                            className={`${
-                              invite === 1
-                                ? "bg-easywork-main text-white"
-                                : "text-black"
-                            } w-full py-1 mt-3 px-2 rounded-md cursor-pointer`}
-                            onClick={() => {
-                              setInvite(1);
-                            }}
-                          >
-                            Invitar mediante enlace
-                          </li>
-                          <li
-                            className={`${
-                              invite === 2
-                                ? "bg-easywork-main text-white"
-                                : "text-black"
-                            } w-full py-1 mt-3 px-2 rounded-md cursor-pointer`}
-                            onClick={() => {
-                              setInvite(2);
-                            }}
-                          >
-                            Invitar mediante correo electrónico o número de
-                            teléfono
-                          </li>
-                          <li
-                            className={`${
-                              invite === 3
-                                ? "bg-easywork-main text-white"
-                                : "text-black"
-                            } w-full py-1 mt-3 px-2 rounded-md cursor-pointer`}
-                            onClick={() => {
-                              setInvite(3);
-                            }}
-                          >
-                            Invitación masiva
-                          </li>
-                          <li
-                            className={`${
-                              invite === 4
-                                ? "bg-easywork-main text-white"
-                                : "text-black"
-                            } w-full py-1 mt-3 px-2 rounded-md cursor-pointer`}
-                            onClick={() => {
-                              setInvite(4);
-                            }}
-                          >
-                            Invitar a un usuario de otra compañía
-                          </li>
-                        </ul> */}
-                        <div className="w-full bg-slate-50 mt-3 rounded-md p-2">
+                        <div className="w-full text-sm bg-slate-50 mt-3 rounded-md p-2">
                           <div className="flex items-center pb-2 border-b-2">
                             <h1 className="w-7/12">
                               Número máximo de usuarios permitidos en su plan

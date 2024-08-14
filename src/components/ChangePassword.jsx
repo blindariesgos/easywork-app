@@ -1,6 +1,6 @@
 "use client";
 import { Fragment, useState, useEffect } from "react";
-import { Dialog, Transition, Switch } from "@headlessui/react";
+import { Dialog, Transition, Select } from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
@@ -16,6 +16,7 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
   const { t } = useTranslation();
   const session = useSession();
   const router = useRouter();
+  const [config, setConfig] = useState(1);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const [enabled, setEnabled] = useState(false);
@@ -57,21 +58,30 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
                         className={colorTag}
                       />
                     </div>
-                    <div className="h-screen rounded-lg bg-gray-300 p-6 flex w-2/3">
+                    <div className="h-screen rounded-lg bg-gray-300 p-6 w-2/3 max-md:w-full">
                       <div className="w-60 mr-3">
                         <h1 className="text-xl">Configurar</h1>
-                        <ul className="mt-3">
-                          <li className="bg-gray-400 text-white w-full py-1 px-2 rounded-md">
+                        {/* <ul className="mt-3">
+                          <li className="text-white bg-easywork-main hover:bg-easywork-mainhover cursor-pointer w-full py-1 px-2 rounded-md">
                             Autenticación
                           </li>
-                        </ul>
+                        </ul> */}
+                      </div>
+                      <div className="relative">
+                        <Select
+                          className="bg-easywork-main hover:bg-easywork-mainhover w-full text-white rounded-md"
+                          onChange={(e) => setInvite(e.target.value)} // Maneja el evento onChange
+                          value={config} // Asigna el valor actual del estado
+                        >
+                          <option value="1">Autenticación</option>
+                        </Select>
                       </div>
                       <div className="w-full">
-                        <h1 className="text-xl">Autenticación</h1>
+                        {/* <h1 className="text-xl">Autenticación</h1> */}
                         <div className="h-full bg-white mt-3 rounded-lg p-5">
                           <div className="flex justify-between border-b-2 pb-1">
                             <h2>Cambiar la contraseña</h2>
-                            <p>Cancelar</p>
+                            <button className="px-2 py-1 bg-gray-50 hover:bg-gray-400 cursor-pointer rounded-md text-white">Cancelar</button>
                           </div>
                           <div className="mt-12">
                             <p className="text-sm">Nueva contraseña</p>
@@ -82,7 +92,7 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
                             <p className="text-sm">Confirmar contraseña</p>
                             <input type="password" className="w-full" />
                           </div>
-                          <button className="bg-white border-2 p-2 mt-10">
+                          <button className="text-white bg-easywork-main hover:bg-easywork-mainhover rounded-md p-2 mt-10">
                             Cerrar sesión en todos los dispositivos
                           </button>
                         </div>

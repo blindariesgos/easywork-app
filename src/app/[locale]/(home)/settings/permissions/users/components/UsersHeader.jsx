@@ -10,25 +10,25 @@ import { useTranslation } from "react-i18next";
 import Button from "../../../../../../../components/form/Button";
 import useAppContext from "../../../../../../../context/app";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import FiltersContact from "./filters/FiltersContact";
+import FiltersContact from "./filters/FiltersUser";
 import { useCommon } from "../../../../../../../hooks/useCommon";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
 
-export default function ContactsHeader() {
+export default function UsersHeader() {
   const { t } = useTranslation();
   const { trash, settingsUser: settings } = useCommon();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const { push } = useRouter();
   const { selectedContacts } = useCrmContext();
 
   const handlePathname = () => {
     params.delete("page");
-    params.set("show", true);
-    replace(`/sales/crm/contacts/contact?${params.toString()}`);
+    params.set("inviteuser", true);
+    push(`${pathname}?${params.toString()}`);
   };
 
   return (

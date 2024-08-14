@@ -52,7 +52,8 @@ function classNames(...classes) {
 }
 
 export default function TableUsers() {
-  const { data, limit, setLimit } = useUserContext();
+  const { data, limit, setLimit, setOrderBy, order, orderBy } =
+    useUserContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -167,7 +168,7 @@ export default function TableUsers() {
                           index === selectedColumns.length - 1 && "rounded-e-xl"
                         }`}
                         onClick={() => {
-                          column.order && handleSorting(column.order);
+                          column.order && setOrderBy(column.order);
                         }}
                       >
                         <div className="flex justify-center items-center gap-2">
@@ -175,12 +176,11 @@ export default function TableUsers() {
                           <div>
                             {column.order && (
                               <ChevronDownIcon
-                                className={`h-6 w-6 text-primary ${
-                                  fieldClicked.field === column.order &&
-                                  fieldClicked.sortDirection === "desc"
-                                    ? "transform rotate-180"
-                                    : ""
-                                }`}
+                                className={clsx("h-6 w-6", {
+                                  "text-primary": orderBy === column.order,
+                                  "transform rotate-180":
+                                    orderBy === column.order && order === "ASC",
+                                })}
                               />
                             )}
                           </div>
@@ -295,7 +295,7 @@ export default function TableUsers() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div className="font-medium text-sm text-black hover:text-primary capitalize">
+                              <div className="font-medium text-sm text-black hover:text-primary">
                                 {column.link ? (
                                   <Link
                                     href={`/settings/permissions/users/user/${user.id}?show=true`}

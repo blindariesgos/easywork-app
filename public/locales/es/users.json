@@ -6,5 +6,10 @@
         "lastActivity": "Fecha de la última actividad",
         "mobile-app": "Aplicación Móvil",
         "desk-app": "Aplicación de escritorio"
+    },
+    "form": {
+        "title": "Información del contacto",
+        "firstname": "Nombre",
+        "lastname": "Apellido"
     }
 }

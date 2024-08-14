@@ -29,7 +29,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 
-export default function ContactEditor({ contact, id }) {
+export default function UserEditor({ user, id }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
@@ -44,22 +44,22 @@ export default function ContactEditor({ contact, id }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (contact) {
+    if (user) {
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
           lists?.listContact?.contactTypes.filter(
-            (option) => option.id === contact?.type?.id
+            (option) => option.id === user?.type?.id
           )[0]
         );
       lists?.listContact?.contactSources.length > 0 &&
         setContactSource(
           lists?.listContact?.contactSources.filter(
-            (option) => option.id === contact?.source?.id
+            (option) => option.id === user?.source?.id
           )[0]
         );
-      setSelectedProfileImage({ base64: contact?.photo || null, file: null });
+      setSelectedProfileImage({ base64: user?.photo || null, file: null });
     }
-  }, [contact, lists]);
+  }, [user, lists]);
 
   const schema = Yup.object().shape({
     email: Yup.string()
@@ -78,6 +78,9 @@ export default function ContactEditor({ contact, id }) {
     address: Yup.string(),
     responsible: Yup.string(),
     birthday: Yup.string(),
+    bio: Yup.string(),
+    lastName: Yup.string(),
+    firstName: Yup.string(),
   });
 
   const {
@@ -99,19 +102,22 @@ export default function ContactEditor({ contact, id }) {
       return;
     }
 
-    if (contact?.fullName) setValue("name", contact?.fullName);
-    if (contact?.cargo) setValue("position", contact?.cargo);
-    if (contact?.phones[0]?.phone?.number)
-      setValue("phone", contact?.phones[0]?.phone?.number);
-    if (contact?.emails[0]?.email?.email)
-      setValue("email", contact?.emails[0]?.email?.email);
-    if (contact?.curp) setValue("rfc", contact?.curp);
-    if (contact?.cua) setValue("cua", contact?.cua);
-    if (contact?.type?.id) setValue("typeContact", contact?.type?.id);
-    if (contact?.source?.id) setValue("origin", contact?.source?.id);
-    if (contact?.birthdate) setValue("birthday", contact?.birthdate);
-    if (contact?.address) setValue("address", contact?.address);
-  }, [contact, id]);
+    if (user?.fullName) setValue("name", user?.fullName);
+    if (user?.cargo) setValue("position", user?.cargo);
+    if (user?.phone) setValue("phone", user?.phone);
+    if (user?.email) setValue("email", user?.email);
+    if (user?.curp) setValue("rfc", user?.curp);
+    if (user?.cua) setValue("cua", user?.cua);
+    if (user?.type?.id) setValue("typeContact", user?.type?.id);
+    if (user?.source?.id) setValue("origin", user?.source?.id);
+    if (user?.birthdate) setValue("birthday", user?.birthdate);
+    if (user?.address) setValue("address", user?.address);
+    if (user?.bio) setValue("bio", user?.bio);
+    if (user?.profile?.firstName)
+      setValue("firstName", user?.profile?.firstName);
+    if (user?.profile?.lastName) setValue("lastName", user?.profile?.lastName);
+    if (user?.avatar) setSelectedProfileImage({ base64: user?.avatar });
+  }, [user, id]);
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -198,7 +204,7 @@ export default function ContactEditor({ contact, id }) {
 
     try {
       setLoading(true);
-      if (!contact) {
+      if (!user) {
         await createContact(formData);
         await mutate(`/sales/crm/contacts?limit=10&page=1`);
         toast.success(t("contacts:create:msg"));
@@ -242,9 +248,7 @@ export default function ContactEditor({ contact, id }) {
               )}
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl sm:pl-6 pl-2">
-                  {contact
-                    ? contact.fullName ?? contact.name
-                    : t("leads:create:client")}
+                  {user ? user.fullName ?? user.name : t("leads:create:client")}
                 </h1>
               </div>
               <AddContactTabs id={id} />
@@ -253,9 +257,9 @@ export default function ContactEditor({ contact, id }) {
 
           {/* Panel Principal */}
 
-          <div className="flex flex-col md:flex-row h-full md:pb-[13.5rem] overflow-y-scroll bg-gray-100 md:mx-4 rounded-lg p-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2  overflow-y-scroll bg-gray-100 md:mx-4 rounded-lg p-4 w-full">
             {/* Menu Izquierda */}
-            <div className="md:w-1/2 bg-gray-100">
+            <div className=" bg-gray-100">
               <div className="rounded-lg bg-white my-3 py-4">
                 <div className="flex w-full justify-between">
                   <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
@@ -286,7 +290,7 @@ export default function ContactEditor({ contact, id }) {
                 </div>
               </div>
 
-              <div className="w-full h-full mr-3 my-3 mt-1 p-1 rounded-lg bg-white">
+              <div className="w-full mr-3 my-3 mt-1 p-1 rounded-lg bg-white">
                 <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
                   Compañia: Tu Agencia
                 </h1>
@@ -341,160 +345,15 @@ export default function ContactEditor({ contact, id }) {
                   </div>
                 </div>
               </div>
-              {/* <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl px-5 mb-10 mt-8">
-                <TextInput
-                  type="text"
-                  label={t("contacts:create:name")}
-                  placeholder={t("contacts:create:placeholder-name")}
-                  error={errors.name}
-                  register={register}
-                  name="name"
-                  disabled={!isEdit}
-                />
-                <TextInput
-                  label={t("contacts:create:position")}
-                  placeholder={t("contacts:create:position")}
-                  error={errors.position}
-                  register={register}
-                  name="position"
-                  disabled={!isEdit}
-                />
-                <Controller
-                  render={({ field: { ref, ...field } }) => {
-                    return (
-                      <InputPhone
-                        name="phone"
-                        field={field}
-                        error={errors.phone}
-                        label={t("contacts:create:phone")}
-                        defaultValue={field.value}
-                        disabled={!isEdit}
-                      />
-                    );
-                  }}
-                  name="phone"
-                  control={control}
-                  defaultValue=""
-                />
-                <Controller
-                  render={({ field: { value, onChange, ref, onBlur } }) => {
-                    return (
-                      <InputDate
-                        label={t("contacts:create:born-date")}
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        icon={
-                          <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                        }
-                        error={errors.birthday}
-                        disabled={!isEdit}
-                      // inactiveDate={eighteenYearsAgo}
-                      />
-                    );
-                  }}
-                  name="birthday"
-                  control={control}
-                  defaultValue=""
-                />
-                <TextInput
-                  label={t("contacts:create:email")}
-                  placeholder={t("contacts:create:placeholder-lastname")}
-                  error={errors.email}
-                  register={register}
-                  name="email"
-                  disabled={!isEdit}
-                />
-                <TextInput
-                  label={t("contacts:create:rfc")}
-                  placeholder="XEXX010101000"
-                  error={errors.rfc}
-                  register={register}
-                  name="rfc"
-                  disabled={!isEdit}
-                />
-                <SelectInput
-                  label={t("contacts:create:contact-type")}
-                  options={lists?.listContact?.contactTypes}
-                  selectedOption={contactType && contactType}
-                  name="typeContact"
-                  error={!watch("typeContact") && errors.typeContact}
-                  register={register}
-                  setValue={setValue}
-                  disabled={!isEdit}
-                />
-                {watch("typeContact") == "Otro" ? (
-                  <TextInput
-                    label={t("contacts:create:otherType")}
-                    placeholder=""
-                    error={errors.otherType}
-                    register={register}
-                    name="otherType"
-                    disabled={!isEdit}
-                  //value={watch('otherType')}
-                  />
-                ) : null}
-                <TextInput
-                  label={t("contacts:create:address")}
-                  error={errors.address}
-                  register={register}
-                  name="address"
-                  placeholder={t("contacts:create:placeholder-address")}
-                  disabled={!isEdit}
-                //value={watch('address')}
-                />
-                <SelectInput
-                  label={t("contacts:create:origen")}
-                  name="origin"
-                  options={lists?.listContact?.contactSources}
-                  selectedOption={contactSource && contactSource}
-                  error={!watch("origin") && errors.origin}
-                  register={register}
-                  setValue={setValue}
-                  disabled={!isEdit}
-                //value={watch('origin')}
-                />
-                <SelectDropdown
-                  label={t("contacts:create:responsible")}
-                  name="responsible"
-                  options={lists?.users}
-                  selectedOption={contactResponsible}
-                  register={register}
-                  disabled={!isEdit}
-                  error={!watch("responsible") && errors.responsible}
-                  setValue={setValue}
-                // //value={watch('responsible')}
-                />
-                <TextInput
-                  label={t("contacts:create:cua")}
-                  error={errors.cua}
-                  register={register}
-                  name="cua"
-                  disabled={!isEdit}
-                //value={watch('cua')}
-                // placeholder={t('contacts:create:placeholder-address')}
-                />
-                {
-                  isEdit && (
-                    <DocumentSelector
-                      name="files"
-                      onChange={handleFilesUpload}
-                      files={files}
-                      disabled={!isEdit}
-                      setFiles={setFiles}
-                    />
-
-                  )
-                }
-              </div> */}
             </div>
 
             {/* Menu Derecha */}
-            {/* {id && <ActivityPanel contactId={id} />} */}
-            <div className="md:w-1/2 bg-white h-auto m-3 pt-1 rounded-lg">
+            <div className=" bg-white h-auto m-3 pt-1 rounded-lg">
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
-                <h1 className="">{t("contacts:create:data")}</h1>
-                {contact && (
+                <h1 className="text-primary font-bold text-2xl">
+                  {t("users:form:title")}
+                </h1>
+                {user && (
                   <button
                     type="button"
                     disabled={!id}
@@ -508,21 +367,31 @@ export default function ContactEditor({ contact, id }) {
               <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 mb-10 pb-9 mt-8">
                 <TextInput
                   type="text"
-                  label={t("contacts:create:name")}
+                  label={t("users:form:firstname")}
                   placeholder={t("contacts:create:placeholder-name")}
-                  error={errors.name}
+                  error={errors.firstName && errors.firstName.message}
                   register={register}
-                  name="name"
+                  name="firstName"
                   disabled={!isEdit}
                 />
                 <TextInput
-                  label={t("contacts:create:position")}
-                  placeholder={t("contacts:create:position")}
-                  error={errors.position}
+                  type="text"
+                  label={t("users:form:lastname")}
+                  placeholder={t("contacts:create:placeholder-name")}
+                  error={errors.lastName && errors.lastName.message}
                   register={register}
-                  name="position"
+                  name="lastName"
                   disabled={!isEdit}
                 />
+                <TextInput
+                  label={t("contacts:create:email")}
+                  placeholder={t("contacts:create:placeholder-lastname")}
+                  error={errors.email}
+                  register={register}
+                  name="email"
+                  disabled={!isEdit}
+                />
+
                 <Controller
                   render={({ field: { ref, ...field } }) => {
                     return (
@@ -540,6 +409,15 @@ export default function ContactEditor({ contact, id }) {
                   control={control}
                   defaultValue=""
                 />
+                <TextInput
+                  label={t("contacts:create:position")}
+                  placeholder={t("contacts:create:position")}
+                  error={errors.position}
+                  register={register}
+                  name="position"
+                  disabled={!isEdit}
+                />
+
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
@@ -561,14 +439,7 @@ export default function ContactEditor({ contact, id }) {
                   control={control}
                   defaultValue=""
                 />
-                <TextInput
-                  label={t("contacts:create:email")}
-                  placeholder={t("contacts:create:placeholder-lastname")}
-                  error={errors.email}
-                  register={register}
-                  name="email"
-                  disabled={!isEdit}
-                />
+
                 <TextInput
                   label={t("contacts:create:rfc")}
                   placeholder="XEXX010101000"
@@ -653,7 +524,7 @@ export default function ContactEditor({ contact, id }) {
           {/* )} */}
 
           {/* Botones de acción */}
-          {(isEdit || !contact) && (
+          {(isEdit || !user) && (
             <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
               <Button
                 type="submit"

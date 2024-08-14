@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
-import TextEditor from "../../tasks/components/TextEditor";
+import uploadSignature from "@/src/context/drive";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
@@ -43,10 +43,26 @@ export default function Signature({
   const params = new URLSearchParams(searchParams);
   const quillRef = useRef(null);
   const { lists, setFilter, selectOauth } = useAppContext();
+  const fileInputRef = useRef(null);
+  const [files, setFiles] = useState();
 
   const schema = yup.object().shape({
     responsible: yup.string(),
   });
+
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const archive = event.target.files[0];
+    console.log(archive);
+    const formData = new FormData();
+    formData.append("file", archive);
+    console.log(formData);
+    const response = await uploadSignature(formData);
+    console.log(response);
+  };
 
   useEffect(() => {
     getTokenGoogle(session.data.user.id).then((res) => {
@@ -54,32 +70,6 @@ export default function Signature({
     });
   }, [params.get("signature")]);
 
-  async function sendEmail() {
-    const data = {
-      to: contactsArray,
-      cc: CCArray,
-      bcc: BCCArray,
-      subject: subject,
-      body: value,
-      attachments: null,
-    };
-    console.log(data);
-    try {
-      if (!data.to) {
-        toast.error("Debes colocar destinatario");
-        return;
-      }
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
-        data
-      );
-      toast.success("Correo enviado");
-      router.back();
-    } catch (error) {
-      toast.error("Error al enviar correo");
-      console.error("Failed to send email:", error);
-    }
-  }
   return (
     <Transition.Root show={params.get("signature")} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>
@@ -123,8 +113,12 @@ export default function Signature({
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
                       <div className="flex mb-3 items-center">
-                        <div className="flex items-center"><h1 className="text-lg mb-4 inline-block align-middle h-full">Firmas</h1></div>
-                        
+                        <div className="flex items-center">
+                          <h1 className="text-lg mb-4 inline-block align-middle h-full">
+                            Firmas
+                          </h1>
+                        </div>
+
                         <div className="flex items-center w-full rounded-md bg-white ml-2 pl-2">
                           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
                           <input
@@ -137,12 +131,20 @@ export default function Signature({
                             // onClick={() => setSearchInput("")}
                           />
                         </div>
-                        <button
-                          className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44"
-                          // onClick={() => sendEmail()}
-                        >
-                          Agregar Firma
-                        </button>
+                        <div>
+                          <div
+                            className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
+                            onClick={handleFileClick}
+                          >
+                            <p className="ml-1">Agregar Firma</p>
+                          </div>
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                          />
+                        </div>
                       </div>
                       <div className="bg-white p-5 h-auto rounded-lg w-full text-easywork-main flex">
                         <div className="w-1/2 flex">

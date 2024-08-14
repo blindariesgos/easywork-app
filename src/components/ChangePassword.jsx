@@ -69,7 +69,7 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
                       </div>
                       <div className="relative">
                         <Select
-                          className="bg-easywork-main hover:bg-easywork-mainhover w-full text-white rounded-md"
+                          className="bg-easywork-main hover:bg-easywork-mainhover w-full text-white rounded-md mt-1"
                           onChange={(e) => setInvite(e.target.value)} // Maneja el evento onChange
                           value={config} // Asigna el valor actual del estado
                         >

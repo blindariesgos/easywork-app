@@ -67,3 +67,13 @@ export const deleteItem = async (type, id) => {
     return response;
 };
 
+export const uploadSignature = async (data) => {
+    const response = await axios({
+        baseURL: process.env.API_DRIVE_HOST,
+        contentType: "multipart/form-data"
+    })
+        .post(`/files/signatures`, data).catch(error => error);
+    return response;
+};
+
+

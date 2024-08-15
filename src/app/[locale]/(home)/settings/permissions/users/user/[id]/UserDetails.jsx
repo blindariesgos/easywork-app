@@ -1,12 +1,11 @@
 "use client";
 import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
-import UserEditor from "../../components/create_contact/UserEditor";
-import { useContact } from "@/src/lib/api/hooks/contacts";
+import UserEditor from "../../components/create/UserEditor";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useUser } from "@/src/lib/api/hooks/users";
 
-export default function ContactDetails({ id }) {
+export default function UserDetails({ id }) {
   const { data, isLoading, isError } = useUser(id);
 
   if (isError) {

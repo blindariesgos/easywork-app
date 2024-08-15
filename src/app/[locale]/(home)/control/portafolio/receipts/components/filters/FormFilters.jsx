@@ -6,24 +6,22 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { useCommon } from "../../../../../../../../hooks/useCommon";
 import SelectInput from "../../../../../../../../components/form/SelectInput";
 import InputDate from "../../../../../../../../components/form/InputDate";
 import TextInput from "../../../../../../../../components/form/TextInput";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import AddFields from "./AddFields";
+import AddFields from "../../../../../../../../components/filters/AddFields";
 import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
 import useAppContext from "../../../../../../../../context/app";
-import useUserContext from "@/src/context/users";
 import { formatDate } from "@/src/utils/getFormatDate";
+import useReceiptContext from "../../../../../../../../context/receipts";
 
 const FormFilters = () => {
   const { lists, setFilter } = useAppContext();
   const { t } = useTranslation();
   const { setFilters, filters, filterFields, setDisplayFilters } =
-    useUserContext();
+    useReceiptContext();
   const schema = yup.object().shape({
     fields: yup.array().of(yup.object().shape({})),
   });

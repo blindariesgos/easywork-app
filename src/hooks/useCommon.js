@@ -183,7 +183,7 @@ export const useSidebar = () => {
             {
               name: t("common:menu:control:portfolio:receipts"),
               href: "",
-              // href: "/control/portafolio/receipts",
+              href: "/control/portafolio/receipts",
               image: "/img/cobranza/recibos.png",
               iconShortBar: GlobeAltIcon,
             }
@@ -1433,7 +1433,7 @@ export const useUserTable = () => {
   const columnTable = [
     {
       id: 1,
-      name: t("contacts:table:user"),
+      name: t("users:table:name"),
       row: "contactName",
       order: "name",
       check: true,
@@ -1443,14 +1443,63 @@ export const useUserTable = () => {
     },
     {
       id: 2,
-      name: t("contacts:table:birthday"),
-      row: "birthdate",
-      order: "birthdate",
+      name: t("users:table:email"),
+      row: "email",
+      order: "email",
       check: true,
     },
     {
       id: 3,
-      name: t("contacts:table:responsible"),
+      name: t("users:table:phone"),
+      row: "phone",
+      order: "phone",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 4,
+      name: t("users:table:lastActivity"),
+      row: "lastLogin",
+      order: "lastLogin",
+      check: true,
+    },
+    {
+      id: 5,
+      name: t("users:table:mobile-app"),
+      row: "mobile-app",
+      check: true,
+    },
+    {
+      id: 6,
+      name: t("users:table:desk-app"),
+      row: "desk-app",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useReceiptTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 1,
+      name: t("receipts:table:receipt"),
+      row: "receipt",
+      order: "receipt",
+      check: true,
+      permanent: true,
+    },
+    {
+      id: 2,
+      name: t("receipts:table:policy"),
+      row: "policy",
+      order: "policy",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("receipts:table:responsible"),
       row: "responsible",
       order: "responsible",
       check: true,
@@ -1458,30 +1507,33 @@ export const useUserTable = () => {
     },
     {
       id: 4,
-      name: t("contacts:table:email"),
-      row: "email",
-      order: "emails[0].email.email",
+      name: t("receipts:table:client"),
+      row: "client",
+      order: "client",
       check: true,
     },
     {
       id: 5,
-      name: t("contacts:table:phone"),
-      row: "phone",
-      order: "phones[0].phone.number",
+      name: t("receipts:table:stages"),
+      row: "stages",
       check: true,
     },
     {
       id: 6,
-      name: t("contacts:table:created"),
-      row: "createdAt",
-      order: "createdAt",
+      name: t("receipts:table:amount"),
+      row: "amount",
       check: true,
     },
     {
       id: 7,
-      name: t("contacts:table:origin"),
-      row: "source",
-      order: "source",
+      name: t("receipts:table:created-in"),
+      row: "createdAt",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("receipts:table:activities"),
+      row: "activities",
       check: true,
     },
   ];

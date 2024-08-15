@@ -3,9 +3,9 @@ import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AppointmentMenu from "./AppointmentMenu";
 import Link from "next/link";
-import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
-import Button from "@/src/components/form/Button";
-import { addContactComment } from "@/src/lib/apis";
+import TextEditor from "../TextEditor";
+import Button from "../form/Button";
+import { addContactComment } from "../../lib/apis";
 import { toast } from "react-toastify";
 
 export default function ActivityHeader({ contactId, update }) {

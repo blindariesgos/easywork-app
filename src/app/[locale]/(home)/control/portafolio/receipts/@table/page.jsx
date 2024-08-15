@@ -1,5 +1,5 @@
 "use client";
-import TableUsers from "./TableUsers";
+import TableReceipts from "./TableReceipts";
 import { useEffect, useState } from "react";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useTranslation } from "react-i18next";
@@ -33,7 +33,7 @@ export default function Page({ searchParams }) {
 
   return (
     <div className="flow-root relative h-full">
-      <TableUsers />
+      <TableReceipts />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/src/components/form/Button";
-import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
+import TextEditor from "../TextEditor";
 import IconDropdown from "@/src/components/SettingsButton";
 import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
 import {
@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { BsBriefcase } from "react-icons/bs";
 import { RiFileEditLine } from "react-icons/ri";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
-import { postComment } from "@/src/lib/apis";
+import { postComment } from "../../lib/apis";
 import { toast } from "react-toastify";
 //is a component that must recieve its props
 export default function CardTask({ data }) {

@@ -9,7 +9,7 @@ import {
 } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
-import NewFields from "./NewFields";
+import NewFields from "../../app/[locale]/(home)/control/portafolio/receipts/components/filters/NewFields";
 
 const AddFields = ({ append, remove, fields }) => {
   const { t } = useTranslation();

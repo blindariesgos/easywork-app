@@ -183,7 +183,7 @@ export const useSidebar = () => {
             {
               name: t("common:menu:control:portfolio:receipts"),
               href: "",
-              // href: "/control/portafolio/receipts",
+              href: "/control/portafolio/receipts",
               image: "/img/cobranza/recibos.png",
               iconShortBar: GlobeAltIcon,
             }
@@ -1473,6 +1473,67 @@ export const useUserTable = () => {
       id: 6,
       name: t("users:table:desk-app"),
       row: "desk-app",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useReceiptTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 1,
+      name: t("receipts:table:receipt"),
+      row: "receipt",
+      order: "receipt",
+      check: true,
+      permanent: true,
+    },
+    {
+      id: 2,
+      name: t("receipts:table:policy"),
+      row: "policy",
+      order: "policy",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("receipts:table:responsible"),
+      row: "responsible",
+      order: "responsible",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 4,
+      name: t("receipts:table:client"),
+      row: "client",
+      order: "client",
+      check: true,
+    },
+    {
+      id: 5,
+      name: t("receipts:table:stages"),
+      row: "stages",
+      check: true,
+    },
+    {
+      id: 6,
+      name: t("receipts:table:amount"),
+      row: "amount",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("receipts:table:created-in"),
+      row: "createdAt",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("receipts:table:activities"),
+      row: "activities",
       check: true,
     },
   ];

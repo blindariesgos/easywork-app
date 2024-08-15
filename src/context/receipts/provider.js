@@ -5,8 +5,8 @@ import { ReceiptsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useUsers } from "../../lib/api/hooks/users";
-
-export default function UsersContextProvider({ children }) {
+import { receipts } from "./mockups"
+export default function ReceiptsContextProvider({ children }) {
   const { t } = useTranslation()
   const [config, setConfig] = useState({
     page: 1,
@@ -135,13 +135,13 @@ export default function UsersContextProvider({ children }) {
 
   const values = useMemo(
     () => ({
-      data: data,
+      data: receipts,
       isLoading,
       isError,
       mutate,
-      page: config.page,
+      page: 1, //config.page,
       setPage: (value) => handleChangeConfig("page", value),
-      limit: config.limit,
+      limit: 5, // config.limit,
       setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
       setOrderBy: (value) => handleChangeConfig("orderBy", value),

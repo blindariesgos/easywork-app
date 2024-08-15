@@ -14,7 +14,7 @@ import InputPhone from "@/src/components/form/InputPhone";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
-import ActivityPanel from "../ActivityPanel";
+import ActivityPanel from "../../../../../../../../components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import {
   createContact,

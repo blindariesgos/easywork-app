@@ -129,7 +129,6 @@ export default function SlideOver({
       show={show}
       as={Fragment}
       afterLeave={() => {
-        console.log("qlqlqlqlqlql");
         router.back();
         // if (taskId) {
         //   router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });

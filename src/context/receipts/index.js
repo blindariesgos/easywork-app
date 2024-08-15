@@ -3,14 +3,14 @@
 import { useContext } from "react";
 import { ReceiptsContext } from "..";
 
-export function useUserContext() {
+export function useReceiptContext() {
   const context = useContext(ReceiptsContext);
 
   if (!context) {
-    throw new Error("useUserContext must be used within an useUserProvider");
+    throw new Error("useReceiptContext must be used within an useReceiptProvider");
   }
 
   return context;
 }
 
-export default useUserContext;
+export default useReceiptContext;

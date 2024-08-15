@@ -54,6 +54,10 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     updateLabelId(array, "trash");
   }
 
+  const handleChangeAddCrm = () => {
+    router.push("/sales/crm/leads/lead?show=true&page=1");
+  };
+
   async function updateLabelId(array, label) {
     if (label === "inbox") {
       await axios.post(
@@ -366,6 +370,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                           label="CRM"
                           buttonStyle="secondary"
                           className="px-1 py-1"
+                          onclick={handleChangeAddCrm}
                         />
                       </div>
                       <div

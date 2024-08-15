@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
-import TextEditor from "../../tasks/components/TextEditor";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
@@ -28,58 +27,72 @@ export default function Signature({
   const { t } = useTranslation();
   const session = useSession();
   const router = useRouter();
-  const [value, setValueText] = useState("");
-  const [recipient, setRecipient] = useState("");
-  const [CCBCC, setCCBCC] = useState({ CC: false, BCC: false });
-  const [subject, setSubject] = useState("");
+
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
-  const [valueTest, setValue] = useState("");
-  const [contactsArray, setContactsArray] = useState(null);
-  const [BCCArray, setBCCArray] = useState(null);
-  const [CCArray, setCCArray] = useState(null);
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const quillRef = useRef(null);
-  const { lists, setFilter, selectOauth } = useAppContext();
+  const { selectOauth } = useAppContext();
+  const fileInputRef = useRef(null);
+  const [signatures, setSignatures] = useState([]);
 
   const schema = yup.object().shape({
     responsible: yup.string(),
   });
 
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const archive = event.target.files[0];
+    const response = await uploadSignature(archive);
+    console.log(response);
+  };
+
+  const uploadSignature = async (archive) => {
+    const formData = new FormData();
+    formData.append("file", archive);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      getSignatures();
+      return response;
+    } catch (error) {
+      console.error("Error uploading signature:", error);
+    }
+  };
+
+  const getSignatures = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      setSignatures(response.data);
+    } catch (error) {}
+  };
+
   useEffect(() => {
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
+    getSignatures();
   }, [params.get("signature")]);
 
-  async function sendEmail() {
-    const data = {
-      to: contactsArray,
-      cc: CCArray,
-      bcc: BCCArray,
-      subject: subject,
-      body: value,
-      attachments: null,
-    };
-    console.log(data);
-    try {
-      if (!data.to) {
-        toast.error("Debes colocar destinatario");
-        return;
-      }
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
-        data
-      );
-      toast.success("Correo enviado");
-      router.back();
-    } catch (error) {
-      toast.error("Error al enviar correo");
-      console.error("Failed to send email:", error);
-    }
-  }
   return (
     <Transition.Root show={params.get("signature")} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>
@@ -123,8 +136,12 @@ export default function Signature({
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
                       <div className="flex mb-3 items-center">
-                        <div className="flex items-center"><h1 className="text-lg mb-4 inline-block align-middle h-full">Firmas</h1></div>
-                        
+                        <div className="flex items-center">
+                          <h1 className="text-lg mb-4 inline-block align-middle h-full">
+                            Firmas
+                          </h1>
+                        </div>
+
                         <div className="flex items-center w-full rounded-md bg-white ml-2 pl-2">
                           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
                           <input
@@ -137,12 +154,20 @@ export default function Signature({
                             // onClick={() => setSearchInput("")}
                           />
                         </div>
-                        <button
-                          className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44"
-                          // onClick={() => sendEmail()}
-                        >
-                          Agregar Firma
-                        </button>
+                        <div>
+                          <div
+                            className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
+                            onClick={handleFileClick}
+                          >
+                            <p className="ml-1">Agregar Firma</p>
+                          </div>
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: "none" }}
+                            onChange={handleFileChange}
+                          />
+                        </div>
                       </div>
                       <div className="bg-white p-5 h-auto rounded-lg w-full text-easywork-main flex">
                         <div className="w-1/2 flex">
@@ -154,26 +179,17 @@ export default function Signature({
                           <ChevronDownIcon className="w-5 h-5" />
                         </div>
                       </div>
-                      <div className="flex">
-                        <div className="w-1/2 text-sm">
-                          <div className="flex m-3">
-                            <input type="checkbox" />
-                            <p className="ml-2">{selectOauth?.email}</p>
+                        {signatures.map((signature, index) => (
+                          <div className="p-3 w-full" key={index}>
+                            <div className="flex justify-between">
+                              <div className="flex">
+                                <input type="checkbox" />
+                                <p className="ml-2">{selectOauth?.email}</p>
+                              </div>
+                              <p>{signature?.name}</p>
+                            </div>
                           </div>
-                          <div className="flex m-3">
-                            <input type="checkbox" />
-                            <p className="ml-2">{selectOauth?.email}</p>
-                          </div>
-                        </div>
-                        <div className="w-1/2">
-                          <div className="flex m-3">
-                            <p>logo.gif</p>
-                          </div>
-                          <div className="flex m-3">
-                            <p>logo.gif</p>
-                          </div>
-                        </div>
-                      </div>
+                        ))}
                     </div>
                   </div>
                 </Dialog.Panel>

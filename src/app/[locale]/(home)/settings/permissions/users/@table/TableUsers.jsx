@@ -310,7 +310,9 @@ export default function TableUsers() {
                                     />
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {user?.username ?? user?.name}
+                                        {user?.profile
+                                          ? `${user?.profile.firstName} ${user?.profile?.lastName}`
+                                          : user?.username}
                                       </p>
                                       {user.bio && (
                                         <p className="text-start text-xs">

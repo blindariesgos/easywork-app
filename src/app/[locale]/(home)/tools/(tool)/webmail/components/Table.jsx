@@ -22,6 +22,7 @@ import {
   Menu,
   Transition,
 } from "@headlessui/react";
+import Button from "@/src/components/form/Button";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -52,6 +53,10 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     });
     updateLabelId(array, "trash");
   }
+
+  const handleChangeAddCrm = () => {
+    router.push("/sales/crm/leads/lead?show=true&page=1");
+  };
 
   async function updateLabelId(array, label) {
     if (label === "inbox") {
@@ -154,9 +159,14 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                     ? new Date(item.email.date)
                     : new Date();
 
+                  fromFormat =
+                    fromFormat.length > 10
+                      ? `${fromFormat.substring(0, 15)}.`
+                      : fromFormat;
+
                   subjectFormat =
-                    subjectFormat.length > 70
-                      ? `${subjectFormat.substring(0, 70)}...`
+                    subjectFormat.length > 40
+                      ? `${subjectFormat.substring(0, 40)}.`
                       : subjectFormat;
 
                   const now = new Date();
@@ -309,7 +319,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
-                          ) + " col-span-6"
+                          ) + " col-span-3"
                         }
                       >
                         {subjectFormat}
@@ -325,7 +335,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
-                          ) + " col-span-3"
+                          ) + " col-span-2 text-right"
                         }
                       >
                         {fromFormat}
@@ -341,7 +351,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
-                          ) + " col-span-1 text-right"
+                          ) + " col-span-1 text-center"
                         }
                       >
                         {dateFormat}
@@ -349,16 +359,83 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                       <div
                         className={
                           clsx(
-                            "whitespace-nowrap py-1 pr-3 text-sm ",
+                            "whitespace-nowrap",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-1 flex justify-center"
+                        }
+                      >
+                        <Button
+                          label="CRM"
+                          buttonStyle="secondary"
+                          className="px-1 py-1"
+                          onclick={handleChangeAddCrm}
+                        />
+                      </div>
+                      <div
+                        className={
+                          clsx(
+                            "whitespace-nowrap",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-1 flex justify-center"
+                        }
+                      >
+                        <Button
+                          label="Tarea"
+                          buttonStyle="secondary"
+                          className="px-1 py-1"
+                        />
+                      </div>
+                      <div
+                        className={
+                          clsx(
+                            "whitespace-nowrap",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-1  flex justify-center"
+                        }
+                      >
+                        <Button
+                          label="Chat"
+                          buttonStyle="secondary"
+                          className="px-1 py-1"
+                        />
+                      </div>
+                      <div
+                        className={
+                          clsx(
+                            "whitespace-nowrap",
                             selectedTasks.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1"
                         }
                       >
-                        <button className="border-2 border-gray-950 px-0.5 rounded-md text-xs">
-                          CRM
-                        </button>
+                        <Button
+                          label="Eventos"
+                          buttonStyle="secondary"
+                          className="px-1 py-1"
+                        />
+                      </div>
+                      <div
+                        className={
+                          clsx(
+                            "whitespace-nowrap",
+                            selectedTasks.includes(item)
+                              ? "text-indigo-600"
+                              : "text-gray-900"
+                          ) + " col-span-1"
+                        }
+                      >
+                        <Button
+                          label="Publicar feed"
+                          buttonStyle="secondary"
+                          className="px-1 py-1"
+                        />
                       </div>
                     </div>
                   );

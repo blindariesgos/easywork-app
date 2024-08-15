@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
-import uploadSignature from "@/src/context/drive";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
@@ -28,23 +27,15 @@ export default function Signature({
   const { t } = useTranslation();
   const session = useSession();
   const router = useRouter();
-  const [value, setValueText] = useState("");
-  const [recipient, setRecipient] = useState("");
-  const [CCBCC, setCCBCC] = useState({ CC: false, BCC: false });
-  const [subject, setSubject] = useState("");
+
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
-  const [valueTest, setValue] = useState("");
-  const [contactsArray, setContactsArray] = useState(null);
-  const [BCCArray, setBCCArray] = useState(null);
-  const [CCArray, setCCArray] = useState(null);
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const quillRef = useRef(null);
-  const { lists, setFilter, selectOauth } = useAppContext();
+  const { selectOauth } = useAppContext();
   const fileInputRef = useRef(null);
-  const [files, setFiles] = useState();
+  const [signatures, setSignatures] = useState([]);
 
   const schema = yup.object().shape({
     responsible: yup.string(),
@@ -56,18 +47,50 @@ export default function Signature({
 
   const handleFileChange = async (event) => {
     const archive = event.target.files[0];
-    console.log(archive);
+    const response = await uploadSignature(archive);
+    console.log(response);
+  };
+
+  const uploadSignature = async (archive) => {
     const formData = new FormData();
     formData.append("file", archive);
-    console.log(formData);
-    const response = await uploadSignature(formData);
-    console.log(response);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      getSignatures();
+      return response;
+    } catch (error) {
+      console.error("Error uploading signature:", error);
+    }
+  };
+
+  const getSignatures = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      setSignatures(response.data);
+    } catch (error) {}
   };
 
   useEffect(() => {
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
+    getSignatures();
   }, [params.get("signature")]);
 
   return (
@@ -156,26 +179,17 @@ export default function Signature({
                           <ChevronDownIcon className="w-5 h-5" />
                         </div>
                       </div>
-                      <div className="flex">
-                        <div className="w-1/2 text-sm">
-                          <div className="flex m-3">
-                            <input type="checkbox" />
-                            <p className="ml-2">{selectOauth?.email}</p>
+                        {signatures.map((signature, index) => (
+                          <div className="p-3 w-full" key={index}>
+                            <div className="flex justify-between">
+                              <div className="flex">
+                                <input type="checkbox" />
+                                <p className="ml-2">{selectOauth?.email}</p>
+                              </div>
+                              <p>{signature?.name}</p>
+                            </div>
                           </div>
-                          <div className="flex m-3">
-                            <input type="checkbox" />
-                            <p className="ml-2">{selectOauth?.email}</p>
-                          </div>
-                        </div>
-                        <div className="w-1/2">
-                          <div className="flex m-3">
-                            <p>logo.gif</p>
-                          </div>
-                          <div className="flex m-3">
-                            <p>logo.gif</p>
-                          </div>
-                        </div>
-                      </div>
+                        ))}
                     </div>
                   </div>
                 </Dialog.Panel>

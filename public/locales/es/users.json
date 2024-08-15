@@ -10,6 +10,9 @@
     "form": {
         "title": "Información del contacto",
         "firstname": "Nombre",
-        "lastname": "Apellido"
+        "lastname": "Apellido",
+        "phone": "Teléfono",
+        "email": "Correo Electrónico",
+        "role": "Rol"
     }
 }

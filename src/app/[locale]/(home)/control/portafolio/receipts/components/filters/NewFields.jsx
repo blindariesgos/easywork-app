@@ -3,10 +3,11 @@ import useAppContext from "../../../../../../../../context/app";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MenuItem } from "@headlessui/react";
+import useReceiptContext from "../../../../../../../../context/receipts";
 
 const NewFields = ({ append, remove, fields: selectFields }) => {
   const { lists } = useAppContext();
-  const { filterFields, setFilterFields } = useUserContext();
+  const { filterFields, setFilterFields } = useReceiptContext();
   const { t } = useTranslation();
 
   // useEffect(() => {

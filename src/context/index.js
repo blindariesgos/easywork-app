@@ -10,3 +10,5 @@ export const TasksContext = createContext(null);
 export const ContactsContext = createContext(null);
 export const LeadsContext = createContext(null);
 export const ControlContext = createContext(null);
+export const UsersContext = createContext(null);
+export const ReceiptsContext = createContext(null);

@@ -123,7 +123,7 @@ export default function LeadsContextProvider({ children }) {
             : "ASC"
       }
     }
-    console.log({ newConfig, config })
+
     setConfig(newConfig)
   }
 

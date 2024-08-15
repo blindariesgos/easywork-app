@@ -3,8 +3,7 @@ import { formatDate } from "@/src/utils/getFormatDate";
 import { ChatBubbleBottomCenterIcon } from "@heroicons/react/24/solid";
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { HiOutlineMail } from "react-icons/hi";
-import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
+import TextEditor from "../TextEditor";
 
 export default function CardComment({ data }) {
   const { t } = useTranslation();

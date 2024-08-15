@@ -44,11 +44,9 @@ const InputDate = ({
   return (
     <div className="flex flex-col w-full">
       {label && (
-        <label className="text-sm font-medium text-gray-900 mb-[-4px]">
-          {label}
-        </label>
+        <label className="text-sm font-medium text-gray-900">{label}</label>
       )}
-      <div className="w-full">
+      <div className={clsx("w-full", { "mt-1": label })}>
         <DatePicker
           renderCustomHeader={({
             date,

@@ -18,11 +18,8 @@ import { useTranslation } from "react-i18next";
 import CardWhatsapp from "./CardWhatsapp";
 import CardEmail from "./CardEmail";
 import CardComment from "./CardComment";
-import { useContactActivities } from "@/src/lib/api/hooks/contacts";
+import { useContactActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
-import TextEditor from "../../../../tools/(tool)/tasks/components/TextEditor";
-import Button from "@/src/components/form/Button";
-import { addContactComment } from "@/src/lib/apis";
 
 function parseAndSortByDate(data) {
   console.log({ data });
@@ -73,7 +70,7 @@ export default function ActivityPanel({ contactId }) {
     }
   };
   return (
-    <div className="px-4 relative bg-gray-100 rounded-tr-lg w-full md:w-3/5 h-full overflow-y-auto">
+    <div className="px-4 relative bg-gray-100 rounded-tr-lg w-full h-full overflow-y-auto">
       <div className="w-full flex ">
         <div className="flow-root rounded-lg w-full">
           <ul role="list" className="p-3">

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import TextInput from '../../../../../../../../../components/form/TextInput';
 import SelectInput from '../../../../../../../../../components/form/SelectInput';
 import { DocumentTextIcon } from '@heroicons/react/20/solid';
-import ActivityPanel from '../../ActivityPanel';
+import ActivityPanel from '../../../../../../../../../components/contactActivities/ActivityPanel';
 
 export default function FormRefund() {
 	const { t } = useTranslation();

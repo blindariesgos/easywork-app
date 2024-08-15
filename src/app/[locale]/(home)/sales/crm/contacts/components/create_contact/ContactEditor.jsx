@@ -14,7 +14,7 @@ import InputPhone from "@/src/components/form/InputPhone";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
-import ActivityPanel from "../ActivityPanel";
+import ActivityPanel from "../../../../../../../../components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import {
   createContact,
@@ -28,7 +28,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
-import ContactFolders from "../show_documents/ContactFolders"
+import ContactFolders from "../show_documents/ContactFolders";
 
 export default function ContactEditor({ contact, id }) {
   const { lists } = useAppContext();
@@ -44,12 +44,12 @@ export default function ContactEditor({ contact, id }) {
   const params = new URLSearchParams(searchParams);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState("general")
+  const [tab, setTab] = useState("general");
 
   useEffect(() => {
-    const tabSelected = params.get('tab') ?? "general"
-    setTab(tabSelected)
-  }, [params.get('tab')])
+    const tabSelected = params.get("tab") ?? "general";
+    setTab(tabSelected);
+  }, [params.get("tab")]);
 
   useEffect(() => {
     if (contact) {
@@ -102,24 +102,24 @@ export default function ContactEditor({ contact, id }) {
   });
 
   useEffect(() => {
-
     if (!id) {
-      setIsEdit(true)
-      return
+      setIsEdit(true);
+      return;
     }
 
-    if (contact?.fullName) setValue("name", contact?.fullName)
-    if (contact?.cargo) setValue("position", contact?.cargo)
-    if (contact?.phones[0]?.phone?.number) setValue("phone", contact?.phones[0]?.phone?.number)
-    if (contact?.emails[0]?.email?.email) setValue("email", contact?.emails[0]?.email?.email)
-    if (contact?.curp) setValue("rfc", contact?.curp)
-    if (contact?.cua) setValue("cua", contact?.cua)
-    if (contact?.type?.id) setValue("typeContact", contact?.type?.id)
-    if (contact?.source?.id) setValue("origin", contact?.source?.id)
-    if (contact?.birthdate) setValue("birthday", contact?.birthdate)
-    if (contact?.address) setValue("address", contact?.address)
-
-  }, [contact, id])
+    if (contact?.fullName) setValue("name", contact?.fullName);
+    if (contact?.cargo) setValue("position", contact?.cargo);
+    if (contact?.phones[0]?.phone?.number)
+      setValue("phone", contact?.phones[0]?.phone?.number);
+    if (contact?.emails[0]?.email?.email)
+      setValue("email", contact?.emails[0]?.email?.email);
+    if (contact?.curp) setValue("rfc", contact?.curp);
+    if (contact?.cua) setValue("cua", contact?.cua);
+    if (contact?.type?.id) setValue("typeContact", contact?.type?.id);
+    if (contact?.source?.id) setValue("origin", contact?.source?.id);
+    if (contact?.birthdate) setValue("birthday", contact?.birthdate);
+    if (contact?.address) setValue("address", contact?.address);
+  }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -246,251 +246,237 @@ export default function ContactEditor({ contact, id }) {
             )}
             <div className="flex gap-2 items-center">
               <h1 className="text-xl sm:pl-6 pl-2">
-                {contact ? contact.fullName ?? contact.name : t("leads:create:client")}
+                {contact
+                  ? contact.fullName ?? contact.name
+                  : t("leads:create:client")}
               </h1>
-
             </div>
             <AddContactTabs id={id} tab={tab} />
           </div>
         </div>
-        {
-          tab === "general" && (
-            <form
-              onSubmit={handleSubmit(handleFormSubmit)}
-              className="flex flex-col flex-1 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
-            >
+        {tab === "general" && (
+          <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="flex flex-col flex-1 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
+          >
+            {/* Panel Principal */}
 
-              {/* Panel Principal */}
-
-              <div className="flex flex-col md:flex-row h-full  bg-gray-100 md:mx-4 rounded-lg p-4 w-full">
-                {/* Menu Izquierda */}
-                <div className="md:w-2/5 bg-gray-100 md:overflow-y-scroll rounded-lg">
-                  <div className="pr-2">
-                    <div className="flex justify-between bg-white py-4 px-3 rounded-md">
-                      <h1 className="">{t("contacts:create:data")}</h1>
-                      {
-                        contact && (
-                          <button
-                            type="button"
-                            disabled={!id}
-                            onClick={() => setIsEdit(!isEdit)}
-                            title="Editar"
-                          >
-                            <PencilIcon className="h-6 w-6 text-primary" />
-                          </button>
-                        )
-                      }
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 h-full  bg-gray-100 md:mx-4 rounded-lg p-4 w-full">
+              {/* Menu Izquierda */}
+              <div className=" bg-gray-100 md:overflow-y-scroll rounded-lg">
+                <div className="pr-2">
+                  <div className="flex justify-between bg-white py-4 px-3 rounded-md">
+                    <h1 className="">{t("contacts:create:data")}</h1>
+                    {contact && (
+                      <button
+                        type="button"
+                        disabled={!id}
+                        onClick={() => setIsEdit(!isEdit)}
+                        title="Editar"
+                      >
+                        <PencilIcon className="h-6 w-6 text-primary" />
+                      </button>
+                    )}
                   </div>
-                  <div className="flex justify-center">
-                    {
-                      isEdit
-                        ? (
-                          <ProfileImageInput
-                            selectedProfileImage={selectedProfileImage}
-                            onChange={handleProfileImageChange}
-                            disabled={!isEdit}
-                          />
-                        ) : (
-                          <div className="p-2">
-                            <Image
-                              width={96}
-                              height={96}
-                              src={selectedProfileImage?.base64 || "/img/avatar.svg"}
-                              alt="Profile picture"
-                              className="h-16 w-16 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
-                              objectFit="fill"
-                            />
-                          </div>
-                        )
-                    }
-                  </div>
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl px-5 mb-10 mt-8">
-                    <TextInput
-                      type="text"
-                      label={t("contacts:create:name")}
-                      placeholder={t("contacts:create:placeholder-name")}
-                      error={errors.name}
-                      register={register}
-                      name="name"
+                </div>
+                <div className="flex justify-center">
+                  {isEdit ? (
+                    <ProfileImageInput
+                      selectedProfileImage={selectedProfileImage}
+                      onChange={handleProfileImageChange}
                       disabled={!isEdit}
                     />
-                    <TextInput
-                      label={t("contacts:create:position")}
-                      placeholder={t("contacts:create:position")}
-                      error={errors.position}
-                      register={register}
-                      name="position"
-                      disabled={!isEdit}
-                    />
-                    <Controller
-                      render={({ field: { ref, ...field } }) => {
-                        return (
-                          <InputPhone
-                            name="phone"
-                            field={field}
-                            error={errors.phone}
-                            label={t("contacts:create:phone")}
-                            defaultValue={field.value}
-                            disabled={!isEdit}
-                          />
-                        );
-                      }}
-                      name="phone"
-                      control={control}
-                      defaultValue=""
-                    />
-                    <Controller
-                      render={({ field: { value, onChange, ref, onBlur } }) => {
-                        return (
-                          <InputDate
-                            label={t("contacts:create:born-date")}
-                            value={value}
-                            onChange={onChange}
-                            onBlur={onBlur}
-                            icon={
-                              <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                            }
-                            error={errors.birthday}
-                            disabled={!isEdit}
-                          // inactiveDate={eighteenYearsAgo}
-                          />
-                        );
-                      }}
-                      name="birthday"
-                      control={control}
-                      defaultValue=""
-                    />
-                    <TextInput
-                      label={t("contacts:create:email")}
-                      placeholder={t("contacts:create:placeholder-lastname")}
-                      error={errors.email}
-                      register={register}
-                      name="email"
-                      disabled={!isEdit}
-                    />
-                    <TextInput
-                      label={t("contacts:create:rfc")}
-                      placeholder="XEXX010101000"
-                      error={errors.rfc}
-                      register={register}
-                      name="rfc"
-                      disabled={!isEdit}
-                    />
-                    <SelectInput
-                      label={t("contacts:create:contact-type")}
-                      options={lists?.listContact?.contactTypes}
-                      selectedOption={contactType && contactType}
-                      name="typeContact"
-                      error={!watch("typeContact") && errors.typeContact}
-                      register={register}
-                      setValue={setValue}
-                      disabled={!isEdit}
-                    />
-                    {watch("typeContact") == "Otro" ? (
-                      <TextInput
-                        label={t("contacts:create:otherType")}
-                        placeholder=""
-                        error={errors.otherType}
-                        register={register}
-                        name="otherType"
-                        disabled={!isEdit}
-                      //value={watch('otherType')}
+                  ) : (
+                    <div className="p-2">
+                      <Image
+                        width={96}
+                        height={96}
+                        src={selectedProfileImage?.base64 || "/img/avatar.svg"}
+                        alt="Profile picture"
+                        className="h-16 w-16 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                        objectFit="fill"
                       />
-                    ) : null}
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl px-5 mb-10 mt-8">
+                  <TextInput
+                    type="text"
+                    label={t("contacts:create:name")}
+                    placeholder={t("contacts:create:placeholder-name")}
+                    error={errors.name}
+                    register={register}
+                    name="name"
+                    disabled={!isEdit}
+                  />
+                  <TextInput
+                    label={t("contacts:create:position")}
+                    placeholder={t("contacts:create:position")}
+                    error={errors.position}
+                    register={register}
+                    name="position"
+                    disabled={!isEdit}
+                  />
+                  <Controller
+                    render={({ field: { ref, ...field } }) => {
+                      return (
+                        <InputPhone
+                          name="phone"
+                          field={field}
+                          error={errors.phone}
+                          label={t("contacts:create:phone")}
+                          defaultValue={field.value}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="phone"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("contacts:create:born-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.birthday}
+                          disabled={!isEdit}
+                          // inactiveDate={eighteenYearsAgo}
+                        />
+                      );
+                    }}
+                    name="birthday"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <TextInput
+                    label={t("contacts:create:email")}
+                    placeholder={t("contacts:create:placeholder-lastname")}
+                    error={errors.email}
+                    register={register}
+                    name="email"
+                    disabled={!isEdit}
+                  />
+                  <TextInput
+                    label={t("contacts:create:rfc")}
+                    placeholder="XEXX010101000"
+                    error={errors.rfc}
+                    register={register}
+                    name="rfc"
+                    disabled={!isEdit}
+                  />
+                  <SelectInput
+                    label={t("contacts:create:contact-type")}
+                    options={lists?.listContact?.contactTypes}
+                    selectedOption={contactType && contactType}
+                    name="typeContact"
+                    error={!watch("typeContact") && errors.typeContact}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                  />
+                  {watch("typeContact") == "Otro" ? (
                     <TextInput
-                      label={t("contacts:create:address")}
-                      error={errors.address}
+                      label={t("contacts:create:otherType")}
+                      placeholder=""
+                      error={errors.otherType}
                       register={register}
-                      name="address"
-                      placeholder={t("contacts:create:placeholder-address")}
+                      name="otherType"
                       disabled={!isEdit}
+                      //value={watch('otherType')}
+                    />
+                  ) : null}
+                  <TextInput
+                    label={t("contacts:create:address")}
+                    error={errors.address}
+                    register={register}
+                    name="address"
+                    placeholder={t("contacts:create:placeholder-address")}
+                    disabled={!isEdit}
                     //value={watch('address')}
-                    />
-                    <SelectInput
-                      label={t("contacts:create:origen")}
-                      name="origin"
-                      options={lists?.listContact?.contactSources}
-                      selectedOption={contactSource && contactSource}
-                      error={!watch("origin") && errors.origin}
-                      register={register}
-                      setValue={setValue}
-                      disabled={!isEdit}
+                  />
+                  <SelectInput
+                    label={t("contacts:create:origen")}
+                    name="origin"
+                    options={lists?.listContact?.contactSources}
+                    selectedOption={contactSource && contactSource}
+                    error={!watch("origin") && errors.origin}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
                     //value={watch('origin')}
-                    />
-                    <SelectDropdown
-                      label={t("contacts:create:responsible")}
-                      name="responsible"
-                      options={lists?.users}
-                      selectedOption={contactResponsible}
-                      register={register}
-                      disabled={!isEdit}
-                      error={!watch("responsible") && errors.responsible}
-                      setValue={setValue}
+                  />
+                  <SelectDropdown
+                    label={t("contacts:create:responsible")}
+                    name="responsible"
+                    options={lists?.users}
+                    selectedOption={contactResponsible}
+                    register={register}
+                    disabled={!isEdit}
+                    error={!watch("responsible") && errors.responsible}
+                    setValue={setValue}
                     // //value={watch('responsible')}
-                    />
-                    <TextInput
-                      label={t("contacts:create:cua")}
-                      error={errors.cua}
-                      register={register}
-                      name="cua"
-                      disabled={!isEdit}
+                  />
+                  <TextInput
+                    label={t("contacts:create:cua")}
+                    error={errors.cua}
+                    register={register}
+                    name="cua"
+                    disabled={!isEdit}
                     //value={watch('cua')}
                     // placeholder={t('contacts:create:placeholder-address')}
+                  />
+                  {isEdit && (
+                    <DocumentSelector
+                      name="files"
+                      onChange={handleFilesUpload}
+                      files={files}
+                      disabled={!isEdit}
+                      setFiles={setFiles}
                     />
-                    {
-                      isEdit && (
-                        <DocumentSelector
-                          name="files"
-                          onChange={handleFilesUpload}
-                          files={files}
-                          disabled={!isEdit}
-                          setFiles={setFiles}
-                        />
-
-                      )
-                    }
-                  </div>
+                  )}
                 </div>
-
-                {/* Menu Derecha */}
-                {id && <ActivityPanel contactId={id} />}
               </div>
-              {/* )} */}
 
-              {/* Botones de acción */}
-              {(isEdit || !contact) && (
-                <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
-                  <Button
-                    type="submit"
-                    label={
-                      loading
-                        ? t("common:buttons:saving")
-                        : t("common:buttons:save")
-                    }
-                    disabled={loading}
-                    buttonStyle="primary"
-                    className="px-3 py-2"
+              {/* Menu Derecha */}
+              {id && <ActivityPanel contactId={id} />}
+            </div>
+            {/* )} */}
+
+            {/* Botones de acción */}
+            {(isEdit || !contact) && (
+              <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
+                <Button
+                  type="submit"
+                  label={
+                    loading
+                      ? t("common:buttons:saving")
+                      : t("common:buttons:save")
+                  }
+                  disabled={loading}
+                  buttonStyle="primary"
+                  className="px-3 py-2"
                   // onclick={() => handleSubmit(handleFormSubmit)}
-                  />
-                  <Button
-                    type="button"
-                    label={t("common:buttons:cancel")}
-                    disabled={loading}
-                    buttonStyle="secondary"
-                    onclick={() => router.back()}
-                    className="px-3 py-2"
-                  />
-                </div>
-              )}
-            </form>
-          )
-        }
-        {
-          tab === "documents" && (
-            <ContactFolders id={id} />
-          )
-        }
+                />
+                <Button
+                  type="button"
+                  label={t("common:buttons:cancel")}
+                  disabled={loading}
+                  buttonStyle="secondary"
+                  onclick={() => router.back()}
+                  className="px-3 py-2"
+                />
+              </div>
+            )}
+          </form>
+        )}
+        {tab === "documents" && <ContactFolders id={id} />}
       </div>
     </div>
   );

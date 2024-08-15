@@ -75,7 +75,7 @@ export default function UsersHeader() {
               />
             }
             options={settings}
-            width="w-[340px]"
+            width="w-[150px]"
           />
         </div>
         <ActiveFiltersDrawer

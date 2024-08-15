@@ -1,10 +1,10 @@
 "use client";
 
 import { useContext } from "react";
-import { ReceiptsContext } from "..";
+import { UsersContext } from "..";
 
 export function useUserContext() {
-  const context = useContext(ReceiptsContext);
+  const context = useContext(UsersContext);
 
   if (!context) {
     throw new Error("useUserContext must be used within an useUserProvider");

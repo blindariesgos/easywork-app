@@ -93,7 +93,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     { name: "Inbox", onClick: (item) => updateLabelId([item], "inbox") },
     { name: "Spam", onClick: (item) => updateLabelId([item], "spam") },
     {
-      name: "Archivados",
+      name: "Todos",
       onClick: (item) => updateLabelId([item], "archived"),
     },
   ];
@@ -187,7 +187,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                       className={clsx(
                         selectedTasks.includes(item) ? "bg-gray-50" : undefined,
                         item.email.folder.includes("UNREAD")
-                          ? "font-medium"
+                          ? "font-semibold"
                           : "",
                         "hover:bg-indigo-100/40 cursor-default grid grid-cols-12 gap-2 p-4"
                       )}

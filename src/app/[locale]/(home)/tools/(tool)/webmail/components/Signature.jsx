@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
-import SelectDropdown from "./SelectDropdown";
+import { setCookie, getCookie } from "cookies-next";
 import useAppContext from "../../../../../../../context/app";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FaMagnifyingGlass } from "react-icons/fa6";
@@ -36,10 +36,12 @@ export default function Signature({
   const { selectOauth } = useAppContext();
   const fileInputRef = useRef(null);
   const [signatures, setSignatures] = useState([]);
+  const [selectedCheckbox, setSelectedCheckbox] = useState(null);
 
-  const schema = yup.object().shape({
-    responsible: yup.string(),
-  });
+  const handleCheckboxChange = (id) => {
+    setSelectedCheckbox(id);
+    setCookie("myCheckbox", id);
+  };
 
   const handleFileClick = () => {
     fileInputRef.current.click();
@@ -179,17 +181,23 @@ export default function Signature({
                           <ChevronDownIcon className="w-5 h-5" />
                         </div>
                       </div>
-                        {signatures.map((signature, index) => (
-                          <div className="p-3 w-full" key={index}>
-                            <div className="flex justify-between">
-                              <div className="flex">
-                                <input type="checkbox" />
-                                <p className="ml-2">{selectOauth?.email}</p>
-                              </div>
-                              <p>{signature?.name}</p>
+                      {signatures.map((signature, index) => (
+                        <div className="p-3 w-full" key={index}>
+                          <div className="flex justify-between">
+                            <div className="flex">
+                              <input
+                                type="checkbox"
+                                checked={selectedCheckbox === signature.id}
+                                onChange={() =>
+                                  handleCheckboxChange(signature.id)
+                                }
+                              />
+                              <p className="ml-2">{selectOauth?.email}</p>
                             </div>
+                            <p>{signature?.name}</p>
                           </div>
-                        ))}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </Dialog.Panel>

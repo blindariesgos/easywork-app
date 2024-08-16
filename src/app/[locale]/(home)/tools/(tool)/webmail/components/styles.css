@@ -1,0 +1,9 @@
+.ql-container {
+    background-color: white;
+}
+
+.ql-container.ql-snow {
+    height: 500px !important;
+    max-height: 1000px !important;
+    overflow-y: auto;
+}

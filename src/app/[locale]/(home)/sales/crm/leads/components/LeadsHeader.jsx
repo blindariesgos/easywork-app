@@ -31,7 +31,7 @@ export default function LeadsHeader() {
 
   return (
     <header className="flex flex-col">
-      <div className="px-2 grid grid-cols-1 gap-2 bg-white py-4 rounded-md ">
+      <div className="px-2 grid grid-cols-1 gap-2 bg-white py-4 rounded-md shadow-sm">
         <div className="flex gap-3 items-center flex-wrap">
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
             {t("leads:header:lead")}

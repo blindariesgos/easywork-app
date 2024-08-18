@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { putTaskId } from "@/src/lib/apis";
@@ -9,48 +9,47 @@ import { useSWRConfig } from "swr";
 import { formatDate, getFormatDate } from "@/src/utils/getFormatDate";
 import DatePicker from "react-datepicker";
 import { parseISO } from "date-fns";
-import { Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItems, Transition } from "@headlessui/react";
 import { FaTimes } from "react-icons/fa";
 import clsx from "clsx";
 import InputDate from "@/src/components/form/InputDate";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
 import useTasksContext from "@/src/context/tasks";
+import Button from "@/src/components/form/Button";
 
 const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
   const { t } = useTranslation();
   const { mutate: mutateTasks } = useTasksContext();
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
     task?.deadline ? parseISO(task.deadline) : new Date()
   );
-  const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
-  const containerRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const schema = yup.object().shape({
     deadline: yup.string().nullable(),
   });
 
   const handleDateChange = async (e) => {
-    setIsLoading(true);
+    setSelectedDate(e.target.value);
+  };
+
+  const handleSaveDate = async (close) => {
     const body = {
-      deadline: getFormatDate(e.target.value),
+      deadline: getFormatDate(selectedDate),
     };
 
     try {
-      const response = await putTaskId(task?.id, body);
-      console.log({ response, body });
-      toast.success(t("tools:tasks:update-msg"));
+      close();
+      await toast.promise(putTaskId(task?.id, body), {
+        pending: "Actualizando fecha limite",
+        success: t("tools:tasks:update-msg"),
+        error: "Error al actualizar fecha limite",
+      });
       mutate(`/tools/tasks/${task?.id}`);
       mutateTasks();
     } catch (error) {
       handleApiError(error.message);
-    } finally {
-      setIsLoading(false);
-      setIsEditing(false);
     }
   };
 
@@ -75,81 +74,62 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
     setSelectedDate(null);
   };
 
-  const handleDateClick = (e) => {
-    if (task.completedTime) return;
-    setIsEditing(true);
-    const containerRect = containerRef.current.getBoundingClientRect();
-    setPosition({
-      top: e.clientY - containerRect.top,
-      left: e.clientX - containerRect.left,
-    });
-  };
-
-  const ExampleCustomTimeInput = ({ date, value, onChange }) => (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{ border: "solid 1px pink" }}
-    />
-  );
-
   return (
-    <div className="relative" ref={containerRef}>
-      <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
-        <p className="text-sm text-black">
-          {t("tools:tasks:edit:limit-date")}:
-        </p>
-        <div
-          className="flex items-center"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-        >
-          <p
-            className={clsx(
-              !task.completedTime &&
-                "underline decoration-dotted cursor-pointer font-semibold",
-              "text-sm text-black"
-            )}
-            onClick={handleDateClick}
+    <Menu>
+      {({ close }) => (
+        <Fragment>
+          <div className="flex justify-between items-center group">
+            <p className="text-sm text-black">
+              {t("tools:tasks:edit:limit-date")}:
+            </p>
+            <div className="flex items-center">
+              <MenuButton
+                className={clsx(
+                  !task.completedTime &&
+                    "underline decoration-dotted cursor-pointer font-semibold",
+                  "text-sm text-black"
+                )}
+              >
+                {task?.deadline
+                  ? formatDate(task?.deadline, "dd/MM/yyyy hh:mm a")
+                  : "Ninguna"}
+              </MenuButton>
+              {task?.deadline && (
+                <FaTimes
+                  className={`ml-2 text-indigo-500 hover:text-indigo-700 cursor-pointer group-hover:visible invisible`}
+                  onClick={handleDateRemove}
+                />
+              )}
+            </div>
+          </div>
+          <MenuItems
+            anchor="bottom end"
+            className="bg-white shadow-lg p-2 w-[265px] flex flex-col items-center rounded-md"
           >
-            {task?.deadline
-              ? formatDate(task?.deadline, "dd/MM/yyyy hh:mm a")
-              : "Ninguna"}
-          </p>
-          {task?.deadline && (
-            <FaTimes
-              className={`ml-2 text-indigo-500 hover:text-indigo-700 cursor-pointer ${isHovering ? "visible" : "invisible"}`}
-              onClick={handleDateRemove}
+            <InputDate
+              onChange={handleDateChange}
+              value={selectedDate}
+              time
+              inline
             />
-          )}
-        </div>
-      </div>
-      <Transition
-        show={isEditing}
-        enter="transition ease-out duration-200"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-150"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <div
-          className="absolute z-10 bg-white shadow-lg rounded-md"
-          style={{
-            top: position.top + 20,
-            left: "auto",
-            right: `calc(90% - ${position.left}px)`,
-          }}
-        >
-          <InputDate
-            onChange={handleDateChange}
-            value={selectedDate}
-            time
-            inline
-          />
-        </div>
-      </Transition>
-    </div>
+            <div className="flex item justify-end gap-2 p-2 w-full">
+              <Button
+                buttonStyle="secondary"
+                label="Cancelar"
+                className="px-2 py-1"
+                onclick={close}
+              />
+              <Button
+                buttonStyle="primary"
+                label="Guardar"
+                className="px-2 py-1"
+                onclick={() => handleSaveDate(close)}
+              />
+            </div>
+          </MenuItems>
+        </Fragment>
+      )}
+    </Menu>
   );
 };
 

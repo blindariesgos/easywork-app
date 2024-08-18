@@ -124,7 +124,7 @@ export default function TableLeads() {
     <div className="flow-root ">
       {loading && <LoaderSpinner />}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
             <table className="min-w-full rounded-md bg-gray-100 table-auto">
               <thead className="text-sm bg-white drop-shadow-sm">

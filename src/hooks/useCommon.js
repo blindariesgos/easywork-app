@@ -740,6 +740,27 @@ export const useCommon = () => {
     },
   ];
 
+  const settingsReceipts = [
+    {
+      value: 6,
+      name: t("contacts:header:settings:csv"),
+      onclick: () => { },
+      disabled: false,
+    },
+    {
+      value: 7,
+      name: t("contacts:header:settings:excel"),
+      onclick: () => { },
+      disabled: false,
+    },
+    {
+      value: 0,
+      name: "Imprimir pdf",
+      onclick: () => { },
+      icon: DocumentTextIcon,
+    },
+  ];
+
 
   const settingsPolicies = [
     {
@@ -848,6 +869,7 @@ export const useCommon = () => {
     settingsLead,
     statusLead,
     stagesLead,
+    settingsReceipts
   };
 };
 
@@ -1483,8 +1505,15 @@ export const useReceiptTable = () => {
   const { t } = useTranslation();
   const columnTable = [
     {
+      id: 4,
+      name: t("control:portafolio:receipt:table:client"),
+      row: "client",
+      order: "client",
+      check: true,
+    },
+    {
       id: 1,
-      name: t("receipts:table:receipt"),
+      name: t("control:portafolio:receipt:table:receipt"),
       row: "receipt",
       order: "receipt",
       check: true,
@@ -1492,48 +1521,48 @@ export const useReceiptTable = () => {
     },
     {
       id: 2,
-      name: t("receipts:table:policy"),
+      name: t("control:portafolio:receipt:table:policy"),
       row: "policy",
       order: "policy",
       check: true,
     },
     {
       id: 3,
-      name: t("receipts:table:responsible"),
+      name: t("control:portafolio:receipt:table:responsible"),
       row: "responsible",
       order: "responsible",
       check: true,
       photo: true,
     },
     {
-      id: 4,
-      name: t("receipts:table:client"),
-      row: "client",
-      order: "client",
-      check: true,
-    },
-    {
-      id: 5,
-      name: t("receipts:table:stages"),
-      row: "stages",
-      check: true,
-    },
-    {
       id: 6,
-      name: t("receipts:table:amount"),
+      name: t("control:portafolio:receipt:table:amount"),
       row: "amount",
       check: true,
     },
     {
-      id: 7,
-      name: t("receipts:table:created-in"),
-      row: "createdAt",
+      id: 8,
+      name: t("control:portafolio:receipt:table:activities"),
+      row: "activities",
+      check: true,
+    },
+    {
+      id: 9,
+      name: t("control:portafolio:receipt:table:expiration-date"),
+      row: "expiration",
+      order: "expiration",
+      check: true,
+    },
+    {
+      id: 5,
+      name: t("control:portafolio:receipt:table:stages"),
+      row: "stages",
       check: true,
     },
     {
       id: 7,
-      name: t("receipts:table:activities"),
-      row: "activities",
+      name: t("control:portafolio:receipt:table:created-in"),
+      row: "createdAt",
       check: true,
     },
   ];

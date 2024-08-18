@@ -129,7 +129,8 @@ export default function TableUsers() {
     },
     { name: "Editar" },
     { name: "Copiar" },
-    { name: "Eliminar" },
+    { name: "Activar" },
+    { name: "Desactivar" },
     // { name: "Agregar Evento" },
     // { name: "Nuevo correo electrónico" },
   ];

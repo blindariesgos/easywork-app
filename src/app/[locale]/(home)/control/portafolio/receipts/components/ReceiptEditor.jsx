@@ -196,31 +196,31 @@ export default function ReceiptEditor({ data, id }) {
                 </p>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
-                    {t("receipts:details:date")}:
+                    {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-xs sm:text-sm xl:text-base">10/06/2024</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
-                    {t("receipts:details:product")}:
+                    {t("control:portafolio:receipt:details:product")}:
                   </p>
                   <p className="text-xs sm:text-sm xl:text-base">Profesional</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
-                    {t("receipts:details:policy")}:
+                    {t("control:portafolio:receipt:details:policy")}:
                   </p>
                   <p className="text-xs sm:text-sm xl:text-base">423659874</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">
-                    {t("receipts:details:company")}:
+                    {t("control:portafolio:receipt:details:company")}:
                   </p>
                   <p className="text-xs md:text-sm xl:text-base">AXXA</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">
-                    {t("receipts:details:client-code")}:
+                    {t("control:portafolio:receipt:details:client-code")}:
                   </p>
                   <p className="text-xs md:text-sm xl:text-base">326598</p>
                 </div>
@@ -239,7 +239,7 @@ export default function ReceiptEditor({ data, id }) {
           </div>
           <div className="flex items-center gap-4  bg-gray-100 rounded-2xl p-4 w-full">
             <p className="uppercase text-gray-50">
-              {t("receipts:details:consult")}
+              {t("control:portafolio:receipt:details:consult")}
             </p>
             <Button
               buttonStyle="primary"
@@ -257,7 +257,9 @@ export default function ReceiptEditor({ data, id }) {
               <div className="flex justify-between py-4 px-3 rounded-md"></div>
               <div className="grid grid-cols-1 gap-x-6  rounded-lg w-full gap-y-3 px-5  pb-9">
                 <SelectDropdown
-                  label={t("receipts:details:form:responsible")}
+                  label={t(
+                    "control:portafolio:receipt:details:form:responsible"
+                  )}
                   name="responsible"
                   options={lists?.users}
                   selectedOption={contactResponsible}
@@ -267,7 +269,7 @@ export default function ReceiptEditor({ data, id }) {
                   setValue={setValue}
                 />
                 <SelectInput
-                  label={t("receipts:details:form:status")}
+                  label={t("control:portafolio:receipt:details:form:status")}
                   options={[
                     {
                       id: "1",
@@ -291,7 +293,9 @@ export default function ReceiptEditor({ data, id }) {
                   disabled={!isEdit}
                 />
                 <SelectInput
-                  label={t("receipts:details:form:payment-methods")}
+                  label={t(
+                    "control:portafolio:receipt:details:form:payment-methods"
+                  )}
                   options={[
                     {
                       id: "1",
@@ -324,7 +328,9 @@ export default function ReceiptEditor({ data, id }) {
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
                       <InputDate
-                        label={t("receipts:details:form:init-date")}
+                        label={t(
+                          "control:portafolio:receipt:details:form:init-date"
+                        )}
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
@@ -345,7 +351,9 @@ export default function ReceiptEditor({ data, id }) {
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
                       <InputDate
-                        label={t("receipts:details:form:expiration")}
+                        label={t(
+                          "control:portafolio:receipt:details:form:expiration"
+                        )}
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
@@ -364,14 +372,14 @@ export default function ReceiptEditor({ data, id }) {
                 />
                 <TextInput
                   type="text"
-                  label={t("receipts:details:form:amount")}
+                  label={t("control:portafolio:receipt:details:form:amount")}
                   placeholder={`10.000,00`}
                   register={register}
                   name="firstName"
                   disabled={!isEdit}
                 />
                 <SelectInput
-                  label={t("receipts:details:form:currency")}
+                  label={t("control:portafolio:receipt:details:form:currency")}
                   options={[
                     {
                       id: "1",
@@ -392,7 +400,7 @@ export default function ReceiptEditor({ data, id }) {
 
                 <TextInput
                   type="text"
-                  label={t("receipts:details:form:comments")}
+                  label={t("control:portafolio:receipt:details:form:comments")}
                   error={errors.lastName && errors.lastName.message}
                   register={register}
                   name="lastNamef"

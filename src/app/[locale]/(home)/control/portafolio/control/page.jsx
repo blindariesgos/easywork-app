@@ -15,19 +15,19 @@ const Page = () => {
   const { filters, displayFilters, removeFilter } = useControlContext();
   // const tabs = [
   //   {
-  //     name: t("tools:portafolio:control:tabs:contact"),
+  //     name: t("control:portafolio:control:tabs:contact"),
   //     component: () => <Contact />,
   //   },
   //   {
-  //     name: t("tools:portafolio:control:tabs:company"),
+  //     name: t("control:portafolio:control:tabs:company"),
   //     component: () => <MoralContactForm />,
   //   },
   //   {
-  //     name: t("tools:portafolio:control:tabs:policy"),
+  //     name: t("control:portafolio:control:tabs:policy"),
   //     component: () => <Policy />,
   //   },
   //   {
-  //     name: t("tools:portafolio:control:tabs:control"),
+  //     name: t("control:portafolio:control:tabs:control"),
   //     component: () => <Control />,
   //   },
   // ];
@@ -36,10 +36,10 @@ const Page = () => {
       <div className="bg-white rounded-md shadow-sm py-4 px-4 grid grid-cols-1 gap-2">
         <div className="flex gap-3 items-center">
           <h2 className="text-primary text-2xl">
-            {t("tools:portafolio:control:title")}
+            {t("control:portafolio:control:title")}
           </h2>
           <Button
-            label={"Crear"}
+            label={"Añadir"}
             buttonStyle="primary"
             icon={<FaChevronDown className="w-4 h-4" />}
             className="py-2 px-4"

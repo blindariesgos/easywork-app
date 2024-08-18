@@ -13,7 +13,6 @@ export default function LayoutLeads({ table, children }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const { optionsHeader } = useLeads();
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -24,14 +23,11 @@ export default function LayoutLeads({ table, children }) {
   }, [searchParams, replace, pathname]);
 
   return (
-    <div className="bg-gray-100 h-full p-2 rounded-xl relative">
+    <div className="bg-gray-100 h-full p-4 rounded-xl relative flex flex-col w-full gap-4">
       <Header />
-      <div className="flex flex-col w-full">
-        <HeaderCrm options={optionsHeader} />
-        <LeadsHeader />
-        <Suspense fallback={<LoaderSpinner />}>{table}</Suspense>
-        {children}
-      </div>
+      <LeadsHeader />
+      <Suspense fallback={<LoaderSpinner />}>{table}</Suspense>
+      {children}
     </div>
   );
 }

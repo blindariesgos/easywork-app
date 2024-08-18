@@ -20,7 +20,7 @@ import React, {
 } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import { Pagination } from "@/src/components/pagination/Pagination";
+import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
 import { deleteContactId } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
@@ -51,7 +51,7 @@ function classNames(...classes) {
 }
 
 export default function TableReceipts() {
-  const { data, limit, setLimit, setOrderBy, order, orderBy } =
+  const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
     useReceiptContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -122,9 +122,6 @@ export default function TableReceipts() {
     },
     { name: "Editar" },
     { name: "Copiar" },
-    { name: "Eliminar" },
-    // { name: "Agregar Evento" },
-    // { name: "Nuevo correo electrónico" },
   ];
 
   return (
@@ -290,7 +287,7 @@ export default function TableReceipts() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div className="font-medium text-sm text-black hover:text-primary">
+                              <div className="font-medium text-sm text-center text-black hover:text-primary">
                                 {column.row == "responsible" ? (
                                   <div className="flex gap-3 items-center">
                                     <Image
@@ -359,9 +356,12 @@ export default function TableReceipts() {
                                   >
                                     {receipt[column.row]}
                                   </Link>
-                                ) : column.row === "createdAt" ? (
-                                  formatDate(receipt.createdAt, "dd/MM/yyyy") ??
-                                  null
+                                ) : column.row === "createdAt" ||
+                                  column.row === "expiration" ? (
+                                  formatDate(
+                                    receipt[column.row],
+                                    "dd/MM/yyyy"
+                                  ) ?? null
                                 ) : (
                                   receipt[column.row] || "-"
                                 )}
@@ -414,7 +414,11 @@ export default function TableReceipts() {
               </ListboxOptions>
             </Listbox>
           </div>
-          <Pagination totalPages={data?.meta?.totalPages || 0} />
+          <PaginationV2
+            totalPages={data?.meta?.totalPages || 0}
+            currentPage={page}
+            setPage={setPage}
+          />
         </div>
         <div className="flex">
           {selectedContacts.length > 0 && (

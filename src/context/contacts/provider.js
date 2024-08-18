@@ -66,13 +66,6 @@ export default function ContactsContextProvider({ children }) {
         code: "typeContact",
       },
       {
-        id: 7,
-        name: t("contacts:filters:cua"),
-        type: "input",
-        check: false,
-        code: "cua",
-      },
-      {
         id: 8,
         name: t("contacts:filters:rfc"),
         type: "input",

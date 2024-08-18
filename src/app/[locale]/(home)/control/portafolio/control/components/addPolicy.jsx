@@ -58,7 +58,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
           </div>
           <div className="px-8 pt-4 grid grid-cols-1 gap-4">
             <SelectInput
-              label={t("tools:portafolio:control:form:typePerson")}
+              label={t("control:portafolio:control:form:typePerson")}
               options={[
                 {
                   name: "Fisica",
@@ -72,7 +72,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               placeholder="- Seleccionar -"
             />
             <SelectInput
-              label={t("tools:portafolio:control:form:insurance-company")}
+              label={t("control:portafolio:control:form:insurance-company")}
               options={[
                 {
                   name: "GNP",
@@ -110,7 +110,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               placeholder="- Seleccionar -"
             />
             <SelectInput
-              label={t("tools:portafolio:control:form:category")}
+              label={t("control:portafolio:control:form:category")}
               options={[
                 {
                   name: "AHORRO",
@@ -148,7 +148,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               placeholder="- Seleccionar -"
             />
             <SelectInput
-              label={t("tools:portafolio:control:form:branch")}
+              label={t("control:portafolio:control:form:branch")}
               options={[
                 {
                   name: "001-PARTICULAR",
@@ -186,7 +186,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               placeholder="- Seleccionar -"
             />
             <SelectInput
-              label={t("tools:portafolio:control:form:health-branch")}
+              label={t("control:portafolio:control:form:health-branch")}
               options={[
                 {
                   name: "Otros",

@@ -7,7 +7,7 @@ import InputPhone from "../../../../../../../components/form/InputPhone";
 import SelectDropdown from "../../../../../../../components/form/SelectDropdown";
 import SelectInput from "../../../../../../../components/form/SelectInput";
 import { PencilIcon } from "@heroicons/react/20/solid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
@@ -163,41 +163,32 @@ export default function CreateLead({ edit, id }) {
 
   return (
     <div className="flex flex-col h-screen relative w-full">
-      {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
-      <div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
-        <form
-          onSubmit={handleSubmit(handleFormSubmit)}
-          className="flex flex-col flex-1 bg-gray-100 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
-        >
-          {/* Encabezado del Formulario */}
-          <div className="bg-transparent py-6 mx-4">
-            <div className="flex items-start flex-col justify-between space-y-3 relative">
-              {!id && (
-                <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
-              )}
-              <div className="flex gap-2 items-center">
-                <h1 className="text-xl sm:pl-6 pl-2">
-                  {edit ? edit.name : t("leads:lead:new")}
-                </h1>
-                <div>
-                  <PencilIcon className="h-4 w-4 text-gray-200" />
-                </div>
-              </div>
-              <div className="px-4 py-4">
-                <ProgressStages />
-              </div>
-              <div className="mt-4 w-full px-4">
-                <HeaderCrm options={optionsHeader} />
-              </div>
+      <form
+        onSubmit={handleSubmit(handleFormSubmit)}
+        className="  bg-gray-600 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px]  overflow-y-auto md:overflow-hidden"
+      >
+        <div className="bg-transparent p-4">
+          <div className="flex items-start flex-col justify-between gap-y-4 relative">
+            {!id && (
+              <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
+            )}
+            <div className="flex gap-2 items-center">
+              <h1 className="text-xl pl-4">
+                {edit ? edit.name : t("leads:lead:new")}
+              </h1>
+              {/* <div>
+                <PencilIcon className="h-4 w-4 text-gray-200" />
+              </div> */}
             </div>
+            <ProgressStages />
+            <HeaderCrm options={optionsHeader} />
           </div>
-
-          {/* Panel Principal */}
-
-          <div className="flex flex-col md:flex-row h-full md:pb-[18.5rem] bg-white md:mx-4 rounded-lg p-4 w-full">
+        </div>
+        <div className="px-4 w-full h-full">
+          <div className="grid grid-cols-1 h-full md:grid-cols-2 w-full bg-gray-100 rounded-xl md:overflow-hidden">
             {/* Menu Izquierda */}
-            <div className="md:w-2/5 bg-gray-100 md:overflow-y-scroll rounded-lg">
+            <div className="overflow-y-scroll rounded-lg px-4 pt-4 md:pb-[280px]">
               <div className="flex justify-between bg-white py-4 px-4 rounded-md">
                 <h1 className="">{t("leads:lead:lead-data")}</h1>
                 <button
@@ -214,7 +205,7 @@ export default function CreateLead({ edit, id }) {
                   onChange={handleProfileImageChange}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl lg:px-12 px-2 mb-10 mt-8">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-3 lg:px-12 px-2">
                 <TextInput
                   type="text"
                   label={t("leads:lead:fields:fullname")}
@@ -354,33 +345,31 @@ export default function CreateLead({ edit, id }) {
             {/* Menu Derecha */}
             <ActivityPanel editing={!id} />
           </div>
+        </div>
 
-          {/* Botones de acción */}
-          {(openButtons || !edit) && (
-            <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
-              <Button
-                type="submit"
-                label={
-                  loading
-                    ? t("common:buttons:saving")
-                    : t("common:buttons:save")
-                }
-                disabled={loading}
-                buttonStyle="primary"
-                className="px-3 py-2"
-              />
-              <Button
-                type="button"
-                label={t("common:buttons:cancel")}
-                disabled={loading}
-                buttonStyle="secondary"
-                onclick={() => router.push(`/sales/crm/leads?page=1`)}
-                className="px-3 py-2"
-              />
-            </div>
-          )}
-        </form>
-      </div>
+        {/* Botones de acción */}
+        {(openButtons || !edit) && (
+          <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
+            <Button
+              type="submit"
+              label={
+                loading ? t("common:buttons:saving") : t("common:buttons:save")
+              }
+              disabled={loading}
+              buttonStyle="primary"
+              className="px-3 py-2"
+            />
+            <Button
+              type="button"
+              label={t("common:buttons:cancel")}
+              disabled={loading}
+              buttonStyle="secondary"
+              onclick={() => router.push(`/sales/crm/leads?page=1`)}
+              className="px-3 py-2"
+            />
+          </div>
+        )}
+      </form>
     </div>
   );
 }

@@ -13,16 +13,37 @@ import { formatDate } from "@/src/utils/getFormatDate";
 import clsx from "clsx";
 const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
 import TaskList from "./components/taskList";
+import { addDays } from "date-fns";
 
 export default function Page() {
-  const { tasks: overdueTasks, isLoading: isLoadingOverdueTasks } = useTasks({
-    filters: { status: "overdue" },
+  const {
+    tasks: overdueTasks,
+    isLoading: isLoadingOverdueTasks,
+    mutate: mutateOverdueTasks,
+  } = useTasks({
+    filters: { status: "overdue", isCompleted: false },
   });
 
-  const { tasks: deadlineTodayTasks, isLoading: isLoadingDeadlineTodayTasks } =
-    useTasks({
-      filters: { deadline: formatDate(new Date(), "yyyy-MM-dd") },
-    });
+  const {
+    tasks: deadlineTodayTasks,
+    isLoading: isLoadingDeadlineTodayTasks,
+    mutate: mutateDeadlineTodayTasks,
+  } = useTasks({
+    filters: { deadline: formatDate(new Date(), "yyyy-MM-dd") },
+  });
+
+  const {
+    tasks: nextTasks,
+    isLoading: isLoadingNextTasks,
+    mutate: mutateNextTasks,
+  } = useTasks({
+    filters: {
+      deadline: [
+        formatDate(addDays(new Date(), 1).toDateString(), "yyyy-MM-dd"),
+        formatDate(addDays(new Date(), 8).toDateString(), "yyyy-MM-dd"),
+      ],
+    },
+  });
 
   useEffect(() => {
     const fromUrl = document.referrer ? new URL(document.referrer) : null; // Validador para document.referrer
@@ -77,8 +98,11 @@ export default function Page() {
               <LoadingSpinnerSmall color="primary" />
             ) : (
               <Fragment>
-                {overdueTasks.items && overdueTasks.items.length ? (
-                  <TaskList tasks={overdueTasks.items} />
+                {overdueTasks?.items && overdueTasks?.items?.length ? (
+                  <TaskList
+                    tasks={overdueTasks?.items}
+                    mutate={mutateOverdueTasks}
+                  />
                 ) : (
                   <Fragment>
                     <div className=" flex justify-center">
@@ -107,8 +131,12 @@ export default function Page() {
               <LoadingSpinnerSmall color="primary" />
             ) : (
               <Fragment>
-                {deadlineTodayTasks.items && deadlineTodayTasks.items.length ? (
-                  <TaskList tasks={deadlineTodayTasks.items} />
+                {deadlineTodayTasks?.items &&
+                deadlineTodayTasks?.items?.length ? (
+                  <TaskList
+                    tasks={deadlineTodayTasks?.items}
+                    mutate={mutateDeadlineTodayTasks}
+                  />
                 ) : (
                   <Fragment>
                     <div className=" flex justify-center">
@@ -124,33 +152,35 @@ export default function Page() {
               </Fragment>
             )}
           </div>
-          <div className="h-64 bg-white rounded-lg p-2 ">
-            <h1 className="h-1/6 font-medium">Actividades próximas</h1>
-            <ul className="h-3/6 p-1">
-              <li className="flex items-center mb-3">
-                <input type="checkbox" className="shadow-slate-200" />
-                <div className="ml-2">
-                  <h3 className="text-sm">Seguimiento prospecto</h3>
-                  <p className="text-xs">Vencimiento: 10/07/2025</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3">
-                <input type="checkbox" />
-                <div className="ml-2">
-                  <h3 className="text-sm">Cristian llamada</h3>
-                  <p className="text-xs">Vencimiento: 20/05/2025</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3">
-                <input type="checkbox" />
-                <div className="ml-2">
-                  <h3 className="text-sm">
-                    Enviar correo electrónico a Carlos
-                  </h3>
-                  <p className="text-xs">Vencimiento: 14/12/2025</p>
-                </div>
-              </li>
-            </ul>
+          <div
+            className={clsx(
+              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
+              {
+                "justify-between": !nextTasks?.items?.length,
+              }
+            )}
+          >
+            <h1 className="font-medium w-full">Actividades próximas</h1>
+            {isLoadingNextTasks ? (
+              <LoadingSpinnerSmall color="primary" />
+            ) : (
+              <Fragment>
+                {nextTasks?.items && nextTasks?.items?.length ? (
+                  <TaskList tasks={nextTasks?.items} mutate={mutateNextTasks} />
+                ) : (
+                  <Fragment>
+                    <div className=" flex justify-center">
+                      <CalendarIcon className="h-16 w-16 text-slate-400" />
+                    </div>
+                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                      <h1 className="text-sm p-2 ">
+                        No tienes próximas actividades
+                      </h1>
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
+            )}
           </div>
           <div className="h-64 bg-white rounded-lg p-2 ">
             <h1 className="h-1/6 font-medium">

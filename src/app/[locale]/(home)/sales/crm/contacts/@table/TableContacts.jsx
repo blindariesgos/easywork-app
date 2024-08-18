@@ -40,7 +40,7 @@ import {
   Listbox,
   ListboxButton,
   ListboxOption,
-  ListboxOptions
+  ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import useContactContext from "@/src/context/contacts";
@@ -52,17 +52,14 @@ function classNames(...classes) {
 }
 
 export default function TableContacts() {
-  const { data, limit, setLimit } = useContactContext()
+  const { data, limit, setLimit } = useContactContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const router = useRouter()
-  const {
-    setLastContactsUpdate,
-    selectedContacts,
-    setSelectedContacts,
-  } = useCrmContext();
+  const router = useRouter();
+  const { setLastContactsUpdate, selectedContacts, setSelectedContacts } =
+    useCrmContext();
   const { columnTable } = useContactTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
@@ -78,8 +75,8 @@ export default function TableContacts() {
   );
 
   useEffect(() => {
-    if (data) setDataContacts(data)
-  }, [data])
+    if (data) setDataContacts(data);
+  }, [data]);
 
   useEffect(() => {
     if (orderItems?.length > 0)
@@ -165,13 +162,14 @@ export default function TableContacts() {
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) => router.push(`/sales/crm/contacts/contact/${id}?show=true`)
+      handleClick: (id) =>
+        router.push(`/sales/crm/contacts/contact/${id}?show=true`),
     },
     { name: "Editar" },
     { name: "Copiar" },
     { name: "Eliminar" },
-    { name: "Agregar Evento" },
-    { name: "Nuevo correo electrónico" },
+    { name: "Agregar Cita" },
+    { name: "Enviar e-mail" },
   ];
 
   return (
@@ -204,8 +202,9 @@ export default function TableContacts() {
                       <th
                         key={index}
                         scope="col"
-                        className={`min-w-[12rem] py-2 pr-3 text-sm font-medium text-gray-400 cursor-pointer ${index === selectedColumns.length - 1 && "rounded-e-xl"
-                          }`}
+                        className={`min-w-[12rem] py-2 pr-3 text-sm font-medium text-gray-400 cursor-pointer ${
+                          index === selectedColumns.length - 1 && "rounded-e-xl"
+                        }`}
                         onClick={() => {
                           column.order && handleSorting(column.order);
                         }}
@@ -215,11 +214,12 @@ export default function TableContacts() {
                           <div>
                             {column.order && (
                               <ChevronDownIcon
-                                className={`h-6 w-6 text-primary ${fieldClicked.field === column.order &&
+                                className={`h-6 w-6 text-primary ${
+                                  fieldClicked.field === column.order &&
                                   fieldClicked.sortDirection === "desc"
-                                  ? "transform rotate-180"
-                                  : ""
-                                  }`}
+                                    ? "transform rotate-180"
+                                    : ""
+                                }`}
                               />
                             )}
                           </div>
@@ -257,8 +257,8 @@ export default function TableContacts() {
                                   e.target.checked
                                     ? [...selectedContacts, contact]
                                     : selectedContacts.filter(
-                                      (p) => p !== contact
-                                    )
+                                        (p) => p !== contact
+                                      )
                                 )
                               }
                             />
@@ -284,7 +284,13 @@ export default function TableContacts() {
                               >
                                 <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                                   {itemOptions.map((item) => (
-                                    <MenuItem key={item.name} onClick={() => item.handleClick && item.handleClick(contact.id)}>
+                                    <MenuItem
+                                      key={item.name}
+                                      onClick={() =>
+                                        item.handleClick &&
+                                        item.handleClick(contact.id)
+                                      }
+                                    >
                                       {({ active }) => (
                                         <div
                                           // onClick={item.onClick}
@@ -325,10 +331,10 @@ export default function TableContacts() {
                                   </Link>
                                 ) : column.row === "responsible" ? (
                                   <div className="flex items-center justify-center">
-
                                     <div className="ml-4 flex">
                                       <p className="text-start">
-                                        {contact?.responsibleUser?.name ?? "N/A"}
+                                        {contact?.responsibleUser?.name ??
+                                          "N/A"}
                                       </p>
                                     </div>
                                   </div>
@@ -384,11 +390,11 @@ export default function TableContacts() {
                                     "-"
                                   )
                                 ) : column.row === "birthdate" ? (
-                                  formatDate(contact.birthdate, "dd/MM/yyyy")
-                                  ?? null
+                                  formatDate(contact.birthdate, "dd/MM/yyyy") ??
+                                  null
                                 ) : column.row === "createdAt" ? (
-                                  formatDate(contact.createdAt, "dd/MM/yyyy")
-                                  ?? null
+                                  formatDate(contact.createdAt, "dd/MM/yyyy") ??
+                                  null
                                 ) : (
                                   contact[column.row] || "-"
                                 )}
@@ -396,7 +402,7 @@ export default function TableContacts() {
                             </td>
                           ))}
                       </tr>
-                    )
+                    );
                   })}
               </tbody>
             </table>
@@ -410,8 +416,8 @@ export default function TableContacts() {
             <Listbox value={limit} onChange={setLimit} as="div">
               <ListboxButton
                 className={clsx(
-                  'relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6',
-                  'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2'
+                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
+                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
                 )}
               >
                 {limit}
@@ -424,8 +430,8 @@ export default function TableContacts() {
                 anchor="bottom"
                 transition
                 className={clsx(
-                  'rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl',
-                  'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
+                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
                 )}
               >
                 {itemsByPage.map((page) => (

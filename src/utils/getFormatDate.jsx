@@ -68,7 +68,7 @@ export const isDateMoreFiveDayOverdue = (date) => {
   const now = new Date();
 
   return (
-    differenceInDays(deadlineDate, now) >= 5 &&
+    differenceInDays(deadlineDate, now) >= 2 &&
     differenceInDays(deadlineDate, now) <= 10
   );
 };

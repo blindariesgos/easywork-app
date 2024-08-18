@@ -40,7 +40,7 @@ const FormFilters = () => {
       fields: [
         {
           id: 1,
-          name: t("contacts:filters:responsible"),
+          name: t("control:portafolio:receipt:filters:responsible"),
           type: "dropdown",
           check: true,
           code: "responsible",
@@ -48,26 +48,10 @@ const FormFilters = () => {
         },
         {
           id: 2,
-          name: t("contacts:filters:created"),
+          name: t("control:portafolio:receipt:filters:expiration-date"),
           type: "date",
           check: true,
           code: "createdAt",
-        },
-        {
-          id: 3,
-          name: t("contacts:filters:origin"),
-          type: "select",
-          options: lists?.listContact?.contactSources || [],
-          check: true,
-          code: "origin",
-        },
-        {
-          id: 4,
-          name: t("contacts:filters:created-by"),
-          type: "dropdown",
-          check: true,
-          code: "createdby",
-          options: lists?.users,
         },
       ],
     },

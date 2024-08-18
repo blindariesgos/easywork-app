@@ -54,18 +54,6 @@ export default function UsersHeader() {
               <FiltersContact />
             </div>
           </div>
-          {selectedContacts[0]?.id && (
-            <IconDropdown
-              icon={
-                <TrashIcon
-                  className="h-8 w-8 text-primary"
-                  aria-hidden="true"
-                />
-              }
-              options={trash}
-              width="w-72"
-            />
-          )}
 
           <IconDropdown
             icon={

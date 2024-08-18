@@ -1457,7 +1457,7 @@ export const useUserTable = () => {
       id: 1,
       name: t("users:table:name"),
       row: "contactName",
-      order: "name",
+      order: "profile.firstName",
       check: true,
       link: true,
       permanent: true,
@@ -1479,13 +1479,6 @@ export const useUserTable = () => {
       photo: true,
     },
     {
-      id: 4,
-      name: t("users:table:lastActivity"),
-      row: "lastLogin",
-      order: "lastLogin",
-      check: true,
-    },
-    {
       id: 5,
       name: t("users:table:mobile-app"),
       row: "mobile-app",
@@ -1495,6 +1488,13 @@ export const useUserTable = () => {
       id: 6,
       name: t("users:table:desk-app"),
       row: "desk-app",
+      check: true,
+    },
+    {
+      id: 4,
+      name: t("users:table:lastActivity"),
+      row: "lastLogin",
+      order: "lastLogin",
       check: true,
     },
   ];

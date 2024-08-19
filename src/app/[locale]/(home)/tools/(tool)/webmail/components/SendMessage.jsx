@@ -120,7 +120,7 @@ export default function SendMessage({
       );
       console.log(response.data.url);
       console.log(value);
-      setValueText(`<br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`);
+      setValueText(`<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`);
       setSignature(response.data.url);
     } catch (error) {}
   };

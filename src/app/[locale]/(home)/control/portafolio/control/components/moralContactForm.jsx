@@ -10,12 +10,12 @@ const MoralContactForm = () => {
     <div className="py-4">
       <div className="bg-gray-100 p-4 grid gap-4">
         <h3 className="pb-4 text-2xl">
-          {t("tools:portafolio:control:form:contact-data")}
+          {t("control:portafolio:control:form:contact-data")}
         </h3>
         <div className="grid grid-cols-2 gap-4 ">
-          <TextInput label={t("tools:portafolio:control:form:rfc")} />
+          <TextInput label={t("control:portafolio:control:form:rfc")} />
           <SelectInput
-            label={t("tools:portafolio:control:form:agent")}
+            label={t("control:portafolio:control:form:agent")}
             options={[
               {
                 name: "Soporte Principal",
@@ -28,13 +28,13 @@ const MoralContactForm = () => {
             ]}
             placeholder="- Seleccionar -"
           />
-          <TextInput label={t("tools:portafolio:control:form:names")} />
-          <TextInput label={t("tools:portafolio:control:form:lastnames")} />
-          <InputPhone label={t("tools:portafolio:control:form:phone")} />
+          <TextInput label={t("control:portafolio:control:form:names")} />
+          <TextInput label={t("control:portafolio:control:form:lastnames")} />
+          <InputPhone label={t("control:portafolio:control:form:phone")} />
 
           <div className="grid grid-cols-3 gap-4 ">
             <SelectInput
-              label={t("tools:portafolio:control:form:email")}
+              label={t("control:portafolio:control:form:email")}
               options={[
                 {
                   name: "Personal",
@@ -52,10 +52,10 @@ const MoralContactForm = () => {
             </div>
           </div>
 
-          <TextInput label={t("tools:portafolio:control:form:website")} />
+          <TextInput label={t("control:portafolio:control:form:website")} />
           <div className="grid grid-cols-3 gap-4 ">
             <SelectInput
-              label={t("tools:portafolio:control:form:social-network")}
+              label={t("control:portafolio:control:form:social-network")}
               options={[
                 {
                   name: "Facebook",
@@ -82,14 +82,16 @@ const MoralContactForm = () => {
           </div>
         </div>
         <h3 className="pb-4 text-2xl">
-          {t("tools:portafolio:control:form:company-data")}
+          {t("control:portafolio:control:form:company-data")}
         </h3>
 
         <div className="grid grid-cols-2 gap-4">
-          <TextInput label={t("tools:portafolio:control:form:company-rfc")} />
-          <TextInput label={t("tools:portafolio:control:form:company-name")} />
+          <TextInput label={t("control:portafolio:control:form:company-rfc")} />
+          <TextInput
+            label={t("control:portafolio:control:form:company-name")}
+          />
           <SelectInput
-            label={t("tools:portafolio:control:form:company-type")}
+            label={t("control:portafolio:control:form:company-type")}
             options={[
               {
                 name: "Cliente Contratante",
@@ -119,7 +121,7 @@ const MoralContactForm = () => {
             placeholder="- Seleccionar -"
           />
           <SelectInput
-            label={t("tools:portafolio:control:form:company-activity")}
+            label={t("control:portafolio:control:form:company-activity")}
             options={[
               {
                 name: "Fisica",
@@ -132,8 +134,8 @@ const MoralContactForm = () => {
             ]}
             placeholder="- Seleccionar -"
           />
-          <InputPhone label={t("tools:portafolio:control:form:phone")} />
-          <TextInput label={t("tools:portafolio:control:form:email")} />
+          <InputPhone label={t("control:portafolio:control:form:phone")} />
+          <TextInput label={t("control:portafolio:control:form:email")} />
         </div>
 
         <div>

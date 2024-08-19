@@ -15,43 +15,55 @@ const currencies = [
 
 const cards = (t) => [
   {
-    name: t("tools:portafolio:control:cards:by-overcoming"),
-    id: 1,
-    color: "#DFE3E6",
-    value: "23412",
-  },
-  {
-    name: t("tools:portafolio:control:cards:overdue"),
+    name: t("control:portafolio:control:cards:overdue"),
     id: 2,
     color: "#FFEB04",
     value: "324",
   },
   {
-    name: t("tools:portafolio:control:cards:urgent"),
-    id: 3,
-    color: "#86BEDF",
-    value: "23",
-  },
-  {
-    name: t("tools:portafolio:control:cards:delay"),
+    name: t("control:portafolio:control:cards:delay"),
     id: 4,
     color: "#A9EA44",
     value: "212",
   },
   {
-    name: t("tools:portafolio:control:cards:on-time"),
-    id: 5,
-    color: "#8D9194",
-    value: "43",
+    name: t("control:portafolio:control:cards:urgent"),
+    id: 3,
+    color: "#86BEDF",
+    value: "23",
   },
   {
-    name: t("tools:portafolio:control:cards:trash"),
+    name: t("control:portafolio:control:cards:trash"),
     id: 6,
     color: "#AF8764",
     value: "2",
   },
   {
-    name: t("tools:portafolio:control:cards:cancelled"),
+    name: t("control:portafolio:control:cards:trash-more"),
+    id: 8,
+    color: "#b60f0f",
+    value: "24",
+  },
+  {
+    name: t("control:portafolio:control:cards:by-overcoming"),
+    id: 1,
+    color: "#6b6c6d",
+    value: "23412",
+  },
+  {
+    name: t("control:portafolio:control:cards:on-time"),
+    id: 5,
+    color: "#8D9194",
+    value: "43",
+  },
+  {
+    name: t("control:portafolio:control:cards:charged"),
+    id: 9,
+    color: "#DFE3E6",
+    value: "24",
+  },
+  {
+    name: t("control:portafolio:control:cards:cancelled"),
     id: 7,
     color: "#0F8BBF",
     value: "24",
@@ -78,9 +90,9 @@ const Control = () => {
                   >
                     {cards(t).map((card) => (
                       <Radio
-                        key={card.type}
+                        key={card.id}
                         value={card}
-                        className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
+                        className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 hover:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
                       >
                         <div
                           className={`absolute w-full h-[7px] top-0 left-0`}
@@ -93,7 +105,7 @@ const Control = () => {
                   </RadioGroup>
                   <div className="md:hidden flex flex-col gap-4">
                     <SelectInput
-                      // label={t("tools:portafolio:control:form:agent")}
+                      // label={t("control:portafolio:control:form:agent")}
                       options={cards(t)}
                       placeholder="- Seleccionar -"
                       setSelectedOption={setCardSelected}

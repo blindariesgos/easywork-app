@@ -20,45 +20,6 @@ import {
 } from "@heroicons/react/20/solid";
 import TextInput from "@/src/components/form/TextInput";
 
-const columns = [
-  {
-    name: "Póliza",
-    field: "a",
-  },
-  {
-    name: "Contacto",
-    field: "b",
-  },
-  {
-    name: "Compañia",
-    field: "n",
-  },
-  {
-    name: "Aseguradora",
-    field: "m",
-  },
-  {
-    name: "Número de Póliza",
-    field: "f",
-  },
-  {
-    name: "Monto",
-    field: "g",
-  },
-  {
-    name: "Moneda",
-    field: "h",
-  },
-  {
-    name: "Fecha de Vencimiento",
-    field: "j",
-  },
-  {
-    name: "Acciones",
-    field: "activities",
-  },
-];
-
 const data = [
   {
     a: "GNP 123123124 VIDA - pago 9",
@@ -143,9 +104,42 @@ const data = [
 ];
 
 export default function ControlTable({ name }) {
-  const [loading, setLoading] = useState(false);
-
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const columns = [
+    {
+      name: t("control:portafolio:control:table:contact"),
+      field: "b",
+    },
+    {
+      name: t("control:portafolio:control:table:policy"),
+      field: "f",
+    },
+    {
+      name: t("control:portafolio:control:table:receipt"),
+      field: "a",
+    },
+    {
+      name: t("control:portafolio:control:table:insurance"),
+      field: "m",
+    },
+    {
+      name: t("control:portafolio:control:table:amount"),
+      field: "g",
+    },
+    {
+      name: t("control:portafolio:control:table:currency"),
+      field: "h",
+    },
+    {
+      name: t("control:portafolio:control:table:expired"),
+      field: "j",
+    },
+    {
+      name: t("control:portafolio:control:table:actions"),
+      field: "activities",
+    },
+  ];
 
   return (
     <Fragment>
@@ -168,7 +162,7 @@ export default function ControlTable({ name }) {
                         scope="col"
                         className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer `}
                       >
-                        <div className="flex justify-left items-center gap-2">
+                        <div className="flex justify-center items-center gap-2">
                           {column.name}
                           <div>
                             <ChevronDownIcon
@@ -189,7 +183,7 @@ export default function ControlTable({ name }) {
                       )}
                     >
                       {columns.map((column, index) => (
-                        <td className="text-left py-5 pr-2" key={index}>
+                        <td className="text-center py-5 pr-2" key={index}>
                           <div className="font-medium text-sm text-nowrap text-black hover:text-primary capitalize">
                             {renderCellContent(column, control, t)}
                           </div>

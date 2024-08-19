@@ -10,6 +10,7 @@ export const receipts = {
             client: "avimarkstudio.INK",
             amount: "$10.000,00",
             createdAt: new Date(),
+            expiration: new Date()
         },
         {
             receipt: "GNP 2345676 VIDA",
@@ -21,6 +22,7 @@ export const receipts = {
             client: "avimarkstudio.INK",
             amount: "$10.000,00",
             createdAt: new Date(),
+            expiration: new Date()
         },
         {
             receipt: "GNP 2345676 VIDA",
@@ -32,6 +34,7 @@ export const receipts = {
             client: "avimarkstudio.INK",
             amount: "$10.000,00",
             createdAt: new Date(),
+            expiration: new Date()
         },
         {
             receipt: "GNP 2345676 VIDA",
@@ -43,6 +46,7 @@ export const receipts = {
             client: "avimarkstudio.INK",
             amount: "$10.000,00",
             createdAt: new Date(),
+            expiration: new Date()
         },
         {
             receipt: "GNP 2345676 VIDA",
@@ -54,6 +58,10 @@ export const receipts = {
             client: "avimarkstudio.INK",
             amount: "$10.000,00",
             createdAt: new Date(),
+            expiration: new Date()
         },
-    ]
+    ],
+    meta: {
+        totalPages: 1
+    }
 }

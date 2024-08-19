@@ -15,16 +15,6 @@ export default async function ReceiptLayout({ children, table }) {
       name: "Lista",
       component: table,
     },
-    {
-      name: "Actividades",
-      component: "",
-      disabled: true,
-    },
-    {
-      name: "Calendario",
-      component: "",
-      disabled: true,
-    },
   ];
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">

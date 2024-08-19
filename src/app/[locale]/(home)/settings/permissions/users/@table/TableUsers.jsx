@@ -121,7 +121,7 @@ export default function TableUsers() {
     }
   };
 
-  const itemOptions = [
+  const itemOptions = (user) => [
     {
       name: "Ver",
       handleClick: (id) =>
@@ -129,9 +129,9 @@ export default function TableUsers() {
     },
     { name: "Editar" },
     { name: "Copiar" },
-    { name: "Eliminar" },
-    // { name: "Agregar Evento" },
-    // { name: "Nuevo correo electrónico" },
+    (() => {
+      return user.isActive ? { name: "Desactivar" } : { name: "Activar" };
+    })(),
   ];
 
   return (
@@ -191,28 +191,30 @@ export default function TableUsers() {
               </thead>
               <tbody className="bg-gray-100">
                 {data?.items && data?.items.length === 0 && (
-                  <div className="flex items-center justify-center h-96">
-                    <div className="flex flex-col items-center space-y-3">
-                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-10 h-10 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          ></path>
-                        </svg>
+                  <tr>
+                    <td colSpan={selectedColumns.length}>
+                      <div className="flex items-center justify-center h-96 w-full gap-3">
+                        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-10 h-10 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                            ></path>
+                          </svg>
+                        </div>
+                        <p className="text-lg font-medium text-gray-400">
+                          {t("users:table:not-data")}
+                        </p>
                       </div>
-                      <p className="text-lg font-medium text-gray-400">
-                        {t("contacts:table:not-data")}
-                      </p>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
                 )}
                 {selectedColumns.length > 0 &&
                   data?.items &&
@@ -266,7 +268,7 @@ export default function TableUsers() {
                                 leaveTo="transform opacity-0 scale-95"
                               >
                                 <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                                  {itemOptions.map((item) => (
+                                  {itemOptions(user).map((item) => (
                                     <MenuItem
                                       key={item.name}
                                       onClick={() =>
@@ -295,7 +297,7 @@ export default function TableUsers() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div className="font-medium text-sm text-black hover:text-primary">
+                              <div className="font-medium text-sm text-black text-center hover:text-primary">
                                 {column.link ? (
                                   <Link
                                     href={`/settings/permissions/users/user/${user.id}?show=true`}

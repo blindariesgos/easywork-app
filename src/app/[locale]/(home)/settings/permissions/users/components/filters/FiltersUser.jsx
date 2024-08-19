@@ -35,10 +35,10 @@ const FiltersContact = () => {
     if (searchInput.length > 0) {
       setFilters({
         ...filters,
-        name: searchInput,
+        firstName: searchInput,
       });
     } else {
-      const { name, ...otherFilters } = filters;
+      const { firstName, ...otherFilters } = filters;
       setFilters(otherFilters);
     }
   }, 500);

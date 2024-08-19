@@ -306,3 +306,8 @@ export const addContactComment = async (body) => {
   return response;
 };
 
+export const getAllRoles = async () => {
+  const response = await axios().get(`/roles`);
+  return response;
+};
+

@@ -3,7 +3,7 @@ import React from "react";
 
 const HeaderCrm = ({ options }) => {
   return (
-    <div className="bg-white rounded-md shadow-sm">
+    <div className="bg-white rounded-md shadow-sm w-full">
       <div className="flex gap-6 py-4 px-4 flex-wrap">
         {options.map((opt, index) => (
           <div key={index} className="cursor-pointer">

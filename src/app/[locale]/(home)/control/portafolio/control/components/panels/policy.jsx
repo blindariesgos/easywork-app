@@ -41,16 +41,18 @@ const Policy = () => {
           <div className=" col-span-2 flex">
             <div className="bg-white p-4 flex items-center gap-4 w-auto">
               <InputCheckBox
-                label={t("tools:portafolio:control:form:contact")}
+                label={t("control:portafolio:control:form:contact")}
               />
               <InputCheckBox
-                label={t("tools:portafolio:control:form:company")}
+                label={t("control:portafolio:control:form:company")}
               />
             </div>
           </div>
-          <TextInput label={t("tools:portafolio:control:form:customer-rfc")} />
+          <TextInput
+            label={t("control:portafolio:control:form:customer-rfc")}
+          />
           <SelectInput
-            label={t("tools:portafolio:control:form:insurance")}
+            label={t("control:portafolio:control:form:insurance")}
             options={[
               {
                 name: "AHORRO",
@@ -67,11 +69,15 @@ const Policy = () => {
             ]}
             placeholder="- Seleccionar -"
           />
-          <TextInput label={t("tools:portafolio:control:form:customer-code")} />
-          <TextInput label={t("tools:portafolio:control:form:policy-number")} />
-          <TextInput label={t("tools:portafolio:control:form:version")} />
+          <TextInput
+            label={t("control:portafolio:control:form:customer-code")}
+          />
+          <TextInput
+            label={t("control:portafolio:control:form:policy-number")}
+          />
+          <TextInput label={t("control:portafolio:control:form:version")} />
           <SelectInput
-            label={t("tools:portafolio:control:form:insurance-type")}
+            label={t("control:portafolio:control:form:insurance-type")}
             options={[
               {
                 name: "Autos",
@@ -101,7 +107,7 @@ const Policy = () => {
             placeholder="- Seleccionar -"
           />
           <SelectInput
-            label={t("tools:portafolio:control:form:agent")}
+            label={t("control:portafolio:control:form:agent")}
             options={[
               {
                 name: "Sporte Principal",
@@ -115,7 +121,7 @@ const Policy = () => {
             placeholder="- Seleccionar -"
           />
           <SelectInput
-            label={t("tools:portafolio:control:form:coverage")}
+            label={t("control:portafolio:control:form:coverage")}
             options={[
               {
                 name: "Nacionalo",
@@ -140,7 +146,7 @@ const Policy = () => {
                   icon={
                     <FaCalendarDays className="h-3 w-3 text-primary pr-4" />
                   }
-                  label={t("tools:portafolio:control:form:issue-date")}
+                  label={t("control:portafolio:control:form:issue-date")}
                 />
               );
             }}
@@ -158,7 +164,7 @@ const Policy = () => {
                   icon={
                     <FaCalendarDays className="h-3 w-3 text-primary pr-4" />
                   }
-                  label={t("tools:portafolio:control:form:effective-date")}
+                  label={t("control:portafolio:control:form:effective-date")}
                 />
               );
             }}
@@ -176,7 +182,7 @@ const Policy = () => {
                   icon={
                     <FaCalendarDays className="h-3 w-3 text-primary pr-4" />
                   }
-                  label={t("tools:portafolio:control:form:expiration-date")}
+                  label={t("control:portafolio:control:form:expiration-date")}
                 />
               );
             }}
@@ -185,7 +191,7 @@ const Policy = () => {
             defaultValue=""
           />
           <SelectInput
-            label={t("tools:portafolio:control:form:payment-methods")}
+            label={t("control:portafolio:control:form:payment-methods")}
             options={[
               {
                 name: "Anual",
@@ -212,7 +218,7 @@ const Policy = () => {
           />
           <div className="grid grid-cols-2 gap-4 place-items-end">
             <SelectInput
-              label={t("tools:portafolio:control:form:net-premium")}
+              label={t("control:portafolio:control:form:net-premium")}
               options={[
                 {
                   name: "Peso",
@@ -230,7 +236,7 @@ const Policy = () => {
           <div className="grid grid-cols-2 gap-4 place-items-end">
             <SelectInput
               label={t(
-                "tools:portafolio:control:form:surcharge-installment-payment"
+                "control:portafolio:control:form:surcharge-installment-payment"
               )}
               options={[
                 {
@@ -248,7 +254,7 @@ const Policy = () => {
           </div>
           <div className="grid grid-cols-2 gap-4 place-items-end">
             <SelectInput
-              label={t("tools:portafolio:control:form:iva")}
+              label={t("control:portafolio:control:form:iva")}
               options={[
                 {
                   name: "Peso",
@@ -265,7 +271,7 @@ const Policy = () => {
           </div>
           <div className="grid grid-cols-2 gap-4 place-items-end">
             <SelectInput
-              label={t("tools:portafolio:control:form:policy-low")}
+              label={t("control:portafolio:control:form:policy-low")}
               options={[
                 {
                   name: "Peso",
@@ -282,7 +288,7 @@ const Policy = () => {
           </div>
           <div className="grid grid-cols-2 gap-4 place-items-end">
             <SelectInput
-              label={t("tools:portafolio:control:form:amount-to-pay")}
+              label={t("control:portafolio:control:form:amount-to-pay")}
               options={[
                 {
                   name: "Peso",
@@ -298,7 +304,7 @@ const Policy = () => {
             <TextInput />
           </div>
           <SelectInput
-            label={t("tools:portafolio:control:form:forms-of-payment")}
+            label={t("control:portafolio:control:form:forms-of-payment")}
             options={[
               {
                 name: "CAT",
@@ -316,7 +322,7 @@ const Policy = () => {
             placeholder="- Seleccionar -"
           />
           <SelectInput
-            label={t("tools:portafolio:control:form:related-agent")}
+            label={t("control:portafolio:control:form:related-agent")}
             options={[
               {
                 name: "Agente 1",

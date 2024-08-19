@@ -35,7 +35,7 @@ const FormFilters = () => {
       fields: [
         {
           id: 1,
-          name: t("tools:portafolio:control:form:agent"),
+          name: t("control:portafolio:control:form:agent"),
           options: lists?.users,
           type: "select",
           check: true,
@@ -44,7 +44,7 @@ const FormFilters = () => {
         },
         {
           id: 2,
-          name: "Moneda",
+          name: t("control:portafolio:control:form:currency"),
           type: "select",
           check: false,
           code: "currency",

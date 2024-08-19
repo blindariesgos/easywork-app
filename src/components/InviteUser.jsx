@@ -26,9 +26,6 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
     responsible: yup.string(),
   });
 
-  const textPassword =
-    "La contraseña debe contener al menos 10 símbolos, contienen letras mayúsculas  latina (a-z), contienen letras latinas minúsculas (a-z), contienen los dígitos (0-9),contener marcas de puntuación (,.<>/?;:’[]{}|`~!@#$%^&*()-_+=).";
-
   useEffect(() => {}, [params.get("inviteuser")]);
 
   return (
@@ -59,7 +56,8 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                         className={colorTag}
                       />
                     </div>
-                    <div className="h-screen rounded-lg bg-gray-300 p-6 flex max-md:w-full w-1/2">
+                    <div className="h-screen rounded-lg bg-gray-300 p-6 max-md:w-full w-1/2">
+                      <h1 className="ml-3 mb-3">INVITAR A USUARIOS</h1>
                       <div className="mr-3 w-full">
                         {/* <h1 className="text-xl">Invitar</h1> */}
                         <div className="relative">
@@ -68,7 +66,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                             onChange={(e) => setInvite(e.target.value)} // Maneja el evento onChange
                             value={invite} // Asigna el valor actual del estado
                           >
-                            <option value="1">Invitar...</option>
+                            <option value="1">Selecciona una opción</option>
                             <option value="1">Mediante enlace</option>
                             <option value="2">
                               Mediante correo electrónico o número de teléfono

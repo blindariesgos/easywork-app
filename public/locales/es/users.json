@@ -1,15 +1,19 @@
 {
     "table": {
-        "name": "Empleado",
+        "name": "Usuarios",
         "email": "Correo Electrónico",
         "phone": "Móvil",
         "lastActivity": "Fecha de la última actividad",
         "mobile-app": "Aplicación Móvil",
-        "desk-app": "Aplicación de escritorio"
+        "desk-app": "Aplicación de escritorio",
+        "not-data": "No hay usuarios"
     },
     "form": {
         "title": "Información del contacto",
         "firstname": "Nombre",
-        "lastname": "Apellido"
+        "lastname": "Apellido",
+        "phone": "Teléfono",
+        "email": "Correo Electrónico",
+        "role": "Rol"
     }
 }

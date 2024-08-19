@@ -17,7 +17,7 @@ import useCrmContext from "../../../../../../../context/crm";
 
 export default function ReceiptHeader() {
   const { t } = useTranslation();
-  const { trash, settingsUser: settings } = useCommon();
+  const { trash, settingsReceipts: settings } = useCommon();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
@@ -34,7 +34,7 @@ export default function ReceiptHeader() {
     <header className="flex flex-col">
       <div className="px-4 flex gap-3 items-center bg-white py-4 rounded-md flex-wrap shadow-sm">
         <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
-          {t("receipts:title")}
+          {t("control:portafolio:receipt:title")}
         </h1>
         <Button
           label={"Crear"}
@@ -67,7 +67,7 @@ export default function ReceiptHeader() {
             />
           }
           options={settings}
-          width="w-[340px]"
+          width="w-[180px]"
         />
       </div>
     </header>

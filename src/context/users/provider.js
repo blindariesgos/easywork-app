@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { ReceiptsContext } from "..";
+import { UsersContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useUsers } from "../../lib/api/hooks/users";
@@ -44,66 +44,42 @@ export default function UsersContextProvider({ children }) {
     setFilterFields([
       {
         id: 1,
-        name: t("contacts:filters:responsible"),
-        type: "dropdown",
+        name: t("users:form:firstname"),
+        type: "input",
         check: true,
-        code: "responsible",
-        options: lists?.users
+        code: "firstName",
       },
       {
         id: 2,
-        name: t("contacts:filters:created"),
-        type: "date",
+        name: t("users:form:lastname"),
+        type: "input",
         check: true,
-        code: "createdAt",
+        code: "lastName",
       },
       {
         id: 3,
-        name: t("contacts:filters:origin"),
-        type: "select",
-        options: lists?.listContact?.contactSources || [],
-        check: true,
-        code: "origin",
+        name: t("users:form:phone"),
+        type: "input",
+        check: false,
+        code: "phone",
       },
       {
         id: 4,
-        name: t("contacts:filters:created-by"),
-        type: "dropdown",
-        check: true,
-        code: "createdby",
-        options: lists?.users
-      },
-      {
-        id: 5,
-        name: t("contacts:filters:fullname"),
+        name: t("users:form:email"),
         type: "input",
         check: false,
-        code: "name",
+        code: "email",
       },
       {
         id: 6,
-        name: t("contacts:filters:contact-type"),
+        name: t("users:form:role"),
         type: "select",
-        options: lists?.listContact?.contactTypes || [],
+        options: lists?.roles || [],
         check: false,
-        code: "typeContact",
-      },
-      {
-        id: 7,
-        name: t("contacts:filters:cua"),
-        type: "input",
-        check: false,
-        code: "cua",
-      },
-      {
-        id: 8,
-        name: t("contacts:filters:rfc"),
-        type: "input",
-        check: false,
-        code: "rfc",
-      },
+        code: "role",
+      }
     ])
-  }, [lists?.listContact])
+  }, [lists?.listContact, lists?.roles])
 
   useEffect(() => {
     handleChangeConfig("page", 1)
@@ -168,5 +144,5 @@ export default function UsersContextProvider({ children }) {
     ]
   );
 
-  return <ReceiptsContext.Provider value={values}>{children}</ReceiptsContext.Provider>;
+  return <UsersContext.Provider value={values}>{children}</UsersContext.Provider>;
 }

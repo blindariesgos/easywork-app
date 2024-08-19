@@ -25,7 +25,7 @@ export default function ControlContextProvider({ children }) {
     setFilterFields([
       {
         id: 1,
-        name: t("tools:portafolio:control:form:agent"),
+        name: t("control:portafolio:control:form:agent"),
         options: lists?.users,
         type: "select",
         check: true,
@@ -33,7 +33,7 @@ export default function ControlContextProvider({ children }) {
       },
       {
         id: 2,
-        name: "Moneda",
+        name: t("control:portafolio:control:form:currency"),
         type: "select",
         check: false,
         code: "currency",
@@ -64,14 +64,14 @@ export default function ControlContextProvider({ children }) {
     setDisplayFilters([
       {
         id: 1,
-        name: t("tools:portafolio:control:form:agent"),
+        name: t("control:portafolio:control:form:agent"),
         options: lists?.users,
         type: "select",
         value: lists?.users[0]?.id
       },
       {
         id: 2,
-        name: "Moneda",
+        name: t("control:portafolio:control:form:currency"),
         code: "currency",
         type: "select",
         options: [

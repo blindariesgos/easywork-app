@@ -22,6 +22,7 @@ import { useLeads } from "../../../../../../../hooks/useCommon";
 import ProgressStages from "./ProgressStages";
 import TextInput from "../../../../../../../components/form/TextInput";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 const contactSources = [
   { id: 1, name: "Correo electrónico" },
@@ -39,7 +40,7 @@ const contactSources = [
   { id: 13, name: "WhatsApp" },
 ];
 
-export default function CreateLead({ edit, id }) {
+export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
   const [openButtons, setOpenButtons] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -90,7 +91,7 @@ export default function CreateLead({ edit, id }) {
     formState: { isValid, errors },
   } = useForm({
     defaultValues: {
-      name: id ? edit?.name : "",
+      name: id ? lead?.name : "",
       //   position: id ? "Programador" : "",
       //   phone: id ? "5284791145" : "",
       //   email: id ? "test@gmail.com" : "",
@@ -162,33 +163,56 @@ export default function CreateLead({ edit, id }) {
   };
 
   return (
-    <div className="flex flex-col h-screen relative w-full">
+    <div
+      className={clsx("flex flex-col h-screen relative w-full", {
+        "max-w-xl": !lead,
+      })}
+    >
       {loading && <LoaderSpinner />}
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
         className="  bg-gray-600 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px]  overflow-y-auto md:overflow-hidden"
       >
-        <div className="bg-transparent p-4">
-          <div className="flex items-start flex-col justify-between gap-y-4 relative">
-            {!id && (
-              <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
-            )}
-            <div className="flex gap-2 items-center">
-              <h1 className="text-xl pl-4">
-                {edit ? edit.name : t("leads:lead:new")}
-              </h1>
-              {/* <div>
+        {!lead && (
+          <div className="flex gap-2 items-center py-4">
+            <h1 className="text-xl pl-4">{t("leads:lead:new")}</h1>
+          </div>
+        )}
+        {lead && (
+          <div className="bg-transparent p-4">
+            <div className="flex items-start flex-col justify-between gap-y-4 relative">
+              {!id && (
+                <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
+              )}
+              <div className="flex gap-2 items-center">
+                <h1 className="text-xl pl-4">
+                  {lead ? lead.name : t("leads:lead:new")}
+                </h1>
+                {/* <div>
                 <PencilIcon className="h-4 w-4 text-gray-200" />
               </div> */}
+              </div>
+              <ProgressStages />
+              <HeaderCrm options={optionsHeader} />
             </div>
-            <ProgressStages />
-            <HeaderCrm options={optionsHeader} />
           </div>
-        </div>
+        )}
         <div className="px-4 w-full h-full">
-          <div className="grid grid-cols-1 h-full md:grid-cols-2 w-full bg-gray-100 rounded-xl md:overflow-hidden">
+          <div
+            className={clsx(
+              "grid grid-cols-1 h-full  w-full bg-gray-100 rounded-xl md:overflow-hidden",
+              {
+                "md:grid-cols-2": lead,
+              }
+            )}
+          >
             {/* Menu Izquierda */}
-            <div className="overflow-y-scroll rounded-lg px-4 pt-4 md:pb-[280px]">
+            <div
+              className={clsx("overflow-y-scroll rounded-lg px-4 pt-4 ", {
+                "md:pb-[280px]": lead,
+                "md:pb-[140px]": !lead,
+              })}
+            >
               <div className="flex justify-between bg-white py-4 px-4 rounded-md">
                 <h1 className="">{t("leads:lead:lead-data")}</h1>
                 <button
@@ -343,12 +367,12 @@ export default function CreateLead({ edit, id }) {
             </div>
 
             {/* Menu Derecha */}
-            <ActivityPanel editing={!id} />
+            {lead && <ActivityPanel editing={!id} />}
           </div>
         </div>
 
         {/* Botones de acción */}
-        {(openButtons || !edit) && (
+        {(openButtons || !lead) && (
           <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
             <Button
               type="submit"

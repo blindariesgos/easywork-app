@@ -1,18 +1,21 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import SliderOverShord from "../../../../../../../components/SliderOverShort";
-import Button from "../../../../../../../components/form/Button";
+import SliderOverShord from "../../../../../../components/SliderOverShort";
+import Button from "../../../../../../components/form/Button";
 import Tag from "@/src/components/Tag";
 import { RiPencilFill } from "react-icons/ri";
-import SelectInput from "../../../../../../../components/form/SelectInput";
+import SelectInput from "../../../../../../components/form/SelectInput";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
+import useAppContext from "@/src/context/app";
+
 const AddPolicy = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
   const MAX_FILE_SIZE = 5000000; //5MB
+  const { lists } = useAppContext();
 
   const handleChangeFile = async (e) => {
     const files = e.target.files;
@@ -42,19 +45,15 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     reader.readAsDataURL(file);
   };
 
-  useEffect(() => {
-    console.log({ file });
-  }, [file]);
-
   return (
     <SliderOverShord openModal={isOpen}>
       <Tag onclick={() => setIsOpen(false)} className="bg-easywork-main" />
       <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
         <div className="bg-gray-100 rounded-md p-2">
-          <h4 className="text-2xl pb-4">Datos</h4>
+          <h4 className="text-2xl pb-4">Crear póliza</h4>
           <div className="bg-white rounded-md p-4 flex justify-between items-center">
-            <p>Datos</p>
-            <RiPencilFill className="w-4 h-4 text-primary" />
+            <p>Datos de la póliza</p>
+            {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
           </div>
           <div className="px-8 pt-4 grid grid-cols-1 gap-4">
             <SelectInput
@@ -110,6 +109,11 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               placeholder="- Seleccionar -"
             />
             <SelectInput
+              label={"Agente relacionado"}
+              options={lists?.users ?? []}
+              placeholder="- Seleccionar -"
+            />
+            {/* <SelectInput
               label={t("control:portafolio:control:form:category")}
               options={[
                 {
@@ -206,7 +210,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                 },
               ]}
               placeholder="- Seleccionar -"
-            />
+            /> */}
             <div className="w-full">
               <label
                 className={`block text-sm font-medium leading-6 text-gray-900`}

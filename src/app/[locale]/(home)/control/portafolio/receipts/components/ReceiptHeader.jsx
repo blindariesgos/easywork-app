@@ -14,6 +14,7 @@ import { useCommon } from "../../../../../../../hooks/useCommon";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
+import ButtonAdd from "../../components/ButtonAdd";
 
 export default function ReceiptHeader() {
   const { t } = useTranslation();
@@ -36,14 +37,7 @@ export default function ReceiptHeader() {
         <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
           {t("control:portafolio:receipt:title")}
         </h1>
-        <Button
-          label={"Crear"}
-          type="button"
-          // onclick={() => handlePathname()}
-          buttonStyle={"primary"}
-          icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
-          className="px-3 py-2"
-        />
+        <ButtonAdd />
         <div className="flex-grow">
           <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
             <FiltersReceipt />

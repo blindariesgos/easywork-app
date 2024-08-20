@@ -18,54 +18,63 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:overdue"),
     id: 2,
     color: "#FFEB04",
+    amount: "$10,00",
     value: "324",
   },
   {
     name: t("control:portafolio:control:cards:delay"),
     id: 4,
     color: "#A9EA44",
+    amount: "$1000,00",
     value: "212",
   },
   {
     name: t("control:portafolio:control:cards:urgent"),
     id: 3,
     color: "#86BEDF",
+    amount: "$100,00",
     value: "23",
-  },
-  {
-    name: t("control:portafolio:control:cards:trash"),
-    id: 6,
-    color: "#AF8764",
-    value: "2",
-  },
-  {
-    name: t("control:portafolio:control:cards:trash-more"),
-    id: 8,
-    color: "#b60f0f",
-    value: "24",
   },
   {
     name: t("control:portafolio:control:cards:by-overcoming"),
     id: 1,
     color: "#6b6c6d",
+    amount: "$109,15",
     value: "23412",
   },
   {
     name: t("control:portafolio:control:cards:on-time"),
     id: 5,
     color: "#8D9194",
+    amount: "$1069812,00",
     value: "43",
   },
   {
     name: t("control:portafolio:control:cards:charged"),
     id: 9,
     color: "#DFE3E6",
+    amount: "$31080,00",
     value: "24",
   },
   {
     name: t("control:portafolio:control:cards:cancelled"),
     id: 7,
     color: "#0F8BBF",
+    amount: "$960,00",
+    value: "24",
+  },
+  {
+    name: t("control:portafolio:control:cards:trash"),
+    id: 6,
+    color: "#AF8764",
+    amount: "$100,50",
+    value: "2",
+  },
+  {
+    name: t("control:portafolio:control:cards:trash-more"),
+    id: 8,
+    color: "#b60f0f",
+    amount: "$40,00",
     value: "24",
   },
 ];
@@ -92,14 +101,17 @@ const Control = () => {
                       <Radio
                         key={card.id}
                         value={card}
-                        className="group px-2 pb-2 pt-4 relative opacity-20 select-none grid grid-cols-1 gap-6 data-[checked]:opacity-100 hover:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
+                        className="group px-2 pb-2 pt-4 relative opacity-20 select-none flex flex-col w-full justify-between gap-6 data-[checked]:opacity-100 hover:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
                       >
                         <div
                           className={`absolute w-full h-[7px] top-0 left-0`}
                           style={{ background: card.color }}
                         />
                         <p className="text-sm">{card.name}</p>
-                        <p className="text-4xl text-right">{card.value}</p>
+                        <div className="w-full">
+                          <p className="text-4xl text-right">{card.value}</p>
+                          <p className="text-sm text-right">{card.amount}</p>
+                        </div>
                       </Radio>
                     ))}
                   </RadioGroup>

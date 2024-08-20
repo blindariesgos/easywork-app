@@ -5,13 +5,14 @@ import Control from "./components/panels/control";
 import { useTranslation } from "react-i18next";
 import Button from "../../../../../../components/form/Button";
 import { FaChevronDown } from "react-icons/fa";
-import AddPolicy from "./components/addPolicy";
+
 import FiltersControl from "./components/filters/FiltersControl";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useControlContext from "@/src/context/control";
+import ButtonAdd from "../components/ButtonAdd";
+
 const Page = () => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
   const { filters, displayFilters, removeFilter } = useControlContext();
   // const tabs = [
   //   {
@@ -38,13 +39,7 @@ const Page = () => {
           <h2 className="text-primary text-2xl">
             {t("control:portafolio:control:title")}
           </h2>
-          <Button
-            label={"Añadir"}
-            buttonStyle="primary"
-            icon={<FaChevronDown className="w-4 h-4" />}
-            className="py-2 px-4"
-            onclick={() => setIsOpen(true)}
-          />
+          <ButtonAdd />
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FiltersControl />
@@ -83,7 +78,6 @@ const Page = () => {
           </div>
         </div>
       </div> */}
-      <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} />
     </Fragment>
   );
 };

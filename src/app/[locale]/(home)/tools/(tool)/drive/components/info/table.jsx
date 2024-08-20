@@ -17,6 +17,8 @@ import Button from "@/src/components/form/Button";
 import { formatDate } from "@/src/utils/getFormatDate";
 import UserInfoById from "../UserInfoById";
 import { useRouter } from "next/navigation";
+import ConnectCRMBUtton from "../ConnectCRMButton";
+import ConnectCRM from "../dialogs/ConnectCRM";
 
 export default function TableInfo({
   files,
@@ -306,7 +308,9 @@ export default function TableInfo({
                               }
                             />
                           ) : (
-                            ""
+                            file.type === "folder" && (
+                              <ConnectCRMBUtton folder={file} />
+                            )
                           )}
                         </td>
                       </tr>
@@ -317,6 +321,7 @@ export default function TableInfo({
           </div>
         </div>
       </div>
+      <ConnectCRM />
     </div>
   );
 }

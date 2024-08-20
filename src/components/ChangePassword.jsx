@@ -26,7 +26,7 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
   });
 
   const textPassword =
-    "La contraseña debe contener al menos 10 símbolos, contienen letras mayúsculas  latina (a-z), contienen letras latinas minúsculas (a-z), contienen los dígitos (0-9),contener marcas de puntuación (,.<>/?;:’[]{}|`~!@#$%^&*()-_+=).";
+    "La contraseña debe contener al menos 10 símbolos, contener letras mayúsculas latina (a-z), contener letras latinas minúsculas (a-z), contener algún dígito (0-9), contener carácter especial (,.<>/?;:’[]{}|`~!@#$%^&*()-_+=).";
 
   useEffect(() => {}, [params.get("changepassword")]);
 
@@ -81,7 +81,9 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
                         <div className="h-full bg-white mt-3 rounded-lg p-5">
                           <div className="flex justify-between border-b-2 pb-1">
                             <h2>Cambiar la contraseña</h2>
-                            <button className="px-2 py-1 bg-gray-50 hover:bg-gray-400 cursor-pointer rounded-md text-white">Cancelar</button>
+                            <button className="px-2 py-1 bg-gray-50 hover:bg-gray-400 cursor-pointer rounded-md text-white">
+                              Cancelar
+                            </button>
                           </div>
                           <div className="mt-12">
                             <p className="text-sm">Nueva contraseña</p>
@@ -92,9 +94,15 @@ export default function ChangePassword({ previousModalPadding, colorTag }) {
                             <p className="text-sm">Confirmar contraseña</p>
                             <input type="password" className="w-full" />
                           </div>
-                          <button className="text-white bg-easywork-main hover:bg-easywork-mainhover rounded-md p-2 mt-10">
-                            Cerrar sesión en todos los dispositivos
-                          </button>
+                          <div className="flex">
+                            <button className="text-white bg-easywork-main hover:bg-easywork-mainhover rounded-md p-2 mt-10">
+                              Actualizar contraseña
+                            </button>
+                            <button className="text-white bg-easywork-main hover:bg-easywork-mainhover ml-2 rounded-md p-2 mt-10">
+                              Actualizar y cerrar sesión en todos los
+                              dispositivos
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

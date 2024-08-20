@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
-import SelectDropdown from "./SelectDropdown";
+import { setCookie, getCookie } from "cookies-next";
 import useAppContext from "../../../../../../../context/app";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { XCircleIcon } from "@heroicons/react/20/solid";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import * as yup from "yup";
@@ -36,10 +36,12 @@ export default function Signature({
   const { selectOauth } = useAppContext();
   const fileInputRef = useRef(null);
   const [signatures, setSignatures] = useState([]);
+  const [selectedCheckbox, setSelectedCheckbox] = useState(null);
 
-  const schema = yup.object().shape({
-    responsible: yup.string(),
-  });
+  const handleCheckboxChange = (id) => {
+    setSelectedCheckbox(id);
+    setCookie("myCheckbox", id);
+  };
 
   const handleFileClick = () => {
     fileInputRef.current.click();
@@ -86,11 +88,27 @@ export default function Signature({
     } catch (error) {}
   };
 
+  const deleteSignature = async (id) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      if (response) getSignatures();
+    } catch (error) {}
+  };
+
   useEffect(() => {
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
     getSignatures();
+    console.log(getCookie("myCheckbox"));
+    setSelectedCheckbox(getCookie("myCheckbox"));
   }, [params.get("signature")]);
 
   return (
@@ -137,7 +155,7 @@ export default function Signature({
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
                       <div className="flex mb-3 items-center">
                         <div className="flex items-center">
-                          <h1 className="text-lg mb-4 inline-block align-middle h-full">
+                          <h1 className="text-lg inline-block align-middle h-full">
                             Firmas
                           </h1>
                         </div>
@@ -159,7 +177,7 @@ export default function Signature({
                             className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
                             onClick={handleFileClick}
                           >
-                            <p className="ml-1">Agregar Firma</p>
+                            <p className="ml-1 text-center">Agregar Firma</p>
                           </div>
                           <input
                             type="file"
@@ -169,27 +187,46 @@ export default function Signature({
                           />
                         </div>
                       </div>
-                      <div className="bg-white p-5 h-auto rounded-lg w-full text-easywork-main flex">
-                        <div className="w-1/2 flex">
-                          <h1>Remitente</h1>
-                          <ChevronDownIcon className="w-5 h-5" />
-                        </div>
-                        <div className="w-1/2 flex">
-                          <h1>Firma</h1>
-                          <ChevronDownIcon className="w-5 h-5" />
-                        </div>
-                      </div>
-                        {signatures.map((signature, index) => (
-                          <div className="p-3 w-full" key={index}>
-                            <div className="flex justify-between">
-                              <div className="flex">
-                                <input type="checkbox" />
-                                <p className="ml-2">{selectOauth?.email}</p>
-                              </div>
-                              <p>{signature?.name}</p>
-                            </div>
-                          </div>
-                        ))}
+                      <table className="text-easywork-main w-full">
+                        <thead>
+                          <tr className="bg-white text-left">
+                            <th className="pl-6 py-5 rounded-l-lg">
+                              Remitente
+                            </th>
+                            <th className="py-5 pr-5">Firma</th>
+                            <th className="p-1 rounded-r-lg"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {signatures.map((signature, index) => (
+                            <tr key={index}>
+                              <td className="py-2">
+                                <div className="flex">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedCheckbox === signature.id}
+                                    onChange={() =>
+                                      handleCheckboxChange(signature.id)
+                                    }
+                                  />
+                                  <p className="ml-2">
+                                    {session.data.user.email}
+                                  </p>
+                                </div>
+                              </td>
+                              <td className="py-2">{signature?.name}</td>
+                              <td className="py-2">
+                                <XCircleIcon
+                                  className="w-5 h-5 cursor-pointer"
+                                  onClick={() => {
+                                    deleteSignature(signature.id);
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </Dialog.Panel>

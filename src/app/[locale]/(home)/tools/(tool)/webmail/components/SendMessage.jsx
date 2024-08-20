@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import TextEditor from "../../tasks/components/TextEditor";
+import { setCookie, getCookie } from "cookies-next";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import SelectDropdown from "./SelectDropdown";
 import useAppContext from "../../../../../../../context/app";
@@ -15,8 +16,8 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import dynamic from "next/dynamic";
 import axios from "axios";
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import ReactQuill from "react-quill";
+import './styles.css';
 
 export default function SendMessage({
   selectOauth,
@@ -42,6 +43,7 @@ export default function SendMessage({
   const [contactsArray, setContactsArray] = useState(null);
   const [BCCArray, setBCCArray] = useState(null);
   const [CCArray, setCCArray] = useState(null);
+  const [signature, setSignature] = useState(null);
   const [files, setFiles] = useState([]);
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
@@ -55,10 +57,15 @@ export default function SendMessage({
   });
 
   useEffect(() => {
+    getSignature();
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
   }, [params.get("send")]);
+
+  useEffect(() => {
+    getSignature();
+  }, [params.get("signature")]);
 
   const handleFileClick = () => {
     fileInputRef.current.click();
@@ -75,16 +82,15 @@ export default function SendMessage({
       cc: CCArray,
       bcc: BCCArray,
       subject: subject,
-      body: value,
+      body: value + " <style>img {max-width: 650px; }</style>",
       attachments: [
-        {
-          filename: "test.pdf",
-          mimeType: "application/pdf",
-          path: "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf",
-        },
+        // {
+        //   filename: "test.pdf",
+        //   mimeType: "application/pdf",
+        //   path: "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf",
+        // },
       ],
     };
-    console.log(data);
     try {
       if (!data.to) {
         toast.error("Debes colocar destinatario");
@@ -102,17 +108,36 @@ export default function SendMessage({
     }
   }
 
-  const toolbar = [
-    ["bold", "italic", "underline", "strike"],
-    ["blockquote"],
-    ["link", "image"],
-    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-    [{ indent: "-1" }, { indent: "+1" }],
-    [{ size: ["small", false, "large", "huge"] }],
-    [{ color: [] }, { background: [] }],
-    [{ font: [] }],
-    [{ align: [] }],
-  ];
+  const getSignature = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${getCookie("myCheckbox")}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      console.log(response.data.url);
+      console.log(value);
+      setValueText(`<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`);
+      setSignature(response.data.url);
+    } catch (error) {}
+  };
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ size: [] }],
+      [{ font: [] }],
+      [{ align: ["right", "center", "justify"] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      [{ color: ["red", "#785412"] }],
+      [{ background: ["red", "#785412"] }],
+    ],
+  };
 
   const formats = [
     "header",
@@ -123,17 +148,14 @@ export default function SendMessage({
     "blockquote",
     "list",
     "bullet",
-    "indent",
     "link",
-    "image",
-    "video",
-    "size",
-    "font",
     "color",
+    "image",
+    "image-max-width",
     "background",
     "align",
-    "header",
-    "direction",
+    "size",
+    "font",
   ];
 
   return (
@@ -247,20 +269,12 @@ export default function SendMessage({
                         </div>
                         <div className="py-2">
                           <ReactQuill
-                            className="h-96 w-full bg-white pb-12"
                             theme="snow"
                             value={value}
                             onChange={setValueText}
                             formats={formats}
-                            modules={{ toolbar }}
+                            modules={modules}
                           />
-                          {/* <TextEditor
-                            className="h-96 w-full bg-white pb-12"
-                            theme="snow"
-                            ref={quillRef}
-                            value={value}
-                            setValue={setValueText}
-                          /> */}
                           <div className="mt-2">
                             {files &&
                               files.map((file, index) => (

@@ -491,13 +491,15 @@ export const useSidebar = () => {
           children: [
             {
               name: t("common:menu:settings:subscriptions"),
-              href: "/settings/subscriptions",
+              // href: "/settings/subscriptions",
+              href: "",
               image: "/img/settings/subscriptions.png",
               iconShortBar: ArchiveBoxIcon,
             },
             {
               name: t("common:menu:settings:other-settings"),
-              href: "/settings/othersettings",
+              // href: "/settings/othersettings",
+              href: "",
               image: "/img/settings/othersettings.png",
               iconShortBar: BookOpenIcon,
             },

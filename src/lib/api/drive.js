@@ -67,4 +67,10 @@ export const deleteItem = async (type, id) => {
     return response;
 };
 
+export const assignCRMContact = async (folderId, contactId) => {
+    const url = `/folders/${folderId}/assign-crm-contact/${contactId}`
+    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST }).put(url).catch(error => error);
+    return response;
+};
+
 

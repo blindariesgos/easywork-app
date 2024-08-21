@@ -11,7 +11,8 @@ import {
   renameFile,
   deleteItem,
   moveItem,
-  getFolder
+  getFolder,
+  assignCRMContact
 } from "../../lib/api/drive";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -20,6 +21,8 @@ import useAppContext from "../app";
 
 export default function DriveContextProvider({ children }) {
   const { t } = useTranslation()
+  const [isOpenConnect, setIsOpenConnect] = useState(false)
+  const [folderConnect, setFolderConnect] = useState()
   const [folders, setFolders] = useState()
   const [loading, setLoading] = useState(true)
   const [itemCopy, setItemCopy] = useState()
@@ -289,6 +292,20 @@ export default function DriveContextProvider({ children }) {
     setLoading(false)
   }
 
+  const connectCRMContact = async (contact) => {
+    const id = toast.loading(`Vinculando carpeta ${folderConnect?.name} a contacto ${contact?.name}`)
+    const response = await assignCRMContact(folderConnect.id, contact.id)
+    console.log({ response })
+    if (response?.statusCode == 500) {
+      toast.update(id, { render: "Error al vincular contacto", type: "error", isLoading: false, autoClose: 5000 });
+      return;
+    }
+    toast.update(id, { render: "Contacto vinculado satisfactoriamente", type: "success", isLoading: false, autoClose: 5000 });
+    setIsOpenConnect(false);
+    await getItems()
+    return response
+  };
+
   useEffect(() => {
     getItems()
   }, [])
@@ -316,6 +333,11 @@ export default function DriveContextProvider({ children }) {
     itemMove,
     isOpenMove,
     externalFolderInfo,
+    isOpenConnect,
+    folderConnect,
+    connectCRMContact,
+    setFolderConnect,
+    setIsOpenConnect,
     setIsOpenMove,
     moveFolder,
     setItemMove,
@@ -354,7 +376,9 @@ export default function DriveContextProvider({ children }) {
     itemDelete,
     itemMove,
     isOpenMove,
-    externalFolderInfo
+    externalFolderInfo,
+    isOpenConnect,
+    folderConnect,
   ]);
 
   return <DriveContext.Provider value={values}>{children}</DriveContext.Provider>;

@@ -25,14 +25,14 @@ export default function ContactsHeader() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const { push } = useRouter();
   const { selectedContacts } = useCrmContext();
   const { filters, displayFilters, removeFilter } = useContactContext();
 
   const handlePathname = () => {
     params.delete("page");
     params.set("show", true);
-    replace(`/sales/crm/contacts/contact?${params.toString()}`);
+    push(`/sales/crm/contacts/contact?${params.toString()}`);
   };
 
   return (

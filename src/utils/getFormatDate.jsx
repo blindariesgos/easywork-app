@@ -7,8 +7,12 @@ import {
   differenceInDays,
   isTomorrow,
   isSameDay,
-  endOfToday,
   startOfDay,
+  addDays,
+  endOfTomorrow,
+  startOfTomorrow,
+  startOfToday,
+  endOfToday,
 } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -50,16 +54,14 @@ export const isDateOverdue = (date) => {
 export const isDateTomorrowOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
   const deadlineDate = parseISO(date);
-
-  return isTomorrow(deadlineDate);
+  return startOfTomorrow() < deadlineDate && deadlineDate < endOfTomorrow();
 };
 
 export const isDateTodayOverdue = (date) => {
   if (!date) return false; // No hay fecha limite
   const deadlineDate = parseISO(date);
-  const now = new Date();
 
-  return isSameDay(deadlineDate, now);
+  return startOfToday() < deadlineDate && deadlineDate < endOfToday();
 };
 
 export const isDateMoreFiveDayOverdue = (date) => {

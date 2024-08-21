@@ -187,7 +187,7 @@ export default function Page() {
               Pólizas que requieren atención
             </h1>
             <ul className="h-3/6 p-1">
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -202,7 +202,7 @@ export default function Page() {
                   </p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -217,7 +217,7 @@ export default function Page() {
                   </p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -237,7 +237,7 @@ export default function Page() {
           <div className="col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72">
             <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
             <ul className="h-5/6 p-1 overflow-y-auto">
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -253,7 +253,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">hace 6 días. 4 horas</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -268,7 +268,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">hace 1 semana</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -287,7 +287,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">hace 1 semana</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -310,7 +310,7 @@ export default function Page() {
               Contactos que requieren atención
             </h1>
             <ul className="h-3/6 p-1">
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -323,7 +323,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">+5263524120</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}

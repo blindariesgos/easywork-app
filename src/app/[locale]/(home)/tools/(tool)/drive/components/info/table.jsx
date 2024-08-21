@@ -16,6 +16,9 @@ import {
 import Button from "@/src/components/form/Button";
 import { formatDate } from "@/src/utils/getFormatDate";
 import UserInfoById from "../UserInfoById";
+import { useRouter } from "next/navigation";
+import ConnectCRMBUtton from "../ConnectCRMButton";
+import ConnectCRM from "../dialogs/ConnectCRM";
 
 export default function TableInfo({
   files,
@@ -29,7 +32,7 @@ export default function TableInfo({
   handleOpenItem,
 }) {
   const { t } = useTranslation();
-
+  const { push } = useRouter();
   return (
     <div className="flow-root">
       <div className="overflow-x-auto">
@@ -251,7 +254,7 @@ export default function TableInfo({
                           </p>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          <div className="flex items-center">
+                          <div className="flex items-center justify-center">
                             {/* <div className="h-9 w-9 flex-shrink-0">
                               <Image
                                 className="h-9 w-9 rounded-full"
@@ -262,13 +265,13 @@ export default function TableInfo({
                               />
                             </div> */}
                             <div className="ml-4">
-                              <div className="font-medium text-gray-900">
+                              <div className="font-medium text-gray-900 text-center">
                                 {file?.modifiedBy?.name ?? "N/P"}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700 text-center">
                           <div className="flex items-center">
                             {/* <div className="h-9 w-9 flex-shrink-0">
                               <Image
@@ -282,15 +285,33 @@ export default function TableInfo({
                             <UserInfoById id={file?.createdby} />
                           </div>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700 text-center">
                           {getFileSize(file.size) ?? ""}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          <Button
-                            label="CRM"
-                            buttonStyle="secondary"
-                            className="px-2 py-1"
-                          />
+                          {file?.owners &&
+                          file?.owners?.find(
+                            (f) => f.entityType === "contact"
+                          ) ? (
+                            <Button
+                              label="CRM"
+                              buttonStyle="secondary"
+                              className="px-2 py-1"
+                              onclick={() =>
+                                push(
+                                  `/sales/crm/contacts/contact/${
+                                    file?.owners?.find(
+                                      (f) => f.entityType === "contact"
+                                    )?.entityId
+                                  }?show=true&page=1`
+                                )
+                              }
+                            />
+                          ) : (
+                            file.type === "folder" && (
+                              <ConnectCRMBUtton folder={file} />
+                            )
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -300,6 +321,7 @@ export default function TableInfo({
           </div>
         </div>
       </div>
+      <ConnectCRM />
     </div>
   );
 }

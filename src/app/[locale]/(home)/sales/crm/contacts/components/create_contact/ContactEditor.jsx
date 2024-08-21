@@ -29,6 +29,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import ContactFolders from "../show_documents/ContactFolders";
+import { clsx } from "clsx";
 
 export default function ContactEditor({ contact, id }) {
   const { lists } = useAppContext();
@@ -234,26 +235,39 @@ export default function ContactEditor({ contact, id }) {
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
   return (
-    <div className="flex flex-col h-screen relative w-full">
+    <div
+      className={clsx("flex flex-col h-screen relative", {
+        "w-full": contact,
+        "max-w-xl w-full": !contact,
+      })}
+    >
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
       {/* Encabezado del Formulario */}
       <div className="flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
-        <div className="bg-transparent py-6 mx-4">
-          <div className="flex items-start flex-col justify-between space-y-3 relative">
-            {!id && (
-              <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
-            )}
-            <div className="flex gap-2 items-center">
-              <h1 className="text-xl sm:pl-6 pl-2">
-                {contact
-                  ? contact.fullName ?? contact.name
-                  : t("leads:create:client")}
-              </h1>
-            </div>
-            <AddContactTabs id={id} tab={tab} />
+        {!contact && (
+          <div className="flex gap-2 items-center py-6">
+            <h1 className="text-xl sm:pl-6 pl-2">{t("leads:create:client")}</h1>
           </div>
-        </div>
+        )}
+        {contact && (
+          <div className="bg-transparent py-6 mx-4">
+            <div className="flex items-start flex-col justify-between space-y-3 relative">
+              {!id && (
+                <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
+              )}
+              <div className="flex gap-2 items-center">
+                <h1 className="text-xl sm:pl-6 pl-2">
+                  {contact
+                    ? contact.fullName ?? contact.name
+                    : t("leads:create:client")}
+                </h1>
+              </div>
+              <AddContactTabs id={id} tab={tab} />
+            </div>
+          </div>
+        )}
+
         {tab === "general" && (
           <form
             onSubmit={handleSubmit(handleFormSubmit)}
@@ -261,7 +275,14 @@ export default function ContactEditor({ contact, id }) {
           >
             {/* Panel Principal */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 h-full  bg-gray-100 md:mx-4 rounded-lg p-4 w-full">
+            <div
+              className={clsx(
+                "grid grid-cols-1  h-full  bg-gray-100 md:mx-4 rounded-lg p-4 w-full",
+                {
+                  "md:grid-cols-2": contact,
+                }
+              )}
+            >
               {/* Menu Izquierda */}
               <div className=" bg-gray-100 md:overflow-y-scroll rounded-lg">
                 <div className="pr-2">
@@ -299,7 +320,7 @@ export default function ContactEditor({ contact, id }) {
                     </div>
                   )}
                 </div>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:max-w-xl px-5 mb-10 mt-8">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-3  px-5 mb-10 mt-8">
                   <TextInput
                     type="text"
                     label={t("contacts:create:name")}
@@ -445,7 +466,7 @@ export default function ContactEditor({ contact, id }) {
               </div>
 
               {/* Menu Derecha */}
-              {id && <ActivityPanel contactId={id} />}
+              {id && contact && <ActivityPanel contactId={id} />}
             </div>
             {/* )} */}
 

@@ -41,19 +41,22 @@ const Task = ({ task, mutate }) => {
 
   return (
     <div
-      className={clsx("flex gap-2 p-2 rounded-md w-full  items-center", {
-        "bg-red-200 ": isDateOverdue(task.deadline) && !task.isCompleted,
-        "bg-green-200 ":
-          isDateTomorrowOverdue(task.deadline) && !task.isCompleted,
-        "bg-orange-300 ":
-          isDateTodayOverdue(task.deadline) && !task.isCompleted,
-        "bg-blue-300":
-          isDateMoreFiveDayOverdue(task.deadline) && !task.isCompleted,
-        "bg-gray-300":
-          !task.deadline ||
-          (isDateMoreTenDayOverdue(task.deadline) && !task.isCompleted),
-        "text-gray-800/45 line-through": task.isCompleted,
-      })}
+      className={clsx(
+        "flex gap-2 p-2 rounded-md w-full items-center hover:bg-easy-300",
+        {
+          "bg-red-200 ": task.status == "overdue" && !task.isCompleted,
+          "bg-green-200 ":
+            isDateTomorrowOverdue(task.deadline) && !task.isCompleted,
+          "bg-orange-300 ":
+            isDateTodayOverdue(task.deadline) && !task.isCompleted,
+          "bg-blue-300":
+            isDateMoreFiveDayOverdue(task.deadline) && !task.isCompleted,
+          "bg-gray-300":
+            !task.deadline ||
+            (isDateMoreTenDayOverdue(task.deadline) && !task.isCompleted),
+          "text-gray-800/45 line-through": task.isCompleted,
+        }
+      )}
     >
       <InputCheckBox
         checked={checked}

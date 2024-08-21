@@ -12,7 +12,7 @@ export default function LeadDetails({ leadInfo, id }) {
           </div>
         }
       >
-        <CreateLead edit={leadInfo} id={id} />
+        <CreateLead lead={leadInfo} id={id} />
       </Suspense>
     </SlideOver>
   );

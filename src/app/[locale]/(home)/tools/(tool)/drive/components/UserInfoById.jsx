@@ -9,10 +9,10 @@ const UserInfoById = ({ id }) => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    if (!id) return;
-    setUser(lists.users.find((u) => u.id === id));
+    if (!id || !lists?.users) return;
+    setUser(lists?.users?.find((u) => u.id === id));
     setLoading(false);
-  }, [id]);
+  }, [id, lists?.users]);
 
   if (!id) {
     return "N/D";

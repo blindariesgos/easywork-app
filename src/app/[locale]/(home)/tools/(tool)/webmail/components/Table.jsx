@@ -63,6 +63,7 @@ export default function Table({
   };
 
   async function updateLabelId(array, label) {
+    console.log(label, array, selectOauth?.id);
     if (label === "inbox") {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,

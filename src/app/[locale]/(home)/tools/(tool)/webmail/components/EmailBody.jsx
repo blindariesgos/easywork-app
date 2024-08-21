@@ -34,6 +34,7 @@ export default function EmailBody({
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const fileInputRef = useRef(null);
+  const container = useRef(null);
   const [files, setFiles] = useState([]);
 
   const getParts = (parts) => {
@@ -53,9 +54,10 @@ export default function EmailBody({
   };
 
   useEffect(() => {
-    if(selectMail?.folder?.includes("UNREAD")){
+    if (selectMail?.folder?.includes("UNREAD")) {
       updateLabelId([selectMail.googleId], "unread");
     }
+    setReply(false);
   }, [params.get("detail")]);
 
   useEffect(() => {
@@ -70,6 +72,24 @@ export default function EmailBody({
   const handleFileClick = () => {
     fileInputRef.current.click();
   };
+
+  const replyEmail = () => {
+    setReply(true);
+    setTimeout(() => {
+      if (container.current) {
+        container.current.scrollTop = container.current.scrollHeight;
+      }
+    }, 100);
+  };
+
+  const moveFolder = async (folder,id) => {
+    if (folder === 0){
+      await updateLabelId([id], "spam");
+    } else if (folder === 1) {
+      await updateLabelId([id], "trash");
+    }
+    setOpenModal(false);
+  }
 
   const toolbar = [
     ["bold", "italic", "underline", "strike"],
@@ -147,7 +167,10 @@ export default function EmailBody({
                         />
                       )}
                     </div>
-                    <div className="bg-gray-100 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
+                    <div
+                      className="bg-gray-100 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4 scroll-smooth"
+                      ref={container}
+                    >
                       <h1 className="text-lg mb-4">{selectMail?.subject}</h1>
                       <div className="bg-white text-sm p-5">
                         <div className="pb-2 border-b-2">
@@ -157,7 +180,7 @@ export default function EmailBody({
                             <p
                               className="m-2 text-xs font-semibold cursor-pointer"
                               onClick={() => {
-                                setReply(true);
+                                replyEmail();
                               }}
                             >
                               RESPUESTA
@@ -165,7 +188,7 @@ export default function EmailBody({
                             <p
                               className="m-2 text-xs font-semibold cursor-pointer"
                               onClick={() => {
-                                setReply(true);
+                                replyEmail();
                               }}
                             >
                               RESPONDER A TODOS
@@ -173,10 +196,10 @@ export default function EmailBody({
                             <p className="m-2 text-xs font-semibold cursor-pointer">
                               REENVIAR
                             </p>
-                            <p className="m-2 text-xs font-semibold cursor-pointer">
+                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(0,selectMail.id)}}>
                               MARCAR COMO CORREO NO DESEADO
                             </p>
-                            <p className="m-2 text-xs font-semibold cursor-pointer">
+                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(1,selectMail.id)}}>
                               ELIMINAR
                             </p>
                           </div>

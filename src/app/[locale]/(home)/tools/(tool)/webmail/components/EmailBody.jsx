@@ -88,7 +88,7 @@ export default function EmailBody({
     } else if (folder === 1) {
       await updateLabelId([id], "trash");
     }
-    setOpenModal(false);
+    router.back();
   }
 
   const toolbar = [
@@ -196,10 +196,10 @@ export default function EmailBody({
                             <p className="m-2 text-xs font-semibold cursor-pointer">
                               REENVIAR
                             </p>
-                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(0,selectMail.id)}}>
+                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(0,selectMail.googleId)}}>
                               MARCAR COMO CORREO NO DESEADO
                             </p>
-                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(1,selectMail.id)}}>
+                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(1,selectMail.googleId)}}>
                               ELIMINAR
                             </p>
                           </div>

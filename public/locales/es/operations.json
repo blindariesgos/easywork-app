@@ -1,0 +1,15 @@
+{
+    "policies": {
+        "title": "Pólizas",
+        "table": {
+            "client": "Información General",
+            "policy": "N° Póliza",
+            "origin": "Origen",
+            "state": "Estado",
+            "amount": "Importe",
+            "created-in": "Creado el",
+            "activities": "Actividad",
+            "not-data": "No hay Pólizas"
+        }
+    }
+}

@@ -20,13 +20,12 @@ import React, {
 } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import { Pagination } from "@/src/components/pagination/Pagination";
+import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
 import { deleteContactId } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
-import { useContactTable } from "@/src/hooks/useCommon";
+import { usePoliciesTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
@@ -43,7 +42,7 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useContactContext from "@/src/context/contacts";
+import usePolicyContext from "../../../../../../context/policies";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 
@@ -51,8 +50,9 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function TableContacts() {
-  const { data, limit, setLimit } = useContactContext();
+export default function TablePolicies() {
+  const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
+    usePolicyContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -60,47 +60,31 @@ export default function TableContacts() {
   const router = useRouter();
   const { setLastContactsUpdate, selectedContacts, setSelectedContacts } =
     useCrmContext();
-  const { columnTable } = useContactTable();
+  const { columnTable } = usePoliciesTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
   const { onCloseAlertDialog } = useAlertContext();
   const [loading, setLoading] = useState(false);
 
-  const [dataContacts, setDataContacts] = useState();
-
-  const { fieldClicked, handleSorting, orderItems } = useOrderByColumn(
-    [],
-    data?.items
-  );
-
-  useEffect(() => {
-    if (data) setDataContacts(data);
-  }, [data]);
-
-  useEffect(() => {
-    if (orderItems?.length > 0)
-      setDataContacts({ items: orderItems, meta: data?.meta });
-  }, [orderItems]);
-
   useLayoutEffect(() => {
     if (checkbox.current) {
       const isIndeterminate =
         selectedContacts &&
         selectedContacts.length > 0 &&
-        selectedContacts.length < dataContacts?.items.length;
-      setChecked(selectedContacts?.length === dataContacts?.items?.length);
+        selectedContacts.length < data?.items.length;
+      setChecked(selectedContacts?.length === data?.items?.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedContacts, dataContacts]);
+  }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : dataContacts?.items);
+    setSelectedContacts(checked || indeterminate ? [] : data?.items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
-  }, [checked, indeterminate, dataContacts, setSelectedContacts]);
+  }, [checked, indeterminate, data, setSelectedContacts]);
 
   const deleteContact = (contact) => {
     if (contact.length === 1) apiDelete(contact[0].id);
@@ -132,44 +116,16 @@ export default function TableContacts() {
     }
   };
 
-  if (dataContacts?.items && dataContacts?.items.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("contacts:table:not-data")}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        router.push(`/sales/crm/contacts/contact/${id}?show=true`),
+      handleClick: () =>
+        router.push(
+          `/operations/policies/policy/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true`
+        ),
     },
     { name: "Editar" },
     { name: "Copiar" },
-    { name: "Eliminar" },
-    { name: "Agregar Cita" },
-    { name: "Enviar e-mail" },
   ];
 
   return (
@@ -206,7 +162,7 @@ export default function TableContacts() {
                           index === selectedColumns.length - 1 && "rounded-e-xl"
                         }`}
                         onClick={() => {
-                          column.order && handleSorting(column.order);
+                          column.order && setOrderBy(column.order);
                         }}
                       >
                         <div className="flex justify-center items-center gap-2">
@@ -214,12 +170,11 @@ export default function TableContacts() {
                           <div>
                             {column.order && (
                               <ChevronDownIcon
-                                className={`h-6 w-6 text-primary ${
-                                  fieldClicked.field === column.order &&
-                                  fieldClicked.sortDirection === "desc"
-                                    ? "transform rotate-180"
-                                    : ""
-                                }`}
+                                className={clsx("h-6 w-6", {
+                                  "text-primary": orderBy === column.order,
+                                  "transform rotate-180":
+                                    orderBy === column.order && order === "ASC",
+                                })}
                               />
                             )}
                           </div>
@@ -229,35 +184,59 @@ export default function TableContacts() {
                 </tr>
               </thead>
               <tbody className="bg-gray-100">
+                {data?.items && data?.items.length === 0 && (
+                  <div className="flex items-center justify-center h-96">
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-10 h-10 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          ></path>
+                        </svg>
+                      </div>
+                      <p className="text-lg font-medium text-gray-400">
+                        {t("operations:policies:table:not-data")}
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {selectedColumns.length > 0 &&
-                  dataContacts?.items &&
-                  dataContacts?.items.map((contact, index) => {
+                  data?.items &&
+                  data?.items.map((policy, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(contact)
+                          selectedContacts.includes(policy)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12">
-                          {selectedContacts.includes(contact) && (
+                          {selectedContacts.includes(policy) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={contact.id}
-                              checked={selectedContacts.includes(contact)}
+                              value={policy.id}
+                              checked={selectedContacts.includes(policy)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, contact]
+                                    ? [...selectedContacts, policy]
                                     : selectedContacts.filter(
-                                        (p) => p !== contact
+                                        (p) => p !== policy
                                       )
                                 )
                               }
@@ -288,7 +267,7 @@ export default function TableContacts() {
                                       key={item.name}
                                       onClick={() =>
                                         item.handleClick &&
-                                        item.handleClick(contact.id)
+                                        item.handleClick(policy.id)
                                       }
                                     >
                                       {({ active }) => (
@@ -311,34 +290,32 @@ export default function TableContacts() {
                         </td>
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
-                            <td className="ml-4 text-center py-4" key={index}>
-                              <div className="font-medium text-sm text-black hover:text-primary capitalize">
-                                {column.link ? (
-                                  <Link
-                                    href={`/sales/crm/contacts/contact/${contact.id}?show=true`}
-                                    className="flex gap-3 items-center"
-                                  >
+                            <td className="ml-4 py-4" key={index}>
+                              <div className="font-medium text-sm text-center text-black hover:text-primary">
+                                {column.row == "client" ? (
+                                  <div className="flex gap-3 items-center">
                                     <Image
                                       className="h-8 w-8 rounded-full bg-zinc-200"
                                       width={30}
                                       height={30}
-                                      src={contact.photo || "/img/avatar.svg"}
+                                      src={
+                                        policy?.responsible?.avatar ||
+                                        "/img/avatar.svg"
+                                      }
                                       alt=""
                                     />
-                                    <p className="text-start">
-                                      {contact?.fullName ?? `${contact?.name}`}
-                                    </p>
-                                  </Link>
-                                ) : column.row === "responsible" ? (
-                                  <div className="flex items-center justify-center">
-                                    <div className="ml-4 flex">
+                                    <div className="flex flex-col">
                                       <p className="text-start">
-                                        {contact?.responsibleUser?.name ??
-                                          "N/A"}
+                                        {policy?.responsible?.name}
                                       </p>
+                                      {policy?.responsible?.bio && (
+                                        <p className="text-start text-xs">
+                                          {policy?.responsible?.bio}
+                                        </p>
+                                      )}
                                     </div>
                                   </div>
-                                ) : column.activities ? (
+                                ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
                                     <button
                                       type="button"
@@ -377,26 +354,19 @@ export default function TableContacts() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "email" ? (
-                                  contact.emails?.length > 0 ? (
-                                    contact.emails[0].email.email
-                                  ) : (
-                                    "-"
-                                  )
-                                ) : column.row === "phone" ? (
-                                  contact.phones?.length > 0 ? (
-                                    `+${contact.phones[0].phone.number}`
-                                  ) : (
-                                    "-"
-                                  )
-                                ) : column.row === "birthdate" ? (
-                                  formatDate(contact.birthdate, "dd/MM/yyyy") ??
-                                  null
+                                ) : column.row === "policy" ? (
+                                  <Link
+                                    href={`/operations/policies/policy/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true`}
+                                  >
+                                    {policy[column.row]}
+                                  </Link>
                                 ) : column.row === "createdAt" ? (
-                                  formatDate(contact.createdAt, "dd/MM/yyyy") ??
-                                  null
+                                  formatDate(
+                                    policy[column.row],
+                                    "dd/MM/yyyy"
+                                  ) ?? null
                                 ) : (
-                                  contact[column.row] || "-"
+                                  policy[column.row] || "-"
                                 )}
                               </div>
                             </td>
@@ -410,7 +380,7 @@ export default function TableContacts() {
         </div>
       </div>
       <div className="w-full mt-1 pt-4 sm:pt-0">
-        <div className="flex justify-center flex-wrap">
+        <div className="flex justify-center">
           <div className="flex gap-1 items-center">
             <p>Mostrar:</p>
             <Listbox value={limit} onChange={setLimit} as="div">
@@ -447,7 +417,11 @@ export default function TableContacts() {
               </ListboxOptions>
             </Listbox>
           </div>
-          <Pagination totalPages={dataContacts?.meta?.totalPages || 0} />
+          <PaginationV2
+            totalPages={data?.meta?.totalPages || 0}
+            currentPage={page}
+            setPage={setPage}
+          />
         </div>
         <div className="flex">
           {selectedContacts.length > 0 && (

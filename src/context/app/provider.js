@@ -15,6 +15,7 @@ export default function AppContextProvider({ children }) {
   const [sidebarOpenDesktop2, setSidebarOpenDesktop2] = useState(true);
   const [openModalFolders, setOpenModalFolders] = useState(false);
   const [userGoogle, setUserGoogle] = useState(null);
+  const [selectedEmails, setSelectedEmails] = useState([]);
   const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
   const [selectOauth, setSelectOauth] = useState(null);
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
@@ -90,6 +91,8 @@ export default function AppContextProvider({ children }) {
       userGoogle,
       setFilter,
       filter,
+      setSelectedEmails,
+      selectedEmails
     }),
     [
       sidebarOpen,
@@ -104,6 +107,7 @@ export default function AppContextProvider({ children }) {
       userGoogle,
       filter,
       selectOauth,
+      selectedEmails,
     ],
   );
 

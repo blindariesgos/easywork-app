@@ -290,7 +290,7 @@ export default function WebmailLayout({ children, table }) {
           }
         >
           <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
-            <TaskSubMenu />
+            <TaskSubMenu fetchData={fetchData} />
           </div>
         </EmailHeader>
         <SliderOverEmail>

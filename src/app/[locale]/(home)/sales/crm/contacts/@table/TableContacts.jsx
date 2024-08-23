@@ -333,7 +333,8 @@ export default function TableContacts() {
                                   <div className="flex items-center justify-center">
                                     <div className="ml-4 flex">
                                       <p className="text-start">
-                                        {contact?.responsibleUser?.name ??
+                                        {console.log(contact)}
+                                        {contact?.assignedBy?.username ??
                                           "N/A"}
                                       </p>
                                     </div>
@@ -378,14 +379,14 @@ export default function TableContacts() {
                                     </button>
                                   </div>
                                 ) : column.row === "email" ? (
-                                  contact.emails?.length > 0 ? (
-                                    contact.emails[0].email.email
+                                  contact.email ? (
+                                    <span className="lowercase text-xs">{contact.email}</span>
                                   ) : (
                                     "-"
                                   )
                                 ) : column.row === "phone" ? (
-                                  contact.phones?.length > 0 ? (
-                                    `+${contact.phones[0].phone.number}`
+                                  contact.phone ? (
+                                    `+${contact.phone}`
                                   ) : (
                                     "-"
                                   )
@@ -395,8 +396,10 @@ export default function TableContacts() {
                                 ) : column.row === "createdAt" ? (
                                   formatDate(contact.createdAt, "dd/MM/yyyy") ??
                                   null
+                                ) : column.row === "source" ? (
+                                  contact?.source?.name
                                 ) : (
-                                  contact[column.row] || "-"
+                                  "-"
                                 )}
                               </div>
                             </td>

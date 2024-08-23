@@ -17,13 +17,13 @@ export default function ToolHeader({
   const [loading, setLoading] = React.useState(false);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { replace } = useRouter();
+  const { push } = useRouter();
 
   const handlePathname = () => {
     setLoading(true);
     params.delete("page");
     params.set("show", true);
-    replace(`${route}?${params.toString()}`);
+    push(`${route}?${params.toString()}`);
     setLoading(false);
   };
   return (

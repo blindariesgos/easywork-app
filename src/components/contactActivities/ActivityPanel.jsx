@@ -70,10 +70,10 @@ export default function ActivityPanel({ contactId }) {
     }
   };
   return (
-    <div className="px-4 relative bg-gray-100 rounded-tr-lg w-full h-full overflow-y-auto">
+    <div className="lg:px-4 relative bg-gray-100 rounded-tr-lg w-full h-full overflow-y-auto">
       <div className="w-full flex ">
         <div className="flow-root rounded-lg w-full">
-          <ul role="list" className="p-3">
+          <ul role="list" className="lg:p-3 py-3">
             <li className="w-full">
               <div className="relative">
                 <span

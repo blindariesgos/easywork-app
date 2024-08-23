@@ -2,6 +2,7 @@
 import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect, Fragment } from "react";
+import clsx from "clsx";
 import CreateTaskButton from "./components/CreateTaskButton";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
@@ -14,6 +15,7 @@ import {
   ChatBubbleLeftRightIcon,
   HeartIcon,
   FolderIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/20/solid";
 import {
   ChevronUpIcon,
@@ -29,6 +31,9 @@ import {
   MenuItems,
   Menu,
   Transition,
+  Listbox,
+  ListboxButton,
+  ListboxOptions,
 } from "@headlessui/react";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
@@ -69,6 +74,7 @@ export default function WebmailLayout({ children, table }) {
   } = useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
+  const [limit, setLimit] = useState(10);
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,7 +110,7 @@ export default function WebmailLayout({ children, table }) {
     getMails(
       session.data.user.id,
       searchParams.get("page"),
-      10,
+      limit,
       selectedFolder,
       selectOauth?.id
     ).then((res) => {
@@ -127,6 +133,16 @@ export default function WebmailLayout({ children, table }) {
       toast.success("Correos actualizados");
     }
   };
+
+  const totalUnreadByPage = () => {
+    let contador = 0;
+    for (const email of dmails) {
+      if (email.email.folder.includes('UNREAD')) {
+        contador++;
+      }
+    }
+    return contador;    
+  }
 
   const fetchData = async () => {
     const config = {
@@ -290,7 +306,7 @@ export default function WebmailLayout({ children, table }) {
           }
         >
           <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
-            <TaskSubMenu fetchData={fetchData} />
+            <TaskSubMenu fetchData={fetchData} totalUnreadByPage={totalUnreadByPage} />
           </div>
         </EmailHeader>
         <SliderOverEmail>
@@ -501,6 +517,43 @@ export default function WebmailLayout({ children, table }) {
         )}
         {children}
         <div className="flex justify-center">
+        <div className="flex gap-1 items-center">
+            <p>Mostrar:</p>
+            <Listbox value={limit} onChange={setLimit} as="div">
+              <ListboxButton
+                className={clsx(
+                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
+                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
+                )}
+              >
+                {limit}
+                <ChevronDownIcon
+                  className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
+                  aria-hidden="true"
+                />
+              </ListboxButton>
+              <ListboxOptions
+                anchor="bottom"
+                transition
+                className={clsx(
+                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
+                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
+                )}
+              >
+                {/* {itemsByPage.map((page) => (
+                  <ListboxOption
+                    key={page.name}
+                    value={page.id}
+                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
+                  >
+                    <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
+                    <div className="text-sm/6">{page.name}</div>
+                  </ListboxOption>
+                ))} */}
+              </ListboxOptions>
+            </Listbox>
+          </div>
+          {/* <Pagination totalPages={dataContacts?.meta?.totalPages || 0} /> */}
           <Pagination totalPages={10} bgColor="bg-gray-300" />
         </div>
       </div>

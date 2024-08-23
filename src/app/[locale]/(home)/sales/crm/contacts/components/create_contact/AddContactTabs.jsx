@@ -28,8 +28,8 @@ export default function AddContactTabs() {
       value: 1,
       module: "policies",
     },
-    { name: t("contacts:create:tabs:activities"), value: 2 },
-    { name: t("contacts:create:tabs:reports"), value: 3 },
+    // { name: t("contacts:create:tabs:activities"), value: 2 },
+    // { name: t("contacts:create:tabs:reports"), value: 3 },
     {
       name: t("contacts:create:tabs:documents"),
       value: 4,

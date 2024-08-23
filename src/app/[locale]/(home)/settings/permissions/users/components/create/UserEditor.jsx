@@ -14,7 +14,6 @@ import InputPhone from "@/src/components/form/InputPhone";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
-import ActivityPanel from "../../../../../../../../components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import {
   createContact,
@@ -248,7 +247,10 @@ export default function UserEditor({ user, id }) {
               )}
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl sm:pl-6 pl-2">
-                  {user ? user.fullName ?? user.name : t("leads:create:client")}
+                  {user
+                    ? `${user?.profile.firstName} ${user?.profile?.lastName}` ??
+                      user.name
+                    : t("leads:create:client")}
                 </h1>
               </div>
               <AddContactTabs id={id} />

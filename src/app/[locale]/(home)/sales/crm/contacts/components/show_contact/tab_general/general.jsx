@@ -258,13 +258,13 @@ export default function ContactGeneral({ contact, id }) {
                   disabled={!isEdit}
                 />
               ) : (
-                <div className="p-2">
+                <div className="pb-2 pt-4">
                   <Image
                     width={96}
                     height={96}
                     src={selectedProfileImage?.base64 || "/img/avatar.svg"}
                     alt="Profile picture"
-                    className="h-16 w-16 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                    className="h-[150px] w-[150px] flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
                     objectFit="fill"
                   />
                 </div>

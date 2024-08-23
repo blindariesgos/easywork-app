@@ -1,11 +1,7 @@
 "use client";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
-import {
-  Cog8ToothIcon,
-  FireIcon,
-  LinkIcon
-} from "@heroicons/react/20/solid";
+import { Cog8ToothIcon, FireIcon, LinkIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,6 +27,7 @@ import TaskDeadLine from "./components/TaskDeadLine";
 import TaskHeaderStatus from "./components/TaskHeaderStatus";
 import BannerStatus from "./components/BannerStatus";
 import Button from "@/src/components/form/Button";
+import { useSearchParams } from "next/navigation";
 
 export default function TaskView({ id }) {
   const { task, isLoading, isError, mutate: mutateTask } = useTask(id);
@@ -43,24 +40,14 @@ export default function TaskView({ id }) {
   const [openEdit, setOpenEdit] = useState(null);
   const { mutate } = useSWRConfig();
   const [isDelegating, setIsDelegating] = useState(false);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   const handleDateChange = (date) => {
-    console.log('Nueva fecha:', date);
-  };
-
-  const getValues = (name) => {
-    // Simulación de obtención de valores (puede ser desde un formulario)
-    return console.log(name);
-  };
-
-  const setValue = (name, value, options) => {
-    // Simulación de establecimiento de valores (puede ser desde un formulario)
-    console.log(`Setting ${name} to`, value, options);
+    console.log("Nueva fecha:", date);
   };
 
   const field = {}; // Pasar props adicionales del campo si es necesario
-  const errors = {}; // Pasar errores de validación si es necesario
-
 
   const getCompletedTask = async () => {
     try {
@@ -69,7 +56,7 @@ export default function TaskView({ id }) {
       toast.success(t("tools:tasks:completed-success"));
       setLoading(false);
       mutateTask();
-      mutate("/tools/tasks/user?limit=15&page=1")
+      mutate("/tools/tasks/user?limit=15&page=1");
     } catch (error) {
       setLoading(false);
       handleApiError(error.message);
@@ -80,42 +67,43 @@ export default function TaskView({ id }) {
     if (data.type === "contact") {
       return (
         <div className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex justify-between w-52">
-          <p className="text-sm text-white">
-            {t("tools:tasks:edit:contact")}:
-          </p>
+          <p className="text-sm text-white">{t("tools:tasks:edit:contact")}:</p>
           <Link
             href={`/sales/crm/contacts/contact/${data.contact.id}?show=true&prev=task&prev_id=${task.id}`}
-            className="text-sm text-white">
-            {
-              data.contact.fullName
-            }
+            className="text-sm text-white"
+          >
+            {data.contact.fullName}
           </Link>
         </div>
-      )
+      );
     }
 
     if (data.type === "poliza") {
       return (
         <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
-          <p className="text-sm text-white">
-            {t("tools:tasks:edit:policy")}:
-          </p>
+          <p className="text-sm text-white">{t("tools:tasks:edit:policy")}:</p>
           <p className="text-sm text-white">{data.poliza.noPoliza}</p>
         </div>
-      )
+      );
     }
-  }
+  };
+
+  useEffect(() => {
+    if (params.get("action")) {
+      setOpenEdit({ mode: params.get("action") });
+    }
+  }, [params.get("edit")]);
 
   useEffect(() => {
     if (task) {
-      setTaskDescription(task.description)
+      setTaskDescription(task.description);
     }
-  }, [task])
+  }, [task]);
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(window.location.href);
     toast.success("Copiado en el Portapapeles");
-  }
+  };
 
   if (isLoading)
     return (
@@ -136,38 +124,55 @@ export default function TaskView({ id }) {
       <div
         className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
       >
-        {openEdit?.mode !== "copy" && <div className="flex justify-between items-center py-2">
-          <div className="flex gap-3 items-center">
-            <h1 className="text-xl font-medium">
-              {
-                openEdit?.mode === "subtask"
-                  ? <span>Creando subtarea para: <span className="text-primary italic underline decoration-indigo-600">{task?.name}</span></span>
-                  : task?.name
-              }
-            </h1>
-            {
-              !openEdit && (
+        {openEdit?.mode !== "copy" && (
+          <div className="flex justify-between items-center py-2">
+            <div className="flex gap-3 items-center">
+              <h1 className="text-xl font-medium">
+                {openEdit?.mode === "subtask" ? (
+                  <span>
+                    Creando subtarea para:{" "}
+                    <span className="text-primary italic underline decoration-indigo-600">
+                      {task?.name}
+                    </span>
+                  </span>
+                ) : (
+                  task?.name
+                )}
+              </h1>
+              {!openEdit && (
                 <LinkIcon
                   className="h-4 w-4 text-[#4f4f4f] opacity-50 hover:opacity-100 cursor-pointer"
                   title="Copiar enlace de tarea en Portapapeles"
                   aria-hidden="true"
                   onClick={handleCopyUrl}
                 />
-              )
-            }
-
+              )}
+            </div>
+            <IconDropdown
+              icon={
+                openEdit?.mode === "edit" ? (
+                  <Cog8ToothIcon
+                    className="h-8 w-8 text-primary"
+                    aria-hidden="true"
+                  />
+                ) : null
+              }
+              options={settings}
+              width="w-44"
+            />
           </div>
-          <IconDropdown
-            icon={openEdit?.mode === "edit" ? <Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" /> : null}
-            options={settings}
-            width="w-44"
-          />
-        </div>}
+        )}
         <div className="w-full grid gap-2 sm:gap-4 grid-cols-1 md:grid-cols-12 h-full max-h-[calc(100vh-50px)] overflow-y-auto pr-2">
           {openEdit ? (
-            <TaskEditor edit={openEdit?.mode === "edit" && task} copy={openEdit?.mode === "copy" && task} subtask={openEdit?.mode === "subtask" && task} />
+            <TaskEditor
+              edit={openEdit?.mode === "edit" && task}
+              copy={openEdit?.mode === "copy" && task}
+              subtask={openEdit?.mode === "subtask" && task}
+            />
           ) : (
-            <div className={`w-full ${!openEdit ? "col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9" : "col-span-12"}`}>
+            <div
+              className={`w-full ${!openEdit ? "col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9" : "col-span-12"}`}
+            >
               <div className="bg-white rounded-lg">
                 <div className="flex justify-between gap-2 items-center bg-gray-300 p-2">
                   <p className="text-xs">
@@ -175,8 +180,9 @@ export default function TaskView({ id }) {
                   </p>
                   <div className="flex gap-2 items-center">
                     <FireIcon
-                      className={`h-5 w-5 ${check ? "text-red-500" : "text-gray-200"
-                        }`}
+                      className={`h-5 w-5 ${
+                        check ? "text-red-500" : "text-gray-200"
+                      }`}
                     />
                     <p className="text-sm">{t("tools:tasks:new:high")}</p>
                   </div>
@@ -192,11 +198,9 @@ export default function TaskView({ id }) {
                 {/* CRM */}
                 {task?.crm?.length > 0 && (
                   <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                    {
-                      task.crm.map(info => {
-                        return getCMRView(info)
-                      })
-                    }
+                    {task.crm.map((info) => {
+                      return getCMRView(info);
+                    })}
                   </div>
                 )}
                 <div className="p-2 sm:p-4">
@@ -219,7 +223,6 @@ export default function TaskView({ id }) {
                       >
                         {t("tools:tasks:edit:end")}
                       </button>
-
                     )}
                     <ButtonMore
                       setOpenEdit={setOpenEdit}
@@ -228,7 +231,12 @@ export default function TaskView({ id }) {
                       setIsDelegating={setIsDelegating}
                     />
                     {isDelegating && (
-                      <TaskDelegate lists={lists} setIsDelegating={setIsDelegating} responsibleId={task?.responsible[0]?.id} taskId={task?.id} />
+                      <TaskDelegate
+                        lists={lists}
+                        setIsDelegating={setIsDelegating}
+                        responsibleId={task?.responsible[0]?.id}
+                        taskId={task?.id}
+                      />
                     )}
                     {/* <div className="flex gap-2 items-center">
                       <BsStopwatchFill className="h-4 w-4 text-easy-400" />
@@ -284,24 +292,10 @@ export default function TaskView({ id }) {
                     </p>
                   </div>
                 </div>
-                <TaskResponsible
-                  task={task}
-                  lists={lists}
-                  field={field}
-                />
-                <TaskParticipants
-                  task={task}
-                  lists={lists}
-                  field={field}
-                />
-                <TaskObservers
-                  task={task}
-                  lists={lists}
-                  field={field}
-                />
-                <TaskTags
-                  task={task}
-                />
+                <TaskResponsible task={task} lists={lists} field={field} />
+                <TaskParticipants task={task} lists={lists} field={field} />
+                <TaskObservers task={task} lists={lists} field={field} />
+                <TaskTags task={task} />
               </div>
             </div>
           )}

@@ -1,83 +1,35 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
-import { Tab } from "@headlessui/react";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import useCrmContext from "../../../../../../../../../context/crm";
 import ContactPolizaTable from "./ContactPolizaTable";
 import { useTranslation } from "react-i18next";
 import { usePolicies } from "../../../../../../../../../hooks/useCommon";
+import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 export default function PolizasTab({ base = 0, contactID }) {
+  const { policies } = usePoliciesByContactId({ contactId: contactID });
   const { t } = useTranslation();
   const { currentContact } = useCrmContext();
   const { branches: options } = usePolicies(contactID);
   const pathname = usePathname();
 
-  // let [categories] = useState({
-  //   Todos_los_ramos: "ALL",
-  //   Vida: "VIDA",
-  //   Autos: "AUTO",
-  //   Gastos_Médicos: "GMM",
-  //   Daños: "DAÑO",
-  //   Diversos: "DIVERSOS",
-  // });
-
   const [branches, setBranches] = useState(options);
 
-  
-  // let [polizas, setPolizas] = useState([]);
-
-  // useEffect(() => {
-  //   if (currentContact) {
-  //     let categorizedPolizas = mapContactPolizasToCategories(
-  //       currentContact.polizas
-  //     );
-  //     setPolizas(categorizedPolizas);
-  //   }
-  // }, [currentContact]);
-
-  // const mapContactPolizasToCategories = (polizas) => {
-  //   return polizas?.reduce((acc, poliza) => {
-  //     const category = poliza.tipoPoliza;
-  //     if (!acc[category]) {
-  //       acc[category] = [];
-  //     }
-  //     if (!acc["ALL"]){
-  //       acc["ALL"] = []
-  //     }
-  //     // add all polizas to the "ALL" category
-  //     acc["ALL"].push(poliza);
-
-  //     acc[category].push(poliza);
-  //     return acc;
-  //   }, {});
-  // };
+  useEffect(() => {
+    console.log({ policies });
+  }, [policies]);
 
   if (!currentContact) return <></>;
 
   return (
-    <div className="w-full py-2">
-      <Tab.Group>
-        <Tab.List className="flex space-x-1 rounded-md w-full p-2 bg-white sm:flex-row flex-col">
-          {/* {Object.keys(categories).map((category) => (
-            <Tab
-              key={category}
-              className={({ selected }) =>
-                classNames(
-                  "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
-                  "ring-white/60 ring-offset-2 ring-offset-easy-500 focus:outline-none focus:ring-2",
-                  selected
-                    ? "bg-easy-500 text-white shadow"
-                    : "text-easy-700 hover:bg-easy-600/[0.3] hover:text-easy-700"
-                )
-              }
-            >
-              {category.replace(/_/g, " ")}
-            </Tab>
-          ))} */}
+    <div className="w-full h-full px-4 lg:px-8">
+      <TabGroup defaultIndex={0}>
+        <TabList className="flex space-x-1 rounded-md w-full p-2 bg-white sm:flex-row flex-col">
           {branches.slice(base, branches.length).map((category, index) => (
             <Tab
               key={index}
@@ -85,7 +37,7 @@ export default function PolizasTab({ base = 0, contactID }) {
                 classNames(
                   "w-full rounded-lg text-sm font-medium leading-5",
                   "ring-white/60 ring-offset-2 ring-0 focus:outline-none focus:ring-0",
-                  (category.route == pathname)
+                  category.route == pathname
                     ? "bg-blue-100 text-white shadow py-2"
                     : ` ${!category.inactive ? "hover:text-white hover:bg-blue-100 text-gray-400" : "hover-off text-gray-200"}`
                 )
@@ -96,22 +48,22 @@ export default function PolizasTab({ base = 0, contactID }) {
               {category.name}
             </Tab>
           ))}
-        </Tab.List>
-        <Tab.Panels className="mt-2">
+        </TabList>
+        <TabPanels className="pt-2">
           {/* {Object.values(categories).map((category, idx) => ( */}
-          
-            <Tab.Panel
-              className={classNames(
-                "rounded-xl",
-                "ring-white/60 ring-offset-2  focus:outline-none"
-              )}
-            >
-              {/* <ContactPolizaTable polizas={polizas ? polizas[category] : []} /> */}
-              <ContactPolizaTable polizas={[]} base={base} contactID={contactID}/>
-            </Tab.Panel>
+
+          <TabPanel
+            className={classNames(
+              "rounded-xl",
+              "ring-white/60 ring-offset-2  focus:outline-none"
+            )}
+          >
+            {/* <ContactPolizaTable polizas={polizas ? polizas[category] : []} /> */}
+            <ContactPolizaTable base={base} contactID={contactID} />
+          </TabPanel>
           {/* ))} */}
-        </Tab.Panels>
-      </Tab.Group>
+        </TabPanels>
+      </TabGroup>
     </div>
   );
 }

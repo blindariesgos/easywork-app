@@ -27,7 +27,7 @@ function SelectDropdown({
   border,
   watch,
 }) {
-  const [selected, setSelected] = useState(selectedOption);
+  const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -50,10 +50,11 @@ function SelectDropdown({
         });
 
   useEffect(() => {
-    if (!watch || selected) return;
+    if (!watch || selected || !options) return;
     const id = watch(name);
+    console.log({ id, name, options });
     setSelected(options.find((option) => option.id == id));
-  }, [watch && watch(name)]);
+  }, [watch && watch(name), options]);
 
   return (
     <div className={className}>
@@ -63,6 +64,7 @@ function SelectDropdown({
         onChange={setSelected}
         disabled={disabled}
         className="relative"
+        name={name}
       >
         <Label className="block text-sm font-medium leading-6 text-gray-900">
           {label}

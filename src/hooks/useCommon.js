@@ -200,32 +200,32 @@ export const useSidebar = () => {
       children: [
         {
           name: "Pólizas",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
+          href: "/operations/policies",
+          image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Renovaciones",
           href: "",
-          image: "/img/cobranza/portafolio.png",
+          image: "/img/operations/renovations.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Siniestros",
           href: "",
-          image: "/img/cobranza/portafolio.png",
+          image: "/img/operations/accidents.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Reembolsos",
           href: "",
-          image: "/img/cobranza/portafolio.png",
+          image: "/img/operations/refunds.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Rescate de Fondos",
           href: "",
-          image: "/img/cobranza/portafolio.png",
+          image: "/img/operations/fund_recovery.svg",
           iconShortBar: GlobeAltIcon,
         },
       ],
@@ -1567,6 +1567,61 @@ export const useReceiptTable = () => {
       row: "createdAt",
       check: true,
     },
+  ];
+  return { columnTable };
+};
+
+export const usePoliciesTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:policies:table:client"),
+      row: "client",
+      order: "client",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:policies:table:policy"),
+      row: "policy",
+      order: "policy",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:policies:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:policies:table:created-in"),
+      row: "createdAt",
+      check: true,
+    },
+    {
+      id: 1,
+      name: t("operations:policies:table:origin"),
+      row: "origin",
+      order: "origin",
+      check: true,
+      permanent: true,
+    },
+    {
+      id: 6,
+      name: t("operations:policies:table:amount"),
+      row: "amount",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:policies:table:activities"),
+      row: "activities",
+      check: true,
+    }
   ];
   return { columnTable };
 };

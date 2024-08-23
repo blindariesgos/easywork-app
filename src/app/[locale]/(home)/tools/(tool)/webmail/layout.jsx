@@ -3,7 +3,7 @@ import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect, Fragment } from "react";
 import clsx from "clsx";
-import CreateTaskButton from "./components/CreateTaskButton";
+import { itemsByPage } from "@/src/lib/common";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
@@ -16,6 +16,7 @@ import {
   HeartIcon,
   FolderIcon,
   ChevronDownIcon,
+  CheckIcon,
 } from "@heroicons/react/20/solid";
 import {
   ChevronUpIcon,
@@ -34,6 +35,7 @@ import {
   Listbox,
   ListboxButton,
   ListboxOptions,
+  ListboxOption,
 } from "@headlessui/react";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
@@ -107,6 +109,7 @@ export default function WebmailLayout({ children, table }) {
   }, [openModalFolders]);
 
   useEffect(() => {
+    console.log(limit);
     getMails(
       session.data.user.id,
       searchParams.get("page"),
@@ -116,7 +119,7 @@ export default function WebmailLayout({ children, table }) {
     ).then((res) => {
       setDMails(res);
     });
-  }, [selectOauth, searchParams.get("page"), selectedFolder]);
+  }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
 
   const updateData = async () => {
     setIsLoading(true);
@@ -540,7 +543,7 @@ export default function WebmailLayout({ children, table }) {
                   "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
                 )}
               >
-                {/* {itemsByPage.map((page) => (
+                {itemsByPage.map((page) => (
                   <ListboxOption
                     key={page.name}
                     value={page.id}
@@ -549,7 +552,7 @@ export default function WebmailLayout({ children, table }) {
                     <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
                     <div className="text-sm/6">{page.name}</div>
                   </ListboxOption>
-                ))} */}
+                ))}
               </ListboxOptions>
             </Listbox>
           </div>

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import useAppContext from "../../../../../../../context/app";
 
-export default function TaskSubMenu({ fetchData }) {
+export default function TaskSubMenu({ fetchData, totalUnreadByPage }) {
   const { t } = useTranslation();
   const session = useSession();
   const { selectOauth, selectedEmails, setSelectedEmails } = useAppContext();
@@ -34,7 +34,7 @@ export default function TaskSubMenu({ fetchData }) {
       <div>
         <p>
           {" "}
-          <span className="bg-white rounded-full p-1">0</span> Correos
+          <span className="bg-white rounded-full p-1">{totalUnreadByPage()}</span> Correos
           electrónicos
         </p>
       </div>

@@ -159,7 +159,8 @@ const FormFilters = () => {
                 )}
               />
             )}
-            {dataField.type === "tags" && (
+            {/* TODO: Corregir `MultiSelectTags` no esta importado. */}
+            {/* {dataField.type === "tags" && (
               <Controller
                 name={`fields[${index}].value`}
                 control={control}
@@ -174,7 +175,7 @@ const FormFilters = () => {
                   />
                 )}
               />
-            )}
+            )} */}
           </div>
         );
       })}

@@ -28,34 +28,28 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Table({
-  mails,
-  selectedFolder = "INBOX",
-  fetchData,
-}) {
+export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   const router = useRouter();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedTasks, setSelectedTasks] = useState([]);
-  const [mailsData, setMailsData] = useState(mails);
   const [selectMail, setSelectMail] = useState(mails);
   const session = useSession();
-  const { selectOauth } = useAppContext();
+  const { selectOauth, selectedEmails, setSelectedEmails } = useAppContext();
 
   function toggleAll() {
-    setSelectedTasks(checked || indeterminate ? [] : mails);
+    setSelectedEmails(checked || indeterminate ? [] : mails);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
 
-  async function deleteEmails() {
+  async function changeSelectLabelId(label) {
     const array = [];
-    selectedTasks.forEach((element) => {
+    selectedEmails.forEach((element) => {
       array.push(element.email.googleId);
     });
-    updateLabelId(array, "trash");
+    updateLabelId(array, label);
   }
 
   const handleChangeAddCrm = () => {
@@ -83,7 +77,10 @@ export default function Table({
   }
 
   const itemOptions = [
-    { name: "Marcar como no leido", onClick: (item) => updateLabelId([item], "unread") },
+    {
+      name: "Marcar como no leido",
+      onClick: (item) => updateLabelId([item], "unread"),
+    },
     { name: "Mover a la carpeta", onClick: "" },
     { name: "Marcar como correo no deseado", onClick: "" },
     { name: "Eliminar", onClick: (item) => updateLabelId([item], "trash") },
@@ -94,11 +91,20 @@ export default function Table({
   ];
 
   const folderOptions = [
-    { name: "Inbox", onClick: (item) => updateLabelId([item], "inbox"), value: "Inbox" },
-    { name: "Spam", onClick: (item) => updateLabelId([item], "spam"), value: "Spam" },
+    {
+      name: "Inbox",
+      onClick: (item) => selectedEmails ? changeSelectLabelId("inbox") : updateLabelId([item], "inbox"),
+      value: "Inbox",
+    },
+    {
+      name: "Spam",
+      onClick: (item) => selectedEmails ? changeSelectLabelId("spam") : updateLabelId([item], "spam"),
+      value: "Spam",
+    },
     {
       name: "Todos",
-      onClick: (item) => updateLabelId([item], "archived"), value: "All"
+      onClick: (item) => selectedEmails ? changeSelectLabelId("all") : updateLabelId([item], "archived"),
+      value: "All",
     },
   ];
 
@@ -128,14 +134,53 @@ export default function Table({
                   Seleccionar todo
                 </div>
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
+              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer" onClick={() => changeSelectLabelId("unread")}>
                 <EnvelopeOpenIcon className="h-5 w-5" />
                 Leer
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
-                <FolderArrowDownIcon className="h-5 w-5" />
-                Mover a carpeta
-              </div>
+              <Menu as="div" className="relative">
+                <MenuButton className="flex items-center">
+                  <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
+                    <FolderArrowDownIcon className="h-5 w-5" />
+                    Mover a carpeta
+                  </div>
+                </MenuButton>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <MenuItems className="absolute left-0 z-50 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                    {folderOptions.map(
+                      (subitem) =>
+                        subitem.value.toLowerCase() !==
+                          selectedFolder.toLowerCase() && (
+                          <MenuItem key={subitem.name}>
+                            {({ active }) => (
+                              <div
+                                className={clsx(
+                                  active
+                                    ? "bg-gray-50 text-white"
+                                    : "text-black",
+                                  "block px-3 py-1 text-sm leading-6  cursor-pointer"
+                                )}
+                                onClick={() =>
+                                  subitem.onClick(null)
+                                }
+                              >
+                                {subitem.name}
+                              </div>
+                            )}
+                          </MenuItem>
+                        )
+                    )}
+                  </MenuItems>
+                </Transition>
+              </Menu>
               <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
                 <ExclamationCircleIcon className="h-5 w-5" />
                 Marcar como correo no deseado
@@ -143,7 +188,7 @@ export default function Table({
               <div
                 className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer"
                 onClick={() => {
-                  deleteEmails();
+                  changeSelectLabelId("trash");
                 }}
               >
                 <TrashIcon className="h-5 w-5" />
@@ -189,7 +234,7 @@ export default function Table({
                     <div
                       key={item.id}
                       className={clsx(
-                        selectedTasks.includes(item) ? "bg-gray-50" : undefined,
+                        selectedEmails.includes(item) ? "bg-gray-50" : undefined,
                         item.email.folder.includes("UNREAD")
                           ? "font-semibold"
                           : "",
@@ -197,7 +242,7 @@ export default function Table({
                       )}
                     >
                       <div className="relative px-2 w-full h-full col-span-1">
-                        {selectedTasks.includes(item) && (
+                        {selectedEmails.includes(item) && (
                           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
                         <div className="flex items-center h-full">
@@ -205,12 +250,12 @@ export default function Table({
                             type="checkbox"
                             className="..."
                             value={item.id}
-                            checked={selectedTasks.includes(item)}
+                            checked={selectedEmails.includes(item)}
                             onChange={(e) =>
-                              setSelectedTasks(
+                              setSelectedEmails(
                                 e.target.checked
-                                  ? [...selectedTasks, item]
-                                  : selectedTasks.filter((p) => p !== item)
+                                  ? [...selectedEmails, item]
+                                  : selectedEmails.filter((p) => p !== item)
                               )
                             }
                           />
@@ -322,7 +367,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap py-1 pr-3 text-sm ",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-3"
@@ -338,7 +383,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap py-1 pr-3 text-sm ",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-2 text-right"
@@ -354,7 +399,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap py-1 pr-3 text-sm ",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1 text-center"
@@ -366,7 +411,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1 flex justify-center"
@@ -383,7 +428,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1 flex justify-center"
@@ -399,7 +444,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1  flex justify-center"
@@ -415,7 +460,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1"
@@ -431,7 +476,7 @@ export default function Table({
                         className={
                           clsx(
                             "whitespace-nowrap",
-                            selectedTasks.includes(item)
+                            selectedEmails.includes(item)
                               ? "text-indigo-600"
                               : "text-gray-900"
                           ) + " col-span-1"

@@ -21,7 +21,13 @@ export default function ContactEditor({ contact, id }) {
   const [selectedSectionIndex, setSelectedSectionIndex] = useState(0);
 
   useEffect(() => {
-    const tabs = ["general", "policies", "activities", "reports", "documents"];
+    const tabs = [
+      "general",
+      "policies",
+      // "activities",
+      // "reports",
+      "documents",
+    ];
     const tabSelected = params.get("tab") ?? "general";
     setSelectedSectionIndex(tabs.findIndex((tab) => tab == tabSelected));
   }, [params.get("tab")]);
@@ -68,8 +74,8 @@ export default function ContactEditor({ contact, id }) {
           <TabPanel>
             <PolizasTab contactID={id} selected="general" />
           </TabPanel>
-          <TabPanel></TabPanel>
-          <TabPanel></TabPanel>
+          {/* <TabPanel></TabPanel>
+          <TabPanel></TabPanel> */}
           <TabPanel>
             <ContactFolders id={id} />
           </TabPanel>

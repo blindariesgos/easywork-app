@@ -2,9 +2,9 @@ import React, { Suspense } from "react";
 import LayoutPolicies from "./LayoutPolicies";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import PoliciesContextProvider from "../../../../../context/policies/provider";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
-export default async function ReceiptLayout({ children, table }) {
+export default async function PolicyLayout({ children, table }) {
+  console.log("paso por el lagout de polizas");
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
       <PoliciesContextProvider>

@@ -140,8 +140,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
-  console.log("Edit", edit);
-
   useEffect(() => {
     if (params.get("prev") === "contact") {
       const prevId = params.get("prev_id");

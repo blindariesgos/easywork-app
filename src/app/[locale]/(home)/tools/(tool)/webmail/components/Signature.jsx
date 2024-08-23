@@ -49,13 +49,20 @@ export default function Signature({
 
   const handleFileChange = async (event) => {
     const archive = event.target.files[0];
-    const response = await uploadSignature(archive);
-    console.log(response);
+    try {
+      const response = await uploadSignature(archive, { name: archive.name });
+      if (response){
+        toast.success("Firma cargada");
+      }
+    } catch (error) {
+      toast.success(error);
+    }
   };
 
-  const uploadSignature = async (archive) => {
+  const uploadSignature = async (archive, metadata) => {
     const formData = new FormData();
     formData.append("file", archive);
+    formData.append("metadata", metadata);
 
     try {
       const response = await axios.post(
@@ -84,6 +91,7 @@ export default function Signature({
           },
         }
       );
+      console.log(response);
       setSignatures(response.data);
     } catch (error) {}
   };

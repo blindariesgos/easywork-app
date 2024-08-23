@@ -48,6 +48,7 @@ import { useSession } from "next-auth/react";
 import ModalConfigGmail from "../mails/components/ModalConfigGmail";
 import { Pagination } from "../../../../../../components/pagination/Pagination";
 import Signature from "./components/Signature";
+import { toast } from "react-toastify";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -70,7 +71,7 @@ export default function WebmailLayout({ children, table }) {
   const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
-  const [otherGmailState, setOtherGmailState] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [motivo, setMotivo] = useState("");
   const [addOtherOauth, setAddOtherOauth] = useState(false);
   const [folders, setFolders] = useState(null);
@@ -112,10 +113,19 @@ export default function WebmailLayout({ children, table }) {
   }, [selectOauth, searchParams.get("page"), selectedFolder]);
 
   const updateData = async () => {
-    await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}/${selectOauth.id}`
-    );
-    fetchData();
+    setIsLoading(true);
+    try {
+      await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}/${selectOauth.id}`
+      );
+      fetchData();
+    } catch (error) {
+      setIsLoading(false);
+      toast.success("Correos actualizados");
+    } finally {
+      setIsLoading(false);
+      toast.success("Correos actualizados");
+    }
   };
 
   const fetchData = async () => {
@@ -140,11 +150,11 @@ export default function WebmailLayout({ children, table }) {
         const axiosFolders = await getFoldersSaved(session.data.user.id);
         setFolders(axiosFolders);
         if (!axiosMails || axiosMails?.length === 0) {
-          await deleteOauth() 
+          await deleteOauth();
         }
       }
     } catch (errr) {
-      await deleteOauth() 
+      await deleteOauth();
     }
   };
 
@@ -179,7 +189,10 @@ export default function WebmailLayout({ children, table }) {
     { name: "Volver a la lista", onClick: "" },
     { name: "Contactos", onClick: "" },
     { name: "Editar firmas", onClick: "" },
-    { name: "Configuración del buzón", onClick: () => openModal("edit", true, false) },
+    {
+      name: "Configuración del buzón",
+      onClick: () => openModal("edit", true, false),
+    },
     { name: "Abrir email", onClick: "" },
   ];
 
@@ -210,7 +223,11 @@ export default function WebmailLayout({ children, table }) {
           />
         </ModalAddFolders>
       )}
-      <SendMessage colorTag="bg-easywork-main" userData={userData} selectOauth={selectOauth} />
+      <SendMessage
+        colorTag="bg-easywork-main"
+        userData={userData}
+        selectOauth={selectOauth}
+      />
       <div className="flex flex-col flex-grow">
         <EmailHeader
           title="Tareas"
@@ -318,7 +335,7 @@ export default function WebmailLayout({ children, table }) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-56 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {allOauth?.map((oauth) => (
                       <Menu.Item key={oauth.id}>
                         {({ active }) => (
@@ -348,7 +365,16 @@ export default function WebmailLayout({ children, table }) {
                   </Menu.Items>
                 </Transition>
                 <div
-                  className="flex items-center justify-center ml-1.5 border border-white rounded-full cursor-pointer"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginLeft: "1rem",
+                    border: "1px solid white",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                    animation: isLoading ? "spin 1s infinite linear" : "none", // Aplica la animación si isLoading es true
+                  }}
                   onClick={() => updateData()}
                 >
                   <ArrowPathIcon className="m-1 h-6 w-6 text-white" />
@@ -466,7 +492,13 @@ export default function WebmailLayout({ children, table }) {
             </ul>
           </div>
         </SliderOverEmail>
-        {dmails && <Table mails={dmails} fetchData={fetchData} selectedFolder={selectedFolder} />}
+        {dmails && (
+          <Table
+            mails={dmails}
+            fetchData={fetchData}
+            selectedFolder={selectedFolder}
+          />
+        )}
         {children}
         <div className="flex justify-center">
           <Pagination totalPages={10} bgColor="bg-gray-300" />

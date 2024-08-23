@@ -5,7 +5,7 @@ import PolicyDetails from "../../components/PolicyDetails";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { policies } from "../../../../../../../context/policies/mockups";
 
-export default function PolicyDetailsPage({ id }) {
+export default function PolicyDetailsPage({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
   const { data, isLoading, isError } = {
     isLoading: false,
@@ -22,8 +22,6 @@ export default function PolicyDetailsPage({ id }) {
   }
 
   if (isLoading) <LoaderSpinner />;
-
-  console.log("User", data);
 
   return (
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">

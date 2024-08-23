@@ -8,9 +8,9 @@ import PolizasEmpty from "./PolizasEmpty";
 import { useTranslation } from "react-i18next";
 import { useOrderByColumn } from "../../../../../../../../../hooks/useOrderByColumn";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTaskContactsPolizas } from "@/src/lib/api/hooks/tasks";
+import Link from "next/link";
 
 const people = [
   {
@@ -309,7 +309,7 @@ export default function ContactPolizaTable({ base }) {
                 </td>
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
                   <Link
-                    href={`/sales/crm/contacts/contact/policy/consult/${poliza.noPoliza}?show=true`}
+                    href={`/operations/policies/policy/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true`}
                   >
                     <div className="flex gap-2 px-2 hover:text-primary">
                       {poliza.noPoliza}

@@ -39,23 +39,23 @@ export default function PolicyDetails({ data, id }) {
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (data) {
-      lists?.listContact?.contactTypes.length > 0 &&
-        setContactType(
-          lists?.listContact?.contactTypes.filter(
-            (option) => option.id === data?.type?.id
-          )[0]
-        );
-      lists?.listContact?.contactSources.length > 0 &&
-        setContactSource(
-          lists?.listContact?.contactSources.filter(
-            (option) => option.id === data?.source?.id
-          )[0]
-        );
-      setSelectedProfileImage({ base64: data?.photo || null, file: null });
-    }
-  }, [data, lists]);
+  // useEffect(() => {
+  //   if (data) {
+  //     lists?.listContact?.contactTypes?.length > 0 &&
+  //       setContactType(
+  //         lists?.listContact?.contactTypes?.filter(
+  //           (option) => option.id === data?.type?.id
+  //         )[0]
+  //       );
+  //     lists?.listContact?.contactSources.length > 0 &&
+  //       setContactSource(
+  //         lists?.listContact?.contactSources.filter(
+  //           (option) => option.id === data?.source?.id
+  //         )[0]
+  //       );
+  //     setSelectedProfileImage({ base64: data?.photo || null, file: null });
+  //   }
+  // }, [data, lists]);
 
   const schema = Yup.object().shape({
     email: Yup.string()

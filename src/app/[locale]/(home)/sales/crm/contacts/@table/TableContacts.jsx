@@ -331,13 +331,28 @@ export default function TableContacts() {
                                   </Link>
                                 ) : column.row === "responsible" ? (
                                   <div className="flex items-center justify-center">
-                                    <div className="ml-4 flex">
-                                      <p className="text-start">
-                                        {console.log(contact)}
-                                        {contact?.assignedBy?.username ??
-                                          "N/A"}
-                                      </p>
-                                    </div>
+                                    {contact?.assignedBy?.username ? (
+                                      <div className="flex items-center gap-3">
+                                        <Image
+                                          className="h-8 w-8 rounded-full bg-zinc-200"
+                                          width={30}
+                                          height={30}
+                                          src={
+                                            contact?.assignedBy?.avatar ||
+                                            "/img/avatar.svg"
+                                          }
+                                          alt=""
+                                        />
+                                        <div>
+                                          <p>{`${contact?.assignedBy?.profile?.firstName} ${contact?.assignedBy?.profile?.lastName}`}</p>
+                                          <p className="text-xs text-left">
+                                            {contact?.assignedBy?.bio}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      "N/A"
+                                    )}
                                   </div>
                                 ) : column.activities ? (
                                   <div className="flex justify-center gap-2">
@@ -380,7 +395,9 @@ export default function TableContacts() {
                                   </div>
                                 ) : column.row === "email" ? (
                                   contact.email ? (
-                                    <span className="lowercase text-xs">{contact.email}</span>
+                                    <span className="lowercase text-xs">
+                                      {contact.email}
+                                    </span>
                                   ) : (
                                     "-"
                                   )

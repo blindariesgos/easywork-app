@@ -16,7 +16,8 @@ import { toast } from "react-toastify";
 import { deleteTask as apiDeleteTask } from "@/src/lib/apis"; // Ajusta el path según sea necesario
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import TasksContextProvider from "@/src/context/tasks/provider";
-import FiltersView from "./components/filters/FiltersView";
+import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
+
 export default function TaskLayout({ children, table }) {
   const [loading, setLoading] = React.useState(false);
   const { onCloseAlertDialog } = useAlertContext();
@@ -66,7 +67,6 @@ export default function TaskLayout({ children, table }) {
           title={t("tools:tasks:name")}
           route="/tools/tasks/task"
           Filters={FiltersTasks}
-          FiltersView={FiltersView}
           toolButtons={
             <>
               <IconDropdown

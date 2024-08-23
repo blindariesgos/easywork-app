@@ -57,8 +57,8 @@ function SelectInput({
     if (!watch || !options) return;
     if (object && Object.keys(selected).length > 0) return;
     if (!object && selected.length > 0) return;
+
     const option = options.find((option) => option.id == watch(name));
-    console.log("pruebaaaa", watch(name), options, option);
     setSelected(option);
   }, [watch && watch(name), options]);
 

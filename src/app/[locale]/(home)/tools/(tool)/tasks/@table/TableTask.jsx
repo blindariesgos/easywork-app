@@ -1,22 +1,42 @@
 "use client";
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+
+import {
+  ChevronDownIcon,
+  CheckIcon,
+  Bars3Icon,
+} from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, { useEffect, useLayoutEffect, useRef, useState, Fragment } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  Fragment,
+} from "react";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
-import { deleteTask as apiDeleteTask } from '@/src/lib/apis'; // Ajusta el path según sea necesario
+import { deleteTask as apiDeleteTask } from "@/src/lib/apis"; // Ajusta el path según sea necesario
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import useTasksContext from "@/src/context/tasks";
-import { renderCellContent } from "./utils"
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { renderCellContent } from "./utils";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+} from "@headlessui/react";
 import { itemsByPage } from "@/src/lib/common";
-
+import { useRouter } from "next/navigation";
 
 export default function TableTask() {
   const checkbox = useRef();
@@ -26,10 +46,12 @@ export default function TableTask() {
     mutate: mutateTasks,
     selectedTasks,
     setSelectedTasks,
-    limit, setLimit,
-    page, setPage
-  } = useTasksContext()
-
+    limit,
+    setLimit,
+    page,
+    setPage,
+  } = useTasksContext();
+  const router = useRouter();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [dataTask, setDataTask] = useState();
@@ -73,7 +95,7 @@ export default function TableTask() {
     setSelectedTasks(checked || indeterminate ? [] : dataTask?.items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
-  }
+  };
 
   const deleteTasks = async () => {
     try {
@@ -92,6 +114,18 @@ export default function TableTask() {
       onCloseAlertDialog();
       mutateTasks && mutateTasks();
     }
+  };
+
+  const handleDeleteTask = async (id) => {
+    try {
+      setLoading(true);
+      await apiDeleteTask(id);
+      toast.success(t("tools:tasks:delete-msg"));
+      mutateTasks && mutateTasks();
+    } catch {
+      toast.error("Error al eliminar la(s) tarea(s)");
+    }
+    setLoading(false);
   };
 
   const optionsCheckBox = [
@@ -126,6 +160,24 @@ export default function TableTask() {
     },
   ];
 
+  const itemOptions = [
+    {
+      name: "Ver",
+      handleClick: (id) => router.push(`/tools/tasks/task/${id}?show=true`),
+    },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        router.push(`/tools/tasks/task/${id}?show=true&action=edit`),
+    },
+    {
+      name: "Copiar",
+      handleClick: (id) =>
+        router.push(`/tools/tasks/task/${id}?show=true&action=copy`),
+    },
+    { name: "Eliminar", handleClick: (id) => handleDeleteTask(id) },
+  ];
+
   return (
     <Fragment>
       {selectedColumns && selectedColumns.length > 0 && (
@@ -144,7 +196,7 @@ export default function TableTask() {
                     <tr>
                       <th
                         scope="col"
-                        className="flex justify-center items-center gap-2 ml-1.5 px-7 sm:px-6 rounded-s-xl py-5"
+                        className="flex justify-center items-center gap-2  px-4 rounded-s-xl py-4"
                       >
                         <input
                           type="checkbox"
@@ -163,9 +215,10 @@ export default function TableTask() {
                           <th
                             key={index}
                             scope="col"
-                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${index === selectedColumns.length - 1 &&
+                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${
+                              index === selectedColumns.length - 1 &&
                               "rounded-e-xl"
-                              }`}
+                            }`}
                             onClick={() => {
                               handleSorting(column.row);
                             }}
@@ -174,11 +227,12 @@ export default function TableTask() {
                               {column.name}
                               <div>
                                 <ChevronDownIcon
-                                  className={`h-6 w-6 text-primary ${fieldClicked.field === column.row &&
+                                  className={`h-6 w-6 text-primary ${
+                                    fieldClicked.field === column.row &&
                                     fieldClicked.sortDirection === "desc"
-                                    ? "transform rotate-180"
-                                    : ""
-                                    }`}
+                                      ? "transform rotate-180"
+                                      : ""
+                                  }`}
                                 />
                               </div>
                             </div>
@@ -199,23 +253,61 @@ export default function TableTask() {
                             "hover:bg-indigo-100/40 cursor-default"
                           )}
                         >
-                          <td className="relative px-7 sm:w-12 sm:px-6">
+                          <td className="relative  px-4 sm:w-12 ">
                             {selectedTasks.includes(task) && (
                               <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                             )}
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={task.id}
-                              checked={selectedTasks.includes(task)}
-                              onChange={(e) =>
-                                setSelectedTasks(
-                                  e.target.checked
-                                    ? [...selectedTasks, task]
-                                    : selectedTasks.filter((p) => p !== task)
-                                )
-                              }
-                            />
+                            <div className="flex items-center">
+                              <input
+                                type="checkbox"
+                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                value={task.id}
+                                checked={selectedTasks.includes(task)}
+                                onChange={(e) =>
+                                  setSelectedTasks(
+                                    e.target.checked
+                                      ? [...selectedTasks, task]
+                                      : selectedTasks.filter((p) => p !== task)
+                                  )
+                                }
+                              />
+                              <Menu
+                                as="div"
+                                className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                              >
+                                <MenuButton className="flex items-center p-1.5">
+                                  <Bars3Icon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                  />
+                                </MenuButton>
+
+                                <MenuItems
+                                  transition
+                                  anchor="right start"
+                                  className=" z-50 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                >
+                                  {itemOptions.map((item) => (
+                                    <MenuItem
+                                      key={item.name}
+                                      onClick={() =>
+                                        item.handleClick &&
+                                        item.handleClick(task.id)
+                                      }
+                                    >
+                                      <div
+                                        // onClick={item.onClick}
+                                        className={clsx(
+                                          "data-[focus]:bg-gray-100  block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                        )}
+                                      >
+                                        {item.name}
+                                      </div>
+                                    </MenuItem>
+                                  ))}
+                                </MenuItems>
+                              </Menu>
+                            </div>
                           </td>
                           {selectedColumns.length > 0 &&
                             selectedColumns.map((column, index) => (
@@ -239,8 +331,8 @@ export default function TableTask() {
                 <Listbox value={limit} onChange={setLimit} as="div">
                   <ListboxButton
                     className={clsx(
-                      'relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6',
-                      'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2'
+                      "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
+                      "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
                     )}
                   >
                     {limit}
@@ -253,8 +345,8 @@ export default function TableTask() {
                     anchor="bottom"
                     transition
                     className={clsx(
-                      'rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl',
-                      'transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0'
+                      "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
+                      "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
                     )}
                   >
                     {itemsByPage.map((page) => (
@@ -270,7 +362,11 @@ export default function TableTask() {
                   </ListboxOptions>
                 </Listbox>
               </div>
-              <PaginationV2 totalPages={dataTask?.meta?.totalPages || 0} currentPage={page} setPage={setPage} />
+              <PaginationV2
+                totalPages={dataTask?.meta?.totalPages || 0}
+                currentPage={page}
+                setPage={setPage}
+              />
             </div>
           </div>
         </div>
@@ -278,5 +374,3 @@ export default function TableTask() {
     </Fragment>
   );
 }
-
-

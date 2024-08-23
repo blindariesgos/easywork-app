@@ -7,7 +7,7 @@ import Header from "@/src/components/header/Header";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function LayoutReceipts({ children }) {
+export default function LayoutPolicies({ children }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const pathname = usePathname();

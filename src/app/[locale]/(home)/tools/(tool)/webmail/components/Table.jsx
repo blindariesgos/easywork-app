@@ -28,7 +28,11 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
+export default function Table({
+  mails,
+  selectedFolder = "INBOX",
+  fetchData,
+}) {
   const router = useRouter();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -59,6 +63,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   };
 
   async function updateLabelId(array, label) {
+    console.log(label, array, selectOauth?.id);
     if (label === "inbox") {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
@@ -74,12 +79,11 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
         }
       );
     }
-
     fetchData();
   }
 
   const itemOptions = [
-    { name: "Marcar como no leido", onClick: "" },
+    { name: "Marcar como no leido", onClick: (item) => updateLabelId([item], "unread") },
     { name: "Mover a la carpeta", onClick: "" },
     { name: "Marcar como correo no deseado", onClick: "" },
     { name: "Eliminar", onClick: (item) => updateLabelId([item], "trash") },
@@ -90,11 +94,11 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   ];
 
   const folderOptions = [
-    { name: "Inbox", onClick: (item) => updateLabelId([item], "inbox") },
-    { name: "Spam", onClick: (item) => updateLabelId([item], "spam") },
+    { name: "Inbox", onClick: (item) => updateLabelId([item], "inbox"), value: "Inbox" },
+    { name: "Spam", onClick: (item) => updateLabelId([item], "spam"), value: "Spam" },
     {
       name: "Todos",
-      onClick: (item) => updateLabelId([item], "archived"),
+      onClick: (item) => updateLabelId([item], "archived"), value: "All"
     },
   ];
 
@@ -270,30 +274,32 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                                 className="rounded-md bg-white py-2 z-50 shadow-lg focus:outline-none"
                                               >
                                                 {folderOptions.map(
-                                                  (subitem) => (
-                                                    <MenuItem
-                                                      key={subitem.name}
-                                                    >
-                                                      {({ active }) => (
-                                                        <div
-                                                          className={clsx(
-                                                            active
-                                                              ? "bg-gray-50 text-white"
-                                                              : "text-black",
-                                                            "block px-3 py-1 text-sm leading-6  cursor-pointer"
-                                                          )}
-                                                          onClick={() =>
-                                                            subitem.onClick(
-                                                              item.email
-                                                                .googleId
-                                                            )
-                                                          }
-                                                        >
-                                                          {subitem.name}
-                                                        </div>
-                                                      )}
-                                                    </MenuItem>
-                                                  )
+                                                  (subitem) =>
+                                                    subitem.value.toLowerCase() !==
+                                                      selectedFolder.toLowerCase() && (
+                                                      <MenuItem
+                                                        key={subitem.name}
+                                                      >
+                                                        {({ active }) => (
+                                                          <div
+                                                            className={clsx(
+                                                              active
+                                                                ? "bg-gray-50 text-white"
+                                                                : "text-black",
+                                                              "block px-3 py-1 text-sm leading-6  cursor-pointer"
+                                                            )}
+                                                            onClick={() =>
+                                                              subitem.onClick(
+                                                                item.email
+                                                                  .googleId
+                                                              )
+                                                            }
+                                                          >
+                                                            {subitem.name}
+                                                          </div>
+                                                        )}
+                                                      </MenuItem>
+                                                    )
                                                 )}
                                               </MenuItems>
                                             </Transition>

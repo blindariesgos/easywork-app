@@ -21,9 +21,10 @@ const getQueries = (filters, userId) => {
       : getValue(key, userId)).join('&')
 }
 
-export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "" }) => {
+export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "", config = {} }) => {
   const queries = getQueries(filters, userId)
-  const url = `/tools/tasks/user?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`
+  const configParams = Object.keys(config).map(key => `${key}=${config[key]}`).join('&')
+  const url = `/tools/tasks/user?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}${configParams.length > 0 ? `&${configParams}` : ""}`
 
   const { data, error, isLoading, mutate } = useSWR(
     url,

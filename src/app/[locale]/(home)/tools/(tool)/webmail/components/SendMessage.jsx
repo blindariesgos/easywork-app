@@ -57,6 +57,7 @@ export default function SendMessage({
   });
 
   useEffect(() => {
+    setValueText("");
     getSignature();
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
@@ -118,8 +119,6 @@ export default function SendMessage({
           },
         }
       );
-      console.log(response.data.url);
-      console.log(value);
       setValueText(`<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`);
       setSignature(response.data.url);
     } catch (error) {}

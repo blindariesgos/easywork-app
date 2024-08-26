@@ -354,7 +354,7 @@ export default function WebmailLayout({ children, table }) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-72 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {allOauth?.map((oauth) => (
                       <Menu.Item key={oauth.id}>
                         {({ active }) => (
@@ -368,7 +368,7 @@ export default function WebmailLayout({ children, table }) {
                             }}
                           >
                             <p>{oauth.email}</p>
-                            <p className="bg-green-500 px-1 rounded-md text-white">{oauth.unreadCount}</p>
+                            <p className="bg-green-500 px-0.5 rounded-md text-white text-sm">{oauth.unreadCount}</p>
                           </div>
                         )}
                       </Menu.Item>

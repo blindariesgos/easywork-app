@@ -14,6 +14,7 @@ import {
 } from "../../../../../../../../utils/getFormatDate";
 import Link from "next/link";
 import clsx from "clsx";
+import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 
 export default function General({ user, id }) {
   const [page, setPage] = useState(1);
@@ -28,8 +29,8 @@ export default function General({ user, id }) {
   });
 
   const getLastActivity = (task) => {
-    if (task.completedTime) return formatDate(task.createdAt);
-    return formatDate(task.createdAt);
+    if (task.completedTime) return formatDate(task.completedTime);
+    return formatDate(task.updatedAt);
   };
 
   const columns = [
@@ -39,7 +40,7 @@ export default function General({ user, id }) {
     },
     {
       name: "Actividad",
-      key: "",
+      key: "updatedAt",
     },
     {
       name: "Fecha limite",
@@ -57,6 +58,7 @@ export default function General({ user, id }) {
               <tr className="">
                 {columns.map((column, index) => (
                   <th
+                    key={column.id}
                     scope="col"
                     className={clsx(
                       "py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer ",
@@ -80,7 +82,7 @@ export default function General({ user, id }) {
                       {column.name}
                       <span
                         className={`ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
-                          orderBy === column.key && order === "DESC"
+                          orderBy === column.key && order === "ASC"
                             ? "transform rotate-180"
                             : ""
                         } ${orderBy != column.key && "invisible"}`}
@@ -144,6 +146,16 @@ export default function General({ user, id }) {
               </tbody>
             )}
           </table>
+          {tasks && tasks.items && tasks.items.length && (
+            <div className="w-full p-2 flex justify-center">
+              <PaginationV2
+                totalPages={tasks?.meta?.totalPages || 0}
+                currentPage={page}
+                setPage={setPage}
+                bgColor="bg-white"
+              />
+            </div>
+          )}
         </div>
       </div>
     </Fragment>

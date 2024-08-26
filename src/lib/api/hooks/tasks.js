@@ -25,12 +25,11 @@ export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "", conf
   const queries = getQueries(filters, userId)
   const configParams = Object.keys(config).map(key => `${key}=${config[key]}`).join('&')
   const url = `/tools/tasks/user?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}${configParams.length > 0 ? `&${configParams}` : ""}`
-
+  console.log(url)
   const { data, error, isLoading, mutate } = useSWR(
     url,
     fetcher,
   );
-
   return {
     tasks: data,
     isLoading,

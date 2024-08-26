@@ -25,13 +25,10 @@ export default function UserEditor({ user, id }) {
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
       <div className="flex flex-col flex-1 bg-gray-600 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
-        <TabGroup className="flex flex-col flex-1 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
+        <TabGroup className="flex flex-col flex-1 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl">
           {/* Encabezado del Formulario */}
           <div className="bg-transparent p-4">
-            <div className="flex items-start flex-col justify-between gap-4 relative">
-              {!id && (
-                <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
-              )}
+            <div className="flex items-start flex-col justify-between gap-4">
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl sm:pl-6 pl-2">
                   {user

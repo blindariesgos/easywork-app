@@ -235,12 +235,12 @@ export default function General({ user, id }) {
       {loading && <LoaderSpinner />}
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-100 rounded-lg w-full h-[calc(100vh_-_160px)]"
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg w-full h-[calc(100vh_-_160px)]"
       >
         {/* Menu Izquierda */}
-        <div className=" bg-gray-100 grid grid-cols-1 gap-4">
-          <div className="rounded-lg bg-white ">
-            <div className="flex w-full justify-between">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="rounded-lg bg-white">
+            <div className="flex w-full justify-between pt-4">
               <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
                 Supervisor
                 <ChevronDownIcon className="w-4 h-4" />
@@ -504,7 +504,7 @@ export default function General({ user, id }) {
 
       {/* Botones de acción */}
       {(isEdit || !user) && (
-        <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
+        <div className="flex w-full justify-center px-4 py-4 gap-4 fixed -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
           <Button
             type="submit"
             label={

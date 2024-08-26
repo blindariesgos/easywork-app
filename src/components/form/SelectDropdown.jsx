@@ -26,6 +26,7 @@ function SelectDropdown({
   className,
   border,
   watch,
+  placeholder,
 }) {
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
@@ -86,6 +87,7 @@ function SelectDropdown({
               // registerInput && registerInput.onChange(event);
               setQuery(event.target.value);
             }}
+            placeholder
           />
           {!disabled && (
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -115,62 +117,44 @@ function SelectDropdown({
                 filteredElements.map((option) => (
                   <ComboboxOption
                     key={option.id}
-                    className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-6 pr-4 ${
-                        active
-                          ? "bg-primary text-white rounded-md"
-                          : "text-gray-900"
-                      }`
-                    }
+                    className={`relative cursor-default select-none py-2 pl-6 md:pl-8 pr-4 text-gray-900 group data-[focus]:bg-primary data-[selected]:text-white`}
                     value={option}
                   >
-                    {({ selected, active }) => (
-                      <>
-                        <span
-                          className={`flex items-center gap-2 w-full${
-                            selected ? "font-medium" : "font-normal"
-                          }`}
+                    <span
+                      className={`flex items-center gap-2 md:gap-4 xl:gap-6 w-full  font-normal`}
+                    >
+                      <Image
+                        src={option.avatar || "/img/avatar.svg"}
+                        alt=""
+                        height={500}
+                        width={500}
+                        layout="fixed"
+                        objectFit="cover"
+                        className="h-6 w-6 rounded-full"
+                      />
+                      <div className={`flex flex-col leading-3`}>
+                        <p
+                          className={`text-[10px] font-medium group-data-[selected]:font-bold text-black group-data-[focus]:text-white `}
                         >
-                          <div className="w-[20%]">
-                            <Image
-                              src={option.avatar || "/img/avatar.svg"}
-                              alt=""
-                              height={500}
-                              width={500}
-                              layout="fixed"
-                              objectFit="cover"
-                              className="h-6 w-6 rounded-full"
-                            />
-                          </div>
-                          <div className={`flex flex-col leading-3 w-[80%]`}>
-                            <p
-                              className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}
-                            >
-                              {option.name || option?.username}
-                            </p>
-                            <p
-                              className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}
-                            >
-                              {option.email}
-                            </p>
-                            <p
-                              className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}
-                            >
-                              {option.phone}
-                            </p>
-                          </div>
-                        </span>
-                        {selected ? (
-                          <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-1 ${
-                              active ? "text-white" : "text-primary"
-                            }`}
-                          >
-                            <CheckIcon className="h-4 w-4" aria-hidden="true" />
-                          </span>
-                        ) : null}
-                      </>
-                    )}
+                          {option.name || option?.username}
+                        </p>
+                        <p
+                          className={`text-[10px] text-gray-50 group-data-[selected]:font-medium  group-data-[focus]:text-white  flex-wrap`}
+                        >
+                          {option.email}
+                        </p>
+                        <p
+                          className={`text-[10px] text-gray-50 group-data-[selected]:font-medium group-data-[focus]:text-white `}
+                        >
+                          {option.phone}
+                        </p>
+                      </div>
+                    </span>
+                    <span
+                      className={`absolute hidden group-data-[selected]:flex inset-y-0 left-0  items-center pl-2 group-data-[focus]:text-white text-primary`}
+                    >
+                      <CheckIcon className="h-4 w-4" aria-hidden="true" />
+                    </span>
                   </ComboboxOption>
                 ))
               )}

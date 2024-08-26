@@ -409,7 +409,7 @@ export default function WebmailLayout({ children, table }) {
             <div className="w-full">
               <button
                 onClick={() => backButton()}
-                className="w-full bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
+                className="w-full hover:bg-slate-200 bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
               >
                 volver
               </button>

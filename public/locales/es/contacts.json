@@ -75,6 +75,8 @@
     "born": "Nacimiento",
     "sex": "Sexo: ",
     "rfc": "RFC",
+    "typePerson": "Tipo de Persona",
+    "observer": "Observador",
     "zip-code": "Código postal",
     "address": "Dirección",
     "placeholder-address": "Escriba la dirección del cliente.",

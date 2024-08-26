@@ -43,18 +43,18 @@ export default function ContactGeneral({ contact, id }) {
 
   useEffect(() => {
     if (contact) {
-      lists?.listContact?.contactTypes.length > 0 &&
-        setContactType(
-          lists?.listContact?.contactTypes.filter(
-            (option) => option.id === contact?.type?.id
-          )[0]
-        );
-      lists?.listContact?.contactSources.length > 0 &&
-        setContactSource(
-          lists?.listContact?.contactSources.filter(
-            (option) => option.id === contact?.source?.id
-          )[0]
-        );
+      // lists?.listContact?.contactTypes.length > 0 &&
+      //   setContactType(
+      //     lists?.listContact?.contactTypes.filter(
+      //       (option) => option.id === contact?.type?.id
+      //     )[0]
+      //   );
+      // lists?.listContact?.contactSources.length > 0 &&
+      //   setContactSource(
+      //     lists?.listContact?.contactSources.filter(
+      //       (option) => option.id === contact?.source?.id
+      //     )[0]
+      //   );
       setSelectedProfileImage({ base64: contact?.photo || null, file: null });
     }
   }, [contact, lists]);
@@ -64,18 +64,20 @@ export default function ContactGeneral({ contact, id }) {
       .required(t("common:validations:required"))
       .email(t("common:validations:email"))
       .min(5, t("common:validations:min", { min: 5 })),
-    name: Yup.string()
+    fullName: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
-    position: Yup.string(),
+    cargo: Yup.string(),
     phone: Yup.string().required(t("common:validations:required")),
     rfc: Yup.string(),
-    cua: Yup.string(),
     typeContact: Yup.string(),
-    origin: Yup.string(),
+    sourceId: Yup.string(),
     address: Yup.string(),
-    responsible: Yup.string(),
+    assignedById: Yup.string(),
     birthday: Yup.string(),
+    typePerson: Yup.string().required(t("common:validations:required")),
+    observadorId: Yup.string().required(t("common:validations:required")),
+    typeId: Yup.string(),
   });
 
   const {
@@ -97,18 +99,20 @@ export default function ContactGeneral({ contact, id }) {
       return;
     }
 
-    if (contact?.fullName) setValue("name", contact?.fullName);
-    if (contact?.cargo) setValue("position", contact?.cargo);
+    if (contact?.fullName) setValue("fullName", contact?.fullName);
+    if (contact?.cargo) setValue("cargo", contact?.cargo);
     if (contact?.phones[0]?.phone?.number)
       setValue("phone", contact?.phones[0]?.phone?.number);
     if (contact?.emails[0]?.email?.email)
       setValue("email", contact?.emails[0]?.email?.email);
-    if (contact?.curp) setValue("rfc", contact?.curp);
-    if (contact?.cua) setValue("cua", contact?.cua);
-    if (contact?.type?.id) setValue("typeContact", contact?.type?.id);
-    if (contact?.source?.id) setValue("origin", contact?.source?.id);
+    if (contact?.type?.id) setValue("typeId", contact?.type?.id);
+    if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
     if (contact?.birthdate) setValue("birthday", contact?.birthdate);
     if (contact?.address) setValue("address", contact?.address);
+    if (contact?.rfc) setValue("rfc", contact?.rfc);
+    if (contact?.typePerson) setValue("typePerson", contact?.typePerson);
+    if (contact?.assignedById) setValue("assignedById", contact?.assignedById);
+    if (contact?.observadorId) setValue("observadorId", contact?.observadorId);
   }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {
@@ -125,59 +129,25 @@ export default function ContactGeneral({ contact, id }) {
     }
   }, []);
 
-  const handleFilesUpload = (event, drop) => {
-    let uploadedImages = [...files];
-    const fileList = drop ? event.dataTransfer.files : event.target.files;
-
-    if (fileList) {
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error(t("common:validations:size", { size: 5 }));
-          return;
-        } else {
-          const reader = new FileReader();
-
-          reader.onload = (e) => {
-            setTimeout(() => {
-              const existFile = uploadedImages.some(
-                (item) => item.name === file.name
-              );
-              if (!existFile) {
-                uploadedImages = [
-                  ...uploadedImages,
-                  {
-                    base64: reader.result,
-                    type: file.type.split("/")[0],
-                    name: file.name,
-                  },
-                ];
-                setFiles(uploadedImages);
-              }
-            }, 500);
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-  };
-
   const handleFormSubmit = async (data) => {
+    const { phone, email, ...otherData } = data;
+    const phones = contact?.phones?.length
+      ? contact?.phones.map((p, index) => ({
+          number: index == 0 ? data.phone : p.phone?.number,
+        }))
+      : [{ number: phone }];
+    const amails = contact?.emails?.length
+      ? contact?.emails.map((e, index) => ({
+          email: index == 0 ? phone : e.email?.email,
+        }))
+      : [{ email }];
+
     const body = {
-      name: data.name,
-      fullName: data.name,
-      photo: id ? "" : selectedProfileImage?.file || "",
-      cargo: data.position,
-      typeId: data.typeContact,
-      curp: data.rfc,
-      cua: data.cua,
-      address: data.address,
-      birthdate: data.birthday,
-      sourceId: data.origin,
-      emails_dto: JSON.stringify([{ email: data.email }]),
-      phones_dto: [{ number: data.phone }],
-      observadorId: data.responsible,
-      assignedById: data.responsible,
+      ...otherData,
+      name: otherData.fullName.split(" ")[0],
+      photo: selectedProfileImage?.file || "",
+      emails_dto: amails,
+      phones_dto: phones,
     };
 
     const formData = new FormData();
@@ -197,7 +167,14 @@ export default function ContactGeneral({ contact, id }) {
     try {
       setLoading(true);
       if (!contact) {
-        await createContact(formData);
+        const response = await createContact(formData);
+        if (response.hasError) {
+          let message = response.message;
+          if (response.errors) {
+            message = response.errors.join(", ");
+          }
+          throw { message };
+        }
         await mutate(`/sales/crm/contacts?limit=10&page=1`);
         toast.success(t("contacts:create:msg"));
       } else {
@@ -214,6 +191,7 @@ export default function ContactGeneral({ contact, id }) {
       setLoading(false);
       router.push(`/sales/crm/contacts?page=1`);
     } catch (error) {
+      console.error(error.message);
       handleApiError(error.message);
       setLoading(false);
     }
@@ -225,7 +203,7 @@ export default function ContactGeneral({ contact, id }) {
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
           className={clsx(
-            "grid grid-cols-1 lg:h-full bg-gray-100 rounded-lg p-4 w-full",
+            "grid grid-cols-1 lg:h-full bg-gray-100 rounded-lg  w-full",
             {
               "lg:grid-cols-2": contact,
             }
@@ -234,7 +212,7 @@ export default function ContactGeneral({ contact, id }) {
           {/* Panel Principal */}
 
           {/* Menu Izquierda */}
-          <div className=" bg-gray-100 lg:overflow-y-scroll rounded-lg">
+          <div className=" bg-gray-100 p-4 lg:overflow-y-scroll rounded-lg">
             <div className="pr-2">
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("contacts:create:data")}</h1>
@@ -275,17 +253,17 @@ export default function ContactGeneral({ contact, id }) {
                 type="text"
                 label={t("contacts:create:name")}
                 placeholder={t("contacts:create:placeholder-name")}
-                error={errors.name}
+                error={errors.fullName}
                 register={register}
-                name="name"
+                name="fullName"
                 disabled={!isEdit}
               />
               <TextInput
                 label={t("contacts:create:position")}
                 placeholder={t("contacts:create:position")}
-                error={errors.position}
+                error={errors.cargo}
                 register={register}
-                name="position"
+                name="cargo"
                 disabled={!isEdit}
               />
               <Controller
@@ -343,16 +321,35 @@ export default function ContactGeneral({ contact, id }) {
                 disabled={!isEdit}
               />
               <SelectInput
+                label={t("contacts:create:typePerson")}
+                options={[
+                  {
+                    name: "Fisica",
+                    id: "fisica",
+                  },
+                  {
+                    name: "Moral",
+                    id: "moral",
+                  },
+                ]}
+                placeholder="- Seleccionar -"
+                watch={watch}
+                name="typePerson"
+                disabled={!isEdit}
+                setValue={setValue}
+                error={!watch("typePerson") && errors.typePerson}
+              />
+              <SelectInput
                 label={t("contacts:create:contact-type")}
                 options={lists?.listContact?.contactTypes}
-                selectedOption={contactType && contactType}
-                name="typeContact"
-                error={!watch("typeContact") && errors.typeContact}
+                name="typeId"
+                error={errors.typeId}
                 register={register}
                 setValue={setValue}
                 disabled={!isEdit}
+                watch={watch}
               />
-              {watch("typeContact") == "Otro" ? (
+              {watch("typeId") == "Otro" ? (
                 <TextInput
                   label={t("contacts:create:otherType")}
                   placeholder=""
@@ -374,83 +371,72 @@ export default function ContactGeneral({ contact, id }) {
               />
               <SelectInput
                 label={t("contacts:create:origen")}
-                name="origin"
+                name="sourceId"
                 options={lists?.listContact?.contactSources}
-                selectedOption={contactSource && contactSource}
-                error={!watch("origin") && errors.origin}
+                error={errors.sourceId}
                 register={register}
                 setValue={setValue}
                 disabled={!isEdit}
-                //value={watch('origin')}
+                watch={watch}
               />
               <SelectDropdown
                 label={t("contacts:create:responsible")}
-                name="responsible"
+                name="assignedById"
                 options={lists?.users}
-                selectedOption={contactResponsible}
                 register={register}
                 disabled={!isEdit}
-                error={!watch("responsible") && errors.responsible}
+                error={errors.assignedById}
                 setValue={setValue}
-                // //value={watch('responsible')}
+                watch={watch}
+                placeholder="- Seleccionar -"
               />
-              <TextInput
-                label={t("contacts:create:cua")}
-                error={errors.cua}
+              <SelectDropdown
+                label={t("contacts:create:observer")}
+                name="observadorId"
+                options={lists?.users}
                 register={register}
-                name="cua"
                 disabled={!isEdit}
-                //value={watch('cua')}
-                // placeholder={t('contacts:create:placeholder-address')}
+                error={errors.observadorId}
+                setValue={setValue}
+                watch={watch}
+                placeholder="- Seleccionar -"
               />
-              {isEdit && (
-                <DocumentSelector
-                  name="files"
-                  onChange={handleFilesUpload}
-                  files={files}
-                  disabled={!isEdit}
-                  setFiles={setFiles}
-                />
-              )}
             </div>
           </div>
 
           {/* Menu Derecha */}
           {id && contact && <ActivityPanel contactId={id} />}
+          {/* Botones de acción */}
+          {(isEdit || !contact) && (
+            <div
+              className={clsx(
+                "flex justify-center px-4 w-full py-4 gap-4 bottom-0 lg:rounded-bl-[35px] rounded-none left-0 right-0 fixed lg:absolute bg-white shadow-[0px_-2px_6px_4px_#00000017] "
+              )}
+            >
+              <Button
+                type="submit"
+                label={
+                  loading
+                    ? t("common:buttons:saving")
+                    : t("common:buttons:save")
+                }
+                disabled={loading}
+                buttonStyle="primary"
+                className="px-3 py-2"
+                // onclick={() => handleSubmit(handleFormSubmit)}
+              />
+              <Button
+                type="button"
+                label={t("common:buttons:cancel")}
+                disabled={loading}
+                buttonStyle="secondary"
+                onclick={() => router.back()}
+                className="px-3 py-2"
+              />
+            </div>
+          )}
         </form>
       </div>
-
-      {/* Botones de acción */}
-      {(isEdit || !contact) && (
-        <div
-          className={clsx(
-            "flex justify-center px-4 py-4 gap-4  bottom-0 rounded-bl-[35px] fixed  width-[-webkit-fill-available] bg-white shadow-[0px_-2px_6px_4px_#00000017] ",
-            {
-              "w-full": contact,
-              "max-w-xl w-full": !contact,
-            }
-          )}
-        >
-          <Button
-            type="submit"
-            label={
-              loading ? t("common:buttons:saving") : t("common:buttons:save")
-            }
-            disabled={loading}
-            buttonStyle="primary"
-            className="px-3 py-2"
-            // onclick={() => handleSubmit(handleFormSubmit)}
-          />
-          <Button
-            type="button"
-            label={t("common:buttons:cancel")}
-            disabled={loading}
-            buttonStyle="secondary"
-            onclick={() => router.back()}
-            className="px-3 py-2"
-          />
-        </div>
-      )}
     </Fragment>
   );
 }

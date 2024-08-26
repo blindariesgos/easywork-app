@@ -3,7 +3,7 @@ import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect, Fragment } from "react";
 import clsx from "clsx";
-import CreateTaskButton from "./components/CreateTaskButton";
+import { itemsByPage } from "@/src/lib/common";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
@@ -16,6 +16,7 @@ import {
   HeartIcon,
   FolderIcon,
   ChevronDownIcon,
+  CheckIcon,
 } from "@heroicons/react/20/solid";
 import {
   ChevronUpIcon,
@@ -34,6 +35,7 @@ import {
   Listbox,
   ListboxButton,
   ListboxOptions,
+  ListboxOption,
 } from "@headlessui/react";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
@@ -107,6 +109,7 @@ export default function WebmailLayout({ children, table }) {
   }, [openModalFolders]);
 
   useEffect(() => {
+    console.log(limit);
     getMails(
       session.data.user.id,
       searchParams.get("page"),
@@ -116,7 +119,7 @@ export default function WebmailLayout({ children, table }) {
     ).then((res) => {
       setDMails(res);
     });
-  }, [selectOauth, searchParams.get("page"), selectedFolder]);
+  }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
 
   const updateData = async () => {
     setIsLoading(true);
@@ -351,20 +354,21 @@ export default function WebmailLayout({ children, table }) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-72 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {allOauth?.map((oauth) => (
                       <Menu.Item key={oauth.id}>
                         {({ active }) => (
                           <div
                             className={classNames(
                               active ? "bg-gray-50" : "",
-                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                              "flex justify-between items-center px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
                             onClick={() => {
                               setSelectOauth(oauth);
                             }}
                           >
-                            {oauth.email}
+                            <p>{oauth.email}</p>
+                            <p className="bg-green-500 px-0.5 rounded-md text-white text-sm">{oauth.unreadCount}</p>
                           </div>
                         )}
                       </Menu.Item>
@@ -405,7 +409,7 @@ export default function WebmailLayout({ children, table }) {
             <div className="w-full">
               <button
                 onClick={() => backButton()}
-                className="w-full bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
+                className="w-full hover:bg-slate-200 bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
               >
                 volver
               </button>
@@ -540,7 +544,7 @@ export default function WebmailLayout({ children, table }) {
                   "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
                 )}
               >
-                {/* {itemsByPage.map((page) => (
+                {itemsByPage.map((page) => (
                   <ListboxOption
                     key={page.name}
                     value={page.id}
@@ -549,7 +553,7 @@ export default function WebmailLayout({ children, table }) {
                     <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
                     <div className="text-sm/6">{page.name}</div>
                   </ListboxOption>
-                ))} */}
+                ))}
               </ListboxOptions>
             </Listbox>
           </div>

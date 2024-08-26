@@ -361,13 +361,14 @@ export default function WebmailLayout({ children, table }) {
                           <div
                             className={classNames(
                               active ? "bg-gray-50" : "",
-                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                              "flex justify-between items-center px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
                             onClick={() => {
                               setSelectOauth(oauth);
                             }}
                           >
-                            {oauth.email}
+                            <p>{oauth.email}</p>
+                            <p className="bg-green-500 px-1 rounded-md text-white">{oauth.unreadCount}</p>
                           </div>
                         )}
                       </Menu.Item>

@@ -93,17 +93,26 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   const folderOptions = [
     {
       name: "Inbox",
-      onClick: (item) => selectedEmails ? changeSelectLabelId("inbox") : updateLabelId([item], "inbox"),
+      onClick: (item) =>
+        selectedEmails
+          ? changeSelectLabelId("inbox")
+          : updateLabelId([item], "inbox"),
       value: "Inbox",
     },
     {
       name: "Spam",
-      onClick: (item) => selectedEmails ? changeSelectLabelId("spam") : updateLabelId([item], "spam"),
+      onClick: (item) =>
+        selectedEmails
+          ? changeSelectLabelId("spam")
+          : updateLabelId([item], "spam"),
       value: "Spam",
     },
     {
       name: "Todos",
-      onClick: (item) => selectedEmails ? changeSelectLabelId("all") : updateLabelId([item], "archived"),
+      onClick: (item) =>
+        selectedEmails
+          ? changeSelectLabelId("all")
+          : updateLabelId([item], "archived"),
       value: "All",
     },
   ];
@@ -134,7 +143,10 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                   Seleccionar todo
                 </div>
               </div>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer" onClick={() => changeSelectLabelId("unread")}>
+              <div
+                className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer"
+                onClick={() => changeSelectLabelId("unread")}
+              >
                 <EnvelopeOpenIcon className="h-5 w-5" />
                 Leer
               </div>
@@ -168,9 +180,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                     : "text-black",
                                   "block px-3 py-1 text-sm leading-6  cursor-pointer"
                                 )}
-                                onClick={() =>
-                                  subitem.onClick(null)
-                                }
+                                onClick={() => subitem.onClick(null)}
                               >
                                 {subitem.name}
                               </div>
@@ -197,7 +207,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
             </div>
             <div className="divide-y divide-gray-300">
               <div className="divide-y divide-gray-200 bg-white">
-                {mails?.map((item) => {
+                {mails?.map((item, index) => {
                   let subjectFormat = item.email.subject
                     ? item.email.subject
                     : "";
@@ -234,7 +244,9 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                     <div
                       key={item.id}
                       className={clsx(
-                        selectedEmails.includes(item) ? "bg-gray-50" : undefined,
+                        selectedEmails.includes(item)
+                          ? "bg-gray-50"
+                          : undefined,
                         item.email.folder.includes("UNREAD")
                           ? "font-semibold"
                           : "",
@@ -248,7 +260,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                         <div className="flex items-center h-full">
                           <input
                             type="checkbox"
-                            className="..."
+                            className="... mr-2"
                             value={item.id}
                             checked={selectedEmails.includes(item)}
                             onChange={(e) =>
@@ -263,9 +275,9 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                             as="div"
                             className="hover:bg-slate-50/30 w-10 md:w-auto rounded-lg font-normal"
                           >
-                            <MenuButton className="-m-1.5 flex items-center p-1.5">
+                            <MenuButton className="flex items-center">
                               <Bars3Icon
-                                className="ml-3 h-4 w-4 text-gray-400"
+                                className="h-4 w-4 text-gray-400"
                                 aria-hidden="true"
                               />
                             </MenuButton>
@@ -278,7 +290,13 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                               leaveFrom="transform opacity-100 scale-100"
                               leaveTo="transform opacity-0 scale-95"
                             >
-                              <MenuItems className="absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                              <MenuItems
+                                className={
+                                  index > 5
+                                    ? "bottom-0 absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                    : "top-0 absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                }
+                              >
                                 {itemOptions.map((itemOp, index) => (
                                   <MenuItem key={index}>
                                     {({ active }) => (

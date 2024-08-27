@@ -3,11 +3,16 @@ import { Fragment, useEffect, useState, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
+import useAppContext from "../../../../../../../context/app";
+import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { setCookie, getCookie } from "cookies-next";
 import base64 from "base64-js";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
 import dynamic from "next/dynamic";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -26,9 +31,11 @@ export default function EmailBody({
 }) {
   const { t } = useTranslation();
   const router = useRouter();
+  const session = useSession();
   const [label, setLabel] = useState("");
   const [value, setValueText] = useState("");
   const [subLabel, setSubLabel] = useState("");
+  const [signature, setSignature] = useState(null);
   const [reply, setReply] = useState(false);
   const [decodedMailData, setDecodedMailData] = useState("");
   const searchParams = useSearchParams();
@@ -36,6 +43,8 @@ export default function EmailBody({
   const fileInputRef = useRef(null);
   const container = useRef(null);
   const [files, setFiles] = useState([]);
+  const [subject, setSubject] = useState("");
+  const { selectOauth, selectedEmails, setSelectedEmails } = useAppContext();
 
   const getParts = (parts) => {
     let message = "";
@@ -64,6 +73,10 @@ export default function EmailBody({
     setDecodedMailData(selectMail.body);
   }, [selectMail]);
 
+  useEffect(() => {
+    getSignature();
+  }, [reply]);
+
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
@@ -82,13 +95,64 @@ export default function EmailBody({
     }, 100);
   };
 
-  const moveFolder = async (folder,id) => {
-    if (folder === 0){
+  const moveFolder = async (folder, id) => {
+    if (folder === 0) {
       await updateLabelId([id], "spam");
     } else if (folder === 1) {
       await updateLabelId([id], "trash");
     }
     router.back();
+  };
+
+  const getSignature = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${getCookie("myCheckbox")}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      setValueText(
+        `<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`
+      );
+      setSignature(response.data.url);
+    } catch (error) {}
+  };
+
+  async function sendEmail() {
+    const data = {
+      to: [selectMail?.from],
+      // cc: CCArray,
+      // bcc: BCCArray,
+      subject: "Re: " + subject,
+      body: value + " <style>img {max-width: 650px; }</style>",
+      inReplyTo: selectMail.googleId,
+      references: selectMail.googleId,
+      attachments: [
+        // {
+        //   filename: "test.pdf",
+        //   mimeType: "application/pdf",
+        //   path: "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf",
+        // },
+      ],
+    };
+    try {
+      if (!data.inReplyTo) {
+        toast.error("Debes colocar destinatario");
+        return;
+      }
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
+        data
+      );
+      toast.success("Correo enviado");
+      router.back();
+    } catch (error) {
+      toast.error("Error al enviar correo");
+      console.error("Failed to send email:", error);
+    }
   }
 
   const toolbar = [
@@ -196,10 +260,20 @@ export default function EmailBody({
                             <p className="m-2 text-xs font-semibold cursor-pointer">
                               REENVIAR
                             </p>
-                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(0,selectMail.googleId)}}>
+                            <p
+                              className="m-2 text-xs font-semibold cursor-pointer"
+                              onClick={() => {
+                                moveFolder(0, selectMail.googleId);
+                              }}
+                            >
                               MARCAR COMO CORREO NO DESEADO
                             </p>
-                            <p className="m-2 text-xs font-semibold cursor-pointer" onClick={() => {moveFolder(1,selectMail.googleId)}}>
+                            <p
+                              className="m-2 text-xs font-semibold cursor-pointer"
+                              onClick={() => {
+                                moveFolder(1, selectMail.googleId);
+                              }}
+                            >
                               ELIMINAR
                             </p>
                           </div>
@@ -226,20 +300,13 @@ export default function EmailBody({
                               </div>
                               <div className="py-2">
                                 <ReactQuill
-                                  className="h-96 w-full bg-white pb-12"
+                                  className=" w-full bg-white pb-12"
                                   theme="snow"
                                   value={value}
                                   onChange={setValueText}
                                   formats={formats}
                                   modules={{ toolbar }}
                                 />
-                                {/* <TextEditor
-                                                  className="h-96 w-full bg-white pb-12"
-                                                  theme="snow"
-                                                  ref={quillRef}
-                                                  value={value}
-                                                  setValue={setValueText}
-                                                /> */}
                                 <div className="mt-2">
                                   {files &&
                                     files.map((file, index) => (

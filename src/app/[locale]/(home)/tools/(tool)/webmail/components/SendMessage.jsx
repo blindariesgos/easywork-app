@@ -206,7 +206,7 @@ export default function SendMessage({
                         </div>
                         <div className="py-2 border-b-2">
                           <div className="flex items-center">
-                            <p>Para</p>
+                            <p className="w-10">Para:</p>
                             <SelectDropdown
                               name="responsible"
                               options={lists?.users}
@@ -233,24 +233,24 @@ export default function SendMessage({
                           </div>
                           {CCBCC.CC && (
                             <div className="flex items-center mt-2">
-                              <p>CC</p>
+                              <p className="w-10">CC:</p>
                               <SelectDropdown
                                 name="responsible"
                                 options={lists?.users}
                                 setValue={setValue}
-                                className="ml-2 w-10/12"
+                                className="ml-2 w-full"
                                 setContactsArray={setCCArray}
                               />
                             </div>
                           )}
                           {CCBCC.BCC && (
                             <div className="flex items-center mt-2">
-                              <p>BCC</p>
+                              <p className="w-10">BCC:</p>
                               <SelectDropdown
                                 name="responsible"
                                 options={lists?.users}
                                 setValue={setValue}
-                                className="ml-2 w-10/12"
+                                className="ml-2 w-full"
                                 setContactsArray={setBCCArray}
                               />
                             </div>

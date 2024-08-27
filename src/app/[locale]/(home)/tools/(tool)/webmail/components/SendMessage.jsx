@@ -327,9 +327,7 @@ export default function SendMessage({
                               Enviar
                             </button>
                             <button
-                              onclick={() => {
-                                router.back();
-                              }}
+                              onClick={() => router.back()}
                               className="bg-gray-300 hover:bg-gray-500 m-2 p-3 rounded-md"
                             >
                               Cancelar

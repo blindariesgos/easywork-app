@@ -30,7 +30,7 @@ function SelectInput({
   placeholder,
 }) {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState(object ? {} : "");
+  const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -54,10 +54,8 @@ function SelectInput({
         });
 
   useEffect(() => {
-    if (!watch || !options) return;
-    if (object && Object.keys(selected).length > 0) return;
-    if (!object && selected.length > 0) return;
-
+    if (!watch || !options || selected) return;
+    console.log({ selected });
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);

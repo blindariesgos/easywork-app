@@ -76,7 +76,7 @@ export default function AddContactTabs() {
     <div className="bg-white px-4 w-full rounded-lg">
       <div className="flex justify-between items-center">
         <TabList
-          className=" flex gap-x-8 p-2 flex-wrap justify-start"
+          className=" flex gap-x-4 lg:gap-x-8 gap-y-2 p-2 flex-wrap justify-start"
           aria-label="Tabs"
         >
           {tabs.map((tab) => {

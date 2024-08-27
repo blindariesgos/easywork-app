@@ -27,7 +27,7 @@ export default function ContactsHeader() {
   const pathname = usePathname();
   const { push } = useRouter();
   const { selectedContacts } = useCrmContext();
-  const { filters, displayFilters, removeFilter } = useContactContext();
+  const { displayFilters, removeFilter } = useContactContext();
 
   const handlePathname = () => {
     params.delete("page");
@@ -80,7 +80,6 @@ export default function ContactsHeader() {
           />
         </div>
         <ActiveFiltersDrawer
-          filters={filters}
           displayFilters={displayFilters}
           removeFilter={removeFilter}
         />

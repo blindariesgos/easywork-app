@@ -55,7 +55,7 @@ export default function ContactEditor({ contact, id }) {
           </h1>
         )}
         {contact && (
-          <div className="bg-transparent py-6 px-4 lg:px-8 ">
+          <div className="py-6 px-4 lg:px-8 sticky bg-inherit z-10 top-0">
             <div className="flex gap-2 items-center">
               <h1 className="text-xl sm:pl-6 pl-2 pb-6">
                 {contact
@@ -67,7 +67,7 @@ export default function ContactEditor({ contact, id }) {
           </div>
         )}
 
-        <TabPanels className="pb-[150px] h-full ">
+        <TabPanels className="pb-[150px] lg:h-full">
           <TabPanel className="h-full">
             <ContactGeneral id={id} contact={contact} />
           </TabPanel>

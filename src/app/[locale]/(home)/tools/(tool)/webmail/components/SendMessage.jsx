@@ -17,7 +17,7 @@ import * as yup from "yup";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import ReactQuill from "react-quill";
-import './styles.css';
+import "./styles.css";
 
 export default function SendMessage({
   selectOauth,
@@ -119,7 +119,9 @@ export default function SendMessage({
           },
         }
       );
-      setValueText(`<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`);
+      setValueText(
+        `<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`
+      );
       setSignature(response.data.url);
     } catch (error) {}
   };
@@ -319,12 +321,17 @@ export default function SendMessage({
                           </div>
                           <div className="mt-8">
                             <button
-                              className="bg-easywork-main text-white p-3 rounded-md"
+                              className="bg-easywork-main hover:bg-easywork-mainhover text-white p-3 rounded-md"
                               onClick={() => sendEmail()}
                             >
                               Enviar
                             </button>
-                            <button className="bg-gray-300 m-2 p-3 rounded-md">
+                            <button
+                              onclick={() => {
+                                router.back();
+                              }}
+                              className="bg-gray-300 hover:bg-gray-500 m-2 p-3 rounded-md"
+                            >
                               Cancelar
                             </button>
                           </div>

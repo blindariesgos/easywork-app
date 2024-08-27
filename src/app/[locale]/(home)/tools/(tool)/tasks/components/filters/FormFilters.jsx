@@ -76,12 +76,6 @@ const FormFilters = () => {
           value = formatDate(field.value, "yyyy-MM-dd");
         }
 
-        if (field.type == "select") {
-          value = field.options.find(
-            (option) => option.id == field.value
-          ).value;
-        }
-
         return {
           ...acc,
           [field.code]: value,
@@ -107,12 +101,7 @@ const FormFilters = () => {
         .forEach((key) => {
           const index = fields.findIndex((x) => x.code == key);
           const filterField = filterFields.find((field) => field.code == key);
-          const value =
-            filterField?.type == "select"
-              ? filterField.options.find(
-                  (option) => option.value == filters[key]
-                ).id
-              : filters[key];
+          const value = filters[key];
 
           if (index == -1) {
             append({

@@ -49,7 +49,7 @@ export const createContact = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" }).post(
     "/sales/crm/contacts/new",
     data,
-  );
+  ).catch(error => ({ ...error, hasError: true }));
   // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;
 };

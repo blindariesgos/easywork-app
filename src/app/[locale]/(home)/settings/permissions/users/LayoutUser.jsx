@@ -4,7 +4,6 @@ import UsersHeader from "./components/UsersHeader";
 import { useTranslation } from "react-i18next";
 import Header from "@/src/components/header/Header";
 // import HeaderCrm from "../HeaderCrm";
-import useCrmContext from "@/src/context/crm";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 

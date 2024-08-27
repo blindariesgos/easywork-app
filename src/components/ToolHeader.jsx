@@ -4,6 +4,8 @@ import Button from "./form/Button";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CgSpinner } from "react-icons/cg";
+import ActiveFiltersDrawer from "./ActiveFiltersDrawer";
+import useTasksContext from "../context/tasks";
 
 export default function ToolHeader({
   title,
@@ -18,7 +20,7 @@ export default function ToolHeader({
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { push } = useRouter();
-
+  const { displayFilters, removeFilter } = useTasksContext();
   const handlePathname = () => {
     setLoading(true);
     params.delete("page");
@@ -64,7 +66,10 @@ export default function ToolHeader({
           </div>
           {toolButtons}
         </div>
-        {FiltersView && <FiltersView />}
+        <ActiveFiltersDrawer
+          displayFilters={displayFilters}
+          removeFilter={removeFilter}
+        />
       </div>
       {children}
     </header>

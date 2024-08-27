@@ -22,6 +22,7 @@ export default function TasksContextProvider({ children, userId }) {
   const [filterFields, setFilterFields] = useState();
 
   useEffect(() => {
+    if (!lists?.users || lists?.users?.length == 0) return
     setFilterFields([
       {
         id: 1,
@@ -134,7 +135,7 @@ export default function TasksContextProvider({ children, userId }) {
         options: lists?.users,
       },
     ])
-  }, [lists, status])
+  }, [lists?.users, status])
 
   useEffect(() => {
     if (Object.keys(filters).length == 0 && filterFields) {
@@ -148,6 +149,7 @@ export default function TasksContextProvider({ children, userId }) {
   useEffect(() => {
     setPage(1)
   }, [limit])
+
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)

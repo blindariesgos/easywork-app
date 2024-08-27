@@ -74,7 +74,7 @@ export default function ContactGeneral({ contact, id }) {
     sourceId: Yup.string(),
     address: Yup.string(),
     assignedById: Yup.string(),
-    birthday: Yup.string(),
+    birthdate: Yup.string(),
     typePerson: Yup.string().required(t("common:validations:required")),
     observadorId: Yup.string().required(t("common:validations:required")),
     typeId: Yup.string(),
@@ -111,8 +111,8 @@ export default function ContactGeneral({ contact, id }) {
     if (contact?.address) setValue("address", contact?.address);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.typePerson) setValue("typePerson", contact?.typePerson);
-    if (contact?.assignedById) setValue("assignedById", contact?.assignedById);
-    if (contact?.observadorId) setValue("observadorId", contact?.observadorId);
+    if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy.id);
+    if (contact?.observador) setValue("observadorId", contact?.observador.id);
   }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {

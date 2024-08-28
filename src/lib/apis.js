@@ -54,14 +54,15 @@ export const createContact = async (data) => {
   return response;
 };
 export const updateContact = async (data, id) => {
-  const response = await axios().put(`/sales/crm/contacts/${id}`, data);
+  const response = await axios().put(`/sales/crm/contacts/${id}`, data).catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {
   const response = await axios({ contentType: "multipart/form-data" }).put(
     `/sales/crm/contacts/${id}/photo`,
     photo,
-  );
+  ).catch((error) => ({ ...error, hasError: true }));
+
   return response;
 };
 
@@ -310,4 +311,9 @@ export const getAllRoles = async () => {
   const response = await axios().get(`/roles`);
   return response;
 };
+
+export const updateUser = async (id, body) => {
+  const response = await axios().put(`/users/${id}`, body).catch((error) => ({ ...error, hasError: true }));
+  return response;
+}
 

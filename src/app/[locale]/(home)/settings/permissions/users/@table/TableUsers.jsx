@@ -22,7 +22,7 @@ import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "@/src/components/pagination/Pagination";
 import Link from "next/link";
-import { deleteContactId } from "@/src/lib/apis";
+import { deleteContactId, updateUser } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
@@ -52,7 +52,7 @@ function classNames(...classes) {
 }
 
 export default function TableUsers() {
-  const { data, limit, setLimit, setOrderBy, order, orderBy } =
+  const { data, limit, setLimit, setOrderBy, order, orderBy, mutate } =
     useUserContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -121,16 +121,36 @@ export default function TableUsers() {
     }
   };
 
+  const updateStatusUser = async (id, isActive) => {
+    try {
+      const response = await updateUser(id, {
+        isActive: !isActive,
+      });
+      if (response.hasError) {
+        console.log(response);
+        toast.error("No se logro actualizar al usuario");
+        return;
+      }
+      mutate();
+      toast.success("Usuario actualizado con exito");
+    } catch {
+      toast.error("No se logro actualizar al usuario");
+    }
+  };
+
   const itemOptions = (user) => [
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/settings/permissions/permissions/user/${id}?show=true`),
+        router.push(`/settings/permissions/users/user/${id}?show=true`),
     },
     { name: "Editar" },
     { name: "Copiar" },
     (() => {
-      return user.isActive ? { name: "Desactivar" } : { name: "Activar" };
+      return {
+        name: user.isActive ? "Desactivar" : "Activar",
+        handleClick: (id) => updateStatusUser(id, user.isActive),
+      };
     })(),
   ];
 

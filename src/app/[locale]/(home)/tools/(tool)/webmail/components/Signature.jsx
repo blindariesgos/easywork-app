@@ -63,6 +63,7 @@ export default function Signature({
     const formData = new FormData();
     formData.append("file", archive);
     formData.append("metadata", JSON.stringify(metadata));
+    formData.append("size", "650");
 
     try {
       const response = await axios.post(

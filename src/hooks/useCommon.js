@@ -498,8 +498,7 @@ export const useSidebar = () => {
             },
             {
               name: t("common:menu:settings:other-settings"),
-              // href: "/settings/othersettings",
-              href: "",
+              href: `${window.location.pathname}?othersettings=true`,
               image: "/img/settings/othersettings.png",
               iconShortBar: BookOpenIcon,
             },

@@ -27,10 +27,10 @@ export default function PolicyDetails({ data, id }) {
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
-      <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
+      <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] px-4">
         <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
-          <div className="bg-transparent py-6 mx-4">
+          <div className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
             <div className="flex justify-between">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
                 <p className="text-xl sm:text-2xl xl:text-3xl">
@@ -78,22 +78,22 @@ export default function PolicyDetails({ data, id }) {
                 width="w-[140px]"
               />
             </div>
+            <TabList className="flex items-center gap-2 md:gap-4 xl:gap-6 bg-gray-100 rounded-2xl py-2 px-4 w-full">
+              {tabs.map((tab) => (
+                <Tab
+                  key={tab}
+                  className="data-[selected]:bg-blue-100 data-[hover]:bg-blue-400 outline-none text-sm md:text-base focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md px-1 md:px-2 py-2 md:py-3"
+                >
+                  {tab}
+                </Tab>
+              ))}
+            </TabList>
           </div>
-          <TabList className="flex items-center gap-6  bg-gray-100 rounded-2xl py-2 px-4 w-full">
-            {tabs.map((tab) => (
-              <Tab
-                key={tab}
-                className="data-[selected]:bg-blue-100 data-[hover]:bg-blue-400 outline-none focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md px-2 py-3"
-              >
-                {tab}
-              </Tab>
-            ))}
-          </TabList>
-          <TabPanels>
-            <TabPanel>
+          <TabPanels className="w-full">
+            <TabPanel className="w-full md:px-4">
               <General data={data} id={id} />
             </TabPanel>
-            <TabPanel>
+            <TabPanel className="w-full">
               <Receipts data={data} id={id} />
             </TabPanel>
           </TabPanels>

@@ -9,6 +9,7 @@ import FirebaseMessaging from "@/src/components/FirebaseMessaging";
 import { NotifyContextProvider } from "@/src/context/notify";
 import NotifyDrawer from "@/src/components/notifier/drawer/NotifyDrawer";
 import OtherNotifications from "../../../components/OtherNotifications";
+import OtherSettings from "../../../components/OtherSettings";
 import ChangePassword from "../../../components/ChangePassword";
 import InviteUser from "../../../components/InviteUser";
 
@@ -28,6 +29,7 @@ export default function HomeLayout({ children }) {
                 <OtherNotifications colorTag="bg-easywork-main" />
                 <ChangePassword colorTag="bg-easywork-main" />
                 <InviteUser colorTag="bg-easywork-main" />
+                <OtherSettings colorTag="bg-easywork-main" />
               </div>
             </NotifyContextProvider>
           </SocketProvider>

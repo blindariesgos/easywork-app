@@ -28,17 +28,14 @@ function ProfileImageInput({ selectedProfileImage, onChange, disabled }) {
               type="file"
               className="peer hidden inset-0 h-full w-full  rounded-md opacity-0"
               onChange={onChange}
-              accept="image/*"
+              accept="image/jpg,image/jpeg,image/png,image/gif,image/svg"
               disabled={disabled}
             />
-            <p>
-              {t('contacts:create:change-photo')}
-
-            </p>
+            <p>{t("contacts:create:change-photo")}</p>
           </div>
         </div>
         <p className="mt-1 text-xs leading-5 text-black">
-          {t('contacts:create:jpg')}
+          {t("contacts:create:jpg")}
         </p>
       </label>
     </div>

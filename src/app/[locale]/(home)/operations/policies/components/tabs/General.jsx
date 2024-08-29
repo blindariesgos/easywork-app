@@ -170,10 +170,10 @@ export default function PolicyDetails({ data, id }) {
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className="grid grid-cols-1 md:grid-cols-2  overflow-y-scroll bg-gray-100 rounded-2xl p-4 w-full"
+      className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_210px)]"
     >
       {/* Menu Derecha */}
-      <div className="h-auto rounded-2xl ">
+      <div className="h-auto rounded-2xl overflow-y-auto">
         <div className="flex justify-between py-4 px-3 rounded-md"></div>
         <div className="grid grid-cols-1 gap-x-6  rounded-lg w-full gap-y-3 px-5  pb-9">
           <SelectDropdown

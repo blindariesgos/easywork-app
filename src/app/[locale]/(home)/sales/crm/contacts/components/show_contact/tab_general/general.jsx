@@ -27,15 +27,12 @@ import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
+import { formatISO } from "date-fns";
 
 export default function ContactGeneral({ contact, id }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
-  const [contactType, setContactType] = useState(null);
-  const [contactSource, setContactSource] = useState(null);
-  const [contactResponsible] = useState(null);
-  const [files, setFiles] = useState([]);
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -43,18 +40,6 @@ export default function ContactGeneral({ contact, id }) {
 
   useEffect(() => {
     if (contact) {
-      // lists?.listContact?.contactTypes.length > 0 &&
-      //   setContactType(
-      //     lists?.listContact?.contactTypes.filter(
-      //       (option) => option.id === contact?.type?.id
-      //     )[0]
-      //   );
-      // lists?.listContact?.contactSources.length > 0 &&
-      //   setContactSource(
-      //     lists?.listContact?.contactSources.filter(
-      //       (option) => option.id === contact?.source?.id
-      //     )[0]
-      //   );
       setSelectedProfileImage({ base64: contact?.photo || null, file: null });
     }
   }, [contact, lists]);
@@ -64,7 +49,11 @@ export default function ContactGeneral({ contact, id }) {
       .required(t("common:validations:required"))
       .email(t("common:validations:email"))
       .min(5, t("common:validations:min", { min: 5 })),
-    fullName: Yup.string()
+    fullName: Yup.string(),
+    name: Yup.string()
+      .required(t("common:validations:required"))
+      .min(2, t("common:validations:min", { min: 2 })),
+    lastName: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
     cargo: Yup.string(),
@@ -74,7 +63,7 @@ export default function ContactGeneral({ contact, id }) {
     sourceId: Yup.string(),
     address: Yup.string(),
     assignedById: Yup.string(),
-    birthday: Yup.string(),
+    birthdate: Yup.string(),
     typePerson: Yup.string().required(t("common:validations:required")),
     observadorId: Yup.string().required(t("common:validations:required")),
     typeId: Yup.string(),
@@ -100,6 +89,8 @@ export default function ContactGeneral({ contact, id }) {
     }
 
     if (contact?.fullName) setValue("fullName", contact?.fullName);
+    if (contact?.name) setValue("name", contact?.name);
+    if (contact?.lastName) setValue("lastName", contact?.lastName);
     if (contact?.cargo) setValue("cargo", contact?.cargo);
     if (contact?.phones[0]?.phone?.number)
       setValue("phone", contact?.phones[0]?.phone?.number);
@@ -107,12 +98,12 @@ export default function ContactGeneral({ contact, id }) {
       setValue("email", contact?.emails[0]?.email?.email);
     if (contact?.type?.id) setValue("typeId", contact?.type?.id);
     if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
-    if (contact?.birthdate) setValue("birthday", contact?.birthdate);
+    if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
     if (contact?.address) setValue("address", contact?.address);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.typePerson) setValue("typePerson", contact?.typePerson);
-    if (contact?.assignedById) setValue("assignedById", contact?.assignedById);
-    if (contact?.observadorId) setValue("observadorId", contact?.observadorId);
+    if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy.id);
+    if (contact?.observador) setValue("observadorId", contact?.observador.id);
   }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {
@@ -142,31 +133,36 @@ export default function ContactGeneral({ contact, id }) {
         }))
       : [{ email }];
 
-    const body = {
+    let body = {
       ...otherData,
-      name: otherData.fullName.split(" ")[0],
-      photo: selectedProfileImage?.file || "",
       emails_dto: amails,
       phones_dto: phones,
     };
 
-    const formData = new FormData();
-    for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]);
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key]));
-      } else {
-        formData.append(key, body[key]?.toString() || "");
-      }
-    }
-
     try {
       setLoading(true);
       if (!contact) {
+        body = {
+          ...body,
+          photo: selectedProfileImage?.file || "",
+        };
+        const formData = new FormData();
+        for (const key in body) {
+          if (
+            body[key] === null ||
+            body[key] === undefined ||
+            body[key] === ""
+          ) {
+            continue;
+          }
+          if (body[key] instanceof File || body[key] instanceof Blob) {
+            formData.append(key, body[key]);
+          } else if (Array.isArray(body[key])) {
+            formData.append(key, JSON.stringify(body[key]));
+          } else {
+            formData.append(key, body[key]?.toString() || "");
+          }
+        }
         const response = await createContact(formData);
         if (response.hasError) {
           let message = response.message;
@@ -175,27 +171,42 @@ export default function ContactGeneral({ contact, id }) {
           }
           throw { message };
         }
-        await mutate(`/sales/crm/contacts?limit=10&page=1`);
+        await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success(t("contacts:create:msg"));
       } else {
-        await updateContact(body, id);
+        const response = await updateContact(body, id);
+        if (response.hasError) {
+          let message = response.message;
+          if (response.errors) {
+            message = response.errors.join(", ");
+          }
+          throw { message };
+        }
+        toast.success(t("contacts:edit:updated-contact"));
         if (selectedProfileImage.file) {
           const photo = new FormData();
           photo.append("photo", selectedProfileImage.file);
-          await updatePhotoContact(photo, id);
+          const resp = await updatePhotoContact(photo, id);
+          if (resp.hasError) {
+            console.error(resp);
+            toast.error("Error al actualizar la foto");
+          }
         }
-        await mutate(`/sales/crm/contacts?limit=10&page=1`);
+        await mutate(`/sales/crm/contacts?limit=5&page=1`);
         await mutate(`/sales/crm/contacts/${id}`);
-        toast.success(t("contacts:edit:updated-contact"));
       }
       setLoading(false);
-      router.push(`/sales/crm/contacts?page=1`);
+      router.back();
     } catch (error) {
       console.error(error.message);
       handleApiError(error.message);
       setLoading(false);
     }
   };
+
+  // Calculate the user's 18th birthday
+  const eighteenYearsAgo = new Date();
+  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
   return (
     <Fragment>
@@ -249,15 +260,38 @@ export default function ContactGeneral({ contact, id }) {
               )}
             </div>
             <div className="grid grid-cols-1 gap-x-6 gap-y-3  px-5 pb-20 pt-8">
-              <TextInput
-                type="text"
-                label={t("contacts:create:name")}
-                placeholder={t("contacts:create:placeholder-name")}
-                error={errors.fullName}
-                register={register}
-                name="fullName"
-                disabled={!isEdit}
-              />
+              {isEdit ? (
+                <Fragment>
+                  <TextInput
+                    type="text"
+                    label={t("contacts:create:name")}
+                    placeholder={t("contacts:create:placeholder-name")}
+                    error={errors.name}
+                    register={register}
+                    name="name"
+                    disabled={!isEdit}
+                  />
+                  <TextInput
+                    type="text"
+                    label={t("contacts:create:lastName")}
+                    placeholder={t("contacts:create:placeholder-name")}
+                    error={errors.lastName}
+                    register={register}
+                    name="lastName"
+                    disabled={!isEdit}
+                  />
+                </Fragment>
+              ) : (
+                <TextInput
+                  type="text"
+                  label={t("contacts:create:fullname")}
+                  placeholder={t("contacts:create:placeholder-name")}
+                  error={errors.fullName}
+                  register={register}
+                  name="fullName"
+                  disabled={!isEdit}
+                />
+              )}
               <TextInput
                 label={t("contacts:create:position")}
                 placeholder={t("contacts:create:position")}
@@ -294,13 +328,13 @@ export default function ContactGeneral({ contact, id }) {
                       icon={
                         <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                       }
-                      error={errors.birthday}
+                      error={errors.birthdate}
                       disabled={!isEdit}
-                      // inactiveDate={eighteenYearsAgo}
+                      inactiveDate={eighteenYearsAgo}
                     />
                   );
                 }}
-                name="birthday"
+                name="birthdate"
                 control={control}
                 defaultValue=""
               />

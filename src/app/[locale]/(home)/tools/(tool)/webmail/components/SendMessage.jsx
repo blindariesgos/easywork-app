@@ -17,7 +17,7 @@ import * as yup from "yup";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import ReactQuill from "react-quill";
-import './styles.css';
+import "./styles.css";
 
 export default function SendMessage({
   selectOauth,
@@ -119,7 +119,9 @@ export default function SendMessage({
           },
         }
       );
-      setValueText(`<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`);
+      setValueText(
+        `<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`
+      );
       setSignature(response.data.url);
     } catch (error) {}
   };
@@ -206,7 +208,7 @@ export default function SendMessage({
                         </div>
                         <div className="py-2 border-b-2">
                           <div className="flex items-center">
-                            <p>Para</p>
+                            <p className="w-10">Para:</p>
                             <SelectDropdown
                               name="responsible"
                               options={lists?.users}
@@ -233,24 +235,24 @@ export default function SendMessage({
                           </div>
                           {CCBCC.CC && (
                             <div className="flex items-center mt-2">
-                              <p>CC</p>
+                              <p className="w-10">CC:</p>
                               <SelectDropdown
                                 name="responsible"
                                 options={lists?.users}
                                 setValue={setValue}
-                                className="ml-2 w-10/12"
+                                className="ml-2 w-full"
                                 setContactsArray={setCCArray}
                               />
                             </div>
                           )}
                           {CCBCC.BCC && (
                             <div className="flex items-center mt-2">
-                              <p>BCC</p>
+                              <p className="w-10">BCC:</p>
                               <SelectDropdown
                                 name="responsible"
                                 options={lists?.users}
                                 setValue={setValue}
-                                className="ml-2 w-10/12"
+                                className="ml-2 w-full"
                                 setContactsArray={setBCCArray}
                               />
                             </div>
@@ -319,12 +321,15 @@ export default function SendMessage({
                           </div>
                           <div className="mt-8">
                             <button
-                              className="bg-easywork-main text-white p-3 rounded-md"
+                              className="bg-easywork-main hover:bg-easywork-mainhover text-white p-3 rounded-md"
                               onClick={() => sendEmail()}
                             >
                               Enviar
                             </button>
-                            <button className="bg-gray-300 m-2 p-3 rounded-md">
+                            <button
+                              onClick={() => router.back()}
+                              className="bg-gray-300 hover:bg-gray-500 m-2 p-3 rounded-md"
+                            >
                               Cancelar
                             </button>
                           </div>

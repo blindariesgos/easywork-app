@@ -62,7 +62,8 @@ export default function Signature({
   const uploadSignature = async (archive, metadata) => {
     const formData = new FormData();
     formData.append("file", archive);
-    formData.append("metadata", metadata);
+    formData.append("metadata", JSON.stringify(metadata));
+    formData.append("size", "650");
 
     try {
       const response = await axios.post(
@@ -222,7 +223,7 @@ export default function Signature({
                                   </p>
                                 </div>
                               </td>
-                              <td className="py-2">{signature?.name}</td>
+                              <td className="py-2">{signature?.metadata?.name}</td>
                               <td className="py-2">
                                 <XCircleIcon
                                   className="w-5 h-5 cursor-pointer"

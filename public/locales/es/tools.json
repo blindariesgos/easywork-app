@@ -49,7 +49,8 @@
     "task": "Tarea",
     "status": {
       "pending": "Pendiente",
-      "pending_review": "Pendiente por revisión"
+      "pending_review": "Pendiente por revisión",
+      "overdue": "Atrasada"
     },
     "delegate-to": "Delegar a:",
     "delegate": "Delegar",

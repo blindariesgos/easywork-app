@@ -66,15 +66,15 @@ export default function TaskView({ id }) {
   const getCMRView = (data) => {
     if (data.type === "contact") {
       return (
-        <div className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex justify-between w-52">
+        <Link
+          href={`/sales/crm/contacts/contact/${data.contact.id}?show=true&prev=task&prev_id=${task.id}`}
+          className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex gap-2 justify-between "
+        >
           <p className="text-sm text-white">{t("tools:tasks:edit:contact")}:</p>
-          <Link
-            href={`/sales/crm/contacts/contact/${data.contact.id}?show=true&prev=task&prev_id=${task.id}`}
-            className="text-sm text-white"
-          >
-            {data.contact.fullName}
-          </Link>
-        </div>
+          <p className="text-sm text-white">
+            {data.contact?.fullName ?? data.contact?.name ?? ""}
+          </p>
+        </Link>
       );
     }
 

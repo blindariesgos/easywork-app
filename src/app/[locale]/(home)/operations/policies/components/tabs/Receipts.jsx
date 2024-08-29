@@ -69,9 +69,9 @@ export default function ContactPolizaTable({ base }) {
   }
 
   return (
-    <div className="h-full relative">
-      <div className="relative overflow-x-auto shadow-md rounded-xl">
-        <table className="min-w-full rounded-md bg-gray-100 table-auto">
+    <div className="h-full px-4 w-full">
+      <div className="overflow-x-auto shadow-md rounded-xl">
+        <table className="w-full rounded-md bg-gray-100 table-auto table">
           <thead className="text-sm bg-white drop-shadow-sm">
             <tr className="">
               <th

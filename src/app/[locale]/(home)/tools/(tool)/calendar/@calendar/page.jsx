@@ -33,6 +33,11 @@ export default function CalendarHome({ children }) {
     // t("tools:calendar:program"),
   ];
 
+  const handleAddEvent = (event) => {
+    console.log("agregando evento", event);
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.addEvent(event);
+  };
   useEffect(() => {
     const changeView = () => {
       const calendarApi = calendarRef.current.getApi();
@@ -43,7 +48,17 @@ export default function CalendarHome({ children }) {
   }, [calendarView]);
 
   useEffect(() => {
-    console.log({ data });
+    data &&
+      data.items &&
+      data.items.length > 0 &&
+      data.items.forEach((event) => {
+        handleAddEvent({
+          title: event.name,
+          start: event.startTime,
+          end: event.endTime,
+          color: "red",
+        });
+      });
   }, [data]);
 
   return (
@@ -113,15 +128,6 @@ export default function CalendarHome({ children }) {
           editable={true}
           selectable={true}
           selectMirror={true}
-          initialEvents={
-            data && data.items && data.items.length > 0
-              ? data.items.map((x) => ({
-                  ...x,
-                  start: x.startTime,
-                  end: x.endTime,
-                }))
-              : []
-          }
         />
         {children}
       </div>

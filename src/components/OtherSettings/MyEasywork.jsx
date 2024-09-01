@@ -141,9 +141,9 @@ export function MyEasywork() {
                 {activeTabIndexAddress == 1 && (
                   <>
                     <p className="text-xs mt-2">
-                      1. Agregue 4 registros de tipo "IN NS" en el editor DNS de
-                      su dominio. Puede eliminar otros registros de este dominio
-                      si existen.
+                      1. Agregue 4 registros de tipo &quot;IN NS&quot; en el
+                      editor DNS de su dominio. Puede eliminar otros registros
+                      de este dominio si existen.
                     </p>
                     <ul className="text-xs mt-1 p-3 bg-gray-300">
                       <li>ns-1277.awsdns.31.org</li>
@@ -199,6 +199,7 @@ export function MyEasywork() {
                   return (
                     <Image
                       className="w-52"
+                      key={idx}
                       width={80}
                       height={60}
                       src={`/img/backgroundTest/${tab}_${idx}.png`}

@@ -99,7 +99,7 @@ export function MyEasywork() {
               <p className="mt-3 p-2 text-white text-xs w-full bg-easywork-main">
                 Piensa en una dirección fácil de recordar, por ejemplo, el
                 nombre de su empresa. de manera alternativa, puede conectar la
-                dirección de su dominio empresarial. más información.
+                dirección de su dominio empresarial. Más información.
               </p>
               <div className="mt-2">
                 <div className="flex space-x-3 border-b">

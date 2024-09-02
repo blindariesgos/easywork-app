@@ -14,7 +14,7 @@ export function Users() {
       </h1>
       <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
         <div className="bg-white rounded-lg p-5">
-          <h1 className="pb-2 border-b-2 w-full">Perdil empleados</h1>
+          <h1 className="pb-2 border-b-2 w-full">Perfil empleados</h1>
           <div className="mt-3 w-2/3">
             <SelectInput
               label={"Formato del nombre:"}

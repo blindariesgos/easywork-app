@@ -16,6 +16,7 @@ import {
   CommunicationFlow,
   Users,
   Details,
+  Hours,
 } from "./OtherSettings/index";
 import * as yup from "yup";
 import { FaMagnifyingGlass } from "react-icons/fa6";
@@ -124,6 +125,7 @@ export default function OtherSettings({ previousModalPadding, colorTag }) {
                         {invite == 2 && <CommunicationFlow />}
                         {invite == 3 && <Users />}
                         {invite == 4 && <Details />}
+                        {invite == 5 && <Hours />}
                       </div>
                     </div>
                   </div>

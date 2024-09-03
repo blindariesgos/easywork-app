@@ -3,15 +3,13 @@ import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
 import PolicyDetails from "../../components/PolicyDetails";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { policies } from "../../../../../../../context/policies/mockups";
+import { usePolicy } from "@/src/lib/api/hooks/policies";
 
 export default function PolicyDetailsPage({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
-  const { data, isLoading, isError } = {
-    isLoading: false,
-    isError: false,
-    data: policies.items[0],
-  };
+  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaakknknknknknknk");
+  const { data, isLoading, isError } = usePolicy(id);
+  console.log({ data });
 
   if (isError) {
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">

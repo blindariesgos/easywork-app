@@ -12,7 +12,7 @@ export const useNotify = () => {
     },
   );
 
-  const notifications = data ? data.flat() : [];
+  const notifications = data && Array.isArray(data) ? data.flat() : [];
 
   const markAsRead = async (id) => {
     try {

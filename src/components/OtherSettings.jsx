@@ -10,7 +10,14 @@ import {
   EnvelopeIcon,
   ChevronDownIcon,
 } from "@heroicons/react/20/solid";
-import { Tools, MyEasywork, CommunicationFlow, Users } from "./OtherSettings/index";
+import {
+  Tools,
+  MyEasywork,
+  CommunicationFlow,
+  Users,
+  Details,
+  Hours,
+} from "./OtherSettings/index";
 import * as yup from "yup";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
@@ -113,76 +120,12 @@ export default function OtherSettings({ previousModalPadding, colorTag }) {
                         </div>
                       </div>
                       <div className="w-7/12">
-                        <h1 className="ml-3 mb-3 text-lg">Herramientas</h1>
-                        <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
-                          {invite == 0 && <Tools />}
-                          {invite == 1 && <MyEasywork />}
-                          {invite == 2 && <CommunicationFlow />}
-                          {invite == 3 && <Users />}
-                          {invite == 4 && (
-                            <div>
-                              <div className="flex border-b-2 pb-1">
-                                <div className="rounded-full p-1 flex justify-center items-center bg-easywork-main">
-                                  <EnvelopeIcon className="w-5 h-5 text-white" />
-                                </div>
-                                <h2 className="ml-2">
-                                  Un usuario de otra compañía
-                                </h2>
-                              </div>
-                              <div className="mt-2">
-                                <p className="text-xs">Invitar compañía</p>
-                                <div className="flex items-center">
-                                  <input
-                                    type="text"
-                                    className="w-full h-8 rounded-md"
-                                  />
-                                </div>
-                              </div>
-                              <div className="mt-2 flex pb-3 border-b-2">
-                                <div>
-                                  <p className="text-xs">
-                                    E-mail o número de teléfono
-                                  </p>
-                                  {Array.from({ length: 5 }).map((_, index) => (
-                                    <input
-                                      key={index}
-                                      type="text"
-                                      placeholder="E-mail o número de teléfono"
-                                      className="w-full h-6 mt-1 text-xs rounded-md"
-                                    />
-                                  ))}
-                                </div>
-                                <div className="ml-1">
-                                  <p className="text-xs">Nombre</p>
-                                  {Array.from({ length: 5 }).map((_, index) => (
-                                    <input
-                                      key={index}
-                                      type="text"
-                                      placeholder="Nombre"
-                                      className="w-full h-6 mt-1 text-xs rounded-md"
-                                    />
-                                  ))}
-                                </div>
-                                <div className="ml-1">
-                                  <p className="text-xs">Apellido</p>
-                                  {Array.from({ length: 5 }).map((_, index) => (
-                                    <input
-                                      key={index}
-                                      type="text"
-                                      placeholder="Apellido"
-                                      className="w-full h-6 mt-1 text-xs rounded-md"
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                              <div className="flex mt-6 items-center">
-                                <button className="text-white bg-easywork-main hover:bg-easywork-mainhover rounded-md p-2">
-                                  + Agregar más
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        {invite == 0 && <Tools />}
+                        {invite == 1 && <MyEasywork />}
+                        {invite == 2 && <CommunicationFlow />}
+                        {invite == 3 && <Users />}
+                        {invite == 4 && <Details />}
+                        {invite == 5 && <Hours />}
                       </div>
                     </div>
                   </div>

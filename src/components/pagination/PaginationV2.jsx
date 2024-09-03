@@ -11,7 +11,6 @@ export const PaginationV2 = ({ totalPages, bgColor, currentPage, setPage }) => {
       setPage(page);
     };
     const getPages = (i) => {
-      console.log(currentPage, i);
       return (
         <div
           key={i}
@@ -32,22 +31,29 @@ export const PaginationV2 = ({ totalPages, bgColor, currentPage, setPage }) => {
     const buildPagination = () => {
       const pagination = [];
       const total = Number(totalPages);
-      if (currentPage > 5 && total > 6 && currentPage < total) {
-        pagination.push(getPages(1));
+      pagination.push(getPages(1));
+
+      if (currentPage > 3 && total > 4 && currentPage <= total - 3) {
         pagination.push(<div>...</div>);
         const numberPage = currentPage - 1;
         for (let i = numberPage; i < numberPage + 3; i++) {
           pagination.push(getPages(i));
         }
-      } else {
-        for (let i = 0; i < total; i++) {
-          i <= 4 && pagination.push(getPages(i + 1));
+      } else if ((currentPage <= total - 3 && total > 4) || total > 1) {
+        for (let i = 1; i < total; i++) {
+          i <= 2 && pagination.push(getPages(i + 1));
         }
       }
 
-      if (total > 5) {
+      if (total > 3) {
         pagination.push(<div>...</div>);
-        pagination.push(getPages(total));
+        if (currentPage <= total - 3) {
+          pagination.push(getPages(total));
+        } else {
+          for (let i = total - 3; i < total; i++) {
+            pagination.push(getPages(i + 1));
+          }
+        }
       }
       setPages(pagination);
     };

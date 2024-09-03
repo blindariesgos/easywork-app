@@ -228,6 +228,8 @@
   },
   "calendar": {
     "name": "Calendario",
+    "description": "Descripción",
+    "reminder": "Recordatorio",
     "create": "Crear",
     "event": "Evento",
     "task": "Tarea",
@@ -248,6 +250,19 @@
     "go-to-today": "Ir a hoy",
     "previous-month": "Mes anterior",
     "next-month": "Mes siguiente",
+    "reminder-options": {
+      "now": "Cuando el evento comienza",
+      "5m": "5 minutos antes",
+      "10m": "10 minutos antes",
+      "20m": "20 minutos antes",
+      "30m": "30 minutos antes",
+      "1h": "1 hora antes",
+      "2h": "2 horas antes",
+      "1d": "El día del evento",
+      "-1d": "Un día antes del evento",
+      "-2d": "Dos días antes del evento",
+      "custom": "Personalizado"
+    },
     "new-event": {
       "new": "Nuevo evento",
       "close": "Cerrar",
@@ -267,6 +282,8 @@
       "event-color": "Color del evento",
       "availability": "Disponibilidad",
       "private": "Privado",
+      "private-label": "Evento privado",
+      "private-label-2": "Los detalles del evento están disponibles solo para usted",
       "end": "Final",
       "never": "Nunca",
       "after-of": "Después de",

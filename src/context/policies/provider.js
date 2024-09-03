@@ -121,13 +121,13 @@ export default function PoliciesContextProvider({ children }) {
 
   const values = useMemo(
     () => ({
-      data: policies,
+      data,
       isLoading,
       isError,
       mutate,
-      page: 1, //config.page,
+      page: config.page,
       setPage: (value) => handleChangeConfig("page", value),
-      limit: 5, // config.limit,
+      limit: config.limit,
       setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
       setOrderBy: (value) => handleChangeConfig("orderBy", value),

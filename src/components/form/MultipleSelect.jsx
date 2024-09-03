@@ -9,9 +9,18 @@ import Image from "next/image";
 import TextInput from "./TextInput";
 
 const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
-  if (tagLabel) return onlyOne ? itemsLength > 0 ? t("common:buttons:change") : tagLabel : tagLabel;
+  if (tagLabel)
+    return onlyOne
+      ? itemsLength > 0
+        ? t("common:buttons:change")
+        : tagLabel
+      : tagLabel;
 
-  return onlyOne ? itemsLength > 0 ? t("common:buttons:change") : t("common:buttons:add") : t("common:buttons:add")
+  return onlyOne
+    ? itemsLength > 0
+      ? t("common:buttons:change")
+      : t("common:buttons:add")
+    : t("common:buttons:add");
 };
 
 const MultipleSelect = ({
@@ -39,9 +48,11 @@ const MultipleSelect = ({
       }
     };
 
+    if (!dropdownRef) return;
+
     document?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -77,13 +88,13 @@ const MultipleSelect = ({
     query === ""
       ? options
       : options.filter((opt) => {
-        return `${opt.username} ${opt.name}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
-      });
+          return `${opt.username} ${opt.name}`
+            .toLowerCase()
+            .includes(query.toLowerCase());
+        });
 
   return (
-    <div>
+    <div className="w-full">
       <label className="text-sm font-medium leading-6 text-gray-900">
         {label}
       </label>
@@ -112,7 +123,9 @@ const MultipleSelect = ({
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
               <PlusIcon className="h-3 w-3" />
-              <p className="text-xs hover:text-primary/80">{getTextLabel(tagLabel, onlyOne, getValues(name)?.length, t)}</p>
+              <p className="text-xs hover:text-primary/80">
+                {getTextLabel(tagLabel, onlyOne, getValues(name)?.length, t)}
+              </p>
             </div>
           </span>
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
@@ -120,7 +133,10 @@ const MultipleSelect = ({
           </span>
         </button>
         {isOpen && (
-          <div ref={dropdownRef} className="absolute top-full left-0 mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div
+            ref={dropdownRef}
+            className="absolute top-full left-0 mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+          >
             <div
               className="py-1 flex flex-col gap-2 px-2"
               aria-labelledby="options-menu"
@@ -140,11 +156,12 @@ const MultipleSelect = ({
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${getValues(name) &&
+                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
+                      getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
-                      ? "bg-primary"
-                      : "hover:bg-primary/10"
-                      }`}
+                        ? "bg-primary"
+                        : "hover:bg-primary/10"
+                    }`}
                     onClick={() => handleSelect(option)}
                   >
                     {option.avatar && (
@@ -157,11 +174,12 @@ const MultipleSelect = ({
                       />
                     )}
                     <span
-                      className={`text-xs ${getValues(name) &&
+                      className={`text-xs ${
+                        getValues(name) &&
                         getValues(name).some((res) => res.id === option.id)
-                        ? "text-white"
-                        : "text-black"
-                        }`}
+                          ? "text-white"
+                          : "text-black"
+                      }`}
                     >
                       {option.name || option.username}
                     </span>
@@ -173,7 +191,6 @@ const MultipleSelect = ({
         )}
       </div>
       {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
-
     </div>
   );
 };

@@ -1576,15 +1576,15 @@ export const usePoliciesTable = () => {
     {
       id: 4,
       name: t("operations:policies:table:client"),
-      row: "client",
-      order: "client",
+      row: "name",
+      order: "name",
       check: true,
     },
     {
       id: 2,
       name: t("operations:policies:table:policy"),
-      row: "policy",
-      order: "policy",
+      row: "number",
+      order: "number",
       check: true,
     },
     {
@@ -1598,21 +1598,22 @@ export const usePoliciesTable = () => {
     {
       id: 7,
       name: t("operations:policies:table:created-in"),
-      row: "createdAt",
+      row: "fechaEmision",
+      order: "fechaEmision",
       check: true,
     },
     {
       id: 1,
       name: t("operations:policies:table:origin"),
-      row: "origin",
-      order: "origin",
+      row: "source",
+      order: "source",
       check: true,
       permanent: true,
     },
     {
       id: 6,
       name: t("operations:policies:table:amount"),
-      row: "amount",
+      row: "importePagar",
       check: true,
     },
     {

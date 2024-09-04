@@ -2,6 +2,7 @@
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
 import SelectInput from "@/src/components/form/SelectInput";
+import { UserIcon } from "@heroicons/react/20/solid";
 
 export function Users() {
   const [enabled, setEnabled] = useState(false);
@@ -14,7 +15,11 @@ export function Users() {
       </h1>
       <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
         <div className="bg-white rounded-lg p-5">
-          <h1 className="pb-2 border-b-2 w-full">Perfil empleados</h1>
+          <div className="flex w-full pb-2 border-b-2 items-center">
+            <UserIcon className="h-5 w-5" />
+            <h1 className="ml-1">Perfil empleados</h1>
+          </div>
+
           <div className="mt-3 w-2/3">
             <SelectInput
               label={"Formato del nombre:"}

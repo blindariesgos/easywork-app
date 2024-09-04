@@ -1,6 +1,12 @@
 "use client";
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
+import {
+  PencilIcon,
+  GlobeAltIcon,
+  ChevronDownIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
 import Image from "next/image";
 
 export function MyEasywork() {
@@ -15,7 +21,10 @@ export function MyEasywork() {
       <h1 className="ml-3 mb-3 text-lg">Herramientas</h1>
       <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
         <div className="bg-white rounded-lg p-5">
-          <h1 className="pb-2 w-full">Nombre</h1>
+          <div className="flex">
+            <PencilIcon className="h-5 w-5" />
+            <h1 className="pb-2 w-full ml-1">Nombre</h1>
+          </div>
           <p className="mt-3 p-2 text-white text-xs w-full bg-easywork-main">
             Dele a su Easywork un nombre único y/o suba un logotipo. Estos
             elementos se colocarán en la parte superior izquierda de la
@@ -91,8 +100,15 @@ export function MyEasywork() {
           </div>
         </div>
         <div className="bg-white rounded-lg p-5 mt-2">
-          <div onClick={() => setAddress(!address)} className="cursor-pointer">
-            <h1>Dirección de Easywork</h1>
+          <div
+            onClick={() => setAddress(!address)}
+            className="cursor-pointer flex justify-between"
+          >
+            <div className="flex items-center">
+              <GlobeAltIcon className="h-5 w-5" />
+              <h1 className="ml-1">Dirección de Easywork</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
           {address && (
             <>
@@ -175,8 +191,12 @@ export function MyEasywork() {
           )}
         </div>
         <div className="bg-white rounded-lg p-5 mt-2">
-          <div onClick={() => setTheme(!theme)} className="cursor-pointer">
-            <h1>Tema predeterminado</h1>
+          <div onClick={() => setTheme(!theme)}  className="cursor-pointer flex justify-between">
+            <div className="flex items-center">
+              <PhotoIcon className="h-5 w-5" />
+              <h1 className="ml-1">Tema predeterminado</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
           {theme && (
             <>

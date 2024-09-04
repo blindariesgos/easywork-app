@@ -4,3 +4,6 @@ export * from "./CommunicationFlow";
 export * from "./Users";
 export * from "./Details";
 export * from "./Hours";
+export * from "./Rgpd";
+export * from "./Segurity";
+export * from "./OtherConfig";

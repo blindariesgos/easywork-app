@@ -16,8 +16,52 @@ export default function PolicyDetails({ data, id }) {
   const [loading, setLoading] = useState(false);
 
   const tabs = [
-    t("control:portafolio:receipt:details:consult"),
-    "Pagos/Recibos",
+    {
+      name: t("control:portafolio:receipt:details:consult"),
+    },
+    {
+      name: "Beneficiarios",
+      disabled: true,
+    },
+    {
+      name: "Pagos/Recibos",
+    },
+    {
+      name: "Renovaciones",
+      disabled: true,
+    },
+    {
+      name: "Siniestros",
+      disabled: true,
+    },
+    {
+      name: "Reembolsos",
+      disabled: true,
+    },
+    {
+      name: "Facturas",
+      disabled: true,
+    },
+    {
+      name: "Versiones",
+      disabled: true,
+    },
+    {
+      name: "Comisiones",
+      disabled: true,
+    },
+    {
+      name: "Cotizaciones",
+      disabled: true,
+    },
+    {
+      name: "Programaciones",
+      disabled: true,
+    },
+    {
+      name: "Rescate de fondos",
+      disabled: true,
+    },
   ];
 
   return (
@@ -28,7 +72,7 @@ export default function PolicyDetails({ data, id }) {
         <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
           <div className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
                 <p className="text-xl sm:text-2xl xl:text-3xl">N/D</p>
                 <div className="flex items-center gap-2">
@@ -79,13 +123,14 @@ export default function PolicyDetails({ data, id }) {
                 width="w-[140px]"
               />
             </div>
-            <TabList className="flex items-center gap-2 md:gap-4 xl:gap-6 bg-gray-100 rounded-2xl py-2 px-4 w-full">
+            <TabList className="flex items-center gap-2 bg-gray-100 rounded-2xl py-2 px-4 w-full flex-wrap">
               {tabs.map((tab) => (
                 <Tab
                   key={tab}
-                  className="data-[selected]:bg-blue-100 data-[hover]:bg-blue-400 outline-none text-sm md:text-base focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md px-1 md:px-2 py-2 md:py-3"
+                  disabled={tab.disabled}
+                  className="data-[selected]:bg-blue-100 disabled:opacity-60 data-[hover]:bg-blue-400 outline-none text-xs uppercase focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md p-2.5"
                 >
-                  {tab}
+                  {tab.name}
                 </Tab>
               ))}
             </TabList>
@@ -94,6 +139,7 @@ export default function PolicyDetails({ data, id }) {
             <TabPanel className="w-full md:px-4">
               <General data={data} id={id} />
             </TabPanel>
+            <TabPanel className="w-full md:px-4"></TabPanel>
             <TabPanel className="w-full">
               <Receipts data={data} id={id} />
             </TabPanel>

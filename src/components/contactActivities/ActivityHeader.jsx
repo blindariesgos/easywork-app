@@ -38,7 +38,7 @@ export default function ActivityHeader({ contactId, update }) {
     },
     {
       name: t("contacts:create:activities:appointments"),
-      href: "#",
+      href: "/tools/calendar/addEvent?show=true",
       current: false,
       disabled: true,
     },

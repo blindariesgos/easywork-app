@@ -35,13 +35,9 @@ import MultipleSelect from "@/src/components/form/MultipleSelect";
 import SelectInput from "@/src/components/form/SelectInput";
 import TextEditor from "@/src/components/TextEditor";
 import RadioGroupColors from "./components/RadioGroupColors";
-
-const repeatValues = [
-  ...Array.from({ length: 35 }, (_, index) => ({
-    name: index + 1,
-    value: index + 1,
-  })),
-];
+import { addCalendarEvent } from "@/src/lib/apis";
+import { toast } from "react-toastify";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 const calendarios = [{ name: "Mi calendario", value: 1 }];
 
@@ -56,12 +52,20 @@ const eventLocalizations = [
 export default function AddEvent() {
   const { t } = useTranslation();
   const { lists } = useAppContext();
+  const [loading, setLoading] = useState(false);
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
     { name: "Diario", value: 2, id: "diario" },
     { name: "Semanal", value: 3, id: "semanal" },
     { name: "Mensual", value: 4, id: "mensual" },
     { name: "Anual", value: 5, id: "anual" },
+  ];
+
+  const availabilityOptions = [
+    { name: "Ocupado", value: 1, id: "Ocupado" },
+    { name: "Inseguro", value: 2, id: "inseguro" },
+    { name: "Disponible", value: 3, id: "semanal" },
+    { name: "Fuera (Agregar al grafico de ausencias)", value: 4, id: "fuera" },
   ];
 
   const reminderOptions = [
@@ -123,19 +127,15 @@ export default function AddEvent() {
   ];
   const quillRef = useRef(null);
 
-  const [eventImportant, setEventImportant] = useState(false);
   const [timezoneStart, setTimezoneStart] = useState(false);
   const [timezoneEnd, setTimezoneEnd] = useState(false);
   const [calendary, setCalendary] = useState(calendarios[0]);
-  const [repeatOption, setRepeatOption] = useState(repeatOptions[0]);
-  const [repeatFrecuency, setRepeatFrecuency] = useState(repeatValues[0]);
   const [formLocalization, setFormLocalization] = useState(
     eventLocalizations[0]
   );
 
   const [allDay, setAllDay] = useState(false);
   const router = useRouter();
-  const { setOpenModal } = useAppContext();
 
   const schema = yup.object().shape({
     name: yup.string().required(),
@@ -154,6 +154,7 @@ export default function AddEvent() {
     reminder: yup.object().shape({}),
     color: yup.string(),
     repeat: yup.string(),
+    availability: yup.string(),
   });
 
   const {
@@ -170,17 +171,19 @@ export default function AddEvent() {
     resolver: yupResolver(schema),
   });
 
-  const handleSubmitForm = (data) => {
+  const handleSubmitForm = async (data) => {
+    setLoading(true);
     const {
       participants,
       reminder,
       startTime,
       endTime,
       reminderCustom,
+      availability,
       ...otherData
     } = data;
     console.log({ data });
-    let reminderValue = "";
+    let reminderValue;
     if (reminder && reminder?.value) {
       if (reminder?.value?.custom) {
         reminderValue = reminderCustom;
@@ -188,12 +191,33 @@ export default function AddEvent() {
         reminderValue = add(otherData.startTime, reminder.value);
       }
     }
+
     const body = {
       ...otherData,
       participantsIds: participants?.map((participant) => participant.id) ?? [],
-      reminder: reminderValue,
+      reminder: formatISO(reminderValue ?? startTime),
+      startTime: formatISO(startTime),
+      endTime: formatISO(endTime),
+      availability: availability ? availability : availabilityOptions[0].id,
     };
     console.log({ body });
+    try {
+      const response = await addCalendarEvent(body);
+      console.log({ response });
+      if (response.hasError) {
+        toast.error(
+          "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
+        );
+      } else {
+        toast.success("Evento creado con éxito.");
+        router.back();
+      }
+    } catch {
+      toast.error(
+        "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
+      );
+    }
+    setLoading(false);
   };
 
   return (
@@ -201,6 +225,7 @@ export default function AddEvent() {
       onSubmit={handleSubmit(handleSubmitForm)}
       className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] max-w-[calc(80vw)] w-full"
     >
+      {loading && <LoaderSpinner />}
       <div className="flex-1 min-h-0 flex-col overflow-y-scroll px-4">
         {/* Header */}
         <div className="bg-transparent py-6">
@@ -565,7 +590,7 @@ export default function AddEvent() {
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex  bg-white justify-start">
-                      <div className="border rounded-md">
+                      <div className="border rounded-md w-full md:w-[300px]">
                         <Controller
                           name="reminder"
                           control={control}
@@ -573,6 +598,7 @@ export default function AddEvent() {
                             <SelectInput
                               {...field}
                               options={reminderOptions}
+                              selectedOption={reminderOptions[0]}
                               getValues={getValues}
                               setValue={setValue}
                               name="reminder"
@@ -595,6 +621,35 @@ export default function AddEvent() {
                     </div>
                     <div className="sm:col-span-2 flex bg-white">
                       <RadioGroupColors setValue={setValue} />
+                    </div>
+                  </div>
+                  <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                    <div>
+                      <label
+                        htmlFor="project-description"
+                        className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
+                      >
+                        {t("tools:calendar:new-event:availability")}
+                      </label>
+                    </div>
+                    <div className="sm:col-span-2 flex  bg-white justify-start">
+                      <div className="border rounded-md">
+                        <Controller
+                          name="availability"
+                          control={control}
+                          render={({ field }) => (
+                            <SelectInput
+                              {...field}
+                              options={availabilityOptions}
+                              selectedOption={availabilityOptions[0]}
+                              getValues={getValues}
+                              setValue={setValue}
+                              name="availability"
+                              error={errors.availability}
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">

@@ -1583,8 +1583,8 @@ export const usePoliciesTable = () => {
     {
       id: 2,
       name: t("operations:policies:table:policy"),
-      row: "number",
-      order: "number",
+      row: "poliza",
+      order: "poliza",
       check: true,
     },
     {

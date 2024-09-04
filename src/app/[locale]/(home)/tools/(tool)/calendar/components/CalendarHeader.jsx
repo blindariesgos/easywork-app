@@ -26,11 +26,6 @@ export default function CalendarHeader() {
   const params = new URLSearchParams(searchParams);
   const { replace } = useRouter();
 
-  const openConnect = () => {
-    params.set("connect", true);
-    replace(`/tools/calendar?${params.toString()}`);
-  };
-
   return (
     <header className="flex flex-col">
       <div className="lg:px-6 px-2 flex gap-3 items-center bg-white py-4 rounded-md">

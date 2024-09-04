@@ -1,7 +1,10 @@
 "use client";
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
-import SelectInput from "@/src/components/form/SelectInput";
+import {
+  ArchiveBoxIcon,
+  BuildingOffice2Icon,
+} from "@heroicons/react/24/outline";
 
 export function Details() {
   const [enabled, setEnabled] = useState(false);
@@ -14,13 +17,19 @@ export function Details() {
             Introduzca los datos de su empresa para que se agreguen al CRM. Cree
             una página de destino y utilicela como tarjeta de visita.
           </p>
-          <h1 className="mt-2">Detalles de la empresa</h1>
+          <div className="mt-2 flex items-center">
+            <ArchiveBoxIcon className="h-5 w-5" />
+            <h1 className="ml-2">Detalles de la empresa</h1>
+          </div>
           <p className="mt-3 p-2 text-white text-xs w-full bg-easywork-main">
             Si tiene más de una empresa, puede especificar los datos de cada de
             cada una de ellas por separado. Más información.
           </p>
           <div className="p-3 rounded-md border-2 mt-3">
-            <h1>Dirección de agencia</h1>
+            <div className="ml-1 flex items-center">
+              <BuildingOffice2Icon className="h-5 w-5" />
+              <h1 className="ml-1">Dirección de agencia</h1>
+            </div>
             <div className="mt-2">
               <div className="flex justify-between text-xs">
                 <p className="underline">+506 8312 3456</p>

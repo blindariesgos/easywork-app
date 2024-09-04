@@ -25,7 +25,6 @@ const MultipleSelectWithFilters = ({
 
   const dropdownRef = useRef(null);
 
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,9 +32,11 @@ const MultipleSelectWithFilters = ({
       }
     };
 
+    if (!dropdownRef) return;
+
     document?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -55,16 +56,16 @@ const MultipleSelectWithFilters = ({
       name: option.name,
       username: option.username,
       title: option.title,
-      type
+      type,
     };
 
-    const index = currentValues.findIndex(res => res.id === option.id);
-    console.log(currentValues, type, newOption, index)
+    const index = currentValues.findIndex((res) => res.id === option.id);
+    console.log(currentValues, type, newOption, index);
 
     if (index === -1) {
       setValue(name, [...currentValues, newOption], { shouldValidate: true });
     } else {
-      const updatedValue = currentValues.filter(res => res.id !== option.id);
+      const updatedValue = currentValues.filter((res) => res.id !== option.id);
       setValue(name, updatedValue, { shouldValidate: true });
     }
   };
@@ -79,10 +80,10 @@ const MultipleSelectWithFilters = ({
     return query === ""
       ? selectedData
       : selectedData.filter((opt) =>
-        `${opt.username} ${opt.name}`
-          .toLowerCase()
-          .includes(query.toLowerCase())
-      );
+          `${opt.username} ${opt.name}`
+            .toLowerCase()
+            .includes(query.toLowerCase())
+        );
   }, [data, filterSelect, query]);
 
   return (
@@ -123,7 +124,10 @@ const MultipleSelectWithFilters = ({
           </span>
         </button>
         {isOpen && (
-          <div ref={dropdownRef} className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div
+            ref={dropdownRef}
+            className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+          >
             <div className="flex divide-x-2 divide-gray-200/70">
               <div
                 className="py-1 flex flex-col gap-2 px-2 flex-1"
@@ -144,11 +148,12 @@ const MultipleSelectWithFilters = ({
                   filterData.map((option) => (
                     <div
                       key={option.id}
-                      className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${getValues(name) &&
+                      className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
+                        getValues(name) &&
                         getValues(name).some((res) => res.id === option.id)
-                        ? "bg-primary"
-                        : "hover:bg-primary/5"
-                        }`}
+                          ? "bg-primary"
+                          : "hover:bg-primary/5"
+                      }`}
                       onClick={() => handleSelect(option)}
                     >
                       {option.avatar && (
@@ -161,11 +166,12 @@ const MultipleSelectWithFilters = ({
                         />
                       )}
                       <span
-                        className={`text-xs ${getValues(name) &&
+                        className={`text-xs ${
+                          getValues(name) &&
                           getValues(name).some((res) => res.id === option.id)
-                          ? "text-white"
-                          : "text-black"
-                          }`}
+                            ? "text-white"
+                            : "text-black"
+                        }`}
                       >
                         {option.name ||
                           option.username ||

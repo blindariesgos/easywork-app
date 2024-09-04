@@ -1,17 +1,14 @@
 "use client";
-import useAppContext from "@/src/context/app";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import { PencilIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { useSWRConfig } from "swr";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
+import { formatDate } from "@/src/utils/getFormatDate";
 
 export default function PolicyDetails({ data, id }) {
   const { t } = useTranslation();
@@ -33,38 +30,42 @@ export default function PolicyDetails({ data, id }) {
           <div className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
             <div className="flex justify-between">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
-                <p className="text-xl sm:text-2xl xl:text-3xl">
-                  Armando Graterol
-                </p>
+                <p className="text-xl sm:text-2xl xl:text-3xl">N/D</p>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">10/06/2024</p>
+                  <p className="text-xs sm:text-sm xl:text-base">
+                    {formatDate(data?.fechaEmision, "dd/MM/yyyy")}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">Profesional</p>
+                  <p className="text-xs sm:text-sm xl:text-base">N/D</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:policy")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">423659874</p>
+                  <p className="text-xs sm:text-sm xl:text-base">
+                    {data?.poliza}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:company")}:
                   </p>
-                  <p className="text-xs md:text-sm xl:text-base">AXXA</p>
+                  <p className="text-xs md:text-sm xl:text-base">N/D</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
-                  <p className="text-xs md:text-sm xl:text-base">326598</p>
+                  <p className="text-xs md:text-sm xl:text-base">
+                    {data?.metadata["Código de Cliente"] ?? "N/D"}
+                  </p>
                 </div>
               </div>
               <IconDropdown

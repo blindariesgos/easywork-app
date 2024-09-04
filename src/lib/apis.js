@@ -317,3 +317,8 @@ export const updateUser = async (id, body) => {
   return response;
 }
 
+export const addCalendarEvent = async (body) => {
+  const response = await axios().post(`/calendar`, body).catch((error) => ({ ...error, hasError: true }));
+  return response;
+}
+

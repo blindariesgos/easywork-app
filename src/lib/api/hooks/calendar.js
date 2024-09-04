@@ -37,19 +37,3 @@ export const useCalendar = ({ filters = {}, page = 1, limit = 15, userId = "" })
     mutate
   };
 };
-
-export const usePoliciesByContactId = ({ contactId, page = 1, limit = 15, }) => {
-  const url = `/sales/crm/polizas/contact/${contactId}?limit=${limit}&page=${page}`
-
-  const { data, error, isLoading, mutate } = useSWR(
-    url,
-    fetcher,
-  );
-
-  return {
-    policies: data,
-    isLoading,
-    isError: error,
-    mutate
-  };
-};

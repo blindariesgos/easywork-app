@@ -325,7 +325,8 @@ export default function PolicyDetails({ data, id }) {
       </div>
       {/* Menu Izquierda */}
       <div className=" bg-gray-100 rounded-lg w-full">
-        <ActivityPanel contactId={data?.id} />
+        {/* <ActivityPanel contactId={data?.id} /> */}
+        N/D
       </div>
     </form>
   );

@@ -1,8 +1,8 @@
 // components/PdfToImage.js
-import Image from 'next/image';
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-const Global = require('pdfjs-dist/build/pdf');
+import Image from "next/image";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+const Global = require("pdfjs-dist/build/pdf");
 
 const Converter = () => {
   const { t } = useTranslation();
@@ -21,21 +21,22 @@ const Converter = () => {
   const convertPdfToImages = async (file) => {
     const images = [];
     const data = await readFileData(file);
-  
+
     try {
       const pdf = await Global.getDocument(data).promise;
-      const canvas = document.createElement("canvas");
-  
+      const canvas = document?.createElement("canvas");
+
       for (let i = 0; i < pdf.numPages; i++) {
         const page = await pdf.getPage(i + 1);
         const viewport = page.getViewport({ scale: 1 });
         const context = canvas.getContext("2d");
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-        await page.render({ canvasContext: context, viewport: viewport }).promise;
+        await page.render({ canvasContext: context, viewport: viewport })
+          .promise;
         images.push(canvas.toDataURL());
       }
-  
+
       canvas.remove();
       return images;
     } catch (error) {
@@ -63,19 +64,27 @@ const Converter = () => {
   return (
     <div>
       <label>
-        {t('common:file:attach')}:
+        {t("common:file:attach")}:
         <input type="file" accept=".pdf" onChange={handleFileUpload} />
       </label>
       {selectedFile && (
         <div>
           <p>Selected PDF: {selectedFile.name}</p>
-          <button onClick={() => convertPdfToImages(selectedFile)}>{t('common:file:convert')}</button>
+          <button onClick={() => convertPdfToImages(selectedFile)}>
+            {t("common:file:convert")}
+          </button>
         </div>
       )}
       {imageData && (
         <div>
-          <p>{t('common:file:generated')}:</p>
-          <Image src={imageData} alt="Generated Image" style={{ maxWidth: '100%' }} width={100} height={100}/>
+          <p>{t("common:file:generated")}:</p>
+          <Image
+            src={imageData}
+            alt="Generated Image"
+            style={{ maxWidth: "100%" }}
+            width={100}
+            height={100}
+          />
         </div>
       )}
     </div>

@@ -1,7 +1,9 @@
 "use client";
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
-import SelectInput from "@/src/components/form/SelectInput";
+import {
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 export function Rgpd() {
   const [enabled, setEnabled] = useState(false);
@@ -15,7 +17,10 @@ export function Rgpd() {
             (RGPD)
           </p>
           <div className="border-2 p-2 rounded-md">
-            <h1 className="pb-2 w-full">Cumplimiento de RGPD</h1>
+            <div className="flex w-full pb-2">
+            <DocumentTextIcon className="h-5 w-5" />
+            <h1 className="ml-1">Cumplimiento de RGPD</h1>
+            </div>            
             <p className="p-2 mb-2 text-white text-xs w-full bg-easywork-main">
               Los detalles sobre el cumplimiento del RGPD están disponibles.
               <br />

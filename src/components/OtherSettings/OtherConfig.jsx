@@ -2,21 +2,31 @@
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
 import SelectInput from "@/src/components/form/SelectInput";
-import Image from "next/image";
+import {
+  ChevronDownIcon,
+  ClockIcon,
+  EnvelopeIcon,
+  Squares2X2Icon,
+  MapPinIcon,
+  NoSymbolIcon,
+} from "@heroicons/react/24/outline";
 
 export function OtherConfig() {
   const [enabled, setEnabled] = useState(false);
   const [theme, setTheme] = useState(false);
   const [address, setAddress] = useState(false);
   const [various, setVarious] = useState(false);
-  const [activeTabIndexName, setActiveTabIndexName] = useState(0);
-  const [activeTabIndexAddress, setActiveTabIndexAddress] = useState(0);
   return (
     <>
       <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
         <h1 className="pb-2 w-full">Otras configuraciones</h1>
         <div className="bg-white rounded-lg p-5">
-          <h1>Formato de fecha y hora</h1>
+          <div className="flex justify-between">
+            <div className="flex items-center">
+              <ClockIcon className="h-5 w-5" />
+              <h1 className="ml-1">Formato de fecha y hora</h1>
+            </div>
+          </div>
           <div className="mt-3 flex">
             <div className="w-2/3">
               <SelectInput
@@ -63,7 +73,13 @@ export function OtherConfig() {
         </div>
         <div className="bg-white rounded-lg p-5 mt-2">
           <div onClick={() => setAddress(!address)} className="cursor-pointer">
-            <h1>Correo</h1>
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <EnvelopeIcon className="h-5 w-5" />
+                <h1 className="ml-1">Correo</h1>
+              </div>
+              <ChevronDownIcon className="h-5 w-5" />
+            </div>
           </div>
           {address && (
             <>
@@ -148,7 +164,13 @@ export function OtherConfig() {
         </div>
         <div className="bg-white rounded-lg p-5 mt-2">
           <div onClick={() => setTheme(!theme)} className="cursor-pointer">
-            <h1>Mapas</h1>
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <MapPinIcon className="h-5 w-5" />
+                <h1 className="ml-1">Mapas</h1>
+              </div>
+              <ChevronDownIcon className="h-5 w-5" />
+            </div>
           </div>
           {theme && (
             <>
@@ -173,7 +195,13 @@ export function OtherConfig() {
         </div>
         <div className="bg-white rounded-lg p-5 mt-2">
           <div onClick={() => setVarious(!various)} className="cursor-pointer">
-            <h1>Diversos</h1>
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <Squares2X2Icon className="h-5 w-5" />
+                <h1 className="ml-1">Diversos</h1>
+              </div>
+              <ChevronDownIcon className="h-5 w-5" />
+            </div>
           </div>
           {various && (
             <>

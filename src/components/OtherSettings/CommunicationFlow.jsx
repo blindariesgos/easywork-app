@@ -1,6 +1,12 @@
 "use client";
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
+import {
+  ChatBubbleBottomCenterTextIcon,
+  ChatBubbleLeftRightIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/outline";
+import { HandThumbUpIcon } from "@heroicons/react/20/solid";
 
 export function CommunicationFlow() {
   const [enabled, setEnabled] = useState(false);
@@ -9,7 +15,10 @@ export function CommunicationFlow() {
       <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
         <div className="bg-white rounded-lg p-5">
           <div className="mr-3 w-full">
-            <h1 className="pb-2 w-full">Flujo de comunicación</h1>
+            <div className="pb-2 w-full flex items-center">
+              <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
+              <h1 className="ml-1">Flujo de comunicación</h1>
+            </div>
             <div className="flex mt-4 items-center">
               <Switch
                 checked={enabled}
@@ -65,15 +74,24 @@ export function CommunicationFlow() {
                 className="mt-1 w-full h-7 border-2 border-black rounded-md"
               />
             </div>
-            <div className="w-5/12 pl-3 border-l-2 text-sm">
+            <div className="w-5/12 pl-2 border-l-2 text-sm">
               <p>Ejemplo de me gusta</p>
               <p className="text-blue-400">Like</p>
-              <p className="text-blue-600 mt-2">Usted y 24 personas mas</p>
+              <div className="flex mt-2 items-center">
+                <div className="p-1 rounded-full bg-blue-600 flex items-center justify-center">
+                  <HandThumbUpIcon className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-blue-600 ml-1">Usted y 24 personas mas</p>
+              </div>
             </div>
           </div>
         </div>
-        <div className="w-full p-3 mt-2 rounded-md flex items-center bg-gray-500 cursor-pointer">
-          Chats
+        <div className="w-full p-3 mt-2 rounded-md bg-gray-500 cursor-pointer flex justify-between">
+          <div className="flex items-center">
+            <ChatBubbleLeftRightIcon className="h-5 w-5" />
+            <h1 className="ml-1">Chats</h1>
+          </div>
+          <ChevronDownIcon className="h-5 w-5" />
         </div>
       </div>
     </>

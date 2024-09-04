@@ -1,6 +1,14 @@
 "use client";
 import { Fragment, useState, useEffect } from "react";
-import { Dialog, Transition, Switch, Select } from "@headlessui/react";
+import {
+  Dialog,
+  Transition,
+  Switch,
+  Select,
+  Description,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
@@ -17,11 +25,15 @@ import {
   Users,
   Details,
   Hours,
+  Rgpd,
+  Segurity,
+  OtherConfig,
 } from "./OtherSettings/index";
 import * as yup from "yup";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export default function OtherSettings({ previousModalPadding, colorTag }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [invite, setInvite] = useState(0);
   const { t } = useTranslation();
   const session = useSession();
@@ -103,7 +115,7 @@ export default function OtherSettings({ previousModalPadding, colorTag }) {
                               </li>
                             ))}
                           </ul>
-                          <ul className="border-b-2 pb-4">
+                          <ul className="pb-4">
                             {[
                               "Guía de configuración",
                               "Solicitud de implementación",
@@ -111,12 +123,92 @@ export default function OtherSettings({ previousModalPadding, colorTag }) {
                               <li
                                 key={index}
                                 className={`px-3 py-2 w-full text-white cursor-pointer mt-2 bg-gray-50 hover:bg-gray-400 rounded-md`}
-                                // onClick={() => }
+                                onClick={() => index == 1 && setIsOpen(true)}
                               >
                                 {text}
                               </li>
                             ))}
                           </ul>
+                          <Dialog
+                            open={isOpen}
+                            onClose={() => setIsOpen(false)}
+                            className="relative z-50"
+                          >
+                            <div className="fixed inset-0 flex w-screen items-center justify-center p-2">
+                              <DialogPanel className="max-w-lg space-y-4 border bg-white p-10">
+                                <DialogTitle className="font-bold text-center">
+                                  EasyWork implementation request
+                                </DialogTitle>
+                                <Description className="text-center text-sm">
+                                  Submit your EasyWork implementation request,
+                                  and receive up to 5, offers flom our certified
+                                  partners! no worries, all personal
+                                  informationis treated as strictly confidential
+                                  by EasyWork and our partners. no spam, no
+                                  hassle.
+                                </Description>
+                                <p className="text-center text-sm">
+                                  this form SHOULD NOT be used for helpdesk
+                                  requests. if you require tech ni cal
+                                  assistance and have a commercial subscription.
+                                  you can contact us at support24 page.
+                                </p>
+                                <div className="text-sm">
+                                  <input
+                                    type="text"
+                                    placeholder="Nombre"
+                                    className="w-full h-8 rounded-md bg-gray-300 border-0 placeholder-gray-800"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Apellido"
+                                    className="w-full h-8 rounded-md bg-gray-300 border-0 placeholder-gray-800 mt-2"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Email"
+                                    className="w-full h-8 rounded-md bg-gray-300 border-0 placeholder-gray-800 mt-2"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Teléfono"
+                                    className="w-full h-8 rounded-md bg-gray-300 border-0 placeholder-gray-800 mt-2"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Pais"
+                                    className="w-full h-8 rounded-md bg-gray-300 border-0 placeholder-gray-800 mt-2"
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Implementation request"
+                                    className="w-full h-8 rounded-md bg-gray-300 border-0 placeholder-gray-800 mt-2"
+                                  />
+                                  <textarea
+                                    placeholder="Campo de comentarios"
+                                    className="w-full h-36 rounded-md bg-gray-300 border-0 placeholder-gray-800 mt-2"
+                                  ></textarea>
+                                </div>
+                                <div className="mt-2">
+                                  <div className="flex items-center">
+                                    <input type="checkbox" />
+                                    <p className="ml-2 text-xs">
+                                      I acknowledge that i have read and
+                                      understood EasyWork Privacy Policy and
+                                      agree to be contacted by authorized
+                                      easyWork partners
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="text-center text-white rounded-md w-full bg-easywork-main text-sm p-2 hover:bg-easywork-mainhover mt-2"
+                                  >
+                                    Submit
+                                  </button>
+                                </div>
+                              </DialogPanel>
+                            </div>
+                          </Dialog>
                         </div>
                       </div>
                       <div className="w-7/12">
@@ -126,6 +218,9 @@ export default function OtherSettings({ previousModalPadding, colorTag }) {
                         {invite == 3 && <Users />}
                         {invite == 4 && <Details />}
                         {invite == 5 && <Hours />}
+                        {invite == 6 && <Rgpd />}
+                        {invite == 7 && <Segurity />}
+                        {invite == 8 && <OtherConfig />}
                       </div>
                     </div>
                   </div>

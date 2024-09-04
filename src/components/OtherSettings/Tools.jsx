@@ -1,6 +1,7 @@
 "use client";
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
+import { WrenchIcon } from "@heroicons/react/24/outline";
 
 export function Tools() {
   const [enabled, setEnabled] = useState(false);
@@ -10,9 +11,12 @@ export function Tools() {
       <div className="mr-3 pb-10 w-full h-full overflow-y-auto">
         <div className="bg-white rounded-lg p-5">
           <div className="mr-3 w-full">
-            <h1 className="border-b-2 border-black pb-2 w-full">
-              Herramientas del menú principal
-            </h1>
+            <div className="flex border-b-2 border-black w-full">
+              <WrenchIcon className="h-5 w-5" />
+              <h1 className="pb-2 ml-1">
+                Herramientas del menú principal
+              </h1>
+            </div>
             <p className="mt-3 p-2 text-white text-xs w-full bg-easywork-main">
               Seleccione las herramientas que utilizará en su Easywork
             </p>

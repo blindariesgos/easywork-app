@@ -118,6 +118,7 @@
       "name": "Gestión de agentes",
       "learning": "E-Learning (Próximamente)",
       "accompaniment": "Acompañamiento",
+      "commissions": "Comisiones",
       "recruitement": "Embudo de reclutamiento y selección",
       "capacitations": "Embudo de capacitaciones",
       "conections": "Embudo de conexiones",
@@ -135,7 +136,9 @@
       "zurich": "Zurich (Próximamente)",
       "qualitas": "Qualitas (Próximamente)",
       "afirme": "Afirme (Próximamente)",
-      "others": "Otras (Próximamente)"
+      "others": "Otras (Próximamente)",
+      "insurance": "Aseguradoras",
+      "agency-addresses": "Direcciones de Agencia"
     },
     "settings": {
       "name": "Ajustes y Configuraciones",

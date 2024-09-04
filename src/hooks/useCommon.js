@@ -40,7 +40,6 @@ import { deleteLeadById, deleteTask } from "../lib/apis";
 import { handleApiError } from "../utils/api/errors";
 import { useSWRConfig } from "swr";
 
-
 export const useSidebar = () => {
   const { t } = useTranslation();
 
@@ -186,9 +185,9 @@ export const useSidebar = () => {
               href: "/control/portafolio/receipts",
               image: "/img/cobranza/recibos.png",
               iconShortBar: GlobeAltIcon,
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
     },
     {
@@ -198,6 +197,12 @@ export const useSidebar = () => {
       href: "/operations",
       iconShortBar: WalletIcon,
       children: [
+        {
+          name: "Gestión",
+          href: "",
+          image: "/img/operations/policies.svg",
+          iconShortBar: GlobeAltIcon,
+        },
         {
           name: "Pólizas",
           href: "/operations/policies",
@@ -279,7 +284,7 @@ export const useSidebar = () => {
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
-      ]
+      ],
     },
     {
       name: t("common:menu:services:name"),
@@ -346,6 +351,12 @@ export const useSidebar = () => {
           iconShortBar: ArrowDownCircleIcon,
         },
         {
+          name: t("common:menu:agent-management:commissions"),
+          href: "",
+          // // href: "/sd",
+          iconShortBar: ArrowDownCircleIcon,
+        },
+        {
           name: t("common:menu:agent-management:learning"),
           href: "",
           // // href: "/sd",
@@ -397,51 +408,73 @@ export const useSidebar = () => {
       iconShortBar: BuildingOfficeIcon,
       children: [
         {
-          name: t("common:menu:companies:gnp"),
+          name: t("common:menu:companies:insurance"),
           href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
+          // image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+          children: [
+            {
+              name: t("common:menu:companies:gnp"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:axa"),
+              href: "",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:banorte"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:atlas"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:zurich"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:qualitas"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:afirme"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: t("common:menu:companies:others"),
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+          ],
         },
         {
-          name: t("common:menu:companies:axa"),
+          name: t("common:menu:companies:agency-addresses"),
           href: "",
-          iconShortBar: ArrowDownCircleIcon,
-        },
-        {
-          name: t("common:menu:companies:banorte"),
-          href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
-        {
-          name: t("common:menu:companies:atlas"),
-          href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
-        {
-          name: t("common:menu:companies:zurich"),
-          href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
-        {
-          name: t("common:menu:companies:qualitas"),
-          href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
-        {
-          name: t("common:menu:companies:afirme"),
-          href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
-        {
-          name: t("common:menu:companies:others"),
-          href: "",
-          // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
+          // image: "/img/cobranza/portafolio.png",
+          iconShortBar: GlobeAltIcon,
+          children: [
+            {
+              name: "GyaTusSueños",
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+          ],
         },
       ],
     },
@@ -476,7 +509,7 @@ export const useSidebar = () => {
               image: "/img/settings/otrasnotificaciones.png",
               iconShortBar: InboxArrowDownIcon,
             },
-          ]
+          ],
         },
         // {
         //   name: t("common:menu:settings:password"),
@@ -508,7 +541,7 @@ export const useSidebar = () => {
               image: "/img/settings/changepassword.png",
               iconShortBar: InboxArrowDownIcon,
             },
-          ]
+          ],
         },
       ],
     },
@@ -626,13 +659,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("contacts:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -641,13 +674,13 @@ export const useCommon = () => {
       value: 0,
       name: t("leads:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("leads:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -655,73 +688,73 @@ export const useCommon = () => {
     {
       value: 0,
       name: t("contacts:header:settings:vcard"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 1,
       name: t("contacts:header:settings:gmail"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 2,
       name: t("contacts:header:settings:outlook"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 3,
       name: t("contacts:header:settings:yahoo"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 4,
       name: t("contacts:header:settings:import"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 5,
       name: t("contacts:header:settings:crm"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 8,
       name: t("contacts:header:settings:export"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 9,
       name: t("contacts:header:settings:control"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
   ];
@@ -730,13 +763,13 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
   ];
@@ -745,36 +778,35 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 0,
       name: "Imprimir pdf",
-      onclick: () => { },
+      onclick: () => {},
       icon: DocumentTextIcon,
     },
   ];
-
 
   const settingsPolicies = [
     {
       value: 0,
       name: t("contacts:header:excel:export"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: RiFileExcel2Fill,
       name: t("contacts:header:excel:print"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -783,13 +815,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:edit:policies:consult:settings:download"),
       icon: ArrowDownTrayIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: DocumentTextIcon,
       name: t("contacts:edit:policies:consult:settings:print"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -798,13 +830,13 @@ export const useCommon = () => {
       value: 0,
       name: t("leads:header:excel:alone"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 0,
       name: t("leads:header:excel:all"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -870,7 +902,7 @@ export const useCommon = () => {
     settingsLead,
     statusLead,
     stagesLead,
-    settingsReceipts
+    settingsReceipts,
   };
 };
 
@@ -1125,7 +1157,6 @@ export const useLeads = () => {
       row: "activities",
       check: true,
       activities: true,
-
     },
   ];
   return {
@@ -1165,13 +1196,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:excel:alone"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 0,
       name: t("tools:tasks:header:excel:all"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
   const optionsTrash = [
@@ -1179,13 +1210,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("tools:tasks:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -1242,13 +1273,13 @@ export const useTasksConfigs = () => {
     {
       value: 0,
       name: t("tools:tasks:new:download"),
-      onclick: () => { },
+      onclick: () => {},
       icon: ArrowDownTrayIcon,
     },
     {
       value: 0,
       name: t("tools:tasks:new:print"),
-      onclick: () => { },
+      onclick: () => {},
       icon: DocumentTextIcon,
     },
   ];
@@ -1266,7 +1297,6 @@ export const useTasksActions = (selectedTask, setSelectedTasks, setLoading) => {
   const { t } = useTranslation();
   const { onCloseAlertDialog } = useAlertContext();
   const { mutate } = useSWRConfig();
-
 
   const optionsCheckBox = [
     {
@@ -1621,7 +1651,7 @@ export const usePoliciesTable = () => {
       name: t("operations:policies:table:activities"),
       row: "activities",
       check: true,
-    }
+    },
   ];
   return { columnTable };
 };

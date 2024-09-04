@@ -2,6 +2,14 @@
 import { Dialog, Transition, Switch } from "@headlessui/react";
 import { Fragment, useState, useEffect } from "react";
 import SelectInput from "@/src/components/form/SelectInput";
+import {
+  ChevronDownIcon,
+  LockClosedIcon,
+  ArrowUturnLeftIcon,
+  CalendarDaysIcon,
+  MapPinIcon,
+  NoSymbolIcon,
+} from "@heroicons/react/24/outline";
 
 export function Segurity() {
   const [enabled, setEnabled] = useState(false);
@@ -14,20 +22,40 @@ export function Segurity() {
             Haga que las cuentas de los usuarios sean más seguras para evitar
             accesos no autorizados.
           </p>
-          <div className="p-3 border-2">
-            <h1>Autenticación de dos factores</h1>
+          <div className="p-3 border-2 justify-between flex rounded-md">
+            <div className="flex items-center">
+              <LockClosedIcon className="h-5 w-5" />
+              <h1 className="ml-1">Autenticación de dos factores</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
-          <div className="p-3 border-2 mt-2 rounded-md">
-            <h1>Historial de acceso</h1>
+          <div className="p-3 border-2 justify-between flex mt-2 rounded-md">
+            <div className="flex items-center">
+              <ArrowUturnLeftIcon className="h-5 w-5" />
+              <h1 className="ml-1">Historial de acceso</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
-          <div className="p-3 border-2 mt-2 rounded-md">
-            <h1>Registro de eventos</h1>
+          <div className="p-3 border-2 justify-between flex mt-2 rounded-md">
+            <div className="flex items-center">
+              <CalendarDaysIcon className="h-5 w-5" />
+              <h1 className="ml-1">Registro de eventos</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
-          <div className="p-3 border-2 mt-2 rounded-md">
-            <h1>Restringir el acceso por dirección IP</h1>
+          <div className="p-3 border-2 justify-between flex mt-2 rounded-md">
+            <div className="flex items-center">
+              <MapPinIcon className="h-5 w-5" />
+              <h1 className="ml-1">Restringir el acceso por dirección IP</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
-          <div className="p-3 border-2 mt-2 rounded-md">
-            <h1>Lista negra</h1>
+          <div className="p-3 border-2 justify-between flex mt-2 rounded-md">
+            <div className="flex items-center">
+              <NoSymbolIcon className="h-5 w-5" />
+              <h1 className="ml-1">Lista negra</h1>
+            </div>
+            <ChevronDownIcon className="h-5 w-5" />
           </div>
           <div className="flex mt-2">
             <button className="p-2 rounded-md bg-easywork-main hover:bg-easywork-mainhover text-white">

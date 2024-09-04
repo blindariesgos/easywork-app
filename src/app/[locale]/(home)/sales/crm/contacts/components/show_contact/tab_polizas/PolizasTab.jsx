@@ -5,24 +5,18 @@ import useCrmContext from "../../../../../../../../../context/crm";
 import ContactPolizaTable from "./ContactPolizaTable";
 import { useTranslation } from "react-i18next";
 import { usePolicies } from "../../../../../../../../../hooks/useCommon";
-import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 export default function PolizasTab({ base = 0, contactID }) {
-  const { policies } = usePoliciesByContactId({ contactId: contactID });
   const { t } = useTranslation();
   const { currentContact } = useCrmContext();
   const { branches: options } = usePolicies(contactID);
   const pathname = usePathname();
 
   const [branches, setBranches] = useState(options);
-
-  useEffect(() => {
-    console.log({ policies });
-  }, [policies]);
 
   if (!currentContact) return <></>;
 
@@ -59,7 +53,7 @@ export default function PolizasTab({ base = 0, contactID }) {
             )}
           >
             {/* <ContactPolizaTable polizas={polizas ? polizas[category] : []} /> */}
-            <ContactPolizaTable base={base} contactID={contactID} />
+            <ContactPolizaTable base={base} contactId={contactID} />
           </TabPanel>
           {/* ))} */}
         </TabPanels>

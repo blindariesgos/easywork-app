@@ -96,41 +96,41 @@ const FormFilters = () => {
       onSubmit={handleSubmit(handleFormFilters)}
       className="grid grid-cols-1 gap-2 sm:w-96 w-72 px-2"
     >
-      {fields.map((field, index) => {
+      {fields.map((dataField, index) => {
         return (
-          <div key={field.id}>
-            {field.type === "input" && (
+          <div key={dataField.id}>
+            {dataField.type === "input" && (
               <TextInput
-                label={field.name}
+                label={dataField.name}
                 type="text"
                 name={`fields[${index}].value`}
                 register={register}
               />
             )}
-            {field.type === "select" && (
+            {dataField.type === "select" && (
               <SelectInput
-                label={field.name}
+                label={dataField.name}
                 name={`fields[${index}].value`}
-                options={field.options}
+                options={dataField.options}
                 setValue={setValue}
                 watch={watch}
               />
             )}
-            {field.type === "dropdown" && (
+            {dataField.type === "dropdown" && (
               <SelectDropdown
-                label={field.name}
+                label={dataField.name}
                 name={`fields[${index}].value`}
-                options={field.options}
+                options={dataField.options}
                 setValue={setValue}
                 watch={watch}
               />
             )}
-            {field.type === "date" && (
+            {dataField.type === "date" && (
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
                     <InputDate
-                      label={field.name}
+                      label={dataField.name}
                       value={value}
                       onChange={onChange}
                       onBlur={onBlur}
@@ -150,11 +150,11 @@ const FormFilters = () => {
                 render={({ field }) => (
                   <MultipleSelect
                     {...field}
-                    options={dataField.options}
+                    options={field.options}
                     getValues={getValues}
                     setValue={setValue}
                     name={`fields[${index}].value`}
-                    label={dataField.name}
+                    label={field.name}
                   />
                 )}
               />

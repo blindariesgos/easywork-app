@@ -87,7 +87,7 @@ function SelectDropdown({
               // registerInput && registerInput.onChange(event);
               setQuery(event.target.value);
             }}
-            placeholder
+            placeholder={placeholder}
           />
           {!disabled && (
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">

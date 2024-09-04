@@ -17,7 +17,7 @@ const DropdownSelect = ({
   error,
   onlyOne,
   isOpen,
-  setIsOpen
+  setIsOpen,
 }) => {
   const { t } = useTranslation();
   // const [options, setOptions] = useState(data);
@@ -31,7 +31,7 @@ const DropdownSelect = ({
         setIsOpen(false);
       }
     };
-
+    if (!dropdownRef) return;
     document?.addEventListener("mousedown", handleClickOutside);
     return () => {
       document?.removeEventListener("mousedown", handleClickOutside);
@@ -60,10 +60,10 @@ const DropdownSelect = ({
     query === ""
       ? options
       : options.filter((opt) => {
-        return `${opt.username} ${opt.name}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
-      });
+          return `${opt.username} ${opt.name}`
+            .toLowerCase()
+            .includes(query.toLowerCase());
+        });
 
   return (
     <div>
@@ -72,7 +72,10 @@ const DropdownSelect = ({
       </label>
       <div className="relative mt-1">
         {isOpen && (
-          <div ref={dropdownRef} className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div
+            ref={dropdownRef}
+            className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+          >
             <div
               className="py-1 flex flex-col gap-2 px-2"
               aria-labelledby="options-menu"
@@ -93,11 +96,12 @@ const DropdownSelect = ({
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${getValues(name) &&
-                        getValues(name).some((res) => res.id === option.id)
+                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
+                      getValues(name) &&
+                      getValues(name).some((res) => res.id === option.id)
                         ? "bg-primary"
                         : "hover:bg-primary/10"
-                      }`}
+                    }`}
                     onClick={() => handleSelect(option)}
                   >
                     {option.avatar && (
@@ -110,11 +114,12 @@ const DropdownSelect = ({
                       />
                     )}
                     <span
-                      className={`text-xs ${getValues(name) &&
-                          getValues(name).some((res) => res.id === option.id)
+                      className={`text-xs ${
+                        getValues(name) &&
+                        getValues(name).some((res) => res.id === option.id)
                           ? "text-white"
                           : "text-black"
-                        }`}
+                      }`}
                     >
                       {option.name || option.username}
                     </span>

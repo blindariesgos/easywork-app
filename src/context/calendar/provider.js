@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { PoliciesContext } from "..";
+import { CalendarContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "../../lib/api/hooks/policies";
-import { policies } from "./mockups"
-export default function PoliciesContextProvider({ children }) {
+import { useCalendar } from "../../lib/api/hooks/calendar";
+import { policies } from "./mockups";
+
+export default function CalendarContextProvider({ children }) {
   const { t } = useTranslation()
   const [config, setConfig] = useState({
     page: 1,
@@ -16,7 +17,7 @@ export default function PoliciesContextProvider({ children }) {
   })
   const { lists } = useAppContext()
   const [filters, setFilters] = useState({})
-  const { data, isLoading, isError, mutate } = usePolicies({ config, filters })
+  const { data, isLoading, isError, mutate } = useCalendar({ config, filters })
   const [filterFields, setFilterFields] = useState()
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})
@@ -125,9 +126,9 @@ export default function PoliciesContextProvider({ children }) {
       isLoading,
       isError,
       mutate,
-      page: config.page,
+      page: 1, //config.page,
       setPage: (value) => handleChangeConfig("page", value),
-      limit: config.limit,
+      limit: 5, // config.limit,
       setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
       setOrderBy: (value) => handleChangeConfig("orderBy", value),
@@ -156,5 +157,5 @@ export default function PoliciesContextProvider({ children }) {
     ]
   );
 
-  return <PoliciesContext.Provider value={values}>{children}</PoliciesContext.Provider>;
+  return <CalendarContext.Provider value={values}>{children}</CalendarContext.Provider>;
 }

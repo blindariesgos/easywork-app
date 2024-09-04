@@ -292,21 +292,24 @@ export default function TablePolicies() {
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
                               <div className="font-medium text-sm text-center text-black hover:text-primary">
-                                {column.row == "client" ? (
-                                  <div className="flex gap-3 items-center">
-                                    <Image
-                                      className="h-8 w-8 rounded-full bg-zinc-200"
-                                      width={30}
-                                      height={30}
-                                      src={
-                                        policy?.responsible?.avatar ||
-                                        "/img/avatar.svg"
-                                      }
-                                      alt=""
-                                    />
+                                {column.row == "name" ? (
+                                  <Link
+                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                  >
+                                    {/* <div className="flex gap-3 items-center"> */}
+                                    {/* <Image
+                                        className="h-8 w-8 rounded-full bg-zinc-200"
+                                        width={30}
+                                        height={30}
+                                        src={
+                                          policy?.responsible?.avatar ||
+                                          "/img/avatar.svg"
+                                        }
+                                        alt=""
+                                      /> */}
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {policy?.responsible?.name}
+                                        {policy?.name}
                                       </p>
                                       {policy?.responsible?.bio && (
                                         <p className="text-start text-xs">
@@ -314,7 +317,8 @@ export default function TablePolicies() {
                                         </p>
                                       )}
                                     </div>
-                                  </div>
+                                    {/* </div> */}
+                                  </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
                                     <button
@@ -354,13 +358,7 @@ export default function TablePolicies() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "policy" ? (
-                                  <Link
-                                    href={`/operations/policies/policy/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true`}
-                                  >
-                                    {policy[column.row]}
-                                  </Link>
-                                ) : column.row === "createdAt" ? (
+                                ) : column.row === "fechaEmision" ? (
                                   formatDate(
                                     policy[column.row],
                                     "dd/MM/yyyy"

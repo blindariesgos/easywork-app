@@ -46,7 +46,7 @@ export default function Page() {
   });
 
   useEffect(() => {
-    const fromUrl = document.referrer ? new URL(document.referrer) : null; // Validador para document.referrer
+    const fromUrl = document?.referrer ? new URL(document?.referrer) : null; // Validador para document.referrer
     const urlParams = window.location.search
       ? new URLSearchParams(window.location.search)
       : null; // Validador para window.location.search

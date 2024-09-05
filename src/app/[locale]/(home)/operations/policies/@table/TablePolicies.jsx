@@ -45,6 +45,7 @@ import { formatDate } from "@/src/utils/getFormatDate";
 import usePolicyContext from "../../../../../../context/policies";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
+import { formatToDollars } from "@/src/utils/formatters";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -363,6 +364,8 @@ export default function TablePolicies() {
                                     policy[column.row],
                                     "dd/MM/yyyy"
                                   ) ?? null
+                                ) : column.row === "importePagar" ? (
+                                  formatToDollars(policy[column.row])
                                 ) : (
                                   policy[column.row] || "-"
                                 )}

@@ -12,10 +12,14 @@ import { RadioGroup, Label, Radio } from "@headlessui/react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useCalendarContext from "../../../../../../../context/calendar";
+import { useRouter, useSearchParams } from "next/navigation";
 export default function CalendarHome({ children }) {
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
   const { data } = useCalendarContext();
   const calendarRef = useRef(null);
+  const router = useRouter();
   const [calendarView, setCalendarView] = useState("timeGridDay");
   const calendarViews = [
     {
@@ -56,10 +60,15 @@ export default function CalendarHome({ children }) {
           title: event.name,
           start: event.startTime,
           end: event.endTime,
-          color: "red",
+          color: event.color,
         });
       });
   }, [data]);
+
+  const openConnect = () => {
+    params.set("connect", true);
+    router.replace(`/tools/calendar?${params.toString()}`);
+  };
 
   return (
     <div className="flex flex-col flex-grow">

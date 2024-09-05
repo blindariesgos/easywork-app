@@ -37,3 +37,17 @@ export const useCalendar = ({ filters = {}, page = 1, limit = 15, userId = "" })
     mutate
   };
 };
+
+
+export const useEvent = (id) => {
+  const { data, error, isLoading } = useSWR(
+    `/calendar/${id}`,
+    fetcher,
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+  };
+};

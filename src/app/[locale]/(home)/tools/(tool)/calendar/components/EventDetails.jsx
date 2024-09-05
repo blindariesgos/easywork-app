@@ -247,6 +247,8 @@ export default function EventDetails({ data }) {
       return;
     }
 
+    setIsEdit(false);
+
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
@@ -263,7 +265,11 @@ export default function EventDetails({ data }) {
       className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] max-w-[calc(80vw)] w-full"
     >
       {loading && <LoaderSpinner />}
-      <div className="flex-1 min-h-0 flex-col overflow-y-scroll px-6">
+      <div
+        className={clsx("flex-1 min-h-0 flex-col overflow-y-scroll px-6", {
+          "pb-4": !isEdit,
+        })}
+      >
         {/* Header */}
         <div className="bg-transparent py-6 sticky top-0 bg-zinc-100 z-20">
           <div className="flex items-start justify-between gap-x-3">

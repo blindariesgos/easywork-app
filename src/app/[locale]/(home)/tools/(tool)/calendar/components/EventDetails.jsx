@@ -47,6 +47,7 @@ export default function EventDetails({ data }) {
   const { lists } = useAppContext();
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(true);
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
     { name: "Diario", value: 2, id: "diario" },
@@ -241,7 +242,10 @@ export default function EventDetails({ data }) {
   }, [watch]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data) {
+      setIsEdit(true);
+      return;
+    }
 
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
@@ -730,21 +734,23 @@ export default function EventDetails({ data }) {
       </div>
 
       {/* Action buttons */}
-      <div className="flex flex-shrink-0 justify-start px-4 py-4">
-        <button
-          type="submit"
-          className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-        >
-          {t("common:buttons:save")}
-        </button>
-        <button
-          type="button"
-          className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-          onClick={() => setOpen(false)}
-        >
-          {t("common:buttons:cancel")}
-        </button>
-      </div>
+      {isEdit && (
+        <div className="flex flex-shrink-0 justify-start px-4 py-4">
+          <button
+            type="submit"
+            className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          >
+            {t("common:buttons:save")}
+          </button>
+          <button
+            type="button"
+            className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
+            onClick={() => setOpen(false)}
+          >
+            {t("common:buttons:cancel")}
+          </button>
+        </div>
+      )}
     </form>
   );
 }

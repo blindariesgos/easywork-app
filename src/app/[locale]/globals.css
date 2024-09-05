@@ -109,6 +109,16 @@
   border: none;
 }
 
+.fc .fc-view-harness-active>.fc-view {
+  background: #f2f6f7;
+  border: none;
+}
+
+tr.fc-event td {
+  background: white;
+}
+
+
 .fc .fc-timegrid-axis-cushion,
 .fc .fc-timegrid-slot-label-cushion {
   font-size: 12px;
@@ -118,10 +128,31 @@
 .fc .fc-col-header-cell-cushion {
   color: #54585B;
   text-transform: capitalize;
+  font-size: 14px;
 }
 
 .fc .fc-daygrid-day-number {
   font-size: 12px;
+}
+
+.fc .fc-list-day-text {
+  color: #ffffff;
+  font-size: 14px;
+  float: none;
+  background: #241F61;
+  border-radius: 50px;
+  padding: 5px 10px;
+  font-weight: 500;
+}
+
+.fc .fc-list-day-side-text {
+  color: #54585B;
+  font-size: 14px;
+  display: none;
+}
+
+.fc-theme-standard .fc-list-day-cushion {
+  background: #f2f6f7;
 }
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */

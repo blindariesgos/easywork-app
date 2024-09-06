@@ -7,7 +7,6 @@ import { usePolicy } from "@/src/lib/api/hooks/policies";
 
 export default function PolicyDetailsPage({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
-  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaakknknknknknknk");
   const { data, isLoading, isError } = usePolicy(id);
   console.log({ data });
 

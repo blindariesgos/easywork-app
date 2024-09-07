@@ -322,3 +322,8 @@ export const addCalendarEvent = async (body) => {
   return response;
 }
 
+export const updateCalendarEvent = async (body, eventId) => {
+  const response = await axios().put(`/calendar/events/${eventId}`, body).catch((error) => ({ ...error, hasError: true }));
+  return response;
+}
+

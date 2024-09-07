@@ -27,7 +27,7 @@ import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import SelectInput from "@/src/components/form/SelectInput";
 import TextEditor from "@/src/components/TextEditor";
 import RadioGroupColors from "./RadioGroupColors";
-import { addCalendarEvent } from "@/src/lib/apis";
+import { addCalendarEvent, updateCalendarEvent } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import useCalendarContext from "@/src/context/calendar";
@@ -208,20 +208,31 @@ export default function EventDetails({ data }) {
     console.log({ body });
 
     try {
-      const response = await addCalendarEvent(body);
-      if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
-        );
+      if (data) {
+        const response = await updateCalendarEvent(body, data.id);
+        if (response.hasError) {
+          toast.error(
+            "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
+          );
+        } else {
+          toast.success("Evento editado con éxito.");
+          mutate();
+          router.back();
+        }
       } else {
-        toast.success("Evento creado con éxito.");
-        mutate();
-        router.back();
+        const response = await addCalendarEvent(body);
+        if (response.hasError) {
+          toast.error(
+            "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
+          );
+        } else {
+          toast.success("Evento creado con éxito.");
+          mutate();
+          router.back();
+        }
       }
     } catch {
-      toast.error(
-        "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
-      );
+      toast.error("Se ha producido un error, inténtelo de nuevo más tarde.");
     }
     setLoading(false);
   };
@@ -257,6 +268,12 @@ export default function EventDetails({ data }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
+
+    const subscription = watch((data, { name }) => {
+      setIsEdit(true);
+    });
+
+    return () => subscription.unsubscribe();
   }, [data]);
 
   return (
@@ -306,6 +323,7 @@ export default function EventDetails({ data }) {
                 )}
                 {...register("name")}
                 autoComplete="false"
+                disabled={!isEdit}
               />
             </div>
             <div className="relative flex items-start px-2 sm:px-0">
@@ -317,6 +335,7 @@ export default function EventDetails({ data }) {
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   {...register("important")}
+                  disabled={!isEdit}
                 />
               </div>
               <div className="ml-3 text-sm leading-6">
@@ -364,6 +383,7 @@ export default function EventDetails({ data }) {
                       { "border-red-600": errors && errors.startTime }
                     )}
                     {...register("startTime")}
+                    disabled={!isEdit}
                   />
                   {errors && errors?.startTime && (
                     <p className="mt-1 text-xs text-red-600">
@@ -387,6 +407,7 @@ export default function EventDetails({ data }) {
                       { "border-red-600": errors && errors.endTime }
                     )}
                     {...register("endTime")}
+                    disabled={!isEdit}
                   />
                   {errors && errors?.endTime && (
                     <p className="mt-1 text-xs text-red-600">
@@ -404,6 +425,7 @@ export default function EventDetails({ data }) {
                       checked={allDay}
                       onChange={() => setAllDay(!allDay)}
                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      disabled={!isEdit}
                     />
                     <label
                       htmlFor="all-day"
@@ -432,11 +454,13 @@ export default function EventDetails({ data }) {
                         data={timezones}
                         selected={timezoneStart}
                         setSelected={setTimezoneStart}
+                        disabled={!isEdit}
                       />
                       <ComboBox
                         data={timezones}
                         selected={timezoneEnd}
                         setSelected={setTimezoneEnd}
+                        disabled={!isEdit}
                       />
                     </DisclosurePanel>
                   </Transition>
@@ -460,6 +484,7 @@ export default function EventDetails({ data }) {
                 data={calendarios}
                 selected={calendary}
                 setSelected={setCalendary}
+                disabled={!isEdit}
               />
             </div>
           </div>
@@ -488,6 +513,7 @@ export default function EventDetails({ data }) {
                       name="repeat"
                       error={errors.repeat}
                       selectedOption={repeatOptions[0]}
+                      disabled={!isEdit}
                     />
                   )}
                 />
@@ -530,6 +556,7 @@ export default function EventDetails({ data }) {
                   data={eventLocalizations}
                   value={formLocalization}
                   setValue={setFormLocalization}
+                  disabled={!isEdit}
                 />
               </div>
             </div>
@@ -556,6 +583,7 @@ export default function EventDetails({ data }) {
                       name="participants"
                       error={errors.participants}
                       showAvatar
+                      disabled={!isEdit}
                     />
                   )}
                 />
@@ -622,6 +650,8 @@ export default function EventDetails({ data }) {
                         setValue={(e) => {
                           setValue("description", e);
                         }}
+                        value={watch("description") ?? ""}
+                        disabled={!isEdit}
                       />
                     </div>
                   </div>
@@ -649,6 +679,7 @@ export default function EventDetails({ data }) {
                               name="reminder"
                               error={errors.reminder}
                               object
+                              disabled={!isEdit}
                             />
                           )}
                         />
@@ -669,6 +700,7 @@ export default function EventDetails({ data }) {
                         setValue={setValue}
                         name="color"
                         watch={watch}
+                        disabled={!isEdit}
                       />
                     </div>
                   </div>
@@ -695,6 +727,7 @@ export default function EventDetails({ data }) {
                               setValue={setValue}
                               name="availability"
                               error={errors.availability}
+                              disabled={!isEdit}
                             />
                           )}
                         />
@@ -718,6 +751,7 @@ export default function EventDetails({ data }) {
                             type="checkbox"
                             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                             {...register("isPrivate")}
+                            disabled={!isEdit}
                           />
                         </div>
                         <div className="ml-3 text-sm leading-6">

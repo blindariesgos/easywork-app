@@ -1,8 +1,6 @@
 "use client";
 import useAppContext from "../../../../../../../context/app";
-import { onDismissModal } from "../../../../../../../lib/common";
 import {
-  Dialog,
   DialogTitle,
   Disclosure,
   Transition,
@@ -13,31 +11,26 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   FireIcon,
-  LinkIcon,
-  QuestionMarkCircleIcon,
-  XMarkIcon,
 } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
-import ComboBox, { ComboBoxWithElement } from "../components/ComboBox";
+import React, { useEffect, useRef, useState } from "react";
+import ComboBox, { ComboBoxWithElement } from "./ComboBox";
 import { timezones } from "../../../../../../../lib/timezones";
-import Dropdown from "../../../../../../../components/Dropdown";
-import RepeatOptions from "./components/RepeatOptions";
-import SelectMenu from "./components/SelectMenu";
+import SelectMenu from "./SelectMenu";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { add, formatISO, parseISO } from "date-fns";
+import { add, addHours, format, formatISO, parseISO } from "date-fns";
 import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
-import MultipleSelect from "@/src/components/form/MultipleSelect";
 import SelectInput from "@/src/components/form/SelectInput";
 import TextEditor from "@/src/components/TextEditor";
-import RadioGroupColors from "./components/RadioGroupColors";
+import RadioGroupColors from "./RadioGroupColors";
 import { addCalendarEvent } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import useCalendarContext from "@/src/context/calendar";
 
 const calendarios = [{ name: "Mi calendario", value: 1 }];
 
@@ -49,10 +42,12 @@ const eventLocalizations = [
   { id: 5, name: "Zoom Personal", online: true },
 ];
 
-export default function AddEvent() {
+export default function EventDetails({ data }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
+  const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(true);
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
     { name: "Diario", value: 2, id: "diario" },
@@ -125,6 +120,7 @@ export default function AddEvent() {
       value: { custom: true },
     },
   ];
+
   const quillRef = useRef(null);
 
   const [timezoneStart, setTimezoneStart] = useState(false);
@@ -133,14 +129,13 @@ export default function AddEvent() {
   const [formLocalization, setFormLocalization] = useState(
     eventLocalizations[0]
   );
-
   const [allDay, setAllDay] = useState(false);
   const router = useRouter();
 
   const schema = yup.object().shape({
     name: yup.string().required(),
     important: yup.boolean(),
-    private: yup.boolean(),
+    isPrivate: yup.boolean(),
     startTime: yup.date().required(),
     endTime: yup
       .date()
@@ -180,9 +175,13 @@ export default function AddEvent() {
       endTime,
       reminderCustom,
       availability,
-      ...otherData
+      description,
+      color,
+      important,
+      isPrivate,
+      repeat,
+      name,
     } = data;
-    console.log({ data });
     let reminderValue;
     if (reminder && reminder?.value) {
       if (reminder?.value?.custom) {
@@ -193,23 +192,30 @@ export default function AddEvent() {
     }
 
     const body = {
-      ...otherData,
       participantsIds: participants?.map((participant) => participant.id) ?? [],
       reminder: formatISO(reminderValue ?? startTime),
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
       availability: availability ? availability : availabilityOptions[0].id,
+      description: description ?? "<p></p>",
+      color: color ?? "#141052",
+      important: !!important,
+      private: !!isPrivate,
+      repeat: repeat ?? "none",
+      name,
     };
+
     console.log({ body });
+
     try {
       const response = await addCalendarEvent(body);
-      console.log({ response });
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
         );
       } else {
         toast.success("Evento creado con éxito.");
+        mutate();
         router.back();
       }
     } catch {
@@ -220,24 +226,63 @@ export default function AddEvent() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    const subscription = watch((data, { name }) => {
+      if (name === "startTime") {
+        setValue(
+          "endTime",
+          allDay
+            ? format(data.startTime, "yyyy-MM-dd")
+            : format(addHours(data.startTime, 1), "yyyy-MM-dd'T'hh:mm")
+        );
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
+  useEffect(() => {
+    if (!data) {
+      setIsEdit(true);
+      return;
+    }
+
+    setIsEdit(false);
+
+    if (data?.name) setValue("name", data?.name);
+    if (data?.startTime)
+      setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
+    if (data?.endTime)
+      setValue("endTime", format(data?.endTime, "yyyy-MM-dd'T'hh:mm"));
+    if (data?.color) setValue("color", data?.color);
+    if (data?.important) setValue("important", data?.important);
+    if (data?.private) setValue("isPrivate", data?.private);
+  }, [data]);
+
   return (
     <form
       onSubmit={handleSubmit(handleSubmitForm)}
       className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] max-w-[calc(80vw)] w-full"
     >
       {loading && <LoaderSpinner />}
-      <div className="flex-1 min-h-0 flex-col overflow-y-scroll px-4">
+      <div
+        className={clsx("flex-1 min-h-0 flex-col overflow-y-scroll px-6", {
+          "pb-4": !isEdit,
+        })}
+      >
         {/* Header */}
-        <div className="bg-transparent py-6">
+        <div className="bg-transparent py-6 sticky top-0 bg-zinc-100 z-20">
           <div className="flex items-start justify-between gap-x-3">
             <DialogTitle className="text-2xl font-medium leading-6 text-gray-900">
-              {t("tools:calendar:new-event:new")}
+              {data
+                ? t("tools:calendar:event")
+                : t("tools:calendar:new-event:new")}
             </DialogTitle>
           </div>
         </div>
 
         {/* Divider container */}
-        <div className="gap-y-6 py-1 sm:gap-y-0 sm:divide-y sm:divide-gray-200 sm:py-0 bg-white rounded-xl">
+        <div className="gap-y-6 py-1 sm:gap-y-0 sm:divide-y sm:divide-gray-200 sm:py-0 bg-white rounded-xl grid grid-cols-1 ">
           {/* Event name */}
           <div className="flex flex-col sm:flex-row sm:items-center w-full bg-transparent sm:pr-6">
             <label
@@ -518,7 +563,7 @@ export default function AddEvent() {
             </div>
           </div>
         </div>
-        <Disclosure>
+        <Disclosure defaultOpen={!!data}>
           {({ open }) => (
             <>
               <DisclosureButton className="py-2 text-zinc-700 flex items-center text-sm font-medium gap-0.5">
@@ -620,7 +665,11 @@ export default function AddEvent() {
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex bg-white">
-                      <RadioGroupColors setValue={setValue} />
+                      <RadioGroupColors
+                        setValue={setValue}
+                        name="color"
+                        watch={watch}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
@@ -663,17 +712,17 @@ export default function AddEvent() {
                       <div className="relative flex items-start px-2 sm:px-0">
                         <div className="flex h-6 items-center">
                           <input
-                            id="private"
+                            id="isPrivate"
                             aria-describedby="important-description"
-                            name="private"
+                            name="isPrivate"
                             type="checkbox"
                             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                            {...register("private")}
+                            {...register("isPrivate")}
                           />
                         </div>
                         <div className="ml-3 text-sm leading-6">
                           <label
-                            htmlFor="private"
+                            htmlFor="isPrivate"
                             className="font-light flex items-center space-x-1.5"
                           >
                             {t("tools:calendar:new-event:private-label")}
@@ -691,21 +740,23 @@ export default function AddEvent() {
       </div>
 
       {/* Action buttons */}
-      <div className="flex flex-shrink-0 justify-start px-4 py-4">
-        <button
-          type="submit"
-          className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-        >
-          {t("common:buttons:save")}
-        </button>
-        <button
-          type="button"
-          className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-          onClick={() => setOpen(false)}
-        >
-          {t("common:buttons:cancel")}
-        </button>
-      </div>
+      {isEdit && (
+        <div className="flex flex-shrink-0 justify-start px-4 py-4">
+          <button
+            type="submit"
+            className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          >
+            {t("common:buttons:save")}
+          </button>
+          <button
+            type="button"
+            className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
+            onClick={() => setOpen(false)}
+          >
+            {t("common:buttons:cancel")}
+          </button>
+        </div>
+      )}
     </form>
   );
 }

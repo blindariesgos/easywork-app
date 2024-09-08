@@ -13,11 +13,14 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useCalendarContext from "../../../../../../../context/calendar";
 import { useRouter, useSearchParams } from "next/navigation";
+import interactionPlugin from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list";
+
 export default function CalendarHome({ children }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
-  const { data } = useCalendarContext();
+  const { events } = useCalendarContext();
   const calendarRef = useRef(null);
   const router = useRouter();
   const [calendarView, setCalendarView] = useState("timeGridDay");
@@ -34,14 +37,12 @@ export default function CalendarHome({ children }) {
       name: t("tools:calendar:month"),
       id: "dayGridMonth",
     },
-    // t("tools:calendar:program"),
+    {
+      name: t("tools:calendar:program"),
+      id: "listMonth",
+    },
   ];
 
-  const handleAddEvent = (event) => {
-    console.log("agregando evento", event);
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.addEvent(event);
-  };
   useEffect(() => {
     const changeView = () => {
       const calendarApi = calendarRef.current.getApi();
@@ -51,23 +52,17 @@ export default function CalendarHome({ children }) {
     changeView();
   }, [calendarView]);
 
-  useEffect(() => {
-    data &&
-      data.items &&
-      data.items.length > 0 &&
-      data.items.forEach((event) => {
-        handleAddEvent({
-          title: event.name,
-          start: event.startTime,
-          end: event.endTime,
-          color: event.color,
-        });
-      });
-  }, [data]);
-
   const openConnect = () => {
     params.set("connect", true);
     router.replace(`/tools/calendar?${params.toString()}`);
+  };
+
+  const handleSelectDate = (info) => {
+    console.log({ info });
+  };
+
+  const handleClickEvent = (info) => {
+    router.push(`/tools/calendar/event/${info.event.id}?show=true`);
   };
 
   return (
@@ -84,7 +79,7 @@ export default function CalendarHome({ children }) {
               onChange={setCalendarView}
               className="bg-zinc-300/40 rounded-full"
             >
-              <div className="grid grid-cols-3 gap-1">
+              <div className="grid grid-cols-4 gap-1">
                 {calendarViews.map((option) => (
                   <Radio
                     key={option.id}
@@ -121,22 +116,44 @@ export default function CalendarHome({ children }) {
             {t("tools:calendar:connect")}
           </button>
         </div>
-
         <FullCalendar
           locale={esLocale}
           ref={calendarRef}
-          plugins={[dayGridPlugin, timeGridPlugin]}
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            interactionPlugin,
+            listPlugin,
+          ]}
           navLinks={true}
           headerToolbar={{
             left: "title",
             center: "",
             right: "prev,today,next",
           }}
+          events={events}
           initialView="dayGridMonth"
           nowIndicator={true}
           editable={true}
           selectable={true}
           selectMirror={true}
+          dayMaxEvents={true}
+          select={handleSelectDate}
+          // views={{
+          //   dayGridMonth: {
+          //     titleFormat: {
+          //       weekday: "long",
+          //     },
+          //   },
+          // }}
+          eventClick={handleClickEvent}
+          businessHours={{
+            // days of week. an array of zero-based day of week integers (0=Sunday)
+            daysOfWeek: [1, 2, 3, 4, 5], // Monday - Thursday
+
+            startTime: "09:00", // a start time (10am in this example)
+            endTime: "18:00", // an end time (6pm in this example)
+          }}
         />
         {children}
       </div>

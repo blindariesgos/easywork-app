@@ -113,9 +113,10 @@
       "name": "Agent management",
       "learning": "E-Learning (Coming soon)",
       "accompaniment": "Accompaniment",
+      "commissions": "Commissions",
       "recruitement": "Funnel of Recruitment and selection",
-      "capacitations": "Funnel of Trainings",
-      "conections": "Funnel of Connections",
+      "capacitations": "Trainings",
+      "conections": "Connections",
       "development-agents": "Funnel of Agent development",
       "team-meetings": "Team meetings",
       "individual-meetings": "Individual meetings"
@@ -129,7 +130,9 @@
       "zurich": "Zurich (Coming soon)",
       "qualitas": "Qualitas (Coming soon)",
       "afirme": "Affirm (Coming soon)",
-      "others": "Others (Coming soon)"
+      "others": "Others (Coming soon)",
+      "insurance": "Insurance",
+      "agency-addresses": "Agency Addresses"
     },
     "settings": {
       "name": "Settings and Configurations",

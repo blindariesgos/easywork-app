@@ -140,12 +140,12 @@ export default function WebmailLayout({ children, table }) {
   const totalUnreadByPage = () => {
     let contador = 0;
     for (const email of dmails) {
-      if (email.email.folder.includes('UNREAD')) {
+      if (email.email.folder.includes("UNREAD")) {
         contador++;
       }
     }
-    return contador;    
-  }
+    return contador;
+  };
 
   const fetchData = async () => {
     const config = {
@@ -201,7 +201,7 @@ export default function WebmailLayout({ children, table }) {
 
   function backButton() {
     setSidebarOpenEmail(false);
-    router.push("/tools/mails");
+    window.history.go(-2);
   }
 
   const itemOptions = [
@@ -267,7 +267,7 @@ export default function WebmailLayout({ children, table }) {
           }
           ToolsButtons={
             <Menu as="div" className="relative">
-              <Menu.Button>
+              <MenuButton>
                 <div
                   type="button"
                   className="inline-flex items-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -277,39 +277,32 @@ export default function WebmailLayout({ children, table }) {
                     aria-hidden="true"
                   />
                 </div>
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <MenuItems className="absolute right-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                  {itemOptions.map((item, index) => (
-                    <MenuItem key={index}>
-                      {({ active }) => (
-                        <div
-                          onClick={item.onClick}
-                          className={classNames(
-                            active ? "bg-gray-50" : "",
-                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                          )}
-                        >
-                          {item.name}
-                        </div>
-                      )}
-                    </MenuItem>
-                  ))}
-                </MenuItems>
-              </Transition>
+              </MenuButton>
+              <MenuItems className="absolute right-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                {itemOptions.map((item, index) => (
+                  <MenuItem key={index}>
+                    {({ active }) => (
+                      <div
+                        onClick={item.onClick}
+                        className={classNames(
+                          active ? "bg-gray-50" : "",
+                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                        )}
+                      >
+                        {item.name}
+                      </div>
+                    )}
+                  </MenuItem>
+                ))}
+              </MenuItems>
             </Menu>
           }
         >
           <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
-            <TaskSubMenu fetchData={fetchData} totalUnreadByPage={totalUnreadByPage} />
+            <TaskSubMenu
+              fetchData={fetchData}
+              totalUnreadByPage={totalUnreadByPage}
+            />
           </div>
         </EmailHeader>
         <SliderOverEmail>
@@ -325,7 +318,7 @@ export default function WebmailLayout({ children, table }) {
             </Link>
             <div className="mt-3">
               <Menu as="div" className="flex items-center relative">
-                <Menu.Button>
+                <MenuButton>
                   <div className="flex border border-white p-1.5 rounded-lg text-white">
                     <Image
                       width={45}
@@ -344,46 +337,45 @@ export default function WebmailLayout({ children, table }) {
                       <ChevronUpIcon className="ml-2 h-5 w-5 text-white" />
                     </div>
                   </div>
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
+                </MenuButton>
+                <MenuItems
+                  transition
+                  anchor="bottom end"
+                  className=" z-50 mt-1 w-80 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                 >
-                  <Menu.Items className="absolute left-1 top-11 z-50 mt-2.5 w-72 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                    {allOauth?.map((oauth) => (
-                      <Menu.Item key={oauth.id}>
-                        {({ active }) => (
-                          <div
-                            className={classNames(
-                              active ? "bg-gray-50" : "",
-                              "flex justify-between items-center px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                            )}
-                            onClick={() => {
-                              setSelectOauth(oauth);
-                            }}
-                          >
-                            <p>{oauth.email}</p>
-                            <p className="bg-green-500 px-0.5 rounded-md text-white text-sm">{oauth.unreadCount}</p>
-                          </div>
-                        )}
-                      </Menu.Item>
-                    ))}
-                    <Menu.Item className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2">
-                      <div
-                        onClick={() => {
-                          openModal("add", true, true);
-                        }}
-                      >
-                        Conectar nuevo
-                      </div>
-                    </Menu.Item>
-                  </Menu.Items>
-                </Transition>
+                  {allOauth?.map((oauth) => (
+                    <MenuItem key={oauth.id}>
+                      {({ active }) => (
+                        <div
+                          className={classNames(
+                            active ? "bg-gray-50" : "",
+                            "flex justify-between items-center px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                          )}
+                          onClick={() => {
+                            setSelectOauth(oauth);
+                          }}
+                        >
+                          <p>{oauth.email}</p>
+                          <p className="bg-green-500 px-0.5 rounded-md text-white text-sm">
+                            {oauth.unreadCount}
+                          </p>
+                        </div>
+                      )}
+                    </MenuItem>
+                  ))}
+                  <MenuItem
+                    transition
+                    className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
+                  >
+                    <div
+                      onClick={() => {
+                        openModal("add", true, true);
+                      }}
+                    >
+                      Conectar nuevo
+                    </div>
+                  </MenuItem>
+                </MenuItems>
                 <div
                   style={{
                     display: "flex",
@@ -521,7 +513,7 @@ export default function WebmailLayout({ children, table }) {
         )}
         {children}
         <div className="flex justify-center">
-        <div className="flex gap-1 items-center">
+          <div className="flex gap-1 items-center">
             <p>Mostrar:</p>
             <Listbox value={limit} onChange={setLimit} as="div">
               <ListboxButton

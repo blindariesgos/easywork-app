@@ -47,7 +47,7 @@ export default function SliderOverEmail({ openModal, setOpenModal, children }) {
         >
           <div
             className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary pb-4 rounded-tr-[50px] rounded-br-[50px] 
-                          fixed inset-y-0 bg-white left-0 flex w-80"
+                          fixed inset-y-0 bg-white left-0 w-80"
           >
             <div className="pointer-events-auto w-auto">
               <div className="flex b-gray-300 h-16 shrink-0 items-center mx-auto mt-10">

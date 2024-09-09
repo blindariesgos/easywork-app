@@ -74,7 +74,9 @@ export default function PolicyDetails({ data, id }) {
           <div className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
-                <p className="text-xl sm:text-2xl xl:text-3xl">N/D</p>
+                <p className="text-xl sm:text-2xl xl:text-3xl">
+                  {data?.contact?.fullName}
+                </p>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:date")}:
@@ -87,7 +89,9 @@ export default function PolicyDetails({ data, id }) {
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">N/D</p>
+                  <p className="text-xs sm:text-sm xl:text-base">
+                    {data?.category?.name ?? "S/N"}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
@@ -101,7 +105,9 @@ export default function PolicyDetails({ data, id }) {
                   <p className="uppercase text-xs md:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:company")}:
                   </p>
-                  <p className="text-xs md:text-sm xl:text-base">N/D</p>
+                  <p className="text-xs md:text-sm xl:text-base">
+                    {data?.company?.name}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">

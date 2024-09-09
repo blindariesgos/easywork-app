@@ -23,7 +23,7 @@ const getQueries = (filters, userId) => {
 
 export const useCalendar = ({ filters = {}, page = 1, limit = 15, userId = "" }) => {
   const queries = getQueries(filters, userId)
-  const url = `/calendar?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`
+  const url = `/calendar/events?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`
 
   const { data, error, isLoading, mutate } = useSWR(
     url,
@@ -35,5 +35,19 @@ export const useCalendar = ({ filters = {}, page = 1, limit = 15, userId = "" })
     isLoading,
     isError: error,
     mutate
+  };
+};
+
+
+export const useEvent = (id) => {
+  const { data, error, isLoading } = useSWR(
+    `/calendar/events/${id}`,
+    fetcher,
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
   };
 };

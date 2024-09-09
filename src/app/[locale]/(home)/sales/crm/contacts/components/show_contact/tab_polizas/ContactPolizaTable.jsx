@@ -300,7 +300,7 @@ export default function ContactPolizaTable({ base, contactId }) {
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {poliza.product}
+                    {poliza?.category?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
                     {poliza?.company?.name ?? "S/N"}

@@ -9,7 +9,6 @@
     "ms-vscode-remote.remote-wsl",
     "ms-vscode-remote.vscode-remote-extensionpack",
     "ms-vscode.cpptools",
-    "redhat.vscode-yaml",
     "vscoss.vscode-ansible"
   ]
 }

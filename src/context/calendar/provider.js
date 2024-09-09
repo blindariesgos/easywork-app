@@ -21,6 +21,7 @@ export default function CalendarContextProvider({ children }) {
   const [filterFields, setFilterFields] = useState()
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})
+  const [events, setEvents] = useState()
   const defaultFilterFields = [
     {
       id: 0,
@@ -56,6 +57,21 @@ export default function CalendarContextProvider({ children }) {
 
     setConfig(newConfig)
   }
+
+  useEffect(() => {
+    setEvents(
+      (data &&
+        data.items &&
+        data.items.length > 0 &&
+        data.items.map((event) => ({
+          title: event.name,
+          start: event.startTime,
+          end: event.endTime,
+          color: event.color,
+          id: event.id
+        }))) ?? []
+    )
+  }, [data])
 
   useEffect(() => {
     setFilterFields([
@@ -142,7 +158,8 @@ export default function CalendarContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
-      defaultFilterFields
+      defaultFilterFields,
+      events
     }),
     [
       data,
@@ -153,7 +170,8 @@ export default function CalendarContextProvider({ children }) {
       displayFilters,
       filterFields,
       filters,
-      defaultFilterFields
+      defaultFilterFields,
+      events
     ]
   );
 

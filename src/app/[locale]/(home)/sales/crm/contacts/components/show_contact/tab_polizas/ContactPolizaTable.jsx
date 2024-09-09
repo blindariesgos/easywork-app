@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
+import { formatToDollars } from "@/src/utils/formatters";
 
 export default function ContactPolizaTable({ base, contactId }) {
   const [fieldClicked, setFieldClicked] = useState({
@@ -294,7 +295,7 @@ export default function ContactPolizaTable({ base, contactId }) {
                       href={`/operations/policies/policy/${poliza.id}?show=true`}
                     >
                       <div className="flex gap-2 px-2 hover:text-primary">
-                        {poliza.number}
+                        {poliza.poliza}
                       </div>
                     </Link>
                   </td>
@@ -302,7 +303,7 @@ export default function ContactPolizaTable({ base, contactId }) {
                     {poliza.product}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {poliza.company}
+                    {poliza?.company?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
                     {poliza.status}
@@ -314,11 +315,11 @@ export default function ContactPolizaTable({ base, contactId }) {
                     {poliza.metadata["Fecha de cierre"]}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {`$ ${poliza.importePagar}`}
+                    {formatToDollars(poliza.importePagar)}
                   </td>
                   {base === 0 && (
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                      {poliza.ramo}
+                      {poliza?.type?.name || "S/N"}
                     </td>
                   )}
                 </tr>

@@ -157,39 +157,31 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                     Mover a carpeta
                   </div>
                 </MenuButton>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
+                <MenuItems
+                  transition
+                  anchor="bottom end"
+                  className="z-50 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                 >
-                  <MenuItems className="absolute left-0 z-50 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                    {folderOptions.map(
-                      (subitem) =>
-                        subitem.value.toLowerCase() !==
-                          selectedFolder.toLowerCase() && (
-                          <MenuItem key={subitem.name}>
-                            {({ active }) => (
-                              <div
-                                className={clsx(
-                                  active
-                                    ? "bg-gray-50 text-white"
-                                    : "text-black",
-                                  "block px-3 py-1 text-sm leading-6  cursor-pointer"
-                                )}
-                                onClick={() => subitem.onClick(null)}
-                              >
-                                {subitem.name}
-                              </div>
-                            )}
-                          </MenuItem>
-                        )
-                    )}
-                  </MenuItems>
-                </Transition>
+                  {folderOptions.map(
+                    (subitem) =>
+                      subitem.value.toLowerCase() !==
+                        selectedFolder.toLowerCase() && (
+                        <MenuItem key={subitem.name}>
+                          {({ active }) => (
+                            <div
+                              className={clsx(
+                                active ? "bg-gray-50 text-white" : "text-black",
+                                "block px-3 py-1 text-sm leading-6  cursor-pointer"
+                              )}
+                              onClick={() => subitem.onClick(null)}
+                            >
+                              {subitem.name}
+                            </div>
+                          )}
+                        </MenuItem>
+                      )
+                  )}
+                </MenuItems>
               </Menu>
               <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
                 <ExclamationCircleIcon className="h-5 w-5" />
@@ -281,99 +273,76 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                 aria-hidden="true"
                               />
                             </MenuButton>
-                            <Transition
-                              as={Fragment}
-                              enter="transition ease-out duration-100"
-                              enterFrom="transform opacity-0 scale-95"
-                              enterTo="transform opacity-100 scale-100"
-                              leave="transition ease-in duration-75"
-                              leaveFrom="transform opacity-100 scale-100"
-                              leaveTo="transform opacity-0 scale-95"
+                            <MenuItems
+                              transition
+                              anchor="bottom start"
+                              className={
+                                "z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                              }
                             >
-                              <MenuItems
-                                className={
-                                  index > 5
-                                    ? "bottom-0 absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                    : "top-0 absolute left-0 z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                }
-                              >
-                                {itemOptions.map((itemOp, index) => (
-                                  <MenuItem key={index}>
-                                    {({ active }) => (
-                                      <div
-                                        onClick={() =>
-                                          itemOp.onClick(item.email.googleId)
-                                        }
-                                        className={classNames(
-                                          active ? "bg-gray-50" : "",
-                                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                                        )}
-                                      >
-                                        {itemOp.name !==
-                                        "Mover a la carpeta" ? (
-                                          itemOp.name
-                                        ) : (
-                                          <Menu>
-                                            <MenuButton className="flex items-center">
-                                              <div className="w-full flex items-center justify-between">
-                                                {itemOp.name}
-                                                <ChevronRightIcon className="h-6 w-6 ml-4" />
-                                              </div>
-                                            </MenuButton>
-                                            <Transition
-                                              as={Fragment}
-                                              enter="transition ease-out duration-100"
-                                              enterFrom="transform opacity-0 scale-95"
-                                              enterTo="transform opacity-100 scale-100"
-                                              leave="transition ease-in duration-75"
-                                              leaveFrom="transform opacity-100 scale-100"
-                                              leaveTo="transform opacity-0 scale-95"
-                                            >
-                                              <MenuItems
-                                                anchor={{
-                                                  to: "right start",
-                                                  gap: "12px",
-                                                }}
-                                                className="rounded-md bg-white py-2 z-50 shadow-lg focus:outline-none"
-                                              >
-                                                {folderOptions.map(
-                                                  (subitem) =>
-                                                    subitem.value.toLowerCase() !==
-                                                      selectedFolder.toLowerCase() && (
-                                                      <MenuItem
-                                                        key={subitem.name}
-                                                      >
-                                                        {({ active }) => (
-                                                          <div
-                                                            className={clsx(
-                                                              active
-                                                                ? "bg-gray-50 text-white"
-                                                                : "text-black",
-                                                              "block px-3 py-1 text-sm leading-6  cursor-pointer"
-                                                            )}
-                                                            onClick={() =>
-                                                              subitem.onClick(
-                                                                item.email
-                                                                  .googleId
-                                                              )
-                                                            }
-                                                          >
-                                                            {subitem.name}
-                                                          </div>
+                              {itemOptions.map((itemOp, index) => (
+                                <MenuItem key={index}>
+                                  {({ active }) => (
+                                    <div
+                                      onClick={() =>
+                                        index !== 1 &&
+                                        itemOp.onClick(item.email.googleId)
+                                      }
+                                      className={classNames(
+                                        active ? "bg-gray-50" : "",
+                                        "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                      )}
+                                    >
+                                      {itemOp.name !== "Mover a la carpeta" ? (
+                                        itemOp.name
+                                      ) : (
+                                        <Menu>
+                                          <MenuButton className="flex items-center">
+                                            <div className="w-full flex items-center justify-between">
+                                              {itemOp.name}
+                                              <ChevronRightIcon className="h-6 w-6 ml-4" />
+                                            </div>
+                                          </MenuButton>
+                                          <MenuItems
+                                            anchor={{
+                                              to: "right start",
+                                              gap: "12px",
+                                            }}
+                                            className="rounded-md bg-white py-2 z-50 shadow-lg focus:outline-none"
+                                          >
+                                            {folderOptions.map(
+                                              (subitem) =>
+                                                subitem.value.toLowerCase() !==
+                                                  selectedFolder.toLowerCase() && (
+                                                  <MenuItem key={subitem.name}>
+                                                    {({ active }) => (
+                                                      <div
+                                                        className={clsx(
+                                                          active
+                                                            ? "bg-gray-50 text-white"
+                                                            : "text-black",
+                                                          "block px-3 py-1 text-sm leading-6 cursor-pointer"
                                                         )}
-                                                      </MenuItem>
-                                                    )
-                                                )}
-                                              </MenuItems>
-                                            </Transition>
-                                          </Menu>
-                                        )}
-                                      </div>
-                                    )}
-                                  </MenuItem>
-                                ))}
-                              </MenuItems>
-                            </Transition>
+                                                        onClick={() =>
+                                                          subitem.onClick(
+                                                            item.email.googleId
+                                                          )
+                                                        }
+                                                      >
+                                                        {subitem.name}
+                                                      </div>
+                                                    )}
+                                                  </MenuItem>
+                                                )
+                                            )}
+                                          </MenuItems>
+                                        </Menu>
+                                      )}
+                                    </div>
+                                  )}
+                                </MenuItem>
+                              ))}
+                            </MenuItems>
                           </Menu>
                         </div>
                       </div>

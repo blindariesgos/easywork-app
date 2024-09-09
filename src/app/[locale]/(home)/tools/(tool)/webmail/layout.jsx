@@ -201,7 +201,7 @@ export default function WebmailLayout({ children, table }) {
 
   function backButton() {
     setSidebarOpenEmail(false);
-    router.push("/tools/mails");
+    window.history.go(-2);
   }
 
   const itemOptions = [

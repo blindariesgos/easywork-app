@@ -356,12 +356,12 @@ export const useSidebar = () => {
           // // href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
-        {
-          name: t("common:menu:agent-management:learning"),
-          href: "",
-          // // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
+        // {
+          // name: t("common:menu:agent-management:learning"),
+          // href: "",
+          // href: "/sd",
+          // iconShortBar: ArrowDownCircleIcon,
+        // },
         {
           name: t("common:menu:agent-management:recruitement"),
           href: "",
@@ -380,12 +380,12 @@ export const useSidebar = () => {
           // // href: "/sd",
           iconShortBar: ArrowPathIcon,
         },
-        {
-          name: t("common:menu:agent-management:development-agents"),
-          href: "",
+        // {
+          // name: t("common:menu:agent-management:development-agents"),
+          // href: "",
           // // href: "/sd",
-          iconShortBar: SparklesIcon,
-        },
+          // iconShortBar: SparklesIcon,
+        // },
         {
           name: t("common:menu:agent-management:team-meetings"),
           href: "",

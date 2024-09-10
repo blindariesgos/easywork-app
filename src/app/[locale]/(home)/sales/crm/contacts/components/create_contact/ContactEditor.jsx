@@ -12,7 +12,7 @@ import ContactGeneral from "../show_contact/tab_general/general";
 
 import { TabGroup, TabPanel, TabPanels } from "@headlessui/react";
 import PolizasTab from "../show_contact/tab_polizas/PolizasTab";
-
+import ContactRelationsTable from "../../components/show_contact/tab_relations/ContactRelationsTable";
 export default function ContactEditor({ contact, id }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -20,17 +20,36 @@ export default function ContactEditor({ contact, id }) {
   const [loading, setLoading] = useState(false);
   const [selectedSectionIndex, setSelectedSectionIndex] = useState(0);
 
+  const tabs = [
+    { name: t("contacts:create:tabs:general"), value: 0, module: "general" },
+    {
+      name: contact.typePerson === "moral" ? "Contactos" : "Compañias",
+      value: 1,
+      module: "contact",
+      hidden: contact?.relations?.length == 0 ?? true,
+    },
+    {
+      name: t("contacts:create:tabs:policies"),
+      value: 2,
+      module: "policies",
+    },
+    // { name: t("contacts:create:tabs:activities"), value: 2 },
+    // { name: t("contacts:create:tabs:reports"), value: 3 },
+    {
+      name: t("contacts:create:tabs:documents"),
+      value: 3,
+      module: "documents",
+    },
+  ];
+
   useEffect(() => {
-    const tabs = [
-      "general",
-      "policies",
-      // "activities",
-      // "reports",
-      "documents",
-    ];
     const tabSelected = params.get("tab") ?? "general";
-    setSelectedSectionIndex(tabs.findIndex((tab) => tab == tabSelected));
-  }, [params.get("tab")]);
+    setSelectedSectionIndex(
+      tabs
+        .filter((tab) => !tab.hidden)
+        .findIndex((tab) => tab.module == tabSelected)
+    );
+  }, [params.get("tab"), contact]);
 
   return (
     <Fragment>
@@ -63,7 +82,7 @@ export default function ContactEditor({ contact, id }) {
                   : t("leads:create:client")}
               </h1>
             </div>
-            <AddContactTabs id={id} />
+            <AddContactTabs tabs={tabs} />
           </div>
         )}
 
@@ -71,6 +90,11 @@ export default function ContactEditor({ contact, id }) {
           <TabPanel className="h-full">
             <ContactGeneral id={id} contact={contact} />
           </TabPanel>
+          {contact?.relations?.length > 0 && (
+            <TabPanel>
+              <ContactRelationsTable contact={contact} />
+            </TabPanel>
+          )}
           <TabPanel>
             <PolizasTab contactID={id} selected="general" />
           </TabPanel>

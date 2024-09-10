@@ -211,6 +211,7 @@ export default function EventDetails({ data }) {
       if (data) {
         const response = await updateCalendarEvent(body, data.id);
         if (response.hasError) {
+          console.log({ response });
           toast.error(
             "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
           );
@@ -222,6 +223,7 @@ export default function EventDetails({ data }) {
       } else {
         const response = await addCalendarEvent(body);
         if (response.hasError) {
+          console.log({ response });
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
           );
@@ -240,11 +242,16 @@ export default function EventDetails({ data }) {
   useEffect(() => {
     const subscription = watch((data, { name }) => {
       if (name === "startTime") {
+        console.log(
+          data.startTime,
+          addHours(data.startTime, 1),
+          format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm")
+        );
         setValue(
           "endTime",
           allDay
             ? format(data.startTime, "yyyy-MM-dd")
-            : format(addHours(data.startTime, 1), "yyyy-MM-dd'T'hh:mm")
+            : format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm")
         );
       }
     });

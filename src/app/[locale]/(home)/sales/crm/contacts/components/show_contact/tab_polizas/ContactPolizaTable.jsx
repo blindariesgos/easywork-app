@@ -306,7 +306,7 @@ export default function ContactPolizaTable({ base, contactId }) {
                     {poliza?.company?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {poliza.status}
+                    {poliza?.status ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {poliza.metadata["Fecha de inicio"]}

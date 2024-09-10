@@ -174,8 +174,10 @@ export default function ContactGeneral({ contact, id }) {
         await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success(t("contacts:create:msg"));
       } else {
+        console.log({ body });
         const response = await updateContact(body, id);
         if (response.hasError) {
+          console.log({ response });
           let message = response.message;
           if (response.errors) {
             message = response.errors.join(", ");
@@ -198,6 +200,7 @@ export default function ContactGeneral({ contact, id }) {
       setLoading(false);
       router.back();
     } catch (error) {
+      console.log({ error });
       console.error(error.message);
       handleApiError(error.message);
       setLoading(false);

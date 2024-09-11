@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { googleCallback, deleteTokenGoogle } from "../../../lib/apis";
+import { googleCallback, deleteTokenGoogle } from "../../../../lib/apis";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -75,9 +75,10 @@ export default function Page() {
                 close();
               })
               .catch(() => {
+                console.log(session);
                 deleteTokenGoogle(
                   session.data.user.id,
-                  null,
+                  "none",
                   res.data.refresh_token
                 )
                   .then((res) => {
@@ -91,5 +92,6 @@ export default function Page() {
           });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [session.data]);
+  return <div className="absolute w-screen h-screen bg-easywork-main" style={{zIndex: 900}}></div>;
 }

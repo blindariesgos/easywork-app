@@ -262,8 +262,8 @@ export const getTokenGoogle = async (userId, oauthId) => {
   return response;
 };
 
-export const deleteTokenGoogle = async (userId, oauthId) => {
-  const response = await axios().delete(`/oauth/${userId}/${oauthId}`);
+export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
+  const response = await axios().delete(`/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`);
   return response;
 };
 

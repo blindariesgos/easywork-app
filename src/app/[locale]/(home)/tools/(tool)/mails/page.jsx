@@ -143,7 +143,7 @@ export default function IngresarEmail() {
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-4 my-3">
           {emails.map((item, index) => (
             <div
-              className="flex flex-col justify-center bg-gray-100 px-10 py-7 rounded-lg"
+              className="flex flex-col justify-center bg-gray-100 hover:bg-gray-300 px-10 py-7 rounded-lg cursor-pointer"
               key={index}
               onClick={item.click}
             >
@@ -164,13 +164,13 @@ export default function IngresarEmail() {
         </ul>
       </div>
       <ModalConfigGmail state={gmailState} motivo={"add"} addOtherOauth={false}>
-        <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
+        <Tag onclick={() => setGmailState(false)} className="bg-easywork-main" />
       </ModalConfigGmail>
       {openModalFolders && (
         <ModalAddFolders state={true}>
           <Tag
             onclick={() => setOpenModalFolders(false)}
-            className="bg-green-500"
+            className="bg-easywork-main"
           />
         </ModalAddFolders>
       )}

@@ -77,6 +77,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   }
 
   const itemOptions = [
+    { name: "Abrir email", onClick: "" },
     {
       name: "Marcar como no leido",
       onClick: (item) => updateLabelId([item], "unread"),
@@ -285,7 +286,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                   {({ active }) => (
                                     <div
                                       onClick={() =>
-                                        index !== 1 &&
+                                        index !== 2 &&
                                         itemOp.onClick(item.email.googleId)
                                       }
                                       className={classNames(

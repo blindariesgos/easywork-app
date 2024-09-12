@@ -1,10 +1,10 @@
 "use client";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
-import { Cog8ToothIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
@@ -147,7 +147,7 @@ export default function PolicyDetails({ data, id }) {
             </TabPanel>
             <TabPanel className="w-full md:px-4"></TabPanel>
             <TabPanel className="w-full">
-              <Receipts data={data} id={id} />
+              <Receipts receipts={data?.receipts} />
             </TabPanel>
           </TabPanels>
         </TabGroup>

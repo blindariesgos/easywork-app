@@ -54,7 +54,7 @@ export const createContact = async (data) => {
   return response;
 };
 export const updateContact = async (data, id) => {
-  const response = await axios().put(`/sales/crm/contacts/${id}`, data).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios({ contentType: "multipart/form-data" }).put(`/sales/crm/contacts/${id}`, data).catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {

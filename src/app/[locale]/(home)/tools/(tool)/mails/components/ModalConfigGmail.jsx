@@ -34,6 +34,7 @@ export default function ModalConfigGmail({
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
+  const [time, setTime] = useState({ name: "una semana", value: "7" });
 
   const schemaInputs = yup.object().shape({
     name: yup.string(),
@@ -76,8 +77,7 @@ export default function ModalConfigGmail({
 
   async function deleteOauth() {
     try {
-      console.log(selectOauth.id);
-      await deleteTokenGoogle(session.data.user.id, selectOauth.id);
+      await deleteTokenGoogle(session.data.user.id, selectOauth.id, null);
       router.push("/tools/mails");
     } catch (error) {}
   }
@@ -137,11 +137,11 @@ export default function ModalConfigGmail({
   }
 
   const timeMails = [
-    { name: "una semana", onClick: "" },
-    { name: "un mes", onClick: "" },
-    { name: "2 meses", onClick: "" },
-    { name: "3 meses", onClick: "" },
-    { name: "todo el tiempo", onClick: "" },
+    { name: "una semana", value: "7" },
+    { name: "un mes", value: "30" },
+    { name: "2 meses", value: "60" },
+    { name: "3 meses", value: "90" },
+    { name: "todo el tiempo", value: "1000" },
   ];
 
   return (
@@ -190,7 +190,7 @@ export default function ModalConfigGmail({
                   Extraer mensajes para{" "}
                   <Menu.Button>
                     <span className="mt-4 underline text-blue-600 cursor-pointer">
-                      una semana
+                      {time.name}
                     </span>
                     <Transition
                       as={Fragment}
@@ -205,7 +205,9 @@ export default function ModalConfigGmail({
                         {timeMails.map((item) => (
                           <Menu.Item key={item.name}>
                             <div
-                              onClick={item.onClick}
+                              onClick={() =>
+                                setTime({ name: item.name, value: item.value })
+                              }
                               className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             >
                               {item.name}

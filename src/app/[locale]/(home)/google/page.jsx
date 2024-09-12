@@ -1,12 +1,14 @@
 "use client";
 import { useEffect } from "react";
-import { googleCallback } from "../../../../lib/apis";
+import { googleCallback, deleteTokenGoogle } from "../../../../lib/apis";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import qs from "qs";
 
 export default function Page() {
   const searchParams = useSearchParams();
+  const session = useSession();
   const fetchData = async (
     refresh_token,
     access_token,
@@ -52,14 +54,12 @@ export default function Page() {
         }
       )
       .then((res) => {
-        console.log(res);
         const config = {
           headers: { Authorization: `Bearer ${res.data.access_token}` },
         };
         axios
           .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", config)
           .then((userInfo) => {
-            console.log(userInfo)
             fetchData(
               res.data.refresh_token,
               res.data.access_token,
@@ -69,12 +69,29 @@ export default function Page() {
               userInfo.data.given_name,
               userInfo.data.email,
               userInfo.data.picture,
-              res.data.id_token,
-            ).then(() => {
-              close();
-            });
+              res.data.id_token
+            )
+              .then(() => {
+                close();
+              })
+              .catch(() => {
+                console.log(session);
+                deleteTokenGoogle(
+                  session.data.user.id,
+                  "none",
+                  res.data.refresh_token
+                )
+                  .then((res) => {
+                    console.log(res);
+                    close();
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
           });
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.data]);
+  return <div className="absolute w-screen h-screen bg-easywork-main" style={{zIndex: 900}}></div>;
 }

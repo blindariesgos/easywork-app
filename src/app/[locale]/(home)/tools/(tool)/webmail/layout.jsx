@@ -212,7 +212,7 @@ export default function WebmailLayout({ children, table }) {
       name: "Configuración del buzón",
       onClick: () => openModal("edit", true, false),
     },
-    { name: "Abrir email", onClick: "" },
+    // { name: "Abrir email", onClick: "" },
   ];
 
   // async function saveMails() {

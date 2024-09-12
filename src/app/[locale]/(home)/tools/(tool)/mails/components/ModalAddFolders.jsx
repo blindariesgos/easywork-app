@@ -5,12 +5,12 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import useAppContext from "../../../../../../../context/app/index";
 import { useRouter } from "next/navigation";
-import { saveFolders, getAllOauth } from "../../../../../../../lib/apis";
+import { updateLabelId, getAllOauth } from "../../../../../../../lib/apis";
 
 export default function ModalAddFolders({ children }) {
   const router = useRouter();
   const session = useSession();
-  const { setOpenModalFolders, openModalFolders } = useAppContext();
+  const { setOpenModalFolders, openModalFolders, userGoogle } = useAppContext();
   const [folderData, setFolderData] = useState([]);
   const [userData, setUserData] = useState(null);
 
@@ -51,13 +51,12 @@ export default function ModalAddFolders({ children }) {
         folders.push({
           imapFolderId: element.id,
           mailboxName: element.name,
-          userId: session.data.user.id,
           type: element.type,
         });
       }
     });
     try {
-      await saveFolders(folders);
+      await updateLabelId(userGoogle.id, folders);
       await saveMails();
       setOpenModalFolders(false);
       router.push("/tools/webmail?page=1");

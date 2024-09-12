@@ -31,59 +31,23 @@ import { Menu, MenuButton, MenuItems } from "@headlessui/react";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
+import { formatToDollars } from "@/src/utils/formatters";
+import { formatDate } from "@/src/utils/getFormatDate";
 
 export default function ReceiptEditor({ data, id }) {
-  const { lists } = useAppContext();
   const { t } = useTranslation();
-  const [isEdit, setIsEdit] = useState(true);
-  const [contactType, setContactType] = useState(null);
-  const [contactSource, setContactSource] = useState(null);
-  const [contactResponsible] = useState(null);
-  const [files, setFiles] = useState([]);
-  const router = useRouter();
-  const { mutate } = useSWRConfig();
   const { settingsPolicy } = useCommon();
-  const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (data) {
-      lists?.listContact?.contactTypes.length > 0 &&
-        setContactType(
-          lists?.listContact?.contactTypes.filter(
-            (option) => option.id === data?.type?.id
-          )[0]
-        );
-      lists?.listContact?.contactSources.length > 0 &&
-        setContactSource(
-          lists?.listContact?.contactSources.filter(
-            (option) => option.id === data?.source?.id
-          )[0]
-        );
-      setSelectedProfileImage({ base64: data?.photo || null, file: null });
-    }
-  }, [data, lists]);
-
   const schema = Yup.object().shape({
-    email: Yup.string()
-      .required(t("common:validations:required"))
-      .email(t("common:validations:email"))
-      .min(5, t("common:validations:min", { min: 5 })),
-    name: Yup.string()
-      .required(t("common:validations:required"))
-      .min(2, t("common:validations:min", { min: 2 })),
-    position: Yup.string(),
-    phone: Yup.string().required(t("common:validations:required")),
-    rfc: Yup.string(),
-    cua: Yup.string(),
-    typeContact: Yup.string(),
-    origin: Yup.string(),
-    address: Yup.string(),
     responsible: Yup.string(),
-    birthday: Yup.string(),
-    bio: Yup.string(),
-    lastName: Yup.string(),
-    firstName: Yup.string(),
+    status: Yup.string(),
+    "payment-methods": Yup.string(),
+    "init-date": Yup.string(),
+    expiration: Yup.string(),
+    amount: Yup.string(),
+    currency: Yup.string(),
+    comments: Yup.string(),
   });
 
   const {
@@ -100,83 +64,23 @@ export default function ReceiptEditor({ data, id }) {
   });
 
   useEffect(() => {
-    // if (data?.fullName) setValue("name", data?.fullName);
-    // if (data?.cargo) setValue("position", data?.cargo);
-    // if (data?.phone) setValue("phone", data?.phone);
-    // if (data?.email) setValue("email", data?.email);
-    // if (data?.curp) setValue("rfc", data?.curp);
-    // if (data?.cua) setValue("cua", data?.cua);
-    // if (data?.type?.id) setValue("typeContact", data?.type?.id);
-    // if (data?.source?.id) setValue("origin", data?.source?.id);
-    // if (data?.birthdate) setValue("birthday", data?.birthdate);
-    // if (data?.address) setValue("address", data?.address);
-    // if (data?.bio) setValue("bio", data?.bio);
-    // if (data?.profile?.firstName)
-    //   setValue("firstName", data?.profile?.firstName);
-    // if (data?.profile?.lastName) setValue("lastName", data?.profile?.lastName);
-    // if (data?.avatar) setSelectedProfileImage({ base64: data?.avatar });
+    if (data?.responsible?.profile)
+      setValue(
+        "responsible",
+        `${data?.responsible?.profile?.firstName} ${data?.responsible?.profile?.lastName}`
+      );
+    if (data?.status) setValue("status", data?.status);
+    if (data?.methodPayment?.name)
+      setValue("payment-methods", data?.methodPayment?.name);
+    if (data?.metadata["Fecha de inicio"])
+      setValue("init-date", data?.metadata["Fecha de inicio"]);
+    if (data?.metadata["Fecha de cierre"])
+      setValue("expiration", data?.metadata["Fecha de cierre"]);
+    if (data?.paymentAmount)
+      setValue("amount", formatToDollars(data?.paymentAmount));
+    if (data?.currency?.name) setValue("currency", data?.currency?.name);
+    if (data?.description) setValue("comments", data?.description);
   }, [data, id]);
-
-  const handleFormSubmit = async (data) => {
-    const body = {
-      name: data.name,
-      fullName: data.name,
-      photo: id ? "" : selectedProfileImage?.file || "",
-      cargo: data.position,
-      typeId: data.typeContact,
-      curp: data.rfc,
-      cua: data.cua,
-      address: data.address,
-      birthdate: data.birthday,
-      sourceId: data.origin,
-      emails_dto: JSON.stringify([{ email: data.email }]),
-      phones_dto: [{ number: data.phone }],
-      observadorId: data.responsible,
-      assignedById: data.responsible,
-    };
-
-    const formData = new FormData();
-    for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]);
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key]));
-      } else {
-        formData.append(key, body[key]?.toString() || "");
-      }
-    }
-
-    try {
-      setLoading(true);
-      if (!data) {
-        await createContact(formData);
-        await mutate(`/sales/crm/contacts?limit=10&page=1`);
-        toast.success(t("contacts:create:msg"));
-      } else {
-        await updateContact(body, id);
-        if (selectedProfileImage.file) {
-          const photo = new FormData();
-          photo.append("photo", selectedProfileImage.file);
-          await updatePhotoContact(photo, id);
-        }
-        await mutate(`/sales/crm/contacts?limit=10&page=1`);
-        await mutate(`/sales/crm/contacts/${id}`);
-        toast.success(t("contacts:edit:updated-contact"));
-      }
-      setLoading(false);
-      router.push(`/sales/crm/contacts?page=1`);
-    } catch (error) {
-      handleApiError(error.message);
-      setLoading(false);
-    }
-  };
-
-  // Calculate the user's 18th birthday
-  const eighteenYearsAgo = new Date();
-  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
   return (
     <div className="flex flex-col h-screen relative w-full">
@@ -184,7 +88,7 @@ export default function ReceiptEditor({ data, id }) {
       {loading && <LoaderSpinner />}
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
         <form
-          onSubmit={handleSubmit(handleFormSubmit)}
+          onSubmit={handleSubmit((e) => e.preventDefault())}
           className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative"
         >
           {/* Encabezado del Formulario */}
@@ -192,37 +96,48 @@ export default function ReceiptEditor({ data, id }) {
             <div className="flex justify-between">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
                 <p className="text-xl sm:text-2xl xl:text-3xl">
-                  Armando Graterol
+                  {data?.poliza?.contact?.fullName ??
+                    data?.poliza?.contact?.name}
                 </p>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">10/06/2024</p>
+                  <p className="text-xs sm:text-sm xl:text-base">
+                    {formatDate(data?.poliza?.fechaEmision, "dd/MM/yyyy")}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">Profesional</p>
+                  <p className="text-xs sm:text-sm xl:text-base">
+                    {data?.poliza?.category?.name ?? "S/N"}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs sm:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:policy")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">423659874</p>
+                  <p className="text-xs sm:text-sm xl:text-base">
+                    {data?.poliza?.poliza ?? "S/N"}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:company")}:
                   </p>
-                  <p className="text-xs md:text-sm xl:text-base">AXXA</p>
+                  <p className="text-xs md:text-sm xl:text-base">
+                    {data?.poliza?.company?.name ?? "S/N"}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-xs md:text-sm xl:text-base">
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
-                  <p className="text-xs md:text-sm xl:text-base">326598</p>
+                  <p className="text-xs md:text-sm xl:text-base">
+                    {data?.poliza?.metadata["Código de Cliente"] ?? "N/D"}
+                  </p>
                 </div>
               </div>
               <IconDropdown
@@ -254,193 +169,78 @@ export default function ReceiptEditor({ data, id }) {
           <div className="grid grid-cols-1 md:grid-cols-2  overflow-y-scroll bg-gray-100 rounded-2xl p-4 w-full">
             {/* Menu Derecha */}
             <div className="h-auto rounded-2xl ">
-              <div className="flex justify-between py-4 px-3 rounded-md"></div>
               <div className="grid grid-cols-1 gap-x-6  rounded-lg w-full gap-y-3 px-5  pb-9">
-                <SelectDropdown
+                <TextInput
+                  type="text"
                   label={t(
                     "control:portafolio:receipt:details:form:responsible"
                   )}
+                  register={register}
                   name="responsible"
-                  options={lists?.users}
-                  selectedOption={contactResponsible}
-                  register={register}
-                  disabled={!isEdit}
-                  error={!watch("responsible") && errors.responsible}
-                  setValue={setValue}
+                  disabled
                 />
-                <SelectInput
+                <TextInput
+                  type="text"
                   label={t("control:portafolio:receipt:details:form:status")}
-                  options={[
-                    {
-                      id: "1",
-                      value: "1",
-                      name: "Liquidado",
-                    },
-                    {
-                      id: "2",
-                      value: "2",
-                      name: "Cancelado",
-                    },
-                    {
-                      id: "3",
-                      value: "3",
-                      name: "Pendiente",
-                    },
-                  ]}
-                  name="status"
                   register={register}
-                  setValue={setValue}
-                  disabled={!isEdit}
+                  name="status"
+                  disabled
                 />
-                <SelectInput
+                <TextInput
+                  type="text"
                   label={t(
                     "control:portafolio:receipt:details:form:payment-methods"
                   )}
-                  options={[
-                    {
-                      id: "1",
-                      value: "1",
-                      name: "Anual",
-                    },
-                    {
-                      id: "2",
-                      value: "2",
-                      name: "Semestral",
-                    },
-                    {
-                      id: "3",
-                      value: "3",
-                      name: "Trimentral",
-                    },
-                    {
-                      id: "4",
-                      value: "4",
-                      name: "Mensual",
-                    },
-                  ]}
-                  name="payment"
                   register={register}
-                  setValue={setValue}
-                  disabled={!isEdit}
+                  name="payment-methods"
+                  disabled
                 />
-
-                <Controller
-                  render={({ field: { value, onChange, ref, onBlur } }) => {
-                    return (
-                      <InputDate
-                        label={t(
-                          "control:portafolio:receipt:details:form:init-date"
-                        )}
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        icon={
-                          <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                        }
-                        error={errors.birthday}
-                        disabled={!isEdit}
-                        // inactiveDate={eighteenYearsAgo}
-                      />
-                    );
-                  }}
-                  name="birthday"
-                  control={control}
-                  defaultValue=""
+                <TextInput
+                  type="text"
+                  label={t("control:portafolio:receipt:details:form:init-date")}
+                  register={register}
+                  name="init-date"
+                  disabled
                 />
-                <Controller
-                  render={({ field: { value, onChange, ref, onBlur } }) => {
-                    return (
-                      <InputDate
-                        label={t(
-                          "control:portafolio:receipt:details:form:expiration"
-                        )}
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        icon={
-                          <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                        }
-                        error={errors.birthday}
-                        disabled={!isEdit}
-                        // inactiveDate={eighteenYearsAgo}
-                      />
-                    );
-                  }}
-                  name="birthday1"
-                  control={control}
-                  defaultValue=""
+                <TextInput
+                  type="text"
+                  label={t(
+                    "control:portafolio:receipt:details:form:expiration"
+                  )}
+                  register={register}
+                  name="expiration"
+                  disabled
                 />
                 <TextInput
                   type="text"
                   label={t("control:portafolio:receipt:details:form:amount")}
-                  placeholder={`10.000,00`}
                   register={register}
-                  name="firstName"
-                  disabled={!isEdit}
+                  name="amount"
+                  disabled
                 />
-                <SelectInput
+                <TextInput
+                  type="text"
                   label={t("control:portafolio:receipt:details:form:currency")}
-                  options={[
-                    {
-                      id: "1",
-                      value: "1",
-                      name: "Pesos",
-                    },
-                    {
-                      id: "2",
-                      value: "2",
-                      name: "Dolares Americanos",
-                    },
-                  ]}
-                  name="paymendt"
                   register={register}
-                  setValue={setValue}
-                  disabled={!isEdit}
+                  name="currency"
+                  disabled
                 />
-
                 <TextInput
                   type="text"
                   label={t("control:portafolio:receipt:details:form:comments")}
-                  error={errors.lastName && errors.lastName.message}
                   register={register}
-                  name="lastNamef"
-                  disabled={!isEdit}
-                  multiple
+                  name="comments"
+                  disabled
                 />
               </div>
             </div>
             {/* Menu Izquierda */}
             <div className=" bg-gray-100 rounded-lg w-full">
-              <ActivityPanel contactId={data?.id} />
+              {data?.poliza?.contact?.id && (
+                <ActivityPanel contactId={data?.poliza?.contact?.id} />
+              )}
             </div>
           </div>
-          {/* )} */}
-
-          {/* Botones de acción */}
-          {/* {(isEdit || !data) && (
-            <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
-              <Button
-                type="submit"
-                label={
-                  loading
-                    ? t("common:buttons:saving")
-                    : t("common:buttons:save")
-                }
-                disabled={loading}
-                buttonStyle="primary"
-                className="px-3 py-2"
-                // onclick={() => handleSubmit(handleFormSubmit)}
-              />
-              <Button
-                type="button"
-                label={t("common:buttons:cancel")}
-                disabled={loading}
-                buttonStyle="secondary"
-                onclick={() => router.back()}
-                className="px-3 py-2"
-              />
-            </div>
-          )} */}
         </form>
       </div>
     </div>

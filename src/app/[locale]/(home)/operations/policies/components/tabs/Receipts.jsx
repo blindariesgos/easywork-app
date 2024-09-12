@@ -10,36 +10,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useTaskContactsPolizas } from "@/src/lib/api/hooks/tasks";
 import Link from "next/link";
+import { formatToDollars } from "@/src/utils/formatters";
 
-const people = [
-  {
-    noPoliza: "00017892",
-    product: "Profesional",
-    company: "gnp",
-    estadoPoliza: "Vigente",
-    vigenciaDesde: "02-ENE-16",
-    vigenciaHasta: "02-ENE-17",
-    importePagar: "3,456.90",
-    ramo: "Vida",
-  },
-  {
-    noPoliza: "10017892",
-    product: "Traciende",
-    aseguradora: "Front-end Developer",
-    company: "gnp",
-    estadoPoliza: "Pendiente",
-    vigenciaDesde: "02-ENE-16",
-    vigenciaHasta: "02-ENE-17",
-    importePagar: "3,456.90",
-    ramo: "Autos",
-  },
-  // More people...
-];
-
-export default function ContactPolizaTable({ base }) {
+export default function ReceiptsByPolicyId({ receipts, base = 0 }) {
   const {} = useTaskContactsPolizas();
   const { t } = useTranslation();
-  const [polizas, setPolizas] = useState(people);
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
@@ -50,8 +25,8 @@ export default function ContactPolizaTable({ base }) {
       const isIndeterminate =
         selectedPolizas &&
         selectedPolizas.length > 0 &&
-        selectedPolizas.length < polizas.length;
-      setChecked(selectedPolizas?.length === polizas?.length);
+        selectedPolizas.length < receipts.length;
+      setChecked(selectedPolizas?.length === receipts?.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
@@ -59,12 +34,12 @@ export default function ContactPolizaTable({ base }) {
   }, [selectedPolizas]);
 
   function toggleAll() {
-    setSelectedPolizas(checked || indeterminate ? [] : polizas);
+    setSelectedPolizas(checked || indeterminate ? [] : receipts);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
 
-  if (!polizas || polizas.length === 0) {
+  if (!receipts || receipts.length === 0) {
     return <ReceiptEmpty />;
   }
 
@@ -88,10 +63,10 @@ export default function ContactPolizaTable({ base }) {
               </th>
               <th
                 scope="col"
-                className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer "
+                className="py-3.5 pr-3  text-sm font-medium text-gray-400 cursor-pointer "
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:policy")}
+                <div className="group items-center text-left">
+                  # DE RECIBO
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "noPoliza" &&
@@ -109,7 +84,7 @@ export default function ContactPolizaTable({ base }) {
                 className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
               >
                 <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:product")}
+                  STATUS
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "product" &&
@@ -127,7 +102,7 @@ export default function ContactPolizaTable({ base }) {
                 className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
               >
                 <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:company")}
+                  FORMA DE PAGO
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "company" &&
@@ -148,7 +123,7 @@ export default function ContactPolizaTable({ base }) {
                 className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
               >
                 <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:status")}
+                  INICIO DE VIGENCIA
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "estadoPoliza" &&
@@ -169,7 +144,7 @@ export default function ContactPolizaTable({ base }) {
                 className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
               >
                 <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:start")}
+                  VENCIMIENTO
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "vigenciaDesde" &&
@@ -190,7 +165,7 @@ export default function ContactPolizaTable({ base }) {
                 className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
               >
                 <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:expiration")}
+                  IMPORTE
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "vigenciaHasta" &&
@@ -208,12 +183,10 @@ export default function ContactPolizaTable({ base }) {
               </th>
               <th
                 scope="col"
-                className={`px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer ${
-                  base > 0 && "rounded-e-xl"
-                }`}
+                className={`px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl`}
               >
                 <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:amount")}
+                  MONEDA
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "importePagar" &&
@@ -232,52 +205,52 @@ export default function ContactPolizaTable({ base }) {
             </tr>
           </thead>
           <tbody className="bg-gray-100">
-            {polizas.map((poliza, index) => (
+            {receipts.map((receipt, index) => (
               <tr key={index}>
                 <td className="relative px-7 sm:w-12 sm:px-6">
-                  {selectedPolizas.includes(poliza) && (
+                  {selectedPolizas.includes(receipt) && (
                     <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                   )}
                   <input
                     type="checkbox"
                     className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
-                    value={poliza.id}
-                    checked={selectedPolizas.includes(poliza)}
+                    value={receipt.id}
+                    checked={selectedPolizas.includes(receipt)}
                     onChange={(e) =>
                       setSelectedPolizas(
                         e.target.checked
-                          ? [...selectedPolizas, poliza]
-                          : selectedPolizas.filter((p) => p !== poliza)
+                          ? [...selectedPolizas, receipt]
+                          : selectedPolizas.filter((p) => p !== receipt)
                       )
                     }
                   />
                 </td>
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
                   <Link
-                    href={`/control/portafolio/receipts/receipt/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true&page=1`}
+                    href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
                   >
                     <div className="flex gap-2 px-2 hover:text-primary">
-                      {poliza.noPoliza}
+                      {receipt.title}
                     </div>
                   </Link>
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                  {poliza.product}
+                  {receipt.status}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                  {poliza.company}
+                  {receipt.company}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                  {poliza.estadoPoliza}
+                  {receipt?.metadata["Fecha de inicio"]}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                  {poliza.vigenciaDesde}
+                  {receipt?.metadata["Fecha de cierre"]}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                  {poliza.vigenciaHasta}
+                  {formatToDollars(receipt.paymentAmount)}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                  {`$ ${poliza.importePagar}`}
+                  {receipt.vigenciaHasta}
                 </td>
               </tr>
             ))}

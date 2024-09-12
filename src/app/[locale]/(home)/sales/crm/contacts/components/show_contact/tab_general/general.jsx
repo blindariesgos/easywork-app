@@ -139,30 +139,30 @@ export default function ContactGeneral({ contact, id }) {
       phones_dto: phones,
     };
 
+    if (selectedProfileImage?.file) {
+      body = {
+        ...body,
+        photo: selectedProfileImage?.file || "",
+      };
+    }
+
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+
     try {
       setLoading(true);
       if (!contact) {
-        body = {
-          ...body,
-          photo: selectedProfileImage?.file || "",
-        };
-        const formData = new FormData();
-        for (const key in body) {
-          if (
-            body[key] === null ||
-            body[key] === undefined ||
-            body[key] === ""
-          ) {
-            continue;
-          }
-          if (body[key] instanceof File || body[key] instanceof Blob) {
-            formData.append(key, body[key]);
-          } else if (Array.isArray(body[key])) {
-            formData.append(key, JSON.stringify(body[key]));
-          } else {
-            formData.append(key, body[key]?.toString() || "");
-          }
-        }
         const response = await createContact(formData);
         if (response.hasError) {
           let message = response.message;
@@ -175,7 +175,7 @@ export default function ContactGeneral({ contact, id }) {
         toast.success(t("contacts:create:msg"));
       } else {
         console.log({ body });
-        const response = await updateContact(body, id);
+        const response = await updateContact(formData, id);
         if (response.hasError) {
           console.log({ response });
           let message = response.message;
@@ -185,15 +185,6 @@ export default function ContactGeneral({ contact, id }) {
           throw { message };
         }
         toast.success(t("contacts:edit:updated-contact"));
-        if (selectedProfileImage.file) {
-          const photo = new FormData();
-          photo.append("photo", selectedProfileImage.file);
-          const resp = await updatePhotoContact(photo, id);
-          if (resp.hasError) {
-            console.error(resp);
-            toast.error("Error al actualizar la foto");
-          }
-        }
         await mutate(`/sales/crm/contacts?limit=5&page=1`);
         await mutate(`/sales/crm/contacts/${id}`);
       }

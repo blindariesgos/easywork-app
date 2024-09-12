@@ -48,6 +48,7 @@ export default function EventDetails({ data }) {
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
+
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
     { name: "Diario", value: 2, id: "diario" },
@@ -205,13 +206,10 @@ export default function EventDetails({ data }) {
       name,
     };
 
-    console.log({ body });
-
     try {
       if (data) {
         const response = await updateCalendarEvent(body, data.id);
         if (response.hasError) {
-          console.log({ response });
           toast.error(
             "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
           );
@@ -223,7 +221,6 @@ export default function EventDetails({ data }) {
       } else {
         const response = await addCalendarEvent(body);
         if (response.hasError) {
-          console.log({ response });
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
           );

@@ -46,29 +46,29 @@ export const getDataPassword = async (email) => {
   return response.data;
 };
 export const createContact = async (data) => {
-  const response = await axios({ contentType: "multipart/form-data" }).post(
-    "/sales/crm/contacts/new",
-    data,
-  ).catch(error => ({ ...error, hasError: true }));
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post("/sales/crm/contacts/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
   // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;
 };
 export const updateContact = async (data, id) => {
-  const response = await axios().put(`/sales/crm/contacts/${id}`, data).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios()
+    .put(`/sales/crm/contacts/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {
-  const response = await axios({ contentType: "multipart/form-data" }).put(
-    `/sales/crm/contacts/${id}/photo`,
-    photo,
-  ).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/contacts/${id}/photo`, photo)
+    .catch((error) => ({ ...error, hasError: true }));
 
   return response;
 };
 
 export const getContacts = async (page = 1) => {
   const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`,
+    `/sales/crm/contacts?limit=6&page=${page}`
   );
   return response;
 };
@@ -121,14 +121,14 @@ export const getFoldersSaved = async (data) => {
 
 export const getTasks = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`,
+    `/tools/tasks?limit=${limit}&page=${page}`
   );
   return response;
 };
 
 export const getTasksUser = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`,
+    `/tools/tasks/user?limit=${limit}&page=${page}`
   );
   return response;
 };
@@ -179,7 +179,7 @@ export const putComment = async (commentId, body, id) => {
   console.log("Actualizando comentario", commentId, body, id);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
-    body,
+    body
   );
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
@@ -217,7 +217,7 @@ export const getPolizaByContact = async (id) => {
 
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`,
+    `/sales/crm/leads?limit=${limit}&page=${page}`
   );
   return response;
 };
@@ -263,7 +263,9 @@ export const getTokenGoogle = async (userId, oauthId) => {
 };
 
 export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
-  const response = await axios().delete(`/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`);
+  const response = await axios().delete(
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
+  );
   return response;
 };
 
@@ -288,7 +290,9 @@ export const getFilters = async (idUser) => {
 };
 
 export const getMails = async (idUser, page, perPage, folder, oauthId) => {
-  const response = await axios().get(`/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`);
+  const response = await axios().get(
+    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`
+  );
   return response;
 };
 
@@ -299,6 +303,14 @@ export const getAllOauth = async (idUser) => {
 
 export const deleteMails = async (idUser) => {
   const response = await axios().delete(`/oauth/email/delete${idUser}`);
+  return response;
+};
+
+export const updateLabelId = async (usergoogle_id, newLabelId) => {
+  const response = await axios().put(`/oauth/labelId`, {
+    usergoogle_id,
+    newLabelId,
+  });
   return response;
 };
 
@@ -313,12 +325,15 @@ export const getAllRoles = async () => {
 };
 
 export const updateUser = async (id, body) => {
-  const response = await axios().put(`/users/${id}`, body).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios()
+    .put(`/users/${id}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
-}
+};
 
 export const addCalendarEvent = async (body) => {
-  const response = await axios().post(`/calendar/events`, body).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios()
+    .post(`/calendar/events`, body)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
-}
-
+};

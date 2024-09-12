@@ -77,7 +77,6 @@ export default function ModalConfigGmail({
 
   async function deleteOauth() {
     try {
-      console.log(selectOauth.id);
       await deleteTokenGoogle(session.data.user.id, selectOauth.id, null);
       router.push("/tools/mails");
     } catch (error) {}

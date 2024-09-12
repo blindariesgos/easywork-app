@@ -66,6 +66,7 @@
     "data": "Datos del contratante",
     "fullname": "Nombres y Apellidos",
     "name": "Nombres",
+    "name-2": "Nombre",
     "lastName": "Apellidos",
     "placeholder-lastname": "Ej.: Herrera",
     "position": "Cargo",

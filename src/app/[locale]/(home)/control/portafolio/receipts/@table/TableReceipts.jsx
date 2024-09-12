@@ -30,6 +30,8 @@ import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { formatToDollars } from "@/src/utils/formatters";
+
 import {
   Menu,
   MenuButton,
@@ -45,6 +47,7 @@ import { formatDate } from "@/src/utils/getFormatDate";
 import useReceiptContext from "../../../../../../../context/receipts";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
+import { tr } from "date-fns/locale";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -119,9 +122,11 @@ export default function TableReceipts() {
   const itemOptions = [
     {
       name: "Ver",
+      handleClick: (id) =>
+        router.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
     },
-    { name: "Editar" },
-    { name: "Copiar" },
+    // { name: "Editar" },
+    // { name: "Copiar" },
   ];
 
   return (
@@ -135,11 +140,11 @@ export default function TableReceipts() {
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5"
+                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5 flex items-center gap-2"
                   >
                     <input
                       type="checkbox"
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                       ref={checkbox}
                       checked={checked}
                       onChange={toggleAll}
@@ -181,28 +186,32 @@ export default function TableReceipts() {
               </thead>
               <tbody className="bg-gray-100">
                 {data?.items && data?.items.length === 0 && (
-                  <div className="flex items-center justify-center h-96">
-                    <div className="flex flex-col items-center space-y-3">
-                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-10 h-10 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          ></path>
-                        </svg>
+                  <tr>
+                    <td colSpan={selectedColumns.length}>
+                      <div className="flex items-center justify-center h-96">
+                        <div className="flex flex-col items-center space-y-3">
+                          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-10 h-10 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                              ></path>
+                            </svg>
+                          </div>
+                          <p className="text-lg font-medium text-gray-400">
+                            No hay Recibos
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-lg font-medium text-gray-400">
-                        {t("contacts:table:not-data")}
-                      </p>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
                 )}
                 {selectedColumns.length > 0 &&
                   data?.items &&
@@ -287,7 +296,7 @@ export default function TableReceipts() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div className="font-medium text-sm text-center text-black hover:text-primary">
+                              <div className="font-medium text-sm text-black hover:text-primary">
                                 {column.row == "responsible" ? (
                                   <div className="flex gap-3 items-center">
                                     <Image
@@ -302,7 +311,9 @@ export default function TableReceipts() {
                                     />
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {receipt?.responsible?.name}
+                                        {receipt?.responsible?.profile
+                                          ? `${receipt?.responsible?.profile?.firstName} ${receipt?.responsible?.profile?.lastName}`
+                                          : receipt?.responsible?.username}
                                       </p>
                                       {receipt?.responsible?.bio && (
                                         <p className="text-start text-xs">
@@ -350,20 +361,38 @@ export default function TableReceipts() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "receipt" ? (
+                                ) : column.row === "title" ? (
                                   <Link
-                                    href={`/control/portafolio/receipts/receipt/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true`}
+                                    href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
                                   >
                                     {receipt[column.row]}
                                   </Link>
+                                ) : column.row === "client" ? (
+                                  receipt.metadata.Contacto ?? "S/N"
+                                ) : column.row === "stages" ? (
+                                  <p className="text-center">
+                                    {receipt.metadata.Etapa ?? "S/N"}
+                                  </p>
+                                ) : column.row === "paymentAmount" ? (
+                                  <p className="text-center">
+                                    {formatToDollars(receipt?.paymentAmount)}
+                                  </p>
                                 ) : column.row === "createdAt" ||
-                                  column.row === "expiration" ? (
-                                  formatDate(
-                                    receipt[column.row],
-                                    "dd/MM/yyyy"
-                                  ) ?? null
+                                  column.row === "dueDate" ? (
+                                  <p className="text-center">
+                                    {formatDate(
+                                      receipt[column.row],
+                                      "dd/MM/yyyy"
+                                    ) ?? null}
+                                  </p>
+                                ) : column.row === "policy" ? (
+                                  <p className="text-center">
+                                    {receipt?.poliza?.poliza || "-"}
+                                  </p>
                                 ) : (
-                                  receipt[column.row] || "-"
+                                  <p className="text-center">
+                                    {receipt[column.row] || "-"}
+                                  </p>
                                 )}
                               </div>
                             </td>

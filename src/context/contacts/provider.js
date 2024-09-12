@@ -63,7 +63,7 @@ export default function ContactsContextProvider({ children }) {
         type: "select",
         options: lists?.listContact?.contactTypes || [],
         check: false,
-        code: "typeContact",
+        code: "type",
       },
       {
         id: 8,

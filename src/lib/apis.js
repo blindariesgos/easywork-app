@@ -53,9 +53,7 @@ export const createContact = async (data) => {
   return response;
 };
 export const updateContact = async (data, id) => {
-  const response = await axios()
-    .put(`/sales/crm/contacts/${id}`, data)
-    .catch((error) => ({ ...error, hasError: true }));
+  const response = await axios({ contentType: "multipart/form-data" }).put(`/sales/crm/contacts/${id}`, data).catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {
@@ -336,4 +334,10 @@ export const addCalendarEvent = async (body) => {
     .post(`/calendar/events`, body)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
-};
+}
+
+export const updateCalendarEvent = async (body, eventId) => {
+  const response = await axios().put(`/calendar/events/${eventId}`, body).catch((error) => ({ ...error, hasError: true }));
+  return response;
+}
+

@@ -23,7 +23,7 @@ export default function PolizasTab({ base = 0, contactID }) {
   return (
     <div className="w-full h-full px-4 lg:px-8">
       <TabGroup defaultIndex={0}>
-        <TabList className="flex space-x-1 rounded-md w-full p-2 bg-white sm:flex-row flex-col">
+        {/* <TabList className="flex space-x-1 rounded-md w-full p-2 bg-white sm:flex-row flex-col">
           {branches.slice(base, branches.length).map((category, index) => (
             <Tab
               key={index}
@@ -42,7 +42,7 @@ export default function PolizasTab({ base = 0, contactID }) {
               {category.name}
             </Tab>
           ))}
-        </TabList>
+        </TabList> */}
         <TabPanels className="pt-2">
           {/* {Object.values(categories).map((category, idx) => ( */}
 

@@ -120,13 +120,11 @@ export default function TablePolicies() {
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: () =>
-        router.push(
-          `/operations/policies/policy/f2caa1b2-3b74-42ee-b67b-51af9b8e1e62?show=true`
-        ),
+      handleClick: (id) =>
+        router.push(`/operations/policies/policy/${id}?show=true`),
     },
-    { name: "Editar" },
-    { name: "Copiar" },
+    // { name: "Editar" },
+    // { name: "Copiar" },
   ];
 
   return (

@@ -4,8 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ReceiptsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { useUsers } from "../../lib/api/hooks/users";
-import { receipts } from "./mockups"
+import { useReceipts } from "../../lib/api/hooks/receipts";
 export default function ReceiptsContextProvider({ children }) {
   const { t } = useTranslation()
   const [config, setConfig] = useState({
@@ -16,7 +15,7 @@ export default function ReceiptsContextProvider({ children }) {
   })
   const { lists } = useAppContext()
   const [filters, setFilters] = useState({})
-  const { data, isLoading, isError, mutate } = useUsers({ config, filters })
+  const { data, isLoading, isError, mutate } = useReceipts({ config, filters })
   const [filterFields, setFilterFields] = useState()
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})
@@ -105,13 +104,13 @@ export default function ReceiptsContextProvider({ children }) {
 
   const values = useMemo(
     () => ({
-      data: receipts,
+      data,
       isLoading,
       isError,
       mutate,
-      page: 1, //config.page,
+      page: config.page,
       setPage: (value) => handleChangeConfig("page", value),
-      limit: 5, // config.limit,
+      limit: config.limit,
       setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
       setOrderBy: (value) => handleChangeConfig("orderBy", value),

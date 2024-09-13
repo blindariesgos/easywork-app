@@ -89,8 +89,8 @@ export default function PolicyDetails({ data, id }) {
       className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_210px)]"
     >
       {/* Menu Derecha */}
-      <div className="h-auto rounded-2xl overflow-y-auto">
-        <div className="flex justify-between py-4 px-3 rounded-2xl bg-white">
+      <div className="h-auto rounded-2xl overflow-y-auto pr-1">
+        <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
           {t("operations:policies:general:title")}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
@@ -334,7 +334,7 @@ export default function PolicyDetails({ data, id }) {
         {data?.type?.name === "AUTOS" &&
           data?.vehicles.map((vehicle) => (
             <Fragment key={vehicle.id}>
-              <div className="flex justify-between py-4 px-3 rounded-2xl bg-white">
+              <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
                 {"Datos del vehiculo asegurado"}
               </div>
               <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">

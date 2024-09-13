@@ -147,7 +147,7 @@ export default function PolicyDetails({ data, id }) {
             </TabPanel>
             <TabPanel className="w-full md:px-4"></TabPanel>
             <TabPanel className="w-full">
-              <Receipts receipts={data?.receipts} />
+              <Receipts policyId={data?.id} />
             </TabPanel>
           </TabPanels>
         </TabGroup>

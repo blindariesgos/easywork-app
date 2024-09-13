@@ -50,3 +50,17 @@ export const useReceipt = (receiptId) => {
   };
 };
 
+export const useReceiptsByPolicyId = (policyId) => {
+
+  const { data, error, isLoading } = useSWR(
+    `/sales/crm/polizas/receipts/poliza/${policyId}`,
+    fetcher,
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+  };
+}
+

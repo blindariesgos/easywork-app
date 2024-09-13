@@ -42,7 +42,7 @@ export default function ReceiptEditor({ data, id }) {
   const schema = Yup.object().shape({
     responsible: Yup.string(),
     status: Yup.string(),
-    "payment-methods": Yup.string(),
+    frecuencyPayment: Yup.string(),
     "init-date": Yup.string(),
     expiration: Yup.string(),
     amount: Yup.string(),
@@ -70,12 +70,12 @@ export default function ReceiptEditor({ data, id }) {
         `${data?.responsible?.profile?.firstName} ${data?.responsible?.profile?.lastName}`
       );
     if (data?.status) setValue("status", data?.status);
-    if (data?.methodPayment?.name)
-      setValue("payment-methods", data?.methodPayment?.name);
+    if (data?.methodCollection?.name)
+      setValue("frecuencyPayment", data?.methodCollection?.name);
     if (data?.metadata["Fecha de inicio"])
       setValue("init-date", data?.metadata["Fecha de inicio"]);
-    if (data?.metadata["Fecha de cierre"])
-      setValue("expiration", data?.metadata["Fecha de cierre"]);
+    if (data?.dueDate)
+      setValue("expiration", formatDate(data?.dueDate, "dd/MM/yyyy"));
     if (data?.paymentAmount)
       setValue("amount", formatToDollars(data?.paymentAmount));
     if (data?.currency?.name) setValue("currency", data?.currency?.name);
@@ -192,7 +192,7 @@ export default function ReceiptEditor({ data, id }) {
                     "control:portafolio:receipt:details:form:payment-methods"
                   )}
                   register={register}
-                  name="payment-methods"
+                  name="frecuencyPayment"
                   disabled
                 />
                 <TextInput

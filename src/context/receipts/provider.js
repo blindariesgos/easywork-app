@@ -19,7 +19,15 @@ export default function ReceiptsContextProvider({ children }) {
   const [filterFields, setFilterFields] = useState()
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})
-
+  const defaultFilterFields = [
+    {
+      id: 2,
+      name: t("control:portafolio:receipt:filters:expiration-date"),
+      type: "date",
+      check: true,
+      code: "dueDate",
+    },
+  ]
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
@@ -42,19 +50,19 @@ export default function ReceiptsContextProvider({ children }) {
   useEffect(() => {
     setFilterFields([
       {
+        id: 2,
+        name: t("control:portafolio:receipt:filters:expiration-date"),
+        type: "date",
+        check: true,
+        code: "dueDate",
+      },
+      {
         id: 1,
         name: t("control:portafolio:receipt:filters:responsible"),
         type: "dropdown",
         check: true,
         code: "responsible",
         options: lists?.users,
-      },
-      {
-        id: 2,
-        name: t("control:portafolio:receipt:filters:expiration-date"),
-        type: "date",
-        check: true,
-        code: "createdAt",
       },
       {
         id: 3,
@@ -108,6 +116,7 @@ export default function ReceiptsContextProvider({ children }) {
       isLoading,
       isError,
       mutate,
+      searchParam: "title",
       page: config.page,
       setPage: (value) => handleChangeConfig("page", value),
       limit: config.limit,
@@ -124,6 +133,7 @@ export default function ReceiptsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
+      defaultFilterFields
     }),
     [
       data,
@@ -133,7 +143,8 @@ export default function ReceiptsContextProvider({ children }) {
       selectedContacts,
       displayFilters,
       filterFields,
-      filters
+      filters,
+      defaultFilterFields
     ]
   );
 

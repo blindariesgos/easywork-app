@@ -15,53 +15,54 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
 import ButtonAdd from "../../components/ButtonAdd";
+import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
+import useReceiptContext from "@/src/context/receipts";
 
 export default function ReceiptHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const pathname = usePathname();
-  const { push } = useRouter();
   const { selectedContacts } = useCrmContext();
-
-  // const handlePathname = () => {
-  //   params.delete("page");
-  //   params.set("inviteuser", true);
-  //   push(`${pathname}?${params.toString()}`);
-  // };
-
+  const { displayFilters, removeFilter } = useReceiptContext();
   return (
     <header className="flex flex-col">
-      <div className="px-4 flex gap-3 items-center bg-white py-4 rounded-md flex-wrap shadow-sm">
-        <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
-          {t("control:portafolio:receipt:title")}
-        </h1>
-        <ButtonAdd />
-        <div className="flex-grow">
-          <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
-            <FiltersReceipt />
+      <div className="px-4 flex gap-2 flex-col bg-white py-4 rounded-md  shadow-sm">
+        <div className="flex gap-3 items-center flex-wrap">
+          <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
+            {t("control:portafolio:receipt:title")}
+          </h1>
+          <ButtonAdd />
+          <div className="flex-grow">
+            <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+              <FiltersReceipt />
+            </div>
           </div>
-        </div>
-        {selectedContacts[0]?.id && (
+          {selectedContacts[0]?.id && (
+            <IconDropdown
+              icon={
+                <TrashIcon
+                  className="h-8 w-8 text-primary"
+                  aria-hidden="true"
+                />
+              }
+              options={trash}
+              width="w-72"
+            />
+          )}
+
           <IconDropdown
             icon={
-              <TrashIcon className="h-8 w-8 text-primary" aria-hidden="true" />
+              <Cog8ToothIcon
+                className="h-8 w-8 text-primary"
+                aria-hidden="true"
+              />
             }
-            options={trash}
-            width="w-72"
+            options={settings}
+            width="w-[180px]"
           />
-        )}
-
-        <IconDropdown
-          icon={
-            <Cog8ToothIcon
-              className="h-8 w-8 text-primary"
-              aria-hidden="true"
-            />
-          }
-          options={settings}
-          width="w-[180px]"
+        </div>
+        <ActiveFiltersDrawer
+          displayFilters={displayFilters}
+          removeFilter={removeFilter}
         />
       </div>
     </header>

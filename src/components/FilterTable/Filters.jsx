@@ -13,15 +13,18 @@ import useFilterTableContext from "../../context/filters-table";
 const Filters = () => {
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
-  const { filters, setFilters } = useFilterTableContext();
+  const { filters, setFilters, searchParam } = useFilterTableContext();
+
   const handleSearch = useDebouncedCallback(() => {
     if (searchInput.length > 0) {
       setFilters({
         ...filters,
-        name: searchInput,
+        [searchParam ?? "name"]: searchInput,
       });
     } else {
-      const { name, ...otherFilters } = filters;
+      const otherFilters = Object.keys(filters)
+        .filter((key) => key != (searchParam ?? "name"))
+        .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
       setFilters(otherFilters);
     }
   }, 500);

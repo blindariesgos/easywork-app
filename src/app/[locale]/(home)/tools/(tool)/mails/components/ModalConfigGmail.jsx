@@ -13,6 +13,7 @@ import useAppContext from "../../../../../../../context/app/index";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function ModalConfigGmail({
   children,
@@ -35,6 +36,14 @@ export default function ModalConfigGmail({
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
   const [time, setTime] = useState({ name: "una semana", value: "7" });
+
+  const connectGmail = () => {
+    if (!userGoogle) {
+      toast.error("Por favor autentique su Gmail");
+      return;
+    }
+    setOpenModalFolders(true);
+  }
 
   const schemaInputs = yup.object().shape({
     name: yup.string(),
@@ -384,7 +393,7 @@ export default function ModalConfigGmail({
                   <button
                     type="button"
                     className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
-                    onClick={() => setOpenModalFolders(true)}
+                    onClick={() => connectGmail(true)}
                   >
                     Conecta
                   </button>

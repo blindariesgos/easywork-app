@@ -74,7 +74,7 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                // close();
+                close();
               })
               .catch(() => {
                 deleteTokenGoogle(
@@ -84,11 +84,11 @@ export default function Page() {
                 )
                   .then((res) => {
                     console.log(res);
-                    // close();
+                    close();
                   })
                   .catch((err) => {
                     console.log(err);
-                    // close();
+                    close();
                   });
               });
           });

@@ -8,17 +8,23 @@ import * as Yup from "yup";
 import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
 
 import { formatToDollars } from "@/src/utils/formatters";
-
+import { PencilIcon } from "@heroicons/react/24/solid";
+import useAppContext from "@/src/context/app";
+import SelectInput from "@/src/components/form/SelectInput";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
+import InputDate from "@/src/components/form/InputDate";
+import InputCurrency from "@/src/components/form/InputCurrency";
 export default function PolicyDetails({ data, id }) {
   const { t } = useTranslation();
-
+  const [isEdit, setIsEdit] = useState(false);
+  const { lists } = useAppContext();
   const schema = Yup.object().shape({
     subAgent: Yup.string(),
     intermediary: Yup.string(),
     responsible: Yup.string(),
     rfc: Yup.string(),
-    initDate: Yup.string(),
-    endDate: Yup.string(),
+    vigenciaDesde: Yup.string(),
+    vigenciaHasta: Yup.string(),
     address: Yup.string(),
     status: Yup.string(),
     subbranch: Yup.string(),
@@ -47,10 +53,10 @@ export default function PolicyDetails({ data, id }) {
   });
 
   useEffect(() => {
-    if (data?.metadata["Fecha de inicio"])
-      setValue("initDate", data?.metadata["Fecha de inicio"] ?? "");
-    if (data?.metadata["Fecha de cierre"])
-      setValue("endDate", data?.metadata["Fecha de cierre"] ?? "");
+    if (data?.vigenciaDesde)
+      setValue("vigenciaDesde", data?.vigenciaDesde ?? "");
+    if (data?.vigenciaHasta)
+      setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
     if (data?.status) setValue("status", data?.status);
     if (data?.subramo?.name) setValue("subramo", data?.subramo?.name);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
@@ -70,13 +76,14 @@ export default function PolicyDetails({ data, id }) {
         "recargoFraccionado",
         formatToDollars(data?.recargoFraccionado ?? 0)
       );
-    if (data?.formaCobro?.name) setValue("formaCobro", data?.formaCobro?.name);
+    if (data?.formaCobro?.name) setValue("formaCobro", data?.formaCobro?.id);
     if (data?.frecuenciaCobro?.name)
-      setValue("frecuenciaCobro", data?.frecuenciaCobro?.name);
+      setValue("frecuenciaCobro", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
       setValue("intermediary", data?.agenteIntermediario?.name);
     if (data?.comments) setValue("comments", data?.comments);
     if (data?.currency?.name) setValue("currency", data?.currency?.name);
+    if (data?.responsible) setValue("responsible", data?.responsible?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -86,12 +93,21 @@ export default function PolicyDetails({ data, id }) {
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_210px)]"
+      className={`grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_220px)]`}
     >
       {/* Menu Derecha */}
       <div className="h-auto rounded-2xl overflow-y-auto pr-1">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
           {t("operations:policies:general:title")}
+          {data?.idBitrix && (
+            <button
+              type="button"
+              onClick={() => setIsEdit(!isEdit)}
+              title="Editar"
+            >
+              <PencilIcon className="h-6 w-6 text-primary" />
+            </button>
+          )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
           <TextInput
@@ -100,137 +116,170 @@ export default function PolicyDetails({ data, id }) {
             value={data?.address}
             register={register}
             name="address"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:rfc")}
             value={data?.metadata?.RFC}
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:status")}
             register={register}
             name="status"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:subbranch")}
             register={register}
             name="subramo"
-            disabled
+            disabled={!isEdit}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:init-date")}
-            register={register}
-            name="initDate"
-            disabled
+          <Controller
+            render={({ field: { value, onChange, ref, onBlur } }) => {
+              return (
+                <InputDate
+                  label={t("operations:policies:general:init-date")}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  error={errors.vigenciaDesde}
+                  disabled={!isEdit}
+                />
+              );
+            }}
+            name="vigenciaDesde"
+            control={control}
+            defaultValue=""
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:expiration")}
-            register={register}
-            name="endDate"
-            disabled
+
+          <Controller
+            render={({ field: { value, onChange, ref, onBlur } }) => {
+              return (
+                <InputDate
+                  label={t("operations:policies:general:expiration")}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  error={errors.vigenciaHasta}
+                  disabled={!isEdit}
+                />
+              );
+            }}
+            name="vigenciaHasta"
+            control={control}
+            defaultValue=""
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:coverage")}
             register={register}
             name="cobertura"
-            disabled
+            disabled={!isEdit}
           />
-          <TextInput
-            type="text"
+          <SelectInput
             label={t("operations:policies:general:payment-method")}
-            register={register}
             name="formaCobro"
-            disabled
-          />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:payment-frequency")}
+            options={lists?.policies?.polizaFormasCobro ?? []}
+            disabled={!isEdit}
             register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+
+          <SelectInput
+            label={t("operations:policies:general:payment-frequency")}
             name="frecuenciaCobro"
-            disabled
+            options={lists?.policies?.polizaFrecuenciasPago ?? []}
+            disabled={!isEdit}
+            register={register}
+            setValue={setValue}
+            watch={watch}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:payment-term")}
             register={register}
             name="paymentTerm"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={"Moneda"}
             register={register}
             name="currency"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:primaNeta")}
             register={register}
             name="primaNeta"
-            disabled
+            disabled={!isEdit}
+          />
+          <InputCurrency
+            type="text"
+            label={t("operations:policies:general:primaNeta")}
+            setValue={setValue}
+            name="primaNeta"
+            disabled={!isEdit}
+            watch={watch}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:recargoFraccionado")}
             register={register}
             name="recargoFraccionado"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:derechoPoliza")}
             register={register}
             name="derechoPoliza"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:iva")}
             register={register}
             name="iva"
-            disabled
+            disabled={!isEdit}
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:importePagar")}
             register={register}
             name="importePagar"
-            disabled
+            disabled={!isEdit}
           />
-
           <TextInput
             type="text"
             label={t("operations:policies:general:sub-agent")}
             register={register}
             name="sub-agent"
-            disabled
+            disabled={!isEdit}
           />
-
           <TextInput
             type="text"
             label={t("operations:policies:general:intermediary")}
             register={register}
             name="intermediary"
-            disabled
+            disabled={!isEdit}
           />
-
-          <TextInput
-            type="text"
+          <SelectDropdown
             label={t("operations:policies:general:responsible")}
-            register={register}
             name="responsible"
-            disabled
+            options={lists?.users}
+            register={register}
+            disabled={!isEdit}
+            error={!watch("responsible") && errors.responsible}
+            setValue={setValue}
+            watch={watch}
           />
-
           {/* <SelectDropdown
             label={t("control:portafolio:receipt:details:form:responsible")}
             name="responsible"
@@ -327,7 +376,7 @@ export default function PolicyDetails({ data, id }) {
             error={errors.comments && errors.comments.message}
             register={register}
             name="comments"
-            disabled
+            disabled={!isEdit}
             multiple
           />
         </div>

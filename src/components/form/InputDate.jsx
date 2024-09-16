@@ -131,7 +131,7 @@ const InputDate = ({
             return inactiveDate ? date <= inactiveDate : date;
           }}
           timeInputLabel={time && t("common:time")}
-          // dateFormat={time ? "MM/dd/yyyy h:mm aa" : "MM/dd/yyyy"}
+          dateFormat={time ? "dd/MM/yyyy h:mm aa" : "dd/MM/yyyy"}
           showTimeInput={time}
           {...props}
         />

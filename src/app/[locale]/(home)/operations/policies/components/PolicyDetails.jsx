@@ -71,7 +71,10 @@ export default function PolicyDetails({ data, id }) {
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] px-4">
         <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
-          <div className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
+          <div
+            id="policy-header"
+            className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
+          >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
                 <p className="text-xl sm:text-2xl xl:text-3xl">

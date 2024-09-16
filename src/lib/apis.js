@@ -92,6 +92,11 @@ export const getAddListContacts = async () => {
   return response;
 };
 
+export const getAddListPolicies = async () => {
+  const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
+  return response;
+};
+
 export const getUsersContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/users`);
   return response;

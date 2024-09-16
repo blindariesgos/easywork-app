@@ -109,7 +109,10 @@ export default function WebmailLayout({ children, table }) {
   }, [openModalFolders]);
 
   useEffect(() => {
-    console.log(limit);
+    console.log(userData);
+  }, [userData]);
+
+  useEffect(() => {
     getMails(
       session.data.user.id,
       searchParams.get("page"),
@@ -484,23 +487,26 @@ export default function WebmailLayout({ children, table }) {
                 <TrashIcon className="h-6 w-6 text-white" />
                 <h3 className="ml-4 text-md">Basura</h3>
               </li>
-              {folders &&
-                folders
-                  .filter((folder) => folder.type === "user")
-                  .map((folder, index) => (
-                    <li
-                      key={index}
-                      className={`cursor-pointer text-left text-white flex p-4 ${
-                        selectedFolder === folder.mailboxName
-                          ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                          : ""
-                      }`}
-                      onClick={() => setSelectedFolder(folder.mailboxName)}
-                    >
-                      <FolderIcon className="h-6 w-6 text-white" />
-                      <h3 className="ml-4 text-md">{folder.mailboxName}</h3>
-                    </li>
-                  ))}
+              {userData?.labelId
+                ?.filter((labelId) => JSON.parse(labelId).type === "user")
+                .map((labelId, index) => (
+                  <li
+                    key={index}
+                    className={`cursor-pointer text-left text-white flex p-4 ${
+                      selectedFolder === JSON.parse(labelId).mailboxName
+                        ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setSelectedFolder(JSON.parse(labelId).mailboxName)
+                    }
+                  >
+                    <FolderIcon className="h-6 w-6 text-white" />
+                    <h3 className="ml-4 text-md">
+                      {JSON.parse(labelId).mailboxName}
+                    </h3>
+                  </li>
+                ))}
             </ul>
           </div>
         </SliderOverEmail>

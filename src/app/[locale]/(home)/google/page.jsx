@@ -75,7 +75,6 @@ export default function Page() {
                 close();
               })
               .catch(() => {
-                console.log(session);
                 deleteTokenGoogle(
                   session.data.user.id,
                   "none",
@@ -87,6 +86,7 @@ export default function Page() {
                   })
                   .catch((err) => {
                     console.log(err);
+                    close();
                   });
               });
           });

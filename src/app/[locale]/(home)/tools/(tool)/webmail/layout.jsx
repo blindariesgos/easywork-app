@@ -85,6 +85,7 @@ export default function WebmailLayout({ children, table }) {
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     setSelectOauth(null);
@@ -321,7 +322,7 @@ export default function WebmailLayout({ children, table }) {
             </Link>
             <div className="mt-3">
               <Menu as="div" className="flex items-center relative">
-                <MenuButton>
+                <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                   <div className="flex border border-white p-1.5 rounded-lg text-white">
                     <Image
                       width={45}
@@ -337,7 +338,9 @@ export default function WebmailLayout({ children, table }) {
                       <p className="text-xs">info</p>
                     </div>
                     <div className="flex items-center mb-1">
-                      <ChevronUpIcon className="ml-2 h-5 w-5 text-white" />
+                      <ChevronUpIcon
+                        className={`ml-2 h-5 w-5 text-white ${isMenuOpen ? "rotate-180 transition-transform duration-300" : "transition-transform duration-300"}`}
+                      />
                     </div>
                   </div>
                 </MenuButton>

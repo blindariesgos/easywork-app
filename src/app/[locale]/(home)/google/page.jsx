@@ -92,9 +92,10 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                // Lógica adicional si todo es correcto
+                // close()
               })
-              .catch(() => {
+              .catch((err) => {
+                console.log(err);
                 deleteTokenGoogle(
                   session.data.user.id,
                   "none",

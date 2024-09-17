@@ -62,7 +62,6 @@ export default function Page() {
         }
       )
       .then((res) => {
-        // Si el refresh_token no está presente, manejar la reautenticación
         if (!res.data.refresh_token) {
           console.warn(
             "No refresh token found. Redirecting to reauthentication."
@@ -70,8 +69,6 @@ export default function Page() {
           handleReauthentication();
           return;
         }
-
-        // Continuar con la lógica si se obtuvo el refresh_token
         const config = {
           headers: { Authorization: `Bearer ${res.data.access_token}` },
         };
@@ -92,23 +89,19 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                // close()
+                close()
               })
               .catch((err) => {
-                console.log(err);
-                deleteTokenGoogle(
-                  session.data.user.id,
-                  "none",
-                  res.data.refresh_token
-                )
-                  .then((res) => {
-                    console.log(res);
+                // console.log(err);
+                // deleteTokenGoogle(
+                //   session.data.user.id,
+                //   "none",
+                //   res.data.refresh_token
+                // )
+                //   .then((res) => {
+                //     console.log(res);
                     // Lógica adicional si es necesario
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                    // Manejo de errores
-                  });
+                  // })
               });
           });
       })

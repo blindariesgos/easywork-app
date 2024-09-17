@@ -14,7 +14,7 @@ RUN yarn install
 COPY . .
 
 # Compila el proyecto
-RUN yarn build
+# RUN yarn build
 
 # Expone el puerto en el que se ejecuta la aplicación de Next.js
 EXPOSE 3000

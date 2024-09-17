@@ -53,7 +53,9 @@ export const createContact = async (data) => {
   return response;
 };
 export const updateContact = async (data, id) => {
-  const response = await axios({ contentType: "multipart/form-data" }).put(`/sales/crm/contacts/${id}`, data).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/contacts/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {
@@ -66,7 +68,7 @@ export const updatePhotoContact = async (photo, id) => {
 
 export const getContacts = async (page = 1) => {
   const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`
+    `/sales/crm/contacts?limit=6&page=${page}`,
   );
   return response;
 };
@@ -119,14 +121,14 @@ export const getFoldersSaved = async (data) => {
 
 export const getTasks = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`
+    `/tools/tasks?limit=${limit}&page=${page}`,
   );
   return response;
 };
 
 export const getTasksUser = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`
+    `/tools/tasks/user?limit=${limit}&page=${page}`,
   );
   return response;
 };
@@ -177,7 +179,7 @@ export const putComment = async (commentId, body, id) => {
   console.log("Actualizando comentario", commentId, body, id);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
-    body
+    body,
   );
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
@@ -215,7 +217,7 @@ export const getPolizaByContact = async (id) => {
 
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`
+    `/sales/crm/leads?limit=${limit}&page=${page}`,
   );
   return response;
 };
@@ -239,6 +241,7 @@ export const deleteLeadById = async (id) => {
 };
 
 export const googleCallback = async (data, state) => {
+  console.log("google data", data);
   const response = await axios().post(`/oauth/google-save-token`, {
     refresh_token: data.refresh_token,
     access_token: data.access_token,
@@ -262,7 +265,7 @@ export const getTokenGoogle = async (userId, oauthId) => {
 
 export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`,
   );
   return response;
 };
@@ -289,7 +292,7 @@ export const getFilters = async (idUser) => {
 
 export const getMails = async (idUser, page, perPage, folder, oauthId) => {
   const response = await axios().get(
-    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`
+    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`,
   );
   return response;
 };
@@ -334,10 +337,11 @@ export const addCalendarEvent = async (body) => {
     .post(`/calendar/events`, body)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
-}
+};
 
 export const updateCalendarEvent = async (body, eventId) => {
-  const response = await axios().put(`/calendar/events/${eventId}`, body).catch((error) => ({ ...error, hasError: true }));
+  const response = await axios()
+    .put(`/calendar/events/${eventId}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
-}
-
+};

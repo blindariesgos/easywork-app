@@ -86,13 +86,13 @@ export default function Page() {
               userInfo.data.given_name,
               userInfo.data.email,
               userInfo.data.picture,
-              res.data.id_token
+              res.data.id_token,
             )
               .then(() => {
-                close()
+                close();
               })
               .catch(() => {
-                close()
+                // close()
                 // console.log(err);
                 // deleteTokenGoogle(
                 //   session.data.user.id,
@@ -107,7 +107,6 @@ export default function Page() {
           });
       })
       .catch((err) => {
-        close()
         console.error("Error getting token:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

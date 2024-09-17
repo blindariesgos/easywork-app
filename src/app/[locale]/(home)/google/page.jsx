@@ -36,6 +36,14 @@ export default function Page() {
     );
   };
 
+  const handleReauthentication = () => {
+    // Construir la URL de autenticación de Google
+    const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=email profile&access_type=offline&prompt=consent`;
+
+    // Redirigir al usuario a la URL de autenticación de Google
+    window.location.href = googleAuthURL;
+  };
+
   useEffect(() => {
     axios
       .post(
@@ -46,8 +54,6 @@ export default function Page() {
           redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL,
           client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
           grant_type: "authorization_code",
-          access_type: "offline",
-          prompt: "consent",
         }),
         {
           headers: {
@@ -56,11 +62,22 @@ export default function Page() {
         }
       )
       .then((res) => {
+        // Si el refresh_token no está presente, manejar la reautenticación
+        if (!res.data.refresh_token) {
+          console.warn(
+            "No refresh token found. Redirecting to reauthentication."
+          );
+          handleReauthentication();
+          return;
+        }
+
+        // Continuar con la lógica si se obtuvo el refresh_token
         const config = {
           headers: { Authorization: `Bearer ${res.data.access_token}` },
         };
+
         axios
-          .get("https://www.googleapis.com/oauth2/v1/userinfo", config)
+          .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", config)
           .then((userInfo) => {
             console.log("userInfo", userInfo);
             fetchData(
@@ -75,7 +92,7 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                // close();
+                // Lógica adicional si todo es correcto
               })
               .catch(() => {
                 deleteTokenGoogle(
@@ -83,19 +100,26 @@ export default function Page() {
                   "none",
                   res.data.refresh_token
                 )
-                  .then(() => {
-                    // close();
+                  .then((res) => {
+                    console.log(res);
+                    // Lógica adicional si es necesario
                   })
-                  .catch(() => {
-                    // close();
+                  .catch((err) => {
+                    console.log(err);
+                    // Manejo de errores
                   });
               });
           });
       })
-      .catch(() => {
-        // close();
+      .catch((err) => {
+        console.error("Error getting token:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data]);
-  return <div className="absolute w-screen h-screen bg-easywork-main" style={{zIndex: 900}}></div>;
+  return (
+    <div
+      className="absolute w-screen h-screen bg-easywork-main"
+      style={{ zIndex: 900 }}
+    ></div>
+  );
 }

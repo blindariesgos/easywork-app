@@ -23,7 +23,7 @@ export default function ContactEditor({ contact, id }) {
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0, module: "general" },
     {
-      name: contact.typePerson === "moral" ? "Contactos" : "Compañias",
+      name: contact?.typePerson === "moral" ? "Contactos" : "Compañias",
       value: 1,
       module: "contact",
       hidden: contact?.relations?.length == 0 ?? true,

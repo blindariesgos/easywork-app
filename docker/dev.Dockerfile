@@ -20,4 +20,4 @@ RUN yarn build
 EXPOSE 3000
 
 # Define el comando para iniciar la aplicación en modo de producción
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]

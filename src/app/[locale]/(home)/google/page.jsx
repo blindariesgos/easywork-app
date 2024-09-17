@@ -32,7 +32,7 @@ export default function Page() {
         picture,
         id_token,
       },
-      searchParams.get("state")
+      session.data.user.id
     );
   };
 
@@ -91,7 +91,8 @@ export default function Page() {
               .then(() => {
                 close()
               })
-              .catch((err) => {
+              .catch(() => {
+                close()
                 // console.log(err);
                 // deleteTokenGoogle(
                 //   session.data.user.id,
@@ -106,6 +107,7 @@ export default function Page() {
           });
       })
       .catch((err) => {
+        close()
         console.error("Error getting token:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

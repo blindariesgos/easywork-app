@@ -89,10 +89,10 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                close()
+                // close()
               })
               .catch(() => {
-                close()
+                // close()
                 // console.log(err);
                 // deleteTokenGoogle(
                 //   session.data.user.id,
@@ -107,7 +107,7 @@ export default function Page() {
           });
       })
       .catch((err) => {
-        close()
+        // close()
         console.error("Error getting token:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

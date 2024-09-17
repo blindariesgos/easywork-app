@@ -54,12 +54,11 @@ export default function Page() {
         }
       )
       .then((res) => {
-        console.log("res11111", res)
         const config = {
           headers: { Authorization: `Bearer ${res.data.access_token}` },
         };
         axios
-          .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", config)
+          .get("https://www.googleapis.com/oauth2/v1/userinfo", config)
           .then((userInfo) => {
             console.log("userInfo", userInfo);
             fetchData(
@@ -74,7 +73,7 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                // close();
+                close();
               })
               .catch(() => {
                 deleteTokenGoogle(
@@ -82,16 +81,17 @@ export default function Page() {
                   "none",
                   res.data.refresh_token
                 )
-                  .then((res) => {
-                    console.log(res);
-                    // close();
+                  .then(() => {
+                    close();
                   })
-                  .catch((err) => {
-                    console.log(err);
-                    // close();
+                  .catch(() => {
+                    close();
                   });
               });
           });
+      })
+      .catch(() => {
+        close();
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data]);

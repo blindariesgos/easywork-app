@@ -32,13 +32,13 @@ export default function Page() {
         picture,
         id_token,
       },
-      session.data.user.id
+      searchParams.get("state")
     );
   };
 
   const handleReauthentication = () => {
     // Construir la URL de autenticación de Google
-    const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=email profile&access_type=offline&prompt=consent`;
+    const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=email profile&access_type=offline&prompt=consent&state=${searchParams.get("state")}`;
 
     // Redirigir al usuario a la URL de autenticación de Google
     window.location.href = googleAuthURL;

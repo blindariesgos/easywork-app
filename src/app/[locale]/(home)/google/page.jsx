@@ -46,6 +46,8 @@ export default function Page() {
           redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL,
           client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
           grant_type: "authorization_code",
+          access_type: "offline",
+          prompt: "consent",
         }),
         {
           headers: {

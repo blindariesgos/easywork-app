@@ -64,3 +64,20 @@ export const useReceiptsByPolicyId = (policyId) => {
   };
 }
 
+export const useSubAgents = ({ filters }) => {
+  const params = Object.keys(filters).filter(key => filters[key]).map(key => `${key}=${filters[key]}`).join("&")
+  const { data, error, isLoading, mutate } = useSWR(
+    `/sales/crm/polizas/receipts/sub-agents?${params}`,
+    fetcher,
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+    mutate
+  };
+}
+
+
+

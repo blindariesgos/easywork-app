@@ -2,11 +2,12 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextInput from "@/src/components/form/TextInput";
+import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
-
+import clsx from "clsx";
 import { formatToDollars } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import useAppContext from "@/src/context/app";
@@ -14,12 +15,18 @@ import SelectInput from "@/src/components/form/SelectInput";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputDate from "@/src/components/form/InputDate";
 import InputCurrency from "@/src/components/form/InputCurrency";
+import Button from "@/src/components/form/Button";
+import { postComment, putPoliza } from "@/src/lib/apis";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+
 export default function PolicyDetails({ data, id }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
+  const router = useRouter();
   const schema = Yup.object().shape({
-    subAgent: Yup.string(),
     intermediary: Yup.string(),
     responsible: Yup.string(),
     rfc: Yup.string(),
@@ -58,29 +65,17 @@ export default function PolicyDetails({ data, id }) {
     if (data?.vigenciaHasta)
       setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
     if (data?.status) setValue("status", data?.status);
-    if (data?.subramo?.name) setValue("subramo", data?.subramo?.name);
+    if (data?.subramo?.name) setValue("subramo", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
     if (data?.paymentMethod) setValue("paymentMethod", data?.paymentMethod);
     if (data?.paymentFrequency)
       setValue("paymentFrequency", data?.paymentFrequency);
     if (data?.paymentTerm) setValue("paymentTerm", data?.paymentTerm);
-    if (data?.primaNeta)
-      setValue("primaNeta", formatToDollars(data?.primaNeta));
-    if (data?.derechoPoliza)
-      setValue("derechoPoliza", formatToDollars(data?.derechoPoliza));
-    if (data?.iva) setValue("iva", formatToDollars(data?.iva));
-    if (data?.importePagar)
-      setValue("importePagar", formatToDollars(data?.importePagar));
-    if (data?.recargoFraccionado)
-      setValue(
-        "recargoFraccionado",
-        formatToDollars(data?.recargoFraccionado ?? 0)
-      );
     if (data?.formaCobro?.name) setValue("formaCobro", data?.formaCobro?.id);
     if (data?.frecuenciaCobro?.name)
       setValue("frecuenciaCobro", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
-      setValue("intermediary", data?.agenteIntermediario?.name);
+      setValue("intermediary", data?.agenteIntermediario?.id);
     if (data?.comments) setValue("comments", data?.comments);
     if (data?.currency?.name) setValue("currency", data?.currency?.name);
     if (data?.responsible) setValue("responsible", data?.responsible?.id);
@@ -88,6 +83,23 @@ export default function PolicyDetails({ data, id }) {
 
   const handleFormSubmit = async (data) => {
     console.log({ data });
+    try {
+      const response = await putPoliza(id, data);
+      if (response.hasError) {
+        console.log(response);
+        toast.error(
+          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
+        );
+        return;
+      }
+      setIsEdit(false);
+      router.back();
+      toast.success("Poliza actualizada correctamente.");
+    } catch (error) {
+      toast.error(
+        "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
+      );
+    }
   };
 
   return (
@@ -124,19 +136,40 @@ export default function PolicyDetails({ data, id }) {
             value={data?.metadata?.RFC}
             disabled={!isEdit}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:status")}
-            register={register}
+          <SelectInput
+            label={t("control:portafolio:receipt:details:form:status")}
+            options={[
+              {
+                id: "activa",
+                name: "Activa",
+              },
+              {
+                id: "expirada",
+                name: "Expirada",
+              },
+              {
+                id: "cancelada",
+                name: "Cancelada",
+              },
+              {
+                id: "en_proceso",
+                name: "En proceso",
+              },
+            ]}
             name="status"
-            disabled={!isEdit}
-          />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:subbranch")}
             register={register}
-            name="subramo"
+            setValue={setValue}
             disabled={!isEdit}
+            watch={watch}
+          />
+          <SelectInput
+            label={t("operations:policies:general:subbranch")}
+            name="subramo"
+            options={lists?.policies?.polizaSubRamo ?? []}
+            disabled={!isEdit}
+            register={register}
+            setValue={setValue}
+            watch={watch}
           />
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -155,7 +188,6 @@ export default function PolicyDetails({ data, id }) {
             control={control}
             defaultValue=""
           />
-
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {
               return (
@@ -173,12 +205,23 @@ export default function PolicyDetails({ data, id }) {
             control={control}
             defaultValue=""
           />
-          <TextInput
-            type="text"
+          <SelectInput
             label={t("operations:policies:general:coverage")}
-            register={register}
+            options={[
+              {
+                id: "Nacional",
+                name: "Nacional",
+              },
+              {
+                id: "Internacional",
+                name: "Internacional",
+              },
+            ]}
             name="cobertura"
+            register={register}
+            setValue={setValue}
             disabled={!isEdit}
+            watch={watch}
           />
           <SelectInput
             label={t("operations:policies:general:payment-method")}
@@ -189,7 +232,6 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             watch={watch}
           />
-
           <SelectInput
             label={t("operations:policies:general:payment-frequency")}
             name="frecuenciaCobro"
@@ -199,12 +241,23 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             watch={watch}
           />
-          <TextInput
-            type="text"
+          <SelectInput
             label={t("operations:policies:general:payment-term")}
-            register={register}
+            options={[
+              {
+                id: "15",
+                name: "15 días",
+              },
+              {
+                id: "30",
+                name: "30 días",
+              },
+            ]}
             name="paymentTerm"
+            register={register}
+            setValue={setValue}
             disabled={!isEdit}
+            watch={watch}
           />
           <TextInput
             type="text"
@@ -213,63 +266,56 @@ export default function PolicyDetails({ data, id }) {
             name="currency"
             disabled={!isEdit}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:primaNeta")}
-            register={register}
-            name="primaNeta"
-            disabled={!isEdit}
-          />
           <InputCurrency
             type="text"
             label={t("operations:policies:general:primaNeta")}
             setValue={setValue}
             name="primaNeta"
             disabled={!isEdit}
-            watch={watch}
+            defaultValue={data?.primaNeta.toFixed(2) ?? "0.00"}
           />
-          <TextInput
+          <InputCurrency
             type="text"
             label={t("operations:policies:general:recargoFraccionado")}
-            register={register}
+            setValue={setValue}
             name="recargoFraccionado"
             disabled={!isEdit}
+            defaultValue={data?.recargoFraccionado.toFixed(2) ?? "0.00"}
           />
-          <TextInput
+          <InputCurrency
             type="text"
             label={t("operations:policies:general:derechoPoliza")}
-            register={register}
+            setValue={setValue}
             name="derechoPoliza"
             disabled={!isEdit}
+            defaultValue={data?.derechoPoliza.toFixed(2) ?? "0.00"}
           />
-          <TextInput
+          <InputCurrency
             type="text"
             label={t("operations:policies:general:iva")}
-            register={register}
+            setValue={setValue}
             name="iva"
             disabled={!isEdit}
+            defaultValue={data?.iva.toFixed(2) ?? "0.00"}
           />
-          <TextInput
+          <InputCurrency
             type="text"
             label={t("operations:policies:general:importePagar")}
-            register={register}
+            setValue={setValue}
             name="importePagar"
             disabled={!isEdit}
+            defaultValue={data?.importePagar.toFixed(2) ?? "0.00"}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:sub-agent")}
-            register={register}
-            name="sub-agent"
-            disabled={!isEdit}
-          />
-          <TextInput
-            type="text"
+          <SelectInput
             label={t("operations:policies:general:intermediary")}
-            register={register}
             name="intermediary"
+            options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
+            register={register}
+            setValue={setValue}
+            watch={watch}
           />
+
           <SelectDropdown
             label={t("operations:policies:general:responsible")}
             name="responsible"
@@ -280,96 +326,6 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             watch={watch}
           />
-          {/* <SelectDropdown
-            label={t("control:portafolio:receipt:details:form:responsible")}
-            name="responsible"
-            options={lists?.users}
-            selectedOption={contactResponsible}
-            register={register}
-            disabled
-            error={!watch("responsible") && errors.responsible}
-            setValue={setValue}
-          />
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:status")}
-            options={[
-              {
-                id: "1",
-                value: "1",
-                name: "Liquidado",
-              },
-              {
-                id: "2",
-                value: "2",
-                name: "Cancelado",
-              },
-              {
-                id: "3",
-                value: "3",
-                name: "Pendiente",
-              },
-            ]}
-            name="status"
-            register={register}
-            setValue={setValue}
-            disabled
-          />
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:payment-methods")}
-            options={[
-              {
-                id: "1",
-                value: "1",
-                name: "Anual",
-              },
-              {
-                id: "2",
-                value: "2",
-                name: "Semestral",
-              },
-              {
-                id: "3",
-                value: "3",
-                name: "Trimentral",
-              },
-              {
-                id: "4",
-                value: "4",
-                name: "Mensual",
-              },
-            ]}
-            name="payment"
-            register={register}
-            setValue={setValue}
-            disabled
-          />
-          <TextInput
-            type="text"
-            label={t("control:portafolio:receipt:details:form:amount")}
-            placeholder={`10.000,00`}
-            register={register}
-            name="firstName"
-            disabled
-          />
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:currency")}
-            options={[
-              {
-                id: "1",
-                value: "1",
-                name: "Pesos",
-              },
-              {
-                id: "2",
-                value: "2",
-                name: "Dolares Americanos",
-              },
-            ]}
-            name="paymendt"
-            register={register}
-            setValue={setValue}
-            disabled
-          /> */}
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
@@ -429,97 +385,6 @@ export default function PolicyDetails({ data, id }) {
                   value={vehicle?.circulatesIn ?? "S/N"}
                   disabled
                 />
-
-                {/* <SelectDropdown
-            label={t("control:portafolio:receipt:details:form:responsible")}
-            name="responsible"
-            options={lists?.users}
-            selectedOption={contactResponsible}
-            register={register}
-            disabled
-            error={!watch("responsible") && errors.responsible}
-            setValue={setValue}
-          />
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:status")}
-            options={[
-              {
-                id: "1",
-                value: "1",
-                name: "Liquidado",
-              },
-              {
-                id: "2",
-                value: "2",
-                name: "Cancelado",
-              },
-              {
-                id: "3",
-                value: "3",
-                name: "Pendiente",
-              },
-            ]}
-            name="status"
-            register={register}
-            setValue={setValue}
-            disabled
-          />
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:payment-methods")}
-            options={[
-              {
-                id: "1",
-                value: "1",
-                name: "Anual",
-              },
-              {
-                id: "2",
-                value: "2",
-                name: "Semestral",
-              },
-              {
-                id: "3",
-                value: "3",
-                name: "Trimentral",
-              },
-              {
-                id: "4",
-                value: "4",
-                name: "Mensual",
-              },
-            ]}
-            name="payment"
-            register={register}
-            setValue={setValue}
-            disabled
-          />
-          <TextInput
-            type="text"
-            label={t("control:portafolio:receipt:details:form:amount")}
-            placeholder={`10.000,00`}
-            register={register}
-            name="firstName"
-            disabled
-          />
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:currency")}
-            options={[
-              {
-                id: "1",
-                value: "1",
-                name: "Pesos",
-              },
-              {
-                id: "2",
-                value: "2",
-                name: "Dolares Americanos",
-              },
-            ]}
-            name="paymendt"
-            register={register}
-            setValue={setValue}
-            disabled
-          /> */}
               </div>
             </Fragment>
           ))}
@@ -528,6 +393,32 @@ export default function PolicyDetails({ data, id }) {
       <div className=" bg-gray-100 rounded-lg w-full">
         <ActivityPanel contactId={data?.contact?.id} />
       </div>
+      {isEdit && (
+        <div
+          className={clsx(
+            "flex justify-center px-4 w-full py-4 gap-4 bottom-0 lg:rounded-bl-[35px] rounded-none left-0 right-0 fixed lg:absolute bg-white shadow-[0px_-2px_6px_4px_#00000017] "
+          )}
+        >
+          <Button
+            type="submit"
+            label={
+              loading ? t("common:buttons:saving") : t("common:buttons:save")
+            }
+            disabled={loading}
+            buttonStyle="primary"
+            className="px-3 py-2"
+            // onclick={() => handleSubmit(handleFormSubmit)}
+          />
+          <Button
+            type="button"
+            label={t("common:buttons:cancel")}
+            disabled={loading}
+            buttonStyle="secondary"
+            onclick={() => router.back()}
+            className="px-3 py-2"
+          />
+        </div>
+      )}
     </form>
   );
 }

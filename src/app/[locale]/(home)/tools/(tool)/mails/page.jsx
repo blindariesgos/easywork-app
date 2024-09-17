@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { createImap, getAllOauth } from "../../../../../../lib/apis";
 import { handleApiError } from "../../../../../../utils/api/errors";
@@ -10,6 +10,7 @@ import ModalConfigGmail from "./components/ModalConfigGmail";
 import ModalAddFolders from "./components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
 import useAppContext from "../../../../../../context/app/index";
+import { toast } from "react-toastify";
 
 export default function IngresarEmail() {
   const session = useSession();
@@ -18,12 +19,18 @@ export default function IngresarEmail() {
   const [modalC, setModalC] = useState(false);
   const [gmailState, setGmailState] = useState(false);
   const { setOpenModalFolders, openModalFolders } = useAppContext();
+  const searchParams = useSearchParams();
+  const userdeleted = searchParams.get("userdeleted");
 
   // getAllOauth(session.data.user.id).then((response) => {
   //   if (response.length > 0) {
   //     router.push("/tools/webmail?page=1");
-  //   } 
+  //   }
   // })
+
+  useEffect(() => {
+    if (userdeleted == "true") toast.success("Correo eliminado");
+  }, [userdeleted]);
 
   const [ImapData, setImapData] = useState({
     host: null,
@@ -164,7 +171,10 @@ export default function IngresarEmail() {
         </ul>
       </div>
       <ModalConfigGmail state={gmailState} motivo={"add"} addOtherOauth={false}>
-        <Tag onclick={() => setGmailState(false)} className="bg-easywork-main" />
+        <Tag
+          onclick={() => setGmailState(false)}
+          className="bg-easywork-main"
+        />
       </ModalConfigGmail>
       {openModalFolders && (
         <ModalAddFolders state={true}>

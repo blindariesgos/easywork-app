@@ -13,9 +13,10 @@ const InputCurrency = ({
   border,
   setValue,
   watch,
+  defaultValue,
   ...props
 }) => {
-  const [currentValue, setCurrentValue] = useState("");
+  const [currentValue, setCurrentValue] = useState();
   const prefix = "$";
   const registerProps = register && register(name);
 
@@ -39,13 +40,13 @@ const InputCurrency = ({
   };
 
   useEffect(() => {
-    if (!watch || currentValue) return;
+    if (!defaultValue || currentValue) return;
     handleChange({
       target: {
-        value: watch(name),
+        value: defaultValue,
       },
     });
-  }, [watch && watch[name]]);
+  }, [defaultValue]);
 
   return (
     <div className="flex flex-col gap-y-1 w-full">
@@ -57,11 +58,10 @@ const InputCurrency = ({
           autoComplete="off"
           {...registerProps}
           type={type}
+          name={name}
           disabled={disabled}
           value={currentValue}
-          onChange={(e) => {
-            handleChange(e);
-          }}
+          onChange={handleChange}
           placeholder={placeholder}
           {...props}
           className={clsx(

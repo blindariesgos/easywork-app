@@ -36,6 +36,14 @@ export default function Page() {
     );
   };
 
+  const handleReauthentication = () => {
+    // Construir la URL de autenticación de Google
+    const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=email profile&access_type=offline&prompt=consent&state=${searchParams.get("state")}`;
+
+    // Redirigir al usuario a la URL de autenticación de Google
+    window.location.href = googleAuthURL;
+  };
+
   useEffect(() => {
     axios
       .post(
@@ -54,12 +62,21 @@ export default function Page() {
         }
       )
       .then((res) => {
+        if (!res.data.refresh_token) {
+          console.warn(
+            "No refresh token found. Redirecting to reauthentication."
+          );
+          handleReauthentication();
+          return;
+        }
         const config = {
           headers: { Authorization: `Bearer ${res.data.access_token}` },
         };
+
         axios
           .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", config)
           .then((userInfo) => {
+            console.log("userInfo", userInfo);
             fetchData(
               res.data.refresh_token,
               res.data.access_token,
@@ -69,29 +86,35 @@ export default function Page() {
               userInfo.data.given_name,
               userInfo.data.email,
               userInfo.data.picture,
-              res.data.id_token
+              res.data.id_token,
             )
               .then(() => {
                 close();
               })
               .catch(() => {
-                console.log(session);
-                deleteTokenGoogle(
-                  session.data.user.id,
-                  "none",
-                  res.data.refresh_token
-                )
-                  .then((res) => {
-                    console.log(res);
-                    close();
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
+                // close()
+                // console.log(err);
+                // deleteTokenGoogle(
+                //   session.data.user.id,
+                //   "none",
+                //   res.data.refresh_token
+                // )
+                //   .then((res) => {
+                //     console.log(res);
+                    // Lógica adicional si es necesario
+                  // })
               });
           });
+      })
+      .catch((err) => {
+        console.error("Error getting token:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data]);
-  return <div className="absolute w-screen h-screen bg-easywork-main" style={{zIndex: 900}}></div>;
+  return (
+    <div
+      className="absolute w-screen h-screen bg-easywork-main"
+      style={{ zIndex: 900 }}
+    ></div>
+  );
 }

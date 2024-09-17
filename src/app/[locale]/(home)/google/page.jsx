@@ -73,7 +73,7 @@ export default function Page() {
               res.data.id_token
             )
               .then(() => {
-                close();
+                // close();
               })
               .catch(() => {
                 deleteTokenGoogle(
@@ -82,16 +82,16 @@ export default function Page() {
                   res.data.refresh_token
                 )
                   .then(() => {
-                    close();
+                    // close();
                   })
                   .catch(() => {
-                    close();
+                    // close();
                   });
               });
           });
       })
       .catch(() => {
-        close();
+        // close();
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data]);

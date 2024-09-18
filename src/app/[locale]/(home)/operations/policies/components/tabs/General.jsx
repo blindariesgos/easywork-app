@@ -19,15 +19,17 @@ import Button from "@/src/components/form/Button";
 import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useSWRConfig } from "swr";
 
-export default function PolicyDetails({ data, id }) {
+export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
+  const { mutate } = useSWRConfig();
   const router = useRouter();
   const schema = Yup.object().shape({
-    intermediary: Yup.string(),
+    agenteIntermediario: Yup.string(),
     responsible: Yup.string(),
     rfc: Yup.string(),
     vigenciaDesde: Yup.string(),
@@ -44,6 +46,7 @@ export default function PolicyDetails({ data, id }) {
     derechoPoliza: Yup.string(),
     iva: Yup.string(),
     importePagar: Yup.string(),
+    plazoPago: Yup.string(),
   });
 
   const {
@@ -75,16 +78,35 @@ export default function PolicyDetails({ data, id }) {
     if (data?.frecuenciaCobro?.name)
       setValue("frecuenciaCobro", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
-      setValue("intermediary", data?.agenteIntermediario?.id);
+      setValue("agenteIntermediario", data?.agenteIntermediario?.id);
     if (data?.comments) setValue("comments", data?.comments);
     if (data?.currency?.name) setValue("currency", data?.currency?.name);
+    if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.responsible) setValue("responsible", data?.responsible?.id);
+    if (data?.contact?.address) setValue("address", data?.contact?.address);
+    if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
-    console.log({ data });
+    const {
+      primaNeta,
+      recargoFraccionado,
+      derechoPoliza,
+      iva,
+      importePagar,
+      ...otherData
+    } = data;
+
+    const body = {
+      ...otherData,
+      primaNeta: +primaNeta,
+      recargoFraccionado: +recargoFraccionado,
+      derechoPoliza: +derechoPoliza,
+      iva: +iva,
+      importePagar: +importePagar,
+    };
     try {
-      const response = await putPoliza(id, data);
+      const response = await putPoliza(id, body);
       if (response.hasError) {
         console.log(response);
         toast.error(
@@ -94,7 +116,9 @@ export default function PolicyDetails({ data, id }) {
       }
       setIsEdit(false);
       router.back();
+      updatePolicy();
       toast.success("Poliza actualizada correctamente.");
+      mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
@@ -125,16 +149,15 @@ export default function PolicyDetails({ data, id }) {
           <TextInput
             type="text"
             label={t("operations:policies:general:address")}
-            value={data?.address}
             register={register}
             name="address"
-            disabled={!isEdit}
+            disabled
           />
           <TextInput
             type="text"
             label={t("operations:policies:general:rfc")}
-            value={data?.metadata?.RFC}
-            disabled={!isEdit}
+            name="rfc"
+            disabled
           />
           <SelectInput
             label={t("control:portafolio:receipt:details:form:status")}
@@ -253,7 +276,7 @@ export default function PolicyDetails({ data, id }) {
                 name: "30 días",
               },
             ]}
-            name="paymentTerm"
+            name="plazoPago"
             register={register}
             setValue={setValue}
             disabled={!isEdit}
@@ -272,7 +295,7 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             name="primaNeta"
             disabled={!isEdit}
-            defaultValue={data?.primaNeta.toFixed(2) ?? "0.00"}
+            defaultValue={data?.primaNeta.toFixed(2) ?? null}
           />
           <InputCurrency
             type="text"
@@ -280,7 +303,7 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             name="recargoFraccionado"
             disabled={!isEdit}
-            defaultValue={data?.recargoFraccionado.toFixed(2) ?? "0.00"}
+            defaultValue={data?.recargoFraccionado.toFixed(2) ?? null}
           />
           <InputCurrency
             type="text"
@@ -288,7 +311,7 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             name="derechoPoliza"
             disabled={!isEdit}
-            defaultValue={data?.derechoPoliza.toFixed(2) ?? "0.00"}
+            defaultValue={data?.derechoPoliza.toFixed(2) ?? null}
           />
           <InputCurrency
             type="text"
@@ -296,7 +319,7 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             name="iva"
             disabled={!isEdit}
-            defaultValue={data?.iva.toFixed(2) ?? "0.00"}
+            defaultValue={data?.iva.toFixed(2) ?? null}
           />
           <InputCurrency
             type="text"
@@ -304,11 +327,11 @@ export default function PolicyDetails({ data, id }) {
             setValue={setValue}
             name="importePagar"
             disabled={!isEdit}
-            defaultValue={data?.importePagar.toFixed(2) ?? "0.00"}
+            defaultValue={data?.importePagar.toFixed(2) ?? null}
           />
           <SelectInput
             label={t("operations:policies:general:intermediary")}
-            name="intermediary"
+            name="agenteIntermediario"
             options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
             register={register}

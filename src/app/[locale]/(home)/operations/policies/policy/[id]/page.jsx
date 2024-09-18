@@ -7,7 +7,7 @@ import { usePolicy } from "@/src/lib/api/hooks/policies";
 
 export default function PolicyDetailsPage({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
-  const { data, isLoading, isError } = usePolicy(id);
+  const { data, isLoading, isError, mutate } = usePolicy(id);
   console.log({ data });
 
   if (isError) {
@@ -23,7 +23,7 @@ export default function PolicyDetailsPage({ params: { id } }) {
   return (
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">
       <Suspense fallback={<LoaderSpinner />}>
-        <PolicyDetails data={data} id={id} />
+        <PolicyDetails data={data} id={id} mutate={mutate} />
       </Suspense>
     </SlideOver>
   );

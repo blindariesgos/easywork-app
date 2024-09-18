@@ -30,7 +30,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
   const router = useRouter();
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),
-    responsibleId: Yup.string(),
+    assignedById: Yup.string(),
     rfc: Yup.string(),
     vigenciaDesde: Yup.string(),
     vigenciaHasta: Yup.string(),
@@ -83,7 +83,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     if (data?.comments) setValue("comments", data?.comments);
     if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
-    if (data?.responsible) setValue("responsibleId", data?.responsible?.id);
+    if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
     if (data?.contact?.address) setValue("address", data?.contact?.address);
     if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
   }, [data]);
@@ -345,11 +345,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
 
           <SelectDropdown
             label={t("operations:policies:general:responsible")}
-            name="responsibleId"
+            name="assignedById"
             options={lists?.users}
             register={register}
             disabled={!isEdit}
-            error={!watch("responsibleId") && errors.responsibleId}
+            error={!watch("assignedById") && errors.assignedById}
             setValue={setValue}
             watch={watch}
           />

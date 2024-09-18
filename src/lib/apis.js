@@ -235,6 +235,11 @@ export const putPoliza = async (policyId, body) => {
   return response;
 };
 
+export const putReceipt = async (receiptId, body) => {
+  const response = await axios().put(`/sales/crm/polizas/receipts/${receiptId}`, body).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
     `/sales/crm/leads?limit=${limit}&page=${page}`

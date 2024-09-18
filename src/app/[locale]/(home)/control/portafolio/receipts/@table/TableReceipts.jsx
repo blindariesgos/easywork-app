@@ -369,7 +369,13 @@ export default function TableReceipts() {
                                     {receipt[column.row]}
                                   </Link>
                                 ) : column.row === "client" ? (
-                                  receipt.metadata.Contacto ?? "S/N"
+                                  <Link
+                                    href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}
+                                  >
+                                    {receipt?.poliza?.contact?.fullName ??
+                                      receipt?.poliza?.contact?.name ??
+                                      "S/N"}
+                                  </Link>
                                 ) : column.row === "stages" ? (
                                   <p className="text-center">
                                     {receipt.metadata.Etapa ?? "S/N"}
@@ -387,9 +393,14 @@ export default function TableReceipts() {
                                     ) ?? null}
                                   </p>
                                 ) : column.row === "policy" ? (
-                                  <p className="text-center">
-                                    {receipt?.poliza?.poliza || "-"}
-                                  </p>
+                                  <Link
+                                    href={`/operations/policies/policy/${receipt?.poliza?.id}?show=true`}
+                                    className="text-center w-full"
+                                  >
+                                    <p className="text-center">
+                                      {receipt?.poliza?.poliza || "-"}
+                                    </p>
+                                  </Link>
                                 ) : (
                                   <p className="text-center">
                                     {receipt[column.row] || "-"}

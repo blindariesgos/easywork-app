@@ -94,6 +94,11 @@ export const getAddListContacts = async () => {
   return response;
 };
 
+export const getAddListPolicies = async () => {
+  const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
+  return response;
+};
+
 export const getUsersContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/users`);
   return response;
@@ -195,6 +200,16 @@ export const getTags = async () => {
   return response;
 };
 
+export const postSubAgent = async (body) => {
+  const response = await axios().put(`/sales/crm/polizas/receipts/sub-agents`, body).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const deleteSubAgent = async (subAgentId) => {
+  const response = await axios().delete(`/sales/crm/polizas/receipts/sub-agents/${subAgentId}`);
+  return response;
+};
+
 export const postTags = async (body) => {
   const response = await axios().post(`/tools/tags`, body);
   return response;
@@ -215,12 +230,18 @@ export const getPolizaByContact = async (id) => {
   return response;
 };
 
+export const putPoliza = async (policyId, body) => {
+  const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
     `/sales/crm/leads?limit=${limit}&page=${page}`
   );
   return response;
 };
+
 export const getLeadById = async (id) => {
   const response = await axios().get(`/sales/crm/leads/${id}`);
   return response;

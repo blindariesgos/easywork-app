@@ -29,17 +29,16 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
   const { mutate } = useSWRConfig();
   const router = useRouter();
   const schema = Yup.object().shape({
-    agenteIntermediario: Yup.string(),
-    responsible: Yup.string(),
+    agenteIntermediarioId: Yup.string(),
+    assignedById: Yup.string(),
     rfc: Yup.string(),
     vigenciaDesde: Yup.string(),
     vigenciaHasta: Yup.string(),
     address: Yup.string(),
     status: Yup.string(),
-    subbranch: Yup.string(),
+    subramoId: Yup.string(),
     cobertura: Yup.string(),
-    paymentMethod: Yup.string(),
-    paymentFrequency: Yup.string(),
+    frecuenciaCobroId: Yup.string(),
     paymentTerm: Yup.string(),
     primaNeta: Yup.string(),
     recargoFraccionado: Yup.string(),
@@ -47,6 +46,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     iva: Yup.string(),
     importePagar: Yup.string(),
     plazoPago: Yup.string(),
+    formaCobroId: Yup.string(),
+    currencyId: Yup.string(),
   });
 
   const {
@@ -68,21 +69,21 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     if (data?.vigenciaHasta)
       setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
     if (data?.status) setValue("status", data?.status);
-    if (data?.subramo?.name) setValue("subramo", data?.subramo?.id);
+    if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
     if (data?.paymentMethod) setValue("paymentMethod", data?.paymentMethod);
     if (data?.paymentFrequency)
       setValue("paymentFrequency", data?.paymentFrequency);
     if (data?.paymentTerm) setValue("paymentTerm", data?.paymentTerm);
-    if (data?.formaCobro?.name) setValue("formaCobro", data?.formaCobro?.id);
+    if (data?.formaCobro?.name) setValue("formaCobroId", data?.formaCobro?.id);
     if (data?.frecuenciaCobro?.name)
-      setValue("frecuenciaCobro", data?.frecuenciaCobro?.id);
+      setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
-      setValue("agenteIntermediario", data?.agenteIntermediario?.id);
+      setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
     if (data?.comments) setValue("comments", data?.comments);
-    if (data?.currency?.name) setValue("currency", data?.currency?.name);
+    if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
-    if (data?.responsible) setValue("responsible", data?.responsible?.id);
+    if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
     if (data?.contact?.address) setValue("address", data?.contact?.address);
     if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
   }, [data]);
@@ -187,7 +188,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           />
           <SelectInput
             label={t("operations:policies:general:subbranch")}
-            name="subramo"
+            name="subramoId"
             options={lists?.policies?.polizaSubRamo ?? []}
             disabled={!isEdit}
             register={register}
@@ -248,7 +249,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           />
           <SelectInput
             label={t("operations:policies:general:payment-method")}
-            name="formaCobro"
+            name="formaCobroId"
             options={lists?.policies?.polizaFormasCobro ?? []}
             disabled={!isEdit}
             register={register}
@@ -257,7 +258,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           />
           <SelectInput
             label={t("operations:policies:general:payment-frequency")}
-            name="frecuenciaCobro"
+            name="frecuenciaCobroId"
             options={lists?.policies?.polizaFrecuenciasPago ?? []}
             disabled={!isEdit}
             register={register}
@@ -282,13 +283,16 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             disabled={!isEdit}
             watch={watch}
           />
-          <TextInput
-            type="text"
+          <SelectInput
             label={"Moneda"}
+            options={lists?.policies?.currencies ?? []}
+            name="currencyId"
             register={register}
-            name="currency"
+            setValue={setValue}
             disabled={!isEdit}
+            watch={watch}
           />
+
           <InputCurrency
             type="text"
             label={t("operations:policies:general:primaNeta")}
@@ -331,7 +335,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           />
           <SelectInput
             label={t("operations:policies:general:intermediary")}
-            name="agenteIntermediario"
+            name="agenteIntermediarioId"
             options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
             register={register}
@@ -341,11 +345,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
 
           <SelectDropdown
             label={t("operations:policies:general:responsible")}
-            name="responsible"
+            name="assignedById"
             options={lists?.users}
             register={register}
             disabled={!isEdit}
-            error={!watch("responsible") && errors.responsible}
+            error={!watch("assignedById") && errors.assignedById}
             setValue={setValue}
             watch={watch}
           />

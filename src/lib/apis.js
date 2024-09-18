@@ -68,7 +68,7 @@ export const updatePhotoContact = async (photo, id) => {
 
 export const getContacts = async (page = 1) => {
   const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`,
+    `/sales/crm/contacts?limit=6&page=${page}`
   );
   return response;
 };
@@ -121,14 +121,14 @@ export const getFoldersSaved = async (data) => {
 
 export const getTasks = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`,
+    `/tools/tasks?limit=${limit}&page=${page}`
   );
   return response;
 };
 
 export const getTasksUser = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`,
+    `/tools/tasks/user?limit=${limit}&page=${page}`
   );
   return response;
 };
@@ -179,7 +179,7 @@ export const putComment = async (commentId, body, id) => {
   console.log("Actualizando comentario", commentId, body, id);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
-    body,
+    body
   );
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
@@ -217,7 +217,7 @@ export const getPolizaByContact = async (id) => {
 
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`,
+    `/sales/crm/leads?limit=${limit}&page=${page}`
   );
   return response;
 };
@@ -241,7 +241,6 @@ export const deleteLeadById = async (id) => {
 };
 
 export const googleCallback = async (data, state) => {
-  console.log("google data", data);
   const response = await axios().post(`/oauth/google-save-token`, {
     refresh_token: data.refresh_token,
     access_token: data.access_token,
@@ -258,6 +257,11 @@ export const googleCallback = async (data, state) => {
   return response;
 };
 
+export const createEmailConfig = async (data) => {
+  const response = await axios().post(`/oauth/emailconfig`, data);
+  return response;
+};
+
 export const getTokenGoogle = async (userId, oauthId) => {
   const response = await axios().get(`/oauth/config/${userId}/${oauthId}`);
   return response;
@@ -265,7 +269,7 @@ export const getTokenGoogle = async (userId, oauthId) => {
 
 export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`,
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
   );
   return response;
 };
@@ -292,7 +296,7 @@ export const getFilters = async (idUser) => {
 
 export const getMails = async (idUser, page, perPage, folder, oauthId) => {
   const response = await axios().get(
-    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`,
+    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`
   );
   return response;
 };

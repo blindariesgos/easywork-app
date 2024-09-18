@@ -8,7 +8,11 @@ import Image from "next/image";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { deleteTokenGoogle, getAllOauth } from "../../../../../../../lib/apis";
+import {
+  deleteTokenGoogle,
+  getAllOauth,
+  createEmailConfig,
+} from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
@@ -35,15 +39,32 @@ export default function ModalConfigGmail({
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
-  const [time, setTime] = useState({ name: "una semana", value: "7" });
+  const [configData, setConfigData] = useState({
+    extractMessagesForWeek: { name: "una semana", value: 7 },
+    mailboxName: null,
+    senderName: null,
+    externalSmtp: null,
+    processMessagesForWeek: false,
+    routeExistingClientEmailsToCrmManagers: false,
+    createProspectForIncomingMessages: false,
+    createContactForOutgoingMessages: false,
+    createContactsUsingAttachedVCard: false,
+    email: null,
+    contactLeadDistribution: null,
+  });
 
-  const connectGmail = () => {
+  const connectGmail = async () => {
     if (!userGoogle) {
       toast.error("Por favor autentique su Gmail");
       return;
     }
-    setOpenModalFolders(true);
-  }
+    let data = configData;
+    data.extractMessagesForWeek = configData.extractMessagesForWeek.value;
+    data.email = userGoogle.email;
+    const emailConfig = await createEmailConfig(data);
+    console.log(emailConfig);
+    if (emailConfig) setOpenModalFolders(true);
+  };
 
   const schemaInputs = yup.object().shape({
     name: yup.string(),
@@ -110,6 +131,10 @@ export default function ModalConfigGmail({
   }
 
   useEffect(() => {
+    console.log(userGoogle);
+  }, [userGoogle]);
+
+  useEffect(() => {
     if (state) getDataGoogleUser();
   }, [state]);
 
@@ -146,11 +171,11 @@ export default function ModalConfigGmail({
   }
 
   const timeMails = [
-    { name: "una semana", value: "7" },
-    { name: "un mes", value: "30" },
-    { name: "2 meses", value: "60" },
-    { name: "3 meses", value: "90" },
-    { name: "todo el tiempo", value: "1000" },
+    { name: "una semana", value: 7 },
+    { name: "un mes", value: 30 },
+    { name: "2 meses", value: 60 },
+    { name: "3 meses", value: 90 },
+    { name: "todo el tiempo", value: 1000 },
   ];
 
   return (
@@ -199,7 +224,8 @@ export default function ModalConfigGmail({
                   Extraer mensajes para{" "}
                   <Menu.Button>
                     <span className="mt-4 underline text-blue-600 cursor-pointer">
-                      {time.name}
+                      {configData.extractMessagesForWeek?.name ||
+                        "selecciona una opción"}
                     </span>
                     <Transition
                       as={Fragment}
@@ -215,7 +241,13 @@ export default function ModalConfigGmail({
                           <Menu.Item key={item.name}>
                             <div
                               onClick={() =>
-                                setTime({ name: item.name, value: item.value })
+                                setConfigData({
+                                  ...configData,
+                                  extractMessagesForWeek: {
+                                    name: item.name,
+                                    value: item.value,
+                                  },
+                                })
                               }
                               className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             >
@@ -236,11 +268,25 @@ export default function ModalConfigGmail({
                       <input
                         type="text"
                         className="rounded-md border-1 ml-2 w-full"
+                        value={configData.mailboxName || ""}
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            mailboxName: e.target.value,
+                          })
+                        }
                       />
                       <p className="ml-2 mb-1">Nombre del remitente</p>
                       <input
                         type="text"
                         className="rounded-md border-1 ml-2 w-full"
+                        value={configData.senderName || ""}
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            senderName: e.target.value,
+                          })
+                        }
                       />
                     </>
                   ) : (
@@ -287,6 +333,13 @@ export default function ModalConfigGmail({
                     <input
                       type="text"
                       className="rounded-md border-1 ml-2 w-full"
+                      value={configData.externalSmtp || ""}
+                      onChange={(e) =>
+                        setConfigData({
+                          ...configData,
+                          externalSmtp: e.target.value,
+                        })
+                      }
                     />
                   </div>
                 </>
@@ -310,34 +363,82 @@ export default function ModalConfigGmail({
                 {crmConfig && (
                   <div className="ml-3">
                     <div className="flex mt-4">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={configData.processMessagesForWeek}
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            processMessagesForWeek: e.target.checked,
+                          })
+                        }
+                      />
                       <p className="ml-1">Procesar mensajes para una semana</p>
                     </div>
                     <div className="flex mt-4">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={
+                          configData.routeExistingClientEmailsToCrmManagers
+                        }
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            routeExistingClientEmailsToCrmManagers:
+                              e.target.checked,
+                          })
+                        }
+                      />
                       <p className="ml-1">
                         Enrutar correos electrónicos de clientes existentes a
                         gerentes de CRM asignados
                       </p>
                     </div>
                     <div className="flex mt-4">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={configData.createProspectForIncomingMessages}
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            createProspectForIncomingMessages: e.target.checked,
+                          })
+                        }
+                      />
                       <p className="ml-1">
                         Crear Prospecto para los mensajes entrantes a una nueva
                         dirección de correo electrónico
                       </p>
                     </div>
                     <div className="flex mt-4">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={configData.createContactForOutgoingMessages}
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            createContactForOutgoingMessages: e.target.checked,
+                          })
+                        }
+                      />
                       <p className="ml-1">
                         Crear Contacto para mensaje salientes a una nueva
                         direción de correo electrónico
                       </p>
                     </div>
                     <div className="flex mt-4">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={configData.createContactsUsingAttachedVCard}
+                        onChange={(e) =>
+                          setConfigData({
+                            ...configData,
+                            createContactsUsingAttachedVCard: e.target.checked,
+                          })
+                        }
+                      />
                       <p className="ml-1">
-                        Creat contactos usando vCard adjunto
+                        Crear contactos usando vCard adjunto
                       </p>
                     </div>
                     <div className="flex mt-4">
@@ -350,7 +451,7 @@ export default function ModalConfigGmail({
                       </p>
                     </div>
                     <div className="flex mt-4">
-                      <p>Cola de distribución de contactos y prospectosÑ</p>
+                      <p>Cola de distribución de contactos y prospectos</p>
                     </div>
                     <div className="flex mt-4">
                       <Controller

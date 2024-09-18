@@ -38,7 +38,7 @@ export const useReceipts = ({ config = {}, filters = {} }) => {
 };
 
 export const useReceipt = (receiptId) => {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/sales/crm/polizas/receipts/${receiptId}`,
     fetcher,
   );
@@ -47,6 +47,7 @@ export const useReceipt = (receiptId) => {
     data,
     isLoading,
     isError: error,
+    mutate
   };
 };
 

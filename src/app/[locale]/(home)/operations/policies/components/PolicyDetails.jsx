@@ -10,7 +10,7 @@ import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import { formatDate } from "@/src/utils/getFormatDate";
 
-export default function PolicyDetails({ data, id }) {
+export default function PolicyDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -146,7 +146,7 @@ export default function PolicyDetails({ data, id }) {
           </div>
           <TabPanels className="w-full">
             <TabPanel className="w-full md:px-4">
-              <General data={data} id={id} />
+              <General data={data} id={id} mutate={mutate} />
             </TabPanel>
             <TabPanel className="w-full md:px-4"></TabPanel>
             <TabPanel className="w-full">

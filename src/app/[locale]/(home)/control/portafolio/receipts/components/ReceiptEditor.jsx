@@ -35,13 +35,13 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const schema = Yup.object().shape({
-    responsible: Yup.string(),
+    responsibleId: Yup.string(),
     status: Yup.string(),
     methodCollection: Yup.string(),
-    "init-date": Yup.string(),
+    startDate: Yup.string(),
     dueDate: Yup.string(),
     paymentAmount: Yup.string(),
-    currency: Yup.string(),
+    currencyId: Yup.string(),
     description: Yup.string(),
   });
 
@@ -59,14 +59,13 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   });
 
   useEffect(() => {
-    if (data?.responsible?.id) setValue("responsible", data?.responsible?.id);
+    if (data?.responsible?.id) setValue("responsibleId", data?.responsible?.id);
     if (data?.status) setValue("status", data?.status);
     if (data?.methodCollection?.name)
-      setValue("methodCollection", data?.methodCollection?.id);
-    if (data?.metadata["Fecha de inicio"])
-      setValue("init-date", data?.metadata["Fecha de inicio"]);
+      setValue("methodCollectionId", data?.methodCollection?.id);
+    if (data?.startDate) setValue("startDate", data?.startDate);
     if (data?.dueDate) setValue("dueDate", data?.dueDate);
-    if (data?.currency?.id) setValue("currency", data?.currency?.id);
+    if (data?.currency?.id) setValue("currencyId", data?.currency?.id);
     if (data?.description) setValue("description", data?.description);
   }, [data]);
 
@@ -230,11 +229,11 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   label={t(
                     "control:portafolio:receipt:details:form:responsible"
                   )}
-                  name="responsible"
+                  name="responsibleId"
                   options={lists?.users}
                   register={register}
                   disabled={!isEdit}
-                  error={!watch("responsible") && errors.responsible}
+                  error={!watch("responsibleId") && errors.responsible}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -268,19 +267,30 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   label={t(
                     "control:portafolio:receipt:details:form:payment-methods"
                   )}
-                  name="methodCollection"
+                  name="methodCollectionId"
                   options={lists?.policies?.polizaFormasCobro ?? []}
                   disabled={!isEdit}
                   register={register}
                   setValue={setValue}
                   watch={watch}
                 />
-                <TextInput
-                  type="text"
-                  label={t("control:portafolio:receipt:details:form:init-date")}
-                  register={register}
-                  name="init-date"
-                  disabled
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
+                        label={t(
+                          "control:portafolio:receipt:details:form:init-date"
+                        )}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={errors.startDate}
+                        disabled={!isEdit}
+                      />
+                    );
+                  }}
+                  name="startDate"
+                  control={control}
                 />
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -314,7 +324,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                 />
                 <SelectInput
                   label={t("control:portafolio:receipt:details:form:currency")}
-                  name="currency"
+                  name="currencyId"
                   options={lists?.policies?.currencies ?? []}
                   disabled={!isEdit}
                   register={register}

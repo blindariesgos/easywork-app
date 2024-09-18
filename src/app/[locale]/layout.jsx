@@ -39,7 +39,7 @@ export default async function RootLayout({ children, params: { locale } }) {
           <AlertContextProvider>
             <CrmContextProvider>
               <ToolContextProvider>
-                <ToastContainer stacked />
+                <ToastContainer stacked style={{ zIndex: 200000 }} />
                 {children}
               </ToolContextProvider>
             </CrmContextProvider>

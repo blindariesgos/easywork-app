@@ -8,7 +8,11 @@ import {
 } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../../../../../components/form/TextInput";
-import { deleteTags, getTags, postTags } from "../../../../../../../lib/apis";
+import {
+  deleteSubAgent,
+  getTags,
+  postSubAgent,
+} from "../../../../../../../lib/apis";
 import { handleApiError } from "../../../../../../../utils/api/errors";
 
 const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
@@ -63,16 +67,16 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
       value === ""
         ? options
         : options.filter((opt) => {
-          return `${opt.username} ${opt.name}`
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        });
+            return `${opt.username} ${opt.name}`
+              .toLowerCase()
+              .includes(value.toLowerCase());
+          });
     setFilterData(filterData);
   };
 
   const createTags = async () => {
     try {
-      const addTag = await postTags({ name: query });
+      const addTag = await postSubAgent({ name: query });
       setOptions([...options, addTag]);
       setFilterData([...options, addTag]);
       handleSelect(addTag);
@@ -85,7 +89,7 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
   const deleteTag = async (e, id) => {
     e.preventDefault();
     try {
-      const data = await deleteTags(id);
+      const data = await deleteSubAgent(id);
       setOptions(options.filter((tag) => tag.id !== id));
       setFilterData(filterData.filter((tag) => tag.id !== id));
     } catch (error) {
@@ -151,11 +155,12 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex justify-between px-4 py-2 text-sm cursor-pointer rounded-md hover:bg-primary hover:text-white ${getValues(name) &&
+                    className={`flex justify-between px-4 py-2 text-sm cursor-pointer rounded-md hover:bg-primary hover:text-white ${
+                      getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
-                      ? "bg-primary text-white"
-                      : " text-black bg-white"
-                      }`}
+                        ? "bg-primary text-white"
+                        : " text-black bg-white"
+                    }`}
                     onClick={(e) => {
                       e.preventDefault();
                       handleSelect(option);

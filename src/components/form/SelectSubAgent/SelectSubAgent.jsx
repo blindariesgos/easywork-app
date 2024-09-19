@@ -4,14 +4,7 @@ import { useTranslation } from "react-i18next";
 import AddModal from "./AddModal";
 import clsx from "clsx";
 
-const SelectSubAgent = ({
-  setValue,
-  name,
-  label,
-  error,
-  selectedOption,
-  disabled,
-}) => {
+const SelectSubAgent = ({ setValue, name, label, error, watch, disabled }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState();
@@ -24,6 +17,12 @@ const SelectSubAgent = ({
     setValue(name, option, { shouldValidate: true });
     setSelected(option);
   };
+
+  useEffect(() => {
+    if (!watch || !watch(name) || selected) return;
+
+    setSelected(watch(name));
+  }, [watch && watch(name)]);
 
   return (
     <div className="">
@@ -43,7 +42,7 @@ const SelectSubAgent = ({
             }
           )}
         >
-          <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
+          <span className="ml-2 flex gap-1 flex-wrap items-center">
             {selected?.name ?? ""}
           </span>
           {!disabled && (
@@ -58,6 +57,8 @@ const SelectSubAgent = ({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         handleSelect={handleSelect}
+        watch={watch}
+        name={name}
       />
     </div>
   );

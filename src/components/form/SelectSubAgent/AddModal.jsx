@@ -10,9 +10,9 @@ import clsx from "clsx";
 import Button from "../Button";
 import { toast } from "react-toastify";
 
-const AddModal = ({ isOpen, setIsOpen, handleSelect }) => {
+const AddModal = ({ isOpen, setIsOpen, handleSelect, watch, name }) => {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState();
   const [filters, setFilters] = useState({
     order: "DESC",
   });
@@ -42,6 +42,10 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect }) => {
       }
       mutate();
       setIsAdd(false);
+      setAddInfo({
+        name: "",
+        cua: "",
+      });
       toast.success("Sub Agente creado con exito.");
     } catch (error) {
       toast.error(
@@ -49,6 +53,12 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect }) => {
       );
     }
   };
+
+  useEffect(() => {
+    if (!watch || !watch(name) || selected) return;
+
+    setSelected(watch(name));
+  }, [watch && watch(name)]);
 
   //   const createSubAgent = async () => {
   //     try {
@@ -86,50 +96,54 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect }) => {
             className="w-full max-w-md bg-white rounded-xl p-6 backdrop-blur-2xl shadow-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
           >
             <DialogTitle as="h3" className="text-base font-medium pb-4">
-              Seleccionar Sub Agente
+              {!isAdd ? "Seleccionar Sub-agente" : "Crear Sub-agente"}
             </DialogTitle>
-            <table className="table-auto w-full">
-              <thead>
-                <tr className="border-t-2 border-b-2 border-gray-300 bg-gray-100">
-                  <td className="font-semibold p-2">Nombre</td>
-                  <td className="font-semibold p-2">Cua</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="">
-                  <td className="py-2 px-2">
-                    <input
-                      className="rounded-md border border-gray-200 w-full outline-none focus:outline-none text-sm"
-                      name="name"
-                      onChange={handleChangeFilters}
-                      placeholder="filtrar"
-                    />
-                  </td>
-                  <td className="py-2 px-2">
-                    <input
-                      className="rounded-md border border-gray-200 w-full outline-none focus:outline-none text-sm"
-                      name="cua"
-                      onChange={handleChangeFilters}
-                      placeholder="filtrar"
-                    />
-                  </td>
-                </tr>
-                {data &&
-                  data?.items?.length > 0 &&
-                  data?.items?.map((option) => (
-                    <tr
-                      key={option.id}
-                      className={clsx("hover:bg-gray-200 cursor-pointer", {
-                        "bg-primary text-white": option.id == selected.id,
-                      })}
-                      onClick={() => setSelected(option)}
-                    >
-                      <td className="py-2 px-2">{option.name}</td>
-                      <td className="py-2 px-2">{option.cua}</td>
+            {!isAdd && (
+              <div className="relative w-full overflow-y-auto max-h-[200px]">
+                <table className="table-auto w-full">
+                  <thead className="">
+                    <tr className=" bg-gray-100 sticky top-0">
+                      <td className=" p-2">Nombre</td>
+                      <td className=" p-2">Cua</td>
                     </tr>
-                  ))}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    <tr className="">
+                      <td className="py-2 px-2">
+                        <input
+                          className="rounded-md border border-gray-200 w-full outline-none focus:outline-none text-sm"
+                          name="name"
+                          onChange={handleChangeFilters}
+                          placeholder="filtrar"
+                        />
+                      </td>
+                      <td className="py-2 px-2">
+                        <input
+                          className="rounded-md border border-gray-200 w-full outline-none focus:outline-none text-sm"
+                          name="cua"
+                          onChange={handleChangeFilters}
+                          placeholder="filtrar"
+                        />
+                      </td>
+                    </tr>
+                    {data &&
+                      data?.items?.length > 0 &&
+                      data?.items?.map((option) => (
+                        <tr
+                          key={option.id}
+                          className={clsx("hover:bg-gray-200 cursor-pointer", {
+                            "bg-primary text-white": option.id == selected.id,
+                          })}
+                          onClick={() => setSelected(option)}
+                        >
+                          <td className="py-2 px-2">{option.name}</td>
+                          <td className="py-2 px-2">{option.cua}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {((!isLoading && filters?.name?.length) ||
               (!isLoading && filters?.cua?.length)) &&
               data?.items?.length == 0 &&
@@ -152,8 +166,7 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect }) => {
               )}
             {isLoading && <LoadingSpinnerSmall />}
             {isAdd && (
-              <div className="w-full p-2 border border-gray-200 rounded-md">
-                <p className="py-2">Crear SubAgente</p>
+              <div className="w-full p-2">
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     className="rounded-md border border-gray-200 w-full outline-none focus:outline-none text-sm"

@@ -38,7 +38,7 @@ export const useReceipts = ({ config = {}, filters = {} }) => {
 };
 
 export const useReceipt = (receiptId) => {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/sales/crm/polizas/receipts/${receiptId}`,
     fetcher,
   );
@@ -47,6 +47,7 @@ export const useReceipt = (receiptId) => {
     data,
     isLoading,
     isError: error,
+    mutate
   };
 };
 
@@ -63,4 +64,21 @@ export const useReceiptsByPolicyId = (policyId) => {
     isError: error,
   };
 }
+
+export const useSubAgents = ({ filters }) => {
+  const params = Object.keys(filters).filter(key => filters[key]).map(key => `${key}=${filters[key]}`).join("&")
+  const { data, error, isLoading, mutate } = useSWR(
+    `/sales/crm/polizas/receipts/sub-agents?${params}`,
+    fetcher,
+  );
+
+  return {
+    data,
+    isLoading,
+    isError: error,
+    mutate
+  };
+}
+
+
 

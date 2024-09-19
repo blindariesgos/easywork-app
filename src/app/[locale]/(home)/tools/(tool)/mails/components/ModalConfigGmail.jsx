@@ -12,6 +12,7 @@ import {
   deleteTokenGoogle,
   getAllOauth,
   createEmailConfig,
+  getEmailConfig,
 } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import { Menu, Transition } from "@headlessui/react";
@@ -28,14 +29,7 @@ export default function ModalConfigGmail({
 }) {
   const router = useRouter();
   const session = useSession();
-  const {
-    lists,
-    selectOauth,
-    setOpenModalFolders,
-    openModalFolders,
-    userGoogle,
-    setUserGoogle,
-  } = useAppContext();
+  const { lists, selectOauth, userGoogle, setUserGoogle } = useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
@@ -62,9 +56,31 @@ export default function ModalConfigGmail({
     data.extractMessagesForWeek = configData.extractMessagesForWeek.value;
     data.email = userGoogle.email;
     const emailConfig = await createEmailConfig(data);
-    console.log(emailConfig);
-    if (emailConfig) setOpenModalFolders(true);
+    if (emailConfig)
+      router.push(`${window.location.pathname}?configemail=true`);
+    
   };
+
+  // useEffect(() => {
+  //   if (userGoogle?.email) {
+  //     getEmailConfig(userGoogle.email).then((res) => {
+  //       setConfigData((prevConfigData) => ({
+  //         ...prevConfigData,
+  //         externalSmtp: res.externalSmtp,
+  //         extractMessagesForWeek: { name: "una semana", value: 7 },
+  //         mailboxName: res.mailboxName,
+  //         senderName: res.senderName,
+  //         processMessagesForWeek: res.processMessagesForWeek,
+  //         routeExistingClientEmailsToCrmManagers: res.routeExistingClientEmailsToCrmManagers,
+  //         createProspectForIncomingMessages: res.createProspectForIncomingMessages,
+  //         createContactForOutgoingMessages: res.createContactForOutgoingMessages,
+  //         createContactsUsingAttachedVCard: res.createContactsUsingAttachedVCard,
+  //         email: res.email,
+  //         contactLeadDistribution: res.contactLeadDistribution,
+  //       }));
+  //     });
+  //   }
+  // }, [userGoogle, configData]);
 
   const schemaInputs = yup.object().shape({
     name: yup.string(),
@@ -131,10 +147,6 @@ export default function ModalConfigGmail({
   }
 
   useEffect(() => {
-    console.log(userGoogle);
-  }, [userGoogle]);
-
-  useEffect(() => {
     if (state) getDataGoogleUser();
   }, [state]);
 
@@ -157,6 +169,7 @@ export default function ModalConfigGmail({
 
   async function getDataGoogleUser() {
     setUserGoogle(null);
+    if (motivo === "add") return
     if (addOtherOauth) return;
     try {
       const config = {
@@ -180,7 +193,7 @@ export default function ModalConfigGmail({
 
   return (
     <>
-      <SliderOverShort openModal={state && !openModalFolders}>
+      <SliderOverShort openModal={state}>
         {children}
         <div className="bg-gray-100 rounded-l-2xl max-md:w-screen w-96 overflow-y-auto h-screen">
           <div className="m-3 font-medium text-lg">

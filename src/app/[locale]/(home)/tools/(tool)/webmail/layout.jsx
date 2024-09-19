@@ -93,11 +93,15 @@ export default function WebmailLayout({ children, table }) {
   }, []);
 
   useEffect(() => {
+    getAllOauth(session.data.user.id).then((response) => {
+      if (!response.length > 0) {
+        router.push("/tools/mails");
+      }
+    });
     if (window.innerWidth > 1023) {
       setTimeout(() => {
         setSidebarOpenEmail(true);
       }, 1000);
-    } else {
     }
   }, [setSidebarOpenEmail]);
 
@@ -110,10 +114,6 @@ export default function WebmailLayout({ children, table }) {
   }, [openModalFolders]);
 
   useEffect(() => {
-    console.log(userData);
-  }, [userData]);
-
-  useEffect(() => {
     getMails(
       session.data.user.id,
       searchParams.get("page"),
@@ -122,6 +122,10 @@ export default function WebmailLayout({ children, table }) {
       selectOauth?.id
     ).then((res) => {
       setDMails(res);
+      if (dmails.length === 0) {
+        router.push(`${window.location.pathname}?configemail=true`)
+        toast.error("Por favor sincronice su Email");
+      }
     });
   }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
 
@@ -203,27 +207,16 @@ export default function WebmailLayout({ children, table }) {
     setGmailState(state);
   }
 
-  function backButton() {
-    setSidebarOpenEmail(false);
-    window.history.go(-2);
-  }
-
   const itemOptions = [
     { name: "Volver a la lista", onClick: "" },
     { name: "Contactos", onClick: "" },
     { name: "Editar firmas", onClick: "" },
     {
       name: "Configuración del buzón",
-      onClick: () => openModal("edit", true, false),
+      onClick: () =>
+        router.push(`${window.location.pathname}?configemail=true`),
     },
-    // { name: "Abrir email", onClick: "" },
   ];
-
-  // async function saveMails() {
-  //   axios.get(
-  //     `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth.id}`
-  //   );
-  // }
 
   return (
     <>
@@ -238,14 +231,7 @@ export default function WebmailLayout({ children, table }) {
           className="bg-easywork-main"
         />
       </ModalConfigGmail>
-      {openModalFolders && (
-        <ModalAddFolders state={true} addOtherOauth={addOtherOauth}>
-          <Tag
-            onclick={() => setOpenModalFolders(false)}
-            className="bg-easywork-main"
-          />
-        </ModalAddFolders>
-      )}
+      <ModalAddFolders isConfig={true} />
       <SendMessage
         colorTag="bg-easywork-main"
         userData={userData}
@@ -373,11 +359,7 @@ export default function WebmailLayout({ children, table }) {
                     transition
                     className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
                   >
-                    <div
-                      onClick={() => {
-                        openModal("add", true, true);
-                      }}
-                    >
+                    <div onClick={() => router.push("/tools/mails")}>
                       Conectar nuevo
                     </div>
                   </MenuItem>
@@ -391,7 +373,7 @@ export default function WebmailLayout({ children, table }) {
                     border: "1px solid white",
                     borderRadius: "50%",
                     cursor: "pointer",
-                    animation: isLoading ? "spin 1s infinite linear" : "none", // Aplica la animación si isLoading es true
+                    animation: isLoading ? "spin 1s infinite linear" : "none",
                   }}
                   onClick={() => updateData()}
                 >
@@ -406,7 +388,7 @@ export default function WebmailLayout({ children, table }) {
             </div>
             <div className="w-full">
               <button
-                onClick={() => backButton()}
+                onClick={() => router.back()}
                 className="w-full hover:bg-slate-200 bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
               >
                 volver

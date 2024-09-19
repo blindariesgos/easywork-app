@@ -92,7 +92,7 @@ export default function ContactGeneral({ contact, id }) {
     if (contact?.lastName) setValue("lastName", contact?.lastName);
     if (contact?.cargo) setValue("cargo", contact?.cargo);
     if (contact?.phones[0]?.phone?.number)
-      setValue("phone", contact?.phones[0]?.phone?.number);
+      setValue("email", contact?.phones[0]?.phone?.number);
     if (contact?.emails[0]?.email?.email)
       setValue("email", contact?.emails[0]?.email?.email);
     if (contact?.type?.id) setValue("typeId", contact?.type?.id);
@@ -128,7 +128,7 @@ export default function ContactGeneral({ contact, id }) {
       : [{ number: phone }];
     const amails = contact?.emails?.length
       ? contact?.emails.map((e, index) => ({
-          email: index == 0 ? phone : e.email?.email,
+          email: index == 0 ? email : e.email?.email,
         }))
       : [{ email }];
 
@@ -162,6 +162,7 @@ export default function ContactGeneral({ contact, id }) {
     try {
       setLoading(true);
       if (!contact) {
+        console.log("Creando contacto");
         const response = await createContact(formData);
         if (response.hasError) {
           let message = response.message;
@@ -174,6 +175,8 @@ export default function ContactGeneral({ contact, id }) {
         toast.success(t("contacts:create:msg"));
       } else {
         console.log({ body });
+        console.log("Ediatndo contacto");
+
         const response = await updateContact(formData, id);
         if (response.hasError) {
           console.log({ response });

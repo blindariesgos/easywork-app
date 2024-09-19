@@ -54,8 +54,7 @@ function SelectInput({
         });
 
   useEffect(() => {
-    if (!watch || !options || selected) return;
-    console.log({ selected });
+    if (!watch || !options || !watch(name) || selected) return;
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);

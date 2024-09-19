@@ -10,7 +10,7 @@ import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import { formatDate } from "@/src/utils/getFormatDate";
 
-export default function PolicyDetails({ data, id }) {
+export default function PolicyDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -68,10 +68,13 @@ export default function PolicyDetails({ data, id }) {
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
-      <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] px-4">
+      <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
         <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
-          <div className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
+          <div
+            id="policy-header"
+            className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
+          >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
                 <p className="text-xl sm:text-2xl xl:text-3xl">
@@ -132,7 +135,7 @@ export default function PolicyDetails({ data, id }) {
             <TabList className="flex items-center gap-2 bg-gray-100 rounded-2xl py-2 px-4 w-full flex-wrap">
               {tabs.map((tab) => (
                 <Tab
-                  key={tab}
+                  key={tab.name}
                   disabled={tab.disabled}
                   className="data-[selected]:bg-blue-100 disabled:opacity-60 data-[hover]:bg-blue-400 outline-none text-xs uppercase focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md p-2.5"
                 >
@@ -143,7 +146,7 @@ export default function PolicyDetails({ data, id }) {
           </div>
           <TabPanels className="w-full">
             <TabPanel className="w-full md:px-4">
-              <General data={data} id={id} />
+              <General data={data} id={id} mutate={mutate} />
             </TabPanel>
             <TabPanel className="w-full md:px-4"></TabPanel>
             <TabPanel className="w-full">

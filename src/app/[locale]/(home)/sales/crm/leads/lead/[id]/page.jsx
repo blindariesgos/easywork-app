@@ -1,29 +1,16 @@
 "use client";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import LeadDetails from "./LeadDetails";
-import { getLeadById } from "../../../../../../../../lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { useLead } from "@/src/lib/api/hooks/leads";
 
 export default function PageContactId({ params: { id } }) {
-  const [lead, setLead] = useState();
-
-  useEffect(() => {
-    const getLeadId = async (id) => {
-      try {
-        const lead = await getLeadById(id);
-        setLead(lead);
-      } catch (error) {
-        throw new Error(error);
-      }
-    };
-    if (!id || lead) return;
-    getLeadId(id);
-  }, []);
+  const { lead, isLoading, isError, mutate } = useLead(id);
 
   return (
     <Fragment>
-      {!lead && <LoaderSpinner />}
-      {lead && <LeadDetails leadInfo={lead} id={id} />}
+      {isLoading && <LoaderSpinner />}
+      {lead && <LeadDetails leadInfo={lead} id={id} mutate={mutate} />}
     </Fragment>
   );
 }

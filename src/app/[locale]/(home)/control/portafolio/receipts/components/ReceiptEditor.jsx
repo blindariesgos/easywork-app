@@ -25,6 +25,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
 import { formatISO } from "date-fns";
+import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 
 export default function ReceiptEditor({ data, id, updateReceipt }) {
   const { t } = useTranslation();
@@ -67,16 +68,20 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
     if (data?.dueDate) setValue("dueDate", data?.dueDate);
     if (data?.currency?.id) setValue("currencyId", data?.currency?.id);
     if (data?.description) setValue("description", data?.description);
+    if (data?.subAgente) setValue("subAgenteId", data?.subAgente);
   }, [data]);
 
   const onSubmit = async (data) => {
     console.log({ data });
-    const { paymentAmount, dueDate, ...otherData } = data;
+    const { paymentAmount, dueDate, startDate, subAgenteId, ...otherData } =
+      data;
 
     const body = {
       ...otherData,
       paymentAmount: +paymentAmount,
       dueDate: formatISO(dueDate),
+      startDate: formatISO(startDate),
+      subAgenteId: subAgenteId.id,
     };
     try {
       const response = await putReceipt(id, body);
@@ -326,6 +331,14 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   label={t("control:portafolio:receipt:details:form:currency")}
                   name="currencyId"
                   options={lists?.policies?.currencies ?? []}
+                  disabled={!isEdit}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectSubAgent
+                  label={"Sub-agente"}
+                  name="subAgenteId"
                   disabled={!isEdit}
                   register={register}
                   setValue={setValue}

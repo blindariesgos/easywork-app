@@ -46,7 +46,6 @@ export default function ContactGeneral({ contact, id }) {
 
   const schema = Yup.object().shape({
     email: Yup.string()
-      .required(t("common:validations:required"))
       .email(t("common:validations:email"))
       .min(5, t("common:validations:min", { min: 5 })),
     fullName: Yup.string(),
@@ -57,7 +56,7 @@ export default function ContactGeneral({ contact, id }) {
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
     cargo: Yup.string(),
-    phone: Yup.string().required(t("common:validations:required")),
+    phone: Yup.string(),
     rfc: Yup.string(),
     typeContact: Yup.string(),
     sourceId: Yup.string(),

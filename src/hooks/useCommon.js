@@ -1125,8 +1125,8 @@ export const useLeads = () => {
     {
       id: 1,
       name: t("leads:table:lead"),
-      row: "name",
-      order: "name",
+      row: "fullName",
+      order: "fullName",
       check: true,
       link: true,
       permanent: true,
@@ -1135,7 +1135,7 @@ export const useLeads = () => {
     {
       id: 2,
       name: t("leads:table:stages"),
-      row: "stages",
+      row: "stage",
       check: true,
     },
     {
@@ -1148,7 +1148,7 @@ export const useLeads = () => {
     {
       id: 4,
       name: t("leads:table:origin"),
-      row: "origin",
+      row: "source",
       check: true,
     },
     {

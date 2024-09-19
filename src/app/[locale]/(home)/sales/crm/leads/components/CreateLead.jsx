@@ -15,7 +15,7 @@ import Button from "../../../../../../../components/form/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { contactTypes, responsible } from "../../../../../../../lib/common";
+import { contactTypes } from "../../../../../../../lib/common";
 import { toast } from "react-toastify";
 import HeaderCrm from "../../HeaderCrm";
 import { useLeads } from "../../../../../../../hooks/useCommon";
@@ -23,33 +23,22 @@ import ProgressStages from "./ProgressStages";
 import TextInput from "../../../../../../../components/form/TextInput";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import useAppContext from "@/src/context/app";
+import { createLead, updateContact } from "@/src/lib/apis";
+import { useSWRConfig } from "swr";
 
-const contactSources = [
-  { id: 1, name: "Correo electrónico" },
-  { id: 2, name: "Maratón de llamadas" },
-  { id: 3, name: "Formulario de CRM" },
-  { id: 4, name: "Formulario de devolución de llamada" },
-  { id: 5, name: "Gestión del agente" },
-  { id: 6, name: "Red social - LinkedIn" },
-  { id: 7, name: "Red social - Instagram" },
-  { id: 8, name: "Red social - Facebook" },
-  { id: 9, name: "Red social - Otra" },
-  { id: 10, name: "Otro CRM" },
-  { id: 11, name: "Página de ventas" },
-  { id: 12, name: "Teléfono" },
-  { id: 13, name: "WhatsApp" },
-];
-
-export default function CreateLead({ lead, id }) {
+export default function CreateLead({ lead, id, updateLead }) {
   const { t } = useTranslation();
-  const [openButtons, setOpenButtons] = useState();
+  const [isEdit, setIsEdit] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [files, setFiles] = useState([]);
   const { optionsHeader } = useLeads();
+  const { lists } = useAppContext();
   const router = useRouter();
+  const { mutate } = useSWRConfig();
+
   useEffect(() => {
-    setOpenButtons(id ? false : true);
+    setIsEdit(id ? false : true);
   }, [id]);
 
   const schema = Yup.object().shape({
@@ -60,25 +49,18 @@ export default function CreateLead({ lead, id }) {
     name: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
-    position: Yup.string().required(t("common:validations:required")),
+    lastName: Yup.string()
+      .required(t("common:validations:required"))
+      .min(2, t("common:validations:min", { min: 2 })),
+    cargo: Yup.string(),
     phone: Yup.string().required(t("common:validations:required")),
-    rfc: Yup.string().required(t("common:validations:required")),
-    typeContact: Yup.string().required(t("common:validations:required")),
-    otherType: Yup.string(),
-    origin: Yup.string().required(t("common:validations:required")),
-    address: Yup.string().required(t("common:validations:required")),
-    responsible: Yup.string().required(t("common:validations:required")),
-    amount: Yup.number()
-      .typeError(t("common:validations:number"))
-      .positive()
-      .transform((value, originalValue) => {
-        if (typeof value === "string") {
-          const floatValue = parseFloat(value);
-          return isNaN(floatValue) ? originalValue : floatValue;
-        }
-        return value;
-      })
-      .required(t("common:validations:required")),
+    rfc: Yup.string(),
+    typeId: Yup.string(),
+    sourceId: Yup.string(),
+    typePerson: Yup.string(),
+    address: Yup.string(),
+    assignedById: Yup.string(),
+    amount: Yup.string(),
   });
 
   const {
@@ -90,22 +72,31 @@ export default function CreateLead({ lead, id }) {
     watch,
     formState: { isValid, errors },
   } = useForm({
-    defaultValues: {
-      name: id ? lead?.name : "",
-      //   position: id ? "Programador" : "",
-      //   phone: id ? "5284791145" : "",
-      //   email: id ? "test@gmail.com" : "",
-      //   rfc: id ?  "fcdvv" : "",
-      //   amount: id ? "2022.00" : "",
-      //   typeContact: id ? "Amigo" : "",
-      //   otherType: id ? "" : "",
-      //   origin: id ? "Correo electrónico" : "",
-      //   responsible: id ? "Nathaly Polin": "",
-      //   address: id ? "Address": ""
-    },
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (!lead) return;
+    if (lead?.fullName) setValue("fullName", lead?.fullName);
+    if (lead?.name) setValue("name", lead?.name);
+    if (lead?.lastName) setValue("lastName", lead?.lastName);
+    if (lead?.cargo) setValue("cargo", lead?.cargo);
+    if (lead?.phones[0]?.phone?.number)
+      setValue("phone", lead?.phones[0]?.phone?.number);
+    if (lead?.emails[0]?.email?.email)
+      setValue("email", lead?.emails[0]?.email?.email);
+    if (lead?.type?.id) setValue("typeId", lead?.type?.id);
+    if (lead?.source?.id) setValue("sourceId", lead?.source?.id);
+    if (lead?.birthdate) setValue("birthdate", lead?.birthdate);
+    if (lead?.address) setValue("address", lead?.address);
+    if (lead?.rfc) setValue("rfc", lead?.rfc);
+    if (lead?.typePerson) setValue("typePerson", lead?.typePerson);
+    if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy.id);
+    // if (lead?.observador) setValue("observadorId", lead?.observador.id);
+
+    setSelectedProfileImage({ base64: lead?.photo || null, file: null });
+  }, [lead]);
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -121,45 +112,82 @@ export default function CreateLead({ lead, id }) {
     }
   }, []);
 
-  const handleFilesUpload = (event, drop) => {
-    let uploadedImages = [...files];
-    const fileList = drop ? event.dataTransfer.files : event.target.files;
+  const handleFormSubmit = async (data) => {
+    const { phone, email, ...otherData } = data;
+    const phones = lead?.phones?.length
+      ? lead?.phones.map((p, index) => ({
+          number: index == 0 ? data.phone : p.phone?.number,
+        }))
+      : [{ number: phone }];
+    const amails = lead?.emails?.length
+      ? lead?.emails.map((e, index) => ({
+          email: index == 0 ? phone : e.email?.email,
+        }))
+      : [{ email }];
 
-    if (fileList) {
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error(t("common:validations:size", { size: 5 }));
-          return;
-        } else {
-          const reader = new FileReader();
+    let body = {
+      ...otherData,
+      emails_dto: amails,
+      phones_dto: phones,
+    };
 
-          reader.onload = (e) => {
-            setTimeout(() => {
-              const existFile = uploadedImages.some(
-                (item) => item.name === file.name
-              );
-              if (!existFile) {
-                uploadedImages = [
-                  ...uploadedImages,
-                  {
-                    base64: reader.result,
-                    type: file.type.split("/")[0],
-                    name: file.name,
-                  },
-                ];
-                setFiles(uploadedImages);
-              }
-            }, 500);
-          };
-          reader.readAsDataURL(file);
-        }
+    if (selectedProfileImage?.file) {
+      body = {
+        ...body,
+        photo: selectedProfileImage?.file || "",
+      };
+    }
+
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
       }
     }
-  };
 
-  const handleFormSubmit = async (data) => {
-    console.log("data", data);
+    try {
+      setLoading(true);
+      if (!lead) {
+        const response = await createLead(formData);
+        if (response.hasError) {
+          let message = response.message;
+          if (response.errors) {
+            message = response.errors.join(", ");
+          }
+          throw { message };
+        }
+        await mutate(`/sales/crm/leads?limit=5&page=1`);
+        toast.success("Prospecto creado con exito");
+      } else {
+        console.log({ body });
+        const response = await updateContact(formData, id);
+        if (response.hasError) {
+          console.log({ response });
+          let message = response.message;
+          if (response.errors) {
+            message = response.errors.join(", ");
+          }
+          throw { message };
+        }
+        toast.success(t("contacts:edit:updated-contact"));
+        await mutate(`/sales/crm/contacts?limit=5&page=1`);
+        await mutate(`/sales/crm/contacts/${id}`);
+      }
+      setLoading(false);
+      router.back();
+    } catch (error) {
+      console.log({ error });
+      console.error(error.message);
+      handleApiError(error.message);
+      setLoading(false);
+    }
   };
 
   return (
@@ -186,13 +214,17 @@ export default function CreateLead({ lead, id }) {
               )}
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl pl-4">
-                  {lead ? lead.name : t("leads:lead:new")}
+                  {lead ? lead.fullName : t("leads:lead:new")}
                 </h1>
                 {/* <div>
                 <PencilIcon className="h-4 w-4 text-gray-200" />
               </div> */}
               </div>
-              <ProgressStages />
+              <ProgressStages
+                stage={lead.stage}
+                mutate={updateLead}
+                leadId={id}
+              />
               <HeaderCrm options={optionsHeader} />
             </div>
           </div>
@@ -218,7 +250,7 @@ export default function CreateLead({ lead, id }) {
                 <button
                   type="button"
                   disabled={!id}
-                  onClick={() => setOpenButtons(!openButtons)}
+                  onClick={() => setIsEdit(!isEdit)}
                 >
                   <PencilIcon className="h-6 w-6 text-primary" />
                 </button>
@@ -232,22 +264,32 @@ export default function CreateLead({ lead, id }) {
               <div className="grid grid-cols-1 gap-x-6 gap-y-3 lg:px-12 px-2">
                 <TextInput
                   type="text"
-                  label={t("leads:lead:fields:fullname")}
+                  label={t("leads:lead:fields:name")}
                   placeholder={t("leads:lead:fields:placeholder-name")}
                   error={errors.name}
                   register={register}
                   name="name"
-                  disabled={!openButtons}
+                  disabled={!isEdit}
+                  // value={watch('name')}
+                />
+
+                <TextInput
+                  type="text"
+                  label={t("leads:lead:fields:lastName")}
+                  placeholder={t("leads:lead:fields:placeholder-name")}
+                  error={errors.name}
+                  register={register}
+                  name="lastName"
+                  disabled={!isEdit}
                   // value={watch('name')}
                 />
                 <TextInput
                   label={t("leads:lead:fields:position")}
                   placeholder={t("leads:lead:fields:position")}
-                  error={errors.position}
+                  error={errors.cargo}
                   register={register}
-                  // value={watch('position')}
-                  name="position"
-                  disabled={!openButtons}
+                  name="cargo"
+                  disabled={!isEdit}
                 />
                 <Controller
                   render={({ field: { ref, ...field } }) => {
@@ -258,7 +300,7 @@ export default function CreateLead({ lead, id }) {
                         error={errors.phone}
                         label={t("leads:lead:fields:phone-number")}
                         defaultValue={field.value}
-                        disabled={!openButtons}
+                        disabled={!isEdit}
                       />
                     );
                   }}
@@ -273,7 +315,7 @@ export default function CreateLead({ lead, id }) {
                   register={register}
                   name="email"
                   // value={watch('email')}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                 />
                 <TextInput
                   label={t("leads:lead:fields:rfc")}
@@ -281,7 +323,7 @@ export default function CreateLead({ lead, id }) {
                   error={errors.rfc}
                   register={register}
                   name="rfc"
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                   // value={watch('rfc')}
                 />
                 <TextInput
@@ -290,78 +332,65 @@ export default function CreateLead({ lead, id }) {
                   register={register}
                   name="address"
                   placeholder={t("leads:lead:fields:placeholder-address")}
-                  disabled={!openButtons}
+                  disabled={!isEdit}
                   // value={watch('address')}
                 />
                 <SelectInput
                   label={t("leads:lead:fields:contact-type")}
-                  options={contactTypes}
-                  selectedOption={
-                    contactTypes.filter(
-                      (option) => option.name === watch("typeContact")
-                    )[0]
-                  }
-                  name="typeContact"
-                  error={!watch("typeContact") && errors.typeContact}
+                  options={lists?.listLead?.leadTypes}
+                  name="typeId"
+                  error={errors.typeId}
                   register={register}
                   setValue={setValue}
-                  disabled={!openButtons}
-                  // value={watch('typeContact')}
+                  disabled={!isEdit}
+                  watch={watch}
                 />
-                {watch("typeContact") == "Otro" ? (
-                  <TextInput
-                    label={t("leads:lead:fields:otherType")}
-                    placeholder=""
-                    error={errors.otherType}
-                    register={register}
-                    name="otherType"
-                    disabled={!openButtons}
-                    // value={watch('otherType')}
-                  />
-                ) : null}
+
                 <SelectDropdown
                   label={t("leads:lead:fields:responsible")}
-                  name="responsible"
-                  options={responsible}
+                  name="assignedById"
+                  options={lists?.users ?? []}
                   register={register}
-                  disabled={!openButtons}
-                  selectedOption={
-                    responsible.filter(
-                      (option) => option.name === watch("responsible")
-                    )[0]
-                  }
-                  error={!watch("responsible") && errors.responsible}
+                  disabled={!isEdit}
+                  error={!watch("assignedById") && errors.assignedById}
                   setValue={setValue}
-                  // value={watch('responsible')}
+                  watch={watch}
+                />
+                <SelectInput
+                  label={t("contacts:create:typePerson")}
+                  options={[
+                    {
+                      name: "Fisica",
+                      id: "fisica",
+                    },
+                    {
+                      name: "Moral",
+                      id: "moral",
+                    },
+                  ]}
+                  watch={watch}
+                  name="typePerson"
+                  disabled={!isEdit}
+                  setValue={setValue}
+                  error={!watch("typePerson") && errors.typePerson}
                 />
                 <SelectInput
                   label={t("leads:lead:fields:origin")}
-                  name="origin"
-                  options={contactSources}
-                  selectedOption={
-                    contactSources.filter(
-                      (option) => option.name === watch("origin")
-                    )[0]
-                  }
-                  error={!watch("origin") && errors.origin}
+                  name="sourceId"
+                  options={lists?.listLead?.leadSources}
+                  error={errors.sourceId}
                   register={register}
                   setValue={setValue}
-                  disabled={!openButtons}
-                  // value={watch('origin')}
+                  disabled={!isEdit}
+                  watch={watch}
                 />
+
                 <TextInput
                   label={t("leads:lead:fields:amount")}
                   error={errors.amount}
                   register={register}
                   name="amount"
-                  disabled={!openButtons}
-                />
-                <DocumentSelector
-                  name="files"
-                  onChange={handleFilesUpload}
-                  files={files}
-                  disabled={!openButtons}
-                  setFiles={setFiles}
+                  disabled={!isEdit}
                 />
               </div>
             </div>
@@ -372,7 +401,7 @@ export default function CreateLead({ lead, id }) {
         </div>
 
         {/* Botones de acción */}
-        {(openButtons || !lead) && (
+        {(isEdit || !lead) && (
           <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
             <Button
               type="submit"

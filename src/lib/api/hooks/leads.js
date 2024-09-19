@@ -36,8 +36,8 @@ export const useLeads = ({ config = {}, filters = {} }) => {
   };
 };
 
-export const useContact = (id) => {
-  const { data, error, isLoading } = useSWR(
+export const useLead = (id) => {
+  const { data, error, isLoading, mutate } = useSWR(
     `/sales/crm/leads/${id}`,
     fetcher,
   );
@@ -46,6 +46,21 @@ export const useContact = (id) => {
     lead: data,
     isLoading,
     isError: error,
+    mutate
+  };
+};
+
+export const useLeadCancelReazon = () => {
+  const { data, error, isLoading, mutate } = useSWR(
+    `/sales/crm/leads/cancel-reazon`,
+    fetcher,
+  );
+
+  return {
+    lead: data,
+    isLoading,
+    isError: error,
+    mutate
   };
 };
 

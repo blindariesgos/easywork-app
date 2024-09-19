@@ -52,6 +52,13 @@ export const createContact = async (data) => {
   // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;
 };
+
+export const createLead = async (data) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post("/sales/crm/leads/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 export const updateContact = async (data, id) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .put(`/sales/crm/contacts/${id}`, data)
@@ -91,6 +98,11 @@ export const deleteContactId = async (id) => {
 
 export const getAddListContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/get_add_lists`);
+  return response;
+};
+
+export const getAddListLeads = async () => {
+  const response = await axios().get(`/sales/crm/leads/get_add_lists`);
   return response;
 };
 
@@ -174,6 +186,12 @@ export const postComment = async (body, id) => {
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;
 };
+
+export const putLeadStage = async (leadId, stageId) => {
+  const response = await axios().put(`/sales/crm/leads/${leadId}/stage/${stageId}`).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
 export const deleteComment = async (commentId, id) => {
   const response = await axios().delete(`/tools/tasks/comments/${commentId}`);
   revalidatePath(`/tools/tasks/task/${id}`, "page");

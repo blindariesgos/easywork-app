@@ -81,40 +81,40 @@ export default function TableLeads() {
   };
 
   const ColorDivisionsStages = (data) => {
-    const colorGreen = ["etapa1", "etapa2", "etapa3", "etapa4"];
-    const colorYellow = ["etapa5", "etapa6"];
-    const colorRed = ["etapa7"];
+    const stages = [
+      "Contacto Inicial",
+      "Presentar Propuesta",
+      "Propuesta en revisión",
+      "Trámite para emisión",
+      "Emisión de póliza",
+      "Cierre Positivo: Póliza pagada",
+      "Cierre Negativo: Póliza anulada",
+    ];
 
-    const getColorClass = (index) => {
-      if (
-        colorGreen.includes(data.id) &&
-        index <= colorGreen.indexOf(data.id)
-      ) {
-        return "bg-green-600";
-      } else if (
-        colorYellow.includes(data.id) &&
-        index > colorGreen.indexOf(data.id) &&
-        index <= colorYellow.indexOf(data.id)
-      ) {
-        return "bg-yellow-500";
-      } else if (colorRed.includes(data.id) && index === data.id) {
-        return "bg-red-500";
-      } else {
-        return "";
-      }
+    const colors = [
+      "bg-green-primary",
+      "bg-green-primary",
+      "bg-green-primary",
+      "bg-green-primary",
+      "bg-yellow-500",
+      "bg-yellow-500",
+      "bg-red-500",
+    ];
+
+    const getColorClass = (currentIndex) => {
+      const stageIndex = stages.findIndex((value) => data.name == value);
+      const stageColor = colors[stageIndex];
+
+      return currentIndex <= stageIndex ? stageColor : "";
     };
 
     return (
-      <div
-        className={`flex justify-center w-28 ${
-          colorRed.includes(data?.id) ? "bg-red-500" : "bg-gray-200"
-        }`}
-      >
+      <div className={`flex justify-center w-28 ${"bg-gray-200"}`}>
         {[0, 1, 2, 3, 4, 5, 6].map((index) => (
           <div
             key={index}
-            className={`w-4 h-4 ${getColorClass(index)} border border-gray-400`}
-          ></div>
+            className={`w-4 h-4 ${getColorClass(index)} border-t border-b border-l last:border-r border-gray-400`}
+          />
         ))}
       </div>
     );
@@ -175,30 +175,6 @@ export default function TableLeads() {
                 </tr>
               </thead>
               <tbody className="bg-gray-100">
-                {(!data || data?.items?.length === 0) && (
-                  <div className="flex items-center justify-center h-96">
-                    <div className="flex flex-col items-center space-y-3">
-                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-10 h-10 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          />
-                        </svg>
-                      </div>
-                      <p className="text-lg font-medium text-gray-400">
-                        {t("leads:table:not-data")}
-                      </p>
-                    </div>
-                  </div>
-                )}
                 {selectedColumns.length > 0 &&
                   data?.items?.length > 0 &&
                   data?.items?.map((lead, index) => (
@@ -236,7 +212,7 @@ export default function TableLeads() {
                               {column.link ? (
                                 <Link
                                   href={`/sales/crm/leads/lead/${lead.id}?show=true`}
-                                  className="flex gap-3"
+                                  className="flex gap-3 items-center"
                                 >
                                   <Image
                                     className="h-8 w-8 rounded-full bg-zinc-200"
@@ -247,10 +223,14 @@ export default function TableLeads() {
                                   />
                                   {lead[column.row]}
                                 </Link>
-                              ) : column.row === "stages" ? (
+                              ) : column.row === "stage" ? (
                                 <div className="flex items-center flex-col">
-                                  {/* <div className='flex justify-center'>{ColorDivisionsStages(lead.stages)}</div> */}
-                                  {/* <p className='mt-1 text-xs text-gray-200 font-semibold'>{lead.stages.name}</p> */}
+                                  <div className="flex justify-center">
+                                    {ColorDivisionsStages(lead.stage)}
+                                  </div>
+                                  <p className="mt-1 text-xs text-[#969696] font-semibold">
+                                    {lead.stage.name}
+                                  </p>
                                 </div>
                               ) : column.activities ? (
                                 <div className="flex justify-center gap-2">
@@ -294,8 +274,8 @@ export default function TableLeads() {
                               ) : column.row === "createdAt" ? (
                                 moment(lead[column.row]).format("DD/MM/YYYY") ??
                                 "N/A"
-                              ) : column.row === "origin" ? (
-                                lead.origin
+                              ) : column.row === "source" ? (
+                                lead?.source?.name
                               ) : (
                                 lead[column.row] || "-"
                               )}
@@ -306,6 +286,30 @@ export default function TableLeads() {
                   ))}
               </tbody>
             </table>
+            {(!data || data?.items?.length === 0) && (
+              <div className="flex items-center justify-center h-96">
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-10 h-10 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-lg font-medium text-gray-400">
+                    {t("leads:table:not-data")}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

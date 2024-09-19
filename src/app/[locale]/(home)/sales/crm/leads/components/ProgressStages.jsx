@@ -1,30 +1,83 @@
-'use client';
-import { useLeads } from '../../../../../../../hooks/useCommon';
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
-import React, { useState } from 'react';
-import DialogPositiveStage from './DialogPositiveStage';
+"use client";
+import { useLeads } from "../../../../../../../hooks/useCommon";
+import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import React, { useEffect, useState } from "react";
+import DialogPositiveStage from "./DialogPositiveStage";
+import useAppContext from "@/src/context/app";
+import { MdKeyboardArrowRight } from "react-icons/md";
+import clsx from "clsx";
+import { postComment, putLeadStage } from "@/src/lib/apis";
+import { toast } from "react-toastify";
 
-export default function ProgressStages() {
-	const { stages, isOpen, setIsOpen } = useLeads();
-	const [ selectedReason, setSelectedReason ] = useState([]);
-	return (
-		<div className="flex md:flex-row items-center md:justify-center gap-2 md:gap-3 flex-wrap">
-			{stages.map((stage, index) => {
-				const stageClassName = `px-3 py-2 rounded-lg text-sm text-white cursor-pointer ${stage.id === 6
-					? 'bg-green-500'
-					: stage.id === 7 ? 'bg-red-500' : 'bg-easy-600'}`;
-				return (
-					<div key={stage.id} className="flex flex-row items-center relative">
-						{index !== 0 && (
-							<div className="text-blue-800 flex h-7 w-7 bg-white rounded-full justify-center items-center absolute -left-5">
-								<PlusCircleIcon className="h-6 w-6 text-easy-600" />
-							</div>
-						)}
-						<div className={stageClassName} onClick={stage.onclick}>{stage.name}</div>
-					</div>
-				);
-			})}
-			<DialogPositiveStage isOpen={isOpen} setIsOpen={setIsOpen} setSelectedReason={setSelectedReason} selectedReason={selectedReason}/>
-		</div>
-	);
+export default function ProgressStages({ stage, leadId, mutate }) {
+  const { stages, isOpen, setIsOpen } = useLeads();
+  const [selectedReason, setSelectedReason] = useState([]);
+  const { lists } = useAppContext();
+  const [stageIndex, setStageIndex] = useState(0);
+
+  useEffect(() => {
+    let index = lists?.listLead?.leadStages?.findIndex(
+      (x) => x.name == stage.name
+    );
+    setStageIndex(index);
+  }, [lists?.listLead?.leadStages]);
+
+  const handleUpdateState = async (stageId) => {
+    try {
+      const response = await putLeadStage(leadId, stageId);
+      console.log({ response });
+      if (response.hasError) {
+        toast.error("Ocurrio un error al actualizar el estado");
+        return;
+      }
+      mutate();
+      toast.success("Prospecto actualizado con exito");
+    } catch {
+      toast.error("Ocurrio un error al actualizar el estado");
+    }
+  };
+
+  return (
+    <div className="flex md:flex-row items-center md:justify-center gap-2 md:gap-3 flex-wrap">
+      {lists?.listLead?.leadStages?.map((stage, index, arr) => {
+        const stageClassName = `px-3 py-2 rounded-lg text-sm text-white cursor-pointer ${
+          index === 5
+            ? "bg-green-500"
+            : index === 6
+              ? "bg-red-500"
+              : "bg-easy-600"
+        }`;
+        return (
+          <div key={stage.id} className="flex flex-row items-center relative">
+            {index !== 0 && (
+              <div className="text-blue-800 flex h-7 w-7 bg-white rounded-full justify-center items-center absolute -left-5">
+                <MdKeyboardArrowRight className="h-6 w-6 text-easy-600" />
+              </div>
+            )}
+            <div
+              className={clsx(stageClassName, " hover:opacity-100", {
+                "opacity-60": index > stageIndex,
+              })}
+              onClick={() => {
+                if (index < arr.length - 2) {
+                  handleUpdateState(stage.id);
+                }
+                if (index == arr.length - 2) {
+                  setIsOpen(true);
+                }
+              }}
+            >
+              {stage.name}
+            </div>
+          </div>
+        );
+      })}
+      <DialogPositiveStage
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        setSelectedReason={setSelectedReason}
+        selectedReason={selectedReason}
+      />
+    </div>
+  );
 }

@@ -97,7 +97,7 @@ export default function IngresarEmail() {
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => toKnowEmail(),
+      click: () => setGmailState(true),
     },
     {
       name: "ICloud",
@@ -176,14 +176,7 @@ export default function IngresarEmail() {
           className="bg-easywork-main"
         />
       </ModalConfigGmail>
-      {openModalFolders && (
-        <ModalAddFolders state={true}>
-          <Tag
-            onclick={() => setOpenModalFolders(false)}
-            className="bg-easywork-main"
-          />
-        </ModalAddFolders>
-      )}
+      <ModalAddFolders isConfig={false} />
     </div>
   );
 }

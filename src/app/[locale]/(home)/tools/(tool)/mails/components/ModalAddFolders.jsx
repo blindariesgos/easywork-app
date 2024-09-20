@@ -1,42 +1,87 @@
 "use client";
-import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import {
+  Description,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 import axios from "axios";
+import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import useAppContext from "../../../../../../../context/app/index";
-import { useRouter } from "next/navigation";
-import { updateLabelId, getAllOauth } from "../../../../../../../lib/apis";
+import {
+  updateLabelId,
+  getAllOauth,
+  deleteTokenGoogle,
+} from "../../../../../../../lib/apis";
+import Tag from "../../../../../../../components/Tag";
 
-export default function ModalAddFolders({ children }) {
+export default function ModalAddFolders({ isConfig }) {
   const router = useRouter();
   const session = useSession();
-  const { setOpenModalFolders, openModalFolders, userGoogle } = useAppContext();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const { userGoogle, selectOauth } = useAppContext();
   const [folderData, setFolderData] = useState([]);
+  const [folderDataFromDatabase, setFolderDataFromDatabase] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    getAllOauth(session.data.user.id).then((res) => {
-      setUserData(res.slice(-1).pop());
-      console.log(res.slice(-1).pop());
-      const config = {
-        headers: {
-          Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
-        },
-      };
-      axios
-        .get(
-          `https://www.googleapis.com/gmail/v1/users/${res.slice(-1).pop().usergoogle_id}/labels`,
-          config
-        )
-        .then((labels) => {
-          const updatedLabels = labels.data.labels.map((label) => ({
-            ...label,
-            state: label.type === "system" ? true : label.state,
-          }));
-          setFolderData(updatedLabels);
-        });
-    });
-  }, []);
+    if (params.get("configemail")) {
+      getAllOauth(session.data.user.id).then((res) => {
+        setUserData(res.slice(-1).pop());
+        console.log(userData);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
+          },
+        };
+        if (isConfig && userData.labelId) {
+          console.log(userData.labelId);
+          const array = [];
+          userData.labelId.forEach((element) => {
+            const parsedElement = JSON.parse(element);
+            if (parsedElement.type === "user") {
+              array.push({
+                name: parsedElement.mailboxName,
+              });
+            }
+          });
+          setFolderDataFromDatabase(array);
+        }
+        console.log(userData);
+        axios
+          .get(
+            `https://www.googleapis.com/gmail/v1/users/${userData.usergoogle_id}/labels`,
+            config
+          )
+          .then((labels) => {
+            console.log(labels);
+            const updatedLabels = labels.data.labels.map((label) => ({
+              ...label,
+              state:
+                label.type === "system"
+                  ? true
+                  : folderDataFromDatabase.some(
+                      (element) => element.name === label.name
+                    ),
+            }));
+            setFolderData(updatedLabels);
+          });
+      });
+    }
+  }, [params.get("configemail"), userData]);
+
+  async function deleteOauth() {
+    try {
+      await deleteTokenGoogle(session.data.user.id, selectOauth.id, null);
+      router.push("/tools/mails?userdeleted=true");
+    } catch (error) {}
+  }
 
   async function saveMails() {
     axios.get(
@@ -57,9 +102,13 @@ export default function ModalAddFolders({ children }) {
     });
     try {
       await updateLabelId(userGoogle.id, folders);
-      await saveMails();
-      setOpenModalFolders(false);
-      router.push("/tools/webmail?page=1");
+      if (!isConfig) {
+        await saveMails();
+        router.push("/tools/webmail?page=1");
+      } else {
+        router.back();
+        toast.success("Carpetas actualizadas");
+      }
     } catch (error) {}
   }
 
@@ -69,22 +118,22 @@ export default function ModalAddFolders({ children }) {
       state: true,
     }));
     setFolderData(newFolderData);
-  }  
+  }
 
   return (
-    <SliderOverShort openModal={openModalFolders}>
-      {children}
+    <SliderOverShort openModal={params.get("configemail")}>
+      <Tag onclick={() => router.back()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 font-medium text-lg">
-          <h1>Configurar Folders</h1>
+          <h1>Configurar Carpetas</h1>
         </div>
         <div className="m-3 py-5 bg-gray-100 rounded-2xl">
           <div className="bg-white px-2">
             <div className="p-3">
-              <h1 className="font-medium text-lg">Synchronize folders</h1>
+              <h1 className="font-medium text-lg">Sincronizar</h1>
             </div>
             <div className="text-xs">
-              <div className="flex ml-2">
+              {/* <div className="flex ml-2">
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -92,13 +141,22 @@ export default function ModalAddFolders({ children }) {
                   }}
                 />
                 <p className="ml-1">Select all</p>
-              </div>
-              <div className="mt-4 ml-4">
+              </div> */}
+              <div className="ml-2">
                 {folderData?.map((data, index) => (
                   <div className="flex mt-4 ml-2" key={index}>
                     <input
                       type="checkbox"
+                      disabled={data.type === "system"}
                       checked={data.state}
+                      style={
+                        data.state
+                          ? {
+                              backgroundColor:
+                                "rgb(38 34 97 / var(--tw-bg-opacity))",
+                            }
+                          : { backgroundColor: "white" }
+                      }
                       onChange={(e) => {
                         const newFolderData = [...folderData];
                         newFolderData[index] = {
@@ -108,13 +166,14 @@ export default function ModalAddFolders({ children }) {
                         setFolderData(newFolderData);
                       }}
                     />
+
                     <p className="ml-1">{data.name}</p>
                   </div>
                 ))}
               </div>
               <div className="m-3 text-xs my-4 w-80">
                 <h1 className="font-medium text-lg border-b-4 border-black pb-1">
-                  Folder rules
+                  Reglas de carpeta
                 </h1>
                 <p className="p-2">
                   Save sent emails to folder{" "}
@@ -137,13 +196,49 @@ export default function ModalAddFolders({ children }) {
                 >
                   Guardar
                 </button>
+                {isConfig && (
+                  <button
+                    type="button"
+                    className="hover:bg-gray-60 bg-gray-50 text-white font-bold py-2 px-4 rounded-md"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    Inhabilitar
+                  </button>
+                )}
                 <button
                   type="button"
                   className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
-                  onClick={() => setOpenModalFolders(false)}
+                  onClick={() => router.back()}
                 >
                   Cancelar
                 </button>
+                <Dialog
+                  open={isOpen}
+                  onClose={() => setIsOpen(false)}
+                  className="relative z-50"
+                >
+                  <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+                    <DialogPanel className="max-w-lg space-y-4 rounded-md flex flex-col items-center bg-white p-8 w-full">
+                      <DialogTitle className="font-bold">
+                        ¿Desea deshabilitar email de su cuenta Easywork?
+                      </DialogTitle>
+                      <div className="w-full flex justify-center">
+                        <button
+                          onClick={() => setIsOpen(false)}
+                          className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => deleteOauth(true)}
+                          className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md ml-2"
+                        >
+                          Inhabilitar
+                        </button>
+                      </div>
+                    </DialogPanel>
+                  </div>
+                </Dialog>
               </div>
             </div>
           </div>

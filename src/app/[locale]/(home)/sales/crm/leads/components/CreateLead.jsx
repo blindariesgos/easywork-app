@@ -24,10 +24,10 @@ import TextInput from "../../../../../../../components/form/TextInput";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import useAppContext from "@/src/context/app";
-import { createLead, updateContact } from "@/src/lib/apis";
+import { createLead, updateContact, updateLead } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 
-export default function CreateLead({ lead, id, updateLead }) {
+export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -131,7 +131,7 @@ export default function CreateLead({ lead, id, updateLead }) {
       phones_dto: phones,
     };
 
-    if (selectedProfileImage?.file) {
+    if (selectedProfileImage?.file && !lead) {
       body = {
         ...body,
         photo: selectedProfileImage?.file || "",
@@ -167,7 +167,7 @@ export default function CreateLead({ lead, id, updateLead }) {
         toast.success("Prospecto creado con exito");
       } else {
         console.log({ body });
-        const response = await updateContact(formData, id);
+        const response = await updateLead(body, id);
         if (response.hasError) {
           console.log({ response });
           let message = response.message;
@@ -177,8 +177,8 @@ export default function CreateLead({ lead, id, updateLead }) {
           throw { message };
         }
         toast.success(t("contacts:edit:updated-contact"));
-        await mutate(`/sales/crm/contacts?limit=5&page=1`);
-        await mutate(`/sales/crm/contacts/${id}`);
+        await mutate(`/sales/crm/leads?limit=5&page=1`);
+        mutateLead();
       }
       setLoading(false);
       router.back();
@@ -222,8 +222,9 @@ export default function CreateLead({ lead, id, updateLead }) {
               </div>
               <ProgressStages
                 stage={lead.stage}
-                mutate={updateLead}
+                mutate={mutateLead}
                 leadId={id}
+                setValue={setValue}
               />
               <HeaderCrm options={optionsHeader} />
             </div>

@@ -18,11 +18,10 @@ import React, {
   Fragment,
   useCallback,
 } from "react";
-import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
-import { deleteContactId } from "@/src/lib/apis";
+import { deleteContactId, deleteReceiptById } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useReceiptTable } from "../../../../../../../hooks/useCommon";
@@ -47,12 +46,7 @@ import { formatDate } from "@/src/utils/getFormatDate";
 import useReceiptContext from "../../../../../../../context/receipts";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
-import { tr } from "date-fns/locale";
-import { formatISO } from "date-fns";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import useCrmContext from "@/src/context/crm";
 
 export default function TableReceipts() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
@@ -62,8 +56,10 @@ export default function TableReceipts() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
-  const { setLastContactsUpdate, selectedContacts, setSelectedContacts } =
-    useCrmContext();
+  const {
+    selectedContacts: selectedReceipts,
+    setSelectedContacts: setSelectedReceipts,
+  } = useCrmContext();
   const { columnTable } = useReceiptTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
@@ -74,29 +70,34 @@ export default function TableReceipts() {
   useLayoutEffect(() => {
     if (checkbox.current) {
       const isIndeterminate =
-        selectedContacts &&
-        selectedContacts.length > 0 &&
-        selectedContacts.length < data?.items.length;
-      setChecked(selectedContacts?.length === data?.items?.length);
+        selectedReceipts &&
+        selectedReceipts.length > 0 &&
+        selectedReceipts.length < data?.meta?.totalItems;
+      setChecked(selectedReceipts?.length === data?.meta?.totalItems);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedContacts, data]);
+  }, [selectedReceipts]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedReceipts(checked || indeterminate ? [] : data?.items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
-  }, [checked, indeterminate, data, setSelectedContacts]);
+  }, [checked, indeterminate, data, setSelectedReceipts]);
 
-  const deleteContact = (contact) => {
-    if (contact.length === 1) apiDelete(contact[0].id);
-    if (contact.length > 1) {
-      contact.map((cont) => apiDelete(cont.id));
+  const deleteReceipts = async (receipts) => {
+    const response = await Promise.allSettled(
+      receipts.map((receiptId) => deleteReceiptById(receiptId))
+    );
+    if (response.some((x) => x.status === "fulfilled")) {
+      toast.success(
+        `Se eliminaron ${response.filter((x) => x.status === "fulfilled").length} recibos de ${receipts.length} seleccionados`
+      );
+      setSelectedReceipts([]);
+    } else {
+      toast.error("Ocurrio un error al eliminar los recibos");
     }
-    toast.success(t("contacts:delete:msg"));
-    setSelectedContacts([]);
     onCloseAlertDialog();
   };
 
@@ -104,21 +105,9 @@ export default function TableReceipts() {
     {
       id: 1,
       name: t("common:buttons:delete"),
-      onclick: () => deleteContact(selectedContacts),
+      onclick: () => deleteReceipts(selectedReceipts),
     },
   ];
-
-  const apiDelete = async (id) => {
-    try {
-      setLoading(true);
-      const response = await deleteContactId(id);
-      setLastContactsUpdate(response);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      handleApiError(err.message);
-    }
-  };
 
   const itemOptions = [
     {
@@ -221,14 +210,14 @@ export default function TableReceipts() {
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(receipt)
+                          selectedReceipts.includes(receipt.id)
                             ? "bg-gray-200"
                             : undefined,
-                          "hover:bg-indigo-100/40 cursor-default"
+                          "hover:bg-indigo-100/40 cursor-default relative"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12">
-                          {selectedContacts.includes(receipt) && (
+                          {selectedReceipts.includes(receipt.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
@@ -236,13 +225,13 @@ export default function TableReceipts() {
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                               value={receipt.id}
-                              checked={selectedContacts.includes(receipt)}
+                              checked={selectedReceipts.includes(receipt.id)}
                               onChange={(e) =>
-                                setSelectedContacts(
+                                setSelectedReceipts(
                                   e.target.checked
-                                    ? [...selectedContacts, receipt]
-                                    : selectedContacts.filter(
-                                        (p) => p !== receipt
+                                    ? [...selectedReceipts, receipt.id]
+                                    : selectedReceipts.filter(
+                                        (p) => p !== receipt.id
                                       )
                                 )
                               }
@@ -279,7 +268,7 @@ export default function TableReceipts() {
                                       {({ active }) => (
                                         <div
                                           // onClick={item.onClick}
-                                          className={classNames(
+                                          className={clsx(
                                             active ? "bg-gray-50" : "",
                                             "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                                           )}
@@ -461,9 +450,12 @@ export default function TableReceipts() {
             setPage={setPage}
           />
         </div>
-        <div className="flex">
-          {selectedContacts.length > 0 && (
-            <SelectedOptionsTable options={options} />
+        <div className="flex flex-col justify-start gap-2 items-start">
+          {selectedReceipts.length > 0 && (
+            <Fragment>
+              <p>{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
+              <SelectedOptionsTable options={options} />
+            </Fragment>
           )}
         </div>
       </div>

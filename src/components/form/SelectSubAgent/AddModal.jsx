@@ -132,7 +132,7 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect, watch, name }) => {
                         <tr
                           key={option.id}
                           className={clsx("hover:bg-gray-200 cursor-pointer", {
-                            "bg-primary text-white": option.id == selected.id,
+                            "bg-primary text-white": option.id == selected?.id,
                           })}
                           onClick={() => setSelected(option)}
                         >

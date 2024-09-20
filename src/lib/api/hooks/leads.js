@@ -57,7 +57,7 @@ export const useLeadCancelReazon = () => {
   );
 
   return {
-    lead: data,
+    data,
     isLoading,
     isError: error,
     mutate

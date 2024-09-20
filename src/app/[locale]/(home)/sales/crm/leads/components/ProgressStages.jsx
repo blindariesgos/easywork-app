@@ -3,17 +3,19 @@ import { useLeads } from "../../../../../../../hooks/useCommon";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import DialogPositiveStage from "./DialogPositiveStage";
+import DialogNegativeStage from "./DialogNegativeStage";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";
-import { postComment, putLeadStage } from "@/src/lib/apis";
+import { postComment, putLeadStage, updateLead } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 
-export default function ProgressStages({ stage, leadId, mutate }) {
-  const { stages, isOpen, setIsOpen } = useLeads();
-  const [selectedReason, setSelectedReason] = useState([]);
+export default function ProgressStages({ stage, leadId, mutate, setValue }) {
+  const { isOpen, setIsOpen } = useLeads();
+  const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
   const [stageIndex, setStageIndex] = useState(0);
+  const [isOpenNegative, setIsOpenNegative] = useState(false);
 
   useEffect(() => {
     let index = lists?.listLead?.leadStages?.findIndex(
@@ -25,8 +27,33 @@ export default function ProgressStages({ stage, leadId, mutate }) {
   const handleUpdateState = async (stageId) => {
     try {
       const response = await putLeadStage(leadId, stageId);
-      console.log({ response });
       if (response.hasError) {
+        toast.error("Ocurrio un error al actualizar el estado");
+        return;
+      }
+      mutate();
+      toast.success("Prospecto actualizado con exito");
+    } catch {
+      toast.error("Ocurrio un error al actualizar el estado");
+    }
+  };
+
+  const handleSubmitNegativeStage = async () => {
+    try {
+      const response = await handleUpdateState(
+        lists?.listLead?.leadStages[lists?.listLead?.leadStages.length - 1].id
+      );
+      if (response.hasError) {
+        toast.error("Ocurrio un error al actualizar el estado");
+        return;
+      }
+      const updateResponse = await updateLead(
+        {
+          canceledReazon: selectedReason,
+        },
+        leadId
+      );
+      if (updateResponse.hasError) {
         toast.error("Ocurrio un error al actualizar el estado");
         return;
       }
@@ -65,6 +92,9 @@ export default function ProgressStages({ stage, leadId, mutate }) {
                 if (index == arr.length - 2) {
                   setIsOpen(true);
                 }
+                if (index == arr.length - 1) {
+                  setIsOpenNegative(true);
+                }
               }}
             >
               {stage.name}
@@ -75,6 +105,13 @@ export default function ProgressStages({ stage, leadId, mutate }) {
       <DialogPositiveStage
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        setSelectedReason={setSelectedReason}
+        selectedReason={selectedReason}
+      />
+
+      <DialogNegativeStage
+        isOpen={isOpenNegative}
+        setIsOpen={setIsOpenNegative}
         setSelectedReason={setSelectedReason}
         selectedReason={selectedReason}
       />

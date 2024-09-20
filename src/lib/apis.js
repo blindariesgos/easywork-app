@@ -320,6 +320,12 @@ export const createEmailConfig = async (data) => {
   return response;
 };
 
+export const getEmailConfig = async (email) => {
+  const response = await axios().get(`/oauth/emailconfig/${email}`);
+  console.log(response);
+  return response;
+};
+
 export const getTokenGoogle = async (userId, oauthId) => {
   const response = await axios().get(`/oauth/config/${userId}/${oauthId}`);
   return response;

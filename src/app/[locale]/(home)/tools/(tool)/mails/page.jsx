@@ -156,7 +156,7 @@ export default function IngresarEmail() {
           ))}
         </ul>
       </div>
-      <ModalConfigGmail motivo={"add"} addOtherOauth={false} />
+      <ModalConfigGmail isEdit={false} />
       <ModalAddFolders isConfig={false} />
     </div>
   );

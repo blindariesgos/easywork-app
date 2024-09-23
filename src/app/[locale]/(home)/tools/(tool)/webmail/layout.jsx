@@ -80,8 +80,6 @@ export default function WebmailLayout({ children, table }) {
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [motivo, setMotivo] = useState("");
-  const [addOtherOauth, setAddOtherOauth] = useState(false);
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
@@ -121,16 +119,15 @@ export default function WebmailLayout({ children, table }) {
       selectedFolder,
       selectOauth?.id
     ).then((res) => {
+      setDMails(res);
+    });
+    getMails(session.data.user.id, 1, 1, "ALL", selectOauth?.id).then((res) => {
       if (res.length === 0) {
-        console.log(selectOauth);
         axios.get(
           `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
         );
         fetchData();
-        // router.push(`${window.location.pathname}?configlabelid=true`)
-        // toast.error("Por favor sincronice su Email");
       }
-      setDMails(res);
     });
   }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
 
@@ -206,12 +203,6 @@ export default function WebmailLayout({ children, table }) {
     });
   }
 
-  function openModal(motivo, state, add) {
-    setMotivo(motivo);
-    setAddOtherOauth(add);
-    router.push(`${window.location.pathname}?configlabelid=true`);
-  }
-
   const itemOptions = [
     { name: "Volver a la lista", onClick: "" },
     { name: "Contactos", onClick: "" },
@@ -219,17 +210,14 @@ export default function WebmailLayout({ children, table }) {
     {
       name: "Configuración del buzón",
       onClick: () =>
-        router.push(`${window.location.pathname}?configlabelid=true`),
+        router.push(`${window.location.pathname}?configemail=true`),
     },
   ];
 
   return (
     <>
       <Signature />
-      <ModalConfigGmail
-        addOtherOauth={addOtherOauth}
-        motivo={motivo}
-      />
+      <ModalConfigGmail isEdit={true} />
       <ModalAddFolders isConfig={true} />
       <SendMessage
         colorTag="bg-easywork-main"

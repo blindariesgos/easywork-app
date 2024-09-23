@@ -121,11 +121,16 @@ export default function WebmailLayout({ children, table }) {
       selectedFolder,
       selectOauth?.id
     ).then((res) => {
-      setDMails(res);
-      if (dmails.length === 0) {
-        router.push(`${window.location.pathname}?configemail=true`)
-        toast.error("Por favor sincronice su Email");
+      if (res.length === 0) {
+        console.log(selectOauth);
+        axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
+        );
+        fetchData();
+        // router.push(`${window.location.pathname}?configlabelid=true`)
+        // toast.error("Por favor sincronice su Email");
       }
+      setDMails(res);
     });
   }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
 
@@ -204,7 +209,7 @@ export default function WebmailLayout({ children, table }) {
   function openModal(motivo, state, add) {
     setMotivo(motivo);
     setAddOtherOauth(add);
-    setGmailState(state);
+    router.push(`${window.location.pathname}?configlabelid=true`);
   }
 
   const itemOptions = [
@@ -214,7 +219,7 @@ export default function WebmailLayout({ children, table }) {
     {
       name: "Configuración del buzón",
       onClick: () =>
-        router.push(`${window.location.pathname}?configemail=true`),
+        router.push(`${window.location.pathname}?configlabelid=true`),
     },
   ];
 
@@ -222,15 +227,9 @@ export default function WebmailLayout({ children, table }) {
     <>
       <Signature />
       <ModalConfigGmail
-        state={gmailState}
         addOtherOauth={addOtherOauth}
         motivo={motivo}
-      >
-        <Tag
-          onclick={() => setGmailState(false)}
-          className="bg-easywork-main"
-        />
-      </ModalConfigGmail>
+      />
       <ModalAddFolders isConfig={true} />
       <SendMessage
         colorTag="bg-easywork-main"

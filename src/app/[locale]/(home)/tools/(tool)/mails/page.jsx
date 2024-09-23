@@ -79,25 +79,11 @@ export default function IngresarEmail() {
     }
   }
 
-  async function toKnowEmail() {
-    try {
-      const response = await getAllOauth(session.data.user.id);
-      console.log(response.length);
-      if (response.length > 0) {
-        router.push("/tools/webmail?page=1");
-      } else {
-        setGmailState(true);
-      }
-    } catch (error) {
-      setGmailState(true);
-    }
-  }
-
   const emails = [
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => setGmailState(true),
+      click: () => router.push(`${window.location.pathname}?configemail=true`),
     },
     {
       name: "ICloud",
@@ -170,12 +156,7 @@ export default function IngresarEmail() {
           ))}
         </ul>
       </div>
-      <ModalConfigGmail state={gmailState} motivo={"add"} addOtherOauth={false}>
-        <Tag
-          onclick={() => setGmailState(false)}
-          className="bg-easywork-main"
-        />
-      </ModalConfigGmail>
+      <ModalConfigGmail motivo={"add"} addOtherOauth={false} />
       <ModalAddFolders isConfig={false} />
     </div>
   );

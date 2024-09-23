@@ -1,6 +1,5 @@
 "use client";
-import SliderOverShort from "../../../../../../../components/SliderOverShort";
-import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
+
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +7,10 @@ import Image from "next/image";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 import {
   deleteTokenGoogle,
   getAllOauth,
@@ -15,19 +18,14 @@ import {
   getEmailConfig,
 } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import SliderOverShort from "../../../../../../../components/SliderOverShort";
+import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
+import Tag from "../../../../../../../components/Tag";
 
-export default function ModalConfigGmail({
-  children,
-  state,
-  motivo,
-  edit,
-  addOtherOauth,
-}) {
+export default function ModalConfigGmail({ motivo, edit, addOtherOauth }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const session = useSession();
   const { lists, selectOauth, userGoogle, setUserGoogle } = useAppContext();
   const [sendSmtp, setSendSmtp] = useState(false);
@@ -57,8 +55,7 @@ export default function ModalConfigGmail({
     data.email = userGoogle.email;
     const emailConfig = await createEmailConfig(data);
     if (emailConfig)
-      router.push(`${window.location.pathname}?configemail=true`);
-    
+      router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
   // useEffect(() => {
@@ -139,7 +136,7 @@ export default function ModalConfigGmail({
     );
 
     const checkWindowClosed = setInterval(async function () {
-      if (oauthWindow.closed && state) {
+      if (oauthWindow.closed && params.get("configemail")) {
         clearInterval(checkWindowClosed);
         getDataNewGoogleUser();
       }
@@ -147,40 +144,29 @@ export default function ModalConfigGmail({
   }
 
   useEffect(() => {
-    if (state) getDataGoogleUser();
-  }, [state]);
+    if (params.get("configemail")) getDataGoogleUser();
+  }, [params.get("configemail")]);
 
   async function getDataNewGoogleUser() {
     setUserGoogle(null);
     try {
       const res = await getAllOauth(session.data.user.id);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
-        },
-      };
-      const userInfo = await axios.get(
-        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
-        config
-      );
-      setUserGoogle(userInfo.data, ...res.slice(-1).pop().access_token);
-    } catch (error) {}
+      setUserGoogle(res.slice(-1).pop());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function getDataGoogleUser() {
     setUserGoogle(null);
-    if (motivo === "add") return
+    if (motivo === "add") return;
     if (addOtherOauth) return;
     try {
-      const config = {
-        headers: { Authorization: `Bearer ${session.data.user.access_token}` },
-      };
-      const axiosUserData = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
-        config
-      );
-      setUserGoogle(axiosUserData.data);
-    } catch (error) {}
+      const res = await getAllOauth(session.data.user.id);
+      setUserGoogle(res.slice(-1).pop());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const timeMails = [
@@ -193,8 +179,8 @@ export default function ModalConfigGmail({
 
   return (
     <>
-      <SliderOverShort openModal={state}>
-        {children}
+      <SliderOverShort openModal={params.get("configemail")}>
+        <Tag onclick={() => router.back()} className="bg-easywork-main" />
         <div className="bg-gray-100 rounded-l-2xl max-md:w-screen w-96 overflow-y-auto h-screen">
           <div className="m-3 font-medium text-lg">
             <h1>Integración del buzón</h1>
@@ -507,7 +493,7 @@ export default function ModalConfigGmail({
                   <button
                     type="button"
                     className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
-                    onClick={() => connectGmail(true)}
+                    onClick={() => connectGmail()}
                   >
                     Conecta
                   </button>

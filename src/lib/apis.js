@@ -99,7 +99,7 @@ export const getContactId = async (id) => {
 export const deleteContactId = async (id) => {
   // try {
   const response = await axios().delete(`/sales/crm/contacts/${id}`);
-  revalidatePath("/sales/crm/contacts", "page");
+  revalidatePath("/sales/crm/contacts", "layout");
   return response;
 };
 

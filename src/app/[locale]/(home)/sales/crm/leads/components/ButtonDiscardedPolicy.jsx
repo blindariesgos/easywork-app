@@ -6,6 +6,10 @@ import {
   Transition,
   PopoverPanel,
   PopoverButton,
+  Field,
+  Label,
+  Radio,
+  RadioGroup,
 } from "@headlessui/react";
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
@@ -46,37 +50,28 @@ export default function ButtonDiscardedPolicy({
                   </p>
                   <div className="relative grid gap-2 bg-white px-2 sm:px-4 grid-cols-1 mt-4 py-4">
                     {isLoading && <LoadingSpinnerSmall />}
-                    {data &&
-                      data.length > 0 &&
-                      data.map((item) => (
-                        <div key={item.id} className="flex gap-x-2">
-                          <div className="relative w-12">
-                            <input
-                              type="checkbox"
-                              className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary bg-gray-100 focus:ring-primary"
+                    <RadioGroup
+                      value={selectedReason}
+                      onChange={setSelectedReason}
+                      aria-label="Server size"
+                    >
+                      {data &&
+                        data.length > 0 &&
+                        data.map((item) => (
+                          <Field
+                            key={item.id}
+                            className="flex items-center gap-2"
+                          >
+                            <Radio
                               value={item.id}
-                              checked={
-                                selectedReason &&
-                                selectedReason.some(
-                                  (reason) => reason.id === item.id
-                                )
-                              }
-                              onChange={(e) => {
-                                setSelectedReason(
-                                  e.target.checked
-                                    ? [...selectedReason, item]
-                                    : selectedReason.filter(
-                                        (p) => p.id !== item.id
-                                      )
-                                );
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <p>{item.name}</p>
-                          </div>
-                        </div>
-                      ))}
+                              className="group flex size-5 items-center justify-center rounded-full border bg-white data-[checked]:bg-primary"
+                            >
+                              <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
+                            </Radio>
+                            <Label>{item.name}</Label>
+                          </Field>
+                        ))}
+                    </RadioGroup>
                   </div>
                   <div className="flex justify-center gap-4 sticky bottom-0 pt-4 pb-2">
                     <Button

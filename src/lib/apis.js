@@ -59,6 +59,13 @@ export const createLead = async (data) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const updateLead = async (data, id) => {
+  const response = await axios()
+    .put(`/sales/crm/leads/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 export const updateContact = async (data, id) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .put(`/sales/crm/contacts/${id}`, data)
@@ -93,6 +100,13 @@ export const deleteContactId = async (id) => {
   // try {
   const response = await axios().delete(`/sales/crm/contacts/${id}`);
   revalidatePath("/sales/crm/contacts", "page");
+  return response;
+};
+
+export const deleteReceiptById = async (receiptId) => {
+  // try {
+  const response = await axios().delete(`/sales/crm/polizas/receipts/${receiptId}`);
+  revalidatePath("/control/portafolio/receipts", "page");
   return response;
 };
 

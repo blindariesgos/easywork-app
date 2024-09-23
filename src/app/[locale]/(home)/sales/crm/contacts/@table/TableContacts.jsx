@@ -52,19 +52,17 @@ function classNames(...classes) {
 }
 
 export default function TableContacts() {
-  const { data, limit, setLimit } = useContactContext();
+  const { data, limit, setLimit, mutate } = useContactContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
-  const { setLastContactsUpdate, selectedContacts, setSelectedContacts } =
-    useCrmContext();
+  const { selectedContacts, setSelectedContacts } = useCrmContext();
   const { columnTable } = useContactTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  const { onCloseAlertDialog } = useAlertContext();
   const [loading, setLoading] = useState(false);
 
   const [dataContacts, setDataContacts] = useState();
@@ -102,29 +100,42 @@ export default function TableContacts() {
     setIndeterminate(false);
   }, [checked, indeterminate, dataContacts, setSelectedContacts]);
 
-  const deleteContact = (contact) => {
-    if (contact.length === 1) apiDelete(contact[0].id);
-    if (contact.length > 1) {
-      contact.map((cont) => apiDelete(cont.id));
+  const deleteContacts = async () => {
+    setLoading(true);
+    const response = await Promise.allSettled(
+      selectedContacts.map((contactId) => deleteContactId(contactId))
+    );
+
+    if (response.some((x) => x.status === "fulfilled")) {
+      toast.success(
+        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} contactos de ${selectedContacts.length} seleccionados`
+      );
     }
-    toast.success(t("contacts:delete:msg"));
+
+    if (response.some((x) => x.status === "rejected")) {
+      toast.error(
+        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} contactos`
+      );
+    }
     setSelectedContacts([]);
-    onCloseAlertDialog();
+    mutate();
+    setLoading(false);
   };
 
   const options = [
     {
       id: 1,
       name: t("common:buttons:delete"),
-      onclick: () => deleteContact(selectedContacts),
+      onclick: () => deleteContacts(),
     },
   ];
 
-  const apiDelete = async (id) => {
+  const deleteContact = async (id) => {
     try {
       setLoading(true);
       const response = await deleteContactId(id);
-      setLastContactsUpdate(response);
+      toast.success(t("contacts:delete:msg"));
+      mutate();
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -166,10 +177,10 @@ export default function TableContacts() {
         router.push(`/sales/crm/contacts/contact/${id}?show=true`),
     },
     { name: "Editar" },
-    { name: "Copiar" },
-    { name: "Eliminar" },
-    { name: "Agregar Cita" },
-    { name: "Enviar e-mail" },
+    // { name: "Copiar" },
+    { name: "Eliminar", handleClick: (id) => deleteContact(id) },
+    // { name: "Agregar Cita" },
+    // { name: "Enviar e-mail" },
   ];
 
   return (
@@ -236,14 +247,14 @@ export default function TableContacts() {
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(contact)
+                          selectedContacts.includes(contact.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
-                        <td className="pr-7 pl-4 sm:w-12">
-                          {selectedContacts.includes(contact) && (
+                        <td className="pr-7 pl-4 sm:w-12 relative">
+                          {selectedContacts.includes(contact.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
@@ -251,13 +262,13 @@ export default function TableContacts() {
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                               value={contact.id}
-                              checked={selectedContacts.includes(contact)}
+                              checked={selectedContacts.includes(contact.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, contact]
+                                    ? [...selectedContacts, contact.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== contact
+                                        (p) => p !== contact.id
                                       )
                                 )
                               }
@@ -282,7 +293,10 @@ export default function TableContacts() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                <MenuItems
+                                  anchor="bottom start"
+                                  className=" z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                >
                                   {itemOptions.map((item) => (
                                     <MenuItem
                                       key={item.name}

@@ -118,17 +118,17 @@ export default function DontRememberDetails() {
       {/* Video guia */}
       <div className="mt-4 w-full flex justify-evenly">
         <button
+          onClick={() => setContextData(0)}
+          className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
+        >
+          Cancelar
+        </button>
+        <button
           onClick={handleSendOtp}
           disabled={isLoading}
           className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md"
         >
           {isLoading ? "Enviando..." : "Aceptar"}
-        </button>
-        <button
-          onClick={() => setContextData(0)}
-          className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
-        >
-          Cancelar
         </button>
       </div>
       {error && <div className="mt-2 text-red-600">{error}</div>}

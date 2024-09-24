@@ -206,11 +206,17 @@ export default function WebmailLayout({ children, table }) {
   const itemOptions = [
     { name: "Volver a la lista", onClick: "" },
     { name: "Contactos", onClick: "" },
-    { name: "Editar firmas", onClick: "" },
+    {
+      name: "Editar firmas",
+      onClick: () =>
+        router.push(
+          `${window.location.pathname}?page=${searchParams.get("page")}&signature=true`
+        ),
+    },
     {
       name: "Configuración del buzón",
       onClick: () =>
-        router.push(`${window.location.pathname}?configemail=true`),
+        router.push(`${window.location.pathname}?page=${searchParams.get("page")}&configemail=true`),
     },
   ];
 

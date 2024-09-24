@@ -31,15 +31,20 @@ export default function ModalConfigGmail({ isEdit, edit }) {
   const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
+  const [countProcessMessagesDays, setCountProcessMessagesDays] =
+    useState(false);
+  const [createIncomingMessages, setCreateIncomingMessages] = useState(false);
+  const [createForOutgoingMessages, setCreateForOutgoingMessages] =
+    useState(false);
 
   const [configData, setConfigData] = useState({
     countExtractMessagesDays: { name: "una semana", value: 7 },
     mailboxName: null,
     senderName: null,
-    countProcessMessagesDays: false,
+    countProcessMessagesDays: { name: "una semana", value: 7 },
     routeExistingClientEmailsToCrmManagers: false,
-    createIncomingMessages: false,
-    createForOutgoingMessages: false,
+    createIncomingMessages: { name: "prospecto", value: "Lead" },
+    createForOutgoingMessages: { name: "prospecto", value: "Lead" },
     createUsingAttachedVCard: false,
     contactLeadDistribution: null,
     mailboxAccess: null,
@@ -47,19 +52,47 @@ export default function ModalConfigGmail({ isEdit, edit }) {
   });
 
   const connectGmail = async () => {
-    console.log(watch("responsibleAccess"));
-    console.log(watch("responsibleCrm"));
-    console.log(configData);
-    // if (!userGoogle) {
-    //   toast.error("Por favor autentique su Gmail");
-    //   return;
-    // }
-    // let data = configData;
-    // data.extractMessagesForWeek = configData.extractMessagesForWeek.value;
-    // data.email = userGoogle.email;
-    // const emailConfig = await createEmailConfig(data);
-    // if (emailConfig)
-    //   router.push(`${window.location.pathname}?configlabelid=true`);
+    if (!userGoogle) {
+      toast.error("Por favor autentique su Gmail");
+      return;
+    }
+    let data = configData;
+
+    if (!countProcessMessagesDays) data.countProcessMessagesDays = null;
+    else
+      data.countProcessMessagesDays = configData.countProcessMessagesDays.value;
+
+    if (!createIncomingMessages) data.createIncomingMessages = null;
+    else data.createIncomingMessages = configData.createIncomingMessages.value;
+
+    if (!createForOutgoingMessages) data.createForOutgoingMessages = null;
+    else
+      data.createForOutgoingMessages =
+        configData.createForOutgoingMessages.value;
+
+    if (
+      data.contactLeadDistribution === null ||
+      data.contactLeadDistribution?.length === 0
+    )
+      data.contactLeadDistribution = null;
+    if (data.mailboxAccess === null || data.mailboxAccess?.length === 0)
+      data.mailboxAccess = null;
+
+    if (!watch("responsibleCrm") || watch("responsibleCrm").length === 0)
+      data.contactLeadDistribution = null;
+    else data.contactLeadDistribution = watch("responsibleCrm");
+
+    if (!watch("responsibleAccess") || watch("responsibleAccess").length === 0)
+      data.mailboxAccess = null;
+    else data.mailboxAccess = watch("responsibleAccess");
+
+    data.countExtractMessagesDays = configData.countExtractMessagesDays.value
+    data.email = userGoogle.email;
+
+    console.log(data);
+    const emailConfig = await createEmailConfig(data);
+    if (emailConfig)
+      router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
   // useEffect(() => {
@@ -68,14 +101,14 @@ export default function ModalConfigGmail({ isEdit, edit }) {
   //       setConfigData((prevConfigData) => ({
   //         ...prevConfigData,
   //         externalSmtp: res.externalSmtp,
-  //         extractMessagesForWeek: { name: "una semana", value: 7 },
+  //         countExtractMessagesDays: { name: "una semana", value: 7 },
   //         mailboxName: res.mailboxName,
   //         senderName: res.senderName,
   //         processMessagesForWeek: res.processMessagesForWeek,
   //         routeExistingClientEmailsToCrmManagers: res.routeExistingClientEmailsToCrmManagers,
   //         createProspectForIncomingMessages: res.createProspectForIncomingMessages,
   //         createContactForOutgoingMessages: res.createContactForOutgoingMessages,
-  //         createContactsUsingAttachedVCard: res.createContactsUsingAttachedVCard,
+  //         createUsingAttachedVCard: res.createUsingAttachedVCard,
   //         email: res.email,
   //         contactLeadDistribution: res.contactLeadDistribution,
   //       }));
@@ -160,6 +193,11 @@ export default function ModalConfigGmail({ isEdit, edit }) {
     { name: "todo el tiempo", value: 1000 },
   ];
 
+  const contacts = [
+    { name: "prospecto", value: "Lead" },
+    { name: "contacto", value: "Contact" },
+  ];
+
   return (
     <>
       <SliderOverShort openModal={params.get("configemail")}>
@@ -206,7 +244,7 @@ export default function ModalConfigGmail({ isEdit, edit }) {
                   Extraer mensajes para{" "}
                   <Menu.Button>
                     <span className="mt-4 underline text-blue-600 cursor-pointer">
-                      {configData.extractMessagesForWeek?.name ||
+                      {configData.countExtractMessagesDays?.name ||
                         "selecciona una opción"}
                     </span>
                     <Transition
@@ -225,7 +263,7 @@ export default function ModalConfigGmail({ isEdit, edit }) {
                               onClick={() =>
                                 setConfigData({
                                   ...configData,
-                                  extractMessagesForWeek: {
+                                  countExtractMessagesDays: {
                                     name: item.name,
                                     value: item.value,
                                   },
@@ -311,17 +349,54 @@ export default function ModalConfigGmail({ isEdit, edit }) {
                 {crmConfig && (
                   <div className="ml-3 w-96 max-w-full">
                     <div className="flex mt-4">
-                      <input
-                        type="checkbox"
-                        checked={configData.processMessagesForWeek}
-                        onChange={(e) =>
-                          setConfigData({
-                            ...configData,
-                            processMessagesForWeek: e.target.checked,
-                          })
-                        }
-                      />
-                      <p className="ml-1">Procesar mensajes para una semana</p>
+                      <Menu as="div" className="flex mt-1">
+                        <input
+                          type="checkbox"
+                          checked={countProcessMessagesDays}
+                          onChange={(e) =>
+                            setCountProcessMessagesDays(e.target.checked)
+                          }
+                        />
+                        <p className="ml-1">
+                          Procesar mensajes para{" "}
+                          <Menu.Button>
+                            <span className="mt-4 underline text-blue-600 cursor-pointer">
+                              {configData.countProcessMessagesDays?.name ||
+                                "selecciona una opción"}
+                            </span>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items className="absolute z-50 mt-1 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                {timeMails.map((item) => (
+                                  <Menu.Item key={item.name}>
+                                    <div
+                                      onClick={() =>
+                                        setConfigData({
+                                          ...configData,
+                                          countProcessMessagesDays: {
+                                            name: item.name,
+                                            value: item.value,
+                                          },
+                                        })
+                                      }
+                                      className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                    >
+                                      {item.name}
+                                    </div>
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu.Button>
+                        </p>
+                      </Menu>
                     </div>
                     <div className="flex mt-4">
                       <input
@@ -343,45 +418,117 @@ export default function ModalConfigGmail({ isEdit, edit }) {
                       </p>
                     </div>
                     <div className="flex mt-4">
-                      <input
-                        type="checkbox"
-                        checked={configData.createProspectForIncomingMessages}
-                        onChange={(e) =>
-                          setConfigData({
-                            ...configData,
-                            createProspectForIncomingMessages: e.target.checked,
-                          })
-                        }
-                      />
-                      <p className="ml-1">
-                        Crear Prospecto para los mensajes entrantes a una nueva
-                        dirección de correo electrónico
-                      </p>
+                      <Menu as="div" className="flex mt-1">
+                        <input
+                          type="checkbox"
+                          checked={createIncomingMessages}
+                          onChange={(e) =>
+                            setCreateIncomingMessages(e.target.checked)
+                          }
+                        />
+                        <p className="ml-1">
+                          Crear{" "}
+                          <Menu.Button>
+                            <span className="mt-4 underline text-blue-600 cursor-pointer">
+                              {configData.createIncomingMessages?.name ||
+                                "selecciona una opción"}
+                            </span>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items className="absolute z-50 mt-1 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                {contacts.map((item) => (
+                                  <Menu.Item key={item.name}>
+                                    <div
+                                      onClick={() =>
+                                        setConfigData({
+                                          ...configData,
+                                          createIncomingMessages: {
+                                            name: item.name,
+                                            value: item.value,
+                                          },
+                                        })
+                                      }
+                                      className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                    >
+                                      {item.name}
+                                    </div>
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu.Button>{" "}
+                          para los mensajes entrantes a una nueva dirección de
+                          correo electrónico
+                        </p>
+                      </Menu>
+                    </div>
+                    <div className="flex mt-4">
+                      <Menu as="div" className="flex mt-1">
+                        <input
+                          type="checkbox"
+                          checked={createForOutgoingMessages}
+                          onChange={(e) =>
+                            setCreateForOutgoingMessages(e.target.checked)
+                          }
+                        />
+                        <p className="ml-1">
+                          Crear{" "}
+                          <Menu.Button>
+                            <span className="mt-4 underline text-blue-600 cursor-pointer">
+                              {configData.createForOutgoingMessages?.name ||
+                                "selecciona una opción"}
+                            </span>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items className="absolute z-50 mt-1 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                {contacts.map((item) => (
+                                  <Menu.Item key={item.name}>
+                                    <div
+                                      onClick={() =>
+                                        setConfigData({
+                                          ...configData,
+                                          createForOutgoingMessages: {
+                                            name: item.name,
+                                            value: item.value,
+                                          },
+                                        })
+                                      }
+                                      className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                    >
+                                      {item.name}
+                                    </div>
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu.Button>{" "}
+                          para mensaje salientes a una nueva direción de correo
+                          electrónico
+                        </p>
+                      </Menu>
                     </div>
                     <div className="flex mt-4">
                       <input
                         type="checkbox"
-                        checked={configData.createContactForOutgoingMessages}
+                        checked={configData.createUsingAttachedVCard}
                         onChange={(e) =>
                           setConfigData({
                             ...configData,
-                            createContactForOutgoingMessages: e.target.checked,
-                          })
-                        }
-                      />
-                      <p className="ml-1">
-                        Crear Contacto para mensaje salientes a una nueva
-                        direción de correo electrónico
-                      </p>
-                    </div>
-                    <div className="flex mt-4">
-                      <input
-                        type="checkbox"
-                        checked={configData.createContactsUsingAttachedVCard}
-                        onChange={(e) =>
-                          setConfigData({
-                            ...configData,
-                            createContactsUsingAttachedVCard: e.target.checked,
+                            createUsingAttachedVCard: e.target.checked,
                           })
                         }
                       />

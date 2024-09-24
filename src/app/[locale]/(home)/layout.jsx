@@ -12,6 +12,7 @@ import OtherNotifications from "../../../components/OtherNotifications";
 import OtherSettings from "../../../components/OtherSettings";
 import ChangePassword from "../../../components/ChangePassword";
 import InviteUser from "../../../components/InviteUser";
+import ConnectEmail from "./tools/(tool)/webmail/components/ConnectEmail";
 
 export default function HomeLayout({ children }) {
   return (
@@ -29,6 +30,7 @@ export default function HomeLayout({ children }) {
                 <OtherNotifications colorTag="bg-easywork-main" />
                 <ChangePassword colorTag="bg-easywork-main" />
                 <InviteUser colorTag="bg-easywork-main" />
+                <ConnectEmail />
                 <OtherSettings colorTag="bg-easywork-main" />
               </div>
             </NotifyContextProvider>

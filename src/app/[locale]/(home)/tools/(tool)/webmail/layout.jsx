@@ -217,7 +217,7 @@ export default function WebmailLayout({ children, table }) {
       name: "Configuración del buzón",
       onClick: () =>
         router.push(
-          `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true`
+          `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true&isEdit=true`
         ),
     },
   ];
@@ -354,7 +354,7 @@ export default function WebmailLayout({ children, table }) {
                     transition
                     className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
                   >
-                    <div onClick={() => router.push("/tools/mails")}>
+                    <div onClick={() => router.push(`${window.location.href}&connectemail=true`)}>
                       Conectar nuevo
                     </div>
                   </MenuItem>

@@ -22,7 +22,7 @@ import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
 import Tag from "../../../../../../../components/Tag";
 
-export default function ModalConfigGmail({ isEdit, edit }) {
+export default function ModalConfigGmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -176,7 +176,7 @@ export default function ModalConfigGmail({ isEdit, edit }) {
 
   async function getDataGoogleUser() {
     setUserGoogle(null);
-    if (!isEdit) return;
+    if (params.get("isEdit") === "false") return;
     try {
       const res = await getAllOauth(session.data.user.id);
       setUserGoogle(res.slice(-1).pop());
@@ -281,7 +281,7 @@ export default function ModalConfigGmail({ isEdit, edit }) {
                 </p>
               </Menu>
               <div className="mt-2">
-                {!isEdit ? (
+                {params.get("isEdit") === "false" ? (
                   editParams ? (
                     <>
                       <p className="ml-5 mb-1">Nombre del buzón</p>
@@ -591,7 +591,7 @@ export default function ModalConfigGmail({ isEdit, edit }) {
                 />
               </div>
               <div className="flex mt-4 justify-end">
-                {isEdit ? (
+                {params.get("isEdit") === "true" ? (
                   <>
                     <button
                       type="button"

@@ -216,7 +216,9 @@ export default function WebmailLayout({ children, table }) {
     {
       name: "Configuración del buzón",
       onClick: () =>
-        router.push(`${window.location.pathname}?page=${searchParams.get("page")}&configemail=true`),
+        router.push(
+          `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true`
+        ),
     },
   ];
 
@@ -397,7 +399,12 @@ export default function WebmailLayout({ children, table }) {
                 onClick={() => setSelectedFolder("INBOX")}
               >
                 <ChevronRightIcon className="ml-2 mt-1 h-4 w-4" />
-                <h3 className="ml-4 text-md">INBOX</h3>
+                <div className="flex justify-between w-full">
+                  <h3 className="ml-4 text-md">INBOX</h3>
+                  {selectedFolder === "INBOX" && (
+                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                  )}
+                </div>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${
@@ -408,7 +415,13 @@ export default function WebmailLayout({ children, table }) {
                 onClick={() => setSelectedFolder("ALL")}
               >
                 <BookmarkIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Todos</h3>
+                <div className="flex justify-between w-full">
+                  {" "}
+                  <h3 className="ml-4 text-md">Todos</h3>
+                  {selectedFolder === "ALL" && (
+                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                  )}
+                </div>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${
@@ -441,7 +454,13 @@ export default function WebmailLayout({ children, table }) {
                 onClick={() => setSelectedFolder("SPAM")}
               >
                 <ExclamationCircleIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Spam</h3>
+                <div className="flex justify-between w-full">
+                  {" "}
+                  <h3 className="ml-4 text-md">Spam</h3>
+                  {selectedFolder === "SPAM" && (
+                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                  )}{" "}
+                </div>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${

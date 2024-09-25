@@ -34,6 +34,8 @@ export default function ModalConfigGmail() {
   const [countProcessMessagesDays, setCountProcessMessagesDays] =
     useState(false);
   const [createIncomingMessages, setCreateIncomingMessages] = useState(false);
+  const [countExtractMessagesDays, setCountExtractMessagesDays] =
+    useState(false);
   const [createForOutgoingMessages, setCreateForOutgoingMessages] =
     useState(false);
 
@@ -86,35 +88,59 @@ export default function ModalConfigGmail() {
       data.mailboxAccess = null;
     else data.mailboxAccess = watch("responsibleAccess");
 
-    data.countExtractMessagesDays = configData.countExtractMessagesDays.value
+    data.countExtractMessagesDays = configData.countExtractMessagesDays.value;
     data.email = userGoogle.email;
 
-    console.log(data);
     const emailConfig = await createEmailConfig(data);
     if (emailConfig)
       router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
-  // useEffect(() => {
-  //   if (userGoogle?.email) {
-  //     getEmailConfig(userGoogle.email).then((res) => {
-  //       setConfigData((prevConfigData) => ({
-  //         ...prevConfigData,
-  //         externalSmtp: res.externalSmtp,
-  //         countExtractMessagesDays: { name: "una semana", value: 7 },
-  //         mailboxName: res.mailboxName,
-  //         senderName: res.senderName,
-  //         processMessagesForWeek: res.processMessagesForWeek,
-  //         routeExistingClientEmailsToCrmManagers: res.routeExistingClientEmailsToCrmManagers,
-  //         createProspectForIncomingMessages: res.createProspectForIncomingMessages,
-  //         createContactForOutgoingMessages: res.createContactForOutgoingMessages,
-  //         createUsingAttachedVCard: res.createUsingAttachedVCard,
-  //         email: res.email,
-  //         contactLeadDistribution: res.contactLeadDistribution,
-  //       }));
-  //     });
-  //   }
-  // }, [userGoogle, configData]);
+  useEffect(() => {
+    if (params.get("isEdit") === "true") {
+      getEmailConfig(userGoogle?.email).then((res) => {
+        let data = res;
+        if (data.countExtractMessagesDays) {
+          setCountExtractMessagesDays(true);
+          data.countExtractMessagesDays = timeMails.find(
+            (item) => item.value == data.countExtractMessagesDays
+          );
+        }
+        if (data.mailboxAccess) {
+          data.mailboxAccess = [JSON.parse(data.mailboxAccess)];
+          // console.log(data.mailboxAccess);
+          setValue("responsibleAccess", [
+            {
+              avatar: "",
+              bio: "Programador",
+              email: "davidfarias@blindariesgos.com",
+              id: "67dc7eff-2667-47b2-8b2f-34f295ec024b",
+              name: "",
+              phone: "584143396834",
+              username: "fariasta",
+            },
+          ]);
+        }
+
+        setConfigData(data);
+
+        // setConfigData((prevConfigData) => ({
+        //   ...prevConfigData,
+        //   externalSmtp: res.externalSmtp,
+        //   countExtractMessagesDays: { name: "una semana", value: 7 },
+        //   mailboxName: res.mailboxName,
+        //   senderName: res.senderName,
+        //   processMessagesForWeek: res.processMessagesForWeek,
+        //   routeExistingClientEmailsToCrmManagers: res.routeExistingClientEmailsToCrmManagers,
+        //   createProspectForIncomingMessages: res.createProspectForIncomingMessages,
+        //   createContactForOutgoingMessages: res.createContactForOutgoingMessages,
+        //   createUsingAttachedVCard: res.createUsingAttachedVCard,
+        //   email: res.email,
+        //   contactLeadDistribution: res.contactLeadDistribution,
+        // }));
+      });
+    }
+  }, [userGoogle, configData]);
 
   const schemaInputs = yup.object().shape({
     responsibleAccess: yup.string(),
@@ -122,13 +148,10 @@ export default function ModalConfigGmail() {
   });
 
   const {
-    register,
-    handleSubmit,
     formState: { isValid, errors },
     control,
     getValues,
     watch,
-    reset,
     setValue,
   } = useForm({
     defaultValues: {},
@@ -239,7 +262,13 @@ export default function ModalConfigGmail() {
                 )}
               </div>
               <Menu as="div" className="flex mt-4">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={countExtractMessagesDays}
+                  onChange={(e) =>
+                    setCountExtractMessagesDays(e.target.checked)
+                  }
+                />
                 <p className="ml-1">
                   Extraer mensajes para{" "}
                   <Menu.Button>

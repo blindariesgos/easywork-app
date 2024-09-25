@@ -10,6 +10,7 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import MultipleSelectWithFilters from "@/src/components/form/MultipleSelectWithFilters";
+import CMRMultipleSelectWithFilters from "@/src/components/form/CMRMultipleSelectWithFilters";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import DateTimeCalculator from "../components/DateTimeCalculator";
@@ -20,7 +21,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
-import { postTask, putTaskId } from "@/src/lib/apis";
+import {
+  getContactId,
+  postTask,
+  putTaskId,
+  getPolicyById,
+  getLeadById,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
@@ -65,7 +72,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
   const [listField, setListField] = useState([]);
-  const [contactCRM, setContactCRM] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { mutate: mutateTasks } = useTasks({});
@@ -134,26 +140,51 @@ export default function TaskEditor({ edit, copy, subtask }) {
       observers: edit?.observers ?? copy?.observers ?? [],
       tags: edit?.tags ?? copy?.tags ?? [],
       subTask: subtask ? [subtask] : [],
-      crm: formatCrmData(edit?.crm ?? copy?.crm ?? contactCRM),
+      crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
       createdBy: edit ? [edit.createdBy] : [],
     },
     resolver: yupResolver(schemaInputs),
   });
 
+  const setCmrContact = async (contactId) => {
+    const response = await getContactId(contactId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "contact",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Contacto: ");
+    setOpenOptions((prev) => ({ ...prev, more: true }));
+  };
+
+  const setCmrLead = async (leadId) => {
+    const response = await getLeadById(leadId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "lead",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Prospecto: ");
+    setOpenOptions((prev) => ({ ...prev, more: true }));
+  };
+
   useEffect(() => {
+    const prevId = params.get("prev_id");
+
     if (params.get("prev") === "contact") {
-      const prevId = params.get("prev_id");
-      if (!listContactsPolizas || !listContactsPolizas?.contacts) return;
-      const contact = listContactsPolizas.contacts.find(
-        (contact) => contact.id == prevId
-      );
-      setValue("crm", [
-        { id: contact.id, type: "contact", name: contact.name },
-      ]);
-      setValue("name", "CRM: ");
-      setOpenOptions((prev) => ({ ...prev, more: true }));
+      setCmrContact(prevId);
+      return;
     }
-  }, [params.get("prev"), listContactsPolizas]);
+
+    if (params.get("prev") === "leads") {
+      setCmrLead(prevId);
+      return;
+    }
+  }, [params.get("prev")]);
 
   useEffect(() => {
     if (session) {
@@ -583,8 +614,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       {t("tools:tasks:new:crm")}
                     </p>
                     <div className="w-full md:w-[40%]">
-                      <MultipleSelectWithFilters
-                        data={listContactsPolizas || {}}
+                      <CMRMultipleSelectWithFilters
                         getValues={getValues}
                         setValue={setValue}
                         name="crm"
@@ -647,19 +677,36 @@ export default function TaskEditor({ edit, copy, subtask }) {
   );
 }
 
+const getCmrInfo = (cmr) => {
+  if (cmr.type === "contact") {
+    return {
+      id: cmr?.contact?.id,
+      type: cmr.type,
+      name: cmr?.contact?.fullName || cmr?.contact?.name,
+    };
+  }
+  if (cmr.type === "poliza") {
+    return {
+      id: cmr?.polizaId,
+      type: cmr.type,
+      name: cmr?.poliza?.name,
+    };
+  }
+
+  if (cmr.type === "lead") {
+    return {
+      id: cmr?.lead?.id,
+      type: cmr.type,
+      name: cmr?.lead?.fullName || cmr?.lead?.name,
+    };
+  }
+};
+
 const formatCrmData = (crmData) => {
   console.log("crmData", crmData);
   if (!crmData) return [];
 
-  if (Array.isArray(crmData))
-    return crmData.map((item) => ({
-      id: item?.contact?.id ?? item?.poliza?.id,
-      type: item?.type,
-      name: item?.contact?.name,
-      title: item?.poliza?.title ?? item?.poliza?.noPoliza,
-    }));
-
-  return [{ id: crmData, type: "contact", name: "" }];
+  return crmData.map((item) => getCmrInfo(item));
 };
 
 const getSelectedOptions = (edit, t) => {

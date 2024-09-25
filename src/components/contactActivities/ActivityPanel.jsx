@@ -34,10 +34,12 @@ function parseAndSortByDate(data) {
   return combined;
 }
 
-export default function ActivityPanel({ contactId }) {
+export default function ActivityPanel({ contactId, crmType }) {
   const [bulkActivity, setBulkActivity] = useState([]);
-  const { activities, isError, isLoading, mutate } =
-    useContactActivities(contactId);
+  const { activities, isError, isLoading, mutate } = useContactActivities(
+    contactId,
+    crmType
+  );
 
   useEffect(() => {
     if (activities) {
@@ -99,6 +101,7 @@ export default function ActivityPanel({ contactId }) {
                   >
                     <ActivityHeader
                       contactId={contactId}
+                      crmType={crmType}
                       update={mutate}
                       className="w-full"
                     />

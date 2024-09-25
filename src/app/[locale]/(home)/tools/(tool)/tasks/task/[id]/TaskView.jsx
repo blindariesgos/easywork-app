@@ -67,7 +67,7 @@ export default function TaskView({ id }) {
     if (data.type === "contact") {
       return (
         <Link
-          href={`/sales/crm/contacts/contact/${data.contact.id}?show=true&prev=task&prev_id=${task.id}`}
+          href={`/sales/crm/contacts/contact/${data.contact.id}?show=true`}
           className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex gap-2 justify-between "
         >
           <p className="text-sm text-white">{t("tools:tasks:edit:contact")}:</p>
@@ -80,10 +80,27 @@ export default function TaskView({ id }) {
 
     if (data.type === "poliza") {
       return (
-        <div className="bg-blue-100 p-2 rounded-lg flex justify-between w-52">
+        <Link
+          href={`/operations/policies/policy/${data?.polizaId}?show=true`}
+          className="bg-blue-100 hover:bg-blue-500 p-2 rounded-lg flex gap-2 justify-between "
+        >
           <p className="text-sm text-white">{t("tools:tasks:edit:policy")}:</p>
-          <p className="text-sm text-white">{data.poliza.noPoliza}</p>
-        </div>
+          <p className="text-sm text-white">{data?.poliza?.name}</p>
+        </Link>
+      );
+    }
+
+    if (data.type === "lead") {
+      return (
+        <Link
+          href={`/sales/crm/leads/lead/${data?.lead?.id}?show=true`}
+          className="bg-yellow-500 hover:bg-yellow-600 p-2 rounded-lg flex gap-2 justify-between "
+        >
+          <p className="text-sm text-white">{t("tools:tasks:edit:policy")}:</p>
+          <p className="text-sm text-white">
+            {data.lead?.fullName ?? data.lead?.name ?? ""}
+          </p>
+        </Link>
       );
     }
   };

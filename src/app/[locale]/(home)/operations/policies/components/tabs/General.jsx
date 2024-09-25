@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
 import clsx from "clsx";
-import { formatToDollars } from "@/src/utils/formatters";
+import { formatToCurrency } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
@@ -300,6 +300,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="primaNeta"
             disabled={!isEdit}
             defaultValue={data?.primaNeta.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
           />
           <InputCurrency
             type="text"
@@ -308,6 +313,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="recargoFraccionado"
             disabled={!isEdit}
             defaultValue={data?.recargoFraccionado.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
           />
           <InputCurrency
             type="text"
@@ -316,6 +326,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="derechoPoliza"
             disabled={!isEdit}
             defaultValue={data?.derechoPoliza.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
           />
           <InputCurrency
             type="text"
@@ -324,6 +339,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="iva"
             disabled={!isEdit}
             defaultValue={data?.iva.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
           />
           <InputCurrency
             type="text"
@@ -332,6 +352,11 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="importePagar"
             disabled={!isEdit}
             defaultValue={data?.importePagar.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
           />
           <SelectInput
             label={t("operations:policies:general:intermediary")}

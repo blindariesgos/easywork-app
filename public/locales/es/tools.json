@@ -81,7 +81,14 @@
       "limit-date": "Fecha límite",
       "created-by": "Creado por",
       "responsible": "Persona responsable",
-      "no-deadline": "Sin fecha límite"
+      "no-deadline": "Sin fecha límite",
+      "delete-error": "Error al eliminar la(s) tarea(s)",
+      "delete-msg": "Tarea(s) eliminada(s) exitosamente!",
+      "completed-error": "Error al completar la(s) tarea(s)",
+      "completed-msg": "Tarea(s) completada(s) exitosamente!",
+      "responsible-error": "Error al actualizar la(s) tarea(s)",
+      "responsible-msg": "Tarea(s) actualizada(s) exitosamente!",
+      "lead": "Prospecto"
     },
     "filters": {
       "title": "Filtros",

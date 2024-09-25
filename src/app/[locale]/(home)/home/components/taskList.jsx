@@ -13,30 +13,46 @@ import { useEffect, useState } from "react";
 import { putTaskCompleted } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import CompleteModalTask from "./CompleteModalTask";
 
 const TaskList = ({ tasks, mutate }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState();
+
+  const handleComplete = (taskId) => {
+    setSelectedTask(taskId);
+    setIsOpen(true);
+  };
   return (
     <div className="flex flex-col gap-2 overflow-y-auto w-full pr-1">
       {tasks.map((task) => (
-        <Task task={task} key={task.id} mutate={mutate} />
+        <Task
+          task={task}
+          key={task.id}
+          mutate={mutate}
+          handleComplete={handleComplete}
+        />
       ))}
+      <CompleteModalTask
+        mutate={mutate}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        taskId={selectedTask}
+      />
     </div>
   );
 };
 
-const Task = ({ task, mutate }) => {
+const Task = ({ task, mutate, handleComplete }) => {
   const { t } = useTranslation();
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(task.isCompleted);
 
   useEffect(() => {
     setChecked(task.isCompleted);
   }, [task]);
 
   const handleChange = async (e, task) => {
-    setChecked(e);
-    await putTaskCompleted(task.id);
-    mutate();
-    toast.success(t("tools:tasks:completed-success"));
+    handleComplete(task.id);
   };
 
   return (

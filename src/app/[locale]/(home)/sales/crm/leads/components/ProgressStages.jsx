@@ -7,15 +7,22 @@ import DialogNegativeStage from "./DialogNegativeStage";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";
-import { postComment, putLeadStage, updateLead } from "@/src/lib/apis";
+import {
+  postComment,
+  putLeadCancelled,
+  putLeadStage,
+  updateLead,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
-export default function ProgressStages({ stage, leadId, mutate, setValue }) {
+export default function ProgressStages({ stage, leadId, mutate, disabled }) {
   const { isOpen, setIsOpen } = useLeads();
   const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
   const [stageIndex, setStageIndex] = useState(0);
   const [isOpenNegative, setIsOpenNegative] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     let index = lists?.listLead?.leadStages?.findIndex(
@@ -40,23 +47,14 @@ export default function ProgressStages({ stage, leadId, mutate, setValue }) {
 
   const handleSubmitNegativeStage = async () => {
     try {
-      const response = await handleUpdateState(
-        lists?.listLead?.leadStages[lists?.listLead?.leadStages.length - 1].id
-      );
+      const response = await putLeadCancelled(leadId, {
+        cancelReasonId: selectedReason,
+      });
       if (response.hasError) {
         toast.error("Ocurrio un error al actualizar el estado");
         return;
       }
-      const updateResponse = await updateLead(
-        {
-          canceledReazon: selectedReason,
-        },
-        leadId
-      );
-      if (updateResponse.hasError) {
-        toast.error("Ocurrio un error al actualizar el estado");
-        return;
-      }
+      router.back();
       mutate();
       toast.success("Prospecto actualizado con exito");
     } catch {
@@ -67,13 +65,6 @@ export default function ProgressStages({ stage, leadId, mutate, setValue }) {
   return (
     <div className="flex md:flex-row items-center md:justify-center gap-2 md:gap-3 flex-wrap">
       {lists?.listLead?.leadStages?.map((stage, index, arr) => {
-        const stageClassName = `px-3 py-2 rounded-lg text-sm text-white cursor-pointer ${
-          index === 5
-            ? "bg-green-500"
-            : index === 6
-              ? "bg-red-500"
-              : "bg-easy-600"
-        }`;
         return (
           <div key={stage.id} className="flex flex-row items-center relative">
             {index !== 0 && (
@@ -82,10 +73,23 @@ export default function ProgressStages({ stage, leadId, mutate, setValue }) {
               </div>
             )}
             <div
-              className={clsx(stageClassName, " hover:opacity-100", {
-                "opacity-60": index > stageIndex,
-              })}
+              className={clsx(
+                "px-3 py-2 rounded-lg text-sm text-white hover:opacity-100",
+                {
+                  "opacity-60": index > stageIndex,
+                  "bg-easy-600":
+                    index < lists?.listLead?.leadStages.length - 2 &&
+                    stageIndex < lists?.listLead?.leadStages.length - 2,
+                  "bg-green-500":
+                    index === lists?.listLead?.leadStages.length - 2,
+                  "bg-red-500":
+                    index === lists?.listLead?.leadStages.length - 1 ||
+                    stageIndex == lists?.listLead?.leadStages.length - 1,
+                  "cursor-pointer": !disabled,
+                }
+              )}
               onClick={() => {
+                if (disabled) return;
                 if (index < arr.length - 2) {
                   handleUpdateState(stage.id);
                 }
@@ -114,6 +118,7 @@ export default function ProgressStages({ stage, leadId, mutate, setValue }) {
         setIsOpen={setIsOpenNegative}
         setSelectedReason={setSelectedReason}
         selectedReason={selectedReason}
+        handleSubmit={handleSubmitNegativeStage}
       />
     </div>
   );

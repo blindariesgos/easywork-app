@@ -1248,6 +1248,12 @@ export const useTasksConfigs = () => {
       check: true,
     },
     {
+      id: 4,
+      name: t("tools:tasks:table:lead"),
+      row: "lead",
+      check: true,
+    },
+    {
       id: 5,
       name: t("tools:tasks:table.limit-date"),
       row: "deadline",

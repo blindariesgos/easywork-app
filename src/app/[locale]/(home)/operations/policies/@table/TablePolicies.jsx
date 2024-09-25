@@ -45,7 +45,8 @@ import { formatDate } from "@/src/utils/getFormatDate";
 import usePolicyContext from "../../../../../../context/policies";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
-import { formatToDollars } from "@/src/utils/formatters";
+import { formatToCurrency } from "@/src/utils/formatters";
+import useAppContext from "@/src/context/app";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -54,6 +55,7 @@ function classNames(...classes) {
 export default function TablePolicies() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
     usePolicyContext();
+  const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -363,7 +365,7 @@ export default function TablePolicies() {
                                     "dd/MM/yyyy"
                                   ) ?? null
                                 ) : column.row === "importePagar" ? (
-                                  formatToDollars(policy[column.row])
+                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : (
                                   policy[column.row] || "-"
                                 )}

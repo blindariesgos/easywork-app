@@ -80,8 +80,6 @@ export default function WebmailLayout({ children, table }) {
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [motivo, setMotivo] = useState("");
-  const [addOtherOauth, setAddOtherOauth] = useState(false);
   const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
@@ -122,9 +120,13 @@ export default function WebmailLayout({ children, table }) {
       selectOauth?.id
     ).then((res) => {
       setDMails(res);
-      if (dmails.length === 0) {
-        router.push(`${window.location.pathname}?configemail=true`)
-        toast.error("Por favor sincronice su Email");
+    });
+    getMails(session.data.user.id, 1, 1, "ALL", selectOauth?.id).then((res) => {
+      if (res.length === 0) {
+        axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
+        );
+        fetchData();
       }
     });
   }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
@@ -201,36 +203,29 @@ export default function WebmailLayout({ children, table }) {
     });
   }
 
-  function openModal(motivo, state, add) {
-    setMotivo(motivo);
-    setAddOtherOauth(add);
-    setGmailState(state);
-  }
-
   const itemOptions = [
     { name: "Volver a la lista", onClick: "" },
     { name: "Contactos", onClick: "" },
-    { name: "Editar firmas", onClick: "" },
+    {
+      name: "Editar firmas",
+      onClick: () =>
+        router.push(
+          `${window.location.pathname}?page=${searchParams.get("page")}&signature=true`
+        ),
+    },
     {
       name: "Configuración del buzón",
       onClick: () =>
-        router.push(`${window.location.pathname}?configemail=true`),
+        router.push(
+          `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true&isEdit=true`
+        ),
     },
   ];
 
   return (
     <>
       <Signature />
-      <ModalConfigGmail
-        state={gmailState}
-        addOtherOauth={addOtherOauth}
-        motivo={motivo}
-      >
-        <Tag
-          onclick={() => setGmailState(false)}
-          className="bg-easywork-main"
-        />
-      </ModalConfigGmail>
+      <ModalConfigGmail isEdit={true} />
       <ModalAddFolders isConfig={true} />
       <SendMessage
         colorTag="bg-easywork-main"
@@ -359,7 +354,7 @@ export default function WebmailLayout({ children, table }) {
                     transition
                     className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
                   >
-                    <div onClick={() => router.push("/tools/mails")}>
+                    <div onClick={() => router.push(`${window.location.href}&connectemail=true`)}>
                       Conectar nuevo
                     </div>
                   </MenuItem>
@@ -404,7 +399,12 @@ export default function WebmailLayout({ children, table }) {
                 onClick={() => setSelectedFolder("INBOX")}
               >
                 <ChevronRightIcon className="ml-2 mt-1 h-4 w-4" />
-                <h3 className="ml-4 text-md">INBOX</h3>
+                <div className="flex justify-between w-full">
+                  <h3 className="ml-4 text-md">INBOX</h3>
+                  {selectedFolder === "INBOX" && (
+                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                  )}
+                </div>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${
@@ -415,7 +415,13 @@ export default function WebmailLayout({ children, table }) {
                 onClick={() => setSelectedFolder("ALL")}
               >
                 <BookmarkIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Todos</h3>
+                <div className="flex justify-between w-full">
+                  {" "}
+                  <h3 className="ml-4 text-md">Todos</h3>
+                  {selectedFolder === "ALL" && (
+                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                  )}
+                </div>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${
@@ -448,7 +454,13 @@ export default function WebmailLayout({ children, table }) {
                 onClick={() => setSelectedFolder("SPAM")}
               >
                 <ExclamationCircleIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Spam</h3>
+                <div className="flex justify-between w-full">
+                  {" "}
+                  <h3 className="ml-4 text-md">Spam</h3>
+                  {selectedFolder === "SPAM" && (
+                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                  )}{" "}
+                </div>
               </li>
               <li
                 className={`cursor-pointer text-left text-white flex p-4 ${

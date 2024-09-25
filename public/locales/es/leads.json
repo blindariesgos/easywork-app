@@ -113,5 +113,12 @@
         }
       }
     }
+  },
+  "add": {
+    "title": "Añadir documentos",
+    "rfc": "Identificaciones INE, RFC o Pasaporte",
+    "quote": "Cotización",
+    "profile": "Perfil del cliente",
+    "policy": "Póliza"
   }
 }

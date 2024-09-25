@@ -8,7 +8,7 @@ import ReceiptEmpty from "../ReceiptEmpty";
 import { useTranslation } from "react-i18next";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { formatToDollars } from "@/src/utils/formatters";
+import { formatToCurrency } from "@/src/utils/formatters";
 import { useReceiptsByPolicyId } from "@/src/lib/api/hooks/receipts";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { formatDate } from "@/src/utils/getFormatDate";
@@ -254,7 +254,7 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     {formatDate(receipt?.dueDate, "dd/MM/yyyy")}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {formatToDollars(receipt.paymentAmount)}
+                    {formatToCurrency(receipt.paymentAmount)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {receipt?.currency?.symbol ?? "S/N"}

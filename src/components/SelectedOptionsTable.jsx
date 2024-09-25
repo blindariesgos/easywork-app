@@ -9,6 +9,7 @@ import { useAlertContext } from "../context/common/AlertContext";
 export default function SelectedOptionsTable({ options: data }) {
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
@@ -26,7 +27,10 @@ export default function SelectedOptionsTable({ options: data }) {
       />
       {selectedOption?.selectUser && (
         <div>
-          <MenuAddUser selectedOption={selectedOption} />
+          <MenuAddUser
+            selectedOption={selectedOption}
+            setSelection={setSelectedUser}
+          />
         </div>
       )}
       <Button
@@ -34,8 +38,10 @@ export default function SelectedOptionsTable({ options: data }) {
         type="button"
         className="px-3 py-2"
         buttonStyle="primary"
-        disabled={!selectedOption}
-        onclick={(e) => selectedOption && selectedOption.onclick()}
+        disabled={
+          !selectedOption || (selectedOption.selectUser && !selectedUser)
+        }
+        onclick={() => selectedOption && selectedOption.onclick(selectedUser)}
       />
     </div>
   );

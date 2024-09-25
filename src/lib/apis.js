@@ -49,7 +49,7 @@ export const createContact = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post("/sales/crm/contacts/new", data)
     .catch((error) => ({ ...error, hasError: true }));
-  // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  // revalidatePath( '/sales/crm/leads' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;
 };
 
@@ -57,6 +57,8 @@ export const createLead = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post("/sales/crm/leads/new", data)
     .catch((error) => ({ ...error, hasError: true }));
+
+  revalidatePath('/sales/crm/leads', "layout");
   return response;
 };
 
@@ -96,10 +98,19 @@ export const getContactId = async (id) => {
   }
 };
 
+export const getPolicyById = async (id) => {
+  try {
+    const response = await axios().get(`/sales/crm/polizas/${id}`);
+    return response;
+  } catch (error) {
+    // throw new Error(error);
+  }
+};
+
 export const deleteContactId = async (id) => {
   // try {
   const response = await axios().delete(`/sales/crm/contacts/${id}`);
-  revalidatePath("/sales/crm/contacts", "page");
+  revalidatePath("/sales/crm/contacts", "layout");
   return response;
 };
 
@@ -203,6 +214,11 @@ export const postComment = async (body, id) => {
 
 export const putLeadStage = async (leadId, stageId) => {
   const response = await axios().put(`/sales/crm/leads/${leadId}/stage/${stageId}`).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const putLeadCancelled = async (leadId, body) => {
+  const response = await axios().put(`/sales/crm/leads/${leadId}/cancel`, body).catch(error => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -383,8 +399,8 @@ export const updateLabelId = async (usergoogle_id, newLabelId) => {
   return response;
 };
 
-export const addContactComment = async (body) => {
-  const response = await axios().post(`/sales/crm/contacts/comments`, body);
+export const addContactComment = async (body, crmType = "contacts") => {
+  const response = await axios().post(`/sales/crm/${crmType}/comments`, body);
   return response;
 };
 

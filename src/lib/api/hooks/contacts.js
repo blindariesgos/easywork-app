@@ -13,7 +13,7 @@ const getQueries = (filters) => {
     }
   }
 
-  return Object.keys(filters).map(key =>
+  return Object.keys(filters).filter(key => filters[key] && filters[key].length).map(key =>
     Array.isArray(filters[key])
       ? getRepitKeys(key, filters[key])
       : getValue(key)).join('&')
@@ -49,9 +49,9 @@ export const useContact = (id) => {
   };
 };
 
-export const useContactActivities = (id) => {
+export const useContactActivities = (id, element = "contacts") => {
   const { data, error, isLoading, mutate } = useSWR(
-    `/sales/crm/contacts/${id}/activities`,
+    `/sales/crm/${element}/${id}/activities`,
     fetcher,
   );
   return {

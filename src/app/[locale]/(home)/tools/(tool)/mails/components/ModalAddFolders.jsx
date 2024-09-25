@@ -19,62 +19,38 @@ import {
 } from "../../../../../../../lib/apis";
 import Tag from "../../../../../../../components/Tag";
 
-export default function ModalAddFolders({ isConfig }) {
+export default function ModalAddFolders() {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { userGoogle, selectOauth } = useAppContext();
+  const { userGoogle, selectOauth, userData } = useAppContext();
   const [folderData, setFolderData] = useState([]);
-  const [folderDataFromDatabase, setFolderDataFromDatabase] = useState([]);
-  const [userData, setUserData] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (params.get("configemail")) {
+    if (params.get("configlabelid")) {
       getAllOauth(session.data.user.id).then((res) => {
-        setUserData(res.slice(-1).pop());
-        console.log(userData);
         const config = {
           headers: {
             Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
           },
         };
-        if (isConfig && userData.labelId) {
-          console.log(userData.labelId);
-          const array = [];
-          userData.labelId.forEach((element) => {
-            const parsedElement = JSON.parse(element);
-            if (parsedElement.type === "user") {
-              array.push({
-                name: parsedElement.mailboxName,
-              });
-            }
-          });
-          setFolderDataFromDatabase(array);
-        }
-        console.log(userData);
         axios
           .get(
-            `https://www.googleapis.com/gmail/v1/users/${userData.usergoogle_id}/labels`,
+            `https://www.googleapis.com/gmail/v1/users/${userGoogle?.usergoogle_id}/labels`,
             config
           )
           .then((labels) => {
-            console.log(labels);
             const updatedLabels = labels.data.labels.map((label) => ({
               ...label,
-              state:
-                label.type === "system"
-                  ? true
-                  : folderDataFromDatabase.some(
-                      (element) => element.name === label.name
-                    ),
+              state: label.type === "system" ? true : false,
             }));
             setFolderData(updatedLabels);
           });
       });
     }
-  }, [params.get("configemail"), userData]);
+  }, [params.get("configlabelid")]);
 
   async function deleteOauth() {
     try {
@@ -85,7 +61,7 @@ export default function ModalAddFolders({ isConfig }) {
 
   async function saveMails() {
     axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${userData?.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${userGoogle?.id}`
     );
   }
 
@@ -100,16 +76,10 @@ export default function ModalAddFolders({ isConfig }) {
         });
       }
     });
-    try {
-      await updateLabelId(userGoogle.id, folders);
-      if (!isConfig) {
-        await saveMails();
-        router.push("/tools/webmail?page=1");
-      } else {
-        router.back();
-        toast.success("Carpetas actualizadas");
-      }
-    } catch (error) {}
+    console.log(userGoogle);
+    await updateLabelId(userGoogle.usergoogle_id, folders);
+    await saveMails();
+    router.push("/tools/webmail?page=1");
   }
 
   function checkAll() {
@@ -121,7 +91,7 @@ export default function ModalAddFolders({ isConfig }) {
   }
 
   return (
-    <SliderOverShort openModal={params.get("configemail")}>
+    <SliderOverShort openModal={params.get("configlabelid")}>
       <Tag onclick={() => router.back()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 font-medium text-lg">
@@ -196,15 +166,6 @@ export default function ModalAddFolders({ isConfig }) {
                 >
                   Guardar
                 </button>
-                {isConfig && (
-                  <button
-                    type="button"
-                    className="hover:bg-gray-60 bg-gray-50 text-white font-bold py-2 px-4 rounded-md"
-                    onClick={() => setIsOpen(true)}
-                  >
-                    Inhabilitar
-                  </button>
-                )}
                 <button
                   type="button"
                   className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"

@@ -51,7 +51,7 @@ export default function Signature({
     const archive = event.target.files[0];
     try {
       const response = await uploadSignature(archive, { name: archive.name });
-      if (response){
+      if (response) {
         toast.success("Firma cargada");
       }
     } catch (error) {
@@ -150,7 +150,7 @@ export default function Signature({
                               ? router.replace(samePage)
                               : router.back();
                         }}
-                        className={colorTag}
+                        className="bg-easywork-main"
                       />
                       {subLabelTag && (
                         <Tag
@@ -193,6 +193,7 @@ export default function Signature({
                             ref={fileInputRef}
                             style={{ display: "none" }}
                             onChange={handleFileChange}
+                            accept="image/jpeg, image/png"
                           />
                         </div>
                       </div>
@@ -223,7 +224,9 @@ export default function Signature({
                                   </p>
                                 </div>
                               </td>
-                              <td className="py-2">{signature?.metadata?.name}</td>
+                              <td className="py-2">
+                                {signature?.metadata?.name}
+                              </td>
                               <td className="py-2">
                                 <XCircleIcon
                                   className="w-5 h-5 cursor-pointer"

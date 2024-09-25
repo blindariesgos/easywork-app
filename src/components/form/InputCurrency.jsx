@@ -14,14 +14,13 @@ const InputCurrency = ({
   setValue,
   watch,
   defaultValue,
+  prefix = "",
   ...props
 }) => {
   const [currentValue, setCurrentValue] = useState();
-  const prefix = "$";
   const registerProps = register && register(name);
 
   const handleChange = (e) => {
-    console.log({ e });
     const inputValue = e.target.value.replace(/[^0-9]/g, ""); // Eliminar caracteres no numéricos
     setValue && setValue(name, inputValue / 100);
     const formattedValue = formatCurrency(inputValue);
@@ -32,13 +31,18 @@ const InputCurrency = ({
     // Eliminar caracteres no numéricos
     const numericValue = val.replace(/[^0-9]/g, "");
     // Convertir a número y formatear
-    const formattedValue = new Intl.NumberFormat("es-MX", {
+    const formattedValue = new Intl.NumberFormat("de-DE", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(numericValue / 100);
-    return `${prefix}${formattedValue}`;
+    return `${prefix} ${formattedValue}`;
   };
+
+  useEffect(() => {
+    if (!currentValue) return;
+    setCurrentValue(formatCurrency(currentValue));
+  }, [prefix]);
 
   useEffect(() => {
     if (!defaultValue || currentValue) return;

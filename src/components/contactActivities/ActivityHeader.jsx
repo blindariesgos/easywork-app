@@ -8,7 +8,11 @@ import Button from "../form/Button";
 import { addContactComment } from "../../lib/apis";
 import { toast } from "react-toastify";
 
-export default function ActivityHeader({ contactId, update }) {
+export default function ActivityHeader({
+  contactId,
+  update,
+  crmType = "contact",
+}) {
   const [isShowAddComment, setIsShowAddComment] = useState(false);
   const { t } = useTranslation();
   const tabs = [
@@ -20,7 +24,7 @@ export default function ActivityHeader({ contactId, update }) {
     },
     {
       name: t("contacts:create:activities:tasks"),
-      href: `/tools/tasks/task?show=true&prev=contact&prev_id=${contactId}`,
+      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${contactId}`,
       current: false,
       disabled: true,
     },
@@ -35,6 +39,7 @@ export default function ActivityHeader({ contactId, update }) {
       href: "#",
       current: false,
       disabled: true,
+      onClick: () => setIsShowAddComment(true),
     },
     {
       name: t("contacts:create:activities:appointments"),
@@ -144,6 +149,7 @@ export default function ActivityHeader({ contactId, update }) {
                           "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
                         )}
                         aria-current={tab.current ? "page" : undefined}
+                        onClick={tab.onClick}
                       >
                         {tab.name}
                       </Link>
@@ -158,6 +164,7 @@ export default function ActivityHeader({ contactId, update }) {
           {isShowAddComment ? (
             <AddComment
               contactId={contactId}
+              crmType={crmType}
               updateActivities={update}
               close={() => setIsShowAddComment(false)}
             />
@@ -177,7 +184,7 @@ export default function ActivityHeader({ contactId, update }) {
   );
 }
 
-const AddComment = ({ contactId, close, updateActivities }) => {
+const AddComment = ({ contactId, close, updateActivities, crmType }) => {
   const [value, setValueText] = useState("");
   const quillRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -187,9 +194,9 @@ const AddComment = ({ contactId, close, updateActivities }) => {
     const body = {
       comment: value,
       pinned: false,
-      contactId,
+      [crmType == "leads" ? "leadId" : "contactId"]: contactId,
     };
-    const response = await addContactComment(body).catch(() => ({
+    const response = await addContactComment(body, crmType).catch(() => ({
       error: true,
     }));
 

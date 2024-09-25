@@ -59,10 +59,10 @@ export const renderCellContent = (column, task, t) => {
                 isDateTodayOverdue(taskValue) && !task.completedTime,
               "bg-blue-300 text-blue-900":
                 isDateMoreFiveDayOverdue(taskValue) && !task.completedTime,
+              "text-gray-800/45 line-through": task.isCompleted,
               "bg-gray-300":
                 !taskValue ||
                 (isDateMoreTenDayOverdue(taskValue) && !task.completedTime),
-              "text-gray-800/45 line-through": task.isCompleted,
             })}
           >
             {getTaskOverdueTimeDelta(task)}
@@ -70,7 +70,12 @@ export const renderCellContent = (column, task, t) => {
         </div>
       ) : (
         <div className="flex">
-          <span className="p-1 px-2 bg-gray-300 rounded-full text-sm w-auto">
+          <span
+            className={clsx("p-1 px-2  rounded-full text-sm w-auto", {
+              "bg-gray-300": !task.completedTime,
+              "line-through text-gray-800/45": task.completedTime,
+            })}
+          >
             {t("tools:tasks:table:no-deadline")}
           </span>
         </div>
@@ -99,7 +104,7 @@ export const renderCellContent = (column, task, t) => {
                 className="h-6 w-6 rounded-full bg-zinc-200"
                 width={30}
                 height={30}
-                src={taskValue?.avatar || "/img/avatar.svg"}
+                src={contact?.contact?.photo || "/img/avatar.svg"}
                 alt="avatar"
               />
               {contact.contact?.fullName ?? contact.contact?.name}
@@ -113,7 +118,39 @@ export const renderCellContent = (column, task, t) => {
       if (task?.crm?.length === 0) return "No especificado";
       const policy = task.crm.find((item) => item.type == "poliza");
 
-      return policy?.poliza?.title || "No especificado";
+      return (
+        (policy && (
+          <Link
+            href={`/operations/policies/policy/${policy?.polizaId}?show=true`}
+          >
+            <div className="flex gap-x-2 items-center justify-left">
+              {policy?.poliza?.name}
+            </div>
+          </Link>
+        )) ||
+        "No especificado"
+      );
+
+    case "lead":
+      if (task?.crm?.length === 0) return "No especificado";
+      const lead = task.crm.find((item) => item.type == "lead");
+      return (
+        (lead && (
+          <Link href={`/sales/crm/leads/lead/${lead?.lead?.id}?show=true`}>
+            <div className="flex gap-x-2 items-center justify-left">
+              <Image
+                className="h-6 w-6 rounded-full bg-zinc-200"
+                width={30}
+                height={30}
+                src={lead?.lead?.photo || "/img/avatar.svg"}
+                alt="avatar"
+              />
+              {lead.lead?.fullName ?? lead.lead?.name}
+            </div>
+          </Link>
+        )) ||
+        "No especificado"
+      );
 
     default:
       return link ? (

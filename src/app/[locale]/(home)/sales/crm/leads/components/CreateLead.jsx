@@ -26,13 +26,13 @@ import clsx from "clsx";
 import useAppContext from "@/src/context/app";
 import { createLead, updateContact, updateLead } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
+import AddDocuments from "./AddDocuments";
 
 export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { optionsHeader } = useLeads();
   const { lists } = useAppContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
@@ -42,10 +42,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   }, [id]);
 
   const schema = Yup.object().shape({
-    email: Yup.string()
-      .required(t("common:validations:required"))
-      .email(t("common:validations:email"))
-      .min(5, t("common:validations:min", { min: 5 })),
+    email: Yup.string().email(t("common:validations:email")),
     name: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
@@ -53,7 +50,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
     cargo: Yup.string(),
-    phone: Yup.string().required(t("common:validations:required")),
+    phone: Yup.string(),
     rfc: Yup.string(),
     typeId: Yup.string(),
     sourceId: Yup.string(),
@@ -209,9 +206,6 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
         {lead && (
           <div className="bg-transparent p-4">
             <div className="flex items-start flex-col justify-between gap-y-4 relative">
-              {!id && (
-                <div className="inset-0 bg-white/75 w-full h-full z-50 absolute rounded-t-2xl" />
-              )}
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl pl-4">
                   {lead ? lead.fullName : t("leads:lead:new")}
@@ -220,13 +214,23 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                 <PencilIcon className="h-4 w-4 text-gray-200" />
               </div> */}
               </div>
-              <ProgressStages
-                stage={lead.stage}
-                mutate={mutateLead}
-                leadId={id}
-                setValue={setValue}
-              />
-              <HeaderCrm options={optionsHeader} />
+              <div className="w-full relative">
+                <ProgressStages
+                  stage={lead.stage}
+                  mutate={mutateLead}
+                  leadId={id}
+                  setValue={setValue}
+                  disabled={lead.cancelled}
+                />
+              </div>
+              <div className="bg-white rounded-md shadow-sm w-full">
+                <div className="flex gap-6 py-4 px-4 flex-wrap items-center">
+                  <p className="text-gray-400 font-medium hover:text-primary">
+                    {t("leads:header:sales")}
+                  </p>
+                  <AddDocuments />
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -397,7 +401,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
             </div>
 
             {/* Menu Derecha */}
-            {lead && <ActivityPanel editing={!id} />}
+            {lead && <ActivityPanel contactId={id} crmType="leads" />}
           </div>
         </div>
 

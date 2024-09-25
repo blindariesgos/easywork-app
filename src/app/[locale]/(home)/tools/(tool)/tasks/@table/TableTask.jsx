@@ -19,7 +19,11 @@ import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
-import { deleteTask as apiDeleteTask } from "@/src/lib/apis"; // Ajusta el path según sea necesario
+import {
+  deleteTask as apiDeleteTask,
+  putTaskCompleted,
+  putTaskId,
+} from "@/src/lib/apis"; // Ajusta el path según sea necesario
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
@@ -92,7 +96,9 @@ export default function TableTask() {
   }, [selectedTasks, dataTask]);
 
   const toggleAll = () => {
-    setSelectedTasks(checked || indeterminate ? [] : dataTask?.items);
+    setSelectedTasks(
+      checked || indeterminate ? [] : dataTask?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   };
@@ -101,17 +107,52 @@ export default function TableTask() {
     try {
       setLoading(true);
       if (selectedTasks.length === 1) {
-        await apiDeleteTask(selectedTasks[0].id);
+        await apiDeleteTask(selectedTasks[0]);
       } else if (selectedTasks.length > 1) {
-        await Promise.all(selectedTasks.map((task) => apiDeleteTask(task.id)));
+        await Promise.all(selectedTasks.map((task) => apiDeleteTask(task)));
       }
-      toast.success(t("tools:tasks:delete-msg"));
+      toast.success(t("tools:tasks:table:delete-msg"));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error("Error al eliminar la(s) tarea(s)");
+      toast.error(t("tools:tasks:table:delete-error"));
     } finally {
       setLoading(false);
       onCloseAlertDialog();
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const completedTasks = async () => {
+    try {
+      setLoading(true);
+      await Promise.all(
+        selectedTasks.map((taskId) => putTaskCompleted(taskId))
+      );
+      toast.success(t("tools:tasks:table:completed-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:completed-error"));
+    } finally {
+      setLoading(false);
+      onCloseAlertDialog();
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const changeResponsibleTasks = async (responsible) => {
+    try {
+      setLoading(true);
+      const body = {
+        responsibleIds: [responsible.id],
+      };
+
+      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
       mutateTasks && mutateTasks();
     }
   };
@@ -120,10 +161,10 @@ export default function TableTask() {
     try {
       setLoading(true);
       await apiDeleteTask(id);
-      toast.success(t("tools:tasks:delete-msg"));
+      toast.success(t("tools:tasks:table:delete-msg"));
       mutateTasks && mutateTasks();
     } catch {
-      toast.error("Error al eliminar la(s) tarea(s)");
+      toast.error(t("tools:tasks:table:delete-error"));
     }
     setLoading(false);
   };
@@ -132,26 +173,33 @@ export default function TableTask() {
     {
       id: 1,
       name: t("common:table:checkbox:complete"),
+      onclick: () => completedTasks(),
     },
-    {
-      id: 2,
-      name: t("common:table:checkbox:add-observer"),
-      selectUser: true,
-    },
-    {
-      id: 3,
-      name: t("common:table:checkbox:add-participant"),
-      selectUser: true,
-    },
-    {
-      id: 4,
-      name: t("common:table:checkbox:change-observer"),
-      selectUser: true,
-    },
+    // {
+    //   id: 2,
+    //   name: t("common:table:checkbox:add-observer"),
+    //   selectUser: true,
+    // },
+    // {
+    //   id: 3,
+    //   name: t("common:table:checkbox:add-participant"),
+    //   selectUser: true,
+    // },
+    // {
+    //   id: 4,
+    //   name: t("common:table:checkbox:change-observer"),
+    //   selectUser: true,
+    // },
+    // {
+    //   id: 5,
+    //   name: t("common:table:checkbox:change-participant"),
+    //   selectUser: true,
+    // },
     {
       id: 5,
-      name: t("common:table:checkbox:change-participant"),
+      name: t("common:table:checkbox:change-responsible"),
       selectUser: true,
+      onclick: (e) => changeResponsibleTasks(e),
     },
     {
       id: 6,
@@ -247,14 +295,14 @@ export default function TableTask() {
                         <tr
                           key={index}
                           className={clsx(
-                            selectedTasks.includes(task)
+                            selectedTasks.includes(task.id)
                               ? "bg-gray-200"
                               : undefined,
-                            "hover:bg-indigo-100/40 cursor-default"
+                            "hover:bg-indigo-100/40 cursor-default relative"
                           )}
                         >
                           <td className="relative  px-4 sm:w-12 ">
-                            {selectedTasks.includes(task) && (
+                            {selectedTasks.includes(task.id) && (
                               <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                             )}
                             <div className="flex items-center">
@@ -262,12 +310,14 @@ export default function TableTask() {
                                 type="checkbox"
                                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                 value={task.id}
-                                checked={selectedTasks.includes(task)}
+                                checked={selectedTasks.includes(task.id)}
                                 onChange={(e) =>
                                   setSelectedTasks(
                                     e.target.checked
-                                      ? [...selectedTasks, task]
-                                      : selectedTasks.filter((p) => p !== task)
+                                      ? [...selectedTasks, task.id]
+                                      : selectedTasks.filter(
+                                          (p) => p !== task.id
+                                        )
                                   )
                                 }
                               />

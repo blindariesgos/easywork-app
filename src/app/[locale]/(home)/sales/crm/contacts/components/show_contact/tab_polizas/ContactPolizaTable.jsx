@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
-import { formatToDollars } from "@/src/utils/formatters";
+import { formatToCurrency } from "@/src/utils/formatters";
 
 export default function ContactPolizaTable({ base, contactId }) {
   const [fieldClicked, setFieldClicked] = useState({
@@ -315,7 +315,7 @@ export default function ContactPolizaTable({ base, contactId }) {
                     {poliza.metadata["Fecha de cierre"]}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {formatToDollars(poliza.importePagar)}
+                    {formatToCurrency(poliza.importePagar)}
                   </td>
                   {base === 0 && (
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">

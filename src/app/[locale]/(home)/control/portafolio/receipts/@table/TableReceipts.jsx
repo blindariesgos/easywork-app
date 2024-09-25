@@ -29,7 +29,7 @@ import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { formatToDollars } from "@/src/utils/formatters";
+import { formatToCurrency } from "@/src/utils/formatters";
 
 import {
   Menu,
@@ -47,10 +47,12 @@ import useReceiptContext from "../../../../../../../context/receipts";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
+import useAppContext from "@/src/context/app";
 
 export default function TableReceipts() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
     useReceiptContext();
+  const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -371,7 +373,7 @@ export default function TableReceipts() {
                                   </p>
                                 ) : column.row === "paymentAmount" ? (
                                   <p className="text-center">
-                                    {formatToDollars(receipt?.paymentAmount)}
+                                    {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? ""} ${formatToCurrency(receipt?.paymentAmount)}`}
                                   </p>
                                 ) : column.row === "createdAt" ||
                                   column.row === "dueDate" ? (

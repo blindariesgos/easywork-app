@@ -125,7 +125,6 @@
       "development-agents": "Embudo de desarrollo de agentes",
       "team-meetings": "Juntas de equipo",
       "individual-meetings": "Juntas individuales"
-      
     },
     "companies": {
       "name": "Compañías",
@@ -173,7 +172,8 @@
       "add-observer": "Agregar observador",
       "add-participant": "Agregar participante",
       "change-observer": "Cambiar observador",
-      "change-participant": "Cambiar participante"
+      "change-participant": "Cambiar participante",
+      "change-responsible": "Cambiar responsable"
     }
   }
 }

@@ -15,7 +15,7 @@ const getQueries = (filters, userId) => {
     }
   }
 
-  return Object.keys(filters).map(key =>
+  return Object.keys(filters).filter(key => filters[key] && filters[key].length).map(key =>
     Array.isArray(filters[key])
       ? getRepitKeys(key, filters[key])
       : getValue(key, userId)).join('&')

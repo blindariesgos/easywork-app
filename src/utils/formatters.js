@@ -1,16 +1,15 @@
-export const formatToDollars = (amount) => {
+export const formatToCurrency = (amount) => {
     // Asegurarse de que el valor sea un número
     if (isNaN(amount)) {
-        return '$0.00';
+        return '0.00';
     }
 
     // Convertir a número y formatear
     const options = {
-        style: 'currency',
-        currency: 'USD',
+        style: "decimal",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     };
 
-    return new Intl.NumberFormat('en-US', options).format(amount);
+    return new Intl.NumberFormat('de-DE', options).format(amount);
 }

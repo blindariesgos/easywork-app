@@ -21,6 +21,7 @@ export default function DialogNegativeStage({
   setIsOpen,
   setSelectedReason,
   selectedReason,
+  handleSubmit,
 }) {
   const { t } = useTranslation();
   const { data, isLoading } = useLeadCancelReazon();
@@ -93,7 +94,7 @@ export default function DialogNegativeStage({
                 </div>
                 <div className="flex justify-center gap-4 sticky bottom-0 pt-4 pb-2">
                   <Button
-                    type="submit"
+                    onclick={handleSubmit}
                     label={t("common:buttons:save")}
                     buttonStyle="primary"
                     className="px-3 py-2"

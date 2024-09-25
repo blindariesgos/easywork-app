@@ -79,9 +79,9 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
     const body = {
       ...otherData,
       paymentAmount: +paymentAmount,
-      dueDate: formatISO(dueDate),
-      startDate: formatISO(startDate),
-      subAgenteId: subAgenteId.id,
+      dueDate: dueDate ? formatISO(dueDate) : null,
+      startDate: startDate ? formatISO(startDate) : null,
+      subAgenteId: subAgenteId ? subAgenteId.id : null,
     };
     try {
       const response = await putReceipt(id, body);
@@ -315,6 +315,15 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   name="dueDate"
                   control={control}
                 />
+                <SelectInput
+                  label={t("control:portafolio:receipt:details:form:currency")}
+                  name="currencyId"
+                  options={lists?.policies?.currencies ?? []}
+                  disabled={!isEdit}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
                 <InputCurrency
                   type="text"
                   label={t("control:portafolio:receipt:details:form:amount")}
@@ -326,15 +335,11 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                       ? (+data?.paymentAmount)?.toFixed(2)
                       : null
                   }
-                />
-                <SelectInput
-                  label={t("control:portafolio:receipt:details:form:currency")}
-                  name="currencyId"
-                  options={lists?.policies?.currencies ?? []}
-                  disabled={!isEdit}
-                  register={register}
-                  setValue={setValue}
-                  watch={watch}
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
                 />
                 <SelectSubAgent
                   label={"Sub-agente"}

@@ -47,6 +47,8 @@ const createAxiosInstance = (props) => {
           const updatedAuthToken = await refreshAuthToken();
 
           if (!updatedAuthToken) {
+            await clearSession();
+            await logout()
             throw new Error("Failed to refresh auth token");
           }
 

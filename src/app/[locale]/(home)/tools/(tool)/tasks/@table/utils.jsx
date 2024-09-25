@@ -94,10 +94,11 @@ export const renderCellContent = (column, task, t) => {
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
       const contact = task.crm.find((item) => item.type == "contact");
+      console.log("Contact CRM", contact);
       return (
         (contact && (
           <Link
-            href={`/sales/crm/contacts/contact/${contact.contact.id}?show=true&prev=tasks`}
+            href={`/sales/crm/contacts/contact/${contact?.contact?.id}?show=true&prev=tasks`}
           >
             <div className="flex gap-x-2 items-center justify-left">
               <Image

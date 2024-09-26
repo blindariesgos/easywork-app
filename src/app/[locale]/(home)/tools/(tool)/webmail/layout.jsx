@@ -6,7 +6,6 @@ import clsx from "clsx";
 import { itemsByPage } from "@/src/lib/common";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
-import Tag from "../../../../../../components/Tag";
 import Table from "./components/Table";
 import axios from "axios";
 import {

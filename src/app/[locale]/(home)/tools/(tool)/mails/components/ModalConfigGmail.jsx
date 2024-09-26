@@ -16,6 +16,7 @@ import {
   getAllOauth,
   createEmailConfig,
   getEmailConfig,
+  updateEmailConfig,
 } from "../../../../../../../lib/apis";
 import useAppContext from "../../../../../../../context/app/index";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
@@ -28,12 +29,13 @@ export default function ModalConfigGmail() {
   const params = new URLSearchParams(searchParams);
   const session = useSession();
   const { lists, selectOauth, userGoogle, setUserGoogle } = useAppContext();
-  const [sendSmtp, setSendSmtp] = useState(false);
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
   const [countProcessMessagesDays, setCountProcessMessagesDays] =
     useState(false);
   const [createIncomingMessages, setCreateIncomingMessages] = useState(false);
+  const [countExtractMessagesDays, setCountExtractMessagesDays] =
+    useState(false);
   const [createForOutgoingMessages, setCreateForOutgoingMessages] =
     useState(false);
 
@@ -86,35 +88,92 @@ export default function ModalConfigGmail() {
       data.mailboxAccess = null;
     else data.mailboxAccess = watch("responsibleAccess");
 
-    data.countExtractMessagesDays = configData.countExtractMessagesDays.value
+    data.countExtractMessagesDays = configData.countExtractMessagesDays.value;
     data.email = userGoogle.email;
 
-    console.log(data);
     const emailConfig = await createEmailConfig(data);
     if (emailConfig)
       router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
-  // useEffect(() => {
-  //   if (userGoogle?.email) {
-  //     getEmailConfig(userGoogle.email).then((res) => {
-  //       setConfigData((prevConfigData) => ({
-  //         ...prevConfigData,
-  //         externalSmtp: res.externalSmtp,
-  //         countExtractMessagesDays: { name: "una semana", value: 7 },
-  //         mailboxName: res.mailboxName,
-  //         senderName: res.senderName,
-  //         processMessagesForWeek: res.processMessagesForWeek,
-  //         routeExistingClientEmailsToCrmManagers: res.routeExistingClientEmailsToCrmManagers,
-  //         createProspectForIncomingMessages: res.createProspectForIncomingMessages,
-  //         createContactForOutgoingMessages: res.createContactForOutgoingMessages,
-  //         createUsingAttachedVCard: res.createUsingAttachedVCard,
-  //         email: res.email,
-  //         contactLeadDistribution: res.contactLeadDistribution,
-  //       }));
-  //     });
-  //   }
-  // }, [userGoogle, configData]);
+  const updateConfig  = async () => {
+    console.log(configData);
+    let data = {
+      contactLeadDistribution: configData.contactLeadDistribution,
+      countExtractMessagesDays: configData.countExtractMessagesDays ? configData.countExtractMessagesDays.value : null,
+      countProcessMessagesDays: configData.countProcessMessagesDays ? configData.countExtractMessagesDays.value : null,
+      createForOutgoingMessages: configData.createForOutgoingMessages ? configData.countExtractMessagesDays.value : null,
+      createIncomingMessages: configData.createIncomingMessages ? configData.countExtractMessagesDays.value : null,
+      createUsingAttachedVCard: configData.createUsingAttachedVCard,
+      mailboxAccess: configData.mailboxAccess,
+      mailboxName: configData.mailboxName,
+      routeExistingClientEmailsToCrmManagers: configData.routeExistingClientEmailsToCrmManagers,
+      senderName: configData.senderName,
+      email: selectOauth.email,
+    }
+    const response = await updateEmailConfig(data);
+    console.log(response);
+  }
+
+  useEffect(() => {
+    if (params.get("isEdit") === "true") {
+      getEmailConfig(selectOauth?.email).then((res) => {
+        console.log(res);
+        let data = res;
+        if (data.countExtractMessagesDays) {
+          setCountExtractMessagesDays(true);
+          data.countExtractMessagesDays = timeMails.find(
+            (item) => item.value == data.countExtractMessagesDays
+          );
+        }
+        if (data.countProcessMessagesDays) {
+          setCountProcessMessagesDays(true);
+          data.countProcessMessagesDays = timeMails.find(
+            (item) => item.value == data.countProcessMessagesDays
+          );
+        }
+        if (data.createIncomingMessages) {
+          setCreateIncomingMessages(true);
+          data.createIncomingMessages = contacts.find(
+            (item) => item.value == data.createIncomingMessages
+          );
+        }
+        if (data.createForOutgoingMessages) {
+          setCreateForOutgoingMessages(true);
+          data.createForOutgoingMessages = contacts.find(
+            (item) => item.value == data.createForOutgoingMessages
+          );
+        }
+        if (data.contactLeadDistribution) {
+          const responsibleCrmArray = [];
+          data.contactLeadDistribution.forEach((element) => {
+            responsibleCrmArray.push(JSON.parse(element));
+          });
+          setValue("responsibleCrm", responsibleCrmArray);
+          data.contactLeadDistribution = responsibleCrmArray;
+        }
+        if (data.mailboxAccess) {
+          const responsibleAccessArray = [];
+          data.mailboxAccess.forEach((element) => {
+            responsibleAccessArray.push(JSON.parse(element));
+          });
+          setValue("responsibleAccess", responsibleAccessArray);
+          data.mailboxAccess = responsibleAccessArray;
+        }
+
+        if (
+          setCountProcessMessagesDays ||
+          configData?.routeExistingClientEmailsToCrmManagers ||
+          setCreateIncomingMessages ||
+          setCreateForOutgoingMessages ||
+          configData?.createUsingAttachedVCard
+        )
+        setCrmConfig(true);
+
+        setConfigData(data);
+      });
+    }
+  }, [params.get("isEdit")]);
 
   const schemaInputs = yup.object().shape({
     responsibleAccess: yup.string(),
@@ -122,13 +181,10 @@ export default function ModalConfigGmail() {
   });
 
   const {
-    register,
-    handleSubmit,
     formState: { isValid, errors },
     control,
     getValues,
     watch,
-    reset,
     setValue,
   } = useForm({
     defaultValues: {},
@@ -177,12 +233,7 @@ export default function ModalConfigGmail() {
   async function getDataGoogleUser() {
     setUserGoogle(null);
     if (params.get("isEdit") === "false") return;
-    try {
-      const res = await getAllOauth(session.data.user.id);
-      setUserGoogle(res.slice(-1).pop());
-    } catch (error) {
-      console.log(error);
-    }
+    setUserGoogle(selectOauth);
   }
 
   const timeMails = [
@@ -239,7 +290,13 @@ export default function ModalConfigGmail() {
                 )}
               </div>
               <Menu as="div" className="flex mt-4">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={countExtractMessagesDays}
+                  onChange={(e) =>
+                    setCountExtractMessagesDays(e.target.checked)
+                  }
+                />
                 <p className="ml-1">
                   Extraer mensajes para{" "}
                   <Menu.Button>
@@ -340,6 +397,7 @@ export default function ModalConfigGmail() {
                 <div className="flex ml-1">
                   <input
                     type="checkbox"
+                    checked={crmConfig}
                     onChange={(e) => {
                       setCrmConfig(e.target.checked);
                     }}
@@ -603,6 +661,7 @@ export default function ModalConfigGmail() {
                     <button
                       type="button"
                       className="hover:bg-green-600 bg-green-500 text-white font-bold py-2 px-4 rounded-md ml-2"
+                      onClick={() => updateConfig()}
                     >
                       Guardar
                     </button>

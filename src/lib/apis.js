@@ -338,7 +338,11 @@ export const createEmailConfig = async (data) => {
 
 export const getEmailConfig = async (email) => {
   const response = await axios().get(`/oauth/emailconfig/${email}`);
-  console.log(response);
+  return response;
+};
+
+export const updateEmailConfig = async (data) => {
+  const response = await axios().put(`/oauth/emailconfig`, data);
   return response;
 };
 

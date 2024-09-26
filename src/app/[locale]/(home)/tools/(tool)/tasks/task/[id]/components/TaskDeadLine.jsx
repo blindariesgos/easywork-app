@@ -17,7 +17,7 @@ import { useTasks } from "@/src/lib/api/hooks/tasks";
 import useTasksContext from "@/src/context/tasks";
 import Button from "@/src/components/form/Button";
 
-const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
+const TaskDeadLine = ({ task }) => {
   const { t } = useTranslation();
   const { mutate: mutateTasks } = useTasksContext();
 
@@ -54,8 +54,6 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
   };
 
   const handleDateRemove = async () => {
-    setIsLoading(true);
-
     const body = {
       deadline: null,
     };
@@ -67,7 +65,6 @@ const TaskDeadLine = ({ task, onDateChange, onDateRemove }) => {
     } catch (error) {
       handleApiError(error.message);
     } finally {
-      setIsLoading(false);
       setIsEditing(false);
     }
 

@@ -79,13 +79,19 @@ export default function GetPassword() {
           </p>
         </div>
         {/* boton */}
-        <div>
+        <div className="flex flex-col items-center">
           <button
             onClick={() => handleSendOtp()}
             style={{ backgroundColor: "#262261" }}
             className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
           >
             Restablecer mi contraseña
+          </button>
+          <button
+            onClick={() => setContextData(0)}
+            className="hover:bg-gray-800 bg-gray-700 w-24 mt-2 text-white font-bold py-2 px-4 rounded-md"
+          >
+            Cancelar
           </button>
         </div>
       </div>

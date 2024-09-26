@@ -41,6 +41,7 @@ import {
 } from "@headlessui/react";
 import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
+import { getFormatDate } from "@/src/utils/getFormatDate";
 
 export default function TableTask() {
   const checkbox = useRef();
@@ -157,6 +158,43 @@ export default function TableTask() {
     }
   };
 
+  const changeCreatorTasks = async (creator) => {
+    try {
+      setLoading(true);
+      const body = {
+        createdById: creator.id,
+      };
+
+      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const changeDeadlineTasks = async (deadline) => {
+    try {
+      setLoading(true);
+
+      const body = {
+        deadline: getFormatDate(deadline),
+      };
+
+      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
+      mutateTasks && mutateTasks();
+    }
+  };
+
   const handleDeleteTask = async (id) => {
     try {
       setLoading(true);
@@ -185,18 +223,20 @@ export default function TableTask() {
     //   name: t("common:table:checkbox:add-participant"),
     //   selectUser: true,
     // },
-    // {
-    //   id: 4,
-    //   name: t("common:table:checkbox:change-observer"),
-    //   selectUser: true,
-    // },
-    // {
-    //   id: 5,
-    //   name: t("common:table:checkbox:change-participant"),
-    //   selectUser: true,
-    // },
+    {
+      id: 4,
+      name: t("common:table:checkbox:change-creator"),
+      selectUser: true,
+      onclick: (e) => changeCreatorTasks(e),
+    },
     {
       id: 5,
+      name: t("common:table:checkbox:change-deadline"),
+      selectDate: true,
+      onclick: (e) => changeDeadlineTasks(e),
+    },
+    {
+      id: 2,
       name: t("common:table:checkbox:change-responsible"),
       selectUser: true,
       onclick: (e) => changeResponsibleTasks(e),

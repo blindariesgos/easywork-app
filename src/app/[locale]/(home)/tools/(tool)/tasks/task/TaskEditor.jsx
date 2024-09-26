@@ -12,6 +12,7 @@ import MultipleSelect from "@/src/components/form/MultipleSelect";
 import MultipleSelectWithFilters from "@/src/components/form/MultipleSelectWithFilters";
 import CMRMultipleSelectWithFilters from "@/src/components/form/CMRMultipleSelectWithFilters";
 import InputDate from "@/src/components/form/InputDate";
+import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
 import DateTimeCalculator from "../components/DateTimeCalculator";
 import CkeckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
@@ -54,6 +55,7 @@ const schemaInputs = yup.object().shape({
   crm: yup.array(),
   tags: yup.array(),
   listField: yup.array(),
+  important: yup.boolean(),
 });
 
 export default function TaskEditor({ edit, copy, subtask }) {
@@ -142,6 +144,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       subTask: subtask ? [subtask] : [],
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
       createdBy: edit ? [edit.createdBy] : [],
+      important: edit?.important ?? copy?.important ?? false,
     },
     resolver: yupResolver(schemaInputs),
   });
@@ -202,6 +205,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setSelectedOptions(optionsSelected);
     }
   }, [edit, t]);
+
+  useEffect(() => {
+    setCheck("important", edit?.important ?? copy?.important ?? false);
+  }, [edit, copy]);
 
   const createTask = async (data, isNewTask) => {
     if (value === "") return toast.error(t("tools:tasks:description"));
@@ -305,7 +312,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-0"
                   value={check}
                   checked={check}
-                  onChange={(e) => setCheck(e.target.checked)}
+                  onChange={(e) => {
+                    setCheck(e.target.checked);
+                    setValue("important", e.target.checked);
+                  }}
                 />
                 <p className="text-sm">{t("tools:tasks:new:high")}</p>
                 <FireIcon
@@ -471,14 +481,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     <Controller
                       render={({ field: { value, onChange, ref, onBlur } }) => {
                         return (
-                          <InputDate
+                          <InputDateV2
                             value={value}
                             onChange={onChange}
-                            onBlur={onBlur}
                             icon={
-                              <FaCalendarDays className="h-3 w-3 text-primary pr-4" />
+                              <FaCalendarDays className="h-4 w-4 text-primary" />
                             }
                             time
+                            watch={watch}
                           />
                         );
                       }}
@@ -680,7 +690,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
 const getCmrInfo = (cmr) => {
   if (cmr.type === "contact") {
     return {
-      id: cmr?.contact?.id,
+      id: cmr?.contactId,
       type: cmr.type,
       name: cmr?.contact?.fullName || cmr?.contact?.name,
     };
@@ -695,7 +705,7 @@ const getCmrInfo = (cmr) => {
 
   if (cmr.type === "lead") {
     return {
-      id: cmr?.lead?.id,
+      id: cmr?.leadId,
       type: cmr.type,
       name: cmr?.lead?.fullName || cmr?.lead?.name,
     };
@@ -743,6 +753,7 @@ const buildTaskBody = (
     responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
     createdById: session.user?.id,
     crm,
+    important: !!data.important,
   };
 
   if (data.observers?.length) {

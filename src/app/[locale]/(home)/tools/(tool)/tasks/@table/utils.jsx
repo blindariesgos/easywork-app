@@ -91,6 +91,9 @@ export const renderCellContent = (column, task, t) => {
     case "startTime":
       return taskValue ? formatDate(taskValue, "dd/MM/yyyy hh:mm:ss a") : "";
 
+    case "important":
+      return !!taskValue ? t("common:yes") : t("common:no");
+
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
       const contact = task.crm.find((item) => item.type == "contact");

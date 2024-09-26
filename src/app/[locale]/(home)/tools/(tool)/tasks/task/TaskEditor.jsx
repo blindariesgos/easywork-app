@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import MultipleSelectWithFilters from "@/src/components/form/MultipleSelectWithFilters";
 import CMRMultipleSelectWithFilters from "@/src/components/form/CMRMultipleSelectWithFilters";
+import CMRMultipleSelectWithFiltersV2 from "@/src/components/form/CMRMultipleSelectWithFiltersV2";
 import InputDate from "@/src/components/form/InputDate";
 import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
@@ -624,7 +625,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       {t("tools:tasks:new:crm")}
                     </p>
                     <div className="w-full md:w-[40%]">
-                      <CMRMultipleSelectWithFilters
+                      <CMRMultipleSelectWithFiltersV2
                         getValues={getValues}
                         setValue={setValue}
                         name="crm"
@@ -756,6 +757,9 @@ const buildTaskBody = (
     important: !!data.important,
   };
 
+  if (data.createdBy?.length) {
+    body.createdById = data.createdBy[0].id;
+  }
   if (data.observers?.length) {
     body.observersIds = data.observers.map((obs) => obs.id);
   }

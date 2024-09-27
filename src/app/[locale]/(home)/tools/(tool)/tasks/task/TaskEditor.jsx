@@ -701,13 +701,7 @@ const getCmrInfo = (cmr) => {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
   }
 
-  if (cmr.type === "lead") {
-    return {
-      id: cmr?.lead?.id,
-      type: cmr.type,
-      name: cmr?.lead?.fullName || cmr?.lead?.name,
-    };
-  }
+  return { id, type, name };
 };
 
 const formatCrmData = (crmData) => {

@@ -688,25 +688,22 @@ export default function TaskEditor({ edit, copy, subtask }) {
   );
 }
 
+// Función actualizada
 const getCmrInfo = (cmr) => {
-  if (cmr.type === "contact") {
-    return {
-      id: cmr?.contactId,
-      type: cmr.type,
-      name: cmr?.contact?.fullName || cmr?.contact?.name,
-    };
-  }
-  if (cmr.type === "poliza") {
-    return {
-      id: cmr?.polizaId,
-      type: cmr.type,
-      name: cmr?.poliza?.name,
-    };
+  if (!cmr || !cmr.type || !cmr.crmEntity) return null;
+
+  const { id } = cmr.crmEntity;
+  const { type } = cmr;
+
+  let name = cmr.crmEntity.name;
+
+  if (type === "contact" || type === "lead") {
+    name = cmr.crmEntity.fullName || cmr.crmEntity.name;
   }
 
   if (cmr.type === "lead") {
     return {
-      id: cmr?.leadId,
+      id: cmr?.lead?.id,
       type: cmr.type,
       name: cmr?.lead?.fullName || cmr?.lead?.name,
     };

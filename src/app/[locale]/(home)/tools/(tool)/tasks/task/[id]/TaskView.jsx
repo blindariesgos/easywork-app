@@ -64,45 +64,42 @@ export default function TaskView({ id }) {
   };
 
   const getCMRView = (data) => {
-    if (data.type === "contact") {
-      return (
-        <Link
-          href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
-          className="bg-primary hover:bg-indigo-700 p-2 rounded-lg flex gap-2 justify-between "
-        >
-          <p className="text-sm text-white">{t("tools:tasks:edit:contact")}:</p>
-          <p className="text-sm text-white">
-            {data?.contact?.fullName ?? data?.contact?.name ?? ""}
-          </p>
-        </Link>
-      );
-    }
+    if (!data || !data.type || !data.crmEntity) return null;
 
-    if (data.type === "poliza") {
-      return (
-        <Link
-          href={`/operations/policies/policy/${data?.polizaId}?show=true`}
-          className="bg-blue-100 hover:bg-blue-500 p-2 rounded-lg flex gap-2 justify-between "
-        >
-          <p className="text-sm text-white">{t("tools:tasks:edit:policy")}:</p>
-          <p className="text-sm text-white">{data?.poliza?.name}</p>
-        </Link>
-      );
-    }
+    const typeConfig = {
+      contact: {
+        href: `/sales/crm/contacts/contact/${data.crmEntity.id}?show=true`,
+        bgClass: "bg-primary hover:bg-indigo-700",
+        labelKey: "tools:tasks:edit:contact",
+        name: data.crmEntity.fullName ?? data.crmEntity.name ?? "",
+      },
+      poliza: {
+        href: `/operations/policies/policy/${data.crmEntity.id}?show=true`,
+        bgClass: "bg-blue-100 hover:bg-blue-500",
+        labelKey: "tools:tasks:edit:policy",
+        name: data.crmEntity.name,
+      },
+      lead: {
+        href: `/sales/crm/leads/lead/${data.crmEntity.id}?show=true`,
+        bgClass: "bg-yellow-500 hover:bg-yellow-600",
+        labelKey: "tools:tasks:edit:lead",
+        name: data.crmEntity.fullName ?? data.crmEntity.name ?? "",
+      },
+    };
 
-    if (data.type === "lead") {
-      return (
-        <Link
-          href={`/sales/crm/leads/lead/${data?.lead?.id}?show=true`}
-          className="bg-yellow-500 hover:bg-yellow-600 p-2 rounded-lg flex gap-2 justify-between "
-        >
-          <p className="text-sm text-white">{t("tools:tasks:edit:lead")}:</p>
-          <p className="text-sm text-white">
-            {data.lead?.fullName ?? data.lead?.name ?? ""}
-          </p>
-        </Link>
-      );
-    }
+    const config = typeConfig[data.type];
+
+    if (!config) return null;
+
+    return (
+      <Link
+        href={config.href}
+        className={`${config.bgClass} p-2 rounded-lg flex gap-2 justify-between`}
+      >
+        <p className="text-sm text-white">{t(`${config.labelKey}`)}:</p>
+        <p className="text-sm text-white">{config.name}</p>
+      </Link>
+    );
   };
 
   useEffect(() => {

@@ -50,6 +50,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       array.push(element.email.googleId);
     });
     updateLabelId(array, label);
+    setSelectedEmails([]);
   }
 
   const handleChangeAddCrm = () => {
@@ -57,7 +58,6 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   };
 
   async function updateLabelId(array, label) {
-    console.log(label, array, selectOauth?.id);
     if (label === "inbox") {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
@@ -77,18 +77,33 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   }
 
   const itemOptions = [
-    { name: "Abrir email", onClick: "" },
+    {
+      name: "Abrir email",
+      onClick: (item) => {
+        setSelectMail(item.email.googleId);
+        router.push("/tools/webmail/?detail=true");
+      },
+    },
     {
       name: "Marcar como no leido",
-      onClick: (item) => updateLabelId([item], "unread"),
+      onClick: (item) => updateLabelId([item.email.googleId], "read"),
     },
     { name: "Mover a la carpeta", onClick: "" },
-    { name: "Marcar como correo no deseado", onClick: "" },
-    { name: "Eliminar", onClick: (item) => updateLabelId([item], "trash") },
+    {
+      name: "Marcar como correo no deseado",
+      onClick: (item) => updateLabelId([item.email.googleId], "spam"),
+    },
+    {
+      name: "Eliminar",
+      onClick: (item) => updateLabelId([item.email.googleId], "trash"),
+    },
     { name: "Excluir de CRM", onClick: "" },
     { name: "Crear tareas", onClick: "" },
     { name: "Crear eventos", onClick: "" },
-    { name: "Eliminar permanentemente", onClick: "" },
+    {
+      name: "Eliminar permanentemente",
+      onClick: (item) => updateLabelId([item.email.googleId], "delete"),
+    },
   ];
 
   const folderOptions = [
@@ -97,7 +112,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       onClick: (item) =>
         selectedEmails
           ? changeSelectLabelId("inbox")
-          : updateLabelId([item], "inbox"),
+          : updateLabelId([item.email.googleId], "inbox"),
       value: "Inbox",
     },
     {
@@ -105,7 +120,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       onClick: (item) =>
         selectedEmails
           ? changeSelectLabelId("spam")
-          : updateLabelId([item], "spam"),
+          : updateLabelId([item.email.googleId], "spam"),
       value: "Spam",
     },
     {
@@ -113,7 +128,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       onClick: (item) =>
         selectedEmails
           ? changeSelectLabelId("all")
-          : updateLabelId([item], "archived"),
+          : updateLabelId([item.email.googleId], "archived"),
       value: "All",
     },
   ];
@@ -286,8 +301,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                   {({ active }) => (
                                     <div
                                       onClick={() =>
-                                        index !== 2 &&
-                                        itemOp.onClick(item.email.googleId)
+                                        index !== 2 && itemOp.onClick(item)
                                       }
                                       className={classNames(
                                         active ? "bg-gray-50" : "",
@@ -325,9 +339,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                                           "block px-3 py-1 text-sm leading-6 cursor-pointer"
                                                         )}
                                                         onClick={() =>
-                                                          subitem.onClick(
-                                                            item.email.googleId
-                                                          )
+                                                          subitem.onClick(item)
                                                         }
                                                       >
                                                         {subitem.name}

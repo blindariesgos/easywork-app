@@ -126,14 +126,14 @@ const CMRMultipleSelectWithFilters = ({
             {getValues(name)?.length > 0 &&
               getValues(name).map((res) => (
                 <div
-                  key={res.id}
+                  key={res?.id}
                   className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
                 >
-                  {res.fullName ||
-                    res.name ||
-                    res.username ||
-                    res.title ||
-                    res.id}
+                  {res?.fullName ||
+                    res?.name ||
+                    res?.username ||
+                    res?.title ||
+                    res?.id}
                   <div
                     type="button"
                     onClick={() => handleRemove(res.id)}

@@ -184,17 +184,10 @@ export default function Signature({
                         <div>
                           <div
                             className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
-                            onClick={handleFileClick}
+                            onClick={() => router.push(`${window.location.href}&addsignature=true`)}
                           >
                             <p className="ml-1 text-center">Agregar Firma</p>
                           </div>
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                            accept="image/jpeg, image/png"
-                          />
                         </div>
                       </div>
                       <table className="text-easywork-main w-full">

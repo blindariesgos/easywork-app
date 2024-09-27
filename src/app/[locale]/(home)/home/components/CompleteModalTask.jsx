@@ -70,7 +70,7 @@ const CompleteModalTask = ({ isOpen, setIsOpen, taskId, mutate }) => {
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
         {/* The actual dialog panel  */}
         <DialogPanel className="max-w-lg space-y-4 bg-white rounded-md w-full">
-          <DialogTitle className="font-bold bg-primary text-white p-4 rounded-tr-md rounded-tl-md">
+          <DialogTitle className="font-bold bg-primary text-white py-4 px-6 rounded-tr-md rounded-tl-md">
             Cerrar tarea
           </DialogTitle>
           <Description className="px-6 py-4 grid grid-cols-1 gap-2">
@@ -95,7 +95,7 @@ const CompleteModalTask = ({ isOpen, setIsOpen, taskId, mutate }) => {
             </RadioGroup>
             {selected && (
               <Fragment>
-                <label htmlFor="">Comentario</label>
+                <label htmlFor="">Comentario (Opcional)</label>
                 <div className="border border-gray-600 rounded-md">
                   <TextEditor
                     quillRef={quillRef}
@@ -110,8 +110,8 @@ const CompleteModalTask = ({ isOpen, setIsOpen, taskId, mutate }) => {
 
           <div className="flex gap-4 p-4 justify-end">
             <Button
-              label={"Cerrar"}
-              buttonStyle="primary"
+              label={"Cancelar"}
+              buttonStyle="secondary"
               className="px-2 py-1"
               onclick={() => setIsOpen(false)}
             />

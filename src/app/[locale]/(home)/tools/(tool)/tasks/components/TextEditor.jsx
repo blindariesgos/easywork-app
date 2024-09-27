@@ -17,7 +17,7 @@ import ReactQuill from "react-quill";
 
 const toolbar = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
-  ["blockquote"],
+  ["code-block"],
   ["link", "image", "video"],
   [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
@@ -34,7 +34,7 @@ const formats = [
   "italic",
   "underline",
   "strike",
-  "blockquote",
+  "code-block",
   "list",
   "bullet",
   "indent",

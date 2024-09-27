@@ -28,6 +28,7 @@ import TaskHeaderStatus from "./components/TaskHeaderStatus";
 import BannerStatus from "./components/BannerStatus";
 import Button from "@/src/components/form/Button";
 import { useSearchParams } from "next/navigation";
+import clsx from "clsx";
 
 export default function TaskView({ id }) {
   const { task, isLoading, isError, mutate: mutateTask } = useTask(id);
@@ -35,7 +36,6 @@ export default function TaskView({ id }) {
   const { t } = useTranslation();
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
-  const [check, setCheck] = useState(true);
   const [taskDescription, setTaskDescription] = useState("");
   const [openEdit, setOpenEdit] = useState(null);
   const { mutate } = useSWRConfig();
@@ -194,11 +194,18 @@ export default function TaskView({ id }) {
                   </p>
                   <div className="flex gap-2 items-center">
                     <FireIcon
-                      className={`h-5 w-5 ${
-                        check ? "text-red-500" : "text-gray-200"
-                      }`}
+                      className={clsx("h-5 w-5", {
+                        "text-red-500": task.important,
+                        "text-gray-200": !task.important,
+                      })}
                     />
-                    <p className="text-sm">{t("tools:tasks:new:high")}</p>
+                    <p
+                      className={clsx("text-sm", {
+                        "text-gray-200": !task.important,
+                      })}
+                    >
+                      {t("tools:tasks:new:high")}
+                    </p>
                   </div>
                 </div>
                 <div className="p-2 sm:p-4">

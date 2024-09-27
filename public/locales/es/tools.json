@@ -88,7 +88,8 @@
       "completed-msg": "Tarea(s) completada(s) exitosamente!",
       "responsible-error": "Error al actualizar la(s) tarea(s)",
       "responsible-msg": "Tarea(s) actualizada(s) exitosamente!",
-      "lead": "Prospecto"
+      "lead": "Prospecto",
+      "important": "Alta prioridad"
     },
     "filters": {
       "title": "Filtros",

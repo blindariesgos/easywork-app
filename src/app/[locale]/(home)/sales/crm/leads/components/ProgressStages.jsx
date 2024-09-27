@@ -26,7 +26,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
 
   useEffect(() => {
     let index = lists?.listLead?.leadStages?.findIndex(
-      (x) => x.name == stage.name
+      (x) => x.name == stage?.name
     );
     setStageIndex(index);
   }, [lists?.listLead?.leadStages]);
@@ -66,7 +66,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
     <div className="flex md:flex-row items-center md:justify-center gap-2 md:gap-3 flex-wrap">
       {lists?.listLead?.leadStages?.map((stage, index, arr) => {
         return (
-          <div key={stage.id} className="flex flex-row items-center relative">
+          <div key={stage?.id} className="flex flex-row items-center relative">
             {index !== 0 && (
               <div className="text-blue-800 flex h-7 w-7 bg-white rounded-full justify-center items-center absolute -left-5">
                 <MdKeyboardArrowRight className="h-6 w-6 text-easy-600" />
@@ -91,7 +91,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
               onClick={() => {
                 if (disabled) return;
                 if (index < arr.length - 2) {
-                  handleUpdateState(stage.id);
+                  handleUpdateState(stage?.id);
                 }
                 if (index == arr.length - 2) {
                   setIsOpen(true);
@@ -101,7 +101,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
                 }
               }}
             >
-              {stage.name}
+              {stage?.name}
             </div>
           </div>
         );

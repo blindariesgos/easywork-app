@@ -8,6 +8,7 @@ export default function LoginLayout({ children, contextData }) {
     backgroundImage: "url('/img/atom.png')",
     backgroundRepeat: "repeat",
     backgroundColor: "#262261",
+    backgroundSize: "5.6%",
   };
   return (
     <SessionProvider>

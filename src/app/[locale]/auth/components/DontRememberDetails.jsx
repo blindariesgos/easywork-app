@@ -65,16 +65,16 @@ export default function DontRememberDetails() {
             {/* <UserIcon className="h-5 w-5 text-easywork-main" /> */}
           </button>
         </span>
-        <div className="flex justify-between">
+        <div className="flex justify-center">
           <button
             onClick={() => handleModeChange("email")}
-            className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md"
+            className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-2 w-32 rounded-md"
           >
             Usar correo
           </button>
           <button
             onClick={() => handleModeChange("cellphone")}
-            className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md ml-3"
+            className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-2 w-32 rounded-md ml-3"
           >
             Usar teléfono
           </button>
@@ -116,17 +116,17 @@ export default function DontRememberDetails() {
         )}
       </div>
       {/* Video guia */}
-      <div className="mt-4 w-full flex justify-evenly">
+      <div className="mt-4 w-full flex justify-center">
         <button
           onClick={() => setContextData(0)}
-          className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
+          className="hover:bg-gray-800 bg-gray-700 w-28 text-white font-bold py-2 px-4 rounded-md"
         >
           Cancelar
         </button>
         <button
           onClick={handleSendOtp}
           disabled={isLoading}
-          className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md"
+          className="hover:bg-easywork-mainhover w-28 bg-easywork-main text-white font-bold py-2 px-4 rounded-md ml-3"
         >
           {isLoading ? "Enviando..." : "Aceptar"}
         </button>

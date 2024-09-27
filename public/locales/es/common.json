@@ -1,4 +1,6 @@
 {
+  "yes": "Si",
+  "no": "No",
   "loading": "Cargando...",
   "saving": "Guardando...",
   "save": "¡Salvado con éxito!",
@@ -172,7 +174,9 @@
       "add-observer": "Agregar observador",
       "add-participant": "Agregar participante",
       "change-observer": "Cambiar observador",
+      "change-creator": "Cambiar creador",
       "change-participant": "Cambiar participante",
+      "change-deadline": "Cambiar fecha limite",
       "change-responsible": "Cambiar responsable"
     }
   }

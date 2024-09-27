@@ -604,18 +604,6 @@ export default function ModalConfigGmail() {
                       </p>
                     </div>
                     <div className="flex mt-4">
-                      <p>Origen de contacto y prospecto</p>
-                    </div>
-                    <div className="flex mt-4">
-                      <p>
-                        Crear un nuevo prospecto para cada nuevo mensaje
-                        entrante de{" "}
-                      </p>
-                    </div>
-                    <div className="flex mt-4">
-                      <p>Cola de distribución de contactos y prospectos</p>
-                    </div>
-                    <div className="flex mt-4">
                       <Controller
                         name="responsibleCrm"
                         control={control}

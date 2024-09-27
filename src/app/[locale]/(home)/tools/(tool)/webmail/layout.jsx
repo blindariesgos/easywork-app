@@ -54,6 +54,7 @@ import { useSession } from "next-auth/react";
 import ModalConfigGmail from "../mails/components/ModalConfigGmail";
 import { Pagination } from "../../../../../../components/pagination/Pagination";
 import Signature from "./components/Signature";
+import AddSignature from "./components/AddSignature";
 import { toast } from "react-toastify";
 
 function classNames(...classes) {
@@ -224,6 +225,7 @@ export default function WebmailLayout({ children, table }) {
   return (
     <>
       <Signature />
+      <AddSignature />
       <ModalConfigGmail isEdit={true} />
       <ModalAddFolders isConfig={true} />
       <SendMessage

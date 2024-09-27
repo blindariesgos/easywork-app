@@ -96,24 +96,33 @@ export default function ModalConfigGmail() {
       router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
-  const updateConfig  = async () => {
+  const updateConfig = async () => {
     console.log(configData);
     let data = {
       contactLeadDistribution: configData.contactLeadDistribution,
-      countExtractMessagesDays: configData.countExtractMessagesDays ? configData.countExtractMessagesDays.value : null,
-      countProcessMessagesDays: configData.countProcessMessagesDays ? configData.countExtractMessagesDays.value : null,
-      createForOutgoingMessages: configData.createForOutgoingMessages ? configData.countExtractMessagesDays.value : null,
-      createIncomingMessages: configData.createIncomingMessages ? configData.countExtractMessagesDays.value : null,
+      countExtractMessagesDays: configData.countExtractMessagesDays
+        ? configData.countExtractMessagesDays.value
+        : null,
+      countProcessMessagesDays: configData.countProcessMessagesDays
+        ? configData.countExtractMessagesDays.value
+        : null,
+      createForOutgoingMessages: configData.createForOutgoingMessages
+        ? configData.countExtractMessagesDays.value
+        : null,
+      createIncomingMessages: configData.createIncomingMessages
+        ? configData.countExtractMessagesDays.value
+        : null,
       createUsingAttachedVCard: configData.createUsingAttachedVCard,
       mailboxAccess: configData.mailboxAccess,
       mailboxName: configData.mailboxName,
-      routeExistingClientEmailsToCrmManagers: configData.routeExistingClientEmailsToCrmManagers,
+      routeExistingClientEmailsToCrmManagers:
+        configData.routeExistingClientEmailsToCrmManagers,
       senderName: configData.senderName,
       email: selectOauth.email,
-    }
+    };
     const response = await updateEmailConfig(data);
     console.log(response);
-  }
+  };
 
   useEffect(() => {
     if (params.get("isEdit") === "true") {
@@ -168,7 +177,7 @@ export default function ModalConfigGmail() {
           setCreateForOutgoingMessages ||
           configData?.createUsingAttachedVCard
         )
-        setCrmConfig(true);
+          setCrmConfig(true);
 
         setConfigData(data);
       });
@@ -660,20 +669,29 @@ export default function ModalConfigGmail() {
                     </button>
                     <button
                       type="button"
-                      className="hover:bg-green-600 bg-green-500 text-white font-bold py-2 px-4 rounded-md ml-2"
+                      className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md ml-2"
                       onClick={() => updateConfig()}
                     >
                       Guardar
                     </button>
                   </>
                 ) : (
-                  <button
-                    type="button"
-                    className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
-                    onClick={() => connectGmail()}
-                  >
-                    Conecta
-                  </button>
+                  <div className="flex justify-end w-full">
+                    <button
+                      type="button"
+                      className="hover:bg-gray-60 bg-gray-50 text-white font-bold py-2 px-4 rounded-md"
+                      onClick={() => router.back()}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md ml-2"
+                      onClick={() => connectGmail()}
+                    >
+                      Conectar
+                    </button>
+                  </div>
                 )}
 
                 {/* <button

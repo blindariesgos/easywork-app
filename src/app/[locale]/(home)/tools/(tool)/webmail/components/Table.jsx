@@ -80,7 +80,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     {
       name: "Abrir email",
       onClick: (item) => {
-        setSelectMail(item.email.googleId);
+        setSelectMail(item.email);
         router.push("/tools/webmail/?detail=true");
       },
     },

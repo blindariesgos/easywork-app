@@ -58,6 +58,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   };
 
   async function updateLabelId(array, label) {
+    console.log(array);
     if (label === "inbox") {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
@@ -80,7 +81,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     {
       name: "Abrir email",
       onClick: (item) => {
-        setSelectMail(item.email.googleId);
+        setSelectMail(item.email);
         router.push("/tools/webmail/?detail=true");
       },
     },
@@ -109,26 +110,30 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   const folderOptions = [
     {
       name: "Inbox",
-      onClick: (item) =>
-        selectedEmails
+      onClick: (item) => {
+        !selectedEmails.length === 0
           ? changeSelectLabelId("inbox")
-          : updateLabelId([item.email.googleId], "inbox"),
+          : updateLabelId([item.email.googleId], "inbox");
+      },
       value: "Inbox",
     },
     {
       name: "Spam",
-      onClick: (item) =>
-        selectedEmails
+      onClick: (item) => {
+        !selectedEmails.length === 0
           ? changeSelectLabelId("spam")
-          : updateLabelId([item.email.googleId], "spam"),
+          : updateLabelId([item.email.googleId], "spam");
+      },
+
       value: "Spam",
     },
     {
       name: "Todos",
-      onClick: (item) =>
-        selectedEmails
+      onClick: (item) => {
+        !selectedEmails.length === 0
           ? changeSelectLabelId("all")
-          : updateLabelId([item.email.googleId], "archived"),
+          : updateLabelId([item.email.googleId], "archived");
+      },
       value: "All",
     },
   ];
@@ -312,10 +317,10 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                                         itemOp.name
                                       ) : (
                                         <Menu>
-                                          <MenuButton className="flex items-center">
+                                          <MenuButton className="flex items-center w-full">
                                             <div className="w-full flex items-center justify-between">
-                                              {itemOp.name}
-                                              <ChevronRightIcon className="h-6 w-6 ml-4" />
+                                              <p>{itemOp.name}</p>
+                                              <ChevronRightIcon className="h-6 w-6" />
                                             </div>
                                           </MenuButton>
                                           <MenuItems

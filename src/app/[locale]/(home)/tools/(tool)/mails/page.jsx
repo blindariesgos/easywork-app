@@ -17,10 +17,7 @@ export default function IngresarEmail() {
   const router = useRouter();
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
-  const [gmailState, setGmailState] = useState(false);
-  const { setOpenModalFolders, openModalFolders } = useAppContext();
   const searchParams = useSearchParams();
-  const userdeleted = searchParams.get("userdeleted");
 
   // getAllOauth(session.data.user.id).then((response) => {
   //   if (response.length > 0) {
@@ -29,8 +26,11 @@ export default function IngresarEmail() {
   // })
 
   useEffect(() => {
-    if (userdeleted == "true") toast.success("Correo eliminado");
-  }, [userdeleted]);
+    if (searchParams.get("userdeleted") == "true") {
+      toast.success("Correo eliminado");
+      router.push(window.location.pathname);
+    }
+  }, [searchParams.get("userdeleted")]);
 
   const [ImapData, setImapData] = useState({
     host: null,

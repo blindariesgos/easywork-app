@@ -64,6 +64,10 @@ export const itemsByPage = [
     id: 50,
     name: "50"
   },
+  {
+    id: 100,
+    name: "100"
+  },
 ]
 
 export const responsible = [

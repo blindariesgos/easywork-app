@@ -199,6 +199,32 @@ body {
   width: 100%;
 }
 
+
+
+.react-datepicker__day--selected {
+  background-color: #241F61 !important;
+  color: white !important;
+}
+
+.react-datepicker-time__input {
+  font-size: 12px !important;
+  height: 32px !important;
+  border-radius: 12px !important;
+}
+
+.react-datepicker__close-icon {
+  color: #241F61 !important;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* ql project styles */
+
 .ql-container {
   /* height: 200px !important; */
   border: none !important;
@@ -338,23 +364,7 @@ button.ql-indent[value="+1"]::after {
   display: block;
 }
 
-.react-datepicker__day--selected {
-  background-color: #241F61 !important;
-  color: white !important;
-}
-
-.react-datepicker-time__input {
-  font-size: 12px !important;
-  height: 32px !important;
-  border-radius: 12px !important;
-}
-
-.react-datepicker__close-icon {
-  color: #241F61 !important;
-}
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.ql-tooltip.ql-editing[data-mode="video"],
+.ql-tooltip.ql-editing[data-mode="link"] {
+  left: 0 !important;
 }

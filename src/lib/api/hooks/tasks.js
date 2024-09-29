@@ -15,13 +15,13 @@ const getQueries = (filters, userId) => {
     }
   }
 
-  return Object.keys(filters).map(key =>
+  return Object.keys(filters).filter(key => filters[key]).map(key =>
     Array.isArray(filters[key])
       ? getRepitKeys(key, filters[key])
       : getValue(key, userId)).join('&')
 }
 
-export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "", config = {} }) => {
+export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "", config = {}, srcConfig = {} }) => {
   const queries = getQueries(filters, userId)
   const configParams = Object.keys(config).map(key => `${key}=${config[key]}`).join('&')
   const url = `/tools/tasks/user?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}${configParams.length > 0 ? `&${configParams}` : ""}`
@@ -29,6 +29,7 @@ export const useTasks = ({ filters = {}, page = 1, limit = 15, userId = "", conf
   const { data, error, isLoading, mutate } = useSWR(
     url,
     fetcher,
+    srcConfig
   );
   return {
     tasks: data,
@@ -75,7 +76,7 @@ export const useTaskContactsPolizas = () => {
 };
 
 export const useTasksList = () => {
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/tools/tasks/helpers/tasks_list`,
     fetcher,
   );
@@ -84,5 +85,6 @@ export const useTasksList = () => {
     tasksList: data,
     isLoading,
     isError: error,
+    mutate
   };
 };

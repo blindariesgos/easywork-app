@@ -29,6 +29,7 @@ const SubTaskSelect = ({
   error,
   subtitle,
   onlyOne,
+  taskId,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -145,31 +146,35 @@ const SubTaskSelect = ({
                     ) : (
                       tasks &&
                       tasks?.items?.length &&
-                      tasks?.items?.map((option) => (
-                        <div
-                          key={option.id}
-                          className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                            getValues(name) &&
-                            getValues(name).some((res) => res.id === option.id)
-                              ? "bg-primary"
-                              : "hover:bg-primary/5"
-                          }`}
-                          onClick={() => handleSelect(option)}
-                        >
-                          <span
-                            className={`text-xs ${
+                      tasks?.items
+                        ?.filter((task) => task.id !== taskId)
+                        ?.map((option) => (
+                          <div
+                            key={option.id}
+                            className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
                               getValues(name) &&
                               getValues(name).some(
                                 (res) => res.id === option.id
                               )
-                                ? "text-white"
-                                : "text-black"
+                                ? "bg-primary"
+                                : "hover:bg-primary/5"
                             }`}
+                            onClick={() => handleSelect(option)}
                           >
-                            {option.name}
-                          </span>
-                        </div>
-                      ))
+                            <span
+                              className={`text-xs ${
+                                getValues(name) &&
+                                getValues(name).some(
+                                  (res) => res.id === option.id
+                                )
+                                  ? "text-white"
+                                  : "text-black"
+                              }`}
+                            >
+                              {option.name}
+                            </span>
+                          </div>
+                        ))
                     )}
                     {isLoading && <LoadingSpinnerSmall />}
                   </div>

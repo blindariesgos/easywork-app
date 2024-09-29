@@ -603,6 +603,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                         error={errors.subTask}
                         onlyOne
                         subtitle="Seleccionar tarea padre"
+                        taskId={edit?.id ?? copy?.id ?? ""}
                       />
                     </div>
                   </div>

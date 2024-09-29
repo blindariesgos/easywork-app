@@ -207,7 +207,8 @@
       "history": "Historial",
       "time": "Tiempo transcurrido",
       "objections": "Objeciones",
-      "pings": "Mostrar pings ({{qty}})",
+      "pings": "Mostrar comentarios ({{qty}})",
+      "pings-hide": "Ocultar comentarios ({{qty}})",
       "edit": "Editar",
       "restart": "Reanudar",
       "comment": {

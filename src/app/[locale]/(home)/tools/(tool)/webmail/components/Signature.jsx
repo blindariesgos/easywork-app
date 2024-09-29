@@ -162,8 +162,8 @@ export default function Signature({
                       )}
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
-                      <div className="flex mb-3 items-center">
-                        <div className="flex items-center">
+                      <div className="flex mb-3 items-center mt-1.5">
+                        <div className="flex items-center ml-6">
                           <h1 className="text-lg inline-block align-middle h-full">
                             Firmas
                           </h1>
@@ -184,17 +184,10 @@ export default function Signature({
                         <div>
                           <div
                             className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
-                            onClick={handleFileClick}
+                            onClick={() => router.push(`${window.location.href}&addsignature=true`)}
                           >
                             <p className="ml-1 text-center">Agregar Firma</p>
                           </div>
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            onChange={handleFileChange}
-                            accept="image/jpeg, image/png"
-                          />
                         </div>
                       </div>
                       <table className="text-easywork-main w-full">

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
 import { toast } from "react-toastify";
 import {
   Description,
@@ -19,12 +20,20 @@ import {
 } from "../../../../../../../lib/apis";
 import Tag from "../../../../../../../components/Tag";
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export default function ModalAddFolders() {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { userGoogle, selectOauth, userData } = useAppContext();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectFirst, setSelectFirst] = useState("not specified");
+  const [selectSecond, setSelectSecond] = useState("not specified");
+  const [selectThree, setSelectThree] = useState("not specified");
   const [folderData, setFolderData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -145,33 +154,108 @@ export default function ModalAddFolders() {
                 <h1 className="font-medium text-lg border-b-4 border-black pb-1">
                   Reglas de carpeta
                 </h1>
-                <p className="p-2">
-                  Save sent emails to folder{" "}
-                  <span className="text-cyan-500">INBOX / Sent</span>
-                </p>
-                <p className="p-2">
-                  Move deleted emails to folder{" "}
-                  <span className="text-cyan-500">INBOX / Sent</span>
-                </p>
-                <p className="p-2">
-                  Move spam to folder{" "}
-                  <span className="text-cyan-500">INBOX / Sent</span>
-                </p>
+                <Menu as="div" className="flex items-center relative">
+                  <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <p className="p-2">
+                      Save sent emails to folder{" "}
+                      <span className="text-cyan-500">{selectFirst}</span>
+                    </p>
+                  </MenuButton>
+                  <MenuItems
+                    transition
+                    anchor="bottom end"
+                    className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                  >
+                    {folderData?.map((item, index) => (
+                      <MenuItem key={index}>
+                        {({ active }) => (
+                          <div
+                            onClick={() => setSelectFirst(item.name)}
+                            className={classNames(
+                              active ? "bg-gray-50" : "",
+                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                            )}
+                          >
+                            {item.name}
+                          </div>
+                        )}
+                      </MenuItem>
+                    ))}
+                  </MenuItems>
+                </Menu>
+                <Menu as="div" className="flex items-center relative">
+                  <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <p className="p-2">
+                      Move deleted emails to folder{" "}
+                      <span className="text-cyan-500">{selectSecond}</span>
+                    </p>
+                  </MenuButton>
+                  <MenuItems
+                    transition
+                    anchor="bottom end"
+                    className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                  >
+                    {folderData?.map((item, index) => (
+                      <MenuItem key={index}>
+                        {({ active }) => (
+                          <div
+                            onClick={() => setSelectSecond(item.name)}
+                            className={classNames(
+                              active ? "bg-gray-50" : "",
+                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                            )}
+                          >
+                            {item.name}
+                          </div>
+                        )}
+                      </MenuItem>
+                    ))}
+                  </MenuItems>
+                </Menu>
+                <Menu as="div" className="flex items-center relative">
+                  <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <p className="p-2">
+                      Move spam to folder{" "}
+                      <span className="text-cyan-500">{selectThree}</span>
+                    </p>
+                  </MenuButton>
+                  <MenuItems
+                    transition
+                    anchor="bottom end"
+                    className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                  >
+                    {folderData?.map((item, index) => (
+                      <MenuItem key={index}>
+                        {({ active }) => (
+                          <div
+                            onClick={() => setSelectThree(item.name)}
+                            className={classNames(
+                              active ? "bg-gray-50" : "",
+                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                            )}
+                          >
+                            {item.name}
+                          </div>
+                        )}
+                      </MenuItem>
+                    ))}
+                  </MenuItems>
+                </Menu>
               </div>
-              <div className="flex justify-around">
-                <button
-                  type="button"
-                  className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md"
-                  onClick={() => saveFoldersData()}
-                >
-                  Guardar
-                </button>
+              <div className="flex justify-end">
                 <button
                   type="button"
                   className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
                   onClick={() => router.back()}
                 >
                   Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md mx-2"
+                  onClick={() => saveFoldersData()}
+                >
+                  Guardar
                 </button>
                 <Dialog
                   open={isOpen}

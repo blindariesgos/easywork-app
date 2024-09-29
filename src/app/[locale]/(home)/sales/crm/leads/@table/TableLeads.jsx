@@ -102,7 +102,7 @@ export default function TableLeads() {
     ];
 
     const getColorClass = (currentIndex) => {
-      const stageIndex = stages.findIndex((value) => data.name == value);
+      const stageIndex = stages.findIndex((value) => data?.name == value);
       const stageColor = colors[stageIndex];
 
       return currentIndex <= stageIndex ? stageColor : "";
@@ -226,10 +226,10 @@ export default function TableLeads() {
                               ) : column.row === "stage" ? (
                                 <div className="flex items-center flex-col">
                                   <div className="flex justify-center">
-                                    {ColorDivisionsStages(lead.stage)}
+                                    {ColorDivisionsStages(lead?.stage)}
                                   </div>
                                   <p className="mt-1 text-xs text-[#969696] font-semibold">
-                                    {lead.stage.name}
+                                    {lead.stage?.name}
                                   </p>
                                 </div>
                               ) : column.activities ? (

@@ -50,7 +50,7 @@ export default function GetPassword() {
           <h1>Obtener contraseña</h1>
         </div>
         {/* E-mail */}
-        <div className="relative text-gray-600 focus-within:text-gray-400 mt-2">
+        <div className="relative text-gray-600 focus-within:text-gray-400 mt-2 w-full">
           <span className="absolute inset-y-0 left-0 flex items-center pl-2">
             <button
               type="submit"
@@ -64,7 +64,7 @@ export default function GetPassword() {
             type="search"
             name="q"
             onChange={(e) => setEmail(e.target.value)}
-            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
+            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600 w-full"
             placeholder="E-mail"
             autoComplete="off"
           />
@@ -89,7 +89,7 @@ export default function GetPassword() {
           </button>
           <button
             onClick={() => setContextData(0)}
-            className="hover:bg-gray-800 bg-gray-700 w-24 mt-2 text-white font-bold py-2 px-4 rounded-md"
+            className="hover:bg-gray-800 bg-gray-700 w-32 mt-2 text-white font-bold py-2 px-4 rounded-md"
           >
             Cancelar
           </button>

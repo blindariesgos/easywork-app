@@ -1,6 +1,12 @@
 "use client";
 import useAppContext from "../../context/app";
-import { Menu, Transition, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import {
+  Menu,
+  Transition,
+  MenuButton,
+  MenuItems,
+  MenuItem,
+} from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
@@ -13,6 +19,7 @@ import React, { Fragment } from "react";
 import SearchBox from "../SearchBox";
 import Clock from "./Clock";
 import Status from "./Status";
+import Notification from "./Notification";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import { logout } from "../../lib/apis";
@@ -73,7 +80,6 @@ export default function Header() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </Fragment>
-
       )}
 
       {/* Separator */}
@@ -86,7 +92,7 @@ export default function Header() {
           {/* Profile dropdown */}
           <Menu
             as="div"
-            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
           >
             <MenuButton className="flex items-center p-1.5">
               <span className="sr-only">Open user menu</span>
@@ -113,7 +119,8 @@ export default function Header() {
             <MenuItems
               transition
               anchor="bottom end"
-              className=" z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+              className=" z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+            >
               {userNavigation.map((item) => (
                 <MenuItem key={item.name}>
                   {({ active }) => (
@@ -138,6 +145,14 @@ export default function Header() {
           />
 
           <Clock />
+
+          {/* Separator */}
+          <div
+            className="hidden lg:block lg:h-10 lg:w-px lg:bg-gray-900/10"
+            aria-hidden="true"
+          />
+
+          <Notification />
 
           {/* Separator */}
           <div

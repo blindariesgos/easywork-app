@@ -9,24 +9,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
-import CMRMultipleSelectWithFiltersV2 from "@/src/components/form/CMRMultipleSelectWithFiltersV2";
+import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
+import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
 import DateTimeCalculator from "../components/DateTimeCalculator";
-import CkeckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
+import CheckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
 import InputCheckBox from "@/src/components/form/InputCheckBox";
 import Button from "@/src/components/form/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
-import {
-  getContactId,
-  postTask,
-  putTaskId,
-  getPolicyById,
-  getLeadById,
-} from "@/src/lib/apis";
+import { getContactId, postTask, putTaskId, getLeadById } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
@@ -86,17 +81,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
       (edit?.requireRevision ?? copy?.requireRevision),
     more: (edit?.crm?.length ?? copy?.crm?.length ?? subtask) > 0,
   });
-
-  const {
-    data: listContactsPolizas,
-    isLoading,
-    isError,
-  } = useTaskContactsPolizas();
-  const {
-    tasksList,
-    isLoading: isLoadingList,
-    isError: isErrorList,
-  } = useTasksList();
 
   const optionsTime = [
     {
@@ -251,10 +235,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     }
   };
 
-  if (isError) {
-    console.log("Error al cargar lista de contactos y tasks");
-  }
-
   const handleCancel = () => {
     if (params.get("prev")) {
       router.back();
@@ -265,7 +245,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
 
   return (
     <>
-      {loading || (isLoading && <LoaderSpinner />)}
+      {loading && <LoaderSpinner />}
       <div
         className={`col-span-12 flex flex-col ${
           edit ? "h-full" : "h-screen"
@@ -534,7 +514,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
               {openOptions.options && (
                 <div className="flex gap-2 flex-col w-full mt-4 md:pl-36">
                   {optionsTime.map((opt, index) => (
-                    <CkeckBoxMultiple
+                    <CheckBoxMultiple
                       key={index}
                       item={opt}
                       setSelectedCheckbox={setSelectedOptions}
@@ -598,7 +578,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       {t("tools:tasks:new:subtask")}
                     </p>
                     <div className="w-full md:w-[40%]">
-                      <Controller
+                      {/* <Controller
                         name="subTask"
                         control={control}
                         defaultValue={[]}
@@ -614,6 +594,16 @@ export default function TaskEditor({ edit, copy, subtask }) {
                             onlyOne
                           />
                         )}
+                      /> */}
+                      <SubTaskSelect
+                        name="subTask"
+                        getValues={getValues}
+                        setValue={setValue}
+                        disabled={subtask}
+                        error={errors.subTask}
+                        onlyOne
+                        subtitle="Seleccionar tarea padre"
+                        taskId={edit?.id ?? copy?.id ?? ""}
                       />
                     </div>
                   </div>
@@ -622,7 +612,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       {t("tools:tasks:new:crm")}
                     </p>
                     <div className="w-full md:w-[40%]">
-                      <CMRMultipleSelectWithFiltersV2
+                      <CRMMultipleSelectV2
                         getValues={getValues}
                         setValue={setValue}
                         name="crm"
@@ -702,9 +692,7 @@ const getCmrInfo = (cmr) => {
 };
 
 const formatCrmData = (crmData) => {
-  console.log("crmData", crmData);
   if (!crmData) return [];
-
   return crmData.map((item) => getCmrInfo(item));
 };
 

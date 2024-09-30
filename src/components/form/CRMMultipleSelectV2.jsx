@@ -20,13 +20,7 @@ import {
 } from "@headlessui/react";
 import Button from "./Button";
 
-const CMRMultipleSelectWithFilters = ({
-  getValues,
-  setValue,
-  name,
-  label,
-  error,
-}) => {
+const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [filterSelect, setFilterSelect] = useState(1);
@@ -50,23 +44,6 @@ const CMRMultipleSelectWithFilters = ({
       limit: 5,
     },
   });
-
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (!dropdownRef) return;
-
-    document?.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document?.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
 
   const handleToggle = () => {
     setQuery("");
@@ -279,4 +256,4 @@ const CMRMultipleSelectWithFilters = ({
     </div>
   );
 };
-export default CMRMultipleSelectWithFilters;
+export default CRMMultipleSelectV2;

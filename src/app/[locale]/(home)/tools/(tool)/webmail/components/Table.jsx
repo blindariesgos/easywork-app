@@ -58,7 +58,6 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
   };
 
   async function updateLabelId(array, label) {
-    console.log(array);
     if (label === "inbox") {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
@@ -111,7 +110,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     {
       name: "Inbox",
       onClick: (item) => {
-        !selectedEmails.length === 0
+        !selectedEmails.length == 0
           ? changeSelectLabelId("inbox")
           : updateLabelId([item.email.googleId], "inbox");
       },
@@ -120,7 +119,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     {
       name: "Spam",
       onClick: (item) => {
-        !selectedEmails.length === 0
+        !selectedEmails.length == 0
           ? changeSelectLabelId("spam")
           : updateLabelId([item.email.googleId], "spam");
       },
@@ -130,7 +129,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     {
       name: "Todos",
       onClick: (item) => {
-        !selectedEmails.length === 0
+        !selectedEmails.length == 0
           ? changeSelectLabelId("all")
           : updateLabelId([item.email.googleId], "archived");
       },

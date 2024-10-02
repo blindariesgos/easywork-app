@@ -34,7 +34,7 @@ function parseAndSortByDate(data) {
   return combined;
 }
 
-export default function ActivityPanel({ contactId, crmType }) {
+export default function ActivityPanel({ contactId, crmType, className }) {
   const [bulkActivity, setBulkActivity] = useState([]);
   const { activities, isError, isLoading, mutate } = useContactActivities(
     contactId,
@@ -72,7 +72,12 @@ export default function ActivityPanel({ contactId, crmType }) {
     }
   };
   return (
-    <div className="px-2 lg:px-4 relative bg-gray-100 rounded-tr-lg w-full h-full overflow-y-auto">
+    <div
+      className={clsx(
+        "px-2 lg:px-4 relative bg-gray-100 rounded-tr-lg w-full h-full overflow-y-auto",
+        className
+      )}
+    >
       <div className="w-full flex ">
         <div className="flow-root rounded-lg w-full">
           <ul role="list" className="lg:p-3 py-3">

@@ -84,7 +84,7 @@ function SelectInput({
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
                 "border-none focus:ring-0 ": !border,
-                "bg-gray-100": disabled,
+                // "bg-gray-100": disabled,
                 "drop-shadow-sm": !disabled,
               }
             )}
@@ -113,15 +113,16 @@ function SelectInput({
               </div>
             ) : (
               filteredElements &&
-              filteredElements.map((person) => (
+              filteredElements.map((option) => (
                 <ComboboxOption
-                  key={person.id}
+                  key={option.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 px-2 ${
+                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 ${
                       active ? "bg-primary text-white" : "text-gray-900"
                     }`
                   }
-                  value={person}
+                  value={option}
+                  disabled={option.disabled}
                 >
                   {({ selected, active }) => (
                     <>
@@ -130,7 +131,7 @@ function SelectInput({
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {person.name}
+                        {option.name}
                       </span>
                       {selected ? (
                         <span

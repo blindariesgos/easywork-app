@@ -1,6 +1,14 @@
 // SelectDropdown.js
 "use client";
-import { Combobox, Transition } from "@headlessui/react";
+import {
+  Combobox,
+  Transition,
+  ComboboxOption,
+  ComboboxButton,
+  ComboboxOptions,
+  ComboboxLabel,
+  ComboboxInput,
+} from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -72,7 +80,7 @@ function SelectDropdown({
   }
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       setContacts((prevContacts) => [...prevContacts, query.trim()]);
       setContactsArray((prevContacts) => [...prevContacts, query.trim()]);
     }
@@ -86,9 +94,9 @@ function SelectDropdown({
         onChange={setSelected}
         disabled={disabled}
       >
-        <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
+        <label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
-        </Combobox.Label>
+        </label>
         <div className="relative mt-1">
           <div className="flex">
             <div
@@ -107,7 +115,7 @@ function SelectDropdown({
                   </div>
                 ))}
             </div>
-            <Combobox.Input
+            <ComboboxInput
               className="w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-r-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm"
               displayValue={(person) => person?.name || person?.username}
               onChange={(event) => {
@@ -145,58 +153,56 @@ function SelectDropdown({
               </div>
             </div>
           ) : ( */}
-          {
-            filteredElements?.map((option) => (
-              <Combobox.Options className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-                <Combobox.Option
-                  key={option.id}
-                  className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-6 pr-4 ${
-                      active
-                        ? "bg-primary text-white rounded-md"
-                        : "text-gray-900"
-                    }`
-                  }
-                  value={option}
-                >
-                  {({ selected, active }) => (
-                    <>
-                      <span
-                        className={`flex items-center gap-2 w-full${
-                          selected ? "font-medium" : "font-normal"
-                        }`}
-                        onClick={() => setSelected("")}
-                      >
-                        <div className="w-[20%]">
-                          <Image
-                            src={option.avatar || "/img/avatar.svg"}
-                            alt=""
-                            height={500}
-                            width={500}
-                            layout="fixed"
-                            objectFit="cover"
-                            className="h-6 w-6 rounded-full"
-                          />
-                        </div>
-                        <div className={`flex flex-col leading-3 w-[80%]`}>
-                          <p
-                            className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}
-                          >
-                            {option.name || option?.username}
-                          </p>
-                          <p
-                            className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}
-                          >
-                            {option.email}
-                          </p>
-                        </div>
-                      </span>
-                    </>
-                  )}
-                </Combobox.Option>
-              </Combobox.Options>
-            ))
-          }
+          <ComboboxOptions className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            {filteredElements?.map((option) => (
+              <ComboboxOption
+                key={option.id}
+                className={({ active }) =>
+                  `relative cursor-default select-none py-2 pl-6 pr-4 ${
+                    active
+                      ? "bg-primary text-white rounded-md"
+                      : "text-gray-900"
+                  }`
+                }
+                value={option}
+              >
+                {({ selected, active }) => (
+                  <>
+                    <span
+                      className={`flex items-center gap-2 w-full${
+                        selected ? "font-medium" : "font-normal"
+                      }`}
+                      onClick={() => setSelected("")}
+                    >
+                      <div className="w-[20%]">
+                        <Image
+                          src={option.avatar || "/img/avatar.svg"}
+                          alt=""
+                          height={500}
+                          width={500}
+                          layout="fixed"
+                          objectFit="cover"
+                          className="h-6 w-6 rounded-full"
+                        />
+                      </div>
+                      <div className={`flex flex-col leading-3 w-[80%]`}>
+                        <p
+                          className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}
+                        >
+                          {option.name || option?.username}
+                        </p>
+                        <p
+                          className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}
+                        >
+                          {option.email}
+                        </p>
+                      </div>
+                    </span>
+                  </>
+                )}
+              </ComboboxOption>
+            ))}
+          </ComboboxOptions>
           {/* )} */}
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}

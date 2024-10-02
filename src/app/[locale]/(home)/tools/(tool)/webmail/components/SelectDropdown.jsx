@@ -82,6 +82,7 @@ function SelectDropdown({
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       setContacts((prevContacts) => [...prevContacts, query.trim()]);
+      setContactsArray((prevContacts) => [...prevContacts, query.trim()]);
     }
   };
 
@@ -93,9 +94,9 @@ function SelectDropdown({
         onChange={setSelected}
         disabled={disabled}
       >
-        <ComboboxLabel className="block text-sm font-medium leading-6 text-gray-900">
+        <label className="block text-sm font-medium leading-6 text-gray-900">
           {label}
-        </ComboboxLabel>
+        </label>
         <div className="relative mt-1">
           <div className="flex">
             <div
@@ -123,10 +124,9 @@ function SelectDropdown({
               onKeyDown={handleKeyDown}
             />
           </div>
-          {filteredElements?.length === 0 && query !== "" ? (
+          {/* {filteredElements?.length === 0 && query !== "" ? (
             <div
               className="flex flex-row items-center justify-center cursor-default select-none px-4 py-2 text-gray-700 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-              key="mi-fragmento"
             >
               <p>El mensaje será enviado al correo electrónico.</p>
               <div className="flex">
@@ -152,73 +152,58 @@ function SelectDropdown({
                 </button>
               </div>
             </div>
-          ) : (
-            <ComboboxOptions className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {filteredElements &&
-                filteredElements.map((option) => (
-                  <ComboboxOption
-                    key={option.id}
-                    className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-6 pr-4 ${
-                        active
-                          ? "bg-primary text-white rounded-md"
-                          : "text-gray-900"
-                      }`
-                    }
-                    value={option}
-                  >
-                    {({ selected, active }) => (
-                      <>
-                        <span
-                          className={`flex items-center gap-2 w-full${
-                            selected ? "font-medium" : "font-normal"
-                          }`}
-                          onClick={() => setSelected("")}
+          ) : ( */}
+          <ComboboxOptions className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            {filteredElements?.map((option) => (
+              <ComboboxOption
+                key={option.id}
+                className={({ active }) =>
+                  `relative cursor-default select-none py-2 pl-6 pr-4 ${
+                    active
+                      ? "bg-primary text-white rounded-md"
+                      : "text-gray-900"
+                  }`
+                }
+                value={option}
+              >
+                {({ selected, active }) => (
+                  <>
+                    <span
+                      className={`flex items-center gap-2 w-full${
+                        selected ? "font-medium" : "font-normal"
+                      }`}
+                      onClick={() => setSelected("")}
+                    >
+                      <div className="w-[20%]">
+                        <Image
+                          src={option.avatar || "/img/avatar.svg"}
+                          alt=""
+                          height={500}
+                          width={500}
+                          layout="fixed"
+                          objectFit="cover"
+                          className="h-6 w-6 rounded-full"
+                        />
+                      </div>
+                      <div className={`flex flex-col leading-3 w-[80%]`}>
+                        <p
+                          className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}
                         >
-                          <div className="w-[20%]">
-                            <Image
-                              src={option.avatar || "/img/avatar.svg"}
-                              alt=""
-                              height={500}
-                              width={500}
-                              layout="fixed"
-                              objectFit="cover"
-                              className="h-6 w-6 rounded-full"
-                            />
-                          </div>
-                          <div className={`flex flex-col leading-3 w-[80%]`}>
-                            <p
-                              className={`text-[10px] font-medium ${active ? "text-white" : "text-black"}`}
-                            >
-                              {option.name || option?.username}
-                            </p>
-                            <p
-                              className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}
-                            >
-                              {option.email}
-                            </p>
-                            {/* <p
-                              className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}
-                            >
-                              {option.phone}
-                            </p> */}
-                          </div>
-                        </span>
-                        {selected ? (
-                          <span
-                            className={`absolute inset-y-0 left-0 flex items-center pl-1 ${
-                              active ? "text-white" : "text-primary"
-                            }`}
-                          >
-                            <CheckIcon className="h-4 w-4" aria-hidden="true" />
-                          </span>
-                        ) : null}
-                      </>
-                    )}
-                  </ComboboxOption>
-                ))}
-            </ComboboxOptions>
-          )}
+                          {option.name || option?.username}
+                        </p>
+                        <p
+                          className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"} flex-wrap`}
+                        >
+                          {option.email}
+                        </p>
+                      </div>
+                    </span>
+                  </>
+                )}
+              </ComboboxOption>
+            ))}
+          </ComboboxOptions>
+          {/* )} */}
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
       </Combobox>

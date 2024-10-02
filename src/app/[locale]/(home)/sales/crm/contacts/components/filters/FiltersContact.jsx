@@ -1,35 +1,17 @@
 "use client";
 import { Menu, Transition, MenuItems, MenuButton } from "@headlessui/react";
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import FormFilters from "./FormFilters";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { postFilter, getFilters } from "../../../../../../../../lib/apis";
-import useAppContext from "../../../../../../../../context/app";
-import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
 import useContactContext from "@/src/context/contacts";
 import { useDebouncedCallback } from "use-debounce";
-import { formatDate } from "@/src/utils/getFormatDate";
 import { IoIosArrowDown } from "react-icons/io";
 
 const FiltersContact = () => {
-  const session = useSession();
-  const ref = useRef(null);
-  const { filter, lists } = useAppContext();
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
-  const [contacts, setContacts] = useState();
   const { filters, setFilters } = useContactContext();
-  // const handleSelected = (id) => {
-  //   const updateSelection = contacts.map((cont) => {
-  //     return cont.id === id
-  //       ? { ...cont, selected: !cont.selected }
-  //       : { ...cont, selected: false };
-  //   });
-  //   setContacts(updateSelection);
-  // };
 
   const handleSearch = useDebouncedCallback(() => {
     if (searchInput.length > 0) {

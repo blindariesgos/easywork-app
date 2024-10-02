@@ -59,11 +59,8 @@ export default function TableTask() {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [dataTask, setDataTask] = useState();
-  const { fieldClicked, handleSorting, orderItems } = useOrderByColumn(
-    [],
-    data?.items
-  );
+
+  const { fieldClicked, handleSorting } = useOrderByColumn([], data?.items);
   const { columnTable } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
 
@@ -72,34 +69,19 @@ export default function TableTask() {
   );
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (data) setDataTask(data);
-  }, [data]);
-
-  useEffect(
-    () => {
-      if (orderItems?.length > 0)
-        setDataTask({ items: orderItems, meta: data?.meta });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [orderItems]
-  );
-
   useLayoutEffect(() => {
     if (selectedTasks.length > 0) {
       const isIndeterminate =
-        selectedTasks.length > 0 &&
-        selectedTasks.length < dataTask?.items.length;
-      setChecked(selectedTasks.length === dataTask?.items.length);
+        selectedTasks.length > 0 && selectedTasks.length < data?.items.length;
+      setChecked(selectedTasks.length === data?.items.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
-  }, [selectedTasks, dataTask]);
+  }, [selectedTasks, data]);
 
   const toggleAll = () => {
-    setSelectedTasks(
-      checked || indeterminate ? [] : dataTask?.items?.map((x) => x.id)
-    );
+    const items = checked || indeterminate ? [] : data?.items?.map((x) => x.id);
+    setSelectedTasks(items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   };
@@ -330,8 +312,8 @@ export default function TableTask() {
                   </thead>
                   <tbody className="bg-gray-100">
                     {selectedColumns.length > 0 &&
-                      dataTask?.items?.length > 0 &&
-                      dataTask?.items?.map((task, index) => (
+                      data?.items?.length > 0 &&
+                      data?.items?.map((task, index) => (
                         <tr
                           key={index}
                           className={clsx(
@@ -453,7 +435,7 @@ export default function TableTask() {
                 </Listbox>
               </div>
               <PaginationV2
-                totalPages={dataTask?.meta?.totalPages || 0}
+                totalPages={data?.meta?.totalPages || 0}
                 currentPage={page}
                 setPage={setPage}
               />

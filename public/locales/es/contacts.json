@@ -56,14 +56,16 @@
     "phone": "Teléfono",
     "created": "Creado el",
     "origin": "Origen",
-    "activities": "Actividades"
+    "activities": "Actividades",
+    "update-contacts": "Contacto(s) actualizado(s) exitosamente",
+    "update-contacts-error": "Error al actualizar Contacto(s)"
   },
   "create": {
     "msg": "¡Contacto creado!",
     "error": "Error al crear el contacto!",
     "save": "Guardando...",
     "client": "Nuevo cliente",
-    "data": "Datos del contratante",
+    "data": "Datos del cliente contratante",
     "fullname": "Nombres y Apellidos",
     "name": "Nombres",
     "name-2": "Nombre",
@@ -85,7 +87,7 @@
     "placeholder-name": "Ej.: Luis",
     "contact-type": "Tipo de contacto",
     "responsible": "Responsable",
-    "sub-agent": "Sub-Agente",
+    "sub-agent": "Agente relacionado",
     "agent": "Agente",
     "origen": "Orígen",
     "passport": "Identificaciones INE, RFC o Pasaporte",
@@ -100,6 +102,7 @@
     "print": "Imprimir",
     "download": "Descargar",
     "cua": "Código CUA",
+    "comments": "Comentarios",
     "otherType": "Otro",
     "tabs": {
       "general": "General",
@@ -328,6 +331,8 @@
     "cua": "Código CUA",
     "fullname": "Nombre y Apellido",
     "item-name": "Nombre",
+    "firstname": "Nombre",
+    "lastname": "Apellido",
     "contact-type": "Tipo de contacto",
     "rfc": "RFC",
     "date": {

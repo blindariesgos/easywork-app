@@ -18,9 +18,11 @@ function TextInput({
   const registerProps = register && register(name);
   return (
     <div className="flex flex-col gap-y-1 w-full">
-      <label className="block text-sm font-medium leading-6 text-gray-900">
-        {label}
-      </label>
+      {label && (
+        <label className="block text-sm font-medium leading-6 text-gray-900">
+          {label}
+        </label>
+      )}
       <div className="">
         {multiple ? (
           <textarea
@@ -40,7 +42,7 @@ function TextInput({
             className={clsx(
               "w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm",
               {
-                "bg-gray-100": disabled,
+                // "bg-gray-100": disabled,
                 "drop-shadow-sm": !disabled,
               }
             )}
@@ -66,7 +68,6 @@ function TextInput({
               {
                 "border border-gray-200 focus:ring-gray-200": border,
                 "border-none focus:ring-0": !border,
-                "bg-gray-100": disabled,
                 "drop-shadow-sm": !disabled,
               }
             )}

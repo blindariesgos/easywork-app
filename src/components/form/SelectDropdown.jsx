@@ -78,7 +78,7 @@ function SelectDropdown({
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
                 "border-none focus:ring-0 ": !border,
-                "bg-gray-100": disabled,
+                // "bg-gray-100": disabled,
                 "drop-shadow-sm": !disabled,
               }
             )}

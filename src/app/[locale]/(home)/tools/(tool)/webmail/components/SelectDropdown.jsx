@@ -74,6 +74,7 @@ function SelectDropdown({
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       setContacts((prevContacts) => [...prevContacts, query.trim()]);
+      setContactsArray((prevContacts) => [...prevContacts, query.trim()]);
     }
   };
 
@@ -115,10 +116,9 @@ function SelectDropdown({
               onKeyDown={handleKeyDown}
             />
           </div>
-          {filteredElements?.length === 0 && query !== "" ? (
+          {/* {filteredElements?.length === 0 && query !== "" ? (
             <div
               className="flex flex-row items-center justify-center cursor-default select-none px-4 py-2 text-gray-700 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-              key="mi-fragmento"
             >
               <p>El mensaje será enviado al correo electrónico.</p>
               <div className="flex">
@@ -144,9 +144,9 @@ function SelectDropdown({
                 </button>
               </div>
             </div>
-          ) : (
-            filteredElements &&
-            filteredElements.map((option) => (
+          ) : ( */}
+          {
+            filteredElements?.map((option) => (
               <Combobox.Options className="grid grid-cols-2 absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
                 <Combobox.Option
                   key={option.id}
@@ -189,28 +189,15 @@ function SelectDropdown({
                           >
                             {option.email}
                           </p>
-                          {/* <p
-                              className={`text-[10px] text-gray-50 ${active ? "text-white" : "text-black"}`}
-                            >
-                              {option.phone}
-                            </p> */}
                         </div>
                       </span>
-                      {selected ? (
-                        <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-1 ${
-                            active ? "text-white" : "text-primary"
-                          }`}
-                        >
-                          <CheckIcon className="h-4 w-4" aria-hidden="true" />
-                        </span>
-                      ) : null}
                     </>
                   )}
                 </Combobox.Option>
               </Combobox.Options>
             ))
-          )}
+          }
+          {/* )} */}
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
       </Combobox>

@@ -17,14 +17,27 @@ export default function ActivityHeader({
   const { t } = useTranslation();
   const tabs = [
     {
+      name: t("contacts:create:activities:comment"),
+      href: "#",
+      current: false,
+      disabled: true,
+      onClick: () => setIsShowAddComment(true),
+    },
+    {
+      name: t("contacts:create:activities:tasks"),
+      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${contactId}`,
+      current: false,
+      disabled: true,
+    },
+    {
       name: t("contacts:create:activities:email"),
       href: "/tools/mails",
       current: true,
       disabled: false,
     },
     {
-      name: t("contacts:create:activities:tasks"),
-      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${contactId}`,
+      name: t("contacts:create:activities:appointments"),
+      href: "/tools/calendar/addEvent?show=true",
       current: false,
       disabled: true,
     },
@@ -35,26 +48,13 @@ export default function ActivityHeader({
       disabled: true,
     },
     {
-      name: t("contacts:create:activities:comment"),
+      name: t("contacts:create:activities:call"),
       href: "#",
-      current: false,
-      disabled: true,
-      onClick: () => setIsShowAddComment(true),
-    },
-    {
-      name: t("contacts:create:activities:appointments"),
-      href: "/tools/calendar/addEvent?show=true",
       current: false,
       disabled: true,
     },
     {
       name: t("contacts:create:activities:zoom"),
-      href: "#",
-      current: false,
-      disabled: true,
-    },
-    {
-      name: t("contacts:create:activities:call"),
       href: "#",
       current: false,
       disabled: true,

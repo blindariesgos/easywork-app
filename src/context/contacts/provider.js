@@ -47,15 +47,22 @@ export default function ContactsContextProvider({ children }) {
         name: t("contacts:filters:created-by"),
         type: "dropdown",
         check: true,
-        code: "createdby",
+        code: "createdbyId",
         options: lists?.users
       },
       {
         id: 5,
-        name: t("contacts:filters:fullname"),
+        name: t("contacts:filters:firstname"),
         type: "input",
         check: false,
         code: "name",
+      },
+      {
+        id: 9,
+        name: t("contacts:filters:lastname"),
+        type: "input",
+        check: false,
+        code: "lastName",
       },
       {
         id: 6,
@@ -63,7 +70,7 @@ export default function ContactsContextProvider({ children }) {
         type: "select",
         options: lists?.listContact?.contactTypes || [],
         check: false,
-        code: "type",
+        code: "typeId",
       },
       {
         id: 8,

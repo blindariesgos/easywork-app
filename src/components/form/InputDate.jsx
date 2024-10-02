@@ -122,7 +122,7 @@ const InputDate = ({
             "border border-gray-200 focus:ring-gray-200 outline-none focus:outline-none":
               border,
             "border-none focus:ring-0 ": !border,
-            "bg-gray-100": disabled,
+            // "bg-gray-100": disabled,
             "shadow-sm ": !disabled,
           })}
           isClearable={!disabled}

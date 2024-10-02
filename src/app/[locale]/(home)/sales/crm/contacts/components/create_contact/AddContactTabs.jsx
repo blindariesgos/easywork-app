@@ -82,7 +82,7 @@ export default function AddContactTabs({ tabs }) {
               return renderTab(tab);
             })}
           <Button
-            label={t("contacts:create:add")}
+            label={t("leads:add:title")}
             buttonStyle="primary"
             icon={<PlusIcon className="h-4 w-4 text-white" />}
             className="py-2 px-3"

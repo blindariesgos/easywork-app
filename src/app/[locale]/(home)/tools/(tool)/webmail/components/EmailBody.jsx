@@ -107,6 +107,7 @@ export default function EmailBody({
   };
 
   const forwardEmail = () => {
+    setValueText(selectMail.body);
     setSend(true);
     setForward(true);
     setReply(false);
@@ -143,12 +144,46 @@ export default function EmailBody({
     } catch (error) {}
   };
 
-  async function sendEmail() {
+  async function sendReply() {
     const data = {
       to: [selectMail?.from],
       // cc: CCArray,
       // bcc: BCCArray,
       subject: "Re: " + subject,
+      body: value + " <style>img {max-width: 650px; }</style>",
+      inReplyTo: selectMail.googleId,
+      references: selectMail.googleId,
+      attachments: [
+        // {
+        //   filename: "test.pdf",
+        //   mimeType: "application/pdf",
+        //   path: "https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf",
+        // },
+      ],
+    };
+    try {
+      if (!data.inReplyTo) {
+        toast.error("Debes colocar destinatario");
+        return;
+      }
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
+        data
+      );
+      toast.success("Correo enviado");
+      router.back();
+    } catch (error) {
+      toast.error("Error al enviar correo");
+      console.error("Failed to send email:", error);
+    }
+  }
+
+  async function sendForward() {
+    const data = {
+      to: contactsArray,
+      cc: CCArray,
+      bcc: BCCArray,
+      subject: "Fwd: " + subject,
       body: value + " <style>img {max-width: 650px; }</style>",
       inReplyTo: selectMail.googleId,
       references: selectMail.googleId,
@@ -310,157 +345,157 @@ export default function EmailBody({
                           srcDoc={decodedMailData}
                         />
                         {send && (
-                            <div className="bg-white max-md:w-screen rounded-l-2xl overflow-y-auto h-auto p-7 w-full">
-                              <div className="bg-gray-100 text-sm p-5 h-auto">
-                                <div className="pb-2 border-b-2">
-                                  {reply && (
-                                    <p>Responder: {selectMail?.from}</p>
-                                  )}
-                                  {forward && (
-                                    <>
-                                      <div className="py-2 border-b-2">
-                                        <div className="flex items-center">
-                                          <p className="w-10">Para:</p>
+                          <div className="bg-white max-md:w-screen rounded-l-2xl overflow-y-auto h-auto p-7 w-full">
+                            <div className="bg-gray-100 text-sm p-5 h-auto">
+                              <div className="pb-2 border-b-2">
+                                {reply && <p>Responder: {selectMail?.from}</p>}
+                                {forward && (
+                                  <>
+                                    <div className="py-2 border-b-2">
+                                      <div className="flex items-center">
+                                        <p className="w-10">Para:</p>
+                                        <SelectDropdown
+                                          name="responsible"
+                                          options={lists?.users}
+                                          setValue={setValue}
+                                          className="ml-2 w-full"
+                                          setContactsArray={setContactsArray}
+                                        />
+                                        <p
+                                          className="ml-2 hover:underline cursor-pointer"
+                                          onClick={() => {
+                                            setCCBCC({
+                                              CC: true,
+                                              BCC: CCBCC.BCC,
+                                            });
+                                          }}
+                                        >
+                                          CC
+                                        </p>
+                                        <p
+                                          className="ml-2 hover:underline cursor-pointer"
+                                          onClick={() => {
+                                            setCCBCC({
+                                              CC: CCBCC.CC,
+                                              BCC: true,
+                                            });
+                                          }}
+                                        >
+                                          BCC
+                                        </p>
+                                      </div>
+                                      {CCBCC.CC && (
+                                        <div className="flex items-center mt-2">
+                                          <p className="w-10">CC:</p>
                                           <SelectDropdown
                                             name="responsible"
                                             options={lists?.users}
                                             setValue={setValue}
                                             className="ml-2 w-full"
-                                            setContactsArray={setContactsArray}
+                                            setContactsArray={setCCArray}
                                           />
-                                          <p
-                                            className="ml-2 hover:underline cursor-pointer"
-                                            onClick={() => {
-                                              setCCBCC({
-                                                CC: true,
-                                                BCC: CCBCC.BCC,
-                                              });
-                                            }}
-                                          >
-                                            CC
-                                          </p>
-                                          <p
-                                            className="ml-2 hover:underline cursor-pointer"
-                                            onClick={() => {
-                                              setCCBCC({
-                                                CC: CCBCC.CC,
-                                                BCC: true,
-                                              });
-                                            }}
-                                          >
-                                            BCC
-                                          </p>
                                         </div>
-                                        {CCBCC.CC && (
-                                          <div className="flex items-center mt-2">
-                                            <p className="w-10">CC:</p>
-                                            <SelectDropdown
-                                              name="responsible"
-                                              options={lists?.users}
-                                              setValue={setValue}
-                                              className="ml-2 w-full"
-                                              setContactsArray={setCCArray}
-                                            />
-                                          </div>
-                                        )}
-                                        {CCBCC.BCC && (
-                                          <div className="flex items-center mt-2">
-                                            <p className="w-10">BCC:</p>
-                                            <SelectDropdown
-                                              name="responsible"
-                                              options={lists?.users}
-                                              setValue={setValue}
-                                              className="ml-2 w-full"
-                                              setContactsArray={setBCCArray}
-                                            />
-                                          </div>
-                                        )}
-                                      </div>
-                                    </>
-                                  )}
-                                </div>
-                                <div className="flex py-2 items-center">
-                                  <p>Asunto</p>
-                                  <input
-                                    type="text"
-                                    className="py-2 text-sm rounded-md ml-2 w-full focus:text-gray-900 placeholder-slate-600"
-                                    placeholder="Ingrese el asunto del mensaje"
-                                    autoComplete="off"
-                                    onChange={(e) => setSubject(e.target.value)}
-                                  />
-                                </div>
-                                <div className="py-2">
-                                  <ReactQuill
-                                    className=" w-full bg-white pb-12"
-                                    theme="snow"
-                                    value={value}
-                                    onChange={setValueText}
-                                    formats={formats}
-                                    modules={{ toolbar }}
-                                  />
-                                  <div className="mt-2">
-                                    {files &&
-                                      files.map((file, index) => (
-                                        <div
-                                          key={index}
-                                          className="flex flex-col gap-2"
-                                        >
-                                          <p className="text-sm">{file.name}</p>
+                                      )}
+                                      {CCBCC.BCC && (
+                                        <div className="flex items-center mt-2">
+                                          <p className="w-10">BCC:</p>
+                                          <SelectDropdown
+                                            name="responsible"
+                                            options={lists?.users}
+                                            setValue={setValue}
+                                            className="ml-2 w-full"
+                                            setContactsArray={setBCCArray}
+                                          />
                                         </div>
-                                      ))}
-                                  </div>
-                                  <div className="flex mt-2">
-                                    <div>
+                                      )}
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                              <div className="flex py-2 items-center">
+                                <p>Asunto</p>
+                                <input
+                                  type="text"
+                                  className="py-2 text-sm rounded-md ml-2 w-full focus:text-gray-900 placeholder-slate-600"
+                                  placeholder="Ingrese el asunto del mensaje"
+                                  autoComplete="off"
+                                  onChange={(e) => setSubject(e.target.value)}
+                                />
+                              </div>
+                              <div className="py-2">
+                                <ReactQuill
+                                  className=" w-full bg-white pb-12"
+                                  theme="snow"
+                                  value={value}
+                                  onChange={setValueText}
+                                  formats={formats}
+                                  modules={{ toolbar }}
+                                />
+                                <div className="mt-2">
+                                  {files &&
+                                    files.map((file, index) => (
                                       <div
-                                        className="flex text-slate-400 cursor-pointer"
-                                        onClick={handleFileClick}
+                                        key={index}
+                                        className="flex flex-col gap-2"
                                       >
-                                        <PaperClipIcon className="h-5 w-5" />
-                                        <p className="ml-1">Archivo</p>
+                                        <p className="text-sm">{file.name}</p>
                                       </div>
-                                      <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        style={{ display: "none" }}
-                                        onChange={handleFileChange}
-                                      />
-                                    </div>
-                                    <div className="ml-2 flex text-slate-400 cursor-pointer">
-                                      <DocumentIcon className="h-5 w-5" />
-                                      <p className="ml-1">Crear documento</p>
-                                    </div>
+                                    ))}
+                                </div>
+                                <div className="flex mt-2">
+                                  <div>
                                     <div
-                                      className="ml-2 flex text-slate-400 cursor-pointer"
-                                      onClick={() => {
-                                        router.push(
-                                          `/tools/webmail/?page=${searchParams.get("page")}&send=true&signature=true`
-                                        );
-                                      }}
+                                      className="flex text-slate-400 cursor-pointer"
+                                      onClick={handleFileClick}
                                     >
-                                      <PencilIcon className="h-5 w-5" />
-                                      <p className="ml-1">Firma</p>
+                                      <PaperClipIcon className="h-5 w-5" />
+                                      <p className="ml-1">Archivo</p>
                                     </div>
+                                    <input
+                                      type="file"
+                                      ref={fileInputRef}
+                                      style={{ display: "none" }}
+                                      onChange={handleFileChange}
+                                    />
                                   </div>
-                                  <div className="mt-8">
-                                    <button
-                                      className="bg-easywork-main text-white p-3 rounded-md"
-                                      onClick={() => sendEmail()}
-                                    >
-                                      Enviar
-                                    </button>
-                                    <button
-                                      className="bg-gray-300 m-2 p-3 rounded-md"
-                                      onClick={() => {
-                                        setReply(false);
-                                      }}
-                                    >
-                                      Cancelar
-                                    </button>
+                                  <div className="ml-2 flex text-slate-400 cursor-pointer">
+                                    <DocumentIcon className="h-5 w-5" />
+                                    <p className="ml-1">Crear documento</p>
                                   </div>
+                                  <div
+                                    className="ml-2 flex text-slate-400 cursor-pointer"
+                                    onClick={() => {
+                                      router.push(
+                                        `/tools/webmail/?page=${searchParams.get("page")}&send=true&signature=true`
+                                      );
+                                    }}
+                                  >
+                                    <PencilIcon className="h-5 w-5" />
+                                    <p className="ml-1">Firma</p>
+                                  </div>
+                                </div>
+                                <div className="mt-8">
+                                  <button
+                                    className="bg-easywork-main text-white p-3 rounded-md"
+                                    onClick={() =>
+                                      forward ? sendForward() : sendReply()
+                                    }
+                                  >
+                                    Enviar
+                                  </button>
+                                  <button
+                                    className="bg-gray-300 m-2 p-3 rounded-md"
+                                    onClick={() => {
+                                      setSend(false);
+                                    }}
+                                  >
+                                    Cancelar
+                                  </button>
                                 </div>
                               </div>
                             </div>
-                          )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

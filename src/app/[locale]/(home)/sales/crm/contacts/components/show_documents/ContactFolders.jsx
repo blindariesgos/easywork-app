@@ -46,7 +46,7 @@ const ContactFolders = ({ id }) => {
   }, []);
 
   return (
-    <div className="w-full  text-black  rounded-lg px-4">
+    <div className="w-full  text-black  rounded-lg px-4 lg:px-8">
       {loading && <LoaderSpinner />}
       <Disclosure
         as="div"

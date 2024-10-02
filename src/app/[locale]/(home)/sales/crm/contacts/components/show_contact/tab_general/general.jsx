@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
+import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
+import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -15,11 +17,7 @@ import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "../../../../../../../../../components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
-import {
-  createContact,
-  updateContact,
-  updatePhotoContact,
-} from "@/src/lib/apis";
+import { createContact, updateContact } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import { DocumentSelector } from "@/src/components/DocumentSelector";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
@@ -45,9 +43,6 @@ export default function ContactGeneral({ contact, id }) {
   }, [contact, lists]);
 
   const schema = Yup.object().shape({
-    email: Yup.string()
-      .email(t("common:validations:email"))
-      .min(5, t("common:validations:min", { min: 5 })),
     fullName: Yup.string(),
     name: Yup.string()
       .required(t("common:validations:required"))
@@ -56,7 +51,6 @@ export default function ContactGeneral({ contact, id }) {
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
     cargo: Yup.string(),
-    phone: Yup.string(),
     rfc: Yup.string(),
     typeContact: Yup.string(),
     sourceId: Yup.string(),
@@ -64,8 +58,25 @@ export default function ContactGeneral({ contact, id }) {
     assignedById: Yup.string(),
     birthdate: Yup.string(),
     typePerson: Yup.string().required(t("common:validations:required")),
-    observadorId: Yup.string().required(t("common:validations:required")),
+    observadorId: Yup.string(),
+    subAgentId: Yup.string(),
     typeId: Yup.string(),
+    comments: Yup.string(),
+    emails_dto: Yup.array().of(
+      Yup.object().shape({
+        email: Yup.string().matches(
+          /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/,
+          t("common:validations:email")
+        ),
+        relation: Yup.string(),
+      })
+    ),
+    phones_dto: Yup.array().of(
+      Yup.object().shape({
+        number: Yup.string(),
+        relation: Yup.string(),
+      })
+    ),
   });
 
   const {
@@ -92,17 +103,33 @@ export default function ContactGeneral({ contact, id }) {
     if (contact?.lastName) setValue("lastName", contact?.lastName);
     if (contact?.cargo) setValue("cargo", contact?.cargo);
     if (contact?.phones[0]?.phone?.number)
-      setValue("email", contact?.phones[0]?.phone?.number);
-    if (contact?.emails[0]?.email?.email)
-      setValue("email", contact?.emails[0]?.email?.email);
+      setValue("phone", contact?.phones[0]?.phone?.number);
     if (contact?.type?.id) setValue("typeId", contact?.type?.id);
     if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
     if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
     if (contact?.address) setValue("address", contact?.address);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.typePerson) setValue("typePerson", contact?.typePerson);
-    if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy.id);
-    if (contact?.observador) setValue("observadorId", contact?.observador.id);
+    if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
+    if (contact?.observador) setValue("observadorId", contact?.observador?.id);
+    if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
+    if (contact?.comments) setValue("comments", contact?.comments);
+    if (contact?.emails?.length)
+      setValue(
+        "emails_dto",
+        contact?.emails?.map((e) => ({
+          email: e?.email?.email,
+          relation: e?.relation ?? "",
+        }))
+      );
+    if (contact?.phones?.length)
+      setValue(
+        "phones_dto",
+        contact?.phones?.map((e) => ({
+          number: e?.phone?.number,
+          relation: e?.relation ?? "",
+        }))
+      );
   }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {
@@ -120,23 +147,7 @@ export default function ContactGeneral({ contact, id }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    const { phone, email, ...otherData } = data;
-    const phones = contact?.phones?.length
-      ? contact?.phones.map((p, index) => ({
-          number: index == 0 ? data.phone : p.phone?.number,
-        }))
-      : [{ number: phone }];
-    const amails = contact?.emails?.length
-      ? contact?.emails.map((e, index) => ({
-          email: index == 0 ? email : e.email?.email,
-        }))
-      : [{ email }];
-
-    let body = {
-      ...otherData,
-      emails_dto: amails,
-      phones_dto: phones,
-    };
+    let body = { ...data };
 
     if (selectedProfileImage?.file) {
       body = {
@@ -212,14 +223,14 @@ export default function ContactGeneral({ contact, id }) {
           className={clsx(
             "grid grid-cols-1 lg:h-full bg-gray-100 rounded-lg  w-full",
             {
-              "lg:grid-cols-2": contact,
+              "lg:grid-cols-12": contact,
             }
           )}
         >
           {/* Panel Principal */}
 
           {/* Menu Izquierda */}
-          <div className=" bg-gray-100 p-4 lg:overflow-y-scroll rounded-lg">
+          <div className=" bg-gray-100 p-4 lg:overflow-y-scroll rounded-lg lg:col-span-5 ">
             <div className="pr-2">
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("contacts:create:data")}</h1>
@@ -255,7 +266,7 @@ export default function ContactGeneral({ contact, id }) {
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-3  px-5 pb-20 pt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-x-6 gap-y-3 pb-20 pt-4">
               {isEdit ? (
                 <Fragment>
                   <TextInput
@@ -296,23 +307,18 @@ export default function ContactGeneral({ contact, id }) {
                 name="cargo"
                 disabled={!isEdit}
               />
-              <Controller
-                render={({ field: { ref, ...field } }) => {
-                  return (
-                    <InputPhone
-                      name="phone"
-                      field={field}
-                      error={errors.phone}
-                      label={t("contacts:create:phone")}
-                      defaultValue={field.value}
-                      disabled={!isEdit}
-                    />
-                  );
-                }}
-                name="phone"
+
+              <MultiplePhonesInput
+                label={t("contacts:create:phone")}
+                errors={errors.phones_dto}
+                register={register}
+                name="phones_dto"
+                disabled={!isEdit}
                 control={control}
-                defaultValue=""
+                watch={watch}
+                setValue={setValue}
               />
+
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -334,13 +340,15 @@ export default function ContactGeneral({ contact, id }) {
                 control={control}
                 defaultValue=""
               />
-              <TextInput
+              <MultipleEmailsInput
                 label={t("contacts:create:email")}
-                placeholder={t("contacts:create:placeholder-lastname")}
-                error={errors.email}
+                errors={errors.emails}
                 register={register}
-                name="email"
+                name="emails_dto"
                 disabled={!isEdit}
+                control={control}
+                watch={watch}
+                setValue={setValue}
               />
               <TextInput
                 label={t("contacts:create:rfc")}
@@ -354,7 +362,7 @@ export default function ContactGeneral({ contact, id }) {
                 label={t("contacts:create:typePerson")}
                 options={[
                   {
-                    name: "Fisica",
+                    name: "Física",
                     id: "fisica",
                   },
                   {
@@ -431,11 +439,32 @@ export default function ContactGeneral({ contact, id }) {
                 watch={watch}
                 placeholder="- Seleccionar -"
               />
+              <SelectDropdown
+                label={t("contacts:create:sub-agent")}
+                name="subAgentId"
+                options={lists?.users}
+                register={register}
+                disabled={!isEdit}
+                error={errors.subAgentId}
+                setValue={setValue}
+                watch={watch}
+                placeholder="- Seleccionar -"
+              />
+              <TextInput
+                label={t("contacts:create:comments")}
+                error={errors.comments}
+                register={register}
+                name="comments"
+                disabled={!isEdit}
+                multiple
+              />
             </div>
           </div>
 
           {/* Menu Derecha */}
-          {id && contact && <ActivityPanel contactId={id} />}
+          {id && contact && (
+            <ActivityPanel contactId={id} className="lg:col-span-7" />
+          )}
           {/* Botones de acción */}
           {(isEdit || !contact) && (
             <div

@@ -1,6 +1,13 @@
 "use client";
 import { Fragment, useRef, useState, useEffect } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  Transition,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Menu,
+} from "@headlessui/react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
@@ -8,11 +15,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
 import { setCookie, getCookie } from "cookies-next";
 import useAppContext from "../../../../../../../context/app";
-import { XCircleIcon } from "@heroicons/react/20/solid";
+import { XCircleIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import axios from "axios";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function Signature({
   setOpenModal,
@@ -41,45 +52,6 @@ export default function Signature({
   const handleCheckboxChange = (id) => {
     setSelectedCheckbox(id);
     setCookie("myCheckbox", id);
-  };
-
-  const handleFileClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = async (event) => {
-    const archive = event.target.files[0];
-    try {
-      const response = await uploadSignature(archive, { name: archive.name });
-      if (response) {
-        toast.success("Firma cargada");
-      }
-    } catch (error) {
-      toast.success(error);
-    }
-  };
-
-  const uploadSignature = async (archive, metadata) => {
-    const formData = new FormData();
-    formData.append("file", archive);
-    formData.append("metadata", JSON.stringify(metadata));
-    formData.append("size", "650");
-
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
-      getSignatures();
-      return response;
-    } catch (error) {
-      console.error("Error uploading signature:", error);
-    }
   };
 
   const getSignatures = async () => {
@@ -184,7 +156,11 @@ export default function Signature({
                         <div>
                           <div
                             className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
-                            onClick={() => router.push(`${window.location.href}&addsignature=true`)}
+                            onClick={() =>
+                              router.push(
+                                `${window.location.href}&addsignature=true`
+                              )
+                            }
                           >
                             <p className="ml-1 text-center">Agregar Firma</p>
                           </div>
@@ -193,9 +169,8 @@ export default function Signature({
                       <table className="text-easywork-main w-full">
                         <thead>
                           <tr className="bg-white text-left">
-                            <th className="pl-6 py-5 rounded-l-lg">
-                              Remitente
-                            </th>
+                            <th className="p-1 rounded-l-lg"></th>
+                            <th className="pl-6 py-5">Remitente</th>
                             <th className="py-5 pr-5">Firma</th>
                             <th className="p-1 rounded-r-lg"></th>
                           </tr>
@@ -203,17 +178,58 @@ export default function Signature({
                         <tbody>
                           {signatures.map((signature, index) => (
                             <tr key={index}>
-                              <td className="py-2">
-                                <div className="flex">
-                                  <input
-                                    type="checkbox"
-                                    checked={selectedCheckbox === signature.id}
-                                    onChange={() =>
-                                      handleCheckboxChange(signature.id)
+                              <td className="pb-2">
+                                <Menu
+                                  as="div"
+                                  className="w-10 md:w-auto rounded-lg font-normal"
+                                >
+                                  <MenuButton className="flex items-center">
+                                    <Bars3Icon
+                                      className="h-4 w-4 text-gray-400"
+                                      aria-hidden="true"
+                                    />
+                                  </MenuButton>
+                                  <MenuItems
+                                    transition
+                                    anchor="bottom start"
+                                    className={
+                                      "z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                     }
-                                  />
-                                  <p className="ml-2">
-                                    {session.data.user.email}
+                                  >
+                                    {[
+                                      { name: "Editar", click: console.log() },
+                                      {
+                                        name: "Eliminar",
+                                        click: console.log(),
+                                      },
+                                    ].map((item, index) => (
+                                      <MenuItem key={index}>
+                                        {({ active }) => (
+                                          <div
+                                            onClick={() => item.click}
+                                            className={classNames(
+                                              active ? "bg-gray-50" : "",
+                                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                            )}
+                                          >
+                                            <p>{item.name}</p>
+                                          </div>
+                                        )}
+                                      </MenuItem>
+                                    ))}
+                                  </MenuItems>
+                                </Menu>
+                              </td>
+                              <td className="py-2">
+                                <div className="flex w-96 overflow-x-auto">
+                                  <p className="whitespace-nowrap">
+                                    {signature?.metadata?.senders?.map(
+                                      (element, index) => (
+                                        <span key={index} className="mr-2">
+                                          {element.state ? element.email : ""},
+                                        </span>
+                                      )
+                                    )}
                                   </p>
                                 </div>
                               </td>

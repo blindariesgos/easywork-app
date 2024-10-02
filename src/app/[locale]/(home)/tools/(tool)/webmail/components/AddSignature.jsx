@@ -2,19 +2,16 @@
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Range, getTrackBackground } from "react-range";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTokenGoogle, getAllOauth } from "../../../../../../../lib/apis";
-import { setCookie, getCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import useAppContext from "../../../../../../../context/app";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { toast } from "react-toastify";
-import * as yup from "yup";
+
 import axios from "axios";
-import ReactQuill from "react-quill";
 import "./styles.css";
 
 export default function AddSignature({

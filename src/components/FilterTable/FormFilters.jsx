@@ -29,13 +29,14 @@ const FormFilters = () => {
     fields: yup.array().of(yup.object().shape({})),
   });
 
-  const { register, handleSubmit, control, reset, setValue, watch } = useForm({
-    defaultValues: {
-      fields: defaultFilterFields,
-    },
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
+  const { register, handleSubmit, control, reset, setValue, getValues, watch } =
+    useForm({
+      defaultValues: {
+        fields: defaultFilterFields,
+      },
+      mode: "onChange",
+      resolver: yupResolver(schema),
+    });
 
   const handleFormFilters = (data) => {
     if (data.fields.length == 0) return;
@@ -150,11 +151,10 @@ const FormFilters = () => {
                 render={({ field }) => (
                   <MultipleSelect
                     {...field}
-                    options={field.options}
+                    options={dataField.options}
                     getValues={getValues}
                     setValue={setValue}
-                    name={`fields[${index}].value`}
-                    label={field.name}
+                    label={dataField.name}
                   />
                 )}
               />

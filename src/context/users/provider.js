@@ -26,7 +26,7 @@ export default function UsersContextProvider({ children }) {
       ...config,
       [key]: value
     }
-    if (value == config.orderBy) {
+    if (key == "orderBy") {
       newConfig = {
         ...newConfig,
         order: value != config.orderBy

@@ -152,7 +152,8 @@ export default function PoliciesContextProvider({ children }) {
       displayFilters,
       filterFields,
       filters,
-      defaultFilterFields
+      defaultFilterFields,
+      lists
     ]
   );
 

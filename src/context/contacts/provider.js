@@ -16,6 +16,23 @@ export default function ContactsContextProvider({ children }) {
   const [filterFields, setFilterFields] = useState()
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})
+  const defaultFilterFields = [
+    {
+      id: 1,
+      name: t("contacts:filters:responsible"),
+      type: "dropdown",
+      check: true,
+      code: "responsibleId",
+      options: lists?.users
+    },
+    {
+      id: 2,
+      name: t("contacts:filters:created"),
+      type: "date",
+      check: true,
+      code: "createdAt",
+    },
+  ]
 
   useEffect(() => {
     setFilterFields([
@@ -24,7 +41,7 @@ export default function ContactsContextProvider({ children }) {
         name: t("contacts:filters:responsible"),
         type: "dropdown",
         check: true,
-        code: "responsible",
+        code: "responsibleId",
         options: lists?.users
       },
       {
@@ -39,14 +56,14 @@ export default function ContactsContextProvider({ children }) {
         name: t("contacts:filters:origin"),
         type: "select",
         options: lists?.listContact?.contactSources || [],
-        check: true,
-        code: "origin",
+        check: false,
+        code: "sourceId",
       },
       {
         id: 4,
         name: t("contacts:filters:created-by"),
         type: "dropdown",
-        check: true,
+        check: false,
         code: "createdbyId",
         options: lists?.users
       },
@@ -58,14 +75,14 @@ export default function ContactsContextProvider({ children }) {
         code: "name",
       },
       {
-        id: 9,
+        id: 6,
         name: t("contacts:filters:lastname"),
         type: "input",
         check: false,
         code: "lastName",
       },
       {
-        id: 6,
+        id: 7,
         name: t("contacts:filters:contact-type"),
         type: "select",
         options: lists?.listContact?.contactTypes || [],
@@ -79,6 +96,21 @@ export default function ContactsContextProvider({ children }) {
         check: false,
         code: "rfc",
       },
+      {
+        id: 9,
+        name: t("contacts:filters:cargo"),
+        type: "input",
+        check: false,
+        code: "cargo",
+      },
+      {
+        id: 10,
+        name: t("contacts:filters:observer"),
+        type: "dropdown",
+        check: false,
+        code: "observadorId",
+        options: lists?.users
+      },
     ])
   }, [lists?.listContact])
 
@@ -86,14 +118,6 @@ export default function ContactsContextProvider({ children }) {
     setPage(1)
   }, [limit])
 
-  // useEffect(() => {
-  //   if (Object.keys(filters).length == 0 && filterFields) {
-  //     setFilterFields(filterFields?.map(field => ({
-  //       ...field,
-  //       check: field.code === "role"
-  //     })))
-  //   }
-  // }, [filters])
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
@@ -129,6 +153,7 @@ export default function ContactsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
+      defaultFilterFields
     }),
     [
       contacts,
@@ -139,7 +164,8 @@ export default function ContactsContextProvider({ children }) {
       selectedContacts,
       displayFilters,
       filterFields,
-      filters
+      filters,
+      lists
     ]
   );
 

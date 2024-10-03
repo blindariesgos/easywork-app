@@ -48,6 +48,7 @@ import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";
+import FooterTable from "@/src/components/FooterTable";
 
 export default function TableReceipts() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
@@ -121,8 +122,33 @@ export default function TableReceipts() {
     // { name: "Copiar" },
   ];
 
+  if (data?.items && data?.items.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+            <svg
+              className="w-10 h-10 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-gray-400">No hay Recibos</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
+    <Fragment>
       {loading && <LoaderSpinner />}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
@@ -177,34 +203,6 @@ export default function TableReceipts() {
                 </tr>
               </thead>
               <tbody className="bg-gray-100">
-                {data?.items && data?.items.length === 0 && (
-                  <tr>
-                    <td colSpan={selectedColumns.length}>
-                      <div className="flex items-center justify-center h-96">
-                        <div className="flex flex-col items-center space-y-3">
-                          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                            <svg
-                              className="w-10 h-10 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                              ></path>
-                            </svg>
-                          </div>
-                          <p className="text-lg font-medium text-gray-400">
-                            No hay Recibos
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                )}
                 {selectedColumns.length > 0 &&
                   data?.items &&
                   data?.items.map((receipt, index) => {
@@ -409,49 +407,14 @@ export default function TableReceipts() {
         </div>
       </div>
       <div className="w-full mt-1 pt-4 sm:pt-0">
-        <div className="flex justify-center">
-          <div className="flex gap-1 items-center">
-            <p>Mostrar:</p>
-            <Listbox value={limit} onChange={setLimit} as="div">
-              <ListboxButton
-                className={clsx(
-                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
-                )}
-              >
-                {limit}
-                <ChevronDownIcon
-                  className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
-                  aria-hidden="true"
-                />
-              </ListboxButton>
-              <ListboxOptions
-                anchor="bottom"
-                transition
-                className={clsx(
-                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
-                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
-                )}
-              >
-                {itemsByPage.map((page) => (
-                  <ListboxOption
-                    key={page.name}
-                    value={page.id}
-                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
-                    <div className="text-sm/6">{page.name}</div>
-                  </ListboxOption>
-                ))}
-              </ListboxOptions>
-            </Listbox>
-          </div>
-          <PaginationV2
-            totalPages={data?.meta?.totalPages || 0}
-            currentPage={page}
-            setPage={setPage}
-          />
-        </div>
+        <FooterTable
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          totalPages={data?.meta?.totalPages}
+          total={data?.meta?.totalItems ?? 0}
+        />
         <div className="flex flex-col justify-start gap-2 items-start">
           {selectedReceipts.length > 0 && (
             <Fragment>
@@ -461,6 +424,6 @@ export default function TableReceipts() {
           )}
         </div>
       </div>
-    </>
+    </Fragment>
   );
 }

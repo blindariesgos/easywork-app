@@ -178,6 +178,10 @@
       "change-participant": "Cambiar participante",
       "change-deadline": "Cambiar fecha limite",
       "change-responsible": "Cambiar responsable"
+    },
+    "footer": {
+      "elements": "Se muestran elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> de un total de <strong>{{total}}</strong>",
+      "show": "Mostrar:"
     }
   }
 }

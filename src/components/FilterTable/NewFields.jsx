@@ -25,14 +25,14 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
   }, [selectFields, filterFields]);
 
   const handleAddField = (e) => {
-    const { value, checked } = e.target;
+    const { value, checked, name } = e.target;
     const field =
       filterFields.filter((fld) => fld.id === parseInt(value))[0] ||
       filterFields[0];
     if (checked) append({ ...field, value: "" });
     else {
-      const fieldIndex = selectFields.indexOf((item) => item.id == value);
-      if (fieldIndex) remove(fieldIndex);
+      const fieldIndex = selectFields.map((item) => item.code).indexOf(name);
+      if (fieldIndex != -1) remove(fieldIndex);
     }
     const updatedFields = filterFields.map((field) => {
       return field.id == value ? { ...field, check: !field.check } : field;
@@ -51,6 +51,7 @@ const NewFields = ({ append, remove, fields: selectFields }) => {
               value={field.id}
               checked={selectFields.some((x) => x.code == field.code)}
               onChange={(e) => handleAddField(e)}
+              name={field.code}
             />
             <p className="text-sm">{field.name}</p>
           </MenuItem>

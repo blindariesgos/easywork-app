@@ -38,7 +38,7 @@ export default function DriveContextProvider({ children }) {
   const { lists } = useAppContext();
   const params = new URLSearchParams(searchParams);
   const [config, setConfig] = useState({
-    limit: 25,
+    limit: 5,
     page: 1,
     sortField: 'name',
     sortOrder: 'ASC'
@@ -314,7 +314,24 @@ export default function DriveContextProvider({ children }) {
     getItems()
   }, [pages, config, filters])
 
+  const handleChangeConfig = (key, value) => {
+    let newConfig = {
+      ...config,
+      [key]: value
+    }
+    if (value == config.orderBy) {
+      newConfig = {
+        ...newConfig,
+        order: value != config.orderBy
+          ? "DESC"
+          : config.order === "ASC"
+            ? "DESC"
+            : "ASC"
+      }
+    }
 
+    setConfig(newConfig)
+  }
 
   const values = useMemo(() => ({
     config,
@@ -335,6 +352,14 @@ export default function DriveContextProvider({ children }) {
     externalFolderInfo,
     isOpenConnect,
     folderConnect,
+    page: config.page,
+    setPage: (value) => handleChangeConfig("page", value),
+    limit: config.limit,
+    setLimit: (value) => handleChangeConfig("limit", value),
+    orderBy: config.orderBy,
+    setOrderBy: (value) => handleChangeConfig("orderBy", value),
+    order: config.order,
+    setOrder: (value) => handleChangeConfig("order", value),
     connectCRMContact,
     setFolderConnect,
     setIsOpenConnect,

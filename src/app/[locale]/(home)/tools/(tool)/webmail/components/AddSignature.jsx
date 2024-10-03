@@ -15,11 +15,6 @@ import axios from "axios";
 import "./styles.css";
 
 export default function AddSignature({
-  setOpenModal,
-  children,
-  colorTag,
-  labelTag,
-  samePage,
   previousModalPadding,
   subLabelTag,
   userData,
@@ -41,6 +36,7 @@ export default function AddSignature({
   const [archive, setArchive] = useState({ blob: null, file: null });
   const [value, setValueText] = useState("");
   const [allOauth, setAllOauth] = useState(null);
+  const [isEdit, setIsEdit] = useState(null);
 
   const STEP = 0.1;
   const MIN = 100;
@@ -76,10 +72,8 @@ export default function AddSignature({
     const metadata = {
       senders: allOauth,
       name: archive.file.name,
+      size: values[0],
     };
-    console.log("file", archive.file);
-    console.log("metadata", JSON.stringify(metadata));
-    console.log("size", values[0]);
     const formData = new FormData();
     formData.append("file", archive.file);
     formData.append("metadata", JSON.stringify(metadata));
@@ -95,7 +89,9 @@ export default function AddSignature({
           },
         }
       );
-      getSignatures();
+      if (response) {
+        back();
+      }
       return response;
     } catch (error) {
       console.error("Error uploading signature:", error);
@@ -112,41 +108,27 @@ export default function AddSignature({
           },
         }
       );
-      console.log(response);
-      setSignatures(response.data);
+      setSignatures(response.data[0]);
     } catch (error) {}
   };
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ size: [] }],
-      [{ font: [] }],
-      [{ align: ["right", "center", "justify"] }],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link"],
-      [{ color: ["red", "#785412"] }],
-      [{ background: ["red", "#785412"] }],
-    ],
+  const getSignature = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${params.get("isEdit")}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      if (response) {
+        console.log(response.data);
+        setIsEdit(response.data);
+        setValues([response.data.metadata.size]);
+      }
+    } catch (error) {}
   };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "color",
-    "background",
-    "align",
-    "size",
-    "font",
-  ];
 
   const deleteSignature = async (id) => {
     try {
@@ -166,10 +148,14 @@ export default function AddSignature({
     getTokenGoogle(session.data.user.id).then((res) => {
       setUser(res);
     });
-    getSignatures();
-    console.log(getCookie("myCheckbox"));
-    setSelectedCheckbox(getCookie("myCheckbox"));
+    if (params.get("isEdit")) getSignature();
   }, [params.get("addsignature")]);
+
+  const back = () => {
+    router.back();
+    setArchive({ blob: null, file: null });
+    setIsEdit(null);
+  };
 
   return (
     <Transition.Root show={params.get("addsignature")} as={Fragment}>
@@ -194,10 +180,7 @@ export default function AddSignature({
                     <div className={`flex flex-col`}>
                       <Tag
                         title={label}
-                        onclick={() => {
-                          router.back();
-                          setArchive({ blob: null, file: null });
-                        }}
+                        onclick={() => back()}
                         className="bg-easywork-main"
                       />
                       {subLabelTag && (
@@ -214,7 +197,7 @@ export default function AddSignature({
                         Agregar Firma
                       </h1>
                       <div className="mb-3 mt-3">
-                        {archive?.blob ? (
+                        {archive?.blob || isEdit ? (
                           <>
                             <Range
                               values={values}
@@ -287,17 +270,19 @@ export default function AddSignature({
                               <img
                                 className={`max-w-full my-3 relative`}
                                 style={{ width: Number(values) }}
-                                src={archive?.blob}
+                                src={isEdit ? isEdit.url : archive?.blob}
                                 alt="add image"
                               />
-                              <button
-                                className="bg-easywork-main text-white p-1 rounded-full cursor-pointer absolute -top-2 -left-2"
-                                onClick={() =>
-                                  setArchive({ blob: null, file: null })
-                                }
-                              >
-                                <XMarkIcon className="w-5 h-5" />
-                              </button>
+                              {!isEdit && (
+                                <button
+                                  className="bg-easywork-main text-white p-1 rounded-full cursor-pointer absolute -top-2 -left-2"
+                                  onClick={() =>
+                                    setArchive({ blob: null, file: null })
+                                  }
+                                >
+                                  <XMarkIcon className="w-5 h-5" />
+                                </button>
+                              )}
                             </div>
                           </>
                         ) : (

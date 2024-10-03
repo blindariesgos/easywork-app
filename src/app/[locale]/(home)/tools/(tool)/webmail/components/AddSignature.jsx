@@ -201,7 +201,7 @@ export default function AddSignature({
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-4/6">
                       <h1 className="text-lg inline-block align-middle ml-5">
-                        Agregar Firma
+                        Agregar Firma test
                       </h1>
                       <div className="mb-3 mt-3">
                         {archive?.blob || isEdit ? (

@@ -403,7 +403,7 @@ export default function WebmailLayout({ children, table }) {
                 <div className="flex justify-between w-full">
                   <h3 className="ml-4 text-md">INBOX</h3>
                   {selectedFolder === "INBOX" && (
-                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                    <h3 className="text-md">{selectOauth.unreadInboxCount}</h3>
                   )}
                 </div>
               </li>
@@ -420,7 +420,7 @@ export default function WebmailLayout({ children, table }) {
                   {" "}
                   <h3 className="ml-4 text-md">Todos</h3>
                   {selectedFolder === "ALL" && (
-                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                    <h3 className="text-md">{selectOauth.unreadCount}</h3>
                   )}
                 </div>
               </li>
@@ -459,7 +459,7 @@ export default function WebmailLayout({ children, table }) {
                   {" "}
                   <h3 className="ml-4 text-md">Spam</h3>
                   {selectedFolder === "SPAM" && (
-                    <h3 className="text-md">{totalUnreadByPage()}</h3>
+                    <h3 className="text-md">{selectOauth.unreadSpamCount}</h3>
                   )}{" "}
                 </div>
               </li>

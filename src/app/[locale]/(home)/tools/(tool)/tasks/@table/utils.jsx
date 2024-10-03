@@ -97,20 +97,23 @@ export const renderCellContent = (column, task, t) => {
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
       const contact = task.crm.find((item) => item.type == "contact");
+      console.log("cmr-task-contact", task, contact);
       return (
         (contact && (
           <Link
-            href={`/sales/crm/contacts/contact/${contact?.crmEntity.id}?show=true&prev=tasks`}
+            href={`/sales/crm/contacts/contact/${contact?.crmEntity?.id}?show=true&prev=tasks`}
           >
             <div className="flex gap-x-2 items-center justify-left">
               <Image
                 className="h-6 w-6 rounded-full bg-zinc-200"
                 width={30}
                 height={30}
-                src={contact?.crmEntity.photo || "/img/avatar.svg"}
+                src={contact?.crmEntity?.photo || "/img/avatar.svg"}
                 alt="avatar"
               />
-              {contact?.crmEntity?.fullName ?? contact?.crmEntity?.name}
+              {contact?.crmEntity?.fullName ??
+                contact?.crmEntity?.name ??
+                "No Disponible"}
             </div>
           </Link>
         )) ||

@@ -156,7 +156,7 @@ const TextEditor = forwardRef(
         {arroba && (
           <DropdownVisibleUsers
             mentionButtonRef={null}
-            prueba={ref}
+            isOpen={arroba}
             dataUsers={dataUsers}
             modalPosition={modalPosition}
             onChangeCustom={onChangeCustom}

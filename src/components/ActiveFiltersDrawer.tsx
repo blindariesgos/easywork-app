@@ -12,9 +12,10 @@ const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
             return item.options.find((option) => option.id == item.value)?.name;
         }
 
-        if (item.type == "tags") {
+        if (item.type == "tags" || item.type == "multipleSelect") {
             return item.value.map((x) => x.name).join(", ");
         }
+
 
         return item.value;
     };

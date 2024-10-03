@@ -335,6 +335,8 @@
     "lastname": "Apellido",
     "contact-type": "Tipo de contacto",
     "rfc": "RFC",
+    "cargo": "Cargo",
+    "observer": "Observador",
     "date": {
       "yesterday": "Ayer",
       "today": "Hoy",

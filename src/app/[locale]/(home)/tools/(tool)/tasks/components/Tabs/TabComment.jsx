@@ -100,7 +100,7 @@ export default function TabComment({ info }) {
 
   return (
     <div className="w-full p-3">
-      {comments?.length && comments?.length > 3 && (
+      {comments?.length > 3 && (
         <div
           className="cursor-pointer pb-4"
           onClick={() => setShowMore(!showMore)}

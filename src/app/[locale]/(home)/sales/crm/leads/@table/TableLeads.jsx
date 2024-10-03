@@ -1,36 +1,27 @@
 "use client";
 import {
   ChatBubbleBottomCenterIcon,
-  CheckIcon,
   ChevronDownIcon,
   EnvelopeIcon,
   PhoneIcon,
 } from "@heroicons/react/20/solid";
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/react";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
-import { Pagination } from "../../../../../../../components/pagination/Pagination";
 import AddColumnsTable from "../../../../../../../components/AddColumnsTable";
 import { useLeadDetete, useLeads } from "../../../../../../../hooks/useCommon";
 import SelectedOptionsTable from "../../../../../../../components/SelectedOptionsTable";
 import moment from "moment";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 import useLeadContext from "@/src/context/leads";
-import { itemsByPage } from "@/src/lib/common";
+import FooterTable from "@/src/components/FooterTable";
 
 export default function TableLeads() {
-  const { data, limit, setLimit, orderBy, setOrderBy, order } =
+  const { data, limit, setLimit, orderBy, setOrderBy, order, page, setPage } =
     useLeadContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -43,15 +34,6 @@ export default function TableLeads() {
   );
   const [dataLeads, setDataLeads] = useState();
   const [loading, setLoading] = useState(false);
-  const { optionsCheckBox } = useLeadDetete(
-    selectedLeads,
-    setSelectedLeads,
-    setLoading
-  );
-  const { fieldClicked, handleSorting, orderItems } = useOrderByColumn(
-    [],
-    dataLeads?.items
-  );
 
   useEffect(() => {
     if (data) setDataLeads(data);
@@ -75,10 +57,6 @@ export default function TableLeads() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
-
-  const capitalizedText = (text) => {
-    return text.charAt(0).toUpperCase() + text.slice(1);
-  };
 
   const ColorDivisionsStages = (data) => {
     const stages = [
@@ -314,45 +292,14 @@ export default function TableLeads() {
         </div>
       </div>
       <div className="w-full mt-1 pt-4 sm:pt-0">
-        <div className="flex justify-center">
-          <div className="flex gap-1 items-center">
-            <p>Mostrar:</p>
-            <Listbox value={limit} onChange={setLimit} as="div">
-              <ListboxButton
-                className={clsx(
-                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
-                )}
-              >
-                {limit}
-                <ChevronDownIcon
-                  className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
-                  aria-hidden="true"
-                />
-              </ListboxButton>
-              <ListboxOptions
-                anchor="bottom"
-                transition
-                className={clsx(
-                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
-                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
-                )}
-              >
-                {itemsByPage.map((page) => (
-                  <ListboxOption
-                    key={page.name}
-                    value={page.id}
-                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
-                    <div className="text-sm/6">{page.name}</div>
-                  </ListboxOption>
-                ))}
-              </ListboxOptions>
-            </Listbox>
-          </div>
-          <Pagination totalPages={data?.meta?.totalPages || 0} />
-        </div>
+        <FooterTable
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          totalPages={data?.meta?.totalPages}
+          total={data?.meta?.totalItems ?? 0}
+        />
         <div className="flex">
           {selectedLeads.length > 0 && <SelectedOptionsTable options={10} />}
         </div>

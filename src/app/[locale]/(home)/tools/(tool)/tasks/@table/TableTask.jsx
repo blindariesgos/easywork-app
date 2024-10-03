@@ -1,23 +1,13 @@
 "use client";
 
-import {
-  ChevronDownIcon,
-  CheckIcon,
-  Bars3Icon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  Fragment,
-} from "react";
+import React, { useLayoutEffect, useRef, useState, Fragment } from "react";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import FooterTable from "@/src/components/FooterTable";
 import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
 import {
   deleteTask as apiDeleteTask,
@@ -29,17 +19,7 @@ import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import useTasksContext from "@/src/context/tasks";
 import { renderCellContent } from "./utils";
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-} from "@headlessui/react";
-import { itemsByPage } from "@/src/lib/common";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 
@@ -55,6 +35,9 @@ export default function TableTask() {
     setLimit,
     page,
     setPage,
+    order,
+    orderBy,
+    setOrderBy,
   } = useTasksContext();
   const router = useRouter();
   const [checked, setChecked] = useState(false);
@@ -290,16 +273,22 @@ export default function TableTask() {
                               "rounded-e-xl"
                             }`}
                             onClick={() => {
-                              handleSorting(column.row);
+                              setOrderBy(column.row);
                             }}
                           >
-                            <div className="flex justify-left items-center gap-2">
+                            <div
+                              className={clsx(
+                                "flex justify-left items-center gap-2",
+                                {
+                                  "font-bold": orderBy === column.row,
+                                }
+                              )}
+                            >
                               {column.name}
                               <div>
                                 <ChevronDownIcon
                                   className={`h-6 w-6 text-primary ${
-                                    fieldClicked.field === column.row &&
-                                    fieldClicked.sortDirection === "desc"
+                                    orderBy === column.row && order !== "DESC"
                                       ? "transform rotate-180"
                                       : ""
                                   }`}
@@ -397,49 +386,14 @@ export default function TableTask() {
             </div>
           </div>
           <div className="w-full mt-2">
-            <div className="flex justify-center">
-              <div className="flex gap-1 items-center">
-                <p>Mostrar:</p>
-                <Listbox value={limit} onChange={setLimit} as="div">
-                  <ListboxButton
-                    className={clsx(
-                      "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
-                      "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
-                    )}
-                  >
-                    {limit}
-                    <ChevronDownIcon
-                      className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
-                      aria-hidden="true"
-                    />
-                  </ListboxButton>
-                  <ListboxOptions
-                    anchor="bottom"
-                    transition
-                    className={clsx(
-                      "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
-                      "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
-                    )}
-                  >
-                    {itemsByPage.map((page) => (
-                      <ListboxOption
-                        key={page.name}
-                        value={page.id}
-                        className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
-                      >
-                        <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
-                        <div className="text-sm/6">{page.name}</div>
-                      </ListboxOption>
-                    ))}
-                  </ListboxOptions>
-                </Listbox>
-              </div>
-              <PaginationV2
-                totalPages={data?.meta?.totalPages || 0}
-                currentPage={page}
-                setPage={setPage}
-              />
-            </div>
+            <FooterTable
+              limit={limit}
+              setLimit={setLimit}
+              page={page}
+              setPage={setPage}
+              totalPages={data?.meta?.totalPages}
+              total={data?.meta?.totalItems ?? 0}
+            />
           </div>
         </div>
       )}

@@ -55,10 +55,12 @@ export default function AddSignature({
       });
       if (isEdit) {
         newArray.forEach((element) => {
-          element.state = isEdit.metadata.senders.find((item) => {
-            if (item.email == element.email) return item.state;
-          });
+          const foundItem = isEdit.metadata.senders.find((item) => item.email === element.email);
+          if (foundItem) {
+            element.state = foundItem.state;
+          }
         });
+        
       }
       setAllOauth(newArray);
     });
@@ -90,6 +92,35 @@ export default function AddSignature({
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${session.data.user.accessToken}`,
+          },
+        }
+      );
+      if (response) {
+        back();
+      }
+      return response;
+    } catch (error) {
+      console.error("Error uploading signature:", error);
+    }
+  };
+
+  const updateSignature = async () => {
+    const metadata = {
+      senders: allOauth,
+      name: isEdit ? isEdit.metadata.name : archive.file.name,
+      size: values[0],
+    };
+    console.log(metadata);
+    const formData = new FormData();
+    formData.append("metadata", JSON.stringify(metadata));
+
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${params.get("isEdit")}`,
         formData,
         {
           headers: {
@@ -344,7 +375,9 @@ export default function AddSignature({
                         <button
                           className={`${archive?.blob || isEdit ? "bg-easywork-main hover:bg-easywork-mainhover" : "bg-gray-50"} text-white px-3 mt-2 py-1 rounded-md ml-3 w-44 cursor-pointer`}
                           onClick={() => {
-                            archive?.blob ? uploadSignature() : "";
+                            archive?.blob
+                              ? uploadSignature()
+                              : updateSignature();
                           }}
                         >
                           <p className="ml-1 text-center">Guardar</p>

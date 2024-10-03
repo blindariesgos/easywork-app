@@ -114,14 +114,11 @@ export default function AddSignature({
       name: isEdit ? isEdit.metadata.name : archive.file.name,
       size: values[0],
     };
-    console.log(metadata);
-    const formData = new FormData();
-    formData.append("metadata", JSON.stringify(metadata));
 
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${params.get("isEdit")}`,
-        formData,
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${params.get("isEdit")}/metadata`,
+        {metadata},
         {
           headers: {
             Authorization: `Bearer ${session.data.user.accessToken}`,

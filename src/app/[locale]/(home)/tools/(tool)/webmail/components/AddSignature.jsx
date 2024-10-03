@@ -53,13 +53,21 @@ export default function AddSignature({
       res.forEach((element) => {
         newArray.push({ email: element.email, state: false });
       });
+      if (isEdit) {
+        newArray.forEach((element) => {
+          element.state = isEdit.metadata.senders.find((item) => {
+            if (item.email == element.email) return item.state;
+          });          
+        });
+      }
       setAllOauth(newArray);
     });
   }
 
   useEffect(() => {
+    console.log(params.get("addsignature"));
     if (params.get("addsignature") == "true") allOauthPromise();
-  }, [params.get("addsignature")]);
+  }, [params.get("addsignature"), isEdit]);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
@@ -123,7 +131,6 @@ export default function AddSignature({
         }
       );
       if (response) {
-        console.log(response.data);
         setIsEdit(response.data);
         setValues([response.data.metadata.size]);
       }
@@ -313,7 +320,7 @@ export default function AddSignature({
                           <div key={index} className="flex items-center mt-2">
                             <input
                               type="checkbox"
-                              checked={item.state} // Asigna el valor actual del estado
+                              checked={item.state}
                               onChange={(e) => {
                                 const updatedAllOauth = allOauth.map(
                                   (existingItem, i) => {
@@ -335,7 +342,7 @@ export default function AddSignature({
                           </div>
                         ))}
                         <button
-                          className={`${archive?.blob ? "bg-easywork-main hover:bg-easywork-mainhover" : "bg-gray-50"} text-white px-3 mt-2 py-1 rounded-md ml-3 w-44 cursor-pointer`}
+                          className={`${archive?.blob || isEdit ? "bg-easywork-main hover:bg-easywork-mainhover" : "bg-gray-50"} text-white px-3 mt-2 py-1 rounded-md ml-3 w-44 cursor-pointer`}
                           onClick={() => {
                             archive?.blob ? uploadSignature() : "";
                           }}

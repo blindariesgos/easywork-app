@@ -13,19 +13,93 @@ export default function TasksContextProvider({ children, userId }) {
   const { t } = useTranslation()
   const [filters, setFilters] = useState([])
   const [selectedTasks, setSelectedTasks] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
-  const { tasks, isLoading, isError, mutate } = useTasks({ page, limit, filters, userId: session?.data?.user?.id });
+  const [config, setConfig] = useState({
+    page: 1,
+    limit: 5,
+    orderBy: "deadline",
+    order: "DESC"
+  })
+  const { tasks, isLoading, isError, mutate } = useTasks({ config, filters, userId: session?.data?.user?.id });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();
   const [displayFilters, setDisplayFilters] = useState({})
   const [filterFields, setFilterFields] = useState();
+  const defaultFilterFields = [
+    {
+      id: 1,
+      name: t("tools:tasks:filters:fields:createdThe"),
+      type: "date",
+      check: false,
+      code: "createdAt",
+      date: "newDate1",
+      state: 2,
+    },
+    {
+      id: 2,
+      name: t("tools:tasks:filters:fields:createdBy"),
+      type: "dropdown",
+      check: false,
+      code: "createdBy",
+      options: lists?.users,
+    },
+    {
+      id: 3,
+      name: t("tools:tasks:filters:fields:limit-date"),
+      type: "date",
+      check: false,
+      code: "deadline",
+      date: "newDate",
+      state: 1,
+    },
+    {
+      id: 4,
+      name: t("tools:tasks:filters:fields:status"),
+      options: status,
+      type: "multipleSelect",
+      check: false,
+      code: "status",
+    },
+  ]
 
   useEffect(() => {
     if (!lists?.users || lists?.users?.length == 0) return
     setFilterFields([
       {
         id: 1,
+        name: t("tools:tasks:filters:fields:createdThe"),
+        type: "date",
+        check: false,
+        code: "createdAt",
+        date: "newDate1",
+        state: 2,
+      },
+      {
+        id: 2,
+        name: t("tools:tasks:filters:fields:createdBy"),
+        type: "dropdown",
+        check: false,
+        code: "createdBy",
+        options: lists?.users,
+      },
+      {
+        id: 3,
+        name: t("tools:tasks:filters:fields:limit-date"),
+        type: "date",
+        check: false,
+        code: "deadline",
+        date: "newDate",
+        state: 1,
+      },
+      {
+        id: 4,
+        name: t("tools:tasks:filters:fields:status"),
+        options: status,
+        type: "multipleSelect",
+        check: false,
+        code: "status",
+      },
+      {
+        id: 5,
         name: t("tools:tasks:filters:fields:role"),
         options: [
           {
@@ -54,15 +128,7 @@ export default function TasksContextProvider({ children, userId }) {
         code: "role",
       },
       {
-        id: 2,
-        name: t("tools:tasks:filters:fields:status"),
-        options: status,
-        type: "multipleSelect",
-        check: false,
-        code: "status",
-      },
-      {
-        id: 3,
+        id: 6,
         name: t("tools:tasks:filters:fields:responsible"),
         type: "dropdown",
         options: lists?.users,
@@ -70,40 +136,14 @@ export default function TasksContextProvider({ children, userId }) {
         code: "responsible",
       },
       {
-        id: 4,
-        name: t("tools:tasks:filters:fields:limit-date"),
-        type: "date",
-        check: false,
-        code: "deadline",
-        date: "newDate",
-        state: 1,
-      },
-      {
-        id: 11,
-        name: t("tools:tasks:filters:fields:createdThe"),
-        type: "date",
-        check: false,
-        code: "createdAt",
-        date: "newDate1",
-        state: 2,
-      },
-      {
-        id: 5,
-        name: t("tools:tasks:filters:fields:createdBy"),
-        type: "dropdown",
-        check: false,
-        code: "createdBy",
-        options: lists?.users,
-      },
-      {
-        id: 6,
+        id: 7,
         name: t("tools:tasks:filters:fields:tag"),
         type: "tags",
         check: false,
         code: "tags",
       },
       {
-        id: 7,
+        id: 8,
         name: t("tools:tasks:filters:fields:closed"),
         type: "date",
         check: false,
@@ -112,14 +152,14 @@ export default function TasksContextProvider({ children, userId }) {
         state: 3,
       },
       {
-        id: 8,
+        id: 9,
         name: t("tools:tasks:filters:fields:name"),
         type: "input",
         check: false,
         code: "name",
       },
       {
-        id: 9,
+        id: 10,
         name: t("tools:tasks:filters:fields:participant"),
         type: "dropdown",
         check: false,
@@ -127,7 +167,7 @@ export default function TasksContextProvider({ children, userId }) {
         options: lists?.users,
       },
       {
-        id: 10,
+        id: 11,
         name: t("tools:tasks:filters:fields:observer"),
         type: "dropdown",
         check: false,
@@ -146,9 +186,29 @@ export default function TasksContextProvider({ children, userId }) {
     }
   }, [filters])
 
+  const handleChangeConfig = (key, value) => {
+    let newConfig = {
+      ...config,
+      [key]: value
+    }
+    if (value == config.orderBy) {
+      newConfig = {
+        ...newConfig,
+        order: value != config.orderBy
+          ? "DESC"
+          : config.order === "ASC"
+            ? "DESC"
+            : "ASC"
+      }
+    }
+
+    setConfig(newConfig)
+  }
+
   useEffect(() => {
-    setPage(1)
-  }, [limit])
+    handleChangeConfig("page", 1)
+  }, [config.limit])
+
 
 
   const removeFilter = (filterName) => {
@@ -173,10 +233,14 @@ export default function TasksContextProvider({ children, userId }) {
       tasks,
       isLoading,
       isError,
-      page,
-      setPage,
-      limit,
-      setLimit,
+      page: config.page,
+      setPage: (value) => handleChangeConfig("page", value),
+      limit: config.limit,
+      setLimit: (value) => handleChangeConfig("limit", value),
+      orderBy: config.orderBy,
+      setOrderBy: (value) => handleChangeConfig("orderBy", value),
+      order: config.order,
+      setOrder: (value) => handleChangeConfig("order", value),
       mutate,
       filters,
       setFilters,
@@ -184,7 +248,8 @@ export default function TasksContextProvider({ children, userId }) {
       setFilterFields,
       displayFilters,
       setDisplayFilters,
-      removeFilter
+      removeFilter,
+      defaultFilterFields
     }),
     [
       selectedTasks,
@@ -192,8 +257,7 @@ export default function TasksContextProvider({ children, userId }) {
       isLoading,
       isError,
       mutate,
-      page,
-      limit,
+      config,
       filters,
       filterFields,
       displayFilters,

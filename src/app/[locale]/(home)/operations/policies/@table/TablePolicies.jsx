@@ -47,6 +47,7 @@ import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
+import FooterTable from "@/src/components/FooterTable";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -129,8 +130,35 @@ export default function TablePolicies() {
     // { name: "Copiar" },
   ];
 
+  if (data?.items && data?.items.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+            <svg
+              className="w-10 h-10 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-gray-400">
+            {t("operations:policies:table:not-data")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
+    <Fragment>
       {loading && <LoaderSpinner />}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
@@ -140,11 +168,11 @@ export default function TablePolicies() {
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5"
+                    className="relative px-4  rounded-s-xl py-5 flex gap-2 items-center"
                   >
                     <input
                       type="checkbox"
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                       ref={checkbox}
                       checked={checked}
                       onChange={toggleAll}
@@ -185,30 +213,6 @@ export default function TablePolicies() {
                 </tr>
               </thead>
               <tbody className="bg-gray-100">
-                {data?.items && data?.items.length === 0 && (
-                  <div className="flex items-center justify-center h-96">
-                    <div className="flex flex-col items-center space-y-3">
-                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-10 h-10 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          ></path>
-                        </svg>
-                      </div>
-                      <p className="text-lg font-medium text-gray-400">
-                        {t("operations:policies:table:not-data")}
-                      </p>
-                    </div>
-                  </div>
-                )}
                 {selectedColumns.length > 0 &&
                   data?.items &&
                   data?.items.map((policy, index) => {
@@ -380,56 +384,21 @@ export default function TablePolicies() {
           </div>
         </div>
       </div>
-      <div className="w-full mt-1 pt-4 sm:pt-0">
-        <div className="flex justify-center">
-          <div className="flex gap-1 items-center">
-            <p>Mostrar:</p>
-            <Listbox value={limit} onChange={setLimit} as="div">
-              <ListboxButton
-                className={clsx(
-                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
-                )}
-              >
-                {limit}
-                <ChevronDownIcon
-                  className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
-                  aria-hidden="true"
-                />
-              </ListboxButton>
-              <ListboxOptions
-                anchor="bottom"
-                transition
-                className={clsx(
-                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
-                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
-                )}
-              >
-                {itemsByPage.map((page) => (
-                  <ListboxOption
-                    key={page.name}
-                    value={page.id}
-                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
-                    <div className="text-sm/6">{page.name}</div>
-                  </ListboxOption>
-                ))}
-              </ListboxOptions>
-            </Listbox>
-          </div>
-          <PaginationV2
-            totalPages={data?.meta?.totalPages || 0}
-            currentPage={page}
-            setPage={setPage}
-          />
-        </div>
+      <div className="w-full pt-4 ">
+        <FooterTable
+          limit={limit}
+          setLimit={setLimit}
+          page={page}
+          setPage={setPage}
+          totalPages={data?.meta?.totalPages}
+          total={data?.meta?.totalItems ?? 0}
+        />
         <div className="flex">
           {selectedContacts.length > 0 && (
             <SelectedOptionsTable options={options} />
           )}
         </div>
       </div>
-    </>
+    </Fragment>
   );
 }

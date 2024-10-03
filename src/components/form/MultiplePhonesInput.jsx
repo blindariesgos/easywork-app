@@ -34,7 +34,7 @@ const MultiplePhonesInput = ({
             className={clsx(
               "grid grid-cols-3 gap-2 content-start relative group",
               {
-                "pr-4": !disabled || fields.length > 1,
+                "pr-4": !disabled && fields.length > 1,
               }
             )}
           >

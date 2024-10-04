@@ -92,7 +92,7 @@ export default function Header() {
           {/* Profile dropdown */}
           <Menu
             as="div"
-            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
+            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 pr-4 rounded-lg"
           >
             <MenuButton className="flex items-center p-1.5">
               <span className="sr-only">Open user menu</span>

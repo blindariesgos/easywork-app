@@ -119,10 +119,11 @@ export default function SendMessage({
           },
         }
       );
-      setValueText(
-        `<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`
-      );
-      setSignature(response.data.url);
+      console.log(response);
+      // setValueText(
+      //   `<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`
+      // );
+      // setSignature(response.data.url);
     } catch (error) {}
   };
 

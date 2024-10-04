@@ -19,6 +19,8 @@ export default function PolicyDetails({ data, id, mutate }) {
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
     const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
+    
+    console.log(codigos);
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(

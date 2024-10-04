@@ -309,10 +309,10 @@ export default function ContactPolizaTable({ base, contactId }) {
                     {poliza?.status ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {poliza.metadata["Fecha de inicio"]}
+                    {poliza?.vigenciaDesde}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {poliza.metadata["Fecha de cierre"]}
+                    {poliza?.vigenciaHasta}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {formatToCurrency(poliza.importePagar)}

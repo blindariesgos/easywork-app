@@ -59,28 +59,28 @@ export const useSidebar = () => {
       current: true,
       children: [
         {
-          name: t("common:menu:tools:drive"),
-          href: "/tools/drive",
-          image: "/img/herramientas/drive.png",
-          iconShortBar: ArchiveBoxIcon,
-        },
-        {
           name: t("common:menu:tools:tasks"),
           href: "/tools/tasks?page=1",
           image: "/img/herramientas/tareas.png",
           iconShortBar: BookOpenIcon,
         },
         {
-          name: t("common:menu:tools:email"),
-          href: "/tools/webmail?page=1",
-          image: "/img/herramientas/correo.png",
-          iconShortBar: InboxArrowDownIcon,
-        },
-        {
           name: t("common:menu:tools:calendar"),
           href: "/tools/calendar",
           image: "/img/herramientas/calendario.png",
           iconShortBar: CalendarDaysIcon,
+        },
+        {
+          name: t("common:menu:tools:drive"),
+          href: "/tools/drive",
+          image: "/img/herramientas/drive.png",
+          iconShortBar: ArchiveBoxIcon,
+        },
+        {
+          name: t("common:menu:tools:email"),
+          href: "/tools/webmail?page=1",
+          image: "/img/herramientas/correo.png",
+          iconShortBar: InboxArrowDownIcon,
         },
       ],
     },
@@ -168,22 +168,38 @@ export const useSidebar = () => {
       iconShortBar: WalletIcon,
       children: [
         {
+          name: t("common:menu:control:portfolio:commissions"),
+          href: "",
+          iconShortBar: GlobeAltIcon,
+          children: [
+            {
+              name: t("common:menu:control:portfolio:commission-simulator"),
+              href: "",
+              iconShortBar: GlobeAltIcon,
+            },
+            {
+              name: t("common:menu:control:portfolio:commissions-generated"),
+              href: "",
+              iconShortBar: GlobeAltIcon,
+            },
+          ],
+        },
+        {
           name: t("common:menu:control:portfolio:name"),
           href: "/control/portafolio",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
           children: [
             {
-              name: t("common:menu:control:portfolio:control"),
-              href: "/control/portafolio/control",
-              image: "/img/cobranza/cobranzasub.png",
+              name: t("common:menu:control:portfolio:receipts"),
+              href: "/control/portafolio/receipts",
+              image: "/img/cobranza/recibos.png",
               iconShortBar: GlobeAltIcon,
             },
             {
-              name: t("common:menu:control:portfolio:receipts"),
-              href: "",
-              href: "/control/portafolio/receipts",
-              image: "/img/cobranza/recibos.png",
+              name: t("common:menu:control:portfolio:control"),
+              href: "/control/portafolio/control",
+              image: "/img/cobranza/cobranzasub.png",
               iconShortBar: GlobeAltIcon,
             },
           ],
@@ -350,12 +366,12 @@ export const useSidebar = () => {
           // // href: "/sd",
           iconShortBar: ArrowDownCircleIcon,
         },
-        {
-          name: t("common:menu:agent-management:commissions"),
-          href: "",
-          // // href: "/sd",
-          iconShortBar: ArrowDownCircleIcon,
-        },
+        // {
+        //   name: t("common:menu:agent-management:commissions"),
+        //   href: "",
+        //   // // href: "/sd",
+        //   iconShortBar: ArrowDownCircleIcon,
+        // },
         // {
         // name: t("common:menu:agent-management:learning"),
         // href: "",
@@ -387,16 +403,25 @@ export const useSidebar = () => {
         // iconShortBar: SparklesIcon,
         // },
         {
-          name: t("common:menu:agent-management:team-meetings"),
+          name: "Reuniones y sesiones",
           href: "",
-          // // href: "/sd",
-          iconShortBar: SparklesIcon,
-        },
-        {
-          name: t("common:menu:agent-management:individual-meetings"),
-          href: "",
-          // // href: "/sd",
-          iconShortBar: SparklesIcon,
+          icon: ChevronRightIcon,
+          current: false,
+          iconShortBar: IdentificationIcon,
+          children: [
+            {
+              name: t("common:menu:agent-management:team-meetings"),
+              href: "",
+              // // href: "/sd",
+              iconShortBar: SparklesIcon,
+            },
+            {
+              name: t("common:menu:agent-management:individual-meetings"),
+              href: "",
+              // // href: "/sd",
+              iconShortBar: SparklesIcon,
+            },
+          ],
         },
       ],
     },
@@ -469,7 +494,13 @@ export const useSidebar = () => {
           iconShortBar: GlobeAltIcon,
           children: [
             {
-              name: "GyaTusSueños",
+              name: "GYA TUS SUEÑOS",
+              href: "",
+              // href: "/sd",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              name: "BLINDARIESGOS",
               href: "",
               // href: "/sd",
               iconShortBar: ArrowDownCircleIcon,
@@ -503,12 +534,6 @@ export const useSidebar = () => {
               image: "/img/settings/listausuarios.png",
               iconShortBar: BookOpenIcon,
             },
-            {
-              name: t("common:menu:settings:other-notifications"),
-              href: `${window.location.pathname}?othernotifications=true`,
-              image: "/img/settings/otrasnotificaciones.png",
-              iconShortBar: InboxArrowDownIcon,
-            },
           ],
         },
         // {
@@ -523,13 +548,6 @@ export const useSidebar = () => {
           image: "/img/settings/others.png",
           children: [
             {
-              name: t("common:menu:settings:subscriptions"),
-              // href: "/settings/subscriptions",
-              href: "",
-              image: "/img/settings/subscriptions.png",
-              iconShortBar: ArchiveBoxIcon,
-            },
-            {
               name: t("common:menu:settings:other-settings"),
               href: `${window.location.pathname}?othersettings=true`,
               image: "/img/settings/othersettings.png",
@@ -540,6 +558,19 @@ export const useSidebar = () => {
               href: `${window.location.pathname}?changepassword=true`,
               image: "/img/settings/changepassword.png",
               iconShortBar: InboxArrowDownIcon,
+            },
+            {
+              name: t("common:menu:settings:other-notifications"),
+              href: `${window.location.pathname}?othernotifications=true`,
+              image: "/img/settings/otrasnotificaciones.png",
+              iconShortBar: InboxArrowDownIcon,
+            },
+            {
+              name: "Suscripciones",
+              // href: "/settings/subscriptions",
+              href: "",
+              image: "/img/settings/subscriptions.png",
+              iconShortBar: ArchiveBoxIcon,
             },
           ],
         },
@@ -659,13 +690,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("contacts:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -674,13 +705,13 @@ export const useCommon = () => {
       value: 0,
       name: t("leads:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("leads:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -688,73 +719,73 @@ export const useCommon = () => {
     {
       value: 0,
       name: t("contacts:header:settings:vcard"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 1,
       name: t("contacts:header:settings:gmail"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 2,
       name: t("contacts:header:settings:outlook"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 3,
       name: t("contacts:header:settings:yahoo"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 4,
       name: t("contacts:header:settings:import"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 5,
       name: t("contacts:header:settings:crm"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 8,
       name: t("contacts:header:settings:export"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 9,
       name: t("contacts:header:settings:control"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
   ];
@@ -763,13 +794,13 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
   ];
@@ -778,19 +809,19 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 0,
       name: "Imprimir pdf",
-      onclick: () => { },
+      onclick: () => {},
       icon: DocumentTextIcon,
     },
   ];
@@ -800,13 +831,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:excel:export"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: RiFileExcel2Fill,
       name: t("contacts:header:excel:print"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -815,13 +846,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:edit:policies:consult:settings:download"),
       icon: ArrowDownTrayIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: DocumentTextIcon,
       name: t("contacts:edit:policies:consult:settings:print"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -830,13 +861,13 @@ export const useCommon = () => {
       value: 0,
       name: t("leads:header:excel:alone"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 0,
       name: t("leads:header:excel:all"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -1196,13 +1227,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:excel:alone"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 0,
       name: t("tools:tasks:header:excel:all"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
   const optionsTrash = [
@@ -1210,13 +1241,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("tools:tasks:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -1285,13 +1316,13 @@ export const useTasksConfigs = () => {
     {
       value: 0,
       name: t("tools:tasks:new:download"),
-      onclick: () => { },
+      onclick: () => {},
       icon: ArrowDownTrayIcon,
     },
     {
       value: 0,
       name: t("tools:tasks:new:print"),
-      onclick: () => { },
+      onclick: () => {},
       icon: DocumentTextIcon,
     },
   ];

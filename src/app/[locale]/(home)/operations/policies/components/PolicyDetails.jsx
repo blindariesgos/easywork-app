@@ -15,6 +15,21 @@ export default function PolicyDetails({ data, id, mutate }) {
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
 
+   // Función para extraer el código de cliente basado en el id de la compañía
+  const getClientCode = () => {
+    const companyId = data?.company?.id; // ID de la compañía de la póliza
+    const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
+    
+    console.log(codigos);
+
+    // Buscar el código de cliente asociado a la compañía
+    const matchingCodigo = codigos.find(
+      (codigo) => codigo?.insurance?.id === companyId
+    );
+
+    return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
+  };
+
   const tabs = [
     {
       name: t("control:portafolio:receipt:details:consult"),
@@ -117,7 +132,7 @@ export default function PolicyDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
                   <p className="text-xs md:text-sm xl:text-base">
-                    {data?.metadata["Código de Cliente"] ?? "N/D"}
+                    {getClientCode()}
                   </p>
                 </div>
               </div>

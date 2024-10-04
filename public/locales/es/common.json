@@ -76,9 +76,9 @@
     },
     "tools": {
       "name": "Herramientas",
-      "drive": "Drive -  Documentos",
+      "drive": "Documentos",
       "tasks": "Tareas",
-      "email": "Correo",
+      "email": "Buzón de correo",
       "calendar": "Calendario"
     },
     "sales": {
@@ -103,8 +103,11 @@
       "name": "Cobranza",
       "portfolio": {
         "name": "Control de Cartera",
-        "control": "Cobranza",
-        "receipts": "Recibos"
+        "control": "Reporte de Cobranza",
+        "receipts": "Recibos",
+        "commissions": "Comisiones",
+        "commission-simulator": "Simulador de Comisiones",
+        "commissions-generated": "Comisiones Generadas"
       }
     },
     "services": {
@@ -119,7 +122,7 @@
     "agent-management": {
       "name": "Gestión de agentes",
       "learning": "E-Learning (Próximamente)",
-      "accompaniment": "Acompañamiento",
+      "accompaniment": "Seguimiento",
       "commissions": "Comisiones",
       "recruitement": "Embudo de reclutamiento y selección",
       "capacitations": "Capacitaciones",

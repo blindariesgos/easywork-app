@@ -19,6 +19,7 @@ export default function TaskSubMenu({ fetchData, totalUnreadByPage }) {
 
   async function updateLabelId(array, label) {
     console.log(label, array, selectOauth?.id);
+    setSelectedEmails([])
     await axios.post(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`,
       {
@@ -26,7 +27,6 @@ export default function TaskSubMenu({ fetchData, totalUnreadByPage }) {
       }
     );
     await fetchData();
-    setSelectedEmails([]);
   }
 
   return (

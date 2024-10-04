@@ -256,7 +256,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                     <div
                       key={item.id}
                       className={clsx(
-                        selectedEmails.includes(item)
+                        selectedEmails.find((x) => x.id == item.id)
                           ? "bg-gray-50"
                           : undefined,
                         item.email.folder.includes("UNREAD")
@@ -266,7 +266,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                       )}
                     >
                       <div className="relative px-2 w-full h-full col-span-1">
-                        {selectedEmails.includes(item) && (
+                        {selectedEmails.find((x) => x.id == item.id) && (
                           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
                         <div className="flex items-center h-full">
@@ -274,7 +274,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                             type="checkbox"
                             className="... mr-2"
                             value={item.id}
-                            checked={selectedEmails.includes(item)}
+                            checked={selectedEmails.find((x) => x.id == item.id) ? true : false}
                             onChange={(e) =>
                               setSelectedEmails(
                                 e.target.checked

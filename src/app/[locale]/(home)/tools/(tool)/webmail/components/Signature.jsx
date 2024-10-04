@@ -64,7 +64,6 @@ export default function Signature({
           },
         }
       );
-      console.log(response);
       setSignatures(response.data);
     } catch (error) {}
   };
@@ -90,7 +89,7 @@ export default function Signature({
     getSignatures();
     console.log(getCookie("myCheckbox"));
     setSelectedCheckbox(getCookie("myCheckbox"));
-  }, [params.get("signature")]);
+  }, [params.get("signature"), params.get("addsignature")]);
 
   return (
     <Transition.Root show={params.get("signature")} as={Fragment}>
@@ -172,7 +171,6 @@ export default function Signature({
                             <th className="p-1 rounded-l-lg"></th>
                             <th className="pl-6 py-5">Remitente</th>
                             <th className="py-5 pr-5">Firma</th>
-                            <th className="p-1 rounded-r-lg"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -197,16 +195,24 @@ export default function Signature({
                                     }
                                   >
                                     {[
-                                      { name: "Editar", click: console.log() },
+                                      {
+                                        name: "Editar",
+                                        click: () => {
+                                          router.push(
+                                            `${window.location.href}&addsignature=true&isEdit=${signature.id}`
+                                          );
+                                        },
+                                      },
                                       {
                                         name: "Eliminar",
-                                        click: console.log(),
+                                        click: () =>
+                                          deleteSignature(signature.id),
                                       },
                                     ].map((item, index) => (
                                       <MenuItem key={index}>
                                         {({ active }) => (
                                           <div
-                                            onClick={() => item.click}
+                                            onClick={item.click}
                                             className={classNames(
                                               active ? "bg-gray-50" : "",
                                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
@@ -226,7 +232,7 @@ export default function Signature({
                                     {signature?.metadata?.senders?.map(
                                       (element, index) => (
                                         <span key={index} className="mr-2">
-                                          {element.state ? element.email : ""},
+                                          {element.state ? element.email : ""}{" "}
                                         </span>
                                       )
                                     )}
@@ -235,14 +241,6 @@ export default function Signature({
                               </td>
                               <td className="py-2">
                                 {signature?.metadata?.name}
-                              </td>
-                              <td className="py-2">
-                                <XCircleIcon
-                                  className="w-5 h-5 cursor-pointer"
-                                  onClick={() => {
-                                    deleteSignature(signature.id);
-                                  }}
-                                />
                               </td>
                             </tr>
                           ))}

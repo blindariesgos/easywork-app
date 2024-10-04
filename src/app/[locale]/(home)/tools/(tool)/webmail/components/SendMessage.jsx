@@ -112,17 +112,23 @@ export default function SendMessage({
   const getSignature = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${getCookie("myCheckbox")}`,
+        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
         {
           headers: {
             Authorization: `Bearer ${session.data.user.accessToken}`,
           },
         }
       );
-      setValueText(
-        `<br><br><br><br><br><br><img src="${response.data.url}" style="max-width: 650px;">`
-      );
-      setSignature(response.data.url);
+      response.data.forEach((element) => {
+        const foundItem = element.metadata.senders.find((item) =>
+          item.email === userData.email && item.state ? item.state : false
+        );
+        if (foundItem) {
+          setValueText(
+            `<br><br><br><br><br><br><img src="${element.url}" style="max-width: 650px;">`
+          );
+        }
+      });
     } catch (error) {}
   };
 

@@ -372,7 +372,7 @@ export default function TableTask() {
                           </td>
                           {selectedColumns.length > 0 &&
                             selectedColumns.map((column, index) => (
-                              <td className="ml-4 text-left py-5" key={index}>
+                              <td className="ml-4 text-left py-2" key={index}>
                                 <div className="font-medium text-sm text-black hover:text-primary capitalize">
                                   {renderCellContent(column, task, t)}
                                 </div>

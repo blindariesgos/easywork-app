@@ -55,7 +55,7 @@ const InputCurrency = ({
 
   return (
     <div className="flex flex-col gap-y-1 w-full">
-      <label className="block text-sm font-medium leading-6 text-gray-900">
+      <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
         {label}
       </label>
       <div className="">
@@ -74,7 +74,7 @@ const InputCurrency = ({
             {
               "border border-gray-200 focus:ring-gray-200": border,
               "border-none focus:ring-0": !border,
-              "bg-gray-100": disabled,
+              // "bg-gray-100": disabled,
               "drop-shadow-sm": !disabled,
             }
           )}

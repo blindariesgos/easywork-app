@@ -57,7 +57,7 @@ const Filters = () => {
 
   return (
     <Menu as="div" className="relative inline-block w-full">
-      <div className="w-full flex justify-between items-center gap-2">
+      <div className="w-full flex justify-between items-center gap-2 h-[34px]">
         <div className="flex items-center w-full">
           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
           <input

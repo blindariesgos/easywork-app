@@ -84,7 +84,7 @@ export default function ContactsHeader() {
           removeFilter={removeFilter}
         />
       </div>
-      <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
+      <div className="flex-none items-center justify-between  border-gray-200 pt-4 hidden lg:flex">
         <ContactSubMenu />
       </div>
     </header>

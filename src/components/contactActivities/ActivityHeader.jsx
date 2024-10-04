@@ -17,17 +17,17 @@ export default function ActivityHeader({
   const { t } = useTranslation();
   const tabs = [
     {
+      name: t("contacts:create:activities:tasks"),
+      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${contactId}`,
+      current: false,
+      disabled: true,
+    },
+    {
       name: t("contacts:create:activities:comment"),
       href: "#",
       current: false,
       disabled: true,
       onClick: () => setIsShowAddComment(true),
-    },
-    {
-      name: t("contacts:create:activities:tasks"),
-      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${contactId}`,
-      current: false,
-      disabled: true,
     },
     {
       name: t("contacts:create:activities:email"),

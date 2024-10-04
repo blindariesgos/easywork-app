@@ -17,17 +17,17 @@ import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "../../../../../../../../../components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
-import { createContact, updateContact } from "@/src/lib/apis";
+import { createContact, getContactId, updateContact } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import { DocumentSelector } from "@/src/components/DocumentSelector";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { formatISO } from "date-fns";
 
-export default function ContactGeneral({ contact, id }) {
+export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
@@ -35,12 +35,36 @@ export default function ContactGeneral({ contact, id }) {
   const { mutate } = useSWRConfig();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
     if (contact) {
       setSelectedProfileImage({ base64: contact?.photo || null, file: null });
     }
   }, [contact, lists]);
+
+  useEffect(() => {
+    if (params.get("edit") === "true") {
+      setIsEdit(true);
+    }
+  }, [params.get("edit")]);
+
+  useEffect(() => {
+    if (!params.get("copy")) return;
+    setLoading(true);
+    const getContactCopy = async (contactId) => {
+      const response = await getContactId(contactId);
+      if (response?.name) {
+        setValue("name", response?.name);
+      } else {
+        setValue("name", response?.fullName);
+      }
+      if (response?.lastName) setValue("lastName", response?.lastName);
+      setLoading(false);
+    };
+    getContactCopy(params.get("copy"));
+  }, [params.get("copy")]);
 
   const schema = Yup.object().shape({
     fullName: Yup.string(),
@@ -60,6 +84,7 @@ export default function ContactGeneral({ contact, id }) {
     typePerson: Yup.string().required(t("common:validations:required")),
     observadorId: Yup.string(),
     subAgentId: Yup.string(),
+    intermediarioId: Yup.string(),
     typeId: Yup.string(),
     comments: Yup.string(),
     emails_dto: Yup.array().of(
@@ -90,6 +115,20 @@ export default function ContactGeneral({ contact, id }) {
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
+    defaultValues: {
+      emails_dto: [
+        {
+          email: "",
+          relation: "",
+        },
+      ],
+      phones_dto: [
+        {
+          number: "",
+          relation: "",
+        },
+      ],
+    },
   });
 
   useEffect(() => {
@@ -99,7 +138,11 @@ export default function ContactGeneral({ contact, id }) {
     }
 
     if (contact?.fullName) setValue("fullName", contact?.fullName);
-    if (contact?.name) setValue("name", contact?.name);
+    if (contact?.name) {
+      setValue("name", contact?.name);
+    } else {
+      setValue("name", contact?.fullName);
+    }
     if (contact?.lastName) setValue("lastName", contact?.lastName);
     if (contact?.cargo) setValue("cargo", contact?.cargo);
     if (contact?.phones[0]?.phone?.number)
@@ -111,10 +154,12 @@ export default function ContactGeneral({ contact, id }) {
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.typePerson) setValue("typePerson", contact?.typePerson);
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
+    if (contact?.intermediario)
+      setValue("intermediarioId", contact?.intermediario?.id);
     if (contact?.observador) setValue("observadorId", contact?.observador?.id);
     if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
     if (contact?.comments) setValue("comments", contact?.comments);
-    if (contact?.emails?.length)
+    if (contact?.emails?.length) {
       setValue(
         "emails_dto",
         contact?.emails?.map((e) => ({
@@ -122,7 +167,15 @@ export default function ContactGeneral({ contact, id }) {
           relation: e?.relation ?? "",
         }))
       );
-    if (contact?.phones?.length)
+    } else {
+      setValue("emails_dto", [
+        {
+          email: "",
+          relation: "",
+        },
+      ]);
+    }
+    if (contact?.phones?.length) {
       setValue(
         "phones_dto",
         contact?.phones?.map((e) => ({
@@ -130,6 +183,14 @@ export default function ContactGeneral({ contact, id }) {
           relation: e?.relation ?? "",
         }))
       );
+    } else {
+      setValue("phones_dto", [
+        {
+          number: "",
+          relation: "",
+        },
+      ]);
+    }
   }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {
@@ -226,6 +287,7 @@ export default function ContactGeneral({ contact, id }) {
               "lg:grid-cols-12": contact,
             }
           )}
+          ref={refPrint}
         >
           {/* Panel Principal */}
 
@@ -266,7 +328,7 @@ export default function ContactGeneral({ contact, id }) {
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-x-6 gap-y-3 pb-20 pt-4">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-20 pt-4">
               {isEdit ? (
                 <Fragment>
                   <TextInput
@@ -299,15 +361,6 @@ export default function ContactGeneral({ contact, id }) {
                   disabled={!isEdit}
                 />
               )}
-              <TextInput
-                label={t("contacts:create:position")}
-                placeholder={t("contacts:create:position")}
-                error={errors.cargo}
-                register={register}
-                name="cargo"
-                disabled={!isEdit}
-              />
-
               <MultiplePhonesInput
                 label={t("contacts:create:phone")}
                 errors={errors.phones_dto}
@@ -318,7 +371,24 @@ export default function ContactGeneral({ contact, id }) {
                 watch={watch}
                 setValue={setValue}
               />
-
+              <MultipleEmailsInput
+                label={t("contacts:create:email")}
+                errors={errors.emails_dto}
+                register={register}
+                name="emails_dto"
+                disabled={!isEdit}
+                control={control}
+                watch={watch}
+                setValue={setValue}
+              />
+              <TextInput
+                label={t("contacts:create:rfc")}
+                placeholder="XEXX010101000"
+                error={errors.rfc}
+                register={register}
+                name="rfc"
+                disabled={!isEdit}
+              />
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -339,24 +409,6 @@ export default function ContactGeneral({ contact, id }) {
                 name="birthdate"
                 control={control}
                 defaultValue=""
-              />
-              <MultipleEmailsInput
-                label={t("contacts:create:email")}
-                errors={errors.emails}
-                register={register}
-                name="emails_dto"
-                disabled={!isEdit}
-                control={control}
-                watch={watch}
-                setValue={setValue}
-              />
-              <TextInput
-                label={t("contacts:create:rfc")}
-                placeholder="XEXX010101000"
-                error={errors.rfc}
-                register={register}
-                name="rfc"
-                disabled={!isEdit}
               />
               <SelectInput
                 label={t("contacts:create:typePerson")}
@@ -399,13 +451,12 @@ export default function ContactGeneral({ contact, id }) {
                 />
               ) : null}
               <TextInput
-                label={t("contacts:create:address")}
-                error={errors.address}
+                label={t("contacts:create:position")}
+                placeholder={t("contacts:create:position")}
+                error={errors.cargo}
                 register={register}
-                name="address"
-                placeholder={t("contacts:create:placeholder-address")}
+                name="cargo"
                 disabled={!isEdit}
-                //value={watch('address')}
               />
               <SelectInput
                 label={t("contacts:create:origen")}
@@ -417,6 +468,16 @@ export default function ContactGeneral({ contact, id }) {
                 disabled={!isEdit}
                 watch={watch}
               />
+              <TextInput
+                label={t("contacts:create:address")}
+                error={errors.address}
+                register={register}
+                name="address"
+                placeholder={t("contacts:create:placeholder-address")}
+                disabled={!isEdit}
+                //value={watch('address')}
+              />
+
               <SelectDropdown
                 label={t("contacts:create:responsible")}
                 name="assignedById"
@@ -446,6 +507,17 @@ export default function ContactGeneral({ contact, id }) {
                 register={register}
                 disabled={!isEdit}
                 error={errors.subAgentId}
+                setValue={setValue}
+                watch={watch}
+                placeholder="- Seleccionar -"
+              />
+              <SelectDropdown
+                label={t("contacts:create:intermediario")}
+                name="intermediarioId"
+                options={lists?.users}
+                register={register}
+                disabled={!isEdit}
+                error={errors.intermediarioId}
                 setValue={setValue}
                 watch={watch}
                 placeholder="- Seleccionar -"

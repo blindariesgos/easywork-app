@@ -248,7 +248,7 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     {receipt?.methodCollection?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {receipt?.metadata["Fecha de inicio"]}
+                    {receipt?.startDate}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {formatDate(receipt?.dueDate, "dd/MM/yyyy")}

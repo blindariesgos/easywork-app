@@ -69,7 +69,7 @@ function SelectInput({
       >
         {label && (
           <label
-            className={`block text-sm font-medium leading-6 text-gray-900`}
+            className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
           >
             {label}
           </label>

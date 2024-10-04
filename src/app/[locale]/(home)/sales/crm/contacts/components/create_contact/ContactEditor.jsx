@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import AddContactTabs from "./AddContactTabs";
 
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,7 @@ export default function ContactEditor({ contact, id }) {
   const params = new URLSearchParams(searchParams);
   const [loading, setLoading] = useState(false);
   const [selectedSectionIndex, setSelectedSectionIndex] = useState(0);
+  const refPrint = useRef();
 
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0, module: "general" },
@@ -69,26 +70,26 @@ export default function ContactEditor({ contact, id }) {
         )}
       >
         {!contact && (
-          <h1 className="text-xl sm:pl-6 pl-2 py-6 p-2 lg:p-4">
+          <h1 className="text-xl sm:pl-6 pl-2 py-6 px-12 lg:px-[60px]">
             {t("leads:create:client")}
           </h1>
         )}
         {contact && (
           <div className="py-6 px-4 lg:px-8 sticky bg-inherit z-10 top-0">
             <div className="flex gap-2 items-center">
-              <h1 className="text-xl sm:pl-6 pl-2 pb-6">
+              <h1 className="text-xl sm:pl-6 pl-2 pb-6 font-semibold">
                 {contact
                   ? contact.fullName ?? contact.name
                   : t("leads:create:client")}
               </h1>
             </div>
-            <AddContactTabs tabs={tabs} />
+            <AddContactTabs tabs={tabs} refPrint={refPrint} contact={contact} />
           </div>
         )}
 
         <TabPanels className="pb-[150px] lg:h-full">
           <TabPanel className="h-full">
-            <ContactGeneral id={id} contact={contact} />
+            <ContactGeneral id={id} contact={contact} refPrint={refPrint} />
           </TabPanel>
           {contact?.relations?.length > 0 && (
             <TabPanel>

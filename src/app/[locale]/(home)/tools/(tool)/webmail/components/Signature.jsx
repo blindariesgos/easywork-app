@@ -232,7 +232,7 @@ export default function Signature({
                                     {signature?.metadata?.senders?.map(
                                       (element, index) => (
                                         <span key={index} className="mr-2">
-                                          {element.state ? element.email : ""},
+                                          {element.state ? element.email : ""}{" "}
                                         </span>
                                       )
                                     )}

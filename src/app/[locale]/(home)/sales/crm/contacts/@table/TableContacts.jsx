@@ -181,7 +181,7 @@ export default function TableContacts() {
     }
   };
 
-  const options = [
+  const masiveOptions = [
     {
       id: 1,
       name: "Asignar Observador",
@@ -268,14 +268,22 @@ export default function TableContacts() {
     );
   }
 
-  const itemOptions = [
+  const contactOptions = [
     {
       name: "Ver",
       handleClick: (id) =>
         router.push(`/sales/crm/contacts/contact/${id}?show=true`),
     },
-    { name: "Editar", disabled: true },
-    // { name: "Copiar" },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        router.push(`/sales/crm/contacts/contact/${id}?show=true&edit=true`),
+    },
+    {
+      name: "Copiar",
+      handleClick: (id) =>
+        router.push(`/sales/crm/contacts/contact?show=true&copy=${id}`),
+    },
     {
       name: "Eliminar",
       handleClick: (id) => {
@@ -427,7 +435,7 @@ export default function TableContacts() {
                                   anchor="right start"
                                   className=" z-50 mt-2.5 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                 >
-                                  {itemOptions.map((item) =>
+                                  {contactOptions.map((item) =>
                                     !item.options ? (
                                       <MenuItem
                                         key={item.name}
@@ -629,7 +637,7 @@ export default function TableContacts() {
         />
         <div className="flex">
           {selectedContacts.length > 0 && (
-            <SelectedOptionsTable options={options} />
+            <SelectedOptionsTable options={masiveOptions} />
           )}
         </div>
       </div>

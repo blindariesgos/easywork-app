@@ -1,24 +1,18 @@
 "use client";
-import { DocumentSelector } from "../../../../../../../components/DocumentSelector";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 import ProfileImageInput from "../../../../../../../components/ProfileImageInput";
-import InputDate from "../../../../../../../components/form/InputDate";
 import InputPhone from "../../../../../../../components/form/InputPhone";
 import SelectDropdown from "../../../../../../../components/form/SelectDropdown";
 import SelectInput from "../../../../../../../components/form/SelectInput";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
 import Button from "../../../../../../../components/form/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
-import { contactTypes } from "../../../../../../../lib/common";
 import { toast } from "react-toastify";
-import HeaderCrm from "../../HeaderCrm";
-import { useLeads } from "../../../../../../../hooks/useCommon";
 import ProgressStages from "./ProgressStages";
 import TextInput from "../../../../../../../components/form/TextInput";
 import { useRouter } from "next/navigation";
@@ -27,6 +21,7 @@ import useAppContext from "@/src/context/app";
 import { createLead, updateContact, updateLead } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import AddDocuments from "./AddDocuments";
+import InputCurrency from "@/src/components/form/InputCurrency";
 
 export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { t } = useTranslation();
@@ -79,8 +74,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     if (lead?.name) setValue("name", lead?.name);
     if (lead?.lastName) setValue("lastName", lead?.lastName);
     if (lead?.cargo) setValue("cargo", lead?.cargo);
-    if (lead?.phones[0]?.phone?.number)
-      setValue("phone", lead?.phones[0]?.phone?.number);
+    if (lead?.phones?.length) setValue("phone", lead?.phones[0]?.phone?.number);
     if (lead?.emails[0]?.email?.email)
       setValue("email", lead?.emails[0]?.email?.email);
     if (lead?.type?.id) setValue("typeId", lead?.type?.id);
@@ -90,6 +84,8 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     if (lead?.rfc) setValue("rfc", lead?.rfc);
     if (lead?.typePerson) setValue("typePerson", lead?.typePerson);
     if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy.id);
+    if (lead?.currency) setValue("currencyId", lead?.currency.id);
+    if (lead?.quote) setValue("quote", lead?.quote);
     // if (lead?.observador) setValue("observadorId", lead?.observador.id);
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
@@ -389,13 +385,31 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                   disabled={!isEdit}
                   watch={watch}
                 />
-
-                <TextInput
-                  label={t("leads:lead:fields:amount")}
-                  error={errors.amount}
-                  register={register}
-                  name="amount"
+                <SelectInput
+                  label={t("control:portafolio:receipt:details:form:currency")}
+                  name="currencyId"
+                  options={lists?.policies?.currencies ?? []}
                   disabled={!isEdit}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <InputCurrency
+                  type="text"
+                  label={t("leads:lead:fields:amount")}
+                  setValue={setValue}
+                  name="quote"
+                  disabled={!isEdit}
+                  defaultValue={
+                    lead?.quote && lead?.quote?.length
+                      ? (+lead?.quote)?.toFixed(2)
+                      : null
+                  }
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
                 />
               </div>
             </div>

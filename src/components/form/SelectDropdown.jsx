@@ -67,7 +67,7 @@ function SelectDropdown({
         className="relative"
         name={name}
       >
-        <Label className="block text-sm font-medium leading-6 text-gray-900">
+        <Label className="block text-sm font-medium leading-6 text-gray-900  px-3">
           {label}
         </Label>
         <div className="relative mt-1">

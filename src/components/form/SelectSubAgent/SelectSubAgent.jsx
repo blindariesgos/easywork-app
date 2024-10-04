@@ -26,7 +26,7 @@ const SelectSubAgent = ({ setValue, name, label, error, watch, disabled }) => {
 
   return (
     <div className="">
-      <label className="text-sm font-medium leading-6 text-gray-900">
+      <label className="text-sm font-medium leading-6 text-gray-900  px-3">
         {label}
       </label>
       <div className="relative mt-1">

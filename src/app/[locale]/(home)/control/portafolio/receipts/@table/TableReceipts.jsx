@@ -367,7 +367,7 @@ export default function TableReceipts() {
                                   </Link>
                                 ) : column.row === "stages" ? (
                                   <p className="text-center">
-                                    {receipt.metadata.Etapa ?? "S/N"}
+                                    {receipt?.metadata?.Etapa ?? "S/N"}
                                   </p>
                                 ) : column.row === "paymentAmount" ? (
                                   <p className="text-center">

@@ -73,7 +73,7 @@ const SubTaskSelect = ({
   return (
     <div className="">
       {label && (
-        <label className="text-sm font-medium leading-6 text-gray-900">
+        <label className="text-sm font-medium leading-6 text-gray-900 px-3">
           {label}
         </label>
       )}

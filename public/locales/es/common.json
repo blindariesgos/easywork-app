@@ -183,7 +183,7 @@
       "change-responsible": "Cambiar responsable"
     },
     "footer": {
-      "elements": "Se muestran elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> de un total de <strong>{{total}}</strong>",
+      "elements": "Se muestran los elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> | Total elementos <strong>{{total}}</strong>",
       "show": "Mostrar:"
     }
   }

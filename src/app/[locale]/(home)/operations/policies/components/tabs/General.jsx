@@ -18,7 +18,7 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
 import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 
 export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
@@ -27,7 +27,10 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
   const { mutate } = useSWRConfig();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const router = useRouter();
+
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),
     assignedById: Yup.string(),
@@ -54,7 +57,6 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     register,
     handleSubmit,
     control,
-    reset,
     setValue,
     watch,
     formState: { isValid, errors },
@@ -62,6 +64,12 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (params.get("edit") === "true") {
+      setIsEdit(true);
+    }
+  }, [params.get("edit")]);
 
   useEffect(() => {
     if (data?.vigenciaDesde)
@@ -133,10 +141,10 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
       className={`grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_220px)]`}
     >
       {/* Menu Derecha */}
-      <div className="h-auto rounded-2xl overflow-y-auto pr-1">
+      <div className="h-auto rounded-2xl overflow-y-auto pr-2">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
           {t("operations:policies:general:title")}
-          {data?.idBitrix && (
+          {data && (
             <button
               type="button"
               onClick={() => setIsEdit(!isEdit)}

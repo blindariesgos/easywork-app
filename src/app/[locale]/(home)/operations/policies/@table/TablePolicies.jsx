@@ -20,9 +20,8 @@ import React, {
 } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
-import { deleteContactId } from "@/src/lib/apis";
+import { deleteContactId, deletePolicyById } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { usePoliciesTable } from "../../../../../../hooks/useCommon";
@@ -36,26 +35,31 @@ import {
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import usePolicyContext from "../../../../../../context/policies";
-import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
+import DeleteItemModal from "@/src/components/modals/DeleteItem";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function TablePolicies() {
-  const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
-    usePolicyContext();
+  const {
+    data,
+    limit,
+    setLimit,
+    setOrderBy,
+    order,
+    orderBy,
+    page,
+    setPage,
+    mutate,
+  } = usePolicyContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -68,8 +72,9 @@ export default function TablePolicies() {
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  const { onCloseAlertDialog } = useAlertContext();
   const [loading, setLoading] = useState(false);
+  const [deleteId, setDeleteId] = useState();
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
 
   useLayoutEffect(() => {
     if (checkbox.current) {
@@ -90,30 +95,22 @@ export default function TablePolicies() {
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  const deleteContact = (contact) => {
-    if (contact.length === 1) apiDelete(contact[0].id);
-    if (contact.length > 1) {
-      contact.map((cont) => apiDelete(cont.id));
-    }
-    toast.success(t("contacts:delete:msg"));
-    setSelectedContacts([]);
-    onCloseAlertDialog();
-  };
-
   const options = [
     {
       id: 1,
       name: t("common:buttons:delete"),
-      onclick: () => deleteContact(selectedContacts),
+      onclick: () => deletePolicy(selectedContacts),
     },
   ];
 
-  const apiDelete = async (id) => {
+  const deletePolicy = async (id) => {
     try {
       setLoading(true);
-      const response = await deleteContactId(id);
-      setLastContactsUpdate(response);
+      const response = await deletePolicyById(id);
+      toast.success(t("common:alert:delete-success"));
+      mutate();
       setLoading(false);
+      setIsOpenDelete(false);
     } catch (err) {
       setLoading(false);
       handleApiError(err.message);
@@ -126,7 +123,18 @@ export default function TablePolicies() {
       handleClick: (id) =>
         router.push(`/operations/policies/policy/${id}?show=true`),
     },
-    // { name: "Editar" },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        router.push(`/operations/policies/policy/${id}?show=true&edit=true`),
+    },
+    {
+      name: "Eliminar",
+      handleClick: (id) => {
+        setDeleteId(id);
+        setIsOpenDelete(true);
+      },
+    },
     // { name: "Copiar" },
   ];
 
@@ -266,7 +274,10 @@ export default function TablePolicies() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
+                                <MenuItems
+                                  anchor="right start"
+                                  className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                >
                                   {itemOptions.map((item) => (
                                     <MenuItem
                                       key={item.name}
@@ -399,6 +410,12 @@ export default function TablePolicies() {
           )}
         </div>
       </div>
+      <DeleteItemModal
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}
+        handleClick={() => deletePolicy(deleteId)}
+        loading={loading}
+      />
     </Fragment>
   );
 }

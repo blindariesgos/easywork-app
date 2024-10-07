@@ -186,5 +186,8 @@
       "elements": "Se muestran los elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> | Total elementos <strong>{{total}}</strong>",
       "show": "Mostrar:"
     }
+  },
+  "alert": {
+    "delete-success": "Elemento(s) eliminado(s) exitosamente!"
   }
 }

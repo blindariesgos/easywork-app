@@ -11,7 +11,6 @@ import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import InputPhone from "@/src/components/form/InputPhone";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
@@ -19,7 +18,6 @@ import ActivityPanel from "@/src/components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import { createContact, getContactId, updateContact } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
-import { DocumentSelector } from "@/src/components/DocumentSelector";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
@@ -175,6 +173,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.observador) setValue("observadorId", contact?.observador?.id);
     if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
     if (contact?.comments) setValue("comments", contact?.comments);
+    if (contact?.activitySector)
+      setValue("activitySector", contact?.activitySector);
+
     if (contact?.emails?.length) {
       setValue(
         "emails_dto",
@@ -209,6 +210,18 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     }
     setLoading(false);
   }, [contact, id]);
+
+  useEffect(() => {
+    if (!lists?.listContact?.contactTypes) return;
+    if ((contact && !contact?.type?.id) || !contact) {
+      const contactType = lists?.listContact?.contactTypes.find((x) =>
+        /contratante/gi.test(x.name)
+      );
+      if (contactType) {
+        setValue("typeId", contactType?.id);
+      }
+    }
+  }, [lists?.listContact?.contactTypes]);
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -556,6 +569,26 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                     placeholder="- Seleccionar -"
                   />
                 </Fragment>
+              )}
+              {type == "moral" && (
+                <SelectInput
+                  label={t("contacts:create:company-activity")}
+                  options={[
+                    {
+                      name: "Servicios",
+                      id: "services",
+                    },
+                    {
+                      name: "Producción",
+                      id: "production",
+                    },
+                  ]}
+                  watch={watch}
+                  name="activitySector"
+                  disabled={!isEdit}
+                  setValue={setValue}
+                  error={!watch("activitySector") && errors.activitySector}
+                />
               )}
               <TextInput
                 label={t("contacts:create:comments")}

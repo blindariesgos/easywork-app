@@ -19,7 +19,10 @@ export default function TasksContextProvider({ children, userId }) {
     orderBy: "deadline",
     order: "DESC"
   })
-  const { tasks, isLoading, isError, mutate } = useTasks({ config, filters, userId: session?.data?.user?.id });
+  const { tasks, isLoading, isError, mutate } = useTasks({ config, filters:{
+    ...filters,
+    showCompleted: false
+  }, userId: session?.data?.user?.id });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();
   const [displayFilters, setDisplayFilters] = useState({})

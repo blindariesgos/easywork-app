@@ -1308,7 +1308,7 @@ export const useTasksConfigs = () => {
       id: 8,
       name: t("tools:tasks:table.important"),
       row: "important",
-      check: false,
+      check: true,
     },
   ];
 

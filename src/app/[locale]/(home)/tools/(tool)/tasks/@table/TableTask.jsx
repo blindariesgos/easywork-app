@@ -13,6 +13,7 @@ import {
   deleteTask as apiDeleteTask,
   putTaskCompleted,
   putTaskId,
+  putTaskIdRelations,
 } from "@/src/lib/apis"; // Ajusta el path según sea necesario
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -43,13 +44,13 @@ export default function TableTask() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
 
-  const { fieldClicked, handleSorting } = useOrderByColumn([], data?.items);
   const { columnTable } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
 
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
+  
   const { t } = useTranslation();
 
   useLayoutEffect(() => {
@@ -101,6 +102,27 @@ export default function TableTask() {
     } finally {
       setLoading(false);
       onCloseAlertDialog();
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const addRelationTasks = async (user, relation) => {
+    try {
+      setLoading(true);
+      const body = {
+        usersIds: [user.id],
+        relation,
+      };
+
+      await Promise.all(
+        selectedTasks.map((taskId) => putTaskIdRelations(taskId, body))
+      );
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
       mutateTasks && mutateTasks();
     }
   };
@@ -178,16 +200,18 @@ export default function TableTask() {
       name: t("common:table:checkbox:complete"),
       onclick: () => completedTasks(),
     },
-    // {
-    //   id: 2,
-    //   name: t("common:table:checkbox:add-observer"),
-    //   selectUser: true,
-    // },
-    // {
-    //   id: 3,
-    //   name: t("common:table:checkbox:add-participant"),
-    //   selectUser: true,
-    // },
+    {
+      id: 2,
+      name: t("common:table:checkbox:add-observer"),
+      selectUser: true,
+      onclick: (e) => addRelationTasks(e, "observadores"),
+    },
+    {
+      id: 3,
+      name: t("common:table:checkbox:add-participant"),
+      selectUser: true,
+      onclick: (e) => addRelationTasks(e, "participantes"),
+    },
     {
       id: 4,
       name: t("common:table:checkbox:change-creator"),
@@ -259,7 +283,12 @@ export default function TableTask() {
                           onChange={toggleAll}
                         />
                         <AddColumnsTable
-                          columns={columnTable}
+                          columns={columnTable.map((x) => ({
+                            ...x,
+                            check: selectedColumns
+                              .map((s) => s.id)
+                              .includes(x.id),
+                          }))}
                           setSelectedColumns={setSelectedColumns}
                         />
                       </th>

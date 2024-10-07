@@ -14,9 +14,6 @@ export default function PolizasTab({ base = 0, contactID }) {
   const { t } = useTranslation();
   const { currentContact } = useCrmContext();
   const { branches: options } = usePolicies(contactID);
-  const pathname = usePathname();
-
-  const [branches, setBranches] = useState(options);
 
   if (!currentContact) return <></>;
 

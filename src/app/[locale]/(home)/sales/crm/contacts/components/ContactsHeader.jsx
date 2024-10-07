@@ -18,7 +18,7 @@ import useCrmContext from "../../../../../../../context/crm";
 import useContactContext from "@/src/context/contacts";
 import { formatDate } from "@/src/utils/getFormatDate";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
-
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 export default function ContactsHeader() {
   const { t } = useTranslation();
   const { trash, settingsContact: settings } = useCommon();
@@ -29,11 +29,16 @@ export default function ContactsHeader() {
   const { selectedContacts } = useCrmContext();
   const { displayFilters, removeFilter } = useContactContext();
 
-  const handlePathname = () => {
-    params.delete("page");
-    params.set("show", true);
-    push(`/sales/crm/contacts/contact?${params.toString()}`);
-  };
+  const createOptions = [
+    {
+      name: "Cliente",
+      onclick: () => push(`/sales/crm/contacts/contact?show=true&type=fisica`),
+    },
+    {
+      name: "Compañia",
+      onclick: () => push(`/sales/crm/contacts/contact?show=true&type=moral`),
+    },
+  ];
 
   return (
     <header className="flex flex-col">
@@ -42,16 +47,31 @@ export default function ContactsHeader() {
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 ">
             {t("contacts:header:contact")}
           </h1>
-          <Button
-            label={t("contacts:header:create")}
-            type="button"
-            onclick={() => handlePathname()}
-            buttonStyle={"primary"}
-            icon={<ChevronDownIcon className="ml-2 h-5 w-5 text-white" />}
-            className="px-3 py-2"
-          />
+          <Menu>
+            <MenuButton className="py-2 px-3 bg-primary hover:bg-easy-500 text-white disabled:opacity-50 shadow-sm text-sm flex items-center gap-x-2 rounded-md  font-medium outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 justify-center">
+              {t("contacts:header:create")}
+              <ChevronDownIcon className="w-4 h-4" />
+            </MenuButton>
+            <MenuItems
+              transition
+              anchor="bottom start"
+              className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
+            >
+              {createOptions.map((option, index) => (
+                <MenuItem
+                  key={index}
+                  as="div"
+                  onClick={option.onclick && option.onclick}
+                  disabled={option.disabled}
+                  className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                >
+                  {option.name}
+                </MenuItem>
+              ))}
+            </MenuItems>
+          </Menu>
           <div className="flex-grow">
-            <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+            <div className="flex border px-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FiltersContact />
             </div>
           </div>

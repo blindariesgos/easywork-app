@@ -293,6 +293,9 @@ export const getPolizaByContact = async (id) => {
 
 export const putPoliza = async (policyId, body) => {
   const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
+  
+  revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
+
   return response;
 };
 

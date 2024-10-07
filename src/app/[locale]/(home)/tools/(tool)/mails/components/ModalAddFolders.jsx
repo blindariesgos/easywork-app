@@ -103,7 +103,7 @@ export default function ModalAddFolders() {
     <SliderOverShort openModal={params.get("configlabelid")}>
       <Tag onclick={() => router.back()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
-        <div className="m-3 font-medium text-lg">
+        <div className="m-3 pl-5 font-medium text-lg">
           <h1>Configurar Carpetas</h1>
         </div>
         <div className="m-3 py-5 bg-gray-100 rounded-2xl">

@@ -135,14 +135,15 @@ const MultipleSelect = ({
         {isOpen && (
           <div
             ref={dropdownRef}
-            className="absolute top-full left-0 mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+            className="absolute bottom-10 left-0 mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
           >
             <div
-              className="py-1 flex flex-col gap-2 px-2"
+              className="py-1 flex flex-col gap-2 px-2 max-h-60 overflow-y-auto"
               aria-labelledby="options-menu"
             >
               <div className="w-full">
                 <TextInput
+                  placeholder="Buscar"
                   onChangeCustom={(e) => setQuery(e.target.value)}
                   border
                 />

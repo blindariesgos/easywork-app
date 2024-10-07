@@ -263,7 +263,7 @@ export default function ModalConfigGmail() {
       <SliderOverShort openModal={params.get("configemail")}>
         <Tag onclick={() => router.back()} className="bg-easywork-main" />
         <div className="bg-gray-100 rounded-l-2xl max-md:w-screen w-auto overflow-y-auto h-screen">
-          <div className="m-3 font-medium text-lg">
+          <div className="m-3 pl-5 font-medium text-lg">
             <h1>Integración del buzón</h1>
           </div>
           <div className="m-3 p-5 pr-8 bg-white rounded-2xl">
@@ -353,7 +353,7 @@ export default function ModalConfigGmail() {
                       <p className="ml-5 mb-1">Nombre del buzón</p>
                       <input
                         type="text"
-                        className="rounded-md border-1 ml-2 w-full"
+                        className="rounded-md border-1 w-full"
                         value={configData.mailboxName || ""}
                         onChange={(e) =>
                           setConfigData({
@@ -365,7 +365,7 @@ export default function ModalConfigGmail() {
                       <p className="ml-5 mb-1 mt-2">Nombre del remitente</p>
                       <input
                         type="text"
-                        className="rounded-md border-1 ml-2 w-full"
+                        className="rounded-md border-1 w-full"
                         value={configData.senderName || ""}
                         onChange={(e) =>
                           setConfigData({
@@ -414,7 +414,7 @@ export default function ModalConfigGmail() {
                   <p className="ml-1">Enlace a CRM</p>
                 </div>
                 {crmConfig && (
-                  <div className="ml-3 w-96 max-w-full">
+                  <div className="ml-1 w-96 max-w-full">
                     <div className="flex mt-4">
                       <Menu as="div" className="flex mt-1">
                         <input

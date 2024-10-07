@@ -6,6 +6,7 @@ import {
   PhoneIcon,
   Bars3Icon,
   CheckIcon,
+  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -20,9 +21,8 @@ import React, {
 } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
-import { deleteContactId } from "@/src/lib/apis";
+import { deleteContactId, deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { usePoliciesTable } from "../../../../../../hooks/useCommon";
@@ -36,47 +36,53 @@ import {
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import usePolicyContext from "../../../../../../context/policies";
-import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
+import DeleteItemModal from "@/src/components/modals/DeleteItem";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function TablePolicies() {
-  const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
-    usePolicyContext();
+  const {
+    data,
+    limit,
+    setLimit,
+    setOrderBy,
+    order,
+    orderBy,
+    page,
+    setPage,
+    mutate,
+  } = usePolicyContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
-  const { setLastContactsUpdate, selectedContacts, setSelectedContacts } =
-    useCrmContext();
+  const { selectedContacts, setSelectedContacts } = useCrmContext();
   const { columnTable } = usePoliciesTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  const { onCloseAlertDialog } = useAlertContext();
   const [loading, setLoading] = useState(false);
+  const [deleteId, setDeleteId] = useState();
+  const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
 
   useLayoutEffect(() => {
     if (checkbox.current) {
       const isIndeterminate =
         selectedContacts &&
-        selectedContacts.length > 0 &&
-        selectedContacts.length < data?.items.length;
+        selectedContacts?.length > 0 &&
+        selectedContacts?.length < data?.items?.length;
       setChecked(selectedContacts?.length === data?.items?.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
@@ -90,44 +96,197 @@ export default function TablePolicies() {
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  const deleteContact = (contact) => {
-    if (contact.length === 1) apiDelete(contact[0].id);
-    if (contact.length > 1) {
-      contact.map((cont) => apiDelete(cont.id));
-    }
-    toast.success(t("contacts:delete:msg"));
-    setSelectedContacts([]);
-    onCloseAlertDialog();
+  const policyStatus = {
+    activa: "Activa",
+    expirada: "Expirada",
+    cancelada: "Cancelada",
+    en_proceso: "En proceso",
   };
 
-  const options = [
-    {
-      id: 1,
-      name: t("common:buttons:delete"),
-      onclick: () => deleteContact(selectedContacts),
-    },
-  ];
-
-  const apiDelete = async (id) => {
+  const deletePolicy = async (id) => {
     try {
       setLoading(true);
-      const response = await deleteContactId(id);
-      setLastContactsUpdate(response);
+      const response = await deletePolicyById(id);
+      toast.success(t("common:alert:delete-success"));
+      mutate();
       setLoading(false);
+      setIsOpenDelete(false);
     } catch (err) {
       setLoading(false);
       handleApiError(err.message);
     }
   };
 
-  const itemOptions = [
+  const deletePolicies = async () => {
+    setLoading(true);
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => deletePolicyById(policyId))
+    );
+    if (response.some((x) => x.status === "fulfilled")) {
+      toast.success(
+        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected")) {
+      toast.error(
+        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} elementos(s)`
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+    setIsOpenDeleteMasive(false);
+  };
+
+  const changeStatusPolicies = async (status) => {
+    setLoading(true);
+    const body = {
+      status: status.id,
+    };
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => putPoliza(policyId, body))
+    );
+    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
+      toast.success(
+        t("common:alert:update-items-succes", {
+          count: response.filter(
+            (x) => x.status == "fulfilled" && !x?.value?.hasError
+          ).length,
+          total: selectedContacts.length,
+        })
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
+      toast.error(
+        t("common:alert:update-items-error", {
+          count: response.filter(
+            (x) => x.status == "rejected" || x?.value?.hasError
+          ).length,
+        })
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+  };
+
+  const changeResponsible = async (responsible) => {
+    const body = {
+      assignedById: responsible.id,
+    };
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => putPoliza(policyId, body))
+    );
+    console.log({ response });
+    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
+      toast.success(
+        t("common:alert:update-items-succes", {
+          count: response.filter(
+            (x) => x.status == "fulfilled" && !x?.value?.hasError
+          ).length,
+          total: selectedContacts.length,
+        })
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
+      toast.error(
+        t("common:alert:update-items-error", {
+          count: response.filter(
+            (x) => x.status == "rejected" || x?.value?.hasError
+          ).length,
+        })
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+  };
+
+  const masiveActions = [
+    {
+      id: 3,
+      name: "Cambiar Responsable",
+      onclick: changeResponsible,
+      selectUser: true,
+    },
+    {
+      id: 2,
+      name: t("common:table:checkbox:change-status"),
+      onclick: changeStatusPolicies,
+      selectOptions: [
+        {
+          id: "activa",
+          name: "Activa",
+        },
+        {
+          id: "expirada",
+          name: "Expirada",
+        },
+        {
+          id: "cancelada",
+          name: "Cancelada",
+        },
+        {
+          id: "en_proceso",
+          name: "En proceso",
+        },
+      ],
+    },
+    {
+      id: 1,
+      name: t("common:buttons:delete"),
+      onclick: () => setIsOpenDeleteMasive(true),
+    },
+  ];
+
+  const itemActions = [
     {
       name: "Ver",
       handleClick: (id) =>
         router.push(`/operations/policies/policy/${id}?show=true`),
     },
-    // { name: "Editar" },
-    // { name: "Copiar" },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        router.push(`/operations/policies/policy/${id}?show=true&edit=true`),
+    },
+    {
+      name: "Eliminar",
+      handleClick: (id) => {
+        setDeleteId(id);
+        setIsOpenDelete(true);
+      },
+    },
+    {
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClickContact: (id) =>
+            router.push(
+              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+            ),
+        },
+        {
+          name: "Cita",
+          disabled: true,
+        },
+        {
+          name: "Comentario",
+          disabled: true,
+        },
+        {
+          name: "Correo",
+          disabled: true,
+        },
+      ],
+    },
   ];
 
   if (data?.items && data?.items.length === 0) {
@@ -220,14 +379,14 @@ export default function TablePolicies() {
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(policy)
+                          selectedContacts.includes(policy.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
-                        <td className="pr-7 pl-4 sm:w-12">
-                          {selectedContacts.includes(policy) && (
+                        <td className="pr-7 pl-4 sm:w-12 relative">
+                          {selectedContacts.includes(policy.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
@@ -235,18 +394,17 @@ export default function TablePolicies() {
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                               value={policy.id}
-                              checked={selectedContacts.includes(policy)}
+                              checked={selectedContacts.includes(policy.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, policy]
+                                    ? [...selectedContacts, policy.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== policy
+                                        (p) => p !== policy.id
                                       )
                                 )
                               }
                             />
-
                             <Menu
                               as="div"
                               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
@@ -266,28 +424,86 @@ export default function TablePolicies() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                                  {itemOptions.map((item) => (
-                                    <MenuItem
-                                      key={item.name}
-                                      onClick={() =>
-                                        item.handleClick &&
-                                        item.handleClick(policy.id)
-                                      }
-                                    >
-                                      {({ active }) => (
+                                <MenuItems
+                                  anchor="right start"
+                                  className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                >
+                                  {itemActions.map((item) =>
+                                    !item.options ? (
+                                      <MenuItem
+                                        key={item.name}
+                                        disabled={item.disabled}
+                                        onClick={() => {
+                                          item.handleClick &&
+                                            item.handleClick(policy.id);
+                                          item.handleClickContact &&
+                                            item.handleClickContact(
+                                              policy?.contact?.id
+                                            );
+                                        }}
+                                      >
                                         <div
                                           // onClick={item.onClick}
                                           className={classNames(
-                                            active ? "bg-gray-50" : "",
-                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                            "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           )}
                                         >
                                           {item.name}
                                         </div>
-                                      )}
-                                    </MenuItem>
-                                  ))}
+                                      </MenuItem>
+                                    ) : (
+                                      <Menu key={item.name}>
+                                        <MenuButton className="flex items-center hover:bg-gray-50">
+                                          <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
+                                            {item.name}
+                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
+                                          </div>
+                                        </MenuButton>
+                                        <Transition
+                                          as={Fragment}
+                                          enter="transition ease-out duration-100"
+                                          enterFrom="transform opacity-0 scale-95"
+                                          enterTo="transform opacity-100 scale-100"
+                                          leave="transition ease-in duration-75"
+                                          leaveFrom="transform opacity-100 scale-100"
+                                          leaveTo="transform opacity-0 scale-95"
+                                        >
+                                          <MenuItems
+                                            anchor={{
+                                              to: "right start",
+                                              gap: "4px",
+                                            }}
+                                            className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                          >
+                                            {item.options.map((option) => (
+                                              <MenuItem
+                                                key={option.name}
+                                                disabled={option.disabled}
+                                                onClick={() => {
+                                                  option.handleClick &&
+                                                    option.handleClick(
+                                                      policy.id
+                                                    );
+                                                  option.handleClickContact &&
+                                                    option.handleClickContact(
+                                                      policy?.contact?.id
+                                                    );
+                                                }}
+                                              >
+                                                <div
+                                                  className={clsx(
+                                                    "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
+                                                  )}
+                                                >
+                                                  {option.name}
+                                                </div>
+                                              </MenuItem>
+                                            ))}
+                                          </MenuItems>
+                                        </Transition>
+                                      </Menu>
+                                    )
+                                  )}
                                 </MenuItems>
                               </Transition>
                             </Menu>
@@ -370,6 +586,8 @@ export default function TablePolicies() {
                                   ) ?? null
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
+                                ) : column.row === "status" ? (
+                                  policyStatus[policy[column.row]]
                                 ) : (
                                   policy[column.row] || "-"
                                 )}
@@ -395,10 +613,22 @@ export default function TablePolicies() {
         />
         <div className="flex">
           {selectedContacts.length > 0 && (
-            <SelectedOptionsTable options={options} />
+            <SelectedOptionsTable options={masiveActions} />
           )}
         </div>
       </div>
+      <DeleteItemModal
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}
+        handleClick={() => deletePolicy(deleteId)}
+        loading={loading}
+      />
+      <DeleteItemModal
+        isOpen={isOpenDeleteMasive}
+        setIsOpen={setIsOpenDeleteMasive}
+        handleClick={() => deletePolicies()}
+        loading={loading}
+      />
     </Fragment>
   );
 }

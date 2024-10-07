@@ -1,10 +1,6 @@
 "use client";
 import React from "react";
-import {
-  ChevronDownIcon,
-  Cog8ToothIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
+import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import FiltersPolicies from "./filters/FiltersPolicies";
@@ -39,7 +35,7 @@ export default function PolicyHeader() {
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
             {t("operations:policies:title")}
           </h1>
-          <ButtonAdd />
+          {/* <ButtonAdd /> */}
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FiltersPolicies />

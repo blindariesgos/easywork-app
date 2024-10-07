@@ -180,7 +180,8 @@
       "change-creator": "Cambiar creador",
       "change-participant": "Cambiar participante",
       "change-deadline": "Cambiar fecha limite",
-      "change-responsible": "Cambiar responsable"
+      "change-responsible": "Cambiar responsable",
+      "change-status": "Cambiar estatus"
     },
     "footer": {
       "elements": "Se muestran los elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> | Total elementos <strong>{{total}}</strong>",
@@ -188,6 +189,8 @@
     }
   },
   "alert": {
-    "delete-success": "Elemento(s) eliminado(s) exitosamente!"
+    "delete-success": "Elemento(s) eliminado(s) exitosamente!",
+    "update-items-succes": "Se Actualizo con exito {{count}} elemento(s) de {{total}} seleccionado(s)",
+    "update-items-error": "Ocurrio un error al tratar de eliminar {{count}} elemento(s)"
   }
 }

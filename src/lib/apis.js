@@ -114,6 +114,13 @@ export const deleteContactId = async (id) => {
   return response;
 };
 
+export const deletePolicyById = async (id) => {
+  // try {
+  const response = await axios().delete(`/sales/crm/polizas/${id}`);
+  revalidatePath("/operations/policies", "layout");
+  return response;
+};
+
 export const deleteReceiptById = async (receiptId) => {
   // try {
   const response = await axios().delete(`/sales/crm/polizas/receipts/${receiptId}`);

@@ -197,6 +197,12 @@ export const putTaskId = async (id, body) => {
   return response;
 };
 
+export const putTaskIdRelations = async (taskId, body) => {
+  console.log("Updating task relations");
+  const response = await axios().put(`/tools/tasks/${taskId}/update_relations`, body);
+  return response;
+};
+
 export const putTaskCompleted = async (id) => {
   const response = await axios().put(`/tools/tasks/${id}/complete`);
   return response;

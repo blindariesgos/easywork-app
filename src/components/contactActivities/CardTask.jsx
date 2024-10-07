@@ -19,6 +19,8 @@ import { RiFileEditLine } from "react-icons/ri";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { postComment } from "../../lib/apis";
 import { toast } from "react-toastify";
+import { GrTask } from "react-icons/gr";
+import { GoTasklist } from "react-icons/go";
 //is a component that must recieve its props
 export default function CardTask({ data }) {
   const { t } = useTranslation();
@@ -65,7 +67,7 @@ export default function CardTask({ data }) {
       <div className="flex gap-4 md:gap-8 mt-3">
         <div className="flex flex-col gap-2">
           <div className="p-4 bg-gray-100 rounded-lg">
-            <BsBriefcase className="h-12 w-12 text-black" />
+            <GoTasklist className="h-12 w-12 text-black" />
           </div>
           <Link
             href={`/tools/tasks/task/${data.id}?show=true`}

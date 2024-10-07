@@ -16,6 +16,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tab, TabList } from "@headlessui/react";
 import { useReactToPrint } from "react-to-print";
 import moment from "moment";
+import AddDocuments from "../AddDocuments";
 
 export default function AddContactTabs({ tabs, refPrint, contact }) {
   const { t } = useTranslation();
@@ -87,12 +88,13 @@ export default function AddContactTabs({ tabs, refPrint, contact }) {
 
               return renderTab(tab);
             })}
-          <Button
+          {/* <Button
             label={t("leads:add:title")}
             buttonStyle="primary"
             icon={<PlusIcon className="h-4 w-4 text-white" />}
             className="py-2 px-3"
-          />
+          /> */}
+          <AddDocuments />
         </TabList>
         <IconDropdown
           icon={

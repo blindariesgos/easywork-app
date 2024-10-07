@@ -10,13 +10,18 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
 import { formatToCurrency } from "@/src/utils/formatters";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import moment from "moment";
 
-export default function ContactPolizaTable({ base, contactId }) {
+export default function ContactPolizaTable({ base = 0, contactId }) {
   const [fieldClicked, setFieldClicked] = useState({
     orderBy: "poliza",
     order: "DESC",
   });
-  const { policies } = usePoliciesByContactId({ contactId, ...fieldClicked });
+  const { policies, isLoading } = usePoliciesByContactId({
+    contactId,
+    ...fieldClicked,
+  });
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -50,16 +55,13 @@ export default function ContactPolizaTable({ base, contactId }) {
     setIndeterminate(false);
   }
 
-  useEffect(() => {
-    console.log({ policies });
-  }, [policies]);
-
-  if (!policies || policies?.length === 0) {
+  if ((!policies || policies?.length === 0) && !isLoading) {
     return <PolizasEmpty />;
   }
 
   return (
     <div className="h-full relative">
+      {isLoading && <LoaderSpinner />}
       <div className="relative overflow-x-auto shadow-md rounded-xl">
         <table className="min-w-full rounded-md bg-gray-100 table-auto">
           <thead className="text-sm bg-white drop-shadow-sm">
@@ -78,13 +80,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className="py-3.5 pl-4 pr-3 text-center text-sm font-medium text-gray-400 cursor-pointer "
+                className="py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer "
                 onClick={() => {
                   handleSorting("noPoliza");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:policy")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:policy")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "poliza" &&
@@ -99,13 +101,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+                className=" py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
                 onClick={() => {
                   handleSorting("product");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:product")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:product")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "product" &&
@@ -120,13 +122,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
                 onClick={() => {
                   handleSorting("company");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:company")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:company")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "company" &&
@@ -144,13 +146,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
                 onClick={() => {
                   handleSorting("estadoPoliza");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:status")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:status")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "estadoPoliza" &&
@@ -168,13 +170,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
                 onClick={() => {
                   handleSorting("vigenciaDesde");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:start")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:start")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "vigenciaDesde" &&
@@ -192,13 +194,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
                 onClick={() => {
                   handleSorting("vigenciaHasta");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:expiration")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:expiration")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "vigenciaHasta" &&
@@ -216,15 +218,15 @@ export default function ContactPolizaTable({ base, contactId }) {
               </th>
               <th
                 scope="col"
-                className={`px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer ${
+                className={`py-3.5 text-sm font-medium text-gray-400 cursor-pointer ${
                   base > 0 && "rounded-e-xl"
                 }`}
                 onClick={() => {
                   handleSorting("importePagar");
                 }}
               >
-                <div className="group inline-flex items-center">
-                  {t("polizas:edit:policies:table:amount")}
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:amount")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.orderBy === "importePagar" &&
@@ -243,13 +245,13 @@ export default function ContactPolizaTable({ base, contactId }) {
               {base === 0 && (
                 <th
                   scope="col"
-                  className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
+                  className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
                   onClick={() => {
                     handleSorting("ramo");
                   }}
                 >
-                  <div className="group inline-flex items-center">
-                    {t("polizas:edit:policies:table:branch")}
+                  <div className="group flex items-center">
+                    <p>{t("polizas:edit:policies:table:branch")}</p>
                     <span
                       className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                         fieldClicked.orderBy === "ramo" &&
@@ -294,32 +296,32 @@ export default function ContactPolizaTable({ base, contactId }) {
                     <Link
                       href={`/operations/policies/policy/${poliza.id}?show=true`}
                     >
-                      <div className="flex gap-2 px-2 hover:text-primary">
+                      <div className="flex gap-2 hover:text-primary">
                         {poliza.poliza}
                       </div>
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {poliza?.category?.name ?? "S/N"}
+                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
+                    <p>{poliza?.category?.name ?? "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {poliza?.company?.name ?? "S/N"}
+                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
+                    <p>{poliza?.company?.name ?? "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {poliza?.status ?? "S/N"}
+                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
+                    <p>{poliza?.status ?? "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {poliza?.vigenciaDesde}
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                    <p>{moment(poliza?.vigenciaDesde).format("DD/MM/yyyy")}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {poliza?.vigenciaHasta}
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                    <p>{moment(poliza?.vigenciaHasta).format("DD/MM/yyyy")}</p>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {formatToCurrency(poliza.importePagar)}
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                    <p>{`${poliza?.currency?.name ?? "$"} ${poliza?.importePagar?.toFixed(2) ?? "0.00"}`}</p>
                   </td>
                   {base === 0 && (
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                      {poliza?.type?.name || "S/N"}
+                    <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                      <p>{poliza?.type?.name || "S/N"}</p>
                     </td>
                   )}
                 </tr>

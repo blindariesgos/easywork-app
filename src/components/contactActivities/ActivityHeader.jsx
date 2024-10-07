@@ -12,6 +12,7 @@ export default function ActivityHeader({
   contactId,
   update,
   crmType = "contact",
+  contactType = "fisica",
 }) {
   const [isShowAddComment, setIsShowAddComment] = useState(false);
   const { t } = useTranslation();
@@ -40,86 +41,28 @@ export default function ActivityHeader({
       href: "/tools/calendar/addEvent?show=true",
       current: false,
       disabled: true,
+      hidden: contactType == "moral",
     },
     {
       name: t("contacts:create:activities:whatsapp"),
       href: "#",
       current: false,
       disabled: true,
+      hidden: contactType == "moral",
     },
     {
       name: t("contacts:create:activities:call"),
       href: "#",
       current: false,
       disabled: true,
+      hidden: contactType == "moral",
     },
     {
       name: t("contacts:create:activities:zoom"),
       href: "#",
       current: false,
       disabled: true,
-    },
-  ];
-  const settings = [
-    {
-      value: 0,
-      name: t("contacts:header:settings:vcard"),
-      onclick: () => {},
-    },
-    {
-      value: 1,
-      name: t("contacts:header:settings:gmail"),
-      onclick: () => {},
-    },
-    {
-      value: 2,
-      name: t("contacts:header:settings:outlook"),
-      onclick: () => {},
-    },
-    {
-      value: 3,
-      name: t("contacts:header:settings:yahoo"),
-      onclick: () => {},
-    },
-    {
-      value: 4,
-      name: t("contacts:header:settings:import"),
-      onclick: () => {},
-    },
-    {
-      value: 5,
-      name: t("contacts:header:settings:crm"),
-      onclick: () => {},
-    },
-    {
-      value: 6,
-      name: t("contacts:header:settings:csv"),
-      onclick: () => {},
-    },
-    {
-      value: 7,
-      name: t("contacts:header:settings:excel"),
-      onclick: () => {},
-    },
-    {
-      value: 8,
-      name: t("contacts:header:settings:export"),
-      onclick: () => {},
-    },
-    {
-      value: 9,
-      name: t("contacts:header:settings:control"),
-      onclick: () => {},
-    },
-    {
-      value: 10,
-      name: t("contacts:header:settings:search"),
-      onclick: () => {},
-    },
-    {
-      value: 11,
-      name: t("contacts:header:settings:entity"),
-      onclick: () => {},
+      hidden: contactType == "moral",
     },
   ];
   return (
@@ -129,33 +72,35 @@ export default function ActivityHeader({
           <div className="">
             <div className=" mt-4">
               <nav className="flex space-x-2 flex-wrap pt-4" aria-label="Tabs">
-                {tabs.map((tab) => (
-                  <div key={tab.name}>
-                    {tab.children ? (
-                      <div key={tab.name} className="py-4 -mt-4">
-                        <AppointmentMenu
-                          options={tab.children}
-                          label={tab.name}
-                        />
-                      </div>
-                    ) : (
-                      <Link
-                        key={tab.name}
-                        href={tab.href}
-                        className={clsx(
-                          tab.current
-                            ? " text-gray-400"
-                            : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
-                          "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
-                        )}
-                        aria-current={tab.current ? "page" : undefined}
-                        onClick={tab.onClick}
-                      >
-                        {tab.name}
-                      </Link>
-                    )}
-                  </div>
-                ))}
+                {tabs
+                  .filter((tab) => !tab.hidden)
+                  .map((tab) => (
+                    <div key={tab.name}>
+                      {tab.children ? (
+                        <div key={tab.name} className="py-4 -mt-4">
+                          <AppointmentMenu
+                            options={tab.children}
+                            label={tab.name}
+                          />
+                        </div>
+                      ) : (
+                        <Link
+                          key={tab.name}
+                          href={tab.href}
+                          className={clsx(
+                            tab.current
+                              ? " text-gray-400"
+                              : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
+                            "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
+                          )}
+                          aria-current={tab.current ? "page" : undefined}
+                          onClick={tab.onClick}
+                        >
+                          {tab.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
               </nav>
             </div>
           </div>

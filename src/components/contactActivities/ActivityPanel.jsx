@@ -20,7 +20,7 @@ import CardEmail from "./CardEmail";
 import CardComment from "./CardComment";
 import { useContactActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
-
+import { IoMdCheckboxOutline } from "react-icons/io";
 function parseAndSortByDate(data) {
   console.log({ data });
   // Combine tasks and comments with their type
@@ -34,7 +34,12 @@ function parseAndSortByDate(data) {
   return combined;
 }
 
-export default function ActivityPanel({ contactId, crmType, className }) {
+export default function ActivityPanel({
+  contactId,
+  crmType,
+  className,
+  contactType,
+}) {
   const [bulkActivity, setBulkActivity] = useState([]);
   const { activities, isError, isLoading, mutate } = useContactActivities(
     contactId,
@@ -67,7 +72,10 @@ export default function ActivityPanel({ contactId, crmType, className }) {
         );
       default:
         return (
-          <EnvelopeIcon className="h-5 w-5 text-white" aria-hidden="true" />
+          <IoMdCheckboxOutline
+            className="h-5 w-5 text-white"
+            aria-hidden="true"
+          />
         );
     }
   };
@@ -109,6 +117,7 @@ export default function ActivityPanel({ contactId, crmType, className }) {
                       crmType={crmType}
                       update={mutate}
                       className="w-full"
+                      contactType={contactType}
                     />
                   </div>
                 </div>

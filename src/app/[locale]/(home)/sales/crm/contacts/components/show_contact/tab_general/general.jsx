@@ -15,7 +15,7 @@ import InputPhone from "@/src/components/form/InputPhone";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
-import ActivityPanel from "../../../../../../../../../components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/contactActivities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import { createContact, getContactId, updateContact } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
@@ -25,7 +25,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
-import { formatISO } from "date-fns";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -36,6 +35,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
+  const [type, setType] = useState("fisica");
   const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
@@ -49,6 +49,13 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       setIsEdit(true);
     }
   }, [params.get("edit")]);
+
+  useEffect(() => {
+    if (!params.get("type")) return;
+
+    setType(params.get("type"));
+    setValue("typePerson", params.get("type"));
+  }, [params.get("type")]);
 
   useEffect(() => {
     if (!params.get("copy")) return;
@@ -71,9 +78,14 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     name: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
-    lastName: Yup.string()
-      .required(t("common:validations:required"))
-      .min(2, t("common:validations:min", { min: 2 })),
+    lastName: Yup.string().when("typePerson", {
+      is: (value) => value === "fisica",
+      then: (schema) =>
+        schema
+          .required(t("common:validations:required"))
+          .min(2, t("common:validations:min", { min: 2 })),
+      otherwise: (schema) => schema,
+    }),
     cargo: Yup.string(),
     rfc: Yup.string(),
     typeContact: Yup.string(),
@@ -81,7 +93,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     address: Yup.string(),
     assignedById: Yup.string(),
     birthdate: Yup.string(),
-    typePerson: Yup.string().required(t("common:validations:required")),
+    typePerson: Yup.string(),
     observadorId: Yup.string(),
     subAgentId: Yup.string(),
     intermediarioId: Yup.string(),
@@ -136,7 +148,12 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       setIsEdit(true);
       return;
     }
+    setLoading(true);
 
+    if (contact?.typePerson) {
+      setType(contact?.typePerson);
+      setValue("typePerson", contact?.typePerson);
+    }
     if (contact?.fullName) setValue("fullName", contact?.fullName);
     if (contact?.name) {
       setValue("name", contact?.name);
@@ -152,7 +169,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
     if (contact?.address) setValue("address", contact?.address);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
-    if (contact?.typePerson) setValue("typePerson", contact?.typePerson);
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
     if (contact?.intermediario)
       setValue("intermediarioId", contact?.intermediario?.id);
@@ -191,6 +207,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         },
       ]);
     }
+    setLoading(false);
   }, [contact, id]);
 
   const handleProfileImageChange = useCallback((event) => {
@@ -234,7 +251,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     try {
       setLoading(true);
       if (!contact) {
-        console.log("Creando contacto");
         const response = await createContact(formData);
         if (response.hasError) {
           let message = response.message;
@@ -246,9 +262,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success(t("contacts:create:msg"));
       } else {
-        console.log({ body });
-        console.log("Ediatndo contacto");
-
         const response = await updateContact(formData, id);
         if (response.hasError) {
           console.log({ response });
@@ -329,31 +342,42 @@ export default function ContactGeneral({ contact, id, refPrint }) {
               )}
             </div>
             <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-20 pt-4">
-              {isEdit ? (
+              {isEdit && (
                 <Fragment>
                   <TextInput
                     type="text"
-                    label={t("contacts:create:name")}
+                    label={
+                      type == "fisica"
+                        ? t("contacts:create:name")
+                        : t("contacts:create:fullname-company")
+                    }
                     placeholder={t("contacts:create:placeholder-name")}
                     error={errors.name}
                     register={register}
                     name="name"
                     disabled={!isEdit}
                   />
-                  <TextInput
-                    type="text"
-                    label={t("contacts:create:lastName")}
-                    placeholder={t("contacts:create:placeholder-name")}
-                    error={errors.lastName}
-                    register={register}
-                    name="lastName"
-                    disabled={!isEdit}
-                  />
+                  {type == "fisica" && (
+                    <TextInput
+                      type="text"
+                      label={t("contacts:create:lastName")}
+                      placeholder={t("contacts:create:placeholder-name")}
+                      error={errors.lastName}
+                      register={register}
+                      name="lastName"
+                      disabled={!isEdit}
+                    />
+                  )}
                 </Fragment>
-              ) : (
+              )}
+              {!isEdit && (
                 <TextInput
                   type="text"
-                  label={t("contacts:create:fullname")}
+                  label={
+                    type == "fisica"
+                      ? t("contacts:create:fullname")
+                      : t("contacts:create:fullname-company")
+                  }
                   placeholder={t("contacts:create:placeholder-name")}
                   error={errors.fullName}
                   register={register}
@@ -389,28 +413,30 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 name="rfc"
                 disabled={!isEdit}
               />
-              <Controller
-                render={({ field: { value, onChange, ref, onBlur } }) => {
-                  return (
-                    <InputDate
-                      label={t("contacts:create:born-date")}
-                      value={value}
-                      onChange={onChange}
-                      onBlur={onBlur}
-                      icon={
-                        <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                      }
-                      error={errors.birthdate}
-                      disabled={!isEdit}
-                      inactiveDate={eighteenYearsAgo}
-                    />
-                  );
-                }}
-                name="birthdate"
-                control={control}
-                defaultValue=""
-              />
-              <SelectInput
+              {type == "fisica" && (
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
+                        label={t("contacts:create:born-date")}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        icon={
+                          <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                        }
+                        error={errors.birthdate}
+                        disabled={!isEdit}
+                        inactiveDate={eighteenYearsAgo}
+                      />
+                    );
+                  }}
+                  name="birthdate"
+                  control={control}
+                  defaultValue=""
+                />
+              )}
+              {/* <SelectInput
                 label={t("contacts:create:typePerson")}
                 options={[
                   {
@@ -428,9 +454,13 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 disabled={!isEdit}
                 setValue={setValue}
                 error={!watch("typePerson") && errors.typePerson}
-              />
+              /> */}
               <SelectInput
-                label={t("contacts:create:contact-type")}
+                label={
+                  type == "fisica"
+                    ? t("contacts:create:contact-type")
+                    : t("contacts:create:contact-type-company")
+                }
                 options={lists?.listContact?.contactTypes}
                 name="typeId"
                 error={errors.typeId}
@@ -450,78 +480,83 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   //value={watch('otherType')}
                 />
               ) : null}
-              <TextInput
-                label={t("contacts:create:position")}
-                placeholder={t("contacts:create:position")}
-                error={errors.cargo}
-                register={register}
-                name="cargo"
-                disabled={!isEdit}
-              />
-              <SelectInput
-                label={t("contacts:create:origen")}
-                name="sourceId"
-                options={lists?.listContact?.contactSources}
-                error={errors.sourceId}
-                register={register}
-                setValue={setValue}
-                disabled={!isEdit}
-                watch={watch}
-              />
-              <TextInput
-                label={t("contacts:create:address")}
-                error={errors.address}
-                register={register}
-                name="address"
-                placeholder={t("contacts:create:placeholder-address")}
-                disabled={!isEdit}
-                //value={watch('address')}
-              />
+              {type == "fisica" && (
+                <Fragment>
+                  <TextInput
+                    label={t("contacts:create:position")}
+                    placeholder={t("contacts:create:position")}
+                    error={errors.cargo}
+                    register={register}
+                    name="cargo"
+                    disabled={!isEdit}
+                  />
 
-              <SelectDropdown
-                label={t("contacts:create:responsible")}
-                name="assignedById"
-                options={lists?.users}
-                register={register}
-                disabled={!isEdit}
-                error={errors.assignedById}
-                setValue={setValue}
-                watch={watch}
-                placeholder="- Seleccionar -"
-              />
-              <SelectDropdown
-                label={t("contacts:create:observer")}
-                name="observadorId"
-                options={lists?.users}
-                register={register}
-                disabled={!isEdit}
-                error={errors.observadorId}
-                setValue={setValue}
-                watch={watch}
-                placeholder="- Seleccionar -"
-              />
-              <SelectDropdown
-                label={t("contacts:create:sub-agent")}
-                name="subAgentId"
-                options={lists?.users}
-                register={register}
-                disabled={!isEdit}
-                error={errors.subAgentId}
-                setValue={setValue}
-                watch={watch}
-                placeholder="- Seleccionar -"
-              />
-              <SelectDropdown
-                label={t("contacts:create:intermediario")}
-                name="intermediarioId"
-                options={lists?.users}
-                register={register}
-                disabled={!isEdit}
-                error={errors.intermediarioId}
-                setValue={setValue}
-                watch={watch}
-                placeholder="- Seleccionar -"
-              />
+                  <SelectInput
+                    label={t("contacts:create:origen")}
+                    name="sourceId"
+                    options={lists?.listContact?.contactSources}
+                    error={errors.sourceId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                  <TextInput
+                    label={t("contacts:create:address")}
+                    error={errors.address}
+                    register={register}
+                    name="address"
+                    placeholder={t("contacts:create:placeholder-address")}
+                    disabled={!isEdit}
+                    //value={watch('address')}
+                  />
+
+                  <SelectDropdown
+                    label={t("contacts:create:responsible")}
+                    name="assignedById"
+                    options={lists?.users}
+                    register={register}
+                    disabled={!isEdit}
+                    error={errors.assignedById}
+                    setValue={setValue}
+                    watch={watch}
+                    placeholder="- Seleccionar -"
+                  />
+                  <SelectDropdown
+                    label={t("contacts:create:observer")}
+                    name="observadorId"
+                    options={lists?.users}
+                    register={register}
+                    disabled={!isEdit}
+                    error={errors.observadorId}
+                    setValue={setValue}
+                    watch={watch}
+                    placeholder="- Seleccionar -"
+                  />
+                  <SelectDropdown
+                    label={t("contacts:create:sub-agent")}
+                    name="subAgentId"
+                    options={lists?.users}
+                    register={register}
+                    disabled={!isEdit}
+                    error={errors.subAgentId}
+                    setValue={setValue}
+                    watch={watch}
+                    placeholder="- Seleccionar -"
+                  />
+                  <SelectDropdown
+                    label={t("contacts:create:intermediario")}
+                    name="intermediarioId"
+                    options={lists?.users}
+                    register={register}
+                    disabled={!isEdit}
+                    error={errors.intermediarioId}
+                    setValue={setValue}
+                    watch={watch}
+                    placeholder="- Seleccionar -"
+                  />
+                </Fragment>
+              )}
               <TextInput
                 label={t("contacts:create:comments")}
                 error={errors.comments}
@@ -535,7 +570,11 @@ export default function ContactGeneral({ contact, id, refPrint }) {
 
           {/* Menu Derecha */}
           {id && contact && (
-            <ActivityPanel contactId={id} className="lg:col-span-7" />
+            <ActivityPanel
+              contactId={id}
+              contactType={type}
+              className="lg:col-span-7"
+            />
           )}
           {/* Botones de acción */}
           {(isEdit || !contact) && (

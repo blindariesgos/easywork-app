@@ -19,7 +19,10 @@ export default function TasksContextProvider({ children, userId }) {
     orderBy: "deadline",
     order: "DESC"
   })
-  const { tasks, isLoading, isError, mutate } = useTasks({ config, filters, userId: session?.data?.user?.id });
+  const { tasks, isLoading, isError, mutate } = useTasks({ config, filters:{
+    ...filters,
+    showCompleted: false
+  }, userId: session?.data?.user?.id });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();
   const [displayFilters, setDisplayFilters] = useState({})
@@ -44,12 +47,12 @@ export default function TasksContextProvider({ children, userId }) {
     },
     {
       id: 3,
-      name: t("tools:tasks:filters:fields:limit-date"),
+      name: t("tools:tasks:filters:fields:closed"),
       type: "date",
       check: false,
-      code: "deadline",
-      date: "newDate",
-      state: 1,
+      code: "completedTime",
+      date: "newDate2",
+      state: 3,
     },
     {
       id: 4,
@@ -83,13 +86,14 @@ export default function TasksContextProvider({ children, userId }) {
       },
       {
         id: 3,
-        name: t("tools:tasks:filters:fields:limit-date"),
+        name: t("tools:tasks:filters:fields:closed"),
         type: "date",
         check: false,
-        code: "deadline",
-        date: "newDate",
-        state: 1,
+        code: "completedTime",
+        date: "newDate2",
+        state: 3,
       },
+
       {
         id: 4,
         name: t("tools:tasks:filters:fields:status"),
@@ -144,12 +148,12 @@ export default function TasksContextProvider({ children, userId }) {
       },
       {
         id: 8,
-        name: t("tools:tasks:filters:fields:closed"),
+        name: t("tools:tasks:filters:fields:limit-date"),
         type: "date",
         check: false,
-        code: "completedTime",
-        date: "newDate2",
-        state: 3,
+        code: "deadline",
+        date: "newDate",
+        state: 1,
       },
       {
         id: 9,

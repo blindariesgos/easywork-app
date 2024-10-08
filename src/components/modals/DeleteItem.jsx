@@ -20,7 +20,12 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 
-export default function DeleteModal({ isOpen, setIsOpen, handleClick }) {
+export default function DeleteModal({
+  isOpen,
+  setIsOpen,
+  handleClick,
+  loading,
+}) {
   return (
     <Dialog
       open={isOpen}
@@ -39,16 +44,18 @@ export default function DeleteModal({ isOpen, setIsOpen, handleClick }) {
           </DialogTitle>
           <div className="flex justify-center gap-4">
             <Button
-              label="Eliminar"
+              label={loading ? "Eliminando..." : "Eliminar"}
               buttonStyle="error"
               className="px-4 py-2 text-xl"
               onclick={handleClick}
+              disabled={loading}
             />
             <Button
               label="Cancelar"
               buttonStyle="secondary"
               className="px-4 py-2 text-xl"
               onclick={() => setIsOpen(false)}
+              disabled={loading}
             />
           </div>
         </DialogPanel>

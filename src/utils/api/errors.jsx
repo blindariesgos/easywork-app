@@ -10,6 +10,8 @@ export const handleApiError = async (error, errorsDuplicated) => {
   // Determine if the error occurred on the server or client
   const isServerSide = typeof window === "undefined"; // Checks for window object
 
+  console.log("Error detectado", error, errorsDuplicated);
+
   let errorObject = error;
 
   // If on server, parse error as needed

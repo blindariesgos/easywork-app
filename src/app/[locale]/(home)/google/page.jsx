@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { googleCallback, deleteTokenGoogle } from "../../../../lib/apis";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { setCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import qs from "qs";
 
@@ -92,7 +93,8 @@ export default function Page() {
                 close();
               })
               .catch(() => {
-                // close()
+                setCookie("ConnectBuzon", true);
+                close()
                 // console.log(err);
                 // deleteTokenGoogle(
                 //   session.data.user.id,

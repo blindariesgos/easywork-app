@@ -148,18 +148,18 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden sm:rounded-lg">
-            <div className="flex justify-around bg-white">
+            <div className="flex px-2 justify-between bg-white font-semibold">
               <div className="flex">
                 <div className="relative w-12 px-6">
                   <input
                     type="checkbox"
-                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
                     ref={checkbox}
                     checked={checked}
                     onChange={toggleAll}
                   />
                 </div>
-                <div className="min-w-[12rem] py-3.5 text-left text-sm text-easywork-main">
+                <div className="min-w-[12rem] py-3.5 ml-16 text-left text-sm text-easywork-main">
                   Seleccionar todo
                 </div>
               </div>
@@ -205,7 +205,7 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
               </Menu>
               <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
                 <ExclamationCircleIcon className="h-5 w-5" />
-                Marcar como correo no deseado
+                Marcar como no deseado
               </div>
               <div
                 className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer"

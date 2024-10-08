@@ -26,7 +26,7 @@ export default function PoliciesContextProvider({ children }) {
       name: t("control:portafolio:receipt:filters:responsible"),
       type: "dropdown",
       check: true,
-      code: "responsible",
+      code: "assignedById",
       options: lists?.users,
     },
     {
@@ -36,6 +36,13 @@ export default function PoliciesContextProvider({ children }) {
       check: true,
       code: "createdAt",
     },
+          {
+        id: 2,
+        name: t("operations:policies:table:policy"),
+        type: "input",
+        check: false,
+        code: "poliza",
+      },
   ]
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -63,7 +70,7 @@ export default function PoliciesContextProvider({ children }) {
         name: t("control:portafolio:receipt:filters:responsible"),
         type: "dropdown",
         check: true,
-        code: "responsible",
+        code: "assignedById",
         options: lists?.users,
       },
       {
@@ -75,6 +82,13 @@ export default function PoliciesContextProvider({ children }) {
       },
       {
         id: 2,
+        name: t("operations:policies:table:policy"),
+        type: "input",
+        check: false,
+        code: "poliza",
+      },
+      {
+        id: 3,
         name: t("control:portafolio:receipt:filters:client"),
         type: "dropdown",
         check: false,
@@ -82,14 +96,41 @@ export default function PoliciesContextProvider({ children }) {
         options: lists?.users,
       },
       {
-        id: 3,
-        name: t("control:portafolio:receipt:filters:rfc"),
-        type: "input",
+        id: 4,
+        name: t("operations:policies:general:intermediary"),
+        type: "select",
         check: false,
-        code: "rfc",
+        code: "agenteIntermediarioId",
+        options: lists?.policies?.agentesIntermediarios,
       },
+      {
+        id: 5,
+        name: t("operations:policies:table:state"),
+        type: "select",
+        check: false,
+        code: "status",
+        options: [
+              {
+                id: "activa",
+                name: "Activa",
+              },
+              {
+                id: "expirada",
+                name: "Expirada",
+              },
+              {
+                id: "cancelada",
+                name: "Cancelada",
+              },
+              {
+                id: "en_proceso",
+                name: "En proceso",
+              },
+            ],
+      },
+
     ])
-  }, [lists?.listContact])
+  }, [lists?.listContact, lists?.policies?.agentesIntermediarios])
 
   useEffect(() => {
     handleChangeConfig("page", 1)

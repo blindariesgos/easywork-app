@@ -114,6 +114,13 @@ export const deleteContactId = async (id) => {
   return response;
 };
 
+export const deletePolicyById = async (id) => {
+  // try {
+  const response = await axios().delete(`/sales/crm/polizas/${id}`);
+  revalidatePath("/operations/policies", "layout");
+  return response;
+};
+
 export const deleteReceiptById = async (receiptId) => {
   // try {
   const response = await axios().delete(`/sales/crm/polizas/receipts/${receiptId}`);
@@ -194,6 +201,12 @@ export const postTask = async (body) => {
 export const putTaskId = async (id, body) => {
   console.log("Updating task");
   const response = await axios().put(`/tools/tasks/${id}`, body);
+  return response;
+};
+
+export const putTaskIdRelations = async (taskId, body) => {
+  console.log("Updating task relations");
+  const response = await axios().put(`/tools/tasks/${taskId}/update_relations`, body);
   return response;
 };
 
@@ -280,6 +293,9 @@ export const getPolizaByContact = async (id) => {
 
 export const putPoliza = async (policyId, body) => {
   const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
+  
+  revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
+
   return response;
 };
 

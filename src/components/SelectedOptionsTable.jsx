@@ -12,6 +12,7 @@ export default function SelectedOptionsTable({ options: data }) {
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedOptionList, setSelectedOptionList] = useState(null);
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
@@ -32,15 +33,22 @@ export default function SelectedOptionsTable({ options: data }) {
         setSelectedOption={setSelectedOption}
       />
       {selectedOption?.selectUser && (
-        <div>
-          <MenuAddUser
-            selectedOption={selectedOption}
-            setSelection={setSelectedUser}
-          />
-        </div>
+        <MenuAddUser
+          selectedOption={selectedOption}
+          setSelection={setSelectedUser}
+        />
       )}
       {selectedOption?.selectDate && (
         <InputDateV2 value={selectedTime} onChange={setSelectedTime} time />
+      )}
+      {selectedOption?.selectOptions && (
+        <SelectInput
+          label=""
+          options={selectedOption?.selectOptions}
+          name="options"
+          border
+          setSelectedOption={setSelectedOptionList}
+        />
       )}
       <Button
         label={t("common:buttons:apply")}
@@ -48,11 +56,19 @@ export default function SelectedOptionsTable({ options: data }) {
         className="px-3 py-2"
         buttonStyle="primary"
         disabled={
-          !selectedOption || (selectedOption.selectUser && !selectedUser)
+          !selectedOption ||
+          (selectedOption.selectUser && !selectedUser) ||
+          (selectedOption.selectOptions && !selectedOptionList)
         }
-        onclick={() =>
-          selectedOption && selectedOption.onclick(selectedUser || selectedTime)
-        }
+        onclick={() => {
+          selectedOption &&
+            selectedOption.onclick(
+              selectedUser || selectedTime || selectedOptionList
+            );
+          setSelectedUser(null);
+          setSelectedTime(null);
+          setSelectedOptionList(null);
+        }}
       />
     </div>
   );

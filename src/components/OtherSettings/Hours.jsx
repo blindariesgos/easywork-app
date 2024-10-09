@@ -12,7 +12,7 @@ export function Hours() {
         <p className="p-2 text-white text-xs w-full bg-easywork-main mb-3">
           Especifique los dias y horas hábiles de su empresa. De este modo, la
           administración de las horas laborales y la planificación de las fechas
-          limite de las tareas serán más precisas.
+          límite de las tareas serán más precisas.
         </p>
         <div className="bg-white rounded-lg p-5">
           <div className="flex space-x-3 border-b">

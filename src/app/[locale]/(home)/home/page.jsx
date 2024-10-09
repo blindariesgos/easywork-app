@@ -14,6 +14,8 @@ import clsx from "clsx";
 const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
 import TaskList from "./components/taskList";
 import { addDays } from "date-fns";
+import ContactList from "./components/ContactList";
+import PolicyList from "./components/PolicyList";
 
 export default function Page() {
   const {
@@ -186,6 +188,8 @@ export default function Page() {
             <h1 className="h-1/6 font-medium">
               Pólizas que requieren atención
             </h1>
+            <PolicyList />
+
             <ul className="h-3/6 p-1">
               <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
@@ -309,6 +313,7 @@ export default function Page() {
             <h1 className="h-1/6 font-medium">
               Contactos que requieren atención
             </h1>
+            <ContactList />
             <ul className="h-3/6 p-1">
               <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image

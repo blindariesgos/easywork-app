@@ -31,7 +31,7 @@ jobs:
 
   merge:
     runs-on: ubuntu-latest
-    needs: build # Solo se ejecuta si el build fue exitoso
+    needs: build # Solo se ejecuta si el build fue exitoso!
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

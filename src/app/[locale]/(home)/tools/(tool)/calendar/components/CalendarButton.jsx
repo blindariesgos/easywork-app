@@ -10,15 +10,25 @@ import {
   TrashIcon,
   UserPlusIcon,
 } from "@heroicons/react/20/solid";
+import { useSearchParams, useRouter } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function CalendarButton() {
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const { replace } = useRouter();
+
+  const openConfig = () => {
+    params.set("config", true);
+    replace(`/tools/calendar?${params.toString()}`);
+  };
+
   return (
     <Menu as="div" className="relative inline-block text-left">
-      <div>
+      {/* <div>
         <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-indigo-500">
           Calendarios
           <ChevronDownIcon
@@ -26,7 +36,18 @@ export default function CalendarButton() {
             aria-hidden="true"
           />
         </Menu.Button>
-      </div>
+      </div> */}
+
+      <button
+        className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-indigo-500"
+        onClick={() => openConfig()}
+      >
+        Calendarios
+        <ChevronDownIcon
+          className="-mr-1 h-5 w-5 text-slate-100"
+          aria-hidden="true"
+        />
+      </button>
 
       <Transition
         as={Fragment}

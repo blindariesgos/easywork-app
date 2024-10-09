@@ -1,13 +1,14 @@
 "use client";
-import SlideOver from "../../../../../../../../components/SlideOver";
+import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
-import TaskEdit from "./TaskEdit";
+import TaskView from "./TaskView";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 export default function TaskDetailsPage({ params: { id } }) {
   return (
     <SlideOver colorTag="bg-primary" samePage={`/tools/tasks?page=1`}>
-      <Suspense fallback={<div>Loading task details...</div>}>
-        <TaskEdit id={id} />
+      <Suspense fallback={<LoaderSpinner />}>
+        <TaskView id={id} />
       </Suspense>
     </SlideOver>
   );

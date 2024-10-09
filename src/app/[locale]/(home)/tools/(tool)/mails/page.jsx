@@ -1,23 +1,36 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { createImap, getTokenGoogle } from "../../../../../../lib/apis";
+import { createImap, getAllOauth } from "../../../../../../lib/apis";
 import { handleApiError } from "../../../../../../utils/api/errors";
 import axios from "axios";
-import ModalAddGmail from "./components/ModalAddGmail";
+import ModalConfigGmail from "./components/ModalConfigGmail";
 import ModalAddFolders from "./components/ModalAddFolders";
 import Tag from "../../../../../../components/Tag";
 import useAppContext from "../../../../../../context/app/index";
+import { toast } from "react-toastify";
 
 export default function IngresarEmail() {
   const session = useSession();
   const router = useRouter();
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
-  const [gmailState, setGmailState] = useState(false);
-  const { setOpenModalFolders, openModalFolders } = useAppContext();
+  const searchParams = useSearchParams();
+
+  // getAllOauth(session.data.user.id).then((response) => {
+  //   if (response.length > 0) {
+  //     router.push("/tools/webmail?page=1");
+  //   }
+  // })
+
+  useEffect(() => {
+    if (searchParams.get("userdeleted") == "true") {
+      toast.success("Correo eliminado");
+      router.push(window.location.pathname);
+    }
+  }, [searchParams.get("userdeleted")]);
 
   const [ImapData, setImapData] = useState({
     host: null,
@@ -66,26 +79,11 @@ export default function IngresarEmail() {
     }
   }
 
-  async function toKnowEmail() {
-    try {
-      const responseImap = await getTokenGoogle(session.data.user.id);
-      console.log(responseImap);
-      if (responseImap) {
-        router.push("/tools/webmail");
-      } else {
-        setGmailState(true);
-      }
-    } catch (error) {
-      console.log("quetal");
-      setGmailState(true);
-    }
-  }
-
   const emails = [
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => toKnowEmail(),
+      click: () => router.push(`${window.location.pathname}?configemail=true&isEdit=false`),
     },
     {
       name: "ICloud",
@@ -128,7 +126,7 @@ export default function IngresarEmail() {
         <h1
           className="ml-3 w-full py-5 text-center font-medium text-xl"
           onClick={() => {
-            router.push("/tools/webmail");
+            router.push("/tools/webmail?page=1");
           }}
         >
           Use y gestione su buzón
@@ -138,7 +136,7 @@ export default function IngresarEmail() {
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-4 my-3">
           {emails.map((item, index) => (
             <div
-              className="flex flex-col justify-center bg-gray-100 px-10 py-7 rounded-lg"
+              className="flex flex-col justify-center bg-gray-100 hover:bg-gray-300 px-10 py-7 rounded-lg cursor-pointer"
               key={index}
               onClick={item.click}
             >
@@ -158,17 +156,8 @@ export default function IngresarEmail() {
           ))}
         </ul>
       </div>
-      <ModalAddGmail state={gmailState} from={"lobby"}>
-        <Tag onclick={() => setGmailState(false)} className="bg-green-500" />
-      </ModalAddGmail>
-      {openModalFolders && (
-        <ModalAddFolders state={true}>
-          <Tag
-            onclick={() => setOpenModalFolders(false)}
-            className="bg-green-500"
-          />
-        </ModalAddFolders>
-      )}
+      <ModalConfigGmail isEdit={false} />
+      <ModalAddFolders isConfig={false} />
     </div>
   );
 }

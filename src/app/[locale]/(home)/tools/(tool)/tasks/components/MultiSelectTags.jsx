@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
   ChevronDownIcon,
   PlusCircleIcon,
@@ -8,7 +9,13 @@ import {
 } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../../../../../../components/form/TextInput";
-import { deleteTags, getTags, postTags } from "../../../../../../../lib/apis";
+import {
+  deleteSubAgent,
+  deleteTags,
+  getTags,
+  postSubAgent,
+  postTags,
+} from "../../../../../../../lib/apis";
 import { handleApiError } from "../../../../../../../utils/api/errors";
 
 const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
@@ -70,13 +77,14 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
     setFilterData(filterData);
   };
 
-  const createTags = async () => {
+  const createTags = async (close) => {
     try {
       const addTag = await postTags({ name: query });
       setOptions([...options, addTag]);
       setFilterData([...options, addTag]);
       handleSelect(addTag);
       setQuery("");
+      close && close();
     } catch (error) {
       handleApiError(error.message);
     }
@@ -97,97 +105,99 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
       <label className="text-sm font-medium leading-6 text-gray-900">
         {label}
       </label>
-      <div className="relative mt-1">
-        <button
-          type="button"
-          onClick={handleToggle}
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
-        >
-          <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
-            {getValues(name)?.length > 0 &&
-              getValues(name).map((res) => (
-                <div
-                  key={res.id}
-                  className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
-                >
-                  {res.name}
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(res.id)}
-                    className="text-white"
-                  >
-                    <XMarkIcon className="h-3 w-3 text-white" />
-                  </button>
-                </div>
-              ))}
-            <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
+      <Menu>
+        {({ close }) => (
+          <Fragment>
+            <MenuButton className="text-left min-h-[36px] w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2">
+              <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
+                {getValues(name)?.length > 0 &&
+                  getValues(name).map((res) => (
+                    <div
+                      key={res.id}
+                      className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
+                    >
+                      {res.name}
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(res.id)}
+                        className="text-white"
+                      >
+                        <XMarkIcon className="h-3 w-3 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                {/* <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
               <PlusIcon className="h-3 w-3" />
               <p className="text-xs">{t("common:buttons:add")}</p>
-            </div>
-          </span>
-          <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
-            <ChevronDownIcon className="h-4 w-4" />
-          </span>
-        </button>
-        {isOpen && (
-          <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 pt-2">
-            <div
-              className="py-1 flex flex-col gap-2 px-2 relative"
-              aria-labelledby="options-menu"
+            </div> */}
+              </span>
+              <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
+                <ChevronDownIcon className="h-4 w-4" />
+              </span>
+            </MenuButton>
+            <MenuItems
+              transition
+              anchor={{ gap: 10, to: "bottom end" }}
+              className="w-[var(--button-width)] origin-top-right rounded-md bg-white shadow-[0px_0px_6px_3px_#0000001a] z-50 pt-2 transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
             >
-              <div className="w-full mt-2">
-                <TextInput
-                  onChangeCustom={(e) => onChangeTags(e)}
-                  border
-                  value={query}
-                />
-              </div>
-              {filterData?.length === 0 && query !== "" ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                  {t("common:not-found")}
+              <div
+                className="py-1 flex flex-col gap-2 px-2 relative"
+                aria-labelledby="options-menu"
+              >
+                <div className="w-full mt-2">
+                  <TextInput
+                    onChangeCustom={(e) => onChangeTags(e)}
+                    border
+                    value={query}
+                  />
                 </div>
-              ) : (
-                filterData &&
-                filterData.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`flex justify-between px-4 py-2 text-sm cursor-pointer rounded-md hover:bg-primary hover:text-white ${
-                      getValues(name) &&
-                      getValues(name).some((res) => res.id === option.id)
-                        ? "bg-primary text-white"
-                        : " text-black bg-white"
-                    }`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleSelect(option);
-                    }}
-                  >
-                    {option.name}
-                    <div
-                      className="cursor-pointer"
-                      onClick={(e) => deleteTag(e, option.id)}
-                    >
-                      <XCircleIcon className="h-4 w-4" />
-                    </div>
+                {filterData?.length === 0 && query !== "" ? (
+                  <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                    {t("common:not-found")}
                   </div>
-                ))
-              )}
-            </div>
-
-            {query !== "" && (
-              <div className="bg-blue-100 p-2 rounded-b-md">
-                <div
-                  className="flex gap-1 items-center cursor-pointer"
-                  onClick={() => createTags()}
-                >
-                  <PlusCircleIcon className="h-4 w-4 text-primary" />
-                  <p className="text-xs ">{t("tools:tasks:add-tags")}</p>
-                </div>
+                ) : (
+                  filterData &&
+                  filterData.map((option) => (
+                    <MenuItem
+                      key={option.id}
+                      className={`flex justify-between px-4 py-2 text-sm cursor-pointer rounded-md hover:bg-primary hover:text-white ${
+                        getValues(name) &&
+                        getValues(name).some((res) => res.id === option.id)
+                          ? "bg-primary text-white"
+                          : " text-black bg-white"
+                      }`}
+                      onClick={() => {
+                        handleSelect(option);
+                      }}
+                      as="div"
+                    >
+                      {option.name}
+                      <div
+                        className="cursor-pointer"
+                        onClick={(e) => deleteTag(e, option.id)}
+                      >
+                        <XCircleIcon className="h-4 w-4" />
+                      </div>
+                    </MenuItem>
+                  ))
+                )}
               </div>
-            )}
-          </div>
+
+              {query !== "" && (
+                <div className="bg-blue-100 p-2 rounded-b-md">
+                  <div
+                    className="flex gap-1 items-center cursor-pointer"
+                    onClick={() => createTags(close)}
+                  >
+                    <PlusCircleIcon className="h-4 w-4 text-primary" />
+                    <p className="text-xs ">{t("tools:tasks:add-tags")}</p>
+                  </div>
+                </div>
+              )}
+            </MenuItems>
+          </Fragment>
         )}
-      </div>
+      </Menu>
       {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
     </div>
   );

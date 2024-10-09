@@ -10,6 +10,8 @@ export const handleApiError = async (error, errorsDuplicated) => {
   // Determine if the error occurred on the server or client
   const isServerSide = typeof window === "undefined"; // Checks for window object
 
+  console.log("Error detectado", error, errorsDuplicated);
+
   let errorObject = error;
 
   // If on server, parse error as needed
@@ -25,7 +27,7 @@ export const handleApiError = async (error, errorsDuplicated) => {
   if (!errorsDuplicated?.current) {
     switch (errorObject?.statusCode) {
       case 403:
-        isServerSide 
+        isServerSide
           ? logger.error("Forbidden Access (403):", errorObject)
           : toastError(errorObject?.message || errorObject);
         logout();
@@ -33,7 +35,7 @@ export const handleApiError = async (error, errorsDuplicated) => {
       case 401:
         isServerSide
           ? logger.error("Unauthorized (401):", errorObject)
-          : logout(); 
+          : logout();
         break;
       default:
         isServerSide

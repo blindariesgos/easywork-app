@@ -1,0 +1,123 @@
+{
+    "portafolio": {
+        "control": {
+            "tabs": {
+                "contact": "Contacto",
+                "company": "Compañia",
+                "policy": "Póliza",
+                "control": "Cobranza"
+            },
+            "title": "Control de Cartera",
+            "form": {
+                "typePerson": "Tipo de persona",
+                "contact-data": "Datos de Contacto",
+                "company-data": "Datos de Compañia",
+                "rfc": "RFC",
+                "company-name": "Nombre de la Compañia",
+                "company-rfc": "RFC de la Compañia",
+                "company-type": "Tipo de Compañia",
+                "company-activity": "Sector de Actividad",
+                "curp": "CURP",
+                "agent": "Vendedor o Agente",
+                "names": "Nombres",
+                "lastnames": "Apellidos",
+                "birthday": "Fecha de Nacimiento",
+                "gender": "Sexo",
+                "postal-code": "Código Postal",
+                "address": "Dirección",
+                "state": "Estado",
+                "city": "Ciudad",
+                "municipality": "Municipio",
+                "phone": "Teléfono",
+                "email": "Correo Electrónico",
+                "comment": "Comentario",
+                "website": "Página Web",
+                "social-network": "Red Social",
+                "contact": "Contacto",
+                "company": "Compañia",
+                "customer-rfc": "Nombre del cliente / RFC",
+                "customer-code": "Código del cliente",
+                "insurance": "Aseguradora",
+                "policy-number": "# de Póliza",
+                "version": "Versión",
+                "insurance-type": "Tipo de Seguro",
+                "coverage": "Cobertura",
+                "issue-date": "Fecha de Emisión",
+                "effective-date": "Fecha de Vigencia",
+                "expiration-date": "Fecha de Vencimiento",
+                "payment-methods": "Formas de Pago",
+                "net-premium": "Prima Neta",
+                "surcharge-installment-payment": "Recargo por Pago Fraccionado",
+                "iva": "Iva",
+                "policy-low": "Derecho de Póliza",
+                "amount-to-pay": "Importe a Pagar",
+                "forms-of-payment": "Formas de Cobro",
+                "related-agent": "Agente Relacionado",
+                "insurance-company": "Compañia Aseguradora",
+                "category": "Categoría o Plan",
+                "branch": "Sub - Ramo",
+                "health-branch": "Sub - Ramo Salud",
+                "currency": "Moneda"
+            },
+            "table": {
+                "contact": "Cliente Contratante",
+                "policy": "Póliza",
+                "receipt": "# de recibo",
+                "insurance": "Aseguradora",
+                "amount": "Monto",
+                "currency": "Moneda",
+                "expired": "Fecha de Vencimiento",
+                "actions": "Acciones"
+            },
+            "cards": {
+                "by-overcoming": "Atención media: Por vencer Próximos 5 días",
+                "overdue": "Urgentes: Vencidos hace 30 días",
+                "urgent": "Urgentes: Vencidos hace 7 días",
+                "delay": "Urgentes: Vencidos hace 15 días",
+                "on-time": "A Tiempo",
+                "trash": "Perdido: Basura vencidos mayores de 45 días",
+                "trash-more": "Perdido: Basura vencidos mayores de 60 días",
+                "cancelled": "Anuladas",
+                "charged": "Cobrados"
+            }
+        },
+        "receipt": {
+            "title": "Recibos",
+            "filters": {
+                "responsible": "Persona Responsable",
+                "expiration-date": "Fecha de Vencimiento",
+                "client": "Cliente Contratante",
+                "rfc": "RFC"
+            },
+            "table": {
+                "receipt": "Núm. de recibo",
+                "policy": "Póliza asociada",
+                "responsible": "Responsable",
+                "client": "Cliente",
+                "stages": "Estado",
+                "amount": "Importe",
+                "created-in": "Creación",
+                "activities": "Actividad",
+                "expiration-date": "Fecha de Vencimiento"
+            },
+            "details": {
+                "date": "Fecha de emisión de póliza",
+                "product": "Producto",
+                "policy": "Póliza",
+                "company": "Compañía",
+                "client-code": "Código de cliente",
+                "consult": "Consulta",
+                "form": {
+                    "responsible": "Responsable",
+                    "status": "Estatus",
+                    "payment-methods": "Forma de pago",
+                    "init-date": "Inicio de vigencia",
+                    "expiration": "Vencimiento",
+                    "amount": "Importe",
+                    "currency": "Moneda",
+                    "comments": "Comentarios"
+                }
+            }
+        }
+    }
+}

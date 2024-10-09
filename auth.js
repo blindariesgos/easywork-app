@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
 import { isValidToken } from "/src/lib/helpers";
 import { getLogin } from "@/src/lib/api/hooks/auths";
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
   providers: [

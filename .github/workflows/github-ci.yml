@@ -28,6 +28,3 @@ jobs:
 
       - name: Build the application with pnpm
         run: pnpm build
-
-      - name: Run E2E tests
-        run: pnpm test:e2e

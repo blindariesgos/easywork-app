@@ -1,0 +1,43 @@
+name: CI for PRs
+
+on:
+  pull_request:
+    branches:
+      - development # Solo se ejecuta cuando se hace PR a la rama 'development'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    steps:
+      - name: Merge Pull Request
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --squash --admin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

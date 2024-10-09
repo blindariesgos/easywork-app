@@ -29,6 +29,12 @@ jobs:
           node-version: "20.x"
           cache: pnpm # Habilita el cache para pnpm
 
+      - name: Ensure .next/cache directory exists
+        run: mkdir -p .next/cache
+
+      - name: Ensure ~/.pnpm-store directory exists
+        run: mkdir -p ~/.pnpm-store
+
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
@@ -39,6 +45,15 @@ jobs:
 
       - name: Install dependencies with pnpm
         run: pnpm install --shamefully-hoist
+
+      - name: Restore Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-
+          if-no-files-found: ignore
 
       - name: Build the application with pnpm
         run: pnpm build
@@ -71,4 +86,4 @@ jobs:
 
       - name: Send success notification
         if: success()
-        run: echo "Merge successful for PR \#${{ github.event.pull_request.number }}"
+        run: echo "✅ Merge successful for PR \#${{ github.event.pull_request.number }}"

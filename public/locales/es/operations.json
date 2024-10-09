@@ -17,6 +17,7 @@
             "rfc": "RFC",
             "status": "Estado de la póliza",
             "subbranch": "Sub-ramo",
+            "type": "Ramo",
             "init-date": "Fecha de inicio de vigencia",
             "expiration": "Fecha de vencimiento",
             "coverage": "Cobertura",

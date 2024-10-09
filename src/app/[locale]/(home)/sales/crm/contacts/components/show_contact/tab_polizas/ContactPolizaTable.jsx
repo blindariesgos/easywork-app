@@ -12,15 +12,23 @@ import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks
 import { formatToCurrency } from "@/src/utils/formatters";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
+import FooterTable from "@/src/components/FooterTable";
 
 export default function ContactPolizaTable({ base = 0, contactId }) {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
   const [fieldClicked, setFieldClicked] = useState({
     orderBy: "poliza",
     order: "DESC",
   });
-  const { policies, isLoading } = usePoliciesByContactId({
+  const { data, isLoading } = usePoliciesByContactId({
     contactId,
-    ...fieldClicked,
+    config: {
+      ...fieldClicked,
+      page,
+      limit,
+    },
   });
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -41,8 +49,8 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
       const isIndeterminate =
         selectedPolizas &&
         selectedPolizas.length > 0 &&
-        selectedPolizas.length < policies?.items?.length;
-      setChecked(selectedPolizas?.length === policies?.items?.length);
+        selectedPolizas.length < data?.items?.length;
+      setChecked(selectedPolizas?.length === data?.items?.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
@@ -50,12 +58,12 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
   }, [selectedPolizas]);
 
   function toggleAll() {
-    setSelectedPolizas(checked || indeterminate ? [] : policies.items);
+    setSelectedPolizas(checked || indeterminate ? [] : data?.items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
 
-  if ((!policies || policies?.length === 0) && !isLoading) {
+  if ((!data || data?.items?.length === 0) && !isLoading) {
     return <PolizasEmpty />;
   }
 
@@ -66,7 +74,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
         <table className="min-w-full rounded-md bg-gray-100 table-auto">
           <thead className="text-sm bg-white drop-shadow-sm">
             <tr className="">
-              <th
+              {/* <th
                 scope="col"
                 className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl"
               >
@@ -77,7 +85,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   checked={checked}
                   onChange={toggleAll}
                 />
-              </th>
+              </th> */}
               <th
                 scope="col"
                 className="py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer "
@@ -85,7 +93,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("noPoliza");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center pl-4">
                   <p>{t("polizas:edit:policies:table:policy")}</p>
                   <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
@@ -271,10 +279,12 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
             </tr>
           </thead>
           <tbody className="bg-gray-100">
-            {policies &&
-              policies?.map((poliza, index) => (
+            {data &&
+              data?.items &&
+              data?.items?.length &&
+              data?.items?.map((poliza, index) => (
                 <tr key={index}>
-                  <td className="relative px-7 sm:w-12 sm:px-6">
+                  {/* <td className="relative px-7 sm:w-12 sm:px-6">
                     {selectedPolizas.includes(poliza) && (
                       <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                     )}
@@ -291,12 +301,12 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                         )
                       }
                     />
-                  </td>
-                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
+                  </td> */}
+                  <td className="whitespace-nowrap py-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
                     <Link
                       href={`/operations/policies/policy/${poliza.id}?show=true`}
                     >
-                      <div className="flex gap-2 hover:text-primary">
+                      <div className="flex gap-2 hover:text-primary pl-4">
                         {poliza.poliza}
                       </div>
                     </Link>
@@ -317,7 +327,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                     <p>{moment(poliza?.vigenciaHasta).format("DD/MM/yyyy")}</p>
                   </td>
                   <td className="whitespace-nowrap py-4 text-sm text-gray-400">
-                    <p>{`${poliza?.currency?.name ?? "$"} ${poliza?.importePagar?.toFixed(2) ?? "0.00"}`}</p>
+                    <p>{`${poliza?.currency?.symbol ?? "$"} ${poliza?.importePagar?.toFixed(2) ?? "0.00"}`}</p>
                   </td>
                   {base === 0 && (
                     <td className="whitespace-nowrap py-4 text-sm text-gray-400">
@@ -329,6 +339,18 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
           </tbody>
         </table>
       </div>
+      {data?.meta?.totalItems > 10 && (
+        <div className="pt-4">
+          <FooterTable
+            limit={limit}
+            setLimit={setLimit}
+            page={page}
+            setPage={setPage}
+            totalPages={data?.meta?.totalPages}
+            total={data?.meta?.totalItems ?? 0}
+          />
+        </div>
+      )}
     </div>
   );
 }

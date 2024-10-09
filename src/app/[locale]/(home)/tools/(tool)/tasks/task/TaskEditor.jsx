@@ -33,6 +33,7 @@ import {
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
+import useTasksContext from "@/src/context/tasks";
 
 const schemaInputs = yup.object().shape({
   name: yup.string().required(),
@@ -69,7 +70,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [listField, setListField] = useState([]);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { mutate: mutateTasks } = useTasks({});
+  const { mutate: mutateTasks } = useTasksContext({});
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
     participants:
@@ -189,7 +190,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
   }, [edit, t]);
 
   useEffect(() => {
-    setCheck("important", edit?.important ?? copy?.important ?? false);
+    setValue("important", edit?.important ?? copy?.important ?? false);
+    setCheck(edit?.important ?? copy?.important ?? false);
   }, [edit, copy]);
 
   const createTask = async (data, isNewTask) => {
@@ -213,7 +215,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       if (edit) {
         await putTaskId(edit.id, body);
         toast.success(t("tools:tasks:update-msg"));
-        mutate(`/tools/tasks/${edit.id}`);
+        mutate(`/tools/tasks/task/${edit.id}`);
         router.push("/tools/tasks?page=1");
       } else {
         await postTask(body);
@@ -730,7 +732,7 @@ const buildTaskBody = (
     responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
     createdById: session.user?.id,
     crm,
-    important: !!data.important,
+    important: !!data?.important,
   };
 
   if (data.createdBy?.length) {

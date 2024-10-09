@@ -1,4 +1,4 @@
-name: CI for PRs
+name: "CI for PRs"
 
 on:
   pull_request:
@@ -18,16 +18,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9 # Especificar la versión de pnpm
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
+          cache: pnpm # Usa el caché de pnpm para acelerar las instalaciones
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies with pnpm
+        run: pnpm install --shamefully-hoist # Instalación de dependencias con pnpm
 
-      - name: Build the application
-        run: npm run build
+      - name: Build the application with pnpm
+        run: pnpm build # Compila el proyecto usando pnpm
 
   merge:
     runs-on: ubuntu-latest

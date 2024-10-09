@@ -11,7 +11,7 @@ import { getCookie } from "cookies-next";
 import useAppContext from "../../../../../../../context/app";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-import axios from "axios";
+import axios from "@/src/lib/axios";
 import "./styles.css";
 
 export default function AddSignature({
@@ -55,12 +55,13 @@ export default function AddSignature({
       });
       if (isEdit) {
         newArray.forEach((element) => {
-          const foundItem = isEdit.metadata.senders.find((item) => item.email === element.email);
+          const foundItem = isEdit.metadata.senders.find(
+            (item) => item.email === element.email
+          );
           if (foundItem) {
             element.state = foundItem.state;
           }
         });
-        
       }
       setAllOauth(newArray);
     });
@@ -90,15 +91,9 @@ export default function AddSignature({
     formData.append("size", values);
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
+      const response = await axios({
+        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+      }).post(`/files/signatures`, formData);
       if (response) {
         back();
       }
@@ -116,15 +111,11 @@ export default function AddSignature({
     };
 
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${params.get("isEdit")}/metadata`,
-        {metadata},
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
+      const response = await axios({
+        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+      }).put(`/files/signatures/${params.get("isEdit")}/metadata`, {
+        metadata,
+      });
       if (response) {
         back();
       }
@@ -136,46 +127,22 @@ export default function AddSignature({
 
   const getSignatures = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
-      setSignatures(response.data[0]);
+      const response = await axios({
+        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+      }).get(`/files/signatures`);
+      setSignatures(response[0]);
     } catch (error) {}
   };
 
   const getSignature = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${params.get("isEdit")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
+      const response = await axios({
+        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+      }).get(`/files/signatures/${params.get("isEdit")}`);
       if (response) {
         setIsEdit(response.data);
         setValues([response.data.metadata.size]);
       }
-    } catch (error) {}
-  };
-
-  const deleteSignature = async (id) => {
-    try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
-      if (response) getSignatures();
     } catch (error) {}
   };
 

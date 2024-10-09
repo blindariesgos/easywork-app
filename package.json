@@ -42,6 +42,7 @@
     "pino": "^9.1.0",
     "qs": "^6.12.1",
     "react": "^18",
+    "react-beautiful-dnd": "^13.1.1",
     "react-datepicker": "^6.6.0",
     "react-dom": "^18",
     "react-hook-form": "^7.51.2",

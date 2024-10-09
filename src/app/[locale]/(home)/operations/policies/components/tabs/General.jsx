@@ -94,6 +94,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
     if (data?.contact?.address) setValue("address", data?.contact?.address);
     if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
+    if (data?.type?.id) setValue("typeId", data?.type?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -155,29 +156,57 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:address")}
+          <SelectInput
+            label={t("operations:policies:general:type")}
+            name="typeId"
+            options={lists?.policies?.polizaTypes ?? []}
+            disabled={!isEdit}
             register={register}
-            name="address"
-            disabled
+            setValue={setValue}
+            watch={watch}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:rfc")}
-            name="rfc"
-            disabled
-          />
+          {data?.type?.name === "GMM" && (
+            <SelectInput
+              label={t("operations:policies:general:coverage")}
+              options={[
+                {
+                  id: "Nacional",
+                  name: "Nacional",
+                },
+                {
+                  id: "Internacional",
+                  name: "Internacional",
+                },
+              ]}
+              name="cobertura"
+              register={register}
+              setValue={setValue}
+              disabled={!isEdit}
+              watch={watch}
+            />
+          )}
+
+          {data?.type?.name === "VIDA" && (
+            <SelectInput
+              label={t("operations:policies:general:subbranch")}
+              name="subramoId"
+              options={lists?.policies?.polizaSubRamo ?? []}
+              disabled={!isEdit}
+              register={register}
+              setValue={setValue}
+              watch={watch}
+            />
+          )}
           <SelectInput
             label={t("control:portafolio:receipt:details:form:status")}
             options={[
               {
                 id: "activa",
-                name: "Activa",
+                name: "Vigente",
               },
               {
                 id: "expirada",
-                name: "Expirada",
+                name: "No vigente",
               },
               {
                 id: "cancelada",
@@ -185,7 +214,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
               },
               {
                 id: "en_proceso",
-                name: "En proceso",
+                name: "En trámite",
               },
             ]}
             name="status"
@@ -194,15 +223,20 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             disabled={!isEdit}
             watch={watch}
           />
-          <SelectInput
-            label={t("operations:policies:general:subbranch")}
-            name="subramoId"
-            options={lists?.policies?.polizaSubRamo ?? []}
-            disabled={!isEdit}
-            register={register}
-            setValue={setValue}
-            watch={watch}
+          <TextInput
+            type="text"
+            label={t("operations:policies:general:rfc")}
+            name="rfc"
+            disabled
           />
+          <TextInput
+            type="text"
+            label={t("operations:policies:general:address")}
+            register={register}
+            name="address"
+            disabled
+          />
+
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {
               return (
@@ -237,24 +271,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             control={control}
             defaultValue=""
           />
-          <SelectInput
-            label={t("operations:policies:general:coverage")}
-            options={[
-              {
-                id: "Nacional",
-                name: "Nacional",
-              },
-              {
-                id: "Internacional",
-                name: "Internacional",
-              },
-            ]}
-            name="cobertura"
-            register={register}
-            setValue={setValue}
-            disabled={!isEdit}
-            watch={watch}
-          />
+
           <SelectInput
             label={t("operations:policies:general:payment-method")}
             name="formaCobroId"

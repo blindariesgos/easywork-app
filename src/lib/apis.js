@@ -46,28 +46,45 @@ export const getDataPassword = async (email) => {
   return response.data;
 };
 export const createContact = async (data) => {
-  const response = await axios("multipart/form-data").post(
-    "/sales/crm/contacts/new",
-    data,
-  );
-  // revalidatePath( '/sales/crm/contacts?page=1' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post("/sales/crm/contacts/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  // revalidatePath( '/sales/crm/leads' ); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
+export const createLead = async (data) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post("/sales/crm/leads/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
+
+  revalidatePath('/sales/crm/leads', "layout");
+  return response;
+};
+
+export const updateLead = async (data, id) => {
+  const response = await axios()
+    .put(`/sales/crm/leads/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updateContact = async (data, id) => {
-  const response = await axios().put(`/sales/crm/contacts/${id}`, data);
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/contacts/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const updatePhotoContact = async (photo, id) => {
-  const response = await axios("multipart/form-data").put(
-    `/sales/crm/contacts/${id}/photo`,
-    photo,
-  );
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/contacts/${id}/photo`, photo)
+    .catch((error) => ({ ...error, hasError: true }));
+
   return response;
 };
 
 export const getContacts = async (page = 1) => {
   const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`,
+    `/sales/crm/contacts?limit=6&page=${page}`
   );
   return response;
 };
@@ -81,15 +98,48 @@ export const getContactId = async (id) => {
   }
 };
 
+export const getPolicyById = async (id) => {
+  try {
+    const response = await axios().get(`/sales/crm/polizas/${id}`);
+    return response;
+  } catch (error) {
+    // throw new Error(error);
+  }
+};
+
 export const deleteContactId = async (id) => {
   // try {
   const response = await axios().delete(`/sales/crm/contacts/${id}`);
-  revalidatePath("/sales/crm/contacts", "page");
+  revalidatePath("/sales/crm/contacts", "layout");
+  return response;
+};
+
+export const deletePolicyById = async (id) => {
+  // try {
+  const response = await axios().delete(`/sales/crm/polizas/${id}`);
+  revalidatePath("/operations/policies", "layout");
+  return response;
+};
+
+export const deleteReceiptById = async (receiptId) => {
+  // try {
+  const response = await axios().delete(`/sales/crm/polizas/receipts/${receiptId}`);
+  revalidatePath("/control/portafolio/receipts", "page");
   return response;
 };
 
 export const getAddListContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/get_add_lists`);
+  return response;
+};
+
+export const getAddListLeads = async () => {
+  const response = await axios().get(`/sales/crm/leads/get_add_lists`);
+  return response;
+};
+
+export const getAddListPolicies = async () => {
+  const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
   return response;
 };
 
@@ -120,21 +170,20 @@ export const getFoldersSaved = async (data) => {
 
 export const getTasks = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`,
+    `/tools/tasks?limit=${limit}&page=${page}`
   );
   return response;
 };
 
 export const getTasksUser = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`,
+    `/tools/tasks/user?limit=${limit}&page=${page}`
   );
   return response;
 };
 
 export const deleteTask = async (id) => {
   const response = await axios().delete(`/tools/tasks/${id}`);
-  revalidatePath("/tools/tasks", "page");
   return response;
 };
 
@@ -150,21 +199,45 @@ export const postTask = async (body) => {
 };
 
 export const putTaskId = async (id, body) => {
+  console.log("Updating task");
   const response = await axios().put(`/tools/tasks/${id}`, body);
+  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks`, "layout");
+
+  return response;
+};
+
+export const putTaskIdRelations = async (taskId, body) => {
+  console.log("Updating task relations");
+  const response = await axios().put(`/tools/tasks/${taskId}/update_relations`, body);
   return response;
 };
 
 export const putTaskCompleted = async (id) => {
   const response = await axios().put(`/tools/tasks/${id}/complete`);
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  return response;
+};
+
+export const putTaskRestart = async (id) => {
+  const response = await axios().put(`/tools/tasks/${id}/continue`);
   return response;
 };
 
 export const postComment = async (body, id) => {
-  console.log("### POSTING COMMENT", body, id);
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;
 };
+
+export const putLeadStage = async (leadId, stageId) => {
+  const response = await axios().put(`/sales/crm/leads/${leadId}/stage/${stageId}`).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const putLeadCancelled = async (leadId, body) => {
+  const response = await axios().put(`/sales/crm/leads/${leadId}/cancel`, body).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
 export const deleteComment = async (commentId, id) => {
   const response = await axios().delete(`/tools/tasks/comments/${commentId}`);
   revalidatePath(`/tools/tasks/task/${id}`, "page");
@@ -175,7 +248,7 @@ export const putComment = async (commentId, body, id) => {
   console.log("Actualizando comentario", commentId, body, id);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
-    body,
+    body
   );
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
@@ -191,10 +264,21 @@ export const getTags = async () => {
   return response;
 };
 
+export const postSubAgent = async (body) => {
+  const response = await axios().put(`/sales/crm/polizas/receipts/sub-agents`, body).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const deleteSubAgent = async (subAgentId) => {
+  const response = await axios().delete(`/sales/crm/polizas/receipts/sub-agents/${subAgentId}`);
+  return response;
+};
+
 export const postTags = async (body) => {
   const response = await axios().post(`/tools/tags`, body);
   return response;
 };
+
 export const putTags = async (body) => {
   const response = await axios().put(`/tools/tags/${id}`, body);
   return response;
@@ -210,12 +294,26 @@ export const getPolizaByContact = async (id) => {
   return response;
 };
 
+export const putPoliza = async (policyId, body) => {
+  const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
+
+  revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
+
+  return response;
+};
+
+export const putReceipt = async (receiptId, body) => {
+  const response = await axios().put(`/sales/crm/polizas/receipts/${receiptId}`, body).catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`,
+    `/sales/crm/leads?limit=${limit}&page=${page}`
   );
   return response;
 };
+
 export const getLeadById = async (id) => {
   const response = await axios().get(`/sales/crm/leads/${id}`);
   return response;
@@ -252,17 +350,105 @@ export const googleCallback = async (data, state) => {
   return response;
 };
 
-export const getTokenGoogle = async (id) => {
-  const response = await axios().get(`/oauth/${id}`);
+export const createEmailConfig = async (data) => {
+  const response = await axios().post(`/oauth/emailconfig`, data);
   return response;
 };
 
-export const deleteTokenGoogle = async (id) => {
-  const response = await axios().delete(`/oauth/${id}`);
+export const getEmailConfig = async (email) => {
+  const response = await axios().get(`/oauth/emailconfig/${email}`);
+  return response;
+};
+
+export const updateEmailConfig = async (data) => {
+  const response = await axios().put(`/oauth/emailconfig`, data);
+  return response;
+};
+
+export const getTokenGoogle = async (userId, oauthId) => {
+  const response = await axios().get(`/oauth/config/${userId}/${oauthId}`);
+  return response;
+};
+
+export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
+  const response = await axios().delete(
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
+  );
   return response;
 };
 
 export const deleteFoldersMail = async (id) => {
   const response = await axios().delete(`/imap-config/folder/${id}`);
+  return response;
+};
+
+export const postFilter = async (body) => {
+  const response = await axios().post(`/easyapp/filter`, body);
+  return response;
+};
+
+export const deleteFilter = async (idFilter) => {
+  const response = await axios().delete(`/easyapp/filter/${idFilter}`);
+  return response;
+};
+
+export const getFilters = async (idUser) => {
+  const response = await axios().get(`/easyapp/filter/${idUser}`);
+  return response;
+};
+
+export const getMails = async (idUser, page, perPage, folder, oauthId) => {
+  const response = await axios().get(
+    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`
+  );
+  return response;
+};
+
+export const getAllOauth = async (idUser) => {
+  const response = await axios().get(`/oauth/all/${idUser}`);
+  return response;
+};
+
+export const deleteMails = async (idUser) => {
+  const response = await axios().delete(`/oauth/email/delete${idUser}`);
+  return response;
+};
+
+export const updateLabelId = async (usergoogle_id, newLabelId) => {
+  const response = await axios().put(`/oauth/labelId`, {
+    usergoogle_id,
+    newLabelId,
+  });
+  return response;
+};
+
+export const addContactComment = async (body, crmType = "contacts") => {
+  const response = await axios().post(`/sales/crm/${crmType}/comments`, body);
+  return response;
+};
+
+export const getAllRoles = async () => {
+  const response = await axios().get(`/roles`);
+  return response;
+};
+
+export const updateUser = async (id, body) => {
+  const response = await axios()
+    .put(`/users/${id}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addCalendarEvent = async (body) => {
+  const response = await axios()
+    .post(`/calendar/events`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const updateCalendarEvent = async (body, eventId) => {
+  const response = await axios()
+    .put(`/calendar/events/${eventId}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

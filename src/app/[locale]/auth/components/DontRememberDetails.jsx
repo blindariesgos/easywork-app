@@ -65,20 +65,22 @@ export default function DontRememberDetails() {
             {/* <UserIcon className="h-5 w-5 text-easywork-main" /> */}
           </button>
         </span>
-        <div className="flex justify-between">
-          <button
-            onClick={() => handleModeChange("email")}
-            className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md"
-          >
-            Usar correo
-          </button>
-          <button
-            onClick={() => handleModeChange("cellphone")}
-            className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md ml-3"
-          >
-            Usar teléfono
-          </button>
-        </div>
+        {!mode && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => handleModeChange("email")}
+              className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-2 w-32 rounded-md"
+            >
+              Usar correo
+            </button>
+            <button
+              onClick={() => handleModeChange("cellphone")}
+              className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-2 w-32 rounded-md ml-3"
+            >
+              Usar teléfono
+            </button>
+          </div>
+        )}
         {mode === "email" && (
           <div className="relative text-gray-600 focus-within:text-gray-400 mt-2">
             <span className="absolute inset-y-0 left-0 flex items-center pl-2 top-2">
@@ -101,6 +103,7 @@ export default function DontRememberDetails() {
             <IntlTelInput
               containerClassName="intl-tel-input"
               inputClassName="form-control"
+              preferredCountries={['mx']}
               value={inputValue}
               onPhoneNumberChange={(
                 _isValid,
@@ -116,20 +119,25 @@ export default function DontRememberDetails() {
         )}
       </div>
       {/* Video guia */}
-      <div className="mt-4 w-full flex justify-evenly">
+      <div className="mt-4 w-full flex justify-center">
         <button
-          onClick={handleSendOtp}
-          disabled={isLoading}
-          className="hover:bg-easywork-mainhover bg-easywork-main text-white font-bold py-2 px-4 rounded-md"
-        >
-          {isLoading ? "Enviando..." : "Aceptar"}
-        </button>
-        <button
-          onClick={() => setContextData(0)}
-          className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
+          onClick={() => {
+            setContextData(0);
+            setMode(null);
+          }}
+          className="hover:bg-gray-800 bg-gray-700 w-28 text-white font-bold py-2 px-4 rounded-md"
         >
           Cancelar
         </button>
+        {mode && (
+          <button
+            onClick={handleSendOtp}
+            disabled={isLoading}
+            className="hover:bg-easywork-mainhover w-28 bg-easywork-main text-white font-bold py-2 px-4 rounded-md ml-3"
+          >
+            {isLoading ? "Enviando..." : "Aceptar"}
+          </button>
+        )}
       </div>
       {error && <div className="mt-2 text-red-600">{error}</div>}
     </div>

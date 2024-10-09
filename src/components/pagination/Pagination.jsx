@@ -5,8 +5,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export const Pagination = ({ totalPages, bgColor }) => {
-	const [ Pagination, setPagination ] = useState([]);
+export const Pagination = ({ totalPages }) => {
+	const [Pagination, setPagination] = useState([]);
 	const searchParams = useSearchParams();
 	const params = new URLSearchParams(searchParams);
 	const pathname = usePathname();
@@ -17,41 +17,51 @@ export const Pagination = ({ totalPages, bgColor }) => {
 			const params = new URLSearchParams(searchParams);
 			const CreatePagination = () => {
 				const pagination = [];
-				const totalPagesPages = Number(totalPages);
-				for (let i = 0; i < totalPagesPages; i++) {
-					i <= 4 && pagination.push(getPages(i + 1));
+				const total = Number(totalPages);
+				if (Number(params.get('page')) > 5 && total > 6 && Number(params.get('page')) < total) {
+					pagination.push(getPages(1))
+					pagination.push(<div>...</div>)
+					const numberPage = Number(params.get('page')) - 1;
+					for (let i = numberPage; i < (numberPage + 3); i++) {
+						pagination.push(getPages(i));
+					}
+				} else {
+					for (let i = 0; i < total; i++) {
+						i <= 4 && pagination.push(getPages(i + 1));
+					}
 				}
-				if (totalPagesPages > 4) pagination.push(<div>....</div>);
-				if (totalPagesPages > 5) pagination.push(getPages(totalPagesPages));
+
+				if (total > 4) pagination.push(<div>...</div>);
+				if (total > 5) pagination.push(getPages(total));
 				setPagination(pagination);
 			};
-			
+
 			const getPages = (i) => {
 				return (
 					<div
 						key={i}
 						className={clsx(
 							'px-2 cursor-pointer font-medium text-xs flex items-center justify-center rounded-full w-6 h-6',
-								Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
+							Number(params.get('page')) === i ? ' bg-primary text-white ' : 'text-black bg-gray-200'
 						)}
-						onClick={() => {handlePathnamePage(i)}}
+						onClick={() => { handlePathnamePage(i) }}
 					>
 						{i}
 					</div>
 				);
 			};
 			const handlePathnamePage = (page) => {
-				params.set('page', page); 
+				params.set('page', page);
 				replace(`${pathname}?${params.toString()}`);
 			}
-		
+
 			CreatePagination();
 		},
-		[ totalPages, pathname, replace, searchParams]
+		[totalPages, pathname, replace, searchParams]
 	);
 
 	const handlePathname = (page) => {
-		params.set('page', page); 
+		params.set('page', page);
 		replace(`${pathname}?${params.toString()}`);
 	}
 
@@ -62,7 +72,7 @@ export const Pagination = ({ totalPages, bgColor }) => {
 		<div>
 			{totalPagesPag >= 1 && (
 				<div className="items-center w-fit">
-					<div className={`flex flex-row justify-start p-2 border-none rounded-md gap-x-2 ${bgColor || "bg-white"}`}>
+					<div className={`flex flex-row justify-start p-2 border-none rounded-md gap-x-2`}>
 						<div
 							className={clsx(
 								'h-8 w-7 flex justify-center items-center rounded-md text-white cursor-pointer',

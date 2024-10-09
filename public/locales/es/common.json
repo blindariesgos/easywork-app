@@ -1,5 +1,8 @@
 {
+  "yes": "Si",
+  "no": "No",
   "loading": "Cargando...",
+  "saving": "Guardando...",
   "save": "¡Salvado con éxito!",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",
@@ -68,11 +71,14 @@
     "change": "Cambiar"
   },
   "menu": {
+    "home": {
+      "name": "Home"
+    },
     "tools": {
       "name": "Herramientas",
-      "drive": "Drive -  Documentos",
+      "drive": "Documentos",
       "tasks": "Tareas",
-      "email": "Correo",
+      "email": "Buzón de correo",
       "calendar": "Calendario"
     },
     "sales": {
@@ -90,10 +96,18 @@
         "agent": "Rendimiento de agente"
       },
       "marketing": {
-        "name": "Marketing"
-      },
-      "control": {
-        "name": "Cobranza"
+        "name": "MARKETING"
+      }
+    },
+    "control": {
+      "name": "Cobranza",
+      "portfolio": {
+        "name": "Control de Cartera",
+        "control": "Reporte de Cobranza",
+        "receipts": "Recibos",
+        "commissions": "Comisiones",
+        "commission-simulator": "Simulador de Comisiones",
+        "commissions-generated": "Comisiones Generadas"
       }
     },
     "services": {
@@ -107,28 +121,40 @@
     },
     "agent-management": {
       "name": "Gestión de agentes",
-      "recruitement": "Reclutamiento y selección",
+      "learning": "E-Learning (Próximamente)",
+      "accompaniment": "Seguimiento",
+      "commissions": "Comisiones",
+      "recruitement": "Embudo de reclutamiento y selección",
       "capacitations": "Capacitaciones",
       "conections": "Conexiones",
-      "development-agents": "Desarrollo de agentes",
-      "learning": "E-Learning (Próximamente)"
+      "development-agents": "Embudo de desarrollo de agentes",
+      "team-meetings": "Juntas de equipo",
+      "individual-meetings": "Juntas individuales"
     },
     "companies": {
       "name": "Compañías",
       "gnp": "GNP (Próximamente)",
-      "axxa": "AXXA (Próximamente)",
+      "axa": "AXA (Próximamente)",
       "banorte": "Banorte (Próximamente)",
       "atlas": "Atlas (Próximamente)",
       "zurich": "Zurich (Próximamente)",
       "qualitas": "Qualitas (Próximamente)",
       "afirme": "Afirme (Próximamente)",
-      "others": "Otras (Próximamente)"
+      "others": "Otras (Próximamente)",
+      "insurance": "Aseguradoras",
+      "agency-addresses": "Direcciones de Agencia"
     },
     "settings": {
       "name": "Ajustes y Configuraciones",
       "permissions": "Permisos y accesos a usuarios",
       "others": "Otros",
-      "password": "Cambio de contraseña"
+      "password": "Cambio de contraseña",
+      "invite": "Invitar usuario",
+      "user-list": "Lista de usuarios",
+      "other-notifications": "Otras notificaciones",
+      "suscripciones": "Suscripciones",
+      "other-settings": "Ajustes",
+      "change-password": "Cambio de contraseña"
     }
   },
   "header": {
@@ -151,7 +177,20 @@
       "add-observer": "Agregar observador",
       "add-participant": "Agregar participante",
       "change-observer": "Cambiar observador",
-      "change-participant": "Cambiar participante"
+      "change-creator": "Cambiar creador",
+      "change-participant": "Cambiar participante",
+      "change-deadline": "Cambiar fecha limite",
+      "change-responsible": "Cambiar responsable",
+      "change-status": "Cambiar estatus"
+    },
+    "footer": {
+      "elements": "Se muestran los elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> | Total elementos <strong>{{total}}</strong>",
+      "show": "Mostrar:"
     }
+  },
+  "alert": {
+    "delete-success": "Elemento(s) eliminado(s) exitosamente!",
+    "update-items-succes": "Se Actualizo con exito {{count}} elemento(s) de {{total}} seleccionado(s)",
+    "update-items-error": "Ocurrio un error al tratar de eliminar {{count}} elemento(s)"
   }
 }

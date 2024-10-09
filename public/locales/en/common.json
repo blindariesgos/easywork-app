@@ -1,91 +1,173 @@
 {
-    "loading": "Loading...",
-    "save": "Successfully saved!",
-    "link": "Anyone with a link can now view this file.",
-    "buttons": {
-        "saving": "Saving...",
-        "cancel": "Cancel",
-        "save": "Save",
-        "uploading": "Uploading...",
-        "upload": "Upload",
-        "edit": "Edit",
-        "delete": "Delete",
-        "close": "Close"
+  "loading": "Loading...",
+  "saving": "Saving...",
+  "save": "Successfully saved!",
+  "link": "Anyone with a link can now view this file.",
+  "error-loading": "Error loading requested resource",
+  "select": "Select",
+  "not-found": "No results found",
+  "time": "Hour",
+  "search": "Search",
+  "validations": {
+    "required": "The field is required",
+    "min": "The field must have at least {{min}} characters",
+    "email": "It must be a valid email",
+    "file": "You must upload the documents",
+    "size": "The file is larger than {{size}} M.B.",
+    "min-array": "You must at least select {{min}} option(s)",
+    "number": "It must be a number"
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
+  },
+  "date": {
+    "yesterday": "Yesterday",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "currentQuarter": "Current quarter",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last60Days": "Last 60 days",
+    "last90Days": "Last 90 days",
+    "lastNDays": "Last N days",
+    "nextNDays": "Next N days",
+    "month": "Month",
+    "quarter": "Quarter",
+    "year": "Year",
+    "exactDate": "Exact date",
+    "lastWeek": "Last week",
+    "lastMonth": "Last month",
+    "dateRange": "Date range",
+    "nextWeek": "Next week",
+    "nextMonth": "Next month"
+  },
+  "buttons": {
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "save": "Keep",
+    "uploading": "Going up...",
+    "upload": "Increase",
+    "edit": "Edit",
+    "delete": "Eliminate",
+    "close": "Close",
+    "apply": "Apply",
+    "continue": "Continue",
+    "add": "Add",
+    "change": "Change"
+  },
+  "menu": {
+    "home": {
+      "name": "home"
     },
-    "menu": {
-        "tools": {
-            "name": "Tools",
-            "drive": "Drive - Documents",
-            "tasks": "Tasks",
-            "email": "Email",
-            "calendar": "Calendar"
-        },
-        "sales": {
-            "name": "Sales",
-            "crm": {
-                "name": "CRM",
-                "contacts": "Contacts",
-                "prospects": "Prospects"
-            },
-            "reports": {
-                "name": "Reports",
-                "activities": "Activities",
-                "history": "History",
-                "reports": "Reports",
-                "agent": "Agent Performance"
-            },
-            "marketing": {
-                "name": "Marketing"
-            },
-            "control": {
-                "name": "Portfolio Control"
-            }
-        },
-        "services": {
-            "name": "Services",
-            "automations": "Automations",
-            "funnels": "Funnels",
-            "soport": "Customer Support - Chats",
-            "trash": "Trash",
-            "logs": "Logs",
-            "academy": "Academy"
-        },
-        "agent-management": {
-            "name": "Agent Management",
-            "recruitement": "Recruitment and Selection",
-            "capacitations": "Trainings",
-            "conections": "Connections",
-            "development-agents": "Agent Development",
-            "learning": "E-Learning (Coming Soon)"
-        },
-        "companies": {
-            "name": "Companies",
-            "gnp": "GNP (Coming Soon)",
-            "axxa": "AXXA (Coming Soon)",
-            "banorte": "Banorte (Coming Soon)",
-            "atlas": "Atlas (Coming Soon)",
-            "zurich": "Zurich (Coming Soon)",
-            "qualitas": "Qualitas (Coming Soon)",
-            "afirme": "Afirme (Coming Soon)",
-            "others": "Others (Coming Soon)"
-        },
-        "settings": {
-            "name": "Settings and Configurations",
-            "permissions": "User Permissions and Access",
-            "others": "Others",
-            "password": "Change Password"
-        }
+    "tools": {
+      "name": "Tools",
+      "drive": "Drive - Documents",
+      "tasks": "Tasks",
+      "email": "Mail",
+      "calendar": "Calendar"
     },
-    "header": {
-        "working": "Working",
-        "profile": "Your Profile",
-        "signout": "Sign Out",
-        "placeholder-search": "Search people, documents, and more"
+    "sales": {
+      "name": "Sales",
+      "crm": {
+        "name": "CRM",
+        "contacts": "Contacts",
+        "prospects": "Prospects"
+      },
+      "reports": {
+        "name": "Reports",
+        "activities": "Activities",
+        "history": "Record",
+        "reports": "Reports",
+        "agent": "Agent performance"
+      },
+      "marketing": {
+        "name": "MARKETING"
+      },
+      "control": {
+        "name": "Collection"
+      }
     },
-    "file": {
-        "pdf": "Attached PDF:",
-        "attach": "Attach your document in PDF",
-        "convert": "Convert to image",
-        "generated": "Generated Image"
+    "services": {
+      "name": "Services",
+      "automations": "Automations",
+      "funnels": "Funnels",
+      "soport": "Customer support - chats",
+      "trash": "Paper bin",
+      "logs": "Logs",
+      "academy": "Academy"
+    },
+    "agent-management": {
+      "name": "Agent management",
+      "learning": "E-Learning (Coming soon)",
+      "accompaniment": "Accompaniment",
+      "commissions": "Commissions",
+      "recruitement": "Funnel of Recruitment and selection",
+      "capacitations": "Trainings",
+      "conections": "Connections",
+      "development-agents": "Funnel of Agent development",
+      "team-meetings": "Team meetings",
+      "individual-meetings": "Individual meetings"
+    },
+    "companies": {
+      "name": "Companies",
+      "gnp": "GNP (Coming soon)",
+      "axa": "AXA (Coming soon)",
+      "banorte": "Banorte (Coming soon)",
+      "atlas": "Atlas (Coming soon)",
+      "zurich": "Zurich (Coming soon)",
+      "qualitas": "Qualitas (Coming soon)",
+      "afirme": "Affirm (Coming soon)",
+      "others": "Others (Coming soon)",
+      "insurance": "Insurance",
+      "agency-addresses": "Agency Addresses"
+    },
+    "settings": {
+      "name": "Settings and Configurations",
+      "permissions": "Permissions and access to users",
+      "others": "Others",
+      "password": "Change of password",
+      "invite": "Invite user",
+      "user-list": "List of users",
+      "other-notifications": "Other notifications",
+      "subscriptions": "Subscriptions",
+      "other-settings": "Settings",
+      "change-password": "Change password"
     }
+  },
+  "header": {
+    "working": "Working",
+    "profile": "Your profile",
+    "signout": "Sign off",
+    "placeholder-search": "Search people, documents and more"
+  },
+  "file": {
+    "pdf": "Attached PDF:",
+    "attach": "Attach your document in PDF",
+    "convert": "Convert to image",
+    "generated": "Generated image"
+  },
+  "table": {
+    "checkbox": {
+      "msg-delete": "Are you sure you want to continue?",
+      "complete": "To complete",
+      "delete": "Eliminate",
+      "add-observer": "Add observer",
+      "add-participant": "Add participant",
+      "change-observer": "Change observer",
+      "change-participant": "Change participant"
+    }
+  }
 }

@@ -1,6 +1,11 @@
 "use client";
 import { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -19,11 +24,23 @@ export default function SlideOver({
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
+  const [taskId, setTaskId] = useState(null);
+  const [contactId, setContactId] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-
   // Nuevo estado para controlar la transición
   const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (params.get("prev") === "task") {
+      setTaskId(params.get("prev_id"));
+    } else if (params.get("prev") === "contact") {
+      setContactId(params.get("prev_id"));
+    } else if (params.get("prev") === "tasks") {
+      setPreviousPage("tasks");
+    }
+  }, [params]);
 
   useEffect(() => {
     // Parsear el valor de `show` del parámetro de consulta
@@ -108,15 +125,33 @@ export default function SlideOver({
   };
 
   return (
-    <Transition.Root show={show} as={Fragment} afterLeave={() => {
-      router.replace(`${samePage}`, undefined, { shallow: true });
-    }}>
-      <Dialog as="div" className="relative z-50" onClose={() => { }}>
+    <Transition
+      show={show}
+      as={Fragment}
+      afterLeave={() => {
+        router.back();
+        // if (taskId) {
+        //   router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
+        //   return;
+        // } else if (contactId) {
+        //   router.replace(`/sales/crm/contacts/contact/${contactId}?show=true`, undefined, { shallow: true });
+        //   return;
+        // }
+
+        // if (previousPage === "tasks") {
+        //   router.replace(`/tools/tasks`, undefined, { shallow: true });
+        //   return;
+        // }
+
+        // router.replace(`${samePage}`, undefined, { shallow: true });
+      }}
+    >
+      <Dialog as="div" className="relative z-[10000]" onClose={() => {}}>
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
-              <Transition.Child
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-6 2xl:pl-52">
+              <TransitionChild
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
                 enterFrom="translate-x-full"
@@ -125,7 +160,7 @@ export default function SlideOver({
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel
+                <DialogPanel
                   className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
                 >
                   <div className="flex justify-end h-screen">
@@ -146,12 +181,12 @@ export default function SlideOver({
                     </div>
                     {children}
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                </DialogPanel>
+              </TransitionChild>
             </div>
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition>
   );
 }

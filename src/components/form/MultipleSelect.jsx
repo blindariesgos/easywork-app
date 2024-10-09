@@ -8,13 +8,30 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import TextInput from "./TextInput";
 
+const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
+  if (tagLabel)
+    return onlyOne
+      ? itemsLength > 0
+        ? t("common:buttons:change")
+        : tagLabel
+      : tagLabel;
+
+  return onlyOne
+    ? itemsLength > 0
+      ? t("common:buttons:change")
+      : t("common:buttons:add")
+    : t("common:buttons:add");
+};
+
 const MultipleSelect = ({
   options,
   getValues,
   setValue,
   name,
   label,
+  disabled,
   error,
+  tagLabel,
   onlyOne,
 }) => {
   const { t } = useTranslation();
@@ -31,9 +48,11 @@ const MultipleSelect = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (!dropdownRef) return;
+
+    document?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -75,14 +94,15 @@ const MultipleSelect = ({
         });
 
   return (
-    <div>
-      <label className="text-sm font-medium leading-6 text-gray-900">
+    <div className="w-full">
+      <label className="text-sm font-medium leading-6 text-gray-900  px-3">
         {label}
       </label>
-      <div className="relative mt-1">
+      <div className="relative">
         <button
           type="button"
           onClick={handleToggle}
+          disabled={disabled}
           className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
@@ -90,21 +110,22 @@ const MultipleSelect = ({
               getValues(name).map((res) => (
                 <div
                   key={res.id}
-                  className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
+                  className="bg-primary p-1 rounded-sm text-white flex gap-1 items-center text-xs"
                 >
                   {res.name || res.username}
-                  <button
-                    type="button"
+                  <div
                     onClick={() => handleRemove(res.id)}
-                    className="text-white"
+                    className="text-white cursor-pointer"
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
-                  </button>
+                  </div>
                 </div>
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
               <PlusIcon className="h-3 w-3" />
-              <p className="text-xs">{onlyOne ? t("common:buttons:change") : t("common:buttons:add")}</p>
+              <p className="text-xs hover:text-primary/80">
+                {getTextLabel(tagLabel, onlyOne, getValues(name)?.length, t)}
+              </p>
             </div>
           </span>
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
@@ -112,13 +133,17 @@ const MultipleSelect = ({
           </span>
         </button>
         {isOpen && (
-          <div ref={dropdownRef} className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div
+            ref={dropdownRef}
+            className="absolute bottom-10 left-0 mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+          >
             <div
-              className="py-1 flex flex-col gap-2 px-2"
+              className="py-1 flex flex-col gap-2 px-2 max-h-60 overflow-y-auto"
               aria-labelledby="options-menu"
             >
-              <div className="w-full mt-2">
+              <div className="w-full">
                 <TextInput
+                  placeholder="Buscar"
                   onChangeCustom={(e) => setQuery(e.target.value)}
                   border
                 />
@@ -132,7 +157,7 @@ const MultipleSelect = ({
                 filterData.map((option) => (
                   <div
                     key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
+                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
                       getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
                         ? "bg-primary"

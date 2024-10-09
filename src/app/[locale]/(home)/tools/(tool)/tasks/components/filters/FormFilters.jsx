@@ -5,90 +5,84 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import {
-  useCommon,
-  useTasksConfigs,
-} from "../../../../../../../../hooks/useCommon";
 import SelectInput from "../../../../../../../../components/form/SelectInput";
 import TextInput from "../../../../../../../../components/form/TextInput";
+import InputDate from "../../../../../../../../components/form/InputDate";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from "./AddFields";
 import MultipleSelect from "../../../../../../../../components/form/MultipleSelect";
-import InputDateFilter from "./InputDateFilter";
 import SelectDropdown from "../../../../../../../../components/form/SelectDropdown";
 import useAppContext from "../../../../../../../../context/app";
-
-const contactSources = [
-  { id: 1, name: "Correo electrónico" },
-  { id: 2, name: "Maratón de llamadas" },
-  { id: 3, name: "Formulario de CRM" },
-  { id: 4, name: "Formulario de devolución de llamada" },
-  { id: 5, name: "Gestión del agente" },
-  { id: 6, name: "Red social - LinkedIn" },
-  { id: 7, name: "Red social - Instagram" },
-  { id: 8, name: "Red social - Facebook" },
-  { id: 9, name: "Red social - Otra" },
-  { id: 10, name: "Otro CRM" },
-  { id: 11, name: "Página de ventas" },
-  { id: 12, name: "Teléfono" },
-  { id: 13, name: "WhatsApp" },
-];
+import MultiSelectTags from "../MultiSelectTags";
+import useTasksContext from "@/src/context/tasks";
+import { formatDate } from "@/src/utils/getFormatDate";
 
 const FormFilters = () => {
   const { t } = useTranslation();
-  const { statusLead, stagesLead } = useCommon();
-  const { lists } = useAppContext();
-  const { status } = useTasksConfigs();
-
+  const { setFilters, filters, filterFields, setDisplayFilters } =
+    useTasksContext();
   const schema = yup.object().shape({
-    role: yup.string(),
-    // status: yup.array().min(1, t('common:validations:min-array', { min: 1 })),
-    status: yup.array(),
-    responsible: yup.string(),
-    limitDate: yup.object(),
-    newDate: yup.string(),
-    createdThe: yup.object(),
-    newDate1: yup.string(),
-    createdBy: yup.string(),
-    closedThe: yup.object(),
-    newDate2: yup.string(),
-    labels: yup.array(),
     fields: yup.array().of(yup.object().shape()),
   });
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [dateRangeThe, setDateRangeThe] = useState([null, null]);
-  const [dateRangeClosedThe, setDateRangeClosedThe] = useState([null, null]);
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    getValues,
-    watch,
-    formState: { isValid, errors },
-  } = useForm({
-    defaultValues: {
-      range: [null, null],
-      fields: [
-        {
-          id: 1,
-          name: t("tools:tasks:filters:fields:role"),
-          options: [],
-          type: "select",
-          check: false,
-          code: "role",
-        },
-      ],
-    },
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
+
+  const { register, handleSubmit, control, reset, setValue, getValues, watch } =
+    useForm({
+      defaultValues: {
+        fields: [
+          {
+            id: 1,
+            name: t("tools:tasks:filters:fields:role"),
+            options: [
+              {
+                name: "Participante",
+                value: "participants",
+                id: 1,
+              },
+              {
+                name: "Creador",
+                value: "createdBy",
+                id: 2,
+              },
+              {
+                name: "Responsable",
+                value: "responsible",
+                id: 3,
+              },
+              {
+                value: "observers",
+                name: "Observador",
+                id: 4,
+              },
+            ],
+            type: "select",
+            check: false,
+            code: "role",
+          },
+        ],
+      },
+      mode: "onChange",
+      resolver: yupResolver(schema),
+    });
 
   const handleFormFilters = (data) => {
-    console.log("data", data);
+    if (data.fields.length == 0) return;
+    const newFilters = data.fields
+      .filter((field) => field.value)
+      .reduce((acc, field) => {
+        let value = field.value;
+
+        if (field.type == "date") {
+          value = formatDate(field.value, "yyyy-MM-dd");
+        }
+
+        return {
+          ...acc,
+          [field.code]: value,
+        };
+      }, {});
+    setDisplayFilters(data.fields.filter((field) => field.value));
+    setFilters(newFilters);
   };
 
   useEffect(() => {
@@ -100,9 +94,29 @@ const FormFilters = () => {
     name: "fields",
   });
 
+  useEffect(() => {
+    Object.keys(filters).length > 0 &&
+      Object.keys(filters)
+        .filter((key) => filters[key] !== "")
+        .forEach((key) => {
+          const index = fields.findIndex((x) => x.code == key);
+          const filterField = filterFields.find((field) => field.code == key);
+          const value = filters[key];
+
+          if (index == -1) {
+            append({
+              ...filterField,
+              value: value,
+            });
+          } else {
+            setValue(`fields[${index}].value`, value);
+          }
+        });
+  }, [filters]);
+
   return (
     <form onSubmit={handleSubmit(handleFormFilters)}>
-      <div className="h-[325px] overflow-y-auto ">
+      <div className="h-[325px] overflow-y-auto">
         <div className="grid grid-cols-1 gap-2 sm:w-96 w-72 px-2 mb-4">
           {fields.map((dataField, index) => {
             return (
@@ -123,6 +137,7 @@ const FormFilters = () => {
                     options={dataField.options}
                     register={register}
                     setValue={setValue}
+                    watch={watch}
                   />
                 )}
                 {dataField.type === "dropdown" && (
@@ -131,31 +146,24 @@ const FormFilters = () => {
                     name={`fields[${index}].value`}
                     options={dataField.options}
                     setValue={setValue}
+                    watch={watch}
                   />
                 )}
                 {dataField.type === "date" && (
-                  <InputDateFilter
-                    {...dataField}
-                    label={dataField.name}
-                    watch={watch}
-                    setValue={setValue}
-                    register={register}
-                    nameDate={`fields[${index}].newValue`}
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={dataField.name}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                        />
+                      );
+                    }}
                     name={`fields[${index}].value`}
-                    dateRange={
-                      dataField.state === 1
-                        ? dateRange
-                        : dataField.state === 2
-                        ? dateRangeThe
-                        : dateRangeClosedThe
-                    }
-                    setDateRange={
-                      dataField.state === 1
-                        ? setDateRange
-                        : dataField.state === 2
-                        ? setDateRangeThe
-                        : setDateRangeClosedThe
-                    }
+                    control={control}
+                    defaultValue=""
                   />
                 )}
                 {dataField.type === "multipleSelect" && (
@@ -175,12 +183,28 @@ const FormFilters = () => {
                     )}
                   />
                 )}
+                {dataField.type === "tags" && (
+                  <Controller
+                    name={`fields[${index}].value`}
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <MultiSelectTags
+                        {...field}
+                        getValues={getValues}
+                        setValue={setValue}
+                        name={`fields[${index}].value`}
+                        label={dataField.name}
+                      />
+                    )}
+                  />
+                )}
               </div>
             );
           })}
         </div>
       </div>
-      <div className="my-2 flex gap-2 items-center">
+      <div className="my-2 flex gap-2 items-center flex-wrap">
         <AddFields append={append} remove={remove} fields={fields} />
         <Button
           type="button"
@@ -209,6 +233,8 @@ const FormFilters = () => {
           onclick={() => {
             setValue("fields", []);
             reset();
+            setFilters({});
+            setDisplayFilters({});
           }}
         />
       </div>

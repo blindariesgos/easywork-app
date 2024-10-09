@@ -4,14 +4,15 @@ import { auth } from "../../auth";
 import { updateSession, clearSession } from "./session";
 import { refreshAuthToken } from "./helpers/refresh_auth_token";
 import { getLogger } from "@/src/utils/logger";
+import { logout } from "./api/hooks/auths";
 
 const logger = getLogger("axios");
 
-const createAxiosInstance = (contentType = "application/json") => {
+const createAxiosInstance = (props) => {
   const axiosInstance = axios.create({
-    baseURL: process.env.API_HOST,
+    baseURL: props?.baseURL ? props?.baseURL : process.env.API_HOST,
     headers: {
-      "Content-Type": contentType,
+      "Content-Type": props?.contentType ? props?.contentType : "application/json",
     },
   });
 
@@ -27,7 +28,10 @@ const createAxiosInstance = (contentType = "application/json") => {
         return Promise.reject(error);
       }
     },
-    (error) => Promise.reject(error)
+    (error) => {
+
+      return Promise.reject(error)
+    },
   );
 
   axiosInstance.interceptors.response.use(
@@ -35,7 +39,7 @@ const createAxiosInstance = (contentType = "application/json") => {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if ((error.response?.status === 403 || error.response?.status === 401) && !originalRequest._retry) {
         originalRequest._retry = true;
 
         try {
@@ -43,6 +47,8 @@ const createAxiosInstance = (contentType = "application/json") => {
           const updatedAuthToken = await refreshAuthToken();
 
           if (!updatedAuthToken) {
+            await clearSession();
+            await logout()
             throw new Error("Failed to refresh auth token");
           }
 
@@ -54,12 +60,13 @@ const createAxiosInstance = (contentType = "application/json") => {
         } catch (tokenError) {
           console.log("@@@@ Cerrando sesion");
           await clearSession();
+          await logout()
           throw tokenError;
         }
       }
 
       return Promise.reject(error.response?.data || "Unknown Error");
-    }
+    },
   );
 
   return axiosInstance;

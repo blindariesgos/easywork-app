@@ -1,22 +1,52 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Header from "../../../../components/header/Header";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { getCookie } from "cookies-next";
-
+import { useTasks } from "../../../../lib/api/hooks/tasks";
+import LoaderSpinner, {
+  LoadingSpinnerSmall,
+} from "@/src/components/LoaderSpinner";
+import { formatDate } from "@/src/utils/getFormatDate";
+import clsx from "clsx";
 const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
-
-const TASKS = [
-  { title: "Seguimiento prospecto", dueDate: "10/07/2025" },
-  { title: "Cristian llamada", dueDate: "20/05/2025" },
-  { title: "Enviar correo electrónico a Carlos", dueDate: "14/12/2025" },
-];
+import TaskList from "./components/taskList";
+import { addDays } from "date-fns";
 
 export default function Page() {
+  const {
+    tasks: overdueTasks,
+    isLoading: isLoadingOverdueTasks,
+    mutate: mutateOverdueTasks,
+  } = useTasks({
+    filters: { status: "overdue", isCompleted: false },
+  });
+
+  const {
+    tasks: deadlineTodayTasks,
+    isLoading: isLoadingDeadlineTodayTasks,
+    mutate: mutateDeadlineTodayTasks,
+  } = useTasks({
+    filters: { deadline: formatDate(new Date(), "yyyy-MM-dd") },
+  });
+
+  const {
+    tasks: nextTasks,
+    isLoading: isLoadingNextTasks,
+    mutate: mutateNextTasks,
+  } = useTasks({
+    filters: {
+      deadline: [
+        formatDate(addDays(new Date(), 1).toDateString(), "yyyy-MM-dd"),
+        formatDate(addDays(new Date(), 8).toDateString(), "yyyy-MM-dd"),
+      ],
+    },
+  });
+
   useEffect(() => {
-    const fromUrl = document.referrer ? new URL(document.referrer) : null; // Validador para document.referrer
+    const fromUrl = document?.referrer ? new URL(document?.referrer) : null; // Validador para document.referrer
     const urlParams = window.location.search
       ? new URLSearchParams(window.location.search)
       : null; // Validador para window.location.search
@@ -47,67 +77,117 @@ export default function Page() {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div
-      className="bg-center bg-cover rounded-2xl px-2"
+      className="bg-center bg-cover rounded-2xl"
       style={{ backgroundImage: `url(${BACKGROUND_IMAGE_URL})` }}
     >
       {/* Flexbox para controlar el footer */}
-      <div className="w-full py-5 h-full">
+      <div className="w-full p-4  h-full grid grid-cols-1 gap-4">
         <Header />
-        <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-x-4 gap-y-0">
-          <div className="h-64 bg-white rounded-lg p-2">
-            <h1 className="h-1/4 font-medium">Actividades vencidas</h1>
-            <div className="h-2/4 flex justify-center">
-              <ClockIcon className="h-16 w-16 text-slate-400" />
-            </div>
-            <div className="h-1/4 flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg">
-              <h1 className="text-sm">
-                ¡Buen trabajo! No tienes actividades vencidas
-              </h1>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4  gap-4">
+          <div
+            className={clsx(
+              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
+              {
+                "justify-between": !overdueTasks?.items?.length,
+              }
+            )}
+          >
+            <h1 className="font-medium w-full">Actividades vencidas</h1>
+
+            {isLoadingOverdueTasks ? (
+              <LoadingSpinnerSmall color="primary" />
+            ) : (
+              <Fragment>
+                {overdueTasks?.items && overdueTasks?.items?.length ? (
+                  <TaskList
+                    tasks={overdueTasks?.items}
+                    mutate={mutateOverdueTasks}
+                  />
+                ) : (
+                  <Fragment>
+                    <div className=" flex justify-center">
+                      <ClockIcon className="h-16 w-16 text-slate-400" />
+                    </div>
+                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                      <h1 className="text-sm p-2">
+                        ¡Buen trabajo! No tienes actividades vencidas
+                      </h1>
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
+            )}
           </div>
-          <div className="h-64 bg-white rounded-lg p-2 md:col-start-2">
-            <h1 className="h-1/4 font-medium">Actividades de hoy</h1>
-            <div className="h-2/4 flex justify-center">
-              <CalendarIcon className="h-16 w-16 text-slate-400" />
-            </div>
-            <div className="h-1/4 flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg">
-              <h1 className="text-sm">No tienes actividades para hoy</h1>
-            </div>
+          <div
+            className={clsx(
+              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
+              {
+                "justify-between": !deadlineTodayTasks?.items?.length,
+              }
+            )}
+          >
+            <h1 className="font-medium w-full">Actividades de hoy</h1>
+            {isLoadingDeadlineTodayTasks ? (
+              <LoadingSpinnerSmall color="primary" />
+            ) : (
+              <Fragment>
+                {deadlineTodayTasks?.items &&
+                deadlineTodayTasks?.items?.length ? (
+                  <TaskList
+                    tasks={deadlineTodayTasks?.items}
+                    mutate={mutateDeadlineTodayTasks}
+                  />
+                ) : (
+                  <Fragment>
+                    <div className=" flex justify-center">
+                      <CalendarIcon className="h-16 w-16 text-slate-400" />
+                    </div>
+                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                      <h1 className="text-sm p-2 ">
+                        No tienes actividades para hoy
+                      </h1>
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
+            )}
           </div>
-          <div className="h-64 bg-white rounded-lg p-2 md:col-start-3">
-            <h1 className="h-1/6 font-medium">Actividades próximas</h1>
-            <ul className="h-3/6 p-1">
-              <li className="flex items-center mb-3">
-                <input type="checkbox" className="shadow-slate-200" />
-                <div className="ml-2">
-                  <h3 className="text-sm">Seguimiento prospecto</h3>
-                  <p className="text-xs">Vencimiento: 10/07/2025</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3">
-                <input type="checkbox" />
-                <div className="ml-2">
-                  <h3 className="text-sm">Cristian llamada</h3>
-                  <p className="text-xs">Vencimiento: 20/05/2025</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3">
-                <input type="checkbox" />
-                <div className="ml-2">
-                  <h3 className="text-sm">
-                    Enviar correo electrónico a Carlos
-                  </h3>
-                  <p className="text-xs">Vencimiento: 14/12/2025</p>
-                </div>
-              </li>
-            </ul>
+          <div
+            className={clsx(
+              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
+              {
+                "justify-between": !nextTasks?.items?.length,
+              }
+            )}
+          >
+            <h1 className="font-medium w-full">Actividades próximas</h1>
+            {isLoadingNextTasks ? (
+              <LoadingSpinnerSmall color="primary" />
+            ) : (
+              <Fragment>
+                {nextTasks?.items && nextTasks?.items?.length ? (
+                  <TaskList tasks={nextTasks?.items} mutate={mutateNextTasks} />
+                ) : (
+                  <Fragment>
+                    <div className=" flex justify-center">
+                      <CalendarIcon className="h-16 w-16 text-slate-400" />
+                    </div>
+                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                      <h1 className="text-sm p-2 ">
+                        No tienes próximas actividades
+                      </h1>
+                    </div>
+                  </Fragment>
+                )}
+              </Fragment>
+            )}
           </div>
-          <div className="h-64 bg-white rounded-lg p-2 md:col-start-4">
+          <div className="h-64 bg-white rounded-lg p-2 ">
             <h1 className="h-1/6 font-medium">
               Pólizas que requieren atención
             </h1>
             <ul className="h-3/6 p-1">
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -122,7 +202,7 @@ export default function Page() {
                   </p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -137,7 +217,7 @@ export default function Page() {
                   </p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -154,10 +234,10 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div className="col-span-1 md:col-span-2 md:row-start-2 bg-white rounded-lg p-2 h-72">
+          <div className="col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72">
             <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
             <ul className="h-5/6 p-1 overflow-y-auto">
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -173,7 +253,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">hace 6 días. 4 horas</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -188,7 +268,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">hace 1 semana</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -207,7 +287,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">hace 1 semana</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -225,12 +305,12 @@ export default function Page() {
               </li>
             </ul>
           </div>
-          <div className="col-span-1 md:col-span-2 md:col-start-3 md:row-start-2 bg-white rounded-lg p-2 h-72">
+          <div className="col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72">
             <h1 className="h-1/6 font-medium">
               Contactos que requieren atención
             </h1>
             <ul className="h-3/6 p-1">
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -243,7 +323,7 @@ export default function Page() {
                   <p className="text-xs text-slate-500">+5263524120</p>
                 </div>
               </li>
-              <li className="flex items-center mb-3">
+              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
                 <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
@@ -260,7 +340,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }

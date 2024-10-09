@@ -32,29 +32,17 @@ import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
-import {
-  Description,
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+
 import {
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import useContactContext from "@/src/context/contacts";
-import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
-import Button from "@/src/components/form/Button";
 import FooterTable from "@/src/components/FooterTable";
 
 function classNames(...classes) {
@@ -184,9 +172,10 @@ export default function TableContacts() {
   const masiveOptions = [
     {
       id: 1,
-      name: "Asignar Observador",
+      name: "Agregar Observador",
       onclick: changeObserver,
       selectUser: true,
+      disabled: true,
     },
     {
       id: 2,
@@ -199,12 +188,12 @@ export default function TableContacts() {
       onclick: changeResponsible,
       selectUser: true,
     },
-    {
-      id: 4,
-      name: "Cambiar Observador",
-      onclick: changeObserver,
-      selectUser: true,
-    },
+    // {
+    //   id: 4,
+    //   name: "Cambiar Observador",
+    //   onclick: changeObserver,
+    //   selectUser: true,
+    // },
     {
       id: 5,
       name: "Crear Boletín",

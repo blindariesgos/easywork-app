@@ -9,6 +9,7 @@ import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import { formatDate } from "@/src/utils/getFormatDate";
+import Vehicle from "./itemsVIew/vehicle";
 
 export default function PolicyDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -38,8 +39,8 @@ export default function PolicyDetails({ data, id, mutate }) {
           ? "Asegurados"
           : data?.type?.name === "VIDA"
             ? "Beneficiarios"
-            : "Conductor habitual",
-      disabled: true,
+            : "Vehiculos",
+      disabled: data?.type?.name != "AUTOS",
     },
     {
       name: "Pagos/Recibos",
@@ -150,7 +151,7 @@ export default function PolicyDetails({ data, id, mutate }) {
                 width="w-[140px]"
               />
             </div>
-            <TabList className="flex items-center gap-2 bg-gray-100 rounded-2xl py-2 px-4 w-full flex-wrap">
+            <TabList className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
               {tabs.map((tab) => (
                 <Tab
                   key={tab.name}
@@ -166,7 +167,11 @@ export default function PolicyDetails({ data, id, mutate }) {
             <TabPanel className="w-full md:px-4">
               <General data={data} id={id} mutate={mutate} />
             </TabPanel>
-            <TabPanel className="w-full md:px-4"></TabPanel>
+            <TabPanel className="w-full md:px-4">
+              {data?.type?.name === "AUTOS" && (
+                <Vehicle vehicles={data.vehicles} />
+              )}
+            </TabPanel>
             <TabPanel className="w-full">
               <Receipts policyId={data?.id} />
             </TabPanel>

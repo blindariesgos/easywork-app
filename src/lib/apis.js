@@ -452,3 +452,13 @@ export const updateCalendarEvent = async (body, eventId) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const getContactsNeedAttention = async () => {
+  const response = await axios().get(`/tools/tasks/home/lists/contacts`);
+  return response;
+};
+
+export const getPoliciesNeedAttention = async () => {
+  const response = await axios().get(`/tools/tasks/home/lists/polizas`);
+  return response;
+};

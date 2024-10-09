@@ -39,6 +39,12 @@ jobs:
       # - run: git checkout HEAD^2
       #   if: ${{ github.event_name == 'pull_request' }}
 
+      - name: Ensure ~/codeql-db directory exists
+        run: mkdir -p ~/codeql-db
+
+      - name: Ensure ~/.cache/codeql directory exists
+        run: mkdir -p ~/.cache/codeql
+
       - name: Cache CodeQL databases
         uses: actions/cache@v4
         with:

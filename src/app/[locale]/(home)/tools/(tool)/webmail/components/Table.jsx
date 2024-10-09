@@ -86,9 +86,14 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     },
     {
       name: "Marcar como no leido",
-      onClick: (item) => updateLabelId([item.email.googleId], "read"),
+      onClick: (item) => updateLabelId([item.email.googleId], "unread"),
     },
-    { name: "Mover a la carpeta", onClick: "" },
+    selectedFolder.toLowerCase() !== "all"
+      ? {
+          name: "Mover a la carpeta",
+          onClick: (item) => {},
+        }
+      : null,
     {
       name: "Marcar como correo no deseado",
       onClick: (item) => updateLabelId([item.email.googleId], "spam"),
@@ -97,14 +102,23 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       name: "Eliminar",
       onClick: (item) => updateLabelId([item.email.googleId], "trash"),
     },
-    { name: "Excluir de CRM", onClick: "" },
-    { name: "Crear tareas", onClick: "" },
-    { name: "Crear eventos", onClick: "" },
+    {
+      name: "Excluir de CRM",
+      onClick: (item) => {},
+    },
+    {
+      name: "Crear tareas",
+      onClick: (item) => {},
+    },
+    {
+      name: "Crear eventos",
+      onClick: (item) => {},
+    },
     {
       name: "Eliminar permanentemente",
       onClick: (item) => updateLabelId([item.email.googleId], "delete"),
     },
-  ];
+  ].filter((item) => item !== null);
 
   const folderOptions = [
     {
@@ -127,13 +141,13 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
       value: "Spam",
     },
     {
-      name: "Todos",
+      name: "Basura",
       onClick: (item) => {
         !selectedEmails.length == 0
-          ? changeSelectLabelId("all")
-          : updateLabelId([item.email.googleId], "archived");
+          ? changeSelectLabelId("trash")
+          : updateLabelId([item.email.googleId], "trash");
       },
-      value: "All",
+      value: "Trash",
     },
   ];
 
@@ -171,12 +185,14 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                 Leer
               </div>
               <Menu as="div" className="relative">
-                <MenuButton className="flex items-center">
-                  <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
-                    <FolderArrowDownIcon className="h-5 w-5" />
-                    Mover a carpeta
-                  </div>
-                </MenuButton>
+                {selectedFolder.toLowerCase() !== "all" && (
+                  <MenuButton className="flex items-center">
+                    <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
+                      <FolderArrowDownIcon className="h-5 w-5" />
+                      Mover a carpeta
+                    </div>
+                  </MenuButton>
+                )}
                 <MenuItems
                   transition
                   anchor="bottom end"
@@ -274,7 +290,11 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                             type="checkbox"
                             className="... mr-2"
                             value={item.id}
-                            checked={selectedEmails.find((x) => x.id == item.id) ? true : false}
+                            checked={
+                              selectedEmails.find((x) => x.id == item.id)
+                                ? true
+                                : false
+                            }
                             onChange={(e) =>
                               setSelectedEmails(
                                 e.target.checked

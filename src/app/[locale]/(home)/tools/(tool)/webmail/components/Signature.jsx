@@ -19,7 +19,7 @@ import { XCircleIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import axios from "axios";
+import axios from "@/src/lib/axios";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -55,29 +55,21 @@ export default function Signature({
   };
 
   const getSignatures = async () => {
+    console.log("test");
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
-      setSignatures(response.data);
+      const response = await axios({
+        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+      }).get(`/files/signatures`);
+      console.log(response);
+      setSignatures(response);
     } catch (error) {}
   };
 
   const deleteSignature = async (id) => {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
+      const response = await axios({
+        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+      }).delete(`/files/signatures/${id}`);
       if (response) getSignatures();
     } catch (error) {}
   };

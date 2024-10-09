@@ -1,4 +1,4 @@
-name: CI PR Merge
+name: "CI PR Merge"
 
 on:
   workflow_run:

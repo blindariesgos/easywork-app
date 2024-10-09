@@ -85,9 +85,9 @@ export default function ModalAddFolders() {
         });
       }
     });
-    console.log(userGoogle);
     await updateLabelId(userGoogle.usergoogle_id, folders);
     await saveMails();
+    toast.success("Conexión con éxito");
     router.push("/tools/webmail?page=1");
   }
 
@@ -126,7 +126,7 @@ export default function ModalAddFolders() {
                   <div className="flex mt-4 ml-2" key={index}>
                     <input
                       type="checkbox"
-                      disabled={data.type === "system"}
+                      disabled={data.name === "INBOX"}
                       checked={data.state}
                       style={
                         data.state

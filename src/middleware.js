@@ -6,6 +6,7 @@ export function middleware(request) {
 }
 
 // applies this middleware only to files in the app directory
+// Test CI
 export const config = {
   matcher: "/((?!api|static|.*\\..*|_next).*)",
 };

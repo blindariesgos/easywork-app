@@ -14,8 +14,12 @@ import {
   ChatBubbleLeftRightIcon,
   HeartIcon,
   FolderIcon,
-  ChevronDownIcon,
+  ArrowRightCircleIcon,
   CheckIcon,
+  ChatBubbleLeftIcon,
+  ChevronDownIcon,
+  UsersIcon,
+  UserIcon,
 } from "@heroicons/react/20/solid";
 import {
   ChevronUpIcon,
@@ -43,7 +47,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
-  getTokenGoogle,
+  updateLabelId,
   getFoldersSaved,
   deleteTokenGoogle,
   getMails,
@@ -80,7 +84,6 @@ export default function WebmailLayout({ children, table }) {
   const [dmails, setDMails] = useState([]);
   const [gmailState, setGmailState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [folders, setFolders] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -176,16 +179,94 @@ export default function WebmailLayout({ children, table }) {
           selectOauth.id
         );
         setDMails(axiosMails);
-        const axiosFolders = await getFoldersSaved(session.data.user.id);
-        setFolders(axiosFolders);
-        if (!axiosMails || axiosMails?.length === 0) {
-          await deleteOauth();
+        if (
+          !axiosUserData?.data?.labelId ||
+          axiosUserData?.data?.labelId === 0
+        ) {
+          saveFoldersData(axiosUserData.data.usergoogle_id);
         }
       }
     } catch (errr) {
       await deleteOauth();
     }
   };
+
+  async function saveFoldersData(usergoogle_id) {
+    const folders = [
+      {
+        imapFolderId: "CHAT",
+        mailboxName: "CHAT",
+        type: "system",
+      },
+      {
+        imapFolderId: "SENT",
+        mailboxName: "SENT",
+        type: "system",
+      },
+      {
+        imapFolderId: "INBOX",
+        mailboxName: "INBOX",
+        type: "system",
+      },
+      {
+        imapFolderId: "IMPORTANT",
+        mailboxName: "IMPORTANT",
+        type: "system",
+      },
+      {
+        imapFolderId: "TRASH",
+        mailboxName: "TRASH",
+        type: "system",
+      },
+      {
+        imapFolderId: "DRAFT",
+        mailboxName: "DRAFT",
+        type: "system",
+      },
+      {
+        imapFolderId: "SPAM",
+        mailboxName: "SPAM",
+        type: "system",
+      },
+      {
+        imapFolderId: "CATEGORY_FORUMS",
+        mailboxName: "CATEGORY_FORUMS",
+        type: "system",
+      },
+      {
+        imapFolderId: "CATEGORY_UPDATES",
+        mailboxName: "CATEGORY_UPDATES",
+        type: "system",
+      },
+      {
+        imapFolderId: "CATEGORY_PERSONAL",
+        mailboxName: "CATEGORY_PERSONAL",
+        type: "system",
+      },
+      {
+        imapFolderId: "CATEGORY_PROMOTIONS",
+        mailboxName: "CATEGORY_PROMOTIONS",
+        type: "system",
+      },
+      {
+        imapFolderId: "CATEGORY_SOCIAL",
+        mailboxName: "CATEGORY_SOCIAL",
+        type: "system",
+      },
+      {
+        imapFolderId: "STARRED",
+        mailboxName: "STARRED",
+        type: "system",
+      },
+      {
+        imapFolderId: "UNREAD",
+        mailboxName: "UNREAD",
+        type: "system",
+      },
+    ];
+    await updateLabelId(usergoogle_id, folders);
+    await fetchData();
+  }
 
   async function deleteOauth() {
     await deleteTokenGoogle(session.data.user.id);
@@ -219,6 +300,105 @@ export default function WebmailLayout({ children, table }) {
         router.push(
           `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true&isEdit=true`
         ),
+    },
+  ];
+
+  const folderList = [
+    {
+      selectedFolder: "INBOX",
+      label: "Recibidos",
+      icon: <ArrowRightCircleIcon className="h-6 w-6 text-white" />,
+      unread: selectOauth?.unreadInboxCount,
+    },
+    {
+      selectedFolder: "CHAT",
+      label: "Chats",
+      icon: <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "ALL",
+      label: "Todos",
+      icon: <BookmarkIcon className="h-6 w-6 text-white" />,
+      unread: selectOauth?.unreadCount,
+    },
+    {
+      selectedFolder: "SENT",
+      label: "Enviados",
+      icon: <ChatBubbleLeftIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "SAVED",
+      label: "Guardados",
+      icon: <HeartIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "SPAM",
+      label: "Spam",
+      icon: <ExclamationCircleIcon className="h-6 w-6 text-white" />,
+      unread: selectOauth?.unreadSpamCount,
+    },
+    {
+      selectedFolder: "TRASH",
+      label: "Basura",
+      icon: <TrashIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "DRAFT",
+      label: "Borradores",
+      icon: <FolderIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "CATEGORY_FORUMS",
+      label: "Foros",
+      icon: <FolderIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "CATEGORY_UPDATES",
+      label: "Actualizaciones",
+      icon: <ArrowPathIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "CATEGORY_PERSONAL",
+      label: "Personal",
+      icon: <UserIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "CATEGORY_PROMOTIONS",
+      label: "Promociones",
+      icon: <TrashIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "CATEGORY_SOCIAL",
+      label: "Social",
+      icon: <UsersIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "STARRED",
+      label: "Destacados",
+      icon: <FolderIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "IMPORTANT",
+      label: "Importantes",
+      icon: <FolderIcon className="h-6 w-6 text-white" />,
+      unread: null,
+    },
+    {
+      selectedFolder: "UNREAD",
+      label: "No leído",
+      icon: <FolderIcon className="h-6 w-6 text-white" />,
+      unread: null,
     },
   ];
 
@@ -355,7 +535,11 @@ export default function WebmailLayout({ children, table }) {
                     transition
                     className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
                   >
-                    <div onClick={() => router.push(`${window.location.href}&connectemail=true`)}>
+                    <div
+                      onClick={() =>
+                        router.push(`${window.location.href}&connectemail=true`)
+                      }
+                    >
                       Conectar nuevo
                     </div>
                   </MenuItem>
@@ -390,104 +574,24 @@ export default function WebmailLayout({ children, table }) {
                 volver
               </button>
             </div>
-            <ul className="w-full mt-2">
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "INBOX"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("INBOX")}
-              >
-                <ChevronRightIcon className="ml-2 mt-1 h-4 w-4" />
-                <div className="flex justify-between w-full">
-                  <h3 className="ml-4 text-md">INBOX</h3>
-                  {selectedFolder === "INBOX" && (
-                    <h3 className="text-md">{selectOauth?.unreadInboxCount}</h3>
-                  )}
-                </div>
-              </li>
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "ALL"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("ALL")}
-              >
-                <BookmarkIcon className="h-6 w-6 text-white" />
-                <div className="flex justify-between w-full">
-                  {" "}
-                  <h3 className="ml-4 text-md">Todos</h3>
-                  {selectedFolder === "ALL" && (
+            {userData?.labelId && (
+              <ul className="w-full mt-2">
+                <li
+                  className={`cursor-pointer text-left text-white flex p-4 ${
+                    selectedFolder === "ALL"
+                      ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                      : ""
+                  }`}
+                  onClick={() => setSelectedFolder("ALL")}
+                >
+                  <BookmarkIcon className="h-6 w-6 text-white" />
+                  <div className="flex justify-between w-full">
+                    <h3 className="ml-4 text-md">Todos</h3>
+
                     <h3 className="text-md">{selectOauth?.unreadCount}</h3>
-                  )}
-                </div>
-              </li>
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "SENT"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("SENT")}
-              >
-                <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Enviados</h3>
-              </li>
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "SAVED"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("SAVED")}
-              >
-                <HeartIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Guardados</h3>
-              </li>
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "SPAM"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("SPAM")}
-              >
-                <ExclamationCircleIcon className="h-6 w-6 text-white" />
-                <div className="flex justify-between w-full">
-                  {" "}
-                  <h3 className="ml-4 text-md">Spam</h3>
-                  {selectedFolder === "SPAM" && (
-                    <h3 className="text-md">{selectOauth?.unreadSpamCount}</h3>
-                  )}{" "}
-                </div>
-              </li>
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "DRAFTS"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("DRAFTS")}
-              >
-                <FolderIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Borradores</h3>
-              </li>
-              <li
-                className={`cursor-pointer text-left text-white flex p-4 ${
-                  selectedFolder === "TRASH"
-                    ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setSelectedFolder("TRASH")}
-              >
-                <TrashIcon className="h-6 w-6 text-white" />
-                <h3 className="ml-4 text-md">Basura</h3>
-              </li>
-              {userData?.labelId
-                ?.filter((labelId) => JSON.parse(labelId).type === "user")
-                .map((labelId, index) => (
+                  </div>
+                </li>
+                {userData?.labelId?.map((labelId, index) => (
                   <li
                     key={index}
                     className={`cursor-pointer text-left text-white flex p-4 ${
@@ -499,13 +603,47 @@ export default function WebmailLayout({ children, table }) {
                       setSelectedFolder(JSON.parse(labelId).mailboxName)
                     }
                   >
-                    <FolderIcon className="h-6 w-6 text-white" />
-                    <h3 className="ml-4 text-md">
-                      {JSON.parse(labelId).mailboxName}
-                    </h3>
+                    {folderList.find(
+                      (folder) =>
+                        folder.selectedFolder ===
+                        JSON.parse(labelId).mailboxName
+                    ) ? (
+                      folderList.find(
+                        (folder) =>
+                          folder.selectedFolder ===
+                          JSON.parse(labelId).mailboxName
+                      ).icon
+                    ) : (
+                      <FolderIcon className="h-6 w-6 text-white" />
+                    )}
+                    <div className="flex justify-between w-full">
+                      <h3 className="ml-4 text-md">
+                        {folderList.find(
+                          (folder) =>
+                            folder.selectedFolder ===
+                            JSON.parse(labelId).mailboxName
+                        )
+                          ? folderList.find(
+                              (folder) =>
+                                folder.selectedFolder ===
+                                JSON.parse(labelId).mailboxName
+                            ).label
+                          : JSON.parse(labelId).mailboxName}
+                      </h3>
+                      <h3 className="text-md" key={index}>
+                        {
+                          folderList.find(
+                            (folder) =>
+                              folder.selectedFolder ===
+                              JSON.parse(labelId).mailboxName
+                          )?.unread
+                        }
+                      </h3>
+                    </div>
                   </li>
                 ))}
-            </ul>
+              </ul>
+            )}
           </div>
         </SliderOverEmail>
         {dmails && (

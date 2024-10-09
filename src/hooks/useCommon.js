@@ -48,6 +48,7 @@ export const useSidebar = () => {
   // Obtener los roles del usuario
   const userRoles = session?.user?.roles || [];
 
+  // Name
   const userRoleNames = userRoles.map((role) => role.name);
 
   const sidebarNavigation = [

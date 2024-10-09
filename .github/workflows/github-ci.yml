@@ -71,4 +71,4 @@ jobs:
 
       - name: Send success notification
         if: success()
-        run: echo "Merge successful for PR #${{ github.event.pull_request.number }}"
+        run: echo "Merge successful for PR \#${{ github.event.pull_request.number }}"

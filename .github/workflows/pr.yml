@@ -1,0 +1,40 @@
+name: "CI PR Merge"
+
+on:
+  workflow_run:
+    workflows: ["CI"] # Nombre del workflow anterior (CI) que debe completarse
+    types:
+      - completed # Se ejecuta cuando el workflow de CI ha completado
+    branches:
+      - development # Solo para PRs hacia la rama development
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} # Solo si el build fue exitoso
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Try to merge the Pull Request
+        run: |
+          gh pr merge ${{ github.event.workflow_run.pull_requests[0].number }} --squash --admin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true # Continua sin error si la fusión falla
+
+      - name: Notify PR author of merge failure
+        if: failure()
+        run: |
+          gh pr comment ${{ github.event.workflow_run.pull_requests[0].number }} --body "⚠️ The automatic merge has failed. Please review the conflicts and try again."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send success notification
+        if: success()
+        run: echo "Merge successful for PR #${{ github.event.workflow_run.pull_requests[0].number }}"

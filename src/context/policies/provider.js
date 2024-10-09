@@ -34,15 +34,15 @@ export default function PoliciesContextProvider({ children }) {
       name: t("control:portafolio:receipt:filters:expiration-date"),
       type: "date",
       check: true,
-      code: "createdAt",
+      code: "vigenciaHasta",
     },
-          {
-        id: 2,
-        name: t("operations:policies:table:policy"),
-        type: "input",
-        check: false,
-        code: "poliza",
-      },
+    {
+      id: 2,
+      name: t("operations:policies:table:policy"),
+      type: "input",
+      check: false,
+      code: "poliza",
+    },
   ]
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -78,7 +78,7 @@ export default function PoliciesContextProvider({ children }) {
         name: t("control:portafolio:receipt:filters:expiration-date"),
         type: "date",
         check: true,
-        code: "createdAt",
+        code: "vigenciaHasta",
       },
       {
         id: 2,
@@ -110,27 +110,50 @@ export default function PoliciesContextProvider({ children }) {
         check: false,
         code: "status",
         options: [
-              {
-                id: "activa",
-                name: "Activa",
-              },
-              {
-                id: "expirada",
-                name: "Expirada",
-              },
-              {
-                id: "cancelada",
-                name: "Cancelada",
-              },
-              {
-                id: "en_proceso",
-                name: "En proceso",
-              },
-            ],
+          {
+            id: "activa",
+            name: "Vigente",
+          },
+          {
+            id: "expirada",
+            name: "No vigente",
+          },
+          {
+            id: "cancelada",
+            name: "Cancelada",
+          },
+          {
+            id: "en_proceso",
+            name: "En trámite",
+          },
+        ],
       },
-
+      {
+        id: 6,
+        name: t("operations:policies:general:type"),
+        type: "select",
+        check: false,
+        code: "typeId",
+        options: lists?.policies?.polizaTypes,
+      },
+      {
+        id: 7,
+        name: t("operations:policies:general:payment-frequency"),
+        type: "select",
+        check: false,
+        code: "frecuenciaCobroId",
+        options: lists?.policies?.polizaFrecuenciasPago,
+      },
+      {
+        id: 8,
+        name: t("operations:policies:general:payment-method"),
+        type: "select",
+        check: false,
+        code: "formaCobroId",
+        options: lists?.policies?.polizaFormasCobro,
+      },
     ])
-  }, [lists?.listContact, lists?.policies?.agentesIntermediarios])
+  }, [lists?.listContact, lists?.policies])
 
   useEffect(() => {
     handleChangeConfig("page", 1)

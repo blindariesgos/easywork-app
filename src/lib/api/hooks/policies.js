@@ -39,8 +39,9 @@ export const usePolicies = ({ filters = {}, config = {}, userId = "" }) => {
   };
 };
 
-export const usePoliciesByContactId = ({ contactId, page = 1, limit = 15, orderBy = "poliza", order = "DESC" }) => {
-  const url = `/sales/crm/polizas/contact/${contactId}?limit=${limit}&page=${page}&orderBy=${orderBy}&order=${order}`
+export const usePoliciesByContactId = ({ contactId, config = {} }) => {
+  const configParams = Object.keys(config).map(key => `${key}=${config[key]}`).join('&')
+  const url = `/sales/crm/polizas/contact/${contactId}?${configParams}`
 
   const { data, error, isLoading, mutate } = useSWR(
     url,
@@ -48,7 +49,7 @@ export const usePoliciesByContactId = ({ contactId, page = 1, limit = 15, orderB
   );
 
   return {
-    policies: data,
+    data,
     isLoading,
     isError: error,
     mutate

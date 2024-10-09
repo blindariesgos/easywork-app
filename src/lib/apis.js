@@ -201,6 +201,9 @@ export const postTask = async (body) => {
 export const putTaskId = async (id, body) => {
   console.log("Updating task");
   const response = await axios().put(`/tools/tasks/${id}`, body);
+  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks`, "layout");
+
   return response;
 };
 
@@ -293,7 +296,7 @@ export const getPolizaByContact = async (id) => {
 
 export const putPoliza = async (policyId, body) => {
   const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
-  
+
   revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
 
   return response;

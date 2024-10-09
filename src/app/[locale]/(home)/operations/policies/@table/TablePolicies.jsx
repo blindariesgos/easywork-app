@@ -97,10 +97,10 @@ export default function TablePolicies() {
   }, [checked, indeterminate, data, setSelectedContacts]);
 
   const policyStatus = {
-    activa: "Activa",
-    expirada: "Expirada",
+    activa: "Vigente",
+    expirada: "No vigente",
     cancelada: "Cancelada",
-    en_proceso: "En proceso",
+    en_proceso: "En trámite",
   };
 
   const deletePolicy = async (id) => {
@@ -512,33 +512,27 @@ export default function TablePolicies() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div className="font-medium text-sm text-center text-black hover:text-primary">
+                              <div
+                                className={clsx(
+                                  "font-medium text-sm  text-black hover:text-primary",
+                                  {
+                                    "text-center": [
+                                      "vigenciaDesde",
+                                      "poliza",
+                                      "source",
+                                      "status",
+                                    ].includes(column.row),
+                                    "text-right": ["importePagar"].includes(
+                                      column.row
+                                    ),
+                                  }
+                                )}
+                              >
                                 {column.row == "name" ? (
                                   <Link
                                     href={`/operations/policies/policy/${policy.id}?show=true`}
                                   >
-                                    {/* <div className="flex gap-3 items-center"> */}
-                                    {/* <Image
-                                        className="h-8 w-8 rounded-full bg-zinc-200"
-                                        width={30}
-                                        height={30}
-                                        src={
-                                          policy?.responsible?.avatar ||
-                                          "/img/avatar.svg"
-                                        }
-                                        alt=""
-                                      /> */}
-                                    <div className="flex flex-col">
-                                      <p className="text-start">
-                                        {policy?.name}
-                                      </p>
-                                      {policy?.responsible?.bio && (
-                                        <p className="text-start text-xs">
-                                          {policy?.responsible?.bio}
-                                        </p>
-                                      )}
-                                    </div>
-                                    {/* </div> */}
+                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
                                   </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
@@ -579,7 +573,7 @@ export default function TablePolicies() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "fechaEmision" ? (
+                                ) : column.row === "vigenciaDesde" ? (
                                   formatDate(
                                     policy[column.row],
                                     "dd/MM/yyyy"

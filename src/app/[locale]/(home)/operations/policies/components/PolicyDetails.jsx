@@ -15,12 +15,10 @@ export default function PolicyDetails({ data, id, mutate }) {
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
 
-   // Función para extraer el código de cliente basado en el id de la compañía
+  // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
     const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
-    
-    console.log(codigos);
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(
@@ -35,7 +33,12 @@ export default function PolicyDetails({ data, id, mutate }) {
       name: t("control:portafolio:receipt:details:consult"),
     },
     {
-      name: "Beneficiarios",
+      name:
+        data?.type?.name === "GMM"
+          ? "Asegurados"
+          : data?.type?.name === "VIDA"
+            ? "Beneficiarios"
+            : "Conductor habitual",
       disabled: true,
     },
     {
@@ -92,7 +95,7 @@ export default function PolicyDetails({ data, id, mutate }) {
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
-                <p className="text-xl sm:text-2xl xl:text-3xl">
+                <p className="text-xl lg:text-2xl 2xl:text-3xl font-bold">
                   {data?.contact?.fullName}
                 </p>
                 <div className="flex items-center gap-2">
@@ -100,7 +103,7 @@ export default function PolicyDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-xs sm:text-sm xl:text-base">
-                    {formatDate(data?.fechaEmision, "dd/MM/yyyy")}
+                    {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

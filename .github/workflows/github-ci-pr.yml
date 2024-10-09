@@ -1,9 +1,12 @@
-name: "CI for PRs"
+name: CI PR Merge
 
 on:
-  pull_request:
+  workflow_run:
+    workflows: ["CI"] # Nombre del workflow anterior (CI) que debe completarse
+    types:
+      - completed # Se ejecuta cuando el workflow de CI ha completado
     branches:
-      - development # Solo se ejecuta cuando se hace PR a la rama 'development'
+      - development # Solo para PRs hacia la rama development
 
 permissions:
   contents: write
@@ -11,52 +14,27 @@ permissions:
   issues: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9 # Especificar la versión de pnpm
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
-          cache: pnpm # Usa el caché de pnpm para acelerar las instalaciones
-
-      - name: Install dependencies with pnpm
-        run: pnpm install --shamefully-hoist # Instalación de dependencias con pnpm
-
-      - name: Build the application with pnpm
-        run: pnpm build # Compila el proyecto usando pnpm
-
   merge:
     runs-on: ubuntu-latest
-    needs: build # Solo se ejecuta si el build fue exitoso!
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} # Solo si el build fue exitoso
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Try to merge the Pull Request
-        id: merge
         run: |
-          gh pr merge ${{ github.event.pull_request.number }} --squash --admin
+          gh pr merge ${{ github.event.workflow_run.pull_requests[0].number }} --squash --admin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Check if merge failed
-        if: failure()
-        run: echo "Merge failed!"
+        continue-on-error: true # Continua sin error si la fusión falla
 
       - name: Notify PR author of merge failure
         if: failure()
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "⚠️ The automatic merge has failed. Please review the conflicts and try again."
+          gh pr comment ${{ github.event.workflow_run.pull_requests[0].number }} --body "⚠️ The automatic merge has failed. Please review the conflicts and try again."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send success notification
+        if: success()
+        run: echo "Merge successful for PR #${{ github.event.workflow_run.pull_requests[0].number }}"

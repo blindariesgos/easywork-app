@@ -73,4 +73,29 @@ export const assignCRMContact = async (folderId, contactId) => {
     return response;
 };
 
+export const getUserSignatures = async () => {
+    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST }).get(`/files/signatures`).catch(error => error);
+    return response;
+};
 
+export const deleteUserSignatures = async (id) => {
+    const response = await axios({baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST}).delete(`/files/signatures/${id}`).catch(error => error);
+    return response;
+};
+
+export const postUserSignatures = async (formData) => {
+    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST }).post(`/files/signatures`, formData).catch(error => error);
+    return response;
+};
+
+export const putUserSignatures = async (metadata, edit) => {
+    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST }).put(`/files/signatures/${edit}/metadata`, { metadata }).catch(error => error);
+    return response;
+};
+
+export const getUserSignature = async (edit) => {
+    console.log(edit);
+    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST }).get(`/files/signatures/${edit}`).catch(error => error);
+    console.log(response);
+    return response;
+};

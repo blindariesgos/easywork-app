@@ -2,6 +2,9 @@
 import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
 import React, { useState, useEffect, Fragment } from "react";
+import LoaderSpinner, {
+  LoadingSpinnerSmall,
+} from "@/src/components/LoaderSpinner";
 import clsx from "clsx";
 import { itemsByPage } from "@/src/lib/common";
 import SendMessage from "./components/SendMessage";
@@ -69,24 +72,18 @@ export default function WebmailLayout({ children, table }) {
   const session = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { query } = router;
-  const {
-    sidebarOpenEmail,
-    setSidebarOpenEmail,
-    selectOauth,
-    setSelectOauth,
-    setOpenModalFolders,
-    openModalFolders,
-  } = useAppContext();
+  const { setSidebarOpenEmail, selectOauth, setSelectOauth, openModalFolders } =
+    useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
   const [limit, setLimit] = useState(10);
   const [dmails, setDMails] = useState([]);
-  const [gmailState, setGmailState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isLoadingOverdueTasks, setIsLoadingOverdueTasks] = useState(false);
 
   useEffect(() => {
     setSelectOauth(null);
@@ -115,6 +112,7 @@ export default function WebmailLayout({ children, table }) {
   }, [openModalFolders]);
 
   useEffect(() => {
+    setIsLoadingOverdueTasks(true);
     getMails(
       session.data.user.id,
       searchParams.get("page"),
@@ -186,6 +184,8 @@ export default function WebmailLayout({ children, table }) {
           saveFoldersData(axiosUserData.data.usergoogle_id);
         }
       }
+      setLoading(false);
+      setIsLoadingOverdueTasks(false);
     } catch (errr) {
       await deleteOauth();
     }
@@ -404,6 +404,7 @@ export default function WebmailLayout({ children, table }) {
 
   return (
     <>
+      {loading && <LoaderSpinner />}
       <Signature />
       <AddSignature />
       <ModalConfigGmail isEdit={true} />
@@ -472,7 +473,7 @@ export default function WebmailLayout({ children, table }) {
           </div>
         </EmailHeader>
         <SliderOverEmail>
-          <div className="flex flex-col h-16 shrink-0 items-center mx-auto mt-10">
+          <div className="flex flex-col shrink-0 items-center mx-auto h-full mt-10">
             <Link href="/">
               <Image
                 width={72}
@@ -482,167 +483,179 @@ export default function WebmailLayout({ children, table }) {
                 alt="EasyWork"
               />
             </Link>
-            <div className="mt-3">
-              <Menu as="div" className="flex items-center relative">
-                <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                  <div className="flex border border-white p-1.5 rounded-lg text-white">
-                    <Image
-                      width={45}
-                      height={45}
-                      alt="img"
-                      className="rounded-full"
-                      src={userData?.picture}
-                    />
-                    <div className="ml-2">
-                      <h1 className="font-bold">
-                        {userData?.given_name} {userData?.family_name}
-                      </h1>
-                      <p className="text-xs">info</p>
-                    </div>
-                    <div className="flex items-center mb-1">
-                      <ChevronUpIcon
-                        className={`ml-2 h-5 w-5 text-white ${isMenuOpen ? "rotate-180 transition-transform duration-300" : "transition-transform duration-300"}`}
-                      />
-                    </div>
-                  </div>
-                </MenuButton>
-                <MenuItems
-                  transition
-                  anchor="bottom end"
-                  className=" z-50 mt-1 w-80 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                >
-                  {allOauth?.map((oauth) => (
-                    <MenuItem key={oauth.id}>
-                      {({ active }) => (
-                        <div
-                          className={classNames(
-                            active ? "bg-gray-50" : "",
-                            "flex justify-between items-center px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                          )}
-                          onClick={() => {
-                            setSelectOauth(oauth);
-                          }}
-                        >
-                          <p>{oauth.email}</p>
-                          <p className="bg-green-500 px-0.5 rounded-md text-white text-sm">
-                            {oauth.unreadCount}
-                          </p>
+            {isLoadingOverdueTasks ? (
+              <div className="flex items-center">
+                <LoadingSpinnerSmall />
+              </div>
+            ) : (
+              <div>
+                <div className="mt-3">
+                  <Menu as="div" className="flex items-center relative">
+                    <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                      <div className="flex border border-white p-1.5 rounded-lg text-white">
+                        <Image
+                          width={45}
+                          height={45}
+                          alt="img"
+                          className="rounded-full"
+                          src={userData?.picture}
+                        />
+                        <div className="ml-2">
+                          <h1 className="font-bold">
+                            {userData?.given_name} {userData?.family_name}
+                          </h1>
+                          <p className="text-xs">info</p>
                         </div>
-                      )}
-                    </MenuItem>
-                  ))}
-                  <MenuItem
-                    transition
-                    className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
-                  >
-                    <div
-                      onClick={() =>
-                        router.push(`${window.location.href}&connectemail=true`)
-                      }
+                        <div className="flex items-center mb-1">
+                          <ChevronUpIcon
+                            className={`ml-2 h-5 w-5 text-white ${isMenuOpen ? "rotate-180 transition-transform duration-300" : "transition-transform duration-300"}`}
+                          />
+                        </div>
+                      </div>
+                    </MenuButton>
+                    <MenuItems
+                      transition
+                      anchor="bottom end"
+                      className=" z-50 mt-1 w-80 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                     >
-                      Conectar nuevo
+                      {allOauth?.map((oauth) => (
+                        <MenuItem key={oauth.id}>
+                          {({ active }) => (
+                            <div
+                              className={classNames(
+                                active ? "bg-gray-50" : "",
+                                "flex justify-between items-center px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                              )}
+                              onClick={() => {
+                                setSelectOauth(oauth);
+                              }}
+                            >
+                              <p>{oauth.email}</p>
+                              <p className="bg-green-500 px-0.5 rounded-md text-white text-sm">
+                                {oauth.unreadCount}
+                              </p>
+                            </div>
+                          )}
+                        </MenuItem>
+                      ))}
+                      <MenuItem
+                        transition
+                        className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer border-t-2"
+                      >
+                        <div
+                          onClick={() =>
+                            router.push(
+                              `${window.location.href}&connectemail=true`
+                            )
+                          }
+                        >
+                          Conectar nuevo
+                        </div>
+                      </MenuItem>
+                    </MenuItems>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginLeft: "1rem",
+                        border: "1px solid white",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        animation: isLoading
+                          ? "spin 1s infinite linear"
+                          : "none",
+                      }}
+                      onClick={() => updateData()}
+                    >
+                      <ArrowPathIcon className="m-1 h-6 w-6 text-white" />
                     </div>
-                  </MenuItem>
-                </MenuItems>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginLeft: "1rem",
-                    border: "1px solid white",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                    animation: isLoading ? "spin 1s infinite linear" : "none",
-                  }}
-                  onClick={() => updateData()}
-                >
-                  <ArrowPathIcon className="m-1 h-6 w-6 text-white" />
+                  </Menu>
                 </div>
-              </Menu>
-            </div>
-            <div className="w-full my-4">
-              <p className="text-xs text-white text-left">
-                HERRAMIENTAS - CORREO
-              </p>
-            </div>
-            <div className="w-full">
-              <button
-                onClick={() => router.push("/home")}
-                className="w-full hover:bg-slate-200 bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
-              >
-                volver
-              </button>
-            </div>
-            {userData?.labelId && (
-              <ul className="w-full mt-2">
-                <li
-                  className={`cursor-pointer text-left text-white flex p-4 ${
-                    selectedFolder === "ALL"
-                      ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                      : ""
-                  }`}
-                  onClick={() => setSelectedFolder("ALL")}
-                >
-                  <BookmarkIcon className="h-6 w-6 text-white" />
-                  <div className="flex justify-between w-full">
-                    <h3 className="ml-4 text-md">Todos</h3>
-
-                    <h3 className="text-md">{selectOauth?.unreadCount}</h3>
-                  </div>
-                </li>
-                {userData?.labelId?.map((labelId, index) => (
-                  <li
-                    key={index}
-                    className={`cursor-pointer text-left text-white flex p-4 ${
-                      selectedFolder === JSON.parse(labelId).mailboxName
-                        ? "bg-violet-500 transition-colors duration-200 rounded-lg"
-                        : ""
-                    }`}
-                    onClick={() =>
-                      setSelectedFolder(JSON.parse(labelId).mailboxName)
-                    }
+                <div className="w-full my-4">
+                  <p className="text-xs text-white text-left">
+                    HERRAMIENTAS - CORREO
+                  </p>
+                </div>
+                <div className="w-full">
+                  <button
+                    onClick={() => router.push("/home")}
+                    className="w-full hover:bg-slate-200 bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
                   >
-                    {folderList.find(
-                      (folder) =>
-                        folder.selectedFolder ===
-                        JSON.parse(labelId).mailboxName
-                    ) ? (
-                      folderList.find(
-                        (folder) =>
-                          folder.selectedFolder ===
-                          JSON.parse(labelId).mailboxName
-                      ).icon
-                    ) : (
-                      <FolderIcon className="h-6 w-6 text-white" />
-                    )}
-                    <div className="flex justify-between w-full">
-                      <h3 className="ml-4 text-md">
+                    volver
+                  </button>
+                </div>
+                {userData?.labelId && (
+                  <ul className="w-full mt-2">
+                    <li
+                      className={`cursor-pointer text-left text-white flex p-4 ${
+                        selectedFolder === "ALL"
+                          ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedFolder("ALL")}
+                    >
+                      <BookmarkIcon className="h-6 w-6 text-white" />
+                      <div className="flex justify-between w-full">
+                        <h3 className="ml-4 text-md">Todos</h3>
+
+                        <h3 className="text-md">{selectOauth?.unreadCount}</h3>
+                      </div>
+                    </li>
+                    {userData?.labelId?.map((labelId, index) => (
+                      <li
+                        key={index}
+                        className={`cursor-pointer text-left text-white flex p-4 ${
+                          selectedFolder === JSON.parse(labelId).mailboxName
+                            ? "bg-violet-500 transition-colors duration-200 rounded-lg"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          setSelectedFolder(JSON.parse(labelId).mailboxName)
+                        }
+                      >
                         {folderList.find(
                           (folder) =>
                             folder.selectedFolder ===
                             JSON.parse(labelId).mailboxName
-                        )
-                          ? folderList.find(
-                              (folder) =>
-                                folder.selectedFolder ===
-                                JSON.parse(labelId).mailboxName
-                            ).label
-                          : JSON.parse(labelId).mailboxName}
-                      </h3>
-                      <h3 className="text-md" key={index}>
-                        {
+                        ) ? (
                           folderList.find(
                             (folder) =>
                               folder.selectedFolder ===
                               JSON.parse(labelId).mailboxName
-                          )?.unread
-                        }
-                      </h3>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                          ).icon
+                        ) : (
+                          <FolderIcon className="h-6 w-6 text-white" />
+                        )}
+                        <div className="flex justify-between w-full">
+                          <h3 className="ml-4 text-md">
+                            {folderList.find(
+                              (folder) =>
+                                folder.selectedFolder ===
+                                JSON.parse(labelId).mailboxName
+                            )
+                              ? folderList.find(
+                                  (folder) =>
+                                    folder.selectedFolder ===
+                                    JSON.parse(labelId).mailboxName
+                                ).label
+                              : JSON.parse(labelId).mailboxName}
+                          </h3>
+                          <h3 className="text-md" key={index}>
+                            {
+                              folderList.find(
+                                (folder) =>
+                                  folder.selectedFolder ===
+                                  JSON.parse(labelId).mailboxName
+                              )?.unread
+                            }
+                          </h3>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
         </SliderOverEmail>

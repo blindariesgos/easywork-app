@@ -5,7 +5,6 @@ import {
   EnvelopeIcon,
   PhoneIcon,
 } from "@heroicons/react/20/solid";
-import { Draggable } from "react-beautiful-dnd";
 import { FaWhatsapp } from "react-icons/fa6";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useRouter } from "next/navigation";

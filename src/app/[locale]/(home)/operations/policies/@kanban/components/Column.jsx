@@ -1,4 +1,3 @@
-import { Droppable, Draggable } from "react-beautiful-dnd";
 import Card from "./Card";
 import { useMemo } from "react";
 import { useDroppable } from "@dnd-kit/core";

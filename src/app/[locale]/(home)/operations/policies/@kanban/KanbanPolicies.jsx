@@ -1,6 +1,5 @@
 import usePolicyContext from "@/src/context/policies";
 import { useEffect, useMemo, useState } from "react";
-import { DragDropContext, resetServerContext } from "react-beautiful-dnd";
 import FooterTable from "@/src/components/FooterTable";
 import Column from "./components/Column";
 import { putPoliza } from "@/src/lib/apis";

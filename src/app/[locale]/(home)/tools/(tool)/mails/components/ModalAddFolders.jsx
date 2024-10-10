@@ -60,7 +60,7 @@ export default function ModalAddFolders() {
       });
     } else {
       let array = [];
-      userGoogle?.labelId.forEach((element) => {
+      userGoogle?.labelId?.forEach((element) => {
         array.push(JSON.parse(element));
       });
       setFolderData(array);
@@ -82,7 +82,7 @@ export default function ModalAddFolders() {
 
   async function saveFoldersData() {
     const folders = [];
-    folderData.forEach((element) => {
+    folderData?.forEach((element) => {
       if (element.state) {
         folders.push({
           imapFolderId: element.id,

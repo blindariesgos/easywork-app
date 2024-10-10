@@ -44,7 +44,7 @@ jobs:
             pnpm-${{ runner.os }}-
 
       - name: Install dependencies with pnpm
-        run: pnpm install --shamefully-hoist
+        run: pnpm install --shamefully-hoist --no-frozen-lockfile
 
       - name: Restore Next.js build cache
         uses: actions/cache@v4

@@ -5,11 +5,13 @@ import FooterTable from "@/src/components/FooterTable";
 import Column from "./components/Column";
 import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-
+import { DndContext } from "@dnd-kit/core";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 const KanbanPolicies = () => {
-  const { data, limit, setLimit, page, setPage, mutate, isLoading } =
-    usePolicyContext();
+  const { data, limit, setLimit, page, setPage, mutate } = usePolicyContext();
+  const [isLoading, setLoading] = useState(false);
   const columnOrder = ["en_proceso", "activa", "cancelada"];
+  const [isDragging, setIsDragging] = useState(false);
   const columns = {
     en_proceso: {
       id: "en_proceso",
@@ -56,11 +58,12 @@ const KanbanPolicies = () => {
   }, [data]);
 
   const handleDragEnd = (result) => {
-    console.log("handleDragEnd", result);
+    setIsDragging(false);
+    setLoading(true);
     const body = {
-      status: result?.destination?.droppableId,
+      status: result?.over?.id,
     };
-    putPoliza(result?.draggableId, body)
+    putPoliza(result?.active?.id, body)
       .then((response) => {
         if (response.hasError) {
           console.log(response);
@@ -69,29 +72,33 @@ const KanbanPolicies = () => {
           );
           return;
         }
+        setLoading(false);
         toast.success("Poliza actualizada correctamente.");
         mutate();
       })
       .catch((error) => {
+        setLoading(false);
         toast.error(
           "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
         );
       });
   };
 
-  useEffect(() => {
-    resetServerContext();
-  }, [policies]);
+  function handleDragStart() {
+    setIsDragging(true);
+  }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+      {isLoading && <LoaderSpinner />}
       <div className="w-full">
-        <div className="grid grid-cols-3 gap-2 pt-2">
+        <div className="grid grid-cols-3 gap-2 pt-2 min-h-[60vh]">
           {columnOrder.map((column) => (
             <Column
               key={columns[column].id}
               {...columns[column]}
               policies={policies[column]}
+              isDragging={isDragging}
             />
           ))}
         </div>
@@ -106,7 +113,7 @@ const KanbanPolicies = () => {
           />
         </div>
       </div>
-    </DragDropContext>
+    </DndContext>
   );
 };
 

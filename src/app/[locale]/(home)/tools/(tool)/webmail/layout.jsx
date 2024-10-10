@@ -568,7 +568,7 @@ export default function WebmailLayout({ children, table }) {
             </div>
             <div className="w-full">
               <button
-                onClick={() => router.push("/home")}
+                onClick={() => router.back()}
                 className="w-full hover:bg-slate-200 bg-white text-easywork-main py-2 rounded-lg cursor-pointer"
               >
                 volver

@@ -15,10 +15,15 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import ProgressStages from "./ProgressStages";
 import TextInput from "../../../../../../../components/form/TextInput";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import useAppContext from "@/src/context/app";
-import { createLead, updateContact, updateLead } from "@/src/lib/apis";
+import {
+  createLead,
+  getLeadById,
+  updateContact,
+  updateLead,
+} from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -31,10 +36,18 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { lists } = useAppContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
     setIsEdit(id ? false : true);
   }, [id]);
+
+  useEffect(() => {
+    if (params.get("edit") === "true") {
+      setIsEdit(true);
+    }
+  }, [params.get("edit")]);
 
   const schema = Yup.object().shape({
     email: Yup.string().email(t("common:validations:email")),
@@ -67,6 +80,22 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (!params.get("copy")) return;
+    setLoading(true);
+    const getLeadCopy = async (leadId) => {
+      const response = await getLeadById(leadId);
+      if (response?.name) {
+        setValue("name", response?.name);
+      } else {
+        setValue("name", response?.fullName);
+      }
+      if (response?.lastName) setValue("lastName", response?.lastName);
+      setLoading(false);
+    };
+    getLeadCopy(params.get("copy"));
+  }, [params.get("copy")]);
 
   useEffect(() => {
     if (!lead) return;

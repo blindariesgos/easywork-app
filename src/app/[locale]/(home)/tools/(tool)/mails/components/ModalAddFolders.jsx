@@ -222,7 +222,6 @@ export default function ModalAddFolders() {
                           setFolderData(newFolderData);
                         }}
                       />
-
                       <p className="ml-1">
                         {folderList.find((folder) => folder.value === name)
                           ? folderList.find((folder) => folder.value === name)

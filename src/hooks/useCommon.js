@@ -209,7 +209,6 @@ export const useSidebar = () => {
       icon: ChevronRightIcon,
       current: false,
       href: "/operations",
-      roles: ["user"],
       iconShortBar: WalletIcon,
       children: [
         {
@@ -228,24 +227,28 @@ export const useSidebar = () => {
           name: "Renovaciones",
           href: "",
           image: "/img/operations/renovations.svg",
+          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Siniestros",
           href: "",
           image: "/img/operations/accidents.svg",
+          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Reembolsos",
           href: "",
           image: "/img/operations/refunds.svg",
+          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
         {
           name: "Rescate de Fondos",
           href: "",
           image: "/img/operations/fund_recovery.svg",
+          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
       ],

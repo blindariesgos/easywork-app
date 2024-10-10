@@ -99,6 +99,73 @@ export default function ModalAddFolders() {
     setFolderData(newFolderData);
   }
 
+  const folderList = [
+    {
+      value: "INBOX",
+      label: "Recibidos",
+    },
+    {
+      value: "CHAT",
+      label: "Chats",
+    },
+    {
+      value: "ALL",
+      label: "Todos",
+    },
+    {
+      value: "SENT",
+      label: "Enviados",
+    },
+    {
+      value: "SAVED",
+      label: "Guardados",
+    },
+    {
+      value: "SPAM",
+      label: "Spam",
+    },
+    {
+      value: "TRASH",
+      label: "Basura",
+    },
+    {
+      value: "DRAFT",
+      label: "Borradores",
+    },
+    {
+      value: "CATEGORY_FORUMS",
+      label: "Foros",
+    },
+    {
+      value: "CATEGORY_UPDATES",
+      label: "Actualizaciones",
+    },
+    {
+      value: "CATEGORY_PERSONAL",
+      label: "Personal",
+    },
+    {
+      value: "CATEGORY_PROMOTIONS",
+      label: "Promociones",
+    },
+    {
+      value: "CATEGORY_SOCIAL",
+      label: "Social",
+    },
+    {
+      value: "STARRED",
+      label: "Destacados",
+    },
+    {
+      value: "IMPORTANT",
+      label: "Importantes",
+    },
+    {
+      value: "UNREAD",
+      label: "No leído",
+    },
+  ];
+
   return (
     <SliderOverShort openModal={params.get("configlabelid")}>
       <Tag onclick={() => router.back()} className="bg-easywork-main" />
@@ -146,7 +213,13 @@ export default function ModalAddFolders() {
                       }}
                     />
 
-                    <p className="ml-1">{data.name}</p>
+                    <p className="ml-1">
+                      {folderList.find((folder) => folder.value === data.name)
+                        ? folderList.find(
+                            (folder) => folder.value === data.name
+                          )?.label
+                        : data?.name}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -176,7 +249,13 @@ export default function ModalAddFolders() {
                               "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                             )}
                           >
-                            {item.name}
+                            {folderList.find(
+                              (folder) => folder.value === item.name
+                            )
+                              ? folderList.find(
+                                  (folder) => folder.value === item.name
+                                )?.label
+                              : item.name}
                           </div>
                         )}
                       </MenuItem>

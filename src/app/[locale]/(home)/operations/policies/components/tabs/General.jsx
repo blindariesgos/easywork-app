@@ -139,10 +139,10 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={`grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_220px)]`}
+      className={`grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full h-[calc(100vh_-_220px)]`}
     >
       {/* Menu Derecha */}
-      <div className="h-auto rounded-2xl overflow-y-auto pr-2">
+      <div className="h-auto rounded-lg overflow-y-auto pr-2">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
           {t("operations:policies:general:title")}
           {data && (
@@ -160,7 +160,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:type")}
             name="typeId"
             options={lists?.policies?.polizaTypes ?? []}
-            disabled={!isEdit}
+            disabled
             register={register}
             setValue={setValue}
             watch={watch}
@@ -181,7 +181,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
               name="cobertura"
               register={register}
               setValue={setValue}
-              disabled={!isEdit}
+              disabled
               watch={watch}
             />
           )}
@@ -235,6 +235,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             register={register}
             name="address"
             disabled
+            multiple
+            rows={2}
           />
 
           <Controller
@@ -246,7 +248,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
                   onChange={onChange}
                   onBlur={onBlur}
                   error={errors.vigenciaDesde}
-                  disabled={!isEdit}
+                  disabled
                 />
               );
             }}
@@ -263,7 +265,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
                   onChange={onChange}
                   onBlur={onBlur}
                   error={errors.vigenciaHasta}
-                  disabled={!isEdit}
+                  disabled
                 />
               );
             }}
@@ -314,7 +316,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="currencyId"
             register={register}
             setValue={setValue}
-            disabled={!isEdit}
+            disabled
             watch={watch}
           />
 
@@ -323,7 +325,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:primaNeta")}
             setValue={setValue}
             name="primaNeta"
-            disabled={!isEdit}
+            disabled
             defaultValue={data?.primaNeta.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -336,7 +338,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:recargoFraccionado")}
             setValue={setValue}
             name="recargoFraccionado"
-            disabled={!isEdit}
+            disabled
             defaultValue={data?.recargoFraccionado.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -349,7 +351,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:derechoPoliza")}
             setValue={setValue}
             name="derechoPoliza"
-            disabled={!isEdit}
+            disabled
             defaultValue={data?.derechoPoliza.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -362,7 +364,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:iva")}
             setValue={setValue}
             name="iva"
-            disabled={!isEdit}
+            disabled
             defaultValue={data?.iva.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -375,7 +377,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:importePagar")}
             setValue={setValue}
             name="importePagar"
-            disabled={!isEdit}
+            disabled
             defaultValue={data?.importePagar.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -413,7 +415,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             multiple
           />
         </div>
-        {data?.type?.name === "AUTOS" &&
+        {/* {data?.type?.name === "AUTOS" &&
           data?.vehicles.map((vehicle) => (
             <Fragment key={vehicle.id}>
               <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
@@ -464,7 +466,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
                 />
               </div>
             </Fragment>
-          ))}
+          ))} */}
       </div>
       {/* Menu Izquierda */}
       <div className=" bg-gray-100 rounded-lg w-full">

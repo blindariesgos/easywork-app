@@ -20,9 +20,49 @@ export default function LeadsContextProvider({ children }) {
   })
   const { leads, isLoading, isError, mutate } = useLeads({ config, filters })
   const [filterFields, setFilterFields] = useState()
-  const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})
+  const defaultFilterFields = [
+    {
+      id: 1,
+      name: t("leads:filters:origin"),
+      type: "select",
+      options: lists?.listContact?.contactSources || [],
+      check: true,
+      code: "sourceId",
+    },
+    {
+      id: 2,
+      name: t("leads:filters:stages:name"),
+      type: "select",
+      check: true,
+      code: "stageId",
+      options: lists?.listLead?.leadStages,
+    },
+    {
+      id: 3,
+      name: t("leads:filters:created"),
+      type: "date",
+      check: true,
+      code: "createdAt",
+    },
 
+    {
+      id: 4,
+      name: t("leads:filters:status"),
+      type: "select",
+      check: true,
+      code: "status",
+      options: statusLead,
+    },
+    {
+      id: 5,
+      name: t("contacts:filters:responsible"),
+      type: "dropdown",
+      check: true,
+      code: "assignedById",
+      options: lists?.users
+    },
+  ]
   useEffect(() => {
     handleChangeConfig("page", 1)
   }, [config.limit])
@@ -35,15 +75,15 @@ export default function LeadsContextProvider({ children }) {
         type: "select",
         options: lists?.listContact?.contactSources || [],
         check: true,
-        code: "origin",
+        code: "sourceId",
       },
       {
         id: 2,
         name: t("leads:filters:stages:name"),
         type: "select",
         check: true,
-        code: "state",
-        options: stagesLead,
+        code: "stageId",
+        options: lists?.listLead?.leadStages,
       },
       {
         id: 3,
@@ -60,6 +100,14 @@ export default function LeadsContextProvider({ children }) {
         check: true,
         code: "status",
         options: statusLead,
+      },
+      {
+        id: 5,
+        name: t("contacts:filters:responsible"),
+        type: "dropdown",
+        check: true,
+        code: "assignedById",
+        options: lists?.users
       },
       // {
       //   id: 5,
@@ -147,6 +195,7 @@ export default function LeadsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
+      defaultFilterFields
     }),
     [
       leads,
@@ -156,6 +205,7 @@ export default function LeadsContextProvider({ children }) {
       displayFilters,
       filterFields,
       filters,
+      defaultFilterFields
     ]
   );
 

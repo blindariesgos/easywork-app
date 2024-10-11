@@ -1,14 +1,8 @@
 "use client";
 import React from "react";
-import {
-  ChevronDownIcon,
-  Cog8ToothIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, Cog8ToothIcon } from "@heroicons/react/20/solid";
 import ContactSubMenu from "./ContactSubMenu";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../../../components/form/Button";
-import useAppContext from "../../../../../../../context/app";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import FiltersContact from "./filters/FiltersContact";
 import { useCommon } from "../../../../../../../hooks/useCommon";
@@ -16,26 +10,23 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
 import useContactContext from "@/src/context/contacts";
-import { formatDate } from "@/src/utils/getFormatDate";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+
 export default function ContactsHeader() {
   const { t } = useTranslation();
   const { trash, settingsContact: settings } = useCommon();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const pathname = usePathname();
   const { push } = useRouter();
   const { selectedContacts } = useCrmContext();
   const { displayFilters, removeFilter } = useContactContext();
 
   const createOptions = [
     {
-      name: "Cliente",
+      name: "Física",
       onclick: () => push(`/sales/crm/contacts/contact?show=true&type=fisica`),
     },
     {
-      name: "Compañia",
+      name: "Moral",
       onclick: () => push(`/sales/crm/contacts/contact?show=true&type=moral`),
     },
   ];

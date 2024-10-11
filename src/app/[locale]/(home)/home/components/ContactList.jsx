@@ -1,94 +1,82 @@
 import clsx from "clsx";
 import Link from "next/link";
-import {
-  formatDate,
-  isDateOverdue,
-  isDateTomorrowOverdue,
-  isDateTodayOverdue,
-  isDateMoreFiveDayOverdue,
-  isDateMoreTenDayOverdue,
-} from "@/src/utils/getFormatDate";
-import InputCheckBox from "@/src/components/form/InputCheckBox";
-import { useEffect, useState } from "react";
-import { putTaskCompleted } from "@/src/lib/apis";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import CompleteModalTask from "./CompleteModalTask";
+import { Fragment, useEffect, useState } from "react";
 import { getContactsNeedAttention } from "../../../../../lib/apis";
+import Image from "next/image";
+import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 
 const ContactList = () => {
-  const [contacts, setContacts] = useState([]);
-
+  const [contacts, setContacts] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const getContacts = async () => {
       try {
         const response = await getContactsNeedAttention();
-        console.log({ response });
+        setContacts(response);
       } catch (error) {
         console.log(error);
       }
+      setIsLoading(false);
     };
     getContacts();
   }, []);
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto w-full pr-1">
-      {/* {tasks.map((task) => (
-        <Task
-          task={task}
-          key={task.id}
-          mutate={mutate}
-          handleComplete={handleComplete}
-        />
-      ))} */}
-    </div>
-  );
-};
-
-const Task = ({ task, mutate, handleComplete }) => {
-  const { t } = useTranslation();
-  const [checked, setChecked] = useState(task.isCompleted);
-
-  useEffect(() => {
-    setChecked(task.isCompleted);
-  }, [task]);
-
-  const handleChange = async (e, task) => {
-    handleComplete(task.id);
-  };
-
-  return (
     <div
       className={clsx(
-        "flex gap-2 p-2 rounded-md w-full items-center hover:bg-easy-300",
+        "col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72 flex items-center flex-col",
         {
-          "bg-red-200 ": task.status == "overdue" && !task.isCompleted,
-          "bg-green-200 ":
-            isDateTomorrowOverdue(task.deadline) && !task.isCompleted,
-          "bg-orange-300 ":
-            isDateTodayOverdue(task.deadline) && !task.isCompleted,
-          "bg-blue-300":
-            isDateMoreFiveDayOverdue(task.deadline) && !task.isCompleted,
-          "bg-gray-300":
-            !task.deadline ||
-            (isDateMoreTenDayOverdue(task.deadline) && !task.isCompleted),
-          "text-gray-800/45 line-through": task.isCompleted,
+          "justify-between": !contacts?.length,
         }
       )}
     >
-      <InputCheckBox
-        checked={checked}
-        setChecked={(e) => handleChange(e, task)}
-      />
-      <Link
-        className="flex flex-col gap-1 cursor-pointer"
-        href={`/tools/tasks/task/${task.id}?show=true`}
-      >
-        <p className="text-sm">{task.name}</p>
-        <p className="text-xs">
-          Vencimiento: {formatDate(task.deadline, "dd/MM/yyyy")}
-        </p>
-      </Link>
+      <h1 className="h-1/6 font-medium w-full">
+        Contactos que requieren atención
+      </h1>
+      {isLoading ? (
+        <LoadingSpinnerSmall color="primary" />
+      ) : contacts && contacts.length > 0 ? (
+        <div className="flex flex-col gap-2 overflow-y-auto w-full pr-1 h-full">
+          {contacts.map((contact) => (
+            <Link
+              className="flex flex-col gap-1 cursor-pointer hover:bg-easy-300 rounded-md p-1"
+              href={`/sales/crm/contacts/contact/${contact.id}?show=true`}
+              key={contact.id}
+            >
+              <div className="flex gap-2 items-center">
+                <Image
+                  className="h-12 w-12 rounded-full object-cover"
+                  width={36}
+                  height={36}
+                  src={contact?.photo || "/img/avatar.svg"}
+                  alt=""
+                />
+                <div>
+                  <p className="text-sm">{contact.fullName}</p>
+                  {contact?.emails?.length && (
+                    <p className="text-xs text-gray-50">
+                      {contact?.emails[0]?.email?.email}
+                    </p>
+                  )}
+                  {contact?.phones?.length && (
+                    <p className="text-xs text-gray-50">
+                      {contact?.phones[0]?.phone?.number}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <Fragment>
+          <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+            <h1 className="text-sm p-2 ">
+              ¡Buen trabajo! tus contactos están al día
+            </h1>
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 };

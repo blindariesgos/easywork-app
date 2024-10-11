@@ -31,7 +31,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     limit: 5,
   });
   const { data: dataPolicies, isLoading: isLoadingPolicies } = usePolicies({
-    filters: { name: query },
+    filters: { poliza: query },
     config: {
       page: 1,
       limit: 5,
@@ -61,7 +61,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
       id: option.id,
       name:
         type === "poliza"
-          ? `${option?.company?.name} ${option?.poliza} ${option?.company?.type}`
+          ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
           : option.fullName || option.name,
       username: option.username,
       title: option.title,
@@ -104,9 +104,9 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
-              getValues(name).map((res) => (
+              getValues(name).map((option) => (
                 <div
-                  key={res?.id}
+                  key={option?.id}
                   className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
                 >
                   {option.fullName ||
@@ -116,7 +116,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     option.id}
                   <div
                     type="button"
-                    onClick={() => handleRemove(res.id)}
+                    onClick={() => handleRemove(option.id)}
                     className="text-white"
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
@@ -228,7 +228,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                             }`}
                           >
                             {filterSelect == 2
-                              ? `${option?.company?.name} ${option?.poliza} ${option?.company?.type}`
+                              ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
                               : option.fullName ||
                                 option.name ||
                                 option.username ||

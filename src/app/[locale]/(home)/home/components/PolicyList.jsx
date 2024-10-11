@@ -53,9 +53,13 @@ const PolicyList = () => {
                   alt=""
                 />
                 <div>
-                  <p className="text-sm">{policy?.contact?.fullName}</p>
                   <p className="text-sm">{`${policy?.company?.name} ${policy.poliza} ${policy?.type?.name}`}</p>
-                  <p className="text-sm">
+                  {policy?.contact && (
+                    <p className="text-xs text-gray-50">
+                      {policy?.contact?.fullName}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-50">
                     {`$${policy?.importeTotal?.toFixed(2) ?? "0.00"} ${moment(policy.vigenciDesde).format("MMM. DD, YYYY")}`}
                   </p>
                 </div>

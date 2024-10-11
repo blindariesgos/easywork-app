@@ -126,7 +126,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
-      lastName: "",
       emails_dto: [
         {
           email: "",

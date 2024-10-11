@@ -12,8 +12,6 @@ const ContactList = () => {
     const getContacts = async () => {
       try {
         const response = await getContactsNeedAttention();
-        console.log({ response });
-        // setContacts([]);
         setContacts(response);
       } catch (error) {
         console.log(error);

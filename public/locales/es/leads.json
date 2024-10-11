@@ -7,6 +7,14 @@
     "lead": "Prospecto",
     "create": "Crear",
     "search": "Búsqueda",
+    "elements": "Mis Prospectos",
+    "planned": "Planteados",
+    "invitation": "Invitaciones",
+    "entrees": "Entrantes",
+    "others": "Otros",
+    "expired": "Vencida",
+    "comments": "Comentarios",
+    "mark-all": "Marcar todo como leídos",
     "delete": {
       "remove": "Eliminar definitivamente",
       "trash": "Enviar a papelera de reciclaje"

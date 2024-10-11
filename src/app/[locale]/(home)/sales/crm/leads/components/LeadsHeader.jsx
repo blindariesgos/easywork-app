@@ -13,6 +13,7 @@ import IconDropdown from "../../../../../../../components/SettingsButton";
 import FiltersLead from "./filters/FiltersLeads";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useLeadContext from "@/src/context/leads";
+import LeadsSubMenu from "./LeadsSubMenu";
 
 export default function LeadsHeader() {
   const { t } = useTranslation();
@@ -74,6 +75,9 @@ export default function LeadsHeader() {
           displayFilters={displayFilters}
           removeFilter={removeFilter}
         />
+      </div>
+      <div className="flex-none items-center justify-between  border-gray-200 pt-4 hidden lg:flex">
+        <LeadsSubMenu />
       </div>
     </header>
   );

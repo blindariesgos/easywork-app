@@ -45,15 +45,16 @@ const PolicyList = () => {
               key={policy.id}
             >
               <div className="flex gap-2 items-center">
-                {/* <Image
+                <Image
                   className="h-12 w-12 rounded-full object-cover"
                   width={36}
                   height={36}
-                  src={policy?.photo || "/img/avatar.svg"}
+                  src={policy?.contact?.photo || "/img/avatar.svg"}
                   alt=""
-                /> */}
+                />
                 <div>
-                  <p className="text-sm">{policy.poliza}</p>
+                  <p className="text-sm">{policy?.contact?.fullName}</p>
+                  <p className="text-sm">{`${policy?.company?.name} ${policy.poliza} ${policy?.type?.name}`}</p>
                   <p className="text-sm">
                     {`$${policy?.importeTotal?.toFixed(2) ?? "0.00"} ${moment(policy.vigenciDesde).format("MMM. DD, YYYY")}`}
                   </p>

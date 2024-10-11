@@ -104,8 +104,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     if (lead?.lastName) setValue("lastName", lead?.lastName);
     if (lead?.cargo) setValue("cargo", lead?.cargo);
     if (lead?.phones?.length) setValue("phone", lead?.phones[0]?.phone?.number);
-    if (lead?.emails[0]?.email?.email)
-      setValue("email", lead?.emails[0]?.email?.email);
+    if (lead?.emails?.length) setValue("email", lead?.emails[0]?.email?.email);
     if (lead?.type?.id) setValue("typeId", lead?.type?.id);
     if (lead?.source?.id) setValue("sourceId", lead?.source?.id);
     if (lead?.birthdate) setValue("birthdate", lead?.birthdate);

@@ -397,7 +397,7 @@ export default function ModalConfigGmail() {
                   <p
                     className="mt-4 underline text-blue-600 cursor-pointer"
                     onClick={() =>
-                      router.push(`${window.location.pathname}?configlabelid=true&isEdit=true`)
+                      router.push(`${window.location.pathname}?page=${params.get("page")}&configlabelid=true&isEdit=true`)
                     }
                   >
                     Configurar carpetas para la sincronización.

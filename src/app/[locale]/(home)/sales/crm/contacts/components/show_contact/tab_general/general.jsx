@@ -160,8 +160,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     }
     if (contact?.lastName) setValue("lastName", contact?.lastName);
     if (contact?.cargo) setValue("cargo", contact?.cargo);
-    if (contact?.phones[0]?.phone?.number)
-      setValue("phone", contact?.phones[0]?.phone?.number);
     if (contact?.type?.id) setValue("typeId", contact?.type?.id);
     if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
     if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
@@ -184,13 +182,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
           relation: e?.relation ?? "",
         }))
       );
-    } else {
-      setValue("emails_dto", [
-        {
-          email: "",
-          relation: "",
-        },
-      ]);
     }
     if (contact?.phones?.length) {
       setValue(
@@ -200,13 +191,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
           relation: e?.relation ?? "",
         }))
       );
-    } else {
-      setValue("phones_dto", [
-        {
-          number: "",
-          relation: "",
-        },
-      ]);
     }
     setLoading(false);
   }, [contact, id]);
@@ -319,20 +303,18 @@ export default function ContactGeneral({ contact, id, refPrint }) {
 
           {/* Menu Izquierda */}
           <div className=" bg-gray-100 p-4 lg:overflow-y-scroll rounded-lg lg:col-span-5 ">
-            <div className="pr-2">
-              <div className="flex justify-between bg-white py-4 px-3 rounded-md">
-                <h1 className="">{t("contacts:create:data")}</h1>
-                {contact && (
-                  <button
-                    type="button"
-                    disabled={!id}
-                    onClick={() => setIsEdit(!isEdit)}
-                    title="Editar"
-                  >
-                    <PencilIcon className="h-6 w-6 text-primary" />
-                  </button>
-                )}
-              </div>
+            <div className="flex justify-between bg-white py-4 px-3 rounded-md">
+              <h1 className="">{t("contacts:create:data")}</h1>
+              {contact && (
+                <button
+                  type="button"
+                  disabled={!id}
+                  onClick={() => setIsEdit(!isEdit)}
+                  title="Editar"
+                >
+                  <PencilIcon className="h-6 w-6 text-primary" />
+                </button>
+              )}
             </div>
             <div className="flex justify-center">
               {isEdit ? (

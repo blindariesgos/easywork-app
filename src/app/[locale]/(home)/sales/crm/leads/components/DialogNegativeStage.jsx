@@ -94,12 +94,6 @@ export default function DialogNegativeStage({
                 </div>
                 <div className="flex justify-center gap-4 sticky bottom-0 pt-4 pb-2">
                   <Button
-                    onclick={handleSubmit}
-                    label={t("common:buttons:save")}
-                    buttonStyle="primary"
-                    className="px-3 py-2"
-                  />
-                  <Button
                     type="button"
                     label={t("common:buttons:cancel")}
                     buttonStyle="secondary"
@@ -107,6 +101,12 @@ export default function DialogNegativeStage({
                       setSelectedReason([]);
                       closeModal();
                     }}
+                    className="px-3 py-2"
+                  />
+                  <Button
+                    onclick={handleSubmit}
+                    label={t("common:buttons:save")}
+                    buttonStyle="primary"
                     className="px-3 py-2"
                   />
                 </div>

@@ -14,7 +14,7 @@ import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import dynamic from "next/dynamic";
+import { getUserSignatures } from "@/src/lib/api/drive";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "./styles.css";
@@ -111,15 +111,8 @@ export default function SendMessage({
 
   const getSignature = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
-      response.data.forEach((element) => {
+      const response = await getUserSignatures();
+      response.forEach((element) => {
         const foundItem = element.metadata.senders.find((item) =>
           item.email === userData.email && item.state ? item.state : false
         );

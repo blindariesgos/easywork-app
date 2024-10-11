@@ -19,7 +19,7 @@ import { XCircleIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import axios from "@/src/lib/axios";
+import { getUserSignatures, deleteUserSignatures } from "@/src/lib/api/drive";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -57,19 +57,14 @@ export default function Signature({
   const getSignatures = async () => {
     console.log("test");
     try {
-      const response = await axios({
-        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-      }).get(`/files/signatures`);
-      console.log(response);
+      const response = await getUserSignatures();
       setSignatures(response);
     } catch (error) {}
   };
 
   const deleteSignature = async (id) => {
     try {
-      const response = await axios({
-        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-      }).delete(`/files/signatures/${id}`);
+      const response = await deleteUserSignatures(id);
       if (response) getSignatures();
     } catch (error) {}
   };
@@ -166,76 +161,77 @@ export default function Signature({
                           </tr>
                         </thead>
                         <tbody>
-                          {signatures.map((signature, index) => (
-                            <tr key={index}>
-                              <td className="pb-2">
-                                <Menu
-                                  as="div"
-                                  className="w-10 md:w-auto rounded-lg font-normal"
-                                >
-                                  <MenuButton className="flex items-center">
-                                    <Bars3Icon
-                                      className="h-4 w-4 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </MenuButton>
-                                  <MenuItems
-                                    transition
-                                    anchor="bottom start"
-                                    className={
-                                      "z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                    }
+                          {Array.isArray(signatures) &&
+                            signatures.map((signature, index) => (
+                              <tr key={index}>
+                                <td className="pb-2">
+                                  <Menu
+                                    as="div"
+                                    className="w-10 md:w-auto rounded-lg font-normal"
                                   >
-                                    {[
-                                      {
-                                        name: "Editar",
-                                        click: () => {
-                                          router.push(
-                                            `${window.location.href}&addsignature=true&isEdit=${signature.id}`
-                                          );
+                                    <MenuButton className="flex items-center">
+                                      <Bars3Icon
+                                        className="h-4 w-4 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </MenuButton>
+                                    <MenuItems
+                                      transition
+                                      anchor="bottom start"
+                                      className={
+                                        "z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                      }
+                                    >
+                                      {[
+                                        {
+                                          name: "Editar",
+                                          click: () => {
+                                            router.push(
+                                              `${window.location.href}&addsignature=true&isEdit=${signature.id}`
+                                            );
+                                          },
                                         },
-                                      },
-                                      {
-                                        name: "Eliminar",
-                                        click: () =>
-                                          deleteSignature(signature.id),
-                                      },
-                                    ].map((item, index) => (
-                                      <MenuItem key={index}>
-                                        {({ active }) => (
-                                          <div
-                                            onClick={item.click}
-                                            className={classNames(
-                                              active ? "bg-gray-50" : "",
-                                              "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                                            )}
-                                          >
-                                            <p>{item.name}</p>
-                                          </div>
-                                        )}
-                                      </MenuItem>
-                                    ))}
-                                  </MenuItems>
-                                </Menu>
-                              </td>
-                              <td className="py-2">
-                                <div className="flex w-96 overflow-x-auto">
-                                  <p className="whitespace-nowrap">
-                                    {signature?.metadata?.senders?.map(
-                                      (element, index) => (
-                                        <span key={index} className="mr-2">
-                                          {element.state ? element.email : ""}{" "}
-                                        </span>
-                                      )
-                                    )}
-                                  </p>
-                                </div>
-                              </td>
-                              <td className="py-2">
-                                {signature?.metadata?.name}
-                              </td>
-                            </tr>
-                          ))}
+                                        {
+                                          name: "Eliminar",
+                                          click: () =>
+                                            deleteSignature(signature.id),
+                                        },
+                                      ].map((item, index) => (
+                                        <MenuItem key={index}>
+                                          {({ active }) => (
+                                            <div
+                                              onClick={item.click}
+                                              className={classNames(
+                                                active ? "bg-gray-50" : "",
+                                                "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                              )}
+                                            >
+                                              <p>{item.name}</p>
+                                            </div>
+                                          )}
+                                        </MenuItem>
+                                      ))}
+                                    </MenuItems>
+                                  </Menu>
+                                </td>
+                                <td className="py-2">
+                                  <div className="flex w-96 overflow-x-auto">
+                                    <p className="whitespace-nowrap">
+                                      {signature?.metadata?.senders?.map(
+                                        (element, index) => (
+                                          <span key={index} className="mr-2">
+                                            {element.state ? element.email : ""}{" "}
+                                          </span>
+                                        )
+                                      )}
+                                    </p>
+                                  </div>
+                                </td>
+                                <td className="py-2">
+                                  {signature?.metadata?.name}
+                                </td>
+                              </tr>
+                            ))}
                         </tbody>
                       </table>
                     </div>

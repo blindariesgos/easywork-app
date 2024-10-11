@@ -22,11 +22,11 @@ export default function ContactsHeader() {
 
   const createOptions = [
     {
-      name: "Cliente",
+      name: "Física",
       onclick: () => push(`/sales/crm/contacts/contact?show=true&type=fisica`),
     },
     {
-      name: "Compañia",
+      name: "Moral",
       onclick: () => push(`/sales/crm/contacts/contact?show=true&type=moral`),
     },
   ];

@@ -14,7 +14,6 @@ const PolicyList = () => {
     const getPolicies = async () => {
       try {
         const response = await getPoliciesNeedAttention();
-        console.log({ response });
         setPolicies(response);
       } catch (error) {
         console.log(error);

@@ -132,7 +132,7 @@ export default function ModalAddFolders() {
     },
     {
       value: "TRASH",
-      label: "Basura",
+      label: "Papelera",
     },
     {
       value: "DRAFT",
@@ -171,6 +171,33 @@ export default function ModalAddFolders() {
       label: "No leído",
     },
   ];
+
+  const folderListShort = [
+    {
+      value: "INBOX",
+      label: "Recibidos",
+    },
+    {
+      value: "ALL",
+      label: "Todos",
+    },
+    {
+      value: "SENT",
+      label: "Enviados",
+    },
+    {
+      value: "TRASH",
+      label: "Papelera",
+    },
+    {
+      value: "SPAM",
+      label: "Spam",
+    },
+    {
+      value: "IMPORTANT",
+      label: "Importantes",
+    },
+  ]
 
   return (
     <SliderOverShort openModal={params.get("configlabelid")}>
@@ -248,27 +275,18 @@ export default function ModalAddFolders() {
                     anchor="bottom end"
                     className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                   >
-                    {folderData?.map((item, index) => {
-                      let name = params.get("isEdit")
-                        ? item.mailboxName
-                        : item.name;
+                    {folderListShort?.map((item, index) => {
                       return (
                         <MenuItem key={index}>
                           {({ active }) => (
                             <div
-                              onClick={() => setSelectFirst(name)}
+                              onClick={() => setSelectFirst(item.label)}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
                                 "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                               )}
                             >
-                              {folderList.find(
-                                (folder) => folder.value === name
-                              )
-                                ? folderList.find(
-                                    (folder) => folder.value === name
-                                  )?.label
-                                : name}
+                              {item.label}
                             </div>
                           )}
                         </MenuItem>
@@ -288,27 +306,18 @@ export default function ModalAddFolders() {
                     anchor="bottom end"
                     className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                   >
-                    {folderData?.map((item, index) => {
-                      let name = params.get("isEdit")
-                        ? item.mailboxName
-                        : item.name;
+                    {folderListShort?.map((item, index) => {
                       return (
                         <MenuItem key={index}>
                           {({ active }) => (
                             <div
-                              onClick={() => setSelectSecond(name)}
+                              onClick={() => setSelectSecond(item.label)}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
                                 "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                               )}
                             >
-                              {folderList.find(
-                                (folder) => folder.value === name
-                              )
-                                ? folderList.find(
-                                    (folder) => folder.value === name
-                                  )?.label
-                                : name}
+                              {item.label}
                             </div>
                           )}
                         </MenuItem>
@@ -328,27 +337,18 @@ export default function ModalAddFolders() {
                     anchor="bottom end"
                     className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                   >
-                    {folderData?.map((item, index) => {
-                      let name = params.get("isEdit")
-                        ? item.mailboxName
-                        : item.name;
+                    {folderListShort?.map((item, index) => {
                       return (
                         <MenuItem key={index}>
                           {({ active }) => (
                             <div
-                              onClick={() => setSelectThree(name)}
+                              onClick={() => setSelectThree(item.label)}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
                                 "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                               )}
                             >
-                              {folderList.find(
-                                (folder) => folder.value === name
-                              )
-                                ? folderList.find(
-                                    (folder) => folder.value === name
-                                  )?.label
-                                : name}
+                              {item.label}
                             </div>
                           )}
                         </MenuItem>

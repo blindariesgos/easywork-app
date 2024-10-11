@@ -3,7 +3,12 @@ import React from "react";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 
-function ProfileImageInput({ selectedProfileImage, onChange, disabled }) {
+function ProfileImageInput({
+  selectedProfileImage,
+  onChange,
+  disabled,
+  label,
+}) {
   const { t } = useTranslation();
   return (
     <div className="text-center">
@@ -31,11 +36,11 @@ function ProfileImageInput({ selectedProfileImage, onChange, disabled }) {
               accept="image/jpg,image/jpeg,image/png,image/gif,image/svg"
               disabled={disabled}
             />
-            <p>{t("contacts:create:change-photo")}</p>
+            <p>{"Seleccionar"}</p>
           </div>
         </div>
         <p className="mt-1 text-xs leading-5 text-black">
-          {t("contacts:create:jpg")}
+          {label || t("contacts:create:jpg")}
         </p>
       </label>
     </div>

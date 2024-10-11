@@ -55,6 +55,16 @@ const ContactList = () => {
                 />
                 <div>
                   <p className="text-sm">{contact.fullName}</p>
+                  {contact?.emails?.length && (
+                    <p className="text-xs text-gray-50">
+                      {contact?.emails[0]?.email?.email}
+                    </p>
+                  )}
+                  {contact?.phones?.length && (
+                    <p className="text-xs text-gray-50">
+                      {contact?.phones[0]?.phone?.number}
+                    </p>
+                  )}
                 </div>
               </div>
             </Link>

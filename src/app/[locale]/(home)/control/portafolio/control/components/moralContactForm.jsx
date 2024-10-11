@@ -124,7 +124,7 @@ const MoralContactForm = () => {
             label={t("control:portafolio:control:form:company-activity")}
             options={[
               {
-                name: "Fisica",
+                name: "Física",
                 id: 0,
               },
               {

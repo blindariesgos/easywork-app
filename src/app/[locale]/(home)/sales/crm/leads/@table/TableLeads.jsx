@@ -38,6 +38,7 @@ import DeleteModal from "@/src/components/modals/DeleteItem";
 import { deleteLeadById, updateLead } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
+import useCrmContext from "@/src/context/crm";
 
 export default function TableLeads() {
   const [isOpenDelete, setIsOpenDelete] = useState(false);
@@ -59,7 +60,6 @@ export default function TableLeads() {
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedLeads, setSelectedLeads] = useState([]);
   const { columnTable } = useLeads();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
@@ -67,6 +67,10 @@ export default function TableLeads() {
   const [dataLeads, setDataLeads] = useState();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const {
+    selectedContacts: selectedLeads,
+    setSelectedContacts: setSelectedLeads,
+  } = useCrmContext();
 
   useEffect(() => {
     if (data) setDataLeads(data);

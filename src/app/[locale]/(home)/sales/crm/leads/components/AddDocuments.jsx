@@ -6,8 +6,8 @@ const AddDocuments = () => {
   const { t } = useTranslation();
 
   const options = [
-    { name: t("leads:add:rfc"), disabled: true },
     { name: t("leads:add:quote"), disabled: true },
+    { name: t("leads:add:rfc"), disabled: true },
     { name: t("leads:add:profile"), disabled: true },
     { name: t("leads:add:policy"), disabled: true },
   ];

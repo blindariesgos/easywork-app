@@ -15,8 +15,8 @@ const Contact = () => {
             label={t("control:portafolio:control:form:typePerson")}
             options={[
               {
-                name: "Fisica",
-                id: "physical",
+                name: "Física",
+                id: "fisica",
               },
               {
                 name: "Moral",

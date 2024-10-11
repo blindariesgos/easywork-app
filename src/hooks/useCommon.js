@@ -45,21 +45,22 @@ export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
 
-  // Obtener los roles del usuario
-  const userRoles = session?.user?.roles || [];
-
-  // Name
-  const userRoleNames = userRoles.map((role) => role.name);
+  // Obtener los permisos de menú del usuario
+  const userMenuPermissions =
+    session?.user?.roles?.flatMap((role) => role.menuPermissions) || [];
 
   const sidebarNavigation = [
     {
+      id: "home",
       name: t("common:menu:home:name"),
       href: "/home",
       icon: ChevronRightIcon,
       iconShortBar: HomeIcon,
       current: true,
+      roles: ["admin", "user"],
     },
     {
+      id: "tools",
       name: t("common:menu:tools:name"),
       href: "/tools",
       icon: ChevronRightIcon,
@@ -67,24 +68,28 @@ export const useSidebar = () => {
       current: false,
       children: [
         {
+          id: "tools:tasks",
           name: t("common:menu:tools:tasks"),
           href: "/tools/tasks?page=1",
           image: "/img/herramientas/tareas.png",
           iconShortBar: BookOpenIcon,
         },
         {
+          id: "tools:calendar",
           name: t("common:menu:tools:calendar"),
           href: "/tools/calendar",
           image: "/img/herramientas/calendario.png",
           iconShortBar: CalendarDaysIcon,
         },
         {
+          id: "tools:drive",
           name: t("common:menu:tools:drive"),
           href: "/tools/drive",
           image: "/img/herramientas/drive.png",
           iconShortBar: ArchiveBoxIcon,
         },
         {
+          id: "tools:email",
           name: t("common:menu:tools:email"),
           href: "/tools/webmail?page=1",
           image: "/img/herramientas/correo.png",
@@ -93,6 +98,7 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "sales",
       name: t("common:menu:sales:name"),
       icon: ChevronRightIcon,
       current: false,
@@ -100,18 +106,21 @@ export const useSidebar = () => {
       iconShortBar: TagIcon,
       children: [
         {
+          id: "sales:crm",
           name: t("common:menu:sales:crm:name"),
           href: "/sales/crm",
           image: "/img/ventas/crm.png",
           iconShortBar: NewspaperIcon,
           children: [
             {
+              id: "sales:crm:contacts",
               name: t("common:menu:sales:crm:contacts"),
               href: "/sales/crm/contacts?page=1",
               image: "/img/crm/contacto.png",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:crm:leads",
               name: t("common:menu:sales:crm:prospects"),
               href: "/sales/crm/leads?page=1",
               image: "/img/crm/prospecto.png",
@@ -120,33 +129,38 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "sales:reports",
           name: t("common:menu:sales:reports:name"),
           href: "",
           image: "/img/ventas/reportes.png",
           iconShortBar: PresentationChartBarIcon,
           children: [
             {
+              id: "sales:reports:activities",
               name: t("common:menu:sales:reports:activities"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:reports:history",
               name: t("common:menu:sales:reports:history"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:reports:reports",
               name: t("common:menu:sales:reports:reports"),
-
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:reports:agent",
               name: t("common:menu:sales:reports:agent"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
               children: [
                 {
+                  id: "sales:reports:agent:performance",
                   name: "Embudo de ventas sin conversión",
                   href: "",
                   iconShortBar: ArrowDownCircleIcon,
@@ -158,24 +172,27 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "control",
       name: t("common:menu:control:name"),
       icon: ChevronRightIcon,
       current: false,
       href: "/control",
-      roles: ["user"],
       iconShortBar: WalletIcon,
       children: [
         {
+          id: "control:commissions",
           name: t("common:menu:control:portfolio:commissions"),
           href: "",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "control:commissions:commission-simulator",
               name: t("common:menu:control:portfolio:commission-simulator"),
               href: "",
               iconShortBar: GlobeAltIcon,
             },
             {
+              id: "control:commissions:commissions-generated",
               name: t("common:menu:control:portfolio:commissions-generated"),
               href: "",
               iconShortBar: GlobeAltIcon,
@@ -183,18 +200,21 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "control:portfolio",
           name: t("common:menu:control:portfolio:name"),
           href: "/control/portafolio",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "control:portfolio:receipts",
               name: t("common:menu:control:portfolio:receipts"),
               href: "/control/portafolio/receipts",
               image: "/img/cobranza/recibos.png",
               iconShortBar: GlobeAltIcon,
             },
             {
+              id: "control:portfolio:control",
               name: t("common:menu:control:portfolio:control"),
               href: "/control/portafolio/control",
               image: "/img/cobranza/cobranzasub.png",
@@ -205,6 +225,7 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "operations",
       name: "OPERACIONES",
       icon: ChevronRightIcon,
       current: false,
@@ -212,92 +233,101 @@ export const useSidebar = () => {
       iconShortBar: WalletIcon,
       children: [
         {
+          id: "operations:management",
           name: "Gestión",
           href: "",
           image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:policies",
           name: "Pólizas",
           href: "/operations/policies",
           image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:endorsements",
           name: "Renovaciones",
           href: "",
           image: "/img/operations/renovations.svg",
-          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:sinisters",
           name: "Siniestros",
           href: "",
           image: "/img/operations/accidents.svg",
-          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:refunds",
           name: "Reembolsos",
           href: "",
           image: "/img/operations/refunds.svg",
-          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:fund-recovery",
           name: "Rescate de Fondos",
           href: "",
           image: "/img/operations/fund_recovery.svg",
-          roles: ["user"],
           iconShortBar: GlobeAltIcon,
         },
       ],
     },
     {
+      id: "marketing",
       name: t("common:menu:sales:marketing:name"),
       icon: ChevronRightIcon,
       current: false,
       href: "/marketing",
-      roles: ["user"],
       iconShortBar: PuzzlePieceIcon,
       children: [
         {
+          id: "marketing:campaigns",
           name: "Canales (REDES SOCIALES)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:phone",
           name: "Telefonía (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:sms",
           name: "SMS (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:widgets",
           name: "WIDGETS (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:forms",
           name: "Formularios (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:websites",
           name: "Sitios Web (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:landing",
           name: "Landing (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
@@ -306,44 +336,50 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "services",
       name: t("common:menu:services:name"),
       icon: ChevronRightIcon,
       current: false,
       href: "/services",
-      roles: ["user"],
       iconShortBar: PuzzlePieceIcon,
       children: [
         {
+          id: "services:automations",
           name: t("common:menu:services:automations"),
           href: "",
           image: "/img/services/automatizaciones.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "services:funnels",
           name: t("common:menu:services:funnels"),
           href: "",
           image: "/img/services/embudos.png",
           iconShortBar: FunnelIcon,
         },
         {
+          id: "services:chat",
           name: t("common:menu:services:soport"),
           href: "",
           image: "/img/services/soporte.png",
           iconShortBar: ChatBubbleOvalLeftEllipsisIcon,
         },
         {
+          id: "services:trash",
           name: t("common:menu:services:trash"),
           href: "",
           image: "/img/services/papelera.png",
           iconShortBar: TrashIcon,
         },
         {
+          id: "services:logs",
           name: t("common:menu:services:logs"),
           href: "",
           image: "/img/services/logs.png",
           iconShortBar: ShieldCheckIcon,
         },
         {
+          id: "services:academy",
           name: t("common:menu:services:academy"),
           href: "",
           image: "/img/services/academia.png",
@@ -352,34 +388,39 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "agent-management",
       name: t("common:menu:agent-management:name"),
       href: "/",
       icon: ChevronRightIcon,
       current: false,
-      roles: ["user"],
       iconShortBar: IdentificationIcon,
       children: [
         {
+          id: "agent-management:accompaniment",
           name: t("common:menu:agent-management:accompaniment"),
           href: "",
           iconShortBar: ArrowDownCircleIcon,
         },
         {
+          id: "agent-management:recruitement",
           name: t("common:menu:agent-management:recruitement"),
           href: "",
           iconShortBar: UserPlusIcon,
         },
         {
+          id: "agent-management:capacitations",
           name: t("common:menu:agent-management:capacitations"),
           href: "",
           iconShortBar: NewspaperIcon,
         },
         {
+          id: "agent-management:conections",
           name: t("common:menu:agent-management:conections"),
           href: "",
           iconShortBar: ArrowPathIcon,
         },
         {
+          id: "agent-management:meetings",
           name: "Reuniones y sesiones",
           href: "",
           icon: ChevronRightIcon,
@@ -387,11 +428,13 @@ export const useSidebar = () => {
           iconShortBar: IdentificationIcon,
           children: [
             {
+              id: "agent-management:team-meetings",
               name: t("common:menu:agent-management:team-meetings"),
               href: "",
               iconShortBar: SparklesIcon,
             },
             {
+              id: "agent-management:individual-meetings",
               name: t("common:menu:agent-management:individual-meetings"),
               href: "",
               iconShortBar: SparklesIcon,
@@ -401,54 +444,63 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "companies",
       name: t("common:menu:companies:name"),
       href: "/",
-      roles: ["user"],
       icon: ChevronRightIcon,
       current: false,
       iconShortBar: BuildingOfficeIcon,
       children: [
         {
+          id: "companies:insurance",
           name: t("common:menu:companies:insurance"),
           href: "",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "companies:insurance:gnp",
               name: t("common:menu:companies:gnp"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:axa",
               name: t("common:menu:companies:axa"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:banorte",
               name: t("common:menu:companies:banorte"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:atlas",
               name: t("common:menu:companies:atlas"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:zurich",
               name: t("common:menu:companies:zurich"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:qualitas",
               name: t("common:menu:companies:qualitas"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:afirme",
               name: t("common:menu:companies:afirme"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:others",
               name: t("common:menu:companies:others"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
@@ -456,16 +508,19 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "companies:agency-addresses",
           name: t("common:menu:companies:agency-addresses"),
           href: "",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "companies:agency-addresses:gya",
               name: "GYA TUS SUEÑOS",
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:agency-addresses:blinda",
               name: "BLINDARIESGOS",
               href: "",
               iconShortBar: ArrowDownCircleIcon,
@@ -475,6 +530,7 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "settings",
       name: t("common:menu:settings:name"),
       href: "/settings",
       icon: ChevronRightIcon,
@@ -482,19 +538,21 @@ export const useSidebar = () => {
       iconShortBar: ArrowDownCircleIcon,
       children: [
         {
+          id: "settings:permissions",
           name: t("common:menu:settings:permissions"),
           href: "/settings/permissions",
           iconShortBar: ArrowDownCircleIcon,
-          roles: ["user"],
           image: "/img/settings/permissions.png",
           children: [
             {
+              id: "settings:permissions:invite",
               name: t("common:menu:settings:invite"),
               href: `${window.location.pathname}?inviteuser=true`,
               image: "/img/settings/invitar.png",
               iconShortBar: ArchiveBoxIcon,
             },
             {
+              id: "settings:permissions:user-list",
               name: t("common:menu:settings:user-list"),
               href: "/settings/permissions/users",
               image: "/img/settings/listausuarios.png",
@@ -503,35 +561,37 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "settings:others",
           name: t("common:menu:settings:others"),
           href: "/settings/others",
           iconShortBar: ArrowDownCircleIcon,
           image: "/img/settings/others.png",
           children: [
             {
+              id: "settings:others:other-settings",
               name: t("common:menu:settings:other-settings"),
               href: `${window.location.pathname}?othersettings=true`,
-              roles: ["user"],
               image: "/img/settings/othersettings.png",
               iconShortBar: BookOpenIcon,
             },
             {
+              id: "settings:others:change-password",
               name: t("common:menu:settings:change-password"),
               href: `${window.location.pathname}?changepassword=true`,
               image: "/img/settings/changepassword.png",
               iconShortBar: InboxArrowDownIcon,
             },
             {
+              id: "settings:others:other-notifications",
               name: t("common:menu:settings:other-notifications"),
               href: `${window.location.pathname}?othernotifications=true`,
-              roles: ["user"],
               image: "/img/settings/otrasnotificaciones.png",
               iconShortBar: InboxArrowDownIcon,
             },
             {
+              id: "settings:others:subscriptions",
               name: "Suscripciones",
               href: "",
-              roles: ["user"],
               image: "/img/settings/subscriptions.png",
               iconShortBar: ArchiveBoxIcon,
             },
@@ -541,22 +601,19 @@ export const useSidebar = () => {
     },
   ];
 
-  // Función para filtrar las opciones según los roles
-  const filterMenuByRoles = (menuItems) => {
+  // Función para filtrar el menú según los permisos del usuario
+  const filterMenuByPermissions = (menuItems) => {
     return menuItems
       .filter((item) => {
-        // Si no hay roles definidos, se muestra a todos
-        if (!item.roles) return true;
-
-        // Verificar si el usuario tiene alguno de los roles permitidos
-        return item.roles.some((role) => userRoleNames.includes(role));
+        // Verificar si el id del menú está en los permisos del usuario
+        return userMenuPermissions.includes(item.id);
       })
       .map((item) => {
         // Si tiene hijos, aplicar el filtro recursivamente
         if (item.children) {
           return {
             ...item,
-            children: filterMenuByRoles(item.children),
+            children: filterMenuByPermissions(item.children),
           };
         }
         return item;
@@ -570,7 +627,7 @@ export const useSidebar = () => {
       });
   };
 
-  const filteredSidebarNavigation = filterMenuByRoles(sidebarNavigation);
+  const filteredSidebarNavigation = filterMenuByPermissions(sidebarNavigation);
 
   return {
     sidebarNavigation: filteredSidebarNavigation,

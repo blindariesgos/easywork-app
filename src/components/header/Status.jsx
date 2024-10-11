@@ -15,7 +15,7 @@ export default function Status() {
       <div className="flex gap-x-2">
         <div className="flex items-center gap-x-1">
           <FlagIcon className="h-3 w-3 text-black" aria-hidden="true" />
-          <p className="text-black text-xs">10</p>
+          <p className="text-black text-xs">0</p>
         </div>
       </div>
       <div className="flex items-center gap-1">

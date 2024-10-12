@@ -23,6 +23,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
+import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -100,7 +101,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     emails_dto: Yup.array().of(
       Yup.object().shape({
         email: Yup.string().matches(
-          /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/,
+          VALIDATE_EMAIL_REGEX,
           t("common:validations:email")
         ),
         relation: Yup.string(),
@@ -126,18 +127,28 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
-      emails_dto: [
-        {
-          email: "",
-          relation: "",
-        },
-      ],
-      phones_dto: [
-        {
-          number: "",
-          relation: "",
-        },
-      ],
+      emails_dto: contact?.emails?.length
+        ? contact?.emails?.map((e) => ({
+            email: e?.email?.email,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              email: "",
+              relation: "",
+            },
+          ],
+      phones_dto: contact?.phones?.length
+        ? contact?.phones?.map((e) => ({
+            number: e?.phone?.number,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              number: "",
+              relation: "",
+            },
+          ],
     },
   });
 
@@ -174,24 +185,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.activitySector)
       setValue("activitySector", contact?.activitySector);
 
-    if (contact?.emails?.length) {
-      setValue(
-        "emails_dto",
-        contact?.emails?.map((e) => ({
-          email: e?.email?.email,
-          relation: e?.relation ?? "",
-        }))
-      );
-    }
-    if (contact?.phones?.length) {
-      setValue(
-        "phones_dto",
-        contact?.phones?.map((e) => ({
-          number: e?.phone?.number,
-          relation: e?.relation ?? "",
-        }))
-      );
-    }
     setLoading(false);
   }, [contact, id]);
 

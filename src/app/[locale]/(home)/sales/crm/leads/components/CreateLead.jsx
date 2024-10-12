@@ -25,7 +25,7 @@ import { useSWRConfig } from "swr";
 import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
-
+import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
@@ -80,10 +80,10 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     amount: Yup.string(),
     emails_dto: Yup.array().of(
       Yup.object().shape({
-        email: Yup.string().matches(
-          /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/,
-          t("common:validations:email")
-        ),
+        email: Yup.string()
+          .matches(VALIDATE_EMAIL_REGEX, t("common:validations:email"))
+          .nullable() // Permite que el campo sea nulo
+          .notRequired(),
         relation: Yup.string(),
       })
     ),
@@ -107,19 +107,28 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
-      lastName: "",
-      emails_dto: [
-        {
-          email: "",
-          relation: "",
-        },
-      ],
-      phones_dto: [
-        {
-          number: "",
-          relation: "",
-        },
-      ],
+      emails_dto: lead?.emails?.length
+        ? lead?.emails?.map((e) => ({
+            email: e?.email?.email,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              email: null,
+              relation: "",
+            },
+          ],
+      phones_dto: lead?.phones?.length
+        ? lead?.phones?.map((e) => ({
+            number: e?.phone?.number,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              number: "",
+              relation: "",
+            },
+          ],
     },
   });
 
@@ -163,24 +172,6 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     if (lead?.quote) setValue("quote", lead?.quote);
     if (lead?.comments) setValue("comments", lead?.comments);
     if (lead?.observador) setValue("observadorId", lead?.observador.id);
-    if (lead?.emails?.length) {
-      setValue(
-        "emails_dto",
-        lead?.emails?.map((e) => ({
-          email: e?.email?.email,
-          relation: e?.relation ?? "",
-        }))
-      );
-    }
-    if (lead?.phones?.length) {
-      setValue(
-        "phones_dto",
-        lead?.phones?.map((e) => ({
-          number: e?.phone?.number,
-          relation: e?.relation ?? "",
-        }))
-      );
-    }
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
   }, [lead]);
@@ -234,7 +225,6 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
           }
           throw { message };
         }
-        await mutate(`/sales/crm/leads?limit=5&page=1`);
         toast.success("Prospecto creado con exito");
       } else {
         console.log({ body });
@@ -248,7 +238,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
           throw { message };
         }
         toast.success(t("contacts:edit:updated-contact"));
-        await mutate(`/sales/crm/leads?limit=5&page=1`);
+        mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
         mutateLead();
       }
       setLoading(false);

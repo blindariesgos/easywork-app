@@ -80,7 +80,7 @@ const FooterTable = ({ limit, setLimit, totalPages, page, setPage, total }) => {
         </div>
         <PaginationV2
           totalPages={totalPages || 0}
-          currentPage={page}
+          currentPage={Number(page)}
           setPage={setPage}
         />
       </div>

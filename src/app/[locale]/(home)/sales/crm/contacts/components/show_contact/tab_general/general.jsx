@@ -93,11 +93,11 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     assignedById: Yup.string(),
     birthdate: Yup.string(),
     typePerson: Yup.string(),
-    observadorId: Yup.string(),
+    observerId: Yup.string(),
     subAgentId: Yup.string(),
     intermediarioId: Yup.string(),
     typeId: Yup.string(),
-    comments: Yup.string(),
+    observations: Yup.string(),
     emails_dto: Yup.array().of(
       Yup.object().shape({
         email: Yup.string().matches(
@@ -179,9 +179,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
     if (contact?.intermediario)
       setValue("intermediarioId", contact?.intermediario?.id);
-    if (contact?.observador) setValue("observadorId", contact?.observador?.id);
+    if (contact?.observer) setValue("observerId", contact?.observer?.id);
     if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
-    if (contact?.comments) setValue("comments", contact?.comments);
+    if (contact?.observations) setValue("observations", contact?.observations);
     if (contact?.activitySector)
       setValue("activitySector", contact?.activitySector);
 
@@ -512,11 +512,11 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   />
                   <SelectDropdown
                     label={t("contacts:create:observer")}
-                    name="observadorId"
+                    name="observerId"
                     options={lists?.users}
                     register={register}
                     disabled={!isEdit}
-                    error={errors.observadorId}
+                    error={errors.observerId}
                     setValue={setValue}
                     watch={watch}
                     placeholder="- Seleccionar -"
@@ -566,10 +566,10 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 />
               )}
               <TextInput
-                label={t("contacts:create:comments")}
-                error={errors.comments}
+                label={t("contacts:create:observations")}
+                error={errors.observations}
                 register={register}
-                name="comments"
+                name="observations"
                 disabled={!isEdit}
                 multiple
               />
@@ -579,7 +579,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
           {/* Menu Derecha */}
           {id && contact && (
             <ActivityPanel
-              contactId={id}
+              entityId={id}
               contactType={type}
               className="lg:col-span-7"
             />

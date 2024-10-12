@@ -58,7 +58,7 @@ export const createLead = async (data) => {
     .post("/sales/crm/leads/new", data)
     .catch((error) => ({ ...error, hasError: true }));
 
-  revalidatePath('/sales/crm/leads', "layout");
+  revalidatePath("/sales/crm/leads", "layout");
   return response;
 };
 
@@ -84,7 +84,7 @@ export const updatePhotoContact = async (photo, id) => {
 
 export const getContacts = async (page = 1) => {
   const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`
+    `/sales/crm/contacts?limit=6&page=${page}`,
   );
   return response;
 };
@@ -123,7 +123,9 @@ export const deletePolicyById = async (id) => {
 
 export const deleteReceiptById = async (receiptId) => {
   // try {
-  const response = await axios().delete(`/sales/crm/polizas/receipts/${receiptId}`);
+  const response = await axios().delete(
+    `/sales/crm/polizas/receipts/${receiptId}`,
+  );
   revalidatePath("/control/portafolio/receipts", "page");
   return response;
 };
@@ -170,14 +172,14 @@ export const getFoldersSaved = async (data) => {
 
 export const getTasks = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`
+    `/tools/tasks?limit=${limit}&page=${page}`,
   );
   return response;
 };
 
 export const getTasksUser = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`
+    `/tools/tasks/user?limit=${limit}&page=${page}`,
   );
   return response;
 };
@@ -209,7 +211,10 @@ export const putTaskId = async (id, body) => {
 
 export const putTaskIdRelations = async (taskId, body) => {
   console.log("Updating task relations");
-  const response = await axios().put(`/tools/tasks/${taskId}/update_relations`, body);
+  const response = await axios().put(
+    `/tools/tasks/${taskId}/update_relations`,
+    body,
+  );
   return response;
 };
 
@@ -229,12 +234,16 @@ export const postComment = async (body, id) => {
 };
 
 export const putLeadStage = async (leadId, stageId) => {
-  const response = await axios().put(`/sales/crm/leads/${leadId}/stage/${stageId}`).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/leads/${leadId}/stage/${stageId}`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const putLeadCancelled = async (leadId, body) => {
-  const response = await axios().put(`/sales/crm/leads/${leadId}/cancel`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/leads/${leadId}/cancel`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -248,7 +257,7 @@ export const putComment = async (commentId, body, id) => {
   console.log("Actualizando comentario", commentId, body, id);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
-    body
+    body,
   );
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   return response;
@@ -265,12 +274,16 @@ export const getTags = async () => {
 };
 
 export const postSubAgent = async (body) => {
-  const response = await axios().put(`/sales/crm/polizas/receipts/sub-agents`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/polizas/receipts/sub-agents`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const deleteSubAgent = async (subAgentId) => {
-  const response = await axios().delete(`/sales/crm/polizas/receipts/sub-agents/${subAgentId}`);
+  const response = await axios().delete(
+    `/sales/crm/polizas/receipts/sub-agents/${subAgentId}`,
+  );
   return response;
 };
 
@@ -295,7 +308,9 @@ export const getPolizaByContact = async (id) => {
 };
 
 export const putPoliza = async (policyId, body) => {
-  const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/polizas/${policyId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
 
   revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
 
@@ -303,13 +318,15 @@ export const putPoliza = async (policyId, body) => {
 };
 
 export const putReceipt = async (receiptId, body) => {
-  const response = await axios().put(`/sales/crm/polizas/receipts/${receiptId}`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/polizas/receipts/${receiptId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const getAllLeads = async (page = 1, limit = 6) => {
   const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`
+    `/sales/crm/leads?limit=${limit}&page=${page}`,
   );
   return response;
 };
@@ -372,7 +389,7 @@ export const getTokenGoogle = async (userId, oauthId) => {
 
 export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`,
   );
   return response;
 };
@@ -399,7 +416,7 @@ export const getFilters = async (idUser) => {
 
 export const getMails = async (idUser, page, perPage, folder, oauthId) => {
   const response = await axios().get(
-    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`
+    `/oauth/email/${idUser}/${oauthId}?page=${page}&perPage=${perPage}&folder=${folder}`,
   );
   return response;
 };
@@ -423,7 +440,7 @@ export const updateLabelId = async (usergoogle_id, newLabelId) => {
 };
 
 export const addContactComment = async (body, crmType = "contacts") => {
-  const response = await axios().post(`/sales/crm/${crmType}/comments`, body);
+  const response = await axios().post(`/sales/crm/${crmType}s/comments`, body);
   return response;
 };
 

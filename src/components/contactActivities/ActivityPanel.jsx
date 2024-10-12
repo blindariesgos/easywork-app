@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import CardWhatsapp from "./CardWhatsapp";
 import CardEmail from "./CardEmail";
 import CardComment from "./CardComment";
-import { useContactActivities } from "../../lib/api/hooks/contacts";
+import { useEntityActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
 import { IoMdCheckboxOutline } from "react-icons/io";
 function parseAndSortByDate(data) {
@@ -35,14 +35,14 @@ function parseAndSortByDate(data) {
 }
 
 export default function ActivityPanel({
-  contactId,
-  crmType,
+  entityId,
+  crmType="contact",
   className,
   contactType,
 }) {
   const [bulkActivity, setBulkActivity] = useState([]);
-  const { activities, isError, isLoading, mutate } = useContactActivities(
-    contactId,
+  const { activities, isError, isLoading, mutate } = useEntityActivities(
+    entityId,
     crmType
   );
 
@@ -50,6 +50,7 @@ export default function ActivityPanel({
     if (activities) {
       //   const sortedItems = parseAndSortByDate(activities);
 
+      console.log({ activities });
       setBulkActivity(activities);
     }
   }, [activities]);
@@ -113,7 +114,7 @@ export default function ActivityPanel({
                     className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg`}
                   >
                     <ActivityHeader
-                      contactId={contactId}
+                      entityId={entityId}
                       crmType={crmType}
                       update={mutate}
                       className="w-full"

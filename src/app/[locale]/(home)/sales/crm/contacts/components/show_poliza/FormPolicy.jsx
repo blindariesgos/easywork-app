@@ -116,8 +116,8 @@ export default function FormPolicy() {
                   />
                   <TextInput
                     type="text"
-                    label={t("contacts:edit:policies:consult:form:comments")}
-                    name="comments"
+                    label={t("contacts:edit:policies:consult:form:observations")}
+                    name="observations"
                     value={"test"}
                     disabled
                     multiple

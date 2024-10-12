@@ -9,7 +9,7 @@ import { addContactComment } from "../../lib/apis";
 import { toast } from "react-toastify";
 
 export default function ActivityHeader({
-  contactId,
+  entityId,
   update,
   crmType = "contact",
   contactType = "fisica",
@@ -19,7 +19,7 @@ export default function ActivityHeader({
   const tabs = [
     {
       name: t("contacts:create:activities:tasks"),
-      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${contactId}`,
+      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${entityId}`,
       current: false,
       disabled: true,
     },
@@ -108,7 +108,7 @@ export default function ActivityHeader({
         <div className="py-2">
           {isShowAddComment ? (
             <AddComment
-              contactId={contactId}
+              entityId={entityId}
               crmType={crmType}
               updateActivities={update}
               close={() => setIsShowAddComment(false)}
@@ -129,17 +129,24 @@ export default function ActivityHeader({
   );
 }
 
-const AddComment = ({ contactId, close, updateActivities, crmType }) => {
+const AddComment = ({ entityId, close, updateActivities, crmType }) => {
   const [value, setValueText] = useState("");
   const quillRef = useRef(null);
   const [loading, setLoading] = useState(false);
+
+  const mapId = {
+    contact: "contactId",
+    lead: "leadId",
+    receipt: "receiptId",
+    poliza: "polizaId",
+  }
 
   const handleAdd = async () => {
     setLoading(true);
     const body = {
       comment: value,
       pinned: false,
-      [crmType == "leads" ? "leadId" : "contactId"]: contactId,
+      [mapId[crmType]]: entityId,
     };
     const response = await addContactComment(body, crmType).catch(() => ({
       error: true,

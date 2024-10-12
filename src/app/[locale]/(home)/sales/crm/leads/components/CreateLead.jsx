@@ -75,8 +75,8 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     typePerson: Yup.string(),
     address: Yup.string(),
     assignedById: Yup.string(),
-    observadorId: Yup.string(),
-    comments: Yup.string(),
+    observerId: Yup.string(),
+    observations: Yup.string(),
     amount: Yup.string(),
     emails_dto: Yup.array().of(
       Yup.object().shape({
@@ -170,8 +170,8 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy.id);
     if (lead?.currency) setValue("currencyId", lead?.currency.id);
     if (lead?.quote) setValue("quote", lead?.quote);
-    if (lead?.comments) setValue("comments", lead?.comments);
-    if (lead?.observador) setValue("observadorId", lead?.observador.id);
+    if (lead?.observations) setValue("observations", lead?.observations);
+    if (lead?.observer) setValue("observerId", lead?.observer.id);
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
   }, [lead]);
@@ -543,11 +543,11 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
 
                 <SelectDropdown
                   label={t("leads:lead:fields:observer")}
-                  name="observadorId"
+                  name="observerId"
                   options={lists?.users ?? []}
                   register={register}
                   disabled={!isEdit}
-                  error={!watch("observadorId") && errors.observadorId}
+                  error={!watch("observerId") && errors.observerId}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -586,10 +586,10 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                 </div>
 
                 <TextInput
-                  label={t("leads:lead:fields:comments")}
-                  error={errors.comments}
+                  label={t("leads:lead:fields:observations")}
+                  error={errors.observations}
                   register={register}
-                  name="comments"
+                  name="observations"
                   disabled={!isEdit}
                   multiple
                 />
@@ -599,8 +599,8 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
             {/* Menu Derecha */}
             {lead && (
               <ActivityPanel
-                contactId={id}
-                crmType="leads"
+                entityId={id}
+                crmType="lead"
                 className="lg:col-span-7"
               />
             )}

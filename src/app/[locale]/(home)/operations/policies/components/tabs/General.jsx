@@ -88,7 +88,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
       setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
-    if (data?.comments) setValue("comments", data?.comments);
+    if (data?.observations) setValue("observations", data?.observations);
     if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
@@ -407,10 +407,10 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           />
           <TextInput
             type="text"
-            label={t("control:portafolio:receipt:details:form:comments")}
-            error={errors.comments && errors.comments.message}
+            label={t("control:portafolio:receipt:details:form:observations")}
+            error={errors.observations && errors.observations.message}
             register={register}
-            name="comments"
+            name="observations"
             disabled={!isEdit}
             multiple
           />
@@ -470,7 +470,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
       </div>
       {/* Menu Izquierda */}
       <div className=" bg-gray-100 rounded-lg w-full">
-        <ActivityPanel contactId={data?.contact?.id} />
+        <ActivityPanel entityId={data?.contact?.id} />
       </div>
       {isEdit && (
         <div

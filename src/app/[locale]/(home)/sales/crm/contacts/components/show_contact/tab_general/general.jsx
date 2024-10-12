@@ -23,6 +23,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
+import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -100,7 +101,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     emails_dto: Yup.array().of(
       Yup.object().shape({
         email: Yup.string().matches(
-          /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/,
+          VALIDATE_EMAIL_REGEX,
           t("common:validations:email")
         ),
         relation: Yup.string(),

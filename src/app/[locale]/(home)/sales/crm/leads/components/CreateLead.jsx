@@ -25,7 +25,7 @@ import { useSWRConfig } from "swr";
 import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
-
+import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
@@ -81,10 +81,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     emails_dto: Yup.array().of(
       Yup.object().shape({
         email: Yup.string()
-          .matches(
-            /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/,
-            t("common:validations:email")
-          )
+          .matches(VALIDATE_EMAIL_REGEX, t("common:validations:email"))
           .nullable() // Permite que el campo sea nulo
           .notRequired(),
         relation: Yup.string(),

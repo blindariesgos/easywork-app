@@ -1,7 +1,7 @@
 "use client";
 import { useTranslation } from "react-i18next";
 
-export default function ContactSubMenu() {
+export default function SubMenu() {
   const { t } = useTranslation();
   return (
     <div className="flex">

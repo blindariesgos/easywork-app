@@ -17,6 +17,10 @@ const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
       return item.value.map((x) => x.name).join(", ");
     }
 
+    if (item.type == "select-contact") {
+      return item.value.fullName;
+    }
+
     return item.value;
   };
 

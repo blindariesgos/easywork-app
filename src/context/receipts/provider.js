@@ -5,6 +5,7 @@ import { ReceiptsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useReceipts } from "../../lib/api/hooks/receipts";
+import { BsListStars } from "react-icons/bs";
 
 export default function ReceiptsContextProvider({ children }) {
   const { t } = useTranslation()
@@ -28,6 +29,21 @@ export default function ReceiptsContextProvider({ children }) {
       check: true,
       code: "dueDate",
     },
+    {
+        id: 3,
+        name: t("control:portafolio:receipt:filters:client"),
+        type: "select-contact",
+        check: true,
+        code: "client",
+      },
+      {
+        id: 8,
+        name: t("control:portafolio:receipt:filters:type"),
+        type: "select",
+        check: true,
+        code: "poliza.typeId",
+        options: lists?.policies?.polizaTypes,
+      },
   ]
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -48,6 +64,8 @@ export default function ReceiptsContextProvider({ children }) {
     setConfig(newConfig)
   }
 
+
+
   useEffect(() => {
     setFilterFields([
       {
@@ -58,6 +76,21 @@ export default function ReceiptsContextProvider({ children }) {
         code: "dueDate",
       },
       {
+        id: 3,
+        name: t("control:portafolio:receipt:filters:client"),
+        type: "select-contact",
+        check: true,
+        code: "client",
+      },
+      {
+        id: 8,
+        name: t("control:portafolio:receipt:filters:type"),
+        type: "select",
+        check: true,
+        code: "poliza.typeId",
+        options: lists?.policies?.polizaTypes,
+      },
+      {
         id: 1,
         name: t("control:portafolio:receipt:filters:responsible"),
         type: "dropdown",
@@ -65,23 +98,8 @@ export default function ReceiptsContextProvider({ children }) {
         code: "responsible",
         options: lists?.users,
       },
-      {
-        id: 3,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "dropdown",
-        check: true,
-        code: "client",
-        options: lists?.users,
-      },
-      {
-        id: 8,
-        name: t("control:portafolio:receipt:filters:rfc"),
-        type: "input",
-        check: false,
-        code: "rfc",
-      },
     ])
-  }, [lists?.listContact])
+  }, [lists])
 
   useEffect(() => {
     handleChangeConfig("page", 1)
@@ -110,6 +128,10 @@ export default function ReceiptsContextProvider({ children }) {
     })
     setFilterFields(newFilterFields)
   }
+
+  useEffect(() => {
+    console.log("cambio de visualizacion",displayFilters )
+  }, [displayFilters])
 
   const values = useMemo(
     () => ({

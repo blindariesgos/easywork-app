@@ -361,7 +361,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
             {/* Menu Izquierda */}
             <div className=" bg-gray-100 rounded-lg w-full">
               {data?.poliza?.contact?.id && (
-                <ActivityPanel contactId={data?.poliza?.contact?.id} />
+                <ActivityPanel entityId={data?.poliza?.contact?.id} />
               )}
             </div>
           </div>

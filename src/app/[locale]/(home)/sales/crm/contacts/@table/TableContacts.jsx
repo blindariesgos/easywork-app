@@ -153,7 +153,7 @@ export default function TableContacts() {
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append("observadorId", observer.id);
+      formData.append("observerId", observer.id);
 
       await Promise.all(
         selectedContacts.map((id) => updateContact(formData, id))

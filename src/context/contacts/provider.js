@@ -7,15 +7,19 @@ import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 
 export default function ContactsContextProvider({ children }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  const { lists } = useAppContext()
-  const [filters, setFilters] = useState({})
-  const { contacts, isLoading, isError, mutate } = useContacts({ page, limit, filters })
-  const [filterFields, setFilterFields] = useState()
+  const { lists } = useAppContext();
+  const [filters, setFilters] = useState({});
+  const { contacts, isLoading, isError, mutate } = useContacts({
+    page,
+    limit,
+    filters,
+  });
+  const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const [displayFilters, setDisplayFilters] = useState({})
+  const [displayFilters, setDisplayFilters] = useState({});
   const defaultFilterFields = [
     {
       id: 1,
@@ -23,7 +27,7 @@ export default function ContactsContextProvider({ children }) {
       type: "dropdown",
       check: true,
       code: "responsibleId",
-      options: lists?.users
+      options: lists?.users,
     },
     {
       id: 2,
@@ -32,7 +36,7 @@ export default function ContactsContextProvider({ children }) {
       check: true,
       code: "createdAt",
     },
-  ]
+  ];
 
   useEffect(() => {
     setFilterFields([
@@ -42,7 +46,7 @@ export default function ContactsContextProvider({ children }) {
         type: "dropdown",
         check: true,
         code: "responsibleId",
-        options: lists?.users
+        options: lists?.users,
       },
       {
         id: 2,
@@ -65,7 +69,7 @@ export default function ContactsContextProvider({ children }) {
         type: "dropdown",
         check: false,
         code: "createdbyId",
-        options: lists?.users
+        options: lists?.users,
       },
       {
         id: 5,
@@ -108,31 +112,30 @@ export default function ContactsContextProvider({ children }) {
         name: t("contacts:filters:observer"),
         type: "dropdown",
         check: false,
-        code: "observadorId",
-        options: lists?.users
+        code: "observerId",
+        options: lists?.users,
       },
-    ])
-  }, [lists?.listContact])
+    ]);
+  }, [lists?.listContact]);
 
   useEffect(() => {
-    setPage(1)
-  }, [limit])
-
+    setPage(1);
+  }, [limit]);
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName),
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
@@ -153,7 +156,7 @@ export default function ContactsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
-      defaultFilterFields
+      defaultFilterFields,
     }),
     [
       contacts,
@@ -165,9 +168,13 @@ export default function ContactsContextProvider({ children }) {
       displayFilters,
       filterFields,
       filters,
-      lists
-    ]
+      lists,
+    ],
   );
 
-  return <ContactsContext.Provider value={values}>{children}</ContactsContext.Provider>;
+  return (
+    <ContactsContext.Provider value={values}>
+      {children}
+    </ContactsContext.Provider>
+  );
 }

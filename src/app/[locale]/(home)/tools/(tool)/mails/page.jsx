@@ -83,7 +83,14 @@ export default function IngresarEmail() {
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => router.push(`${window.location.pathname}?configemail=true&isEdit=false`),
+      click: () =>
+        searchParams.get("page")
+          ? router.push(
+              `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true&isEdit=false`
+            )
+          : router.push(
+              `${window.location.pathname}?configemail=true&isEdit=false`
+            ),
     },
     {
       name: "ICloud",

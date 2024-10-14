@@ -96,6 +96,7 @@
       "negative-stage": "Etapa negativa",
       "modal": {
         "select": "Seleccione la razón de pérdida del prospecto",
+        "select-positive": "Seleccione el resultado del prospecto",
         "policy": "Generar Póliza",
         "discard": "Póliza Descartada",
         "positive": {

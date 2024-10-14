@@ -84,7 +84,8 @@ export const deleteUserSignatures = async (id) => {
 };
 
 export const postUserSignatures = async (formData) => {
-    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST }).post(`/files/signatures`, formData).catch(error => error);
+    console.log(formData);
+    const response = await axios({ baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST, contentType: "multipart/form-data" }).post(`/files/signatures`, formData).catch(error => error);
     return response;
 };
 

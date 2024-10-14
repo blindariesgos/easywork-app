@@ -30,7 +30,6 @@ export default function ReceiptHeader() {
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
             {t("control:portafolio:receipt:title")}
           </h1>
-          <ButtonAdd />
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FiltersReceipt />

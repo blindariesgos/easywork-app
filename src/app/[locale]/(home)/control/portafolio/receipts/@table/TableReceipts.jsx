@@ -49,6 +49,7 @@ import { useRouter } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
+import moment from "moment";
 
 export default function TableReceipts() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
@@ -360,6 +361,7 @@ export default function TableReceipts() {
                                 ) : column.row === "client" ? (
                                   <Link
                                     href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}
+                                    className="pr-2"
                                   >
                                     {receipt?.poliza?.contact?.fullName ??
                                       receipt?.poliza?.contact?.name ??
@@ -376,10 +378,9 @@ export default function TableReceipts() {
                                 ) : column.row === "createdAt" ||
                                   column.row === "dueDate" ? (
                                   <p className="text-center">
-                                    {formatDate(
-                                      receipt[column.row],
-                                      "dd/MM/yyyy"
-                                    ) ?? null}
+                                    {moment(receipt[column.row])
+                                      .utc()
+                                      .format("DD/MM/yyyy") ?? null}
                                   </p>
                                 ) : column.row === "policy" ? (
                                   <Link

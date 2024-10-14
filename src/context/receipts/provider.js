@@ -5,6 +5,7 @@ import { ReceiptsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useReceipts } from "../../lib/api/hooks/receipts";
+
 export default function ReceiptsContextProvider({ children }) {
   const { t } = useTranslation()
   const [config, setConfig] = useState({

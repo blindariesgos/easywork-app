@@ -87,14 +87,16 @@
                 "responsible": "Persona Responsable",
                 "expiration-date": "Fecha de Vencimiento",
                 "client": "Cliente Contratante",
-                "rfc": "RFC"
+                "rfc": "RFC",
+                "type": "Ramo"
             },
             "table": {
                 "receipt": "Núm. de recibo",
                 "policy": "Póliza asociada",
                 "responsible": "Responsable",
-                "client": "Cliente",
-                "stages": "Estado",
+                "client": "Cliente contratante",
+                "stages": "Etapa",
+                "status": "Estatus",
                 "amount": "Importe",
                 "created-in": "Creación",
                 "activities": "Actividad",

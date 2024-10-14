@@ -1668,6 +1668,12 @@ export const useReceiptTable = () => {
       check: true,
     },
     {
+      id: 5,
+      name: t("control:portafolio:receipt:table:stages"),
+      row: "stages",
+      check: true,
+    },
+    {
       id: 1,
       name: t("control:portafolio:receipt:table:receipt"),
       row: "title",
@@ -1675,11 +1681,31 @@ export const useReceiptTable = () => {
       check: true,
       permanent: true,
     },
+    // {
+    //   id: 2,
+    //   name: t("control:portafolio:receipt:table:policy"),
+    //   row: "policy",
+    //   order: "policy",
+    //   check: true,
+    // },
     {
       id: 2,
-      name: t("control:portafolio:receipt:table:policy"),
-      row: "policy",
-      order: "policy",
+      name: t("control:portafolio:receipt:table:status"),
+      row: "status",
+      order: "status",
+      check: true,
+    },
+    {
+      id: 6,
+      name: t("control:portafolio:receipt:table:amount"),
+      row: "paymentAmount",
+      check: true,
+    },
+    {
+      id: 9,
+      name: t("control:portafolio:receipt:table:expiration-date"),
+      row: "dueDate",
+      order: "dueDate",
       check: true,
     },
     {
@@ -1691,9 +1717,9 @@ export const useReceiptTable = () => {
       photo: true,
     },
     {
-      id: 6,
-      name: t("control:portafolio:receipt:table:amount"),
-      row: "paymentAmount",
+      id: 7,
+      name: t("control:portafolio:receipt:table:created-in"),
+      row: "createdAt",
       check: true,
     },
     {
@@ -1702,25 +1728,7 @@ export const useReceiptTable = () => {
       row: "activities",
       check: true,
     },
-    {
-      id: 9,
-      name: t("control:portafolio:receipt:table:expiration-date"),
-      row: "dueDate",
-      order: "dueDate",
-      check: true,
-    },
-    {
-      id: 5,
-      name: t("control:portafolio:receipt:table:stages"),
-      row: "stages",
-      check: true,
-    },
-    {
-      id: 7,
-      name: t("control:portafolio:receipt:table:created-in"),
-      row: "createdAt",
-      check: true,
-    },
+    
   ];
   return { columnTable };
 };

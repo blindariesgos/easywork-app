@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import SelectInput from "../../components/form/SelectInput";
+import ContactSelectAsync from "../../components/form/ContactSelectAsync";
 import MultipleSelect from "../../components/form/MultipleSelect";
 import InputDate from "../../components/form/InputDate";
 import TextInput from "../../components/form/TextInput";
@@ -40,7 +41,10 @@ const FormFilters = () => {
     });
 
   const handleFormFilters = (data) => {
+    console.log("paso por aqui 222222");
     if (data.fields.length == 0) return;
+    setDisplayFilters(data.fields.filter((field) => field.value));
+    console.log("fieldsssssssssss", data.fields);
     const newFilters = data.fields
       .filter((field) => field.value)
       .reduce((acc, field) => {
@@ -50,12 +54,15 @@ const FormFilters = () => {
           value = moment(field.value).utc().format("yyyy-MM-DD");
         }
 
+        if (field.type == "select-contact") {
+          value = field.value.id;
+        }
+
         return {
           ...acc,
           [field.code]: value,
         };
       }, {});
-    setDisplayFilters(data.fields.filter((field) => field.value));
     setFilters(newFilters);
   };
 
@@ -69,6 +76,7 @@ const FormFilters = () => {
   });
 
   useEffect(() => {
+    console.log("paso por aqui 11111");
     let newItems = [];
     const getDate = (date) => {
       return moment(date.replace(/-/g, "")).format();
@@ -96,7 +104,7 @@ const FormFilters = () => {
     if (newItems.length > 0) {
       append(newItems);
     }
-  }, [filters]);
+  }, []);
 
   return (
     <form
@@ -119,6 +127,14 @@ const FormFilters = () => {
                 label={dataField.name}
                 name={`fields[${index}].value`}
                 options={dataField.options}
+                setValue={setValue}
+                watch={watch}
+              />
+            )}
+            {dataField.type === "select-contact" && (
+              <ContactSelectAsync
+                label={dataField.name}
+                name={`fields[${index}].value`}
                 setValue={setValue}
                 watch={watch}
               />

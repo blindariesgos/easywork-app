@@ -20,20 +20,16 @@ export default function DialogPositiveStage({
   const { t } = useTranslation();
   const generatePolicy = [
     {
-      id: 1,
-      name: t("leads:lead:stages:modal:positive:policyContact"),
-    },
-    {
-      id: 2,
-      name: t("leads:lead:stages:modal:positive:contact"),
+      id: 4,
+      name: t("leads:lead:stages:modal:positive:policy"),
     },
     {
       id: 3,
       name: t("leads:lead:stages:modal:positive:company"),
     },
     {
-      id: 4,
-      name: t("leads:lead:stages:modal:positive:policy"),
+      id: 2,
+      name: t("leads:lead:stages:modal:positive:contact"),
     },
   ];
 
@@ -76,7 +72,7 @@ export default function DialogPositiveStage({
                   as="h3"
                   className="text-lg font-medium leading-6 text-black"
                 >
-                  {t("leads:lead:stages:modal:select")}
+                  {t("leads:lead:stages:modal:select-positive")}
                 </DialogTitle>
                 <div className="flex gap-2 justify-center mt-6">
                   <ButtonGeneratePolicy

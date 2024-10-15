@@ -14,9 +14,7 @@ import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTokenGoogle } from "../../../../../../../lib/apis";
-import { setCookie, getCookie } from "cookies-next";
-import useAppContext from "../../../../../../../context/app";
-import { XCircleIcon, Bars3Icon } from "@heroicons/react/20/solid";
+import { Bars3Icon, TrashIcon } from "@heroicons/react/20/solid";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import * as yup from "yup";
@@ -45,46 +43,39 @@ export default function Signature({
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { selectOauth } = useAppContext();
-  const fileInputRef = useRef(null);
   const [signatures, setSignatures] = useState([]);
-  const [selectedCheckbox, setSelectedCheckbox] = useState(null);
+  const [chechBoxId, setChechBoxId] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const handleCheckboxChange = (id) => {
-    setSelectedCheckbox(id);
-    setCookie("myCheckbox", id);
-  };
+  useEffect(() => {
+    console.log(chechBoxId);
+  }, [chechBoxId]);
 
   const getSignatures = async () => {
-    let count = 0;
     setLoading(true);
     try {
       const response = await getUserSignatures();
-      console.log(response);
       setSignatures(response);
       setLoading(false);
     } catch (error) {
-      if (count < 4) {
-        count++;
-        console.log(count);
-        getSignatures(id);
-      }
+      toast.error(error);
     }
   };
 
   const deleteSignature = async (id) => {
-    let count = 0;
     try {
-      const response = await deleteUserSignatures(id);
-      console.log(response);
-      getSignatures();
-    } catch (error) {
-      if (count < 4) {
-        count++;
-        console.log(count);
-        deleteSignature(id);
+      if (chechBoxId.length > 0) {
+        for (const element of chechBoxId) {
+          await deleteUserSignatures(element);
+        }
+        setChechBoxId([]);
+      } else {
+        await deleteUserSignatures(id);
       }
+      getSignatures();
+      toast.success("Firma eliminada");
+    } catch (error) {
+      toast.error(error);
     }
   };
 
@@ -93,8 +84,6 @@ export default function Signature({
       setUser(res);
     });
     getSignatures();
-    console.log(getCookie("myCheckbox"));
-    setSelectedCheckbox(getCookie("myCheckbox"));
   }, [params.get("signature"), params.get("addsignature")]);
 
   return (
@@ -118,7 +107,7 @@ export default function Signature({
                   className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
                 >
                   <div className="flex justify-end h-screen">
-                    <div className={`flex flex-col`}>
+                    <div className="flex flex-row relative">
                       <Tag
                         title={label}
                         onclick={() => {
@@ -141,19 +130,19 @@ export default function Signature({
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
                       <div className="flex mb-3 items-center mt-1.5">
-                        <div className="flex items-center ml-6">
-                          <h1 className="text-lg inline-block align-middle h-full">
+                        <div className="flex items-center">
+                          <h1 className="text-2xl inline-block align-middle h-full font-medium">
                             Firmas
                           </h1>
                         </div>
 
-                        <div className="flex items-center w-full rounded-md bg-white ml-2 pl-2">
+                        <div className="flex items-center w-full rounded-md bg-white ml-2 pl-2 py-1">
                           <FaMagnifyingGlass className="h-4 w-4 text-primary" />
                           <input
                             type="search"
                             name="search"
                             id="search-cal"
-                            className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 rounded-r-md"
+                            className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 rounded-r-md font-medium"
                             placeholder={t("contacts:header:search")}
                             // onChange={(e) => setSearchInput(e.target.value)}
                             // onClick={() => setSearchInput("")}
@@ -161,7 +150,7 @@ export default function Signature({
                         </div>
                         <div>
                           <div
-                            className="bg-easywork-main text-white px-3 py-1 rounded-md ml-3 w-44 cursor-pointer"
+                            className="bg-easywork-main text-white px-3 py-2 rounded-md ml-3 w-44 cursor-pointer"
                             onClick={() =>
                               router.push(
                                 `${window.location.href}&addsignature=true`
@@ -175,75 +164,111 @@ export default function Signature({
                       <table className="text-easywork-main w-full">
                         <thead>
                           <tr className="bg-white text-left">
-                            <th className="p-1 rounded-l-lg"></th>
-                            <th className="pl-6 py-5">Remitente</th>
-                            <th className="py-5 pr-5">Firma</th>
+                            <th className="p-1 rounded-l-lg pl-3">
+                              <input
+                                type="checkbox"
+                                onChange={(e) => {
+                                  const { checked } = e.target;
+                                  setChechBoxId(
+                                    checked
+                                      ? signatures.map(
+                                          (signature) => signature.id
+                                        )
+                                      : []
+                                  );
+                                }}
+                              />
+                            </th>
+                            <th className="py-4">Firma</th>
+                            <th className="py-4">Nombre</th>
                           </tr>
                         </thead>
                         <tbody>
                           {Array.isArray(signatures) &&
                             signatures.map((signature, index) => (
                               <tr key={index}>
-                                <td className="pb-2">
-                                  <Menu
-                                    as="div"
-                                    className="w-10 md:w-auto rounded-lg font-normal"
-                                  >
-                                    <MenuButton className="flex items-center">
-                                      <Bars3Icon
-                                        className="h-4 w-4 text-gray-400"
-                                        aria-hidden="true"
-                                      />
-                                    </MenuButton>
-                                    <MenuItems
-                                      transition
-                                      anchor="bottom start"
-                                      className={
-                                        "z-50 mt-2.5 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                      }
+                                <td className="pb-2 py-2">
+                                  <div className="flex items-center h-full pl-2">
+                                    <input
+                                      type="checkbox"
+                                      value={signature.id}
+                                      checked={chechBoxId.includes(
+                                        signature.id
+                                      )}
+                                      onChange={(e) => {
+                                        const { checked, value } = e.target;
+                                        setChechBoxId((prevIds) =>
+                                          checked
+                                            ? [...prevIds, value]
+                                            : prevIds.filter(
+                                                (id) => id !== value
+                                              )
+                                        );
+                                      }}
+                                    />
+                                    <Menu
+                                      as="div"
+                                      className="w-10 md:w-auto rounded-lg font-normal ml-1"
                                     >
-                                      {[
-                                        {
-                                          name: "Editar",
-                                          click: () => {
-                                            router.push(
-                                              `${window.location.href}&addsignature=true&isEdit=${signature.id}`
-                                            );
+                                      <MenuButton className="flex items-center">
+                                        <Bars3Icon
+                                          className="h-4 w-4 text-gray-400"
+                                          aria-hidden="true"
+                                        />
+                                      </MenuButton>
+                                      <MenuItems
+                                        transition
+                                        anchor="bottom start"
+                                        className={
+                                          "z-50 mt-2.5 w-64 rounded-md bg-white shadow-lg focus:outline-none"
+                                        }
+                                      >
+                                        {[
+                                          {
+                                            name: "Editar",
+                                            click: () => {
+                                              router.push(
+                                                `${window.location.href}&addsignature=true&isEdit=${signature.id}`
+                                              );
+                                            },
                                           },
-                                        },
-                                        {
-                                          name: "Eliminar",
-                                          click: () =>
-                                            deleteSignature(signature.id),
-                                        },
-                                      ].map((item, index) => (
-                                        <MenuItem key={index}>
-                                          {({ active }) => (
-                                            <div
-                                              onClick={item.click}
-                                              className={classNames(
-                                                active ? "bg-gray-50" : "",
-                                                "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                                              )}
-                                            >
-                                              <p>{item.name}</p>
-                                            </div>
-                                          )}
-                                        </MenuItem>
-                                      ))}
-                                    </MenuItems>
-                                  </Menu>
+                                          {
+                                            name: "Eliminar",
+                                            click: () =>
+                                              deleteSignature(signature.id),
+                                          },
+                                        ].map((item, index) => (
+                                          <MenuItem key={index}>
+                                            {({ active }) => (
+                                              <div
+                                                onClick={item.click}
+                                                className={classNames(
+                                                  active ? "bg-gray-50" : "",
+                                                  "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
+                                                )}
+                                              >
+                                                <p>{item.name}</p>
+                                              </div>
+                                            )}
+                                          </MenuItem>
+                                        ))}
+                                      </MenuItems>
+                                    </Menu>
+                                  </div>
                                 </td>
                                 <td className="py-2">
                                   <div className="flex w-96 overflow-x-auto">
                                     <p className="whitespace-nowrap">
-                                      {signature?.metadata?.senders?.map(
-                                        (element, index) => (
+                                      {signature?.metadata?.senders
+                                        ?.filter((element) => element.state)
+                                        .map((element, index, array) => (
                                           <span key={index} className="mr-2">
-                                            {element.state ? element.email : ""}{" "}
+                                            {element.email}
+                                            {index < array.length - 1
+                                              ? ","
+                                              : ""}
                                           </span>
-                                        )
-                                      )}
+                                        ))}
                                     </p>
                                   </div>
                                 </td>
@@ -254,6 +279,17 @@ export default function Signature({
                             ))}
                         </tbody>
                       </table>
+                      {chechBoxId.length > 0 && (
+                        <div
+                          className="absolute bottom-4 bg-white p-2 rounded-full cursor-pointer"
+                          onClick={() => deleteSignature(null)}
+                        >
+                          <TrashIcon
+                            className="h-8 w-8 text-primary"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Dialog.Panel>

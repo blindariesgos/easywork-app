@@ -103,6 +103,14 @@ export default function WebmailLayout({ children, table }) {
     if (selectOauth) {
       fetchData();
     }
+    getAxiosMails(1, "ALL").then((res) => {
+      if (res.length == 0) {
+        console.log(`${session.data.user.id}/${selectOauth?.usergoogle_id}`);
+        axios.get(
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
+        );
+      }
+    });
   }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
 
   useEffect(() => {
@@ -135,6 +143,22 @@ export default function WebmailLayout({ children, table }) {
     );
   };
 
+  const getAxiosMails = async (limit, folder) => {
+    try {
+      const response = await getMails(
+        session.data.user.id,
+        searchParams.get("page"),
+        limit,
+        folder ? folder : selectedFolder,
+        selectOauth?.id
+      );
+      return response;
+    } catch (error) {
+      console.error("Error fetching mails:", error);
+      throw error;
+    }
+  };
+
   const fetchData = async () => {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
@@ -147,13 +171,7 @@ export default function WebmailLayout({ children, table }) {
         );
         setUserData(axiosUserData.data);
 
-        const axiosMails = await getMails(
-          session.data.user.id,
-          searchParams.get("page"),
-          limit,
-          selectedFolder,
-          selectOauth.id
-        );
+        const axiosMails = await getAxiosMails(limit, null);
         setDMails(axiosMails);
 
         if (

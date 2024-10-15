@@ -131,7 +131,7 @@ export default function Signature({
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-3/4">
                       <div className="flex mb-3 items-center mt-1.5">
                         <div className="flex items-center">
-                          <h1 className="text-2xl inline-block align-middle h-full font-medium">
+                          <h1 className="text-2xl inline-block align-middle h-full font-medium ml-2">
                             Firmas
                           </h1>
                         </div>

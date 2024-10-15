@@ -8,6 +8,7 @@ import {
   MenuItems,
   Menu,
 } from "@headlessui/react";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
@@ -48,6 +49,7 @@ export default function Signature({
   const fileInputRef = useRef(null);
   const [signatures, setSignatures] = useState([]);
   const [selectedCheckbox, setSelectedCheckbox] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleCheckboxChange = (id) => {
     setSelectedCheckbox(id);
@@ -55,18 +57,35 @@ export default function Signature({
   };
 
   const getSignatures = async () => {
-    console.log("test");
+    let count = 0;
+    setLoading(true);
     try {
       const response = await getUserSignatures();
+      console.log(response);
       setSignatures(response);
-    } catch (error) {}
+      setLoading(false);
+    } catch (error) {
+      if (count < 4) {
+        count++;
+        console.log(count);
+        getSignatures(id);
+      }
+    }
   };
 
   const deleteSignature = async (id) => {
+    let count = 0;
     try {
       const response = await deleteUserSignatures(id);
-      if (response) getSignatures();
-    } catch (error) {}
+      console.log(response);
+      getSignatures();
+    } catch (error) {
+      if (count < 4) {
+        count++;
+        console.log(count);
+        deleteSignature(id);
+      }
+    }
   };
 
   useEffect(() => {
@@ -84,6 +103,7 @@ export default function Signature({
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
+            {loading && <LoaderSpinner />}
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
               <Transition.Child
                 as={Fragment}

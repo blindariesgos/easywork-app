@@ -65,7 +65,9 @@ const ContactFolders = ({ id }) => {
               className="flex items-center gap-x-3 cursor-pointer"
             >
               <PiCheckFatFill className="text-primary w-4 h-4" />
-              <p className="py-3">{folder.name}</p>
+              <p className="py-3">
+                {folder?.metadata?.observableName ?? folder.name}
+              </p>
             </Link>
           ))}
         </DisclosurePanel>

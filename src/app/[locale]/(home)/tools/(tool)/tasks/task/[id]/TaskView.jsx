@@ -13,7 +13,6 @@ import TaskEditor from "../TaskEditor";
 import { putTaskCompleted } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
-import { useTask } from "@/src/lib/api/hooks/tasks";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useSWRConfig } from "swr";
 import useAppContext from "@/src/context/app";
@@ -29,9 +28,9 @@ import BannerStatus from "./components/BannerStatus";
 import Button from "@/src/components/form/Button";
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
+import SubTaskTable from "./components/SubTaskTable";
 
-export default function TaskView({ id }) {
-  const { task, isLoading, isError, mutate: mutateTask } = useTask(id);
+export default function TaskView({ id, mutateTask, task }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const { settings } = useTasksConfigs();
@@ -121,19 +120,6 @@ export default function TaskView({ id }) {
     toast.success("Copiado en el Portapapeles");
   };
 
-  if (isLoading)
-    return (
-      <div className="flex flex-col h-screen relative w-full overflow-y-auto">
-        <div
-          className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
-        >
-          <LoaderSpinner />
-        </div>
-      </div>
-    );
-
-  if (isError) return <>Error al cargar la tarea</>;
-
   return (
     <div className="flex flex-col h-screen relative w-full overflow-y-auto">
       {loading && <LoaderSpinner />}
@@ -187,10 +173,10 @@ export default function TaskView({ id }) {
             />
           ) : (
             <div
-              className={`w-full ${!openEdit ? "col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9" : "col-span-12"}`}
+              className={`w-full ${!openEdit ? "col-span-12 grid grid-cols-1 gap-y-2 md:col-span-7 lg:col-span-8 xl:col-span-9" : "col-span-12"}`}
             >
               <div className="bg-white rounded-lg">
-                <div className="flex justify-between gap-2 items-center bg-gray-300 p-2">
+                <div className="flex justify-between gap-2 items-center bg-gray-300 p-2 rounded-t-lg">
                   <p className="text-xs">
                     {`${t("tools:tasks:task")} - ${t(`tools:tasks:status:${task?.status}`)}`}
                   </p>
@@ -226,6 +212,19 @@ export default function TaskView({ id }) {
                     })}
                   </div>
                 )}
+                {task.parentTask && (
+                  <div className="px-2 sm:px-4 py-4">
+                    <div className="flex items-center gap-1 py-4 border-t border-b border-gray-500">
+                      <p className="text-xs">Tarea pincipal:</p>
+                      <Link
+                        className="hover:underline text-xs"
+                        href={`/tools/tasks/task/${task.id}?show=true`}
+                      >
+                        {task?.parentTask?.name}
+                      </Link>
+                    </div>
+                  </div>
+                )}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
                     {/* TODO: Boton para dar inicio a la logica de cronometrar tarea */}
@@ -252,6 +251,7 @@ export default function TaskView({ id }) {
                       openEdit={openEdit}
                       data={task}
                       setIsDelegating={setIsDelegating}
+                      mutateTask={mutateTask}
                     />
                     {isDelegating && (
                       <TaskDelegate
@@ -268,7 +268,13 @@ export default function TaskView({ id }) {
                   </div>
                 </div>
               </div>
-              <div className="mt-2 sm:mt-4 w-full relative">
+              {task?.subTasks?.length > 0 && (
+                <div className="bg-white rounded-lg p-4 grid grid-cols-1 gap-y-2">
+                  <p className="text-sm">SubTareas</p>
+                  <SubTaskTable tasks={task?.subTasks} />
+                </div>
+              )}
+              <div className="w-full relative">
                 <TabsTask data={task} />
               </div>
             </div>

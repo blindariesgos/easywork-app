@@ -6,6 +6,7 @@ import {
   PhoneIcon,
   Bars3Icon,
   CheckIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -290,28 +291,77 @@ export default function TableReceipts() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                                  {itemOptions.map((item) => (
-                                    <MenuItem
-                                      key={item.name}
-                                      onClick={() =>
-                                        item.handleClick &&
-                                        item.handleClick(receipt.id)
-                                      }
-                                    >
-                                      {({ active }) => (
+                                <MenuItems
+                                  anchor="right start"
+                                  className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                >
+                                  {itemOptions.map((item) =>
+                                    !item.options ? (
+                                      <MenuItem
+                                        key={item.name}
+                                        disabled={item.disabled}
+                                        onClick={() => {
+                                          item.handleClick &&
+                                            item.handleClick(receipt.id);
+                                        }}
+                                      >
                                         <div
-                                          // onClick={item.onClick}
-                                          className={clsx(
-                                            active ? "bg-gray-50" : "",
-                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                                          )}
+                                          className={
+                                            "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
+                                          }
                                         >
                                           {item.name}
                                         </div>
-                                      )}
-                                    </MenuItem>
-                                  ))}
+                                      </MenuItem>
+                                    ) : (
+                                      <Menu key={item.name}>
+                                        <MenuButton className="flex items-center hover:bg-gray-50">
+                                          <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
+                                            {item.name}
+                                            <ChevronRightIcon className="h-6 w-6 ml-2" />
+                                          </div>
+                                        </MenuButton>
+                                        <Transition
+                                          as={Fragment}
+                                          enter="transition ease-out duration-100"
+                                          enterFrom="transform opacity-0 scale-95"
+                                          enterTo="transform opacity-100 scale-100"
+                                          leave="transition ease-in duration-75"
+                                          leaveFrom="transform opacity-100 scale-100"
+                                          leaveTo="transform opacity-0 scale-95"
+                                        >
+                                          <MenuItems
+                                            anchor={{
+                                              to: "right start",
+                                              gap: "4px",
+                                            }}
+                                            className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                          >
+                                            {item.options.map((option) => (
+                                              <MenuItem
+                                                key={option.name}
+                                                disabled={option.disabled}
+                                                onClick={() => {
+                                                  option.handleClick &&
+                                                    option.handleClick(
+                                                      receipt.id
+                                                    );
+                                                }}
+                                              >
+                                                <div
+                                                  className={clsx(
+                                                    "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
+                                                  )}
+                                                >
+                                                  {option.name}
+                                                </div>
+                                              </MenuItem>
+                                            ))}
+                                          </MenuItems>
+                                        </Transition>
+                                      </Menu>
+                                    )
+                                  )}
                                 </MenuItems>
                               </Transition>
                             </Menu>

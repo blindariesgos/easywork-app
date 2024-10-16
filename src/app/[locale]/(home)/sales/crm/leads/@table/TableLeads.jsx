@@ -507,7 +507,9 @@ export default function TableLeads() {
                                     src={lead.photo ?? "/img/avatar.svg"}
                                     alt=""
                                   />
-                                  {lead[column.row]}
+                                  <p className="text-left">
+                                    {lead[column.row]}
+                                  </p>
                                 </Link>
                               ) : column.row === "stage" ? (
                                 <div className="flex items-center flex-col">

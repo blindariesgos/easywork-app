@@ -240,7 +240,7 @@ export default function TableInfo({
                                 onClick={() => handleOpenItem(file)}
                                 title={file.name}
                               >
-                                {file.name}
+                                {file?.metadata?.observableName ?? file.name}
                               </div>
                             </div>
                           </div>

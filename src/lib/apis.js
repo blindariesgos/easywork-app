@@ -233,6 +233,11 @@ export const putTaskRestart = async (id) => {
   return response;
 };
 
+export const convertToSubtaskOf = async (taskId, parentId) => {
+  const response = await axios().put(`/tools/tasks/${taskId}/convert_to_subtask_of/${parentId}`);
+  return response;
+};
+
 export const postComment = async (body, id) => {
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;
@@ -444,8 +449,20 @@ export const updateLabelId = async (usergoogle_id, newLabelId) => {
   return response;
 };
 
-export const addContactComment = async (body, crmType = "contacts") => {
-  const response = await axios().post(`/sales/crm/${crmType}s/comments`, body);
+const getCommentPath = (cmrtype) => {
+  switch (cmrtype) {
+    case "policy":
+      return "polizas";
+    case "lead":
+      return "leads";
+    case "receipt":
+      return "polizas/receipts";
+    default:
+      return "contacts";
+  }
+}
+export const addContactComment = async (body, cmrType) => {
+  const response = await axios().post(`/sales/crm/${getCommentPath(cmrType)}/comments`, body);
   return response;
 };
 

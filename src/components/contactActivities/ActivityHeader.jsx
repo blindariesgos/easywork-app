@@ -122,7 +122,7 @@ const AddComment = ({ entityId, close, updateActivities, crmType }) => {
     contact: "contactId",
     lead: "leadId",
     receipt: "receiptId",
-    poliza: "polizaId",
+    policy: "polizaId",
   };
 
   const handleAdd = async () => {

@@ -576,23 +576,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
                         {t("tools:tasks:new:subtask")}
                       </p>
                       <div className="w-full md:w-[40%]">
-                        {/* <Controller
-                        name="subTask"
-                        control={control}
-                        defaultValue={[]}
-                        render={({ field }) => (
-                          <MultipleSelect
-                            {...field}
-                            options={tasksList || []}
-                            getValues={getValues}
-                            setValue={setValue}
-                            name="subTask"
-                            disabled={subtask}
-                            error={errors.subTask}
-                            onlyOne
-                          />
-                        )}
-                      /> */}
                         <SubTaskSelect
                           name="subTask"
                           getValues={getValues}

@@ -586,7 +586,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                 </div>
 
                 <TextInput
-                  label={t("leads:lead:fields:observations")}
+                  label={t("leads:lead:fields:comments")}
                   error={errors.observations}
                   register={register}
                   name="observations"

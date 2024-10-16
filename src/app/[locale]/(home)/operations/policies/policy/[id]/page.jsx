@@ -11,7 +11,7 @@ export default function PolicyDetailsPage({ params: { id } }) {
   console.log({ data });
 
   if (isError) {
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="policy">
       <div>
         <p>Error</p>
       </div>
@@ -21,7 +21,7 @@ export default function PolicyDetailsPage({ params: { id } }) {
   if (isLoading) <LoaderSpinner />;
 
   return (
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="policy">
       <Suspense fallback={<LoaderSpinner />}>
         <PolicyDetails data={data} id={id} mutate={mutate} />
       </Suspense>

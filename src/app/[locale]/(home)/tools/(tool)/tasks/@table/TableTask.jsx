@@ -50,7 +50,7 @@ export default function TableTask() {
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  
+
   const { t } = useTranslation();
 
   useLayoutEffect(() => {
@@ -363,7 +363,7 @@ export default function TableTask() {
                               />
                               <Menu
                                 as="div"
-                                className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                                className="relative hover:bg-slate-50/30 py-2 px-1 rounded-lg"
                               >
                                 <MenuButton className="flex items-center p-1.5">
                                   <Bars3Icon
@@ -375,7 +375,7 @@ export default function TableTask() {
                                 <MenuItems
                                   transition
                                   anchor="right start"
-                                  className=" z-50 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                  className=" z-50 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                 >
                                   {itemOptions.map((item) => (
                                     <MenuItem

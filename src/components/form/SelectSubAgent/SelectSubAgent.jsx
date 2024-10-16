@@ -35,10 +35,10 @@ const SelectSubAgent = ({ setValue, name, label, error, watch, disabled }) => {
           onClick={handleToggle}
           disabled={disabled}
           className={clsx(
-            "text-left min-h-[36px] w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm py-2",
+            "text-left min-h-[36px] w-full outline-none bg-white focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm py-2",
             {
-              "bg-gray-100": disabled,
-              "drop-shadow-sm bg-white ": !disabled,
+              // "bg-gray-100": disabled,
+              "drop-shadow-sm  ": !disabled,
             }
           )}
         >

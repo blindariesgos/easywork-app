@@ -11,12 +11,9 @@ import Tag from "./Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SlideOver({
-  openModal,
-  setOpenModal,
   children,
   colorTag,
   labelTag,
-  samePage,
   previousModalPadding,
   subLabelTag,
 }) {

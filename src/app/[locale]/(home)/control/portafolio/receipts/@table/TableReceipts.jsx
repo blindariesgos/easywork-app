@@ -49,6 +49,7 @@ import { useRouter } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
+import moment from "moment";
 
 export default function TableReceipts() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
@@ -104,11 +105,23 @@ export default function TableReceipts() {
     onCloseAlertDialog();
   };
 
-  const options = [
+  const masiveActions = [
+    // {
+    //   id: 1,
+    //   name: t("common:buttons:delete"),
+    //   onclick: () => deleteReceipts(selectedReceipts),
+    // },
     {
-      id: 1,
-      name: t("common:buttons:delete"),
-      onclick: () => deleteReceipts(selectedReceipts),
+      id: 2,
+      name: "Crear tarea",
+      // onclick: () => deleteReceipts(selectedReceipts),
+      disabled: true,
+    },
+    {
+      id: 3,
+      name: "Agregar Observador",
+      // onclick: () => deleteReceipts(selectedReceipts),
+      disabled: true,
     },
   ];
 
@@ -117,6 +130,27 @@ export default function TableReceipts() {
       name: "Ver",
       handleClick: (id) =>
         router.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
+    },
+    {
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClick: (id) =>
+            router.push(
+              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+            ),
+          disabled: true,
+        },
+        {
+          name: "Envío masivo SMS",
+          disabled: true,
+        },
+        {
+          name: "Correo electrónico",
+          disabled: true,
+        },
+      ],
     },
     // { name: "Editar" },
     // { name: "Copiar" },
@@ -158,7 +192,7 @@ export default function TableReceipts() {
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5 flex items-center gap-2"
+                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5 flex items-center gap-2"
                   >
                     <input
                       type="checkbox"
@@ -220,7 +254,7 @@ export default function TableReceipts() {
                           {selectedReceipts.includes(receipt.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-x-1">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -241,9 +275,9 @@ export default function TableReceipts() {
                               as="div"
                               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
                             >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <MenuButton className=" flex items-center ">
                                 <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
+                                  className=" h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
                               </MenuButton>
@@ -360,6 +394,7 @@ export default function TableReceipts() {
                                 ) : column.row === "client" ? (
                                   <Link
                                     href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}
+                                    className="pr-2"
                                   >
                                     {receipt?.poliza?.contact?.fullName ??
                                       receipt?.poliza?.contact?.name ??
@@ -371,15 +406,14 @@ export default function TableReceipts() {
                                   </p>
                                 ) : column.row === "paymentAmount" ? (
                                   <p className="text-center">
-                                    {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? ""} ${formatToCurrency(receipt?.paymentAmount)}`}
+                                    {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? "MXN"} ${formatToCurrency(receipt?.paymentAmount)}`}
                                   </p>
                                 ) : column.row === "createdAt" ||
                                   column.row === "dueDate" ? (
                                   <p className="text-center">
-                                    {formatDate(
-                                      receipt[column.row],
-                                      "dd/MM/yyyy"
-                                    ) ?? null}
+                                    {moment(receipt[column.row])
+                                      .utc()
+                                      .format("DD/MM/yyyy") ?? null}
                                   </p>
                                 ) : column.row === "policy" ? (
                                   <Link
@@ -419,7 +453,7 @@ export default function TableReceipts() {
           {selectedReceipts.length > 0 && (
             <Fragment>
               <p>{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
-              <SelectedOptionsTable options={options} />
+              <SelectedOptionsTable options={masiveActions} />
             </Fragment>
           )}
         </div>

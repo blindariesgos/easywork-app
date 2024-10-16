@@ -566,7 +566,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 />
               )}
               <TextInput
-                label={t("contacts:create:observations")}
+                label={t("contacts:create:comments")}
                 error={errors.observations}
                 register={register}
                 name="observations"

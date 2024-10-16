@@ -20,49 +20,35 @@ export default function ActivityHeader({
     {
       name: t("contacts:create:activities:tasks"),
       href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${entityId}`,
-      current: false,
-      disabled: true,
     },
     {
       name: t("contacts:create:activities:comment"),
       href: "#",
-      current: false,
-      disabled: true,
       onClick: () => setIsShowAddComment(true),
     },
     {
       name: t("contacts:create:activities:email"),
       href: "/tools/mails",
-      current: true,
-      disabled: false,
     },
     {
       name: t("contacts:create:activities:appointments"),
       href: "/tools/calendar/addEvent?show=true",
-      current: false,
-      disabled: true,
-      hidden: contactType == "moral",
+      hidden: contactType == "moral" || ["receipt"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:whatsapp"),
       href: "#",
-      current: false,
-      disabled: true,
       hidden: contactType == "moral",
     },
     {
       name: t("contacts:create:activities:call"),
       href: "#",
-      current: false,
-      disabled: true,
-      hidden: contactType == "moral",
+      hidden: contactType == "moral" || ["receipt"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:zoom"),
       href: "#",
-      current: false,
-      disabled: true,
-      hidden: contactType == "moral",
+      hidden: contactType == "moral" || ["receipt"].includes(crmType),
     },
   ];
   return (
@@ -88,9 +74,7 @@ export default function ActivityHeader({
                           key={tab.name}
                           href={tab.href}
                           className={clsx(
-                            tab.current
-                              ? " text-gray-400"
-                              : "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
+                            "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
                             "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
                           )}
                           aria-current={tab.current ? "page" : undefined}
@@ -139,7 +123,7 @@ const AddComment = ({ entityId, close, updateActivities, crmType }) => {
     lead: "leadId",
     receipt: "receiptId",
     poliza: "polizaId",
-  }
+  };
 
   const handleAdd = async () => {
     setLoading(true);

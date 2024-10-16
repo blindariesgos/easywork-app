@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import SelectInput from "../../components/form/SelectInput";
+import ContactSelectAsync from "../../components/form/ContactSelectAsync";
 import MultipleSelect from "../../components/form/MultipleSelect";
 import InputDate from "../../components/form/InputDate";
 import TextInput from "../../components/form/TextInput";
@@ -15,6 +16,7 @@ import AddFields from "./AddFields";
 import SelectDropdown from "../../components/form/SelectDropdown";
 import { formatDate } from "@/src/utils/getFormatDate";
 import useFilterTableContext from "../../context/filters-table";
+import moment from "moment";
 
 const FormFilters = () => {
   const { t } = useTranslation();
@@ -40,13 +42,21 @@ const FormFilters = () => {
 
   const handleFormFilters = (data) => {
     if (data.fields.length == 0) return;
+    console.log({ data });
+    setDisplayFilters(
+      data.fields.filter((field) => field.value && field.value.length > 0)
+    );
     const newFilters = data.fields
-      .filter((field) => field.value)
+      .filter((field) => field.value && field.value.length > 0)
       .reduce((acc, field) => {
         let value = field.value;
 
         if (field.type == "date") {
-          value = formatDate(field.value, "yyyy-MM-dd");
+          value = moment(field.value).utc().format("yyyy-MM-DD");
+        }
+
+        if (field.type == "select-contact") {
+          value = field.value.id;
         }
 
         return {
@@ -54,7 +64,6 @@ const FormFilters = () => {
           [field.code]: value,
         };
       }, {});
-    setDisplayFilters(data.fields.filter((field) => field.value));
     setFilters(newFilters);
   };
 
@@ -69,28 +78,33 @@ const FormFilters = () => {
 
   useEffect(() => {
     let newItems = [];
+    const getDate = (date) => {
+      return moment(date.replace(/-/g, "")).format();
+    };
     Object.keys(filters)?.length > 0 &&
       Object.keys(filters)
         .filter((key) => filters[key] !== "")
         .forEach((key) => {
           const index = fields.findIndex((x) => x.code == key);
           const filterField = filterFields.find((field) => field.code == key);
+          const fieldValue =
+            filterField.type == "date" ? getDate(filters[key]) : filters[key];
           if (index == -1) {
             newItems = [
               ...newItems,
               {
                 ...filterField,
-                value: filters[key],
+                value: fieldValue,
               },
             ];
           } else {
-            setValue(`fields[${index}].value`, filters[key]);
+            setValue(`fields[${index}].value`, fieldValue);
           }
         });
     if (newItems.length > 0) {
       append(newItems);
     }
-  }, [filters]);
+  }, []);
 
   return (
     <form
@@ -113,6 +127,14 @@ const FormFilters = () => {
                 label={dataField.name}
                 name={`fields[${index}].value`}
                 options={dataField.options}
+                setValue={setValue}
+                watch={watch}
+              />
+            )}
+            {dataField.type === "select-contact" && (
+              <ContactSelectAsync
+                label={dataField.name}
+                name={`fields[${index}].value`}
                 setValue={setValue}
                 watch={watch}
               />

@@ -71,19 +71,21 @@ export default function TaskView({ id }) {
         href: `/sales/crm/contacts/contact/${data.crmEntity.id}?show=true`,
         bgClass: "bg-primary hover:bg-indigo-700",
         labelKey: "tools:tasks:edit:contact",
-        name: data.crmEntity.fullName ?? data.crmEntity.name ?? "",
+        name: data?.crmEntity?.fullName ?? data?.crmEntity?.name ?? "",
       },
       poliza: {
         href: `/operations/policies/policy/${data.crmEntity.id}?show=true`,
         bgClass: "bg-blue-100 hover:bg-blue-500",
         labelKey: "tools:tasks:edit:policy",
-        name: data.crmEntity.name,
+        name:
+          `${data?.crmEntity?.company?.name} ${data?.crmEntity?.poliza} ${data?.crmEntity?.type?.name}` ??
+          "",
       },
       lead: {
         href: `/sales/crm/leads/lead/${data.crmEntity.id}?show=true`,
         bgClass: "bg-yellow-500 hover:bg-yellow-600",
         labelKey: "tools:tasks:edit:lead",
-        name: data.crmEntity.fullName ?? data.crmEntity.name ?? "",
+        name: data?.crmEntity?.fullName ?? data?.crmEntity?.name ?? "",
       },
     };
 

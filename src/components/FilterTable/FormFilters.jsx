@@ -41,12 +41,13 @@ const FormFilters = () => {
     });
 
   const handleFormFilters = (data) => {
-    console.log("paso por aqui 222222");
     if (data.fields.length == 0) return;
-    setDisplayFilters(data.fields.filter((field) => field.value));
-    console.log("fieldsssssssssss", data.fields);
+    console.log({ data });
+    setDisplayFilters(
+      data.fields.filter((field) => field.value && field.value.length > 0)
+    );
     const newFilters = data.fields
-      .filter((field) => field.value)
+      .filter((field) => field.value && field.value.length > 0)
       .reduce((acc, field) => {
         let value = field.value;
 
@@ -76,7 +77,6 @@ const FormFilters = () => {
   });
 
   useEffect(() => {
-    console.log("paso por aqui 11111");
     let newItems = [];
     const getDate = (date) => {
       return moment(date.replace(/-/g, "")).format();

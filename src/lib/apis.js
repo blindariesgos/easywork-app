@@ -91,7 +91,7 @@ export const getContacts = async (page = 1) => {
 
 export const getContactId = async (id) => {
   try {
-    const response = await axios().get(`/sales/crm/contacts/${id}`).catch(error => ({hasError:true, ...error}));
+    const response = await axios().get(`/sales/crm/contacts/${id}`).catch(error => ({ hasError: true, ...error }));
     return response;
   } catch (error) {
     // throw new Error(error);
@@ -137,6 +137,11 @@ export const getAddListContacts = async () => {
 
 export const getAddListLeads = async () => {
   const response = await axios().get(`/sales/crm/leads/get_add_lists`);
+  return response;
+};
+
+export const getAddListReceipts = async () => {
+  const response = await axios().get(`/sales/crm/polizas/receipts/get_add_lists`);
   return response;
 };
 

@@ -25,11 +25,6 @@ import { getContactId, postTask, putTaskId, getLeadById } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import {
-  useTaskContactsPolizas,
-  useTasks,
-  useTasksList,
-} from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
@@ -575,12 +570,13 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     </div>
                   </div>
                   {/* Sub Task */}
-                  <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                    <p className="text-sm text-left w-full md:w-36">
-                      {t("tools:tasks:new:subtask")}
-                    </p>
-                    <div className="w-full md:w-[40%]">
-                      {/* <Controller
+                  {!edit && (
+                    <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                      <p className="text-sm text-left w-full md:w-36">
+                        {t("tools:tasks:new:subtask")}
+                      </p>
+                      <div className="w-full md:w-[40%]">
+                        {/* <Controller
                         name="subTask"
                         control={control}
                         defaultValue={[]}
@@ -597,18 +593,19 @@ export default function TaskEditor({ edit, copy, subtask }) {
                           />
                         )}
                       /> */}
-                      <SubTaskSelect
-                        name="subTask"
-                        getValues={getValues}
-                        setValue={setValue}
-                        disabled={subtask}
-                        error={errors.subTask}
-                        onlyOne
-                        subtitle="Seleccionar tarea padre"
-                        taskId={edit?.id ?? copy?.id ?? ""}
-                      />
+                        <SubTaskSelect
+                          name="subTask"
+                          getValues={getValues}
+                          setValue={setValue}
+                          disabled={subtask}
+                          error={errors.subTask}
+                          onlyOne
+                          subtitle="Seleccionar tarea padre"
+                          taskId={edit?.id ?? copy?.id ?? ""}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
@@ -688,6 +685,10 @@ const getCmrInfo = (cmr) => {
 
   if (type === "contact" || type === "lead") {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
+  }
+
+  if (type === "poliza") {
+    name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
   }
 
   return { id, type, name };

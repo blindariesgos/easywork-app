@@ -276,9 +276,9 @@ export default function TableReceipts() {
                               as="div"
                               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
                             >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <MenuButton className=" flex items-center ">
                                 <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
+                                  className=" h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
                               </MenuButton>

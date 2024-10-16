@@ -4,10 +4,8 @@ import {
   BsFiletypePdf,
   BsFillFolderFill,
   BsFiletypePng,
-  BsFiletypeJpg
+  BsFiletypeJpg,
 } from "react-icons/bs";
-
-import { MdFolderShared } from "react-icons/md";
 
 import Image from "next/image";
 
@@ -15,7 +13,7 @@ export const getFileIcon = (file, className) => {
   if (file.type === "folder") return <BsFillFolderFill className={className} />;
 
   // Verificar si es una imagen
-  const fileType = getFileType(file.mimetype);
+  const fileType = getFileType(file?.mimetype || file.mimeType);
 
   switch (fileType) {
     case "pdf":
@@ -56,7 +54,7 @@ export const getFileSize = (bytes) => {
 };
 
 const getFileType = (mimetype) => {
-  if (mimetype.includes("image")) {
+  if (mimetype?.includes("image")) {
     return "image";
   } else if (mimetype.includes("pdf")) {
     return "pdf";

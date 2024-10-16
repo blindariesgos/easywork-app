@@ -2,6 +2,7 @@
 import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
+import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 
 import Image from "next/image";
 import {
@@ -13,14 +14,20 @@ import {
   isDateMoreFiveDayOverdue,
   isDateMoreTenDayOverdue,
 } from "@/src/utils/getFormatDate";
-
-export const renderCellContent = (column, task, t) => {
+import { FaChevronCircleDown } from "react-icons/fa";
+export const renderCellContent = (
+  column,
+  task,
+  t,
+  handleShowSubTasks,
+  showSubTasks,
+  isSubTask
+) => {
   const { row, link } = column;
   const taskValue = task[row];
-
   switch (row) {
     case "responsible":
-      if (taskValue.length === 0) return "No especificado";
+      if (!taskValue || taskValue?.length === 0) return "No especificado";
       return (
         <div className="flex gap-x-2 items-center justify-left">
           <Image
@@ -30,7 +37,10 @@ export const renderCellContent = (column, task, t) => {
             src={taskValue[0]?.avatar || "/img/avatar.svg"}
             alt="avatar"
           />
-          <div className="font-medium text-black">{taskValue[0]?.name}</div>
+          <div className="font-medium text-black">
+            {taskValue[0]?.name ??
+              `${taskValue[0]?.profile?.firstName} ${taskValue[0]?.profile?.lastName}`}
+          </div>
         </div>
       );
     case "createdBy":
@@ -43,7 +53,10 @@ export const renderCellContent = (column, task, t) => {
             src={taskValue?.avatar || "/img/avatar.svg"}
             alt="avatar"
           />
-          <div className="font-medium text-black">{taskValue?.name}</div>
+          <div className="font-medium text-black">
+            {taskValue?.name ??
+              `${taskValue?.profile?.firstName} ${taskValue?.profile?.lastName}`}
+          </div>
         </div>
       );
     case "deadline":
@@ -96,7 +109,7 @@ export const renderCellContent = (column, task, t) => {
 
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
-      const contact = task.crm.find((item) => item.type == "contact");
+      const contact = task?.crm?.find((item) => item.type == "contact");
       return (
         (contact && (
           <Link
@@ -121,7 +134,7 @@ export const renderCellContent = (column, task, t) => {
 
     case "policy":
       if (task?.crm?.length === 0) return "No especificado";
-      const policy = task.crm.find((item) => item.type == "poliza");
+      const policy = task?.crm?.find((item) => item.type == "poliza");
 
       return (
         (policy && (
@@ -138,7 +151,7 @@ export const renderCellContent = (column, task, t) => {
 
     case "lead":
       if (task?.crm?.length === 0) return "No especificado";
-      const lead = task.crm.find((item) => item.type == "lead");
+      const lead = task?.crm?.find((item) => item.type == "lead");
       return (
         (lead && (
           <Link href={`/sales/crm/leads/lead/${lead?.crmEntity?.id}?show=true`}>
@@ -157,21 +170,36 @@ export const renderCellContent = (column, task, t) => {
         "No especificado"
       );
 
-    default:
-      return link ? (
-        <Link
-          className={clsx(
-            task.status === "pending_review"
-              ? "text-gray-800/45 line-through"
-              : "text-black"
+    case "name":
+      return (
+        <div className="flex items-center gap-x-2">
+          {handleShowSubTasks && task?.subTasks?.length > 0 && (
+            <div
+              className="w-5 h-5 cursor-pointer"
+              onClick={handleShowSubTasks}
+            >
+              {!showSubTasks ? (
+                <CiCirclePlus className="text-primary w-5 h-5" />
+              ) : (
+                <CiCircleMinus className="text-primary w-5 h-5" />
+              )}
+            </div>
           )}
-          href={`/tools/tasks/task/${task.id}?show=true`}
-        >
-          {taskValue}
-        </Link>
-      ) : (
-        taskValue
+          <Link
+            className={clsx(
+              task.status === "pending_review"
+                ? "text-gray-800/45 line-through"
+                : "text-black",
+              isSubTask && "pl-8"
+            )}
+            href={`/tools/tasks/task/${task.id}?show=true`}
+          >
+            {taskValue}
+          </Link>
+        </div>
       );
+    default:
+      return taskValue;
   }
 };
 

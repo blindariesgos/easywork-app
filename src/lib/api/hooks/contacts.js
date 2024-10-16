@@ -51,9 +51,22 @@ export const useContact = (id) => {
   };
 };
 
-export const useEntityActivities = (id, element = "contacts") => {
+const getActivityPath = (cmrtype) => {
+  switch (cmrtype) {
+    case "policy":
+      return "polizas";
+    case "lead":
+      return "leads";
+    case "receipt":
+      return "polizas/receipts";
+    default:
+      return "contacts";
+  }
+}
+export const useEntityActivities = (id, cmrtype) => {
+
   const { data, error, isLoading, mutate } = useSWR(
-    `/sales/crm/${element}s/${id}/activities`,
+    `/sales/crm/${getActivityPath(cmrtype)}/${id}/activities`,
     fetcher,
   );
   return {

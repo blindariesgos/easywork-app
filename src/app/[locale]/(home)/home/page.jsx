@@ -185,76 +185,15 @@ export default function Page() {
             )}
           </div>
           <PolicyList />
-          <div className="col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72">
+          <div className="col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72 justify-between flex flex-col">
             <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
-            <ul className="h-5/6 p-1 overflow-y-auto">
-              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
-                <Image
-                  className="h-12 w-12 rounded-full object-cover"
-                  width={36}
-                  height={36}
-                  src="https://images.unsplash.com/photo-1542309667-2a115d1f54c6?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt=""
-                />
-                <div className="ml-3">
-                  <h3 className="text-sm">
-                    Lorena FloresM ha cumplimentado el popup Copia de Formulario
-                    Agencia popup
-                  </h3>
-                  <p className="text-xs text-slate-500">hace 6 días. 4 horas</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
-                <Image
-                  className="h-12 w-12 rounded-full object-cover"
-                  width={36}
-                  height={36}
-                  src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt=""
-                />
-                <div className="ml-2">
-                  <h3 className="text-sm">
-                    Nathaly Gomez M. te ha asignado la tarea Cristian
-                  </h3>
-                  <p className="text-xs text-slate-500">hace 1 semana</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
-                <Image
-                  className="h-12 w-12 rounded-full object-cover"
-                  width={36}
-                  height={36}
-                  src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt=""
-                />
-                <div className="ml-2">
-                  <h3
-                    className="text-sm"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                  >
-                    {isHovered ? texto : textoRecortado}
-                  </h3>
-                  <p className="text-xs text-slate-500">hace 1 semana</p>
-                </div>
-              </li>
-              <li className="flex items-center mb-3 hover:bg-easy-200 p-1 rounded-md cursor-pointer">
-                <Image
-                  className="h-12 w-12 rounded-full object-cover"
-                  width={36}
-                  height={36}
-                  src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=1889&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt=""
-                />
-                <div className="ml-2">
-                  <h3 className="text-sm">
-                    Esteban ha cumplimentado el formulario en
-                    agenciamunditodigital
-                  </h3>
-                  <p className="text-xs text-slate-500">hace 1 semana</p>
-                </div>
-              </li>
-            </ul>
+            <Fragment>
+              <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+                <h1 className="text-sm p-2 ">
+                  En este momento no tienes recordatorios
+                </h1>
+              </div>
+            </Fragment>
           </div>
           <ContactList />
         </div>

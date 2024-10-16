@@ -21,7 +21,12 @@ import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 
-export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
+export default function PolicyDetails({
+  data,
+  id,
+  mutate: updatePolicy,
+  headerHeight,
+}) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -139,10 +144,15 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={`grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full h-[calc(100vh_-_220px)]`}
+      className={clsx(
+        `grid grid-cols-1 lg:grid-cols-12 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full h-[calc(100vh_-_220px)]`
+        // {
+        //   [`h-[calc(100vh_-_${headerHeight}px)]`]: headerHeight,
+        // }
+      )}
     >
       {/* Menu Derecha */}
-      <div className="h-auto rounded-lg overflow-y-auto pr-2">
+      <div className="h-auto rounded-lg overflow-y-auto pr-2 lg:col-span-5">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
           {t("operations:policies:general:title")}
           {data && (
@@ -326,7 +336,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             setValue={setValue}
             name="primaNeta"
             disabled
-            defaultValue={data?.primaNeta.toFixed(2) ?? null}
+            defaultValue={data?.primaNeta?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -339,7 +349,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             setValue={setValue}
             name="recargoFraccionado"
             disabled
-            defaultValue={data?.recargoFraccionado.toFixed(2) ?? null}
+            defaultValue={data?.recargoFraccionado?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -352,7 +362,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             setValue={setValue}
             name="derechoPoliza"
             disabled
-            defaultValue={data?.derechoPoliza.toFixed(2) ?? null}
+            defaultValue={data?.derechoPoliza?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -365,7 +375,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             setValue={setValue}
             name="iva"
             disabled
-            defaultValue={data?.iva.toFixed(2) ?? null}
+            defaultValue={data?.iva?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -378,7 +388,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             setValue={setValue}
             name="importePagar"
             disabled
-            defaultValue={data?.importePagar.toFixed(2) ?? null}
+            defaultValue={data?.importePagar?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -407,7 +417,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           />
           <TextInput
             type="text"
-            label={t("control:portafolio:receipt:details:form:observations")}
+            label={t("control:portafolio:receipt:details:form:comments")}
             error={errors.observations && errors.observations.message}
             register={register}
             name="observations"
@@ -469,9 +479,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           ))} */}
       </div>
       {/* Menu Izquierda */}
-      <div className=" bg-gray-100 rounded-lg w-full">
-        <ActivityPanel entityId={data?.contact?.id} />
-      </div>
+      <ActivityPanel entityId={data?.contact?.id} className="lg:col-span-7" />
       {isEdit && (
         <div
           className={clsx(

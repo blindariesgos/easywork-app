@@ -20,89 +20,6 @@ import {
 } from "@heroicons/react/20/solid";
 import TextInput from "@/src/components/form/TextInput";
 
-const data = [
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-  {
-    a: "GNP 123123124 VIDA - pago 9",
-    b: "JOSE LUIS MORALES",
-    n: "N/A",
-    m: "GNP",
-    f: "424234",
-    g: "$ 100,00",
-    h: "Dólar",
-    j: "10/10/2024",
-  },
-];
-
 export default function ControlTable({ name }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -175,7 +92,7 @@ export default function ControlTable({ name }) {
                   </tr>
                 </thead>
                 <tbody className="">
-                  {data.map((control, index) => (
+                  {[].map((control, index) => (
                     <tr
                       key={index}
                       className={clsx(

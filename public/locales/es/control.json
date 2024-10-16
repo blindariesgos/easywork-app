@@ -103,18 +103,23 @@
                 "expiration-date": "Fecha de Vencimiento"
             },
             "details": {
-                "date": "Fecha de emisión de póliza",
+                "date": "Fecha de vencimiento",
                 "product": "Producto",
                 "policy": "Póliza",
                 "company": "Compañía",
                 "client-code": "Código de cliente",
-                "consult": "Consulta",
+                "consult": "General",
                 "form": {
                     "responsible": "Responsable",
+                    "observer": "Observador",
                     "status": "Estatus",
-                    "payment-methods": "Forma de pago",
+                    "payment-methods": "Frecuencia de pago",
+                    "method-collection": "Forma de cobro",
+                    "conducto-pago": "Conducto de pago",
+                    "method-payment": "Método de pago",
                     "init-date": "Inicio de vigencia",
                     "expiration": "Vencimiento",
+                    "payment-date": "Fecha de pago",
                     "amount": "Importe",
                     "currency": "Moneda",
                     "comments": "Comentarios"

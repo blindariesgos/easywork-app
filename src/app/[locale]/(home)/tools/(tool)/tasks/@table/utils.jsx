@@ -97,13 +97,12 @@ export const renderCellContent = (column, task, t) => {
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";
       const contact = task.crm.find((item) => item.type == "contact");
-      console.log("cmr-task-contact", task, contact);
       return (
         (contact && (
           <Link
             href={`/sales/crm/contacts/contact/${contact?.crmEntity?.id}?show=true&prev=tasks`}
           >
-            <div className="flex gap-x-2 items-center justify-left">
+            <div className="flex gap-x-2 items-center justify-left px-0.5">
               <Image
                 className="h-6 w-6 rounded-full bg-zinc-200"
                 width={30}
@@ -129,8 +128,8 @@ export const renderCellContent = (column, task, t) => {
           <Link
             href={`/operations/policies/policy/${policy?.crmEntity?.id}?show=true`}
           >
-            <div className="flex gap-x-2 items-center justify-left">
-              {policy?.crmEntity?.name}
+            <div className="flex gap-x-2 items-center justify-left px-0.5">
+              {`${policy?.crmEntity?.company?.name} ${policy?.crmEntity?.poliza} ${policy?.crmEntity?.type?.name}`}
             </div>
           </Link>
         )) ||
@@ -143,7 +142,7 @@ export const renderCellContent = (column, task, t) => {
       return (
         (lead && (
           <Link href={`/sales/crm/leads/lead/${lead?.crmEntity?.id}?show=true`}>
-            <div className="flex gap-x-2 items-center justify-left">
+            <div className="flex gap-x-2 items-center justify-left px-0.5">
               <Image
                 className="h-6 w-6 rounded-full bg-zinc-200"
                 width={30}

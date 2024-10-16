@@ -1,6 +1,6 @@
 "use client";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -10,12 +10,14 @@ import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import { formatDate } from "@/src/utils/getFormatDate";
 import Vehicle from "./itemsVIew/vehicle";
+import Link from "next/link";
+import clsx from "clsx";
 
 export default function PolicyDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
-
+  const headerRef = useRef();
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -83,6 +85,10 @@ export default function PolicyDetails({ data, id, mutate }) {
     },
   ];
 
+  useEffect(() => {
+    console.log({ headerRef });
+  }, [headerRef]);
+
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
@@ -93,51 +99,39 @@ export default function PolicyDetails({ data, id, mutate }) {
           <div
             id="policy-header"
             className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
+            ref={headerRef}
           >
             <div className="flex justify-between pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 xl:gap-4">
-                <p className="text-xl lg:text-2xl 2xl:text-3xl font-bold">
-                  {data?.contact?.fullName}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
+                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
+                  {`${data?.company?.name ?? ""} ${data?.poliza} ${data?.type?.name}`}
                 </p>
+
                 <div className="flex items-center gap-2">
-                  <p className="uppercase text-xs sm:text-sm xl:text-base">
+                  <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">
+                  <p className="text-sm">
                     {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="uppercase text-xs sm:text-sm xl:text-base">
+                  <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-xs sm:text-sm xl:text-base">
-                    {data?.category?.name ?? "S/N"}
-                  </p>
+                  <p className="text-sm">{data?.category?.name ?? "S/N"}</p>
                 </div>
+                <Link
+                  className="hover:text-easy-600 text-sm"
+                  href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
+                >
+                  {data?.contact?.fullName}
+                </Link>
                 <div className="flex items-center gap-2">
-                  <p className="uppercase text-xs sm:text-sm xl:text-base">
-                    {t("control:portafolio:receipt:details:policy")}:
-                  </p>
-                  <p className="text-xs sm:text-sm xl:text-base">
-                    {data?.poliza}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-xs md:text-sm xl:text-base">
-                    {t("control:portafolio:receipt:details:company")}:
-                  </p>
-                  <p className="text-xs md:text-sm xl:text-base">
-                    {data?.company?.name}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-xs md:text-sm xl:text-base">
+                  <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
-                  <p className="text-xs md:text-sm xl:text-base">
-                    {getClientCode()}
-                  </p>
+                  <p className="text-sm">{getClientCode()}</p>
                 </div>
               </div>
               <IconDropdown
@@ -164,8 +158,8 @@ export default function PolicyDetails({ data, id, mutate }) {
             </TabList>
           </div>
           <TabPanels className="w-full">
-            <TabPanel className="w-full md:px-4">
-              <General data={data} id={id} mutate={mutate} />
+            <TabPanel className={"w-full md:px-4"}>
+              <General data={data} id={id} mutate={mutate} headerHeight={200} />
             </TabPanel>
             <TabPanel className="w-full md:px-4">
               {data?.type?.name === "AUTOS" && (

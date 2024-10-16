@@ -36,7 +36,7 @@ function parseAndSortByDate(data) {
 
 export default function ActivityPanel({
   entityId,
-  crmType="contact",
+  crmType = "contact",
   className,
   contactType,
 }) {
@@ -124,8 +124,8 @@ export default function ActivityPanel({
                 </div>
               </div>
             </li>
-            {bulkActivity.length > 0 &&
-              bulkActivity.map((activity, activityIdx) => (
+            {bulkActivity?.length > 0 &&
+              bulkActivity?.map((activity, activityIdx) => (
                 <li key={activity.id} className="w-full">
                   <div className="relative">
                     {activityIdx !== bulkActivity.length - 1 && (

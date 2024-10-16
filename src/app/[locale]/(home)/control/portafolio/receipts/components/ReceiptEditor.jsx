@@ -494,9 +494,9 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
             </div>
             {/* Menu Izquierda */}
             {/* <div className=" bg-gray-100 rounded-lg w-full"> */}
-            {data?.poliza?.contact?.id && (
+            {id && (
               <ActivityPanel
-                entityId={data?.poliza?.contact?.id}
+                entityId={id}
                 className="lg:col-span-7"
                 crmType="receipt"
               />

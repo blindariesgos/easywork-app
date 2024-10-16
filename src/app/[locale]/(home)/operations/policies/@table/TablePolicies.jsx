@@ -210,6 +210,16 @@ export default function TablePolicies() {
 
   const masiveActions = [
     {
+      id: 1,
+      name: "Asignar agente relacionado - subagente",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: "Asignar observador",
+      disabled: true,
+    },
+    {
       id: 3,
       name: "Cambiar Responsable",
       onclick: changeResponsible,
@@ -240,8 +250,14 @@ export default function TablePolicies() {
     },
     {
       id: 1,
+      name: "Crear tarea",
+      disabled: true,
+    },
+    {
+      id: 1,
       name: t("common:buttons:delete"),
       onclick: () => setIsOpenDeleteMasive(true),
+      disabled: true,
     },
   ];
 
@@ -262,6 +278,7 @@ export default function TablePolicies() {
         setDeleteId(id);
         setIsOpenDelete(true);
       },
+      disabled: true,
     },
     {
       name: "Planificar",
@@ -319,6 +336,11 @@ export default function TablePolicies() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
+      {selectedContacts.length > 0 && (
+        <div className="flex py-2">
+          <SelectedOptionsTable options={masiveActions} />
+        </div>
+      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -605,11 +627,6 @@ export default function TablePolicies() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex">
-          {selectedContacts.length > 0 && (
-            <SelectedOptionsTable options={masiveActions} />
-          )}
-        </div>
       </div>
       <DeleteItemModal
         isOpen={isOpenDelete}

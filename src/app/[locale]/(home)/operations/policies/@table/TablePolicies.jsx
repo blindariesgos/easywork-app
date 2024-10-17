@@ -344,16 +344,16 @@ export default function TablePolicies() {
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto">
-              <thead className="text-sm bg-white drop-shadow-sm">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
+              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-4  rounded-s-xl py-5 flex gap-2 items-center"
+                    className="relative px-4  rounded-xl py-5 flex gap-2 items-center"
                   >
                     <input
                       type="checkbox"
-                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      className=" h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                       ref={checkbox}
                       checked={checked}
                       onChange={toggleAll}

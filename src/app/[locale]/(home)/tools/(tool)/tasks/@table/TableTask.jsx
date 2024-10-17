@@ -235,8 +235,8 @@ export default function TableTask() {
             )}
             <div className="sm:rounded-lg ">
               <div className="overflow-x-auto min-h-[60vh] h-full">
-                <table className="min-w-full rounded-md bg-gray-100 table-auto  ">
-                  <thead className="text-sm bg-white drop-shadow-sm">
+                <table className="min-w-full rounded-md bg-gray-100 table-auto relative ">
+                  <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                     <tr>
                       <th
                         scope="col"

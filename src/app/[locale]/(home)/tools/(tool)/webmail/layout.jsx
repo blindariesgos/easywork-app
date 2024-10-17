@@ -32,17 +32,7 @@ import {
   ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import {
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Menu,
-  Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption,
-} from "@headlessui/react";
+import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
 import TaskSubMenu from "./components/TaskSubMenu";
 import { useTranslation } from "react-i18next";
 import SliderOverEmail from "./components/SliderOverEmail";
@@ -51,7 +41,6 @@ import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   updateLabelId,
-  getFoldersSaved,
   deleteTokenGoogle,
   getMails,
   deleteFoldersMail,
@@ -59,7 +48,6 @@ import {
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalConfigGmail from "../mails/components/ModalConfigGmail";
-import { Pagination } from "../../../../../../components/pagination/Pagination";
 import Signature from "./components/Signature";
 import AddSignature from "./components/AddSignature";
 import { toast } from "react-toastify";
@@ -76,13 +64,14 @@ export default function WebmailLayout({ children, table }) {
     useAppContext();
   const { t } = useTranslation();
   const [userData, setUserData] = useState([]);
-  const [limit, setLimit] = useState(10);
   const [dmails, setDMails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
   const [allOauth, setAllOauth] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [initialFetch, setInitialFetch] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     setSelectOauth(null);
@@ -101,17 +90,29 @@ export default function WebmailLayout({ children, table }) {
 
   useEffect(() => {
     if (selectOauth) {
-      fetchData();
-    }
-    getAxiosMails(1, "ALL").then((res) => {
-      if (res.length == 0) {
-        console.log(`${session.data.user.id}/${selectOauth?.usergoogle_id}`);
-        axios.get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
-        );
+      fetchData(true);
+      if (!initialFetch) {
+        setInitialFetch(true);
       }
-    });
-  }, [selectOauth, searchParams.get("page"), selectedFolder, limit]);
+    }
+  }, [selectOauth, selectedFolder]);
+
+  useEffect(() => {
+    if (selectOauth) {
+      fetchData(false);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    if (selectOauth) {
+      getAxiosMails("ALL", 1).then((res) => {
+        if (res.length == 0)
+          axios.get(
+            `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
+          );
+      });
+    }
+  }, [page, selectedFolder]);
 
   useEffect(() => {
     if (openModalFolders) {
@@ -121,6 +122,7 @@ export default function WebmailLayout({ children, table }) {
 
   const updateData = async () => {
     setIsLoading(true);
+    setDMails([]);
     try {
       await axios.get(
         `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}/${selectOauth.id}`
@@ -135,6 +137,10 @@ export default function WebmailLayout({ children, table }) {
     }
   };
 
+  const getMoreMails = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
   const totalUnreadByPage = () => {
     return dmails.reduce(
       (count, email) =>
@@ -143,11 +149,11 @@ export default function WebmailLayout({ children, table }) {
     );
   };
 
-  const getAxiosMails = async (limit, folder) => {
+  const getAxiosMails = async (folder, limit = 10) => {
     try {
       const response = await getMails(
         session.data.user.id,
-        searchParams.get("page"),
+        page,
         limit,
         folder ? folder : selectedFolder,
         selectOauth?.id
@@ -159,32 +165,42 @@ export default function WebmailLayout({ children, table }) {
     }
   };
 
-  const fetchData = async () => {
+  const fetchUserData = async () => {
     const config = {
       headers: { Authorization: `Bearer ${session.data.user.access_token}` },
     };
     try {
+      const axiosUserData = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
+        config
+      );
+      setUserData(axiosUserData.data);
+      return axiosUserData.data;
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+    }
+  };
+
+  const fetchMails = async (reset = false) => {
+    try {
+      const response = await getAxiosMails(selectedFolder);
+      setDMails((prevMails) =>
+        reset ? response : [...prevMails, ...response]
+      );
+    } catch (error) {
+      console.error("Error fetching mails:", error);
+    }
+  };
+
+  const fetchData = async (reset = false) => {
+    try {
       if (session.data.user.id && selectOauth?.id) {
-        const axiosUserData = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/googleUser/${session.data.user.id}/${selectOauth?.id}`,
-          config
-        );
-        setUserData(axiosUserData.data);
-
-        const axiosMails = await getAxiosMails(limit, null);
-        setDMails(axiosMails);
-
-        if (
-          !axiosUserData?.data?.labelId ||
-          axiosUserData?.data?.labelId === 0
-        ) {
-          saveFoldersData(axiosUserData.data.usergoogle_id);
-        }
+        await fetchUserData();
+        await fetchMails(reset);
       }
       setLoading(false);
     } catch (err) {
       console.error(err);
-      deleteOauth();
     }
   };
 
@@ -229,12 +245,6 @@ export default function WebmailLayout({ children, table }) {
     fetchData();
   }
 
-  async function deleteOauth() {
-    await deleteTokenGoogle(session.data.user.id);
-    await deleteFoldersMail(session.data.user.id);
-    router.push("/tools/mails");
-  }
-
   function allOauthPromise() {
     getAllOauth(session.data.user.id).then((res) => {
       if (!selectOauth) {
@@ -249,17 +259,12 @@ export default function WebmailLayout({ children, table }) {
     { name: "Contactos", onClick: "" },
     {
       name: "Editar firmas",
-      onClick: () =>
-        router.push(
-          `${window.location.pathname}?page=${searchParams.get("page")}&signature=true`
-        ),
+      onClick: () => router.push(`${window.location.pathname}?signature=true`),
     },
     {
       name: "Configuración del buzón",
       onClick: () =>
-        router.push(
-          `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true&isEdit=true`
-        ),
+        router.push(`${window.location.pathname}?configemail=true&isEdit=true`),
     },
   ];
 
@@ -382,11 +387,7 @@ export default function WebmailLayout({ children, table }) {
               <button
                 type="button"
                 className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-md font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
-                onClick={() =>
-                  router.push(
-                    `/tools/webmail/?page=${searchParams.get("page")}&send=true`
-                  )
-                }
+                onClick={() => router.push(`/tools/webmail/?send=true`)}
               >
                 Nuevo mensaje
               </button>
@@ -427,8 +428,10 @@ export default function WebmailLayout({ children, table }) {
         >
           <div className="flex-none items-center justify-between  border-gray-200 py-4 hidden lg:flex">
             <TaskSubMenu
-              fetchData={fetchData}
               totalUnreadByPage={totalUnreadByPage}
+              setDMails={setDMails}
+              getAxiosMails={getAxiosMails}
+              selectedFolder={selectedFolder}
             />
           </div>
         </EmailHeader>
@@ -501,7 +504,7 @@ export default function WebmailLayout({ children, table }) {
                       <div
                         onClick={() =>
                           router.push(
-                            `${window.location.href}&connectemail=true`
+                            `${window.location.href}?connectemail=true`
                           )
                         }
                       >
@@ -616,49 +619,21 @@ export default function WebmailLayout({ children, table }) {
           <Table
             mails={dmails}
             fetchData={fetchData}
+            setDMails={setDMails}
             selectedFolder={selectedFolder}
+            getAxiosMails={getAxiosMails}
           />
         )}
         {children}
         <div className="flex justify-center">
           <div className="flex gap-1 items-center">
-            <p>Mostrar:</p>
-            <Listbox value={limit} onChange={setLimit} as="div">
-              <ListboxButton
-                className={clsx(
-                  "relative block w-full rounded-lg bg-white/5 py-1.5 pr-8 pl-3 text-left text-sm/6",
-                  "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2"
-                )}
-              >
-                {limit}
-                <ChevronDownIcon
-                  className="group pointer-events-none absolute top-2.5 right-2.5 size-4 "
-                  aria-hidden="true"
-                />
-              </ListboxButton>
-              <ListboxOptions
-                anchor="bottom"
-                transition
-                className={clsx(
-                  "rounded-xl border border-white p-1 focus:outline-none bg-white shadow-2xl",
-                  "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
-                )}
-              >
-                {itemsByPage.map((page) => (
-                  <ListboxOption
-                    key={page.name}
-                    value={page.id}
-                    className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-primary data-[focus]:text-white"
-                  >
-                    <CheckIcon className="invisible size-4 group-data-[selected]:visible" />
-                    <div className="text-sm/6">{page.name}</div>
-                  </ListboxOption>
-                ))}
-              </ListboxOptions>
-            </Listbox>
+            <button
+              className="relative inline-flex items-center rounded-md bg-primary px-3 py-2 text-md font-semibold text-white ring-1 ring-inset ring-indigo-600 hover:bg-indigo-500 focus:z-10"
+              onClick={() => getMoreMails()}
+            >
+              Mostrar más
+            </button>
           </div>
-          {/* <Pagination totalPages={dataContacts?.meta?.totalPages || 0} /> */}
-          <Pagination totalPages={10} bgColor="bg-gray-300" />
         </div>
       </div>
     </>

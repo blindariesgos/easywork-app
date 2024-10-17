@@ -2,7 +2,7 @@
 import clsx from "clsx";
 import Image from "next/image";
 import axios from "axios";
-import React, { useRef, useState, Fragment } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ExclamationCircleIcon,
@@ -15,20 +15,20 @@ import EmailBody from "./EmailBody";
 import { useRouter } from "next/navigation";
 import { Bars3Icon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import useAppContext from "../../../../../../../context/app";
-import {
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Menu,
-  Transition,
-} from "@headlessui/react";
+import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
 import Button from "@/src/components/form/Button";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
+export default function Table({
+  mails,
+  selectedFolder = "INBOX",
+  fetchData,
+  setDMails,
+  getAxiosMails,
+}) {
   const router = useRouter();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -44,36 +44,78 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
     setIndeterminate(false);
   }
 
-  async function changeSelectLabelId(label) {
-    const array = [];
-    selectedEmails.forEach((element) => {
-      array.push(element.email.googleId);
-    });
-    updateLabelId(array, label);
-    setSelectedEmails([]);
-  }
-
   const handleChangeAddCrm = () => {
     router.push("/sales/crm/leads/lead?show=true&page=1");
   };
 
+  async function changeSelectLabelId(label) {
+    const array = selectedEmails.map((element) => element.email.googleId);
+    await updateLabelId(array, label);
+    setSelectedEmails([]); // Limpiar la selección después de actualizar
+  }
+
   async function updateLabelId(array, label) {
-    if (label === "inbox") {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`,
-        {
-          data: array,
+    const apiUrl =
+      label === "inbox"
+        ? `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`
+        : `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`;
+
+    await axios.post(apiUrl, { data: array });
+
+    // Actualizar el estado local inmediatamente
+    setDMails((prevMails) =>
+      prevMails.map((mail) => {
+        if (array.includes(mail.email.googleId)) {
+          if (label === "read") {
+            return {
+              ...mail,
+              email: {
+                ...mail.email,
+                folder: mail.email.folder.filter((f) => f !== "UNREAD"),
+              },
+            };
+          } else if (label === "unread") {
+            return {
+              ...mail,
+              email: {
+                ...mail.email,
+                folder: [...mail.email.folder, "UNREAD"],
+              },
+            };
+          } else {
+            return {
+              ...mail,
+              email: {
+                ...mail.email,
+                folder: [
+                  ...mail.email.folder.filter((f) => f !== label),
+                  label,
+                ],
+              },
+            };
+          }
         }
-      );
-    } else {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`,
-        {
-          data: array,
-        }
+        return mail;
+      })
+    );
+
+    // Eliminar los correos movidos a otras carpetas del estado local
+    if (["spam", "trash", "inbox"].includes(label)) {
+      setDMails((prevMails) =>
+        prevMails.filter((mail) => !array.includes(mail.email.googleId))
       );
     }
-    fetchData();
+
+    // Obtener los correos actualizados y solo actualizar los correos modificados
+    const updatedMails = await getAxiosMails(selectedFolder);
+    setDMails((prevMails) =>
+      prevMails.map(
+        (mail) =>
+          updatedMails.find(
+            (updatedMail) => updatedMail.email.googleId === mail.email.googleId
+          ) || mail
+      )
+    );
   }
 
   const itemOptions = [
@@ -137,7 +179,6 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
           ? changeSelectLabelId("spam")
           : updateLabelId([item.email.googleId], "spam");
       },
-
       value: "Spam",
     },
     {
@@ -219,7 +260,10 @@ export default function Table({ mails, selectedFolder = "INBOX", fetchData }) {
                   )}
                 </MenuItems>
               </Menu>
-              <div className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer">
+              <div
+                className="min-w-[12rem] py-3.5 text-sm text-easywork-main flex cursor-pointer"
+                onClick={() => changeSelectLabelId("spam")}
+              >
                 <ExclamationCircleIcon className="h-5 w-5" />
                 Marcar como no deseado
               </div>

@@ -106,8 +106,7 @@
           "policy": "Póliza"
         },
         "negative": {
-          "cancel": "Cancelada y no reagendada",
-          "canceled": "Cancelada",
+          "cancel": "Cancela cita y no reagenda",
           "person": "Lo verá con otra persona (familiar)",
           "documents": "Documentos incompletos",
           "noApproved": "No Aprobado por aseguradora",

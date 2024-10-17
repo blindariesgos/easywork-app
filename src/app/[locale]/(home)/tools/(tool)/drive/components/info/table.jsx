@@ -38,9 +38,9 @@ export default function TableInfo({
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-300 table-auto">
-                <thead className="bg-white">
+            <div className="overflow-x-auto h-full max-h-[60vh]">
+              <table className="min-w-full divide-y divide-gray-300 table-auto relative">
+                <thead className="bg-white sticky top-0 z-10">
                   <tr>
                     <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
                       <input

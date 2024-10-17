@@ -230,22 +230,19 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
         console.log({ body });
         const response = await updateLead(body, id);
         if (response.hasError) {
-          console.log({ response });
           let message = response.message;
           if (response.errors) {
             message = response.errors.join(", ");
           }
           throw { message };
         }
-        toast.success(t("contacts:edit:updated-contact"));
+        toast.success("¡Prospecto actualizado!");
         mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
         mutateLead();
       }
       setLoading(false);
       router.back();
     } catch (error) {
-      console.log({ error });
-      console.error(error.message);
       handleApiError(error.message);
       setLoading(false);
     }
@@ -284,7 +281,9 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                   mutate={mutateLead}
                   leadId={id}
                   setValue={setValue}
-                  disabled={lead.cancelled}
+                  disabled={
+                    lead?.cancelled || /Positivo/gi.test(lead?.stage?.name)
+                  }
                 />
               </div>
               <div className="bg-white rounded-md shadow-sm w-full">
@@ -319,15 +318,17 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
             >
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("leads:lead:lead-data")}</h1>
-                {lead && (
-                  <button
-                    type="button"
-                    disabled={!id}
-                    onClick={() => setIsEdit(!isEdit)}
-                  >
-                    <PencilIcon className="h-6 w-6 text-primary" />
-                  </button>
-                )}
+                {lead &&
+                  !lead.cancelled &&
+                  !/Positivo/gi.test(lead?.stage?.name) && (
+                    <button
+                      type="button"
+                      disabled={!id}
+                      onClick={() => setIsEdit(!isEdit)}
+                    >
+                      <PencilIcon className="h-6 w-6 text-primary" />
+                    </button>
+                  )}
               </div>
               <div className="flex justify-center">
                 {isEdit ? (

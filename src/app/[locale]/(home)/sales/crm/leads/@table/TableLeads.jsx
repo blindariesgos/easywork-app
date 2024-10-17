@@ -32,18 +32,20 @@ import moment from "moment";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 import useLeadContext from "@/src/context/leads";
 import FooterTable from "@/src/components/FooterTable";
-import { Bars3Icon } from "@heroicons/react/24/solid";
+import { Bars3Icon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import DeleteModal from "@/src/components/modals/DeleteItem";
 import { deleteLeadById, updateLead } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import useCrmContext from "@/src/context/crm";
+import useAppContext from "@/src/context/app";
 
 export default function TableLeads() {
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
   const [deleteId, setDeleteId] = useState();
+  const { lists } = useAppContext();
 
   const {
     data,
@@ -98,41 +100,33 @@ export default function TableLeads() {
   }
 
   const ColorDivisionsStages = (data) => {
-    const stages = [
-      "Contacto Inicial",
-      "Presentar Propuesta",
-      "Propuesta en revisión",
-      "Trámite para emisión",
-      "Emisión de póliza",
-      "Cierre Positivo: Póliza pagada",
-      "Cierre Negativo: Póliza anulada",
-    ];
+    const stageIndex =
+      lists?.listLead?.leadStages
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => data?.id == value) ?? -1;
 
-    const colors = [
-      "bg-green-primary",
-      "bg-green-primary",
-      "bg-green-primary",
-      "bg-green-primary",
-      "bg-yellow-500",
-      "bg-yellow-500",
-      "bg-red-500",
-    ];
+    const getColorClass = (item, currentIndex, stageInd) => {
+      if (currentIndex <= stageInd && stageInd != -1) return "bg-yellow-500";
+      if (item && stageInd == -1 && /Positivo/gi.test(item?.name))
+        return "bg-green-primary";
+      if (item && stageInd == -1 && !/Positivo/gi.test(item?.name))
+        return "bg-red-500";
 
-    const getColorClass = (currentIndex) => {
-      const stageIndex = stages.findIndex((value) => data?.name == value);
-      const stageColor = colors[stageIndex];
-
-      return currentIndex <= stageIndex ? stageColor : "";
+      return "";
     };
-
+    console.log(
+      new Array((lists?.listLead?.leadStages?.length ?? 5) + 1).fill(1)
+    );
     return (
-      <div className={`flex justify-center w-28 ${"bg-gray-200"}`}>
-        {[0, 1, 2, 3, 4, 5, 6].map((index) => (
-          <div
-            key={index}
-            className={`w-4 h-4 ${getColorClass(index)} border-t border-b border-l last:border-r border-gray-400`}
-          />
-        ))}
+      <div className={`flex justify-center  ${"bg-gray-200"}`}>
+        {new Array((lists?.listLead?.leadStages?.length ?? 5) + 1)
+          .fill(1)
+          .map((_, index) => (
+            <div
+              key={index}
+              className={`w-4 h-4 ${getColorClass(data, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+            />
+          ))}
       </div>
     );
   };
@@ -245,6 +239,11 @@ export default function TableLeads() {
       name: "Programar Marcación Masiva",
       disabled: true,
     },
+    {
+      id: 9,
+      name: "Enviar SMS masivo",
+      disabled: true,
+    },
   ];
 
   const deleteLead = async (id) => {
@@ -261,7 +260,7 @@ export default function TableLeads() {
     }
   };
 
-  const leadOptions = [
+  const leadOptions = (lead) => [
     {
       name: "Ver",
       handleClick: (id) => router.push(`/sales/crm/leads/lead/${id}?show=true`),
@@ -270,6 +269,7 @@ export default function TableLeads() {
       name: "Editar",
       handleClick: (id) =>
         router.push(`/sales/crm/leads/lead/${id}?show=true&edit=true`),
+      disabled: lead?.cancelled || /Positivo/gi.test(lead?.stage?.name),
     },
     {
       name: "Copiar",
@@ -315,11 +315,16 @@ export default function TableLeads() {
   return (
     <div className="flow-root ">
       {loading && <LoaderSpinner />}
+      <div className="flex pb-2">
+        {selectedLeads.length > 0 && (
+          <SelectedOptionsTable options={masiveOptions} />
+        )}
+      </div>
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto">
-              <thead className="text-sm bg-white drop-shadow-sm">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
+              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                 <tr>
                   <th
                     scope="col"
@@ -420,7 +425,7 @@ export default function TableLeads() {
                                 anchor="right start"
                                 className=" z-50 mt-2.5 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                               >
-                                {leadOptions.map((item) =>
+                                {leadOptions(lead).map((item) =>
                                   !item.options ? (
                                     <MenuItem
                                       key={item.name}
@@ -431,7 +436,6 @@ export default function TableLeads() {
                                       }
                                     >
                                       <div
-                                        // onClick={item.onClick}
                                         className={
                                           "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                         }
@@ -444,7 +448,7 @@ export default function TableLeads() {
                                       <MenuButton className="flex items-center hover:bg-gray-50">
                                         <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
                                           {item.name}
-                                          <ChevronDownIcon className="h-6 w-6 ml-2" />
+                                          <ChevronRightIcon className="h-6 w-6 ml-2" />
                                         </div>
                                       </MenuButton>
                                       <Transition
@@ -610,20 +614,8 @@ export default function TableLeads() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex">
-          {selectedLeads.length > 0 && (
-            <SelectedOptionsTable options={masiveOptions} />
-          )}
-        </div>
       </div>
-      {/* <div className="w-full mt-2">
-        <div className="flex justify-center items-center flex-wrap">
-          {selectedLeads.length > 0 && (
-            <SelectedOptionsTable options={optionsCheckBox} />
-          )}
-          <Pagination totalPages={10} />
-        </div>
-      </div> */}
+
       {/* Delete ConfirmModal */}
       <DeleteModal
         isOpen={isOpenDelete}

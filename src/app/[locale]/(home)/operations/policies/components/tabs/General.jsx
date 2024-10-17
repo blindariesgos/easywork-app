@@ -145,7 +145,7 @@ export default function PolicyDetails({
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
       className={clsx(
-        `grid grid-cols-1 lg:grid-cols-12 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full h-[calc(100vh_-_220px)]`
+        `grid grid-cols-1 lg:grid-cols-12 lg:overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full lg:h-[calc(100vh_-_220px)]`
         // {
         //   [`h-[calc(100vh_-_${headerHeight}px)]`]: headerHeight,
         // }

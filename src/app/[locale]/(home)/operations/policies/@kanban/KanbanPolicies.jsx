@@ -11,6 +11,8 @@ const KanbanPolicies = () => {
   const [isLoading, setLoading] = useState(false);
   const columnOrder = ["en_proceso", "activa", "cancelada"];
   const [isDragging, setIsDragging] = useState(false);
+  const [activeId, setActiveId] = useState(null);
+
   const columns = {
     en_proceso: {
       id: "en_proceso",
@@ -57,6 +59,7 @@ const KanbanPolicies = () => {
   }, [data]);
 
   const handleDragEnd = (result) => {
+    setActiveId(null);
     setIsDragging(false);
     setLoading(true);
     const body = {
@@ -87,6 +90,11 @@ const KanbanPolicies = () => {
     setIsDragging(true);
   }
 
+  function handleDragStart(event) {
+    setActiveId(event.active.id);
+    setIsDragging(true);
+  }
+
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       {isLoading && <LoaderSpinner />}
@@ -98,6 +106,7 @@ const KanbanPolicies = () => {
               {...columns[column]}
               policies={policies[column]}
               isDragging={isDragging}
+              activeId={activeId}
             />
           ))}
         </div>

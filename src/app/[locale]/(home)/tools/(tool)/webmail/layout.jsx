@@ -531,7 +531,7 @@ export default function WebmailLayout({ children, table }) {
               </div>
               <div className="w-full my-4">
                 <p className="text-xs text-white text-left">
-                  HERRAMIENTAS - CORREO
+                  Herramientas - buzón de correo
                 </p>
               </div>
               <div className="w-full">

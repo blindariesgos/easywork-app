@@ -186,12 +186,11 @@ export const renderCellContent = (
             </div>
           )}
           <Link
-            className={clsx(
-              task.status === "pending_review"
-                ? "text-gray-800/45 line-through"
-                : "text-black",
-              isSubTask && "pl-8"
-            )}
+            className={clsx("text-black", {
+              "pl-8": isSubTask,
+              "text-gray-800/45 line-through":
+                task.status === "pending_review" || task.isCompleted,
+            })}
             href={`/tools/tasks/task/${task.id}?show=true`}
           >
             {taskValue}

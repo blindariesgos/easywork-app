@@ -21,18 +21,6 @@ import CardComment from "./CardComment";
 import { useEntityActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
 import { IoMdCheckboxOutline } from "react-icons/io";
-function parseAndSortByDate(data) {
-  console.log({ data });
-  // Combine tasks and comments with their type
-  const combined = [...data?.tasks?.map((task) => ({ type: "task", ...task }))];
-
-  // Sort combined array by createdAt date
-  combined.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-
-  return combined;
-}
 
 export default function ActivityPanel({
   entityId,

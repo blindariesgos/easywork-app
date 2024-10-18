@@ -424,7 +424,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   defaultValue=""
                 />
               )}
-              {/* <SelectInput
+              <SelectInput
                 label={t("contacts:create:typePerson")}
                 options={[
                   {
@@ -439,10 +439,10 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 placeholder="- Seleccionar -"
                 watch={watch}
                 name="typePerson"
-                disabled={!isEdit}
+                disabled
                 setValue={setValue}
                 error={!watch("typePerson") && errors.typePerson}
-              /> */}
+              />
               <SelectInput
                 label={
                   type == "fisica"

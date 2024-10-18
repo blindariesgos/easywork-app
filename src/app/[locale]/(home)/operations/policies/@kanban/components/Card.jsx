@@ -12,9 +12,15 @@ import Image from "next/image";
 import moment from "moment";
 import { useMemo, Fragment } from "react";
 import { useDraggable } from "@dnd-kit/core";
+import DeleteModal from "@/src/components/modals/DeleteItem";
+import { deletePolicyById } from "@/src/lib/apis";
+import { toast } from "react-toastify";
+import { handleApiError } from "@/src/utils/api/errors";
 
 const Card = ({ policy }) => {
   const { lists } = useAppContext();
+  const [deleteId, setDeleteId] = useState();
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
   const route = useRouter();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: policy.id,
@@ -22,16 +28,63 @@ const Card = ({ policy }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        position: "fixed",
       }
     : undefined;
 
   const options = [
     {
-      name: "Tarea",
-      onclick: (id) =>
-        route.push(`/tools/tasks/task?show=true&prev=policy&prev_id=${id}`),
+      name: "Ver",
+      handleClick: (id) =>
+        route.push(`/operations/policies/policy/${id}?show=true`),
+    },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        route.push(`/operations/policies/policy/${id}?show=true&edit=true`),
+    },
+    {
+      name: "Eliminar",
+      handleClick: (id) => {
+        setDeleteId(id);
+        setIsOpenDelete(true);
+      },
+      disabled: true,
+    },
+    {
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClickContact: (id) =>
+            route.push(
+              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+            ),
+        },
+        {
+          name: "Cita",
+          disabled: true,
+        },
+        {
+          name: "Comentario",
+          disabled: true,
+        },
+        {
+          name: "Correo",
+          disabled: true,
+        },
+      ],
     },
   ];
+  const deletePolicy = async (id) => {
+    try {
+      const response = await deletePolicyById(id);
+      toast.success(t("common:alert:delete-success"));
+      setIsOpenDelete(false);
+    } catch (err) {
+      handleApiError(err.message);
+    }
+  };
 
   const handleClickContact = (id) =>
     route.push(`/sales/crm/contacts/contact/${id}?show=true`);
@@ -48,7 +101,6 @@ const Card = ({ policy }) => {
       style={style}
       {...otherAttributes}
       onPointerDown={(event) => {
-        console.log("onPointerDown", event);
         if (event?.target?.onclick) {
           event?.target?.onclick();
           return;
@@ -123,7 +175,8 @@ const Card = ({ policy }) => {
                   key={index}
                   as="div"
                   onClick={() =>
-                    option.onclick && option.onclick(policy?.contact?.id)
+                    option.handleClick &&
+                    option.handleClick(policy?.contact?.id)
                   }
                   disabled={option.disabled}
                   className="p-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-xs cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
@@ -142,6 +195,12 @@ const Card = ({ policy }) => {
           />
         </div>
       </div>
+      <DeleteModal
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}
+        handleClick={() => deletePolicy(deleteId)}
+        loading={loading}
+      />
     </div>
   );
 };

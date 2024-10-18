@@ -16,6 +16,7 @@ export default function DialogPositiveStage({
   setIsOpen,
   setSelectedReason,
   selectedReason,
+  handleSubmitCancel,
 }) {
   const { t } = useTranslation();
   const generatePolicy = [
@@ -82,6 +83,7 @@ export default function DialogPositiveStage({
                   <ButtonDiscardedPolicy
                     setSelectedReason={setSelectedReason}
                     selectedReason={selectedReason}
+                    handleSubmit={handleSubmitCancel}
                   />
                 </div>
               </DialogPanel>

@@ -42,12 +42,20 @@ const FormFilters = () => {
 
   const handleFormFilters = (data) => {
     if (data.fields.length == 0) return;
-    console.log({ data });
     setDisplayFilters(
-      data.fields.filter((field) => field.value && field.value.length > 0)
+      data.fields.filter(
+        (field) =>
+          field.value ||
+          (typeof field.value !== "undefined" && field?.value?.length)
+      )
     );
+
     const newFilters = data.fields
-      .filter((field) => field.value && field.value.length > 0)
+      .filter(
+        (field) =>
+          field.value ||
+          (typeof field.value !== "undefined" && field?.value?.length)
+      )
       .reduce((acc, field) => {
         let value = field.value;
 
@@ -64,6 +72,7 @@ const FormFilters = () => {
           [field.code]: value,
         };
       }, {});
+    console.log({ newFilters });
     setFilters(newFilters);
   };
 

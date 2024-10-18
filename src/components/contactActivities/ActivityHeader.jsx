@@ -132,11 +132,13 @@ const AddComment = ({ entityId, close, updateActivities, crmType }) => {
       pinned: false,
       [mapId[crmType]]: entityId,
     };
-    const response = await addContactComment(body, crmType).catch(() => ({
-      error: true,
+    const response = await addContactComment(body, crmType).catch((error) => ({
+      hasError: true,
+      ...error,
     }));
 
-    if (response.error) {
+    if (response.hasError) {
+      console.log({ response });
       toast.error(
         "Se ha producido un error al crear el comentario, inténtelo de nuevo."
       );

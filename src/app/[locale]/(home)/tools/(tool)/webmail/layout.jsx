@@ -285,7 +285,7 @@ export default function WebmailLayout({ children, table }) {
       selectedFolder: "ALL",
       label: "Todos",
       icon: <BookmarkIcon className="h-6 w-6 text-white" />,
-      unread: selectOauth?.unreadCount,
+      unread: null,
     },
     {
       selectedFolder: "SENT",
@@ -303,7 +303,7 @@ export default function WebmailLayout({ children, table }) {
       selectedFolder: "SPAM",
       label: "Spam",
       icon: <ExclamationCircleIcon className="h-6 w-6 text-white" />,
-      unread: selectOauth?.unreadSpamCount,
+      unread: null,
     },
     {
       selectedFolder: "TRASH",
@@ -531,7 +531,7 @@ export default function WebmailLayout({ children, table }) {
               </div>
               <div className="w-full my-4">
                 <p className="text-xs text-white text-left">
-                  HERRAMIENTAS - CORREO
+                  Herramientas - buzón de correo
                 </p>
               </div>
               <div className="w-full">
@@ -555,8 +555,6 @@ export default function WebmailLayout({ children, table }) {
                     <BookmarkIcon className="h-6 w-6 text-white" />
                     <div className="flex justify-between w-full">
                       <h3 className="ml-4 text-md">Todos</h3>
-
-                      <h3 className="text-md">{selectOauth?.unreadCount}</h3>
                     </div>
                   </li>
                   {userData?.labelId?.map((labelId, index) => (

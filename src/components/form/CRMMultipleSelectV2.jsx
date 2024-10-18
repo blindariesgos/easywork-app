@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import Button from "./Button";
+import { useReceipts } from "@/src/lib/api/hooks/receipts";
 
 const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     page: 1,
     limit: 5,
   });
-  const { data: dataPolicies, isLoading: isLoadingPolicies } = usePolicies({
+  const { data: policies, isLoading: isLoadingPolicies } = usePolicies({
     filters: { poliza: query },
     config: {
       page: 1,
@@ -45,6 +46,14 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     },
   });
 
+  const { data: receipts, isLoading: isLoadingReceipts } = useReceipts({
+    filters: { name: query },
+    config: {
+      page: 1,
+      limit: 5,
+    },
+  });
+
   const handleToggle = () => {
     setQuery("");
     setIsOpen(!isOpen);
@@ -53,7 +62,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const handleSelect = (option) => {
     const currentValues = getValues(name) || [];
 
-    const types = ["contact", "poliza", "lead"];
+    const types = ["contact", "poliza", "lead", "receipt"];
     // Determine the type based on filterSelect
     const type = types[filterSelect - 1];
 
@@ -86,11 +95,12 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const filterData = useMemo(() => {
     const items = [
       contacts?.items ?? [],
-      dataPolicies?.items ?? [],
+      policies?.items ?? [],
       leads?.items ?? [],
+      receipts?.items ?? [],
     ];
     return items[filterSelect - 1];
-  }, [dataPolicies, contacts, leads, filterSelect, query]);
+  }, [policies, contacts, leads, filterSelect, query, receipts]);
 
   return (
     <div className="">
@@ -175,6 +185,15 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                   >
                     Prospectos
                   </li>
+                  <li
+                    className={clsx(
+                      filterSelect === 4 && "bg-gray-300",
+                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
+                    )}
+                    onClick={() => setFilterSelect(4)}
+                  >
+                    Recibos
+                  </li>
                 </ul>
                 <div className="">
                   <div
@@ -240,6 +259,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     )}
                     {(isLoadingContacts ||
                       isLoadingPolicies ||
+                      isLoadingReceipts ||
                       isLoadingLeads) && <LoadingSpinnerSmall />}
                   </div>
                 </div>

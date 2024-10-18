@@ -59,6 +59,9 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
       }
       router.back();
       mutate();
+      mutateContext(
+        "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
+      );
       toast.success("Prospecto actualizado con exito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
@@ -67,7 +70,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
 
   return (
     <div
-      className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${lists?.listLead?.leadStages ? `lg:grid-cols-${lists?.listLead?.leadStages.length + 1}` : "lg:grid-cols-6"} gap-1`}
+      className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${lists?.listLead?.leadStages ? `lg:grid-cols-${lists?.listLead?.leadStages?.length + 1}` : "lg:grid-cols-6"} gap-1`}
     >
       {lists?.listLead?.leadStages?.map((leadStage, index) => {
         return (
@@ -84,7 +87,8 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
               className={clsx(
                 "px-3 py-2 rounded-lg text-sm text-white hover:opacity-100 w-full bg-easy-600 ",
                 {
-                  "opacity-60": index > stageIndex && stageIndex !== -1,
+                  "opacity-60":
+                    (index > stageIndex && stageIndex !== -1) || !stage,
                   "bg-green-500":
                     stageIndex == -1 && /Positivo/gi.test(stage?.name) && stage,
                   "bg-red-500":
@@ -114,10 +118,12 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
           className={clsx(
             "px-3 py-2 rounded-lg text-sm text-white hover:opacity-100 w-full ",
             {
-              "bg-easy-600": stageIndex !== -1,
-              "opacity-60": stageIndex !== -1,
-              "bg-green-500": stageIndex == -1 && /Positivo/gi.test(stage.name),
-              "bg-red-500": stageIndex == -1 && !/Positivo/gi.test(stage.name),
+              "bg-easy-600": stageIndex !== -1 || !stage,
+              "opacity-60": stageIndex !== -1 || !stage,
+              "bg-green-500":
+                stageIndex == -1 && stage && /Positivo/gi.test(stage?.name),
+              "bg-red-500":
+                stageIndex == -1 && stage && !/Positivo/gi.test(stage?.name),
               "cursor-pointer": !disabled,
             }
           )}
@@ -129,10 +135,14 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
           <p
             className="whitespace-nowrap text-ellipsis overflow-hidden"
             title={
-              stageIndex !== -1 ? "Definir estado del negocio" : stage.name
+              stageIndex !== -1 || !stage
+                ? "Definir estado del negocio"
+                : stage?.name
             }
           >
-            {stageIndex !== -1 ? "Definir estado del negocio" : stage.name}
+            {stageIndex !== -1 || !stage
+              ? "Definir estado del negocio"
+              : stage?.name}
           </p>
         </div>
       </div>
@@ -141,14 +151,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
         setIsOpen={setIsOpen}
         setSelectedReason={setSelectedReason}
         selectedReason={selectedReason}
-      />
-
-      <DialogNegativeStage
-        isOpen={isOpenNegative}
-        setIsOpen={setIsOpenNegative}
-        setSelectedReason={setSelectedReason}
-        selectedReason={selectedReason}
-        handleSubmit={handleSubmitNegativeStage}
+        handleSubmitCancel={handleSubmitNegativeStage}
       />
     </div>
   );

@@ -104,7 +104,7 @@ export default function PolicyDetails({ data, id, mutate }) {
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
                 <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {`${data?.company?.name ?? ""} ${data?.poliza} ${data?.type?.name}`}
+                  {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
                 </p>
 
                 <div className="flex items-center gap-2">

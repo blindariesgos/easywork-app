@@ -345,6 +345,12 @@ export const getLeadById = async (id) => {
   const response = await axios().get(`/sales/crm/leads/${id}`);
   return response;
 };
+
+export const getReceiptById = async (receiptId) => {
+  const response = await axios().get(`/sales/crm/polizas/receipts/${receiptId}`);
+  return response;
+};
+
 export const postLead = async (body) => {
   const response = await axios().post(`/sales/crm/leads`, body);
   return response;
@@ -462,7 +468,9 @@ const getCommentPath = (cmrtype) => {
   }
 }
 export const addContactComment = async (body, cmrType) => {
-  const response = await axios().post(`/sales/crm/${getCommentPath(cmrType)}/comments`, body);
+  const url = `/sales/crm/${getCommentPath(cmrType)}/comments`
+  console.log(url, body)
+  const response = await axios().post(url, body);
   return response;
 };
 

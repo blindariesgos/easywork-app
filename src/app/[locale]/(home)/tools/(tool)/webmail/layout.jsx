@@ -555,8 +555,6 @@ export default function WebmailLayout({ children, table }) {
                     <BookmarkIcon className="h-6 w-6 text-white" />
                     <div className="flex justify-between w-full">
                       <h3 className="ml-4 text-md">Todos</h3>
-
-                      <h3 className="text-md">{selectOauth?.unreadCount}</h3>
                     </div>
                   </li>
                   {userData?.labelId?.map((labelId, index) => (

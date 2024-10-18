@@ -1,9 +1,6 @@
 import Card from "./Card";
 import { Fragment, useEffect, useMemo } from "react";
-import {
-  useDroppable,
-  // DragOverlay
-} from "@dnd-kit/core";
+import { useDroppable, DragOverlay } from "@dnd-kit/core";
 import clsx from "clsx";
 const Column = ({ id, color, title, policies, activeId }) => {
   const { isOver, setNodeRef } = useDroppable({
@@ -33,11 +30,6 @@ const Column = ({ id, color, title, policies, activeId }) => {
           <Card policy={policy} index={index} key={policy.id} />
         ))}
       </div>
-      {/* <DragOverlay>
-        {activeId && policies.find((x) => x.id == activeId)?.id ? (
-          <Card policy={policies.find((x) => x.id == activeId)} />
-        ) : null}
-      </DragOverlay> */}
     </div>
   );
 };

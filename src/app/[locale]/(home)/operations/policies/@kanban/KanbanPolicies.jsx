@@ -4,8 +4,10 @@ import FooterTable from "@/src/components/FooterTable";
 import Column from "./components/Column";
 import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import Card from "./components/Card";
+import { createPortal } from "react-dom";
 const KanbanPolicies = () => {
   const { data, limit, setLimit, page, setPage, mutate } = usePolicyContext();
   const [isLoading, setLoading] = useState(false);
@@ -113,6 +115,14 @@ const KanbanPolicies = () => {
           ))}
         </div>
       </div>
+      {createPortal(
+        <DragOverlay>
+          {activeId && data?.items?.find((x) => x.id == activeId)?.id ? (
+            <Card policy={data?.items?.find((x) => x.id == activeId)} />
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 };

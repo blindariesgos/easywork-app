@@ -15,6 +15,7 @@ import {
 } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useSWRConfig } from "swr";
 
 export default function ProgressStages({ stage, leadId, mutate, disabled }) {
   const { isOpen, setIsOpen } = useLeads();
@@ -23,6 +24,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
   const [stageIndex, setStageIndex] = useState(0);
   const [isOpenNegative, setIsOpenNegative] = useState(false);
   const router = useRouter();
+  const { mutate: mutateContext } = useSWRConfig();
 
   useEffect(() => {
     let index = lists?.listLead?.leadStages?.findIndex(
@@ -39,6 +41,7 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
         return;
       }
       mutate();
+      mutateContext(`/sales/crm/leads/${leadId}/activities`);
       toast.success("Prospecto actualizado con exito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");

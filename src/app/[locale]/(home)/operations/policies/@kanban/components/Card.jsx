@@ -12,6 +12,7 @@ import Image from "next/image";
 import moment from "moment";
 import { useMemo, Fragment } from "react";
 import { useDraggable } from "@dnd-kit/core";
+
 const Card = ({ policy }) => {
   const { lists } = useAppContext();
   const route = useRouter();
@@ -21,6 +22,7 @@ const Card = ({ policy }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        // position: "fixed",
       }
     : undefined;
   const options = [
@@ -34,7 +36,7 @@ const Card = ({ policy }) => {
   return (
     <div
       ref={setNodeRef}
-      className="bg-white rounded-md p-2 grid grid-cols-12"
+      className="bg-white rounded-md p-3 grid grid-cols-12"
       style={style}
       {...listeners}
       {...attributes}

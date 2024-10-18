@@ -22,9 +22,10 @@ const Card = ({ policy }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        // position: "fixed",
+        position: "fixed",
       }
     : undefined;
+
   const options = [
     {
       name: "Tarea",
@@ -36,7 +37,7 @@ const Card = ({ policy }) => {
   return (
     <div
       ref={setNodeRef}
-      className="bg-white rounded-md p-3 grid grid-cols-12"
+      className="bg-white rounded-md p-3 grid grid-cols-12 relative"
       style={style}
       {...listeners}
       {...attributes}
@@ -88,7 +89,9 @@ const Card = ({ policy }) => {
       </div>
       <div className="col-span-12 flex justify-between">
         <Menu>
-          <MenuButton className="text-xs">+ Actividades</MenuButton>
+          <MenuButton className="text-xs hover:bg-gray-100">
+            + Actividades
+          </MenuButton>
           <MenuItems
             transition
             anchor="bottom start"

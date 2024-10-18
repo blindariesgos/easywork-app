@@ -21,7 +21,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
-import { getContactId, postTask, putTaskId, getLeadById } from "@/src/lib/apis";
+import {
+  getContactId,
+  postTask,
+  putTaskId,
+  getLeadById,
+  getPolicyById,
+  getReceiptById,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
@@ -127,7 +134,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
-  const setCmrContact = async (contactId) => {
+  const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [
       {
@@ -140,7 +147,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setOpenOptions((prev) => ({ ...prev, more: true }));
   };
 
-  const setCmrLead = async (leadId) => {
+  const setCrmLead = async (leadId) => {
     const response = await getLeadById(leadId);
     setValue("crm", [
       {
@@ -153,16 +160,53 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setOpenOptions((prev) => ({ ...prev, more: true }));
   };
 
+  const setCrmReceipt = async (receiptId) => {
+    const response = await getReceiptById(receiptId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "receipt",
+        name: response?.title,
+      },
+    ]);
+    console.log("receipt", response);
+    setValue("name", "CRM - Recibo: ");
+    setOpenOptions((prev) => ({ ...prev, more: true }));
+  };
+
+  const setCrmPolicy = async (policyId) => {
+    const response = await getPolicyById(policyId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "poliza",
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+      },
+    ]);
+    setValue("name", "CRM - Póliza: ");
+    setOpenOptions((prev) => ({ ...prev, more: true }));
+  };
+
   useEffect(() => {
     const prevId = params.get("prev_id");
 
     if (params.get("prev") === "contact") {
-      setCmrContact(prevId);
+      setCrmContact(prevId);
       return;
     }
 
     if (params.get("prev") === "leads") {
-      setCmrLead(prevId);
+      setCrmLead(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "policy") {
+      setCrmPolicy(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "receipt") {
+      setCrmReceipt(prevId);
       return;
     }
   }, [params.get("prev")]);

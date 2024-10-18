@@ -157,6 +157,39 @@ export default function TableReceipts() {
     // { name: "Copiar" },
   ];
 
+  const receiptStage = (receiptStage) => {
+    const colors = [
+      "bg-[#A9EA44]",
+      "bg-[#86BEDF]",
+      "bg-[#EAB544]",
+      "bg-[#EA8644]",
+      "bg-[#EA4444]",
+    ];
+    const stageIndex =
+      lists?.receipts?.receiptStages
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => receiptStage?.id == value) ?? -1;
+
+    const getColorClass = (item, currentIndex, stageInd) => {
+      if (item?.status == "pagado") return "bg-[#A9EA44]";
+      if (stageInd >= 5) return "bg-[#EA4444]";
+      if (item && stageInd < 5 && currentIndex <= stageInd)
+        return colors[stageIndex];
+      return "";
+    };
+
+    return (
+      <div className={`flex justify-center  ${"bg-gray-200"}`}>
+        {new Array(5).fill(1).map((_, index) => (
+          <div
+            key={index}
+            className={`w-4 h-4 ${getColorClass(receiptStage, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+          />
+        ))}
+      </div>
+    );
+  };
+
   if (data?.items && data?.items.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -451,9 +484,14 @@ export default function TableReceipts() {
                                       "S/N"}
                                   </Link>
                                 ) : column.row === "stages" ? (
-                                  <p className="text-center">
-                                    {receipt?.metadata?.Etapa ?? "S/N"}
-                                  </p>
+                                  <div className="flex items-center flex-col">
+                                    <div className="flex justify-center">
+                                      {receiptStage(receipt?.stage)}
+                                    </div>
+                                    <p className="mt-1 text-xs text-[#969696] font-semibold">
+                                      {receipt?.stage?.name ?? "S/N"}
+                                    </p>
+                                  </div>
                                 ) : column.row === "paymentAmount" ? (
                                   <p className="text-center">
                                     {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? "MXN"} ${formatToCurrency(receipt?.paymentAmount)}`}

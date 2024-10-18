@@ -62,9 +62,11 @@ const KanbanPolicies = () => {
     setActiveId(null);
     setIsDragging(false);
     setLoading(true);
+
     const body = {
       status: result?.over?.id,
     };
+
     putPoliza(result?.active?.id, body)
       .then((response) => {
         if (response.hasError) {
@@ -86,14 +88,14 @@ const KanbanPolicies = () => {
       });
   };
 
-  function handleDragStart() {
-    setIsDragging(true);
-  }
-
   function handleDragStart(event) {
     setActiveId(event.active.id);
     setIsDragging(true);
   }
+
+  useEffect(() => {
+    setLimit(100);
+  }, []);
 
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
@@ -109,16 +111,6 @@ const KanbanPolicies = () => {
               activeId={activeId}
             />
           ))}
-        </div>
-        <div className="w-full pt-8">
-          <FooterTable
-            limit={limit}
-            setLimit={setLimit}
-            page={page}
-            setPage={setPage}
-            totalPages={data?.meta?.totalPages}
-            total={data?.meta?.totalItems ?? 0}
-          />
         </div>
       </div>
     </DndContext>

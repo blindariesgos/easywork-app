@@ -26,6 +26,7 @@ import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
+
 export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
@@ -77,7 +78,8 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     assignedById: Yup.string(),
     observerId: Yup.string(),
     observations: Yup.string(),
-    amount: Yup.string(),
+    quoteAmount: Yup.string(),
+    quoteCurrencyId: Yup.string(),
     emails_dto: Yup.array().of(
       Yup.object().shape({
         email: Yup.string()
@@ -168,8 +170,9 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
       setValue("typePerson", lead?.typePerson);
     }
     if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy.id);
-    if (lead?.currency) setValue("currencyId", lead?.currency.id);
-    if (lead?.quote) setValue("quote", lead?.quote);
+    if (lead?.quoteCurrency)
+      setValue("quoteCurrencyId", lead?.quoteCurrency.id);
+    if (lead?.quoteAmount) setValue("quoteAmount", lead?.quoteAmount);
     if (lead?.observations) setValue("observations", lead?.observations);
     if (lead?.observer) setValue("observerId", lead?.observer.id);
 
@@ -277,7 +280,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
               </div>
               <div className="w-full relative">
                 <ProgressStages
-                  stage={lead.stage}
+                  stage={lead?.stage}
                   mutate={mutateLead}
                   leadId={id}
                   setValue={setValue}
@@ -559,16 +562,16 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                       type="text"
                       label={t("leads:lead:fields:amount")}
                       setValue={setValue}
-                      name="quote"
+                      name="quoteAmount"
                       disabled={!isEdit}
                       defaultValue={
-                        lead?.quote && lead?.quote?.length
-                          ? (+lead?.quote)?.toFixed(2)
+                        lead?.quoteAmount && lead?.quoteAmount?.length
+                          ? (+lead?.quoteAmount)?.toFixed(2)
                           : null
                       }
                       prefix={
                         lists?.policies?.currencies?.find(
-                          (x) => x.id == watch("currencyId")
+                          (x) => x.id == watch("quoteCurrencyId")
                         )?.symbol ?? ""
                       }
                     />
@@ -577,7 +580,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                     label={t(
                       "control:portafolio:receipt:details:form:currency"
                     )}
-                    name="currencyId"
+                    name="quoteCurrencyId"
                     options={lists?.policies?.currencies ?? []}
                     disabled={!isEdit}
                     register={register}

@@ -114,9 +114,7 @@ export default function TableLeads() {
 
       return "";
     };
-    console.log(
-      new Array((lists?.listLead?.leadStages?.length ?? 5) + 1).fill(1)
-    );
+
     return (
       <div className={`flex justify-center  ${"bg-gray-200"}`}>
         {new Array((lists?.listLead?.leadStages?.length ?? 5) + 1)
@@ -250,7 +248,7 @@ export default function TableLeads() {
     try {
       setLoading(true);
       const response = await deleteLeadById(id);
-      toast.success(t("contacts:delete:msg"));
+      toast.success("Prospecto(s) eliminado(s) con exito");
       mutate();
       setLoading(false);
       setIsOpenDelete(false);

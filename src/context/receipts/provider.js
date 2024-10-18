@@ -30,20 +30,20 @@ export default function ReceiptsContextProvider({ children }) {
       code: "dueDate",
     },
     {
-        id: 3,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "select-contact",
-        check: true,
-        code: "client",
-      },
-      {
-        id: 8,
-        name: t("control:portafolio:receipt:filters:type"),
-        type: "select",
-        check: true,
-        code: "poliza.typeId",
-        options: lists?.policies?.polizaTypes,
-      },
+      id: 3,
+      name: t("control:portafolio:receipt:filters:client"),
+      type: "select-contact",
+      check: true,
+      code: "polizaContactId",
+    },
+    {
+      id: 8,
+      name: t("control:portafolio:receipt:filters:type"),
+      type: "select",
+      check: true,
+      code: "polizaTypeId",
+      options: lists?.policies?.polizaTypes,
+    },
   ]
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -80,14 +80,14 @@ export default function ReceiptsContextProvider({ children }) {
         name: t("control:portafolio:receipt:filters:client"),
         type: "select-contact",
         check: true,
-        code: "client",
+        code: "polizaContactId",
       },
       {
         id: 8,
         name: t("control:portafolio:receipt:filters:type"),
         type: "select",
         check: true,
-        code: "poliza.typeId",
+        code: "polizaTypeId",
         options: lists?.policies?.polizaTypes,
       },
       {
@@ -103,7 +103,7 @@ export default function ReceiptsContextProvider({ children }) {
 
   useEffect(() => {
     handleChangeConfig("page", 1)
-  }, [config.limit])
+  }, [config.limit, filters])
 
   // useEffect(() => {
   //   if (Object.keys(filters).length == 0 && filterFields) {
@@ -130,7 +130,7 @@ export default function ReceiptsContextProvider({ children }) {
   }
 
   useEffect(() => {
-    console.log("cambio de visualizacion",displayFilters )
+    console.log("cambio de visualizacion", displayFilters)
   }, [displayFilters])
 
   const values = useMemo(

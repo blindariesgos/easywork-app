@@ -202,7 +202,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
         photo: selectedProfileImage?.file || "",
       };
     }
-
+    console.log({ body });
     const formData = new FormData();
     for (const key in body) {
       if (body[key] === null || body[key] === undefined || body[key] === "") {
@@ -240,14 +240,15 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
           throw { message };
         }
         toast.success("¡Prospecto actualizado!");
-        mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
-        mutateLead();
       }
-      setLoading(false);
-      router.back();
     } catch (error) {
       handleApiError(error.message);
+    } finally {
+      mutate(`/sales/crm/leads/${id} `);
+      mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
+      mutateLead();
       setLoading(false);
+      router.back();
     }
   };
 

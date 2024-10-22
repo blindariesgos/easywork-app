@@ -455,6 +455,14 @@ export const updateLabelId = async (usergoogle_id, newLabelId) => {
   return response;
 };
 
+export const updateLabelIdRules = async (usergoogle_id, newLabelIdRules) => {
+  const response = await axios().put(`/oauth/labelIdRules`, {
+    usergoogle_id,
+    newLabelIdRules,
+  });
+  return response;
+};
+
 const getCommentPath = (cmrtype) => {
   switch (cmrtype) {
     case "policy":

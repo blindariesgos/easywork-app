@@ -4,12 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
 import { toast } from "react-toastify";
-import {
-  Description,
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import axios from "axios";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import useAppContext from "../../../../../../../context/app/index";
@@ -17,6 +12,7 @@ import {
   updateLabelId,
   getAllOauth,
   deleteTokenGoogle,
+  updateLabelIdRules,
 } from "../../../../../../../lib/apis";
 import Tag from "../../../../../../../components/Tag";
 
@@ -31,40 +27,93 @@ export default function ModalAddFolders() {
   const params = new URLSearchParams(searchParams);
   const { userGoogle, selectOauth, userData } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectFirst, setSelectFirst] = useState("not specified");
-  const [selectSecond, setSelectSecond] = useState("not specified");
-  const [selectThree, setSelectThree] = useState("not specified");
+  const [selectFirst, setSelectFirst] = useState({
+    label: "not specified",
+    value: null,
+  });
+  const [selectSecond, setSelectSecond] = useState({
+    label: "not specified",
+    value: null,
+  });
+  const [selectThree, setSelectThree] = useState({
+    label: "not specified",
+    value: null,
+  });
+
   const [folderData, setFolderData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (params.get("configlabelid") && !params.get("isEdit")) {
-      getAllOauth(session.data.user.id).then((res) => {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${res.slice(-1).pop().access_token}`,
-          },
-        };
-        axios
-          .get(
-            `https://www.googleapis.com/gmail/v1/users/${userGoogle?.usergoogle_id}/labels`,
-            config
-          )
-          .then((labels) => {
-            const updatedLabels = labels.data.labels.map((label) => ({
+    if (params.get("configlabelid") && selectOauth) {
+      axios
+        .get(
+          `https://www.googleapis.com/gmail/v1/users/${userGoogle?.usergoogle_id}/labels`,
+          {
+            headers: {
+              Authorization: `Bearer ${selectOauth?.access_token}`,
+            },
+          }
+        )
+        .then((labels) => {
+          let updatedLabels = labels.data.labels;
+          if (!params.get("isEdit")) {
+            updatedLabels = labels.data.labels.map((label) => ({
               ...label,
               state: label.type === "system" ? true : false,
             }));
-            setFolderData(updatedLabels);
-          });
-      });
-    } else {
-      let array = [];
-      userGoogle?.labelId?.forEach((element) => {
-        array.push(JSON.parse(element));
-      });
-      setFolderData(array);
+          } else {
+            updatedLabels = labels.data.labels.map((label) => ({
+              ...label,
+              state: selectOauth.labelId.some(
+                (folder) => JSON.parse(folder).mailboxName === label.name
+              ),
+            }));
+          }
+          setFolderData(updatedLabels);
+        });
     }
+    setSelectFirst(
+      params.get("isEdit")
+        ? {
+            label: folderList.find(
+              (folder) =>
+                folder.value === selectOauth?.labelIdRules.saveSentFolder
+            )?.label,
+            value: folderList.find(
+              (folder) =>
+                folder.value === selectOauth?.labelIdRules.saveSentFolder
+            )?.value,
+          }
+        : selectFirst
+    );
+    setSelectSecond(
+      params.get("isEdit")
+        ? {
+            label: folderList.find(
+              (folder) =>
+                folder.value === selectOauth?.labelIdRules.moveDeletedFolder
+            )?.label,
+            value: folderList.find(
+              (folder) =>
+                folder.value === selectOauth?.labelIdRules.moveDeletedFolder
+            )?.value,
+          }
+        : selectSecond
+    );
+    setSelectThree(
+      params.get("isEdit")
+        ? {
+            label: folderList.find(
+              (folder) =>
+                folder.value === selectOauth?.labelIdRules.moveSpamFolder
+            )?.label,
+            value: folderList.find(
+              (folder) =>
+                folder.value === selectOauth?.labelIdRules.moveSpamFolder
+            )?.value,
+          }
+        : selectThree
+    );
   }, [params.get("configlabelid")]);
 
   async function deleteOauth() {
@@ -91,10 +140,20 @@ export default function ModalAddFolders() {
         });
       }
     });
+    const labelIdRules = {
+      saveSentFolder: selectFirst.value,
+      moveDeletedFolder: selectSecond.value,
+      moveSpamFolder: selectThree.value,
+    };
     await updateLabelId(userGoogle.usergoogle_id, folders);
-    await saveMails();
-    toast.success("Conexión con éxito");
-    router.push("/tools/webmail?page=1");
+    await updateLabelIdRules(userGoogle.usergoogle_id, labelIdRules);
+    if (!params.get("isEdit")) {
+      await saveMails();
+      toast.success("Conexión con éxito");
+      router.push("/tools/webmail");
+    } else {
+      toast.success("Carpetas actualizadas");
+    }
   }
 
   function checkAll() {
@@ -197,11 +256,15 @@ export default function ModalAddFolders() {
       value: "IMPORTANT",
       label: "Importantes",
     },
-  ]
+  ];
+
+  const closeModal = () => {
+    router.back();
+  };
 
   return (
     <SliderOverShort openModal={params.get("configlabelid")}>
-      <Tag onclick={() => router.back()} className="bg-easywork-main" />
+      <Tag onclick={() => closeModal()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 pl-5 font-medium text-lg">
           <h1>Configurar Carpetas</h1>
@@ -212,25 +275,13 @@ export default function ModalAddFolders() {
               <h1 className="font-medium text-lg">Sincronizar</h1>
             </div>
             <div className="text-xs">
-              {/* <div className="flex ml-2">
-                <input
-                  type="checkbox"
-                  onClick={() => {
-                    checkAll();
-                  }}
-                />
-                <p className="ml-1">Select all</p>
-              </div> */}
               <div className="ml-2">
                 {folderData?.map((item, index) => {
-                  let name = params.get("isEdit")
-                    ? item.mailboxName
-                    : item.name;
                   return (
                     <div className="flex mt-4 ml-2" key={index}>
                       <input
                         type="checkbox"
-                        disabled={name === "INBOX"}
+                        disabled={item.mailboxName === "INBOX"}
                         checked={item.state}
                         style={
                           item.state
@@ -250,10 +301,13 @@ export default function ModalAddFolders() {
                         }}
                       />
                       <p className="ml-1">
-                        {folderList.find((folder) => folder.value === name)
-                          ? folderList.find((folder) => folder.value === name)
-                              ?.label
-                          : name}
+                        {item.name &&
+                        folderList.find((folder) => folder.value === item.name)
+                          ?.label
+                          ? folderList.find(
+                              (folder) => folder.value === item.name
+                            )?.label
+                          : item.name}
                       </p>
                     </div>
                   );
@@ -267,7 +321,7 @@ export default function ModalAddFolders() {
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
                       Save sent emails to folder{" "}
-                      <span className="text-cyan-500">{selectFirst}</span>
+                      <span className="text-cyan-500">{selectFirst.label}</span>
                     </p>
                   </MenuButton>
                   <MenuItems
@@ -280,7 +334,7 @@ export default function ModalAddFolders() {
                         <MenuItem key={index}>
                           {({ active }) => (
                             <div
-                              onClick={() => setSelectFirst(item.label)}
+                              onClick={() => setSelectFirst(item)}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
                                 "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
@@ -298,7 +352,9 @@ export default function ModalAddFolders() {
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
                       Move deleted emails to folder{" "}
-                      <span className="text-cyan-500">{selectSecond}</span>
+                      <span className="text-cyan-500">
+                        {selectSecond.label}
+                      </span>
                     </p>
                   </MenuButton>
                   <MenuItems
@@ -311,7 +367,7 @@ export default function ModalAddFolders() {
                         <MenuItem key={index}>
                           {({ active }) => (
                             <div
-                              onClick={() => setSelectSecond(item.label)}
+                              onClick={() => setSelectSecond(item)}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
                                 "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
@@ -329,7 +385,7 @@ export default function ModalAddFolders() {
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
                       Move spam to folder{" "}
-                      <span className="text-cyan-500">{selectThree}</span>
+                      <span className="text-cyan-500">{selectThree.label}</span>
                     </p>
                   </MenuButton>
                   <MenuItems
@@ -342,7 +398,7 @@ export default function ModalAddFolders() {
                         <MenuItem key={index}>
                           {({ active }) => (
                             <div
-                              onClick={() => setSelectThree(item.label)}
+                              onClick={() => setSelectThree(item)}
                               className={classNames(
                                 active ? "bg-gray-50" : "",
                                 "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
@@ -361,7 +417,7 @@ export default function ModalAddFolders() {
                 <button
                   type="button"
                   className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
-                  onClick={() => router.back()}
+                  onClick={() => closeModal()}
                 >
                   Cancelar
                 </button>

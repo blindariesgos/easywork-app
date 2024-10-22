@@ -28,7 +28,7 @@ export default function ModalConfigGmail() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const session = useSession();
-  const { lists, selectOauth, userGoogle, setUserGoogle } = useAppContext();
+  const { lists, selectOauth, setSelectOauth, userGoogle, setUserGoogle } = useAppContext();
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
   const [countProcessMessagesDays, setCountProcessMessagesDays] =
@@ -93,6 +93,8 @@ export default function ModalConfigGmail() {
 
     const emailConfig = await createEmailConfig(data);
     if (emailConfig)
+      console.log(userGoogle);
+      setSelectOauth(userGoogle);
       router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
@@ -125,7 +127,7 @@ export default function ModalConfigGmail() {
   };
 
   useEffect(() => {
-    if (params.get("isEdit") === "true") {
+    if (params.get("isEdit") === "true") {      
       getEmailConfig(selectOauth?.email).then((res) => {
         console.log(res);
         let data = res;

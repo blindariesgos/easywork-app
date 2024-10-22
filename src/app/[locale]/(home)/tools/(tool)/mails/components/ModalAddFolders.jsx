@@ -77,11 +77,11 @@ export default function ModalAddFolders() {
         ? {
             label: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules.saveSentFolder
+                folder.value === selectOauth?.labelIdRules?.saveSentFolder
             )?.label,
             value: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules.saveSentFolder
+                folder.value === selectOauth?.labelIdRules?.saveSentFolder
             )?.value,
           }
         : selectFirst
@@ -91,11 +91,11 @@ export default function ModalAddFolders() {
         ? {
             label: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules.moveDeletedFolder
+                folder.value === selectOauth?.labelIdRules?.moveDeletedFolder
             )?.label,
             value: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules.moveDeletedFolder
+                folder.value === selectOauth?.labelIdRules?.moveDeletedFolder
             )?.value,
           }
         : selectSecond
@@ -105,11 +105,11 @@ export default function ModalAddFolders() {
         ? {
             label: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules.moveSpamFolder
+                folder.value === selectOauth?.labelIdRules?.moveSpamFolder
             )?.label,
             value: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules.moveSpamFolder
+                folder.value === selectOauth?.labelIdRules?.moveSpamFolder
             )?.value,
           }
         : selectThree

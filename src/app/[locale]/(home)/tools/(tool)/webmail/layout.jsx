@@ -1,12 +1,8 @@
 "use client";
 import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
-import React, { useState, useEffect, Fragment } from "react";
-import LoaderSpinner, {
-  LoadingSpinnerSmall,
-} from "@/src/components/LoaderSpinner";
-import clsx from "clsx";
-import { itemsByPage } from "@/src/lib/common";
+import React, { useState, useEffect } from "react";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
 import Table from "./components/Table";
@@ -18,17 +14,13 @@ import {
   HeartIcon,
   FolderIcon,
   ArrowRightCircleIcon,
-  CheckIcon,
   ChatBubbleLeftIcon,
-  ChevronDownIcon,
   UsersIcon,
   UserIcon,
 } from "@heroicons/react/20/solid";
 import {
   ChevronUpIcon,
   ArrowPathIcon,
-  ChevronRightIcon,
-  PauseCircleIcon,
   ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -41,9 +33,7 @@ import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   updateLabelId,
-  deleteTokenGoogle,
   getMails,
-  deleteFoldersMail,
   getAllOauth,
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
@@ -56,7 +46,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function WebmailLayout({ children, table }) {
+export default function WebmailLayout({ children }) {
   const session = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();

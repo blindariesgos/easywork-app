@@ -1,6 +1,6 @@
 "use client";
 import clsx from "clsx";
-import Image from "next/image";
+import { getTokenGoogle } from "../../../../../../../lib/apis";
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -67,6 +67,9 @@ export default function Table({
       prevMails.map((mail) => {
         if (array.includes(mail.email.googleId)) {
           if (label === "read") {
+            getTokenGoogle(session.data.user.id).then((res) => {
+              console.log(res);
+            });
             return {
               ...mail,
               email: {
@@ -75,6 +78,9 @@ export default function Table({
               },
             };
           } else if (label === "unread") {
+            getTokenGoogle(session.data.user.id).then((res) => {
+              console.log(res);
+            });
             return {
               ...mail,
               email: {

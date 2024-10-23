@@ -1,16 +1,42 @@
 import Card from "./Card";
-import { Fragment, useEffect, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDroppable, DragOverlay } from "@dnd-kit/core";
 import clsx from "clsx";
+import { getContactId, getReceiptKanbanByStateId } from "@/src/lib/apis";
+import InfiniteScroll from "react-infinite-scroll-component";
 const Column = ({ id, color, title }) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
   });
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  const getReceipts = async () => {
+    const response = await getReceiptKanbanByStateId({
+      limit: 10,
+      page: page + 1,
+      stageId: id,
+    });
+    console.log(title, response);
+    const auxItems = [...items, ...response.receipts];
+
+    setItems(auxItems);
+    if (auxItems.length >= response.totalReceipts) {
+      setHasMore(false);
+    }
+
+    setPage(page + 1);
+  };
+
+  useEffect(() => {
+    getReceipts();
+  }, []);
 
   return (
     <div
       ref={setNodeRef}
-      className={clsx("p-1 min-h-[60vh] w-[200px]", {
+      className={clsx("w-[250px]", {
         "bg-easy-100": isOver,
       })}
     >
@@ -21,6 +47,24 @@ const Column = ({ id, color, title }) => {
         {title}
         {/* ({policies.length}) */}
       </p>
+      <InfiniteScroll
+        dataLength={items.length}
+        next={getReceipts}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        height="60vh"
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+      >
+        {items.map((i, index) => (
+          <div style={style} key={index}>
+            div - #{index}
+          </div>
+        ))}
+      </InfiniteScroll>
       {/* <p className="pt-1 text-sm text-center">{`$ ${policies.reduce((acc, policy) => acc + policy.importePagar, 0).toFixed(2)}`}</p>
       <div
         className={clsx(
@@ -31,6 +75,7 @@ const Column = ({ id, color, title }) => {
           <Card policy={policy} index={index} key={policy.id} />
         ))}
       </div>
+
       <DragOverlay>
         {activeId && policies.find((x) => x.id == activeId)?.id ? (
           <Card policy={policies.find((x) => x.id == activeId)} />

@@ -27,7 +27,7 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 
-export default function CreateLead({ lead, id, updateLead: mutateLead }) {
+export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -246,7 +246,6 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
     } finally {
       mutate(`/sales/crm/leads/${id} `);
       mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
-      mutateLead();
       setLoading(false);
       router.back();
     }
@@ -282,7 +281,6 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
               <div className="w-full relative">
                 <ProgressStages
                   stage={lead?.stage}
-                  mutate={mutateLead}
                   leadId={id}
                   setValue={setValue}
                   disabled={
@@ -295,7 +293,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                   <p className="text-gray-400 font-medium hover:text-primary">
                     {t("leads:header:general")}
                   </p>
-                  <AddDocuments />
+                  <AddDocuments leadId={id} />
                 </div>
               </div>
             </div>

@@ -240,17 +240,19 @@ export default function TableInfo({
                                 onClick={() => handleOpenItem(file)}
                                 title={file.name}
                               >
-                                {file?.metadata?.observableName ?? file.name}
+                                {file?.metadata?.observableName ??
+                                  file?.metadata?.showName ??
+                                  file.name}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           <p className="text-center">
-                            {formatDate(file.updatedat, "dd/MM/yyyy")}
+                            {formatDate(file.updatedAt, "dd/MM/yyyy")}
                           </p>
                           <p className="text-center">
-                            {formatDate(file.updatedat, "hh:mm a")}
+                            {formatDate(file.updatedAt, "hh:mm a")}
                           </p>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">

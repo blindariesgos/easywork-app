@@ -6,15 +6,15 @@ import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/contactActivities/ActivityPanel";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
-import { formatToDollars } from "@/src/utils/formatters";
 import { formatDate } from "@/src/utils/getFormatDate";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
+import AddDocumentDialog from "@/src/components/modals/AddDocument";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
@@ -37,6 +37,12 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   const { lists } = useAppContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const [addFileProps, setAddFileProps] = useState({
+    isOpen: false,
+    cmrType: "receipt",
+    id,
+  });
+
   const schema = Yup.object().shape({
     responsibleId: Yup.string(),
     status: Yup.string(),
@@ -148,8 +154,8 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   };
 
   const options = [
-    { name: "Soporte de pago", disabled: true },
-    { name: "Factura", disabled: true },
+    { name: "Soporte de pago", type: "pago" },
+    { name: "Factura", type: "factura" },
   ];
 
   const receiptStatus = [
@@ -170,6 +176,15 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
       name: "Liquidado",
     },
   ];
+
+  const handleAddDocument = (document) => {
+    setAddFileProps({
+      ...addFileProps,
+      isOpen: true,
+      documentType: document.type,
+      title: t("common:add-document", { document: document.name }),
+    });
+  };
 
   return (
     <form
@@ -280,7 +295,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   <MenuItem
                     key={index}
                     as="div"
-                    onClick={option.onclick && option.onclick}
+                    onClick={() => handleAddDocument(option)}
                     disabled={option.disabled}
                     className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
                   >
@@ -531,6 +546,14 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
           />
         </div>
       )}
+      <AddDocumentDialog
+        {...addFileProps}
+        setIsOpen={(open) => setAddFileProps({ ...addFileProps, isOpen: open })}
+        update={() => {
+          updateReceipt();
+          mutate(`/sales/crm/polizas/receipts/${id}/activities`);
+        }}
+      />
     </form>
   );
 }

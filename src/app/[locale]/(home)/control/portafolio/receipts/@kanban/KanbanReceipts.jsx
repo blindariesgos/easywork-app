@@ -74,18 +74,16 @@ const KanbanReceipts = () => {
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       {isLoading && <LoaderSpinner />}
-      <div className="w-full">
-        <div className="overflow-x-scroll">
-          <div className="pt-2 flex ">
-            {lists?.receipts?.receiptStages?.map((column) => (
-              <Column
-                key={column.id}
-                id={column.id}
-                color={colors[column.name]}
-                title={column.name}
-              />
-            ))}
-          </div>
+      <div className="overflow-x-auto">
+        <div className="pt-2 grid grid-cols-9 min-w-full w-max gap-2">
+          {lists?.receipts?.receiptStages?.map((column) => (
+            <Column
+              key={column.id}
+              id={column.id}
+              color={colors[column.name]}
+              title={column.name}
+            />
+          ))}
         </div>
       </div>
       {/* {createPortal(

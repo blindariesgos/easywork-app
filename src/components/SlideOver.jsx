@@ -16,6 +16,7 @@ export default function SlideOver({
   labelTag,
   previousModalPadding,
   subLabelTag,
+  className,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -43,6 +44,10 @@ export default function SlideOver({
     // Parsear el valor de `show` del parámetro de consulta
     setShow(params.get("show") === "true");
   }, []); // Dependencia del parámetro de consulta 'show'
+
+  useEffect(() => {
+    if (params.get("profile")) setShow(params.get("show") === "true");
+  }, [params.get("show")]);
 
   useEffect(() => {
     switch (labelTag) {
@@ -176,7 +181,7 @@ export default function SlideOver({
                         />
                       )}
                     </div>
-                    {children}
+                    <div className={`${className} w-full`}>{children}</div>
                   </div>
                 </DialogPanel>
               </TransitionChild>

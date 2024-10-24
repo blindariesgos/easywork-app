@@ -23,10 +23,7 @@ const General = () => {
   const { setIsOpen } = useNotifyContext();
 
   params.set("show", true);
-
-  useEffect(() => {
-    console.log(session.data.user);
-  }, [params.get("profile"), session]);
+  
   return (
     <SliderOverShord openModal={params.get("profile")}>
       <Tag onclick={() => router.back()} className="bg-easywork-main" />

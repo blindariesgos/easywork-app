@@ -14,11 +14,13 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
 import React, { Fragment } from "react";
 import SearchBox from "../SearchBox";
 import Clock from "./Clock";
 import Status from "./Status";
+import General from "./profile/General";
+import Info from "./profile/Info";
 import Notification from "./Notification";
 import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
@@ -31,7 +33,13 @@ function classNames(...classes) {
 
 export default function Header() {
   const { data: session } = useSession();
+  const router = useRouter();
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
   const pathname = usePathname();
+
+  params.set('profile', session.user.id);
+
   function ifWebmailPath() {
     if (pathname === "/tools/webmail") return true;
   }
@@ -45,8 +53,8 @@ export default function Header() {
     setSidebarOpenDesktop2,
   } = useAppContext();
   const userNavigation = [
-    { name: t("common:header:profile"), href: "#" },
-    { name: t("common:header:signout"), href: "#", onClick: () => logout() },
+    { name: t("common:header:profile"), onClick: () => router.push(`${url.origin}${url.pathname}?${params.toString()}`), },
+    { name: t("common:header:signout"), onClick: () => logout() },
   ];
 
   return (
@@ -161,6 +169,8 @@ export default function Header() {
           />
 
           <Status />
+          <General />
+          <Info />
         </div>
       </div>
     </div>

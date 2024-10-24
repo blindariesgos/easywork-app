@@ -636,6 +636,7 @@ export const useSidebar = () => {
 
 export const useCommon = () => {
   const { t } = useTranslation();
+  const router = useRouter()
   const calendarViews = [
     t("tools:calendar:day"),
     t("tools:calendar:week"),
@@ -794,7 +795,7 @@ export const useCommon = () => {
     {
       value: 4,
       name: t("contacts:header:settings:import"),
-      onclick: () => { },
+      onClick: () => router.push("/custom-import/contacts"),
       disabled: false,
     },
     {
@@ -807,13 +808,13 @@ export const useCommon = () => {
       value: 6,
       name: t("contacts:header:settings:csv"),
       onclick: () => { },
-      disabled: false,
+      disabled: true,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
       onclick: () => { },
-      disabled: false,
+      disabled: true,
     },
     {
       value: 8,
@@ -825,19 +826,19 @@ export const useCommon = () => {
       value: 9,
       name: t("contacts:header:settings:control"),
       onclick: () => { },
-      disabled: false,
+      disabled: true,
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
       onclick: () => { },
-      disabled: false,
+      disabled: true,
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
       onclick: () => { },
-      disabled: false,
+      disabled: true,
     },
   ];
 

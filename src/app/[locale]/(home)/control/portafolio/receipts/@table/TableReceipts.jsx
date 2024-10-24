@@ -512,6 +512,10 @@ export default function TableReceipts() {
                                       {receipt?.poliza?.poliza || "-"}
                                     </p>
                                   </Link>
+                                ) : column.row === "status" ? (
+                                  <p className="text-center capitalize">
+                                    {receipt?.status || "-"}
+                                  </p>
                                 ) : (
                                   <p className="text-center">
                                     {receipt[column.row] || "-"}

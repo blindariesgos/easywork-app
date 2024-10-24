@@ -118,7 +118,7 @@ export default function DriveContextProvider({ children }) {
         : pages[pages.length - 1]?.id
     const response = await getExplorer(config, filters, folder)
 
-    if (response.error) {
+    if (response.hasError) {
       toast.error(response.message)
       return setLoading(false)
     };
@@ -230,10 +230,17 @@ export default function DriveContextProvider({ children }) {
     setPages([
       ...pages,
       {
-        name: data.name,
+        name: data?.metadata?.observableName ??
+          data?.metadata?.showName ??
+          data.name,
         id: data.id
       }
     ])
+    setConfig({
+      ...config,
+      page: 1
+    })
+    setFilters({})
   }
 
   const addFiles = async (files) => {

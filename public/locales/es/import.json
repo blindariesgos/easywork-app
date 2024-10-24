@@ -1,0 +1,36 @@
+{
+    "contacts": {
+        "title": "Importar Contactos",
+        "tabs": {
+            "config": "Configuración de importación",
+            "fields": "Campos",
+            "duplicate": "Control de duplicados",
+            "import": "Importar"
+        },
+        "config": {
+            "title": "Editar la configuración de importación",
+            "file": "Archivo de datos (CSV formato):",
+            "data-origin": "Datos de orígen:",
+            "encoding": "Codificación de archivos de datos:",
+            "contact-type": "Tipo de contacto (predeterminado):",
+            "origin": "Origen (predeterminado):",
+            "description": "Descripción (predeterminado):",
+            "available": "Disponible para todos (predeterminado):",
+            "included": "Incluido en la exportación (predeterminado):",
+            "responsible": "Persona responsable (por defecto):",
+            "name-format": "Formato de nombre:",
+            "file-example": "Ejemplo del archivo de importación:",
+            "subtitle-format": "Formato de Archivo",
+            "separator": "Separador de columnas:",
+            "first-row": "Primera fila como encabezado:",
+            "omit-column": "Omitir columnas vacias:",
+            "subtitle-details": "Detalles del parámetro de importación",
+            "import-details": "Importar detalles:",
+            "template": "Plantilla de importación predeterminada:",
+            "match-templates": "Igualar plantillas de archivos de importación:",
+            "id-template": "Coincidir usando el ID de la plantilla:",
+            "use-template": "Utilice la plantilla predeterminada si no se puede hacer coincidir una plantilla con la del archivo de importación:",
+            "field-required": "Campos requeridos"
+        }
+    }
+}

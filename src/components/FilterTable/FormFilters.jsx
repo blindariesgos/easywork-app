@@ -41,20 +41,21 @@ const FormFilters = () => {
     });
 
   const handleFormFilters = (data) => {
+    console.log("folters", data);
     if (data.fields.length == 0) return;
-    setDisplayFilters(
-      data.fields.filter(
-        (field) =>
-          field.value ||
-          (typeof field.value !== "undefined" && field?.value?.length)
-      )
+    const displayAux = data.fields.filter((field) =>
+      field.type == "multipleSelect"
+        ? field.value.length > 0
+        : typeof field.value !== "undefined" && field.value !== ""
     );
+    console.log({ displayAux });
+    setDisplayFilters(displayAux);
 
     const newFilters = data.fields
-      .filter(
-        (field) =>
-          field.value ||
-          (typeof field.value !== "undefined" && field?.value?.length)
+      .filter((field) =>
+        field.type == "multipleSelect"
+          ? field.value.length > 0
+          : typeof field.value !== "undefined" && field.value !== ""
       )
       .reduce((acc, field) => {
         let value = field.value;
@@ -157,6 +158,24 @@ const FormFilters = () => {
                 watch={watch}
               />
             )}
+            {dataField.type === "boolean" && (
+              <SelectInput
+                label={dataField.name}
+                name={`fields[${index}].value`}
+                options={[
+                  {
+                    name: "Si",
+                    id: "true",
+                  },
+                  {
+                    name: "No",
+                    id: "false",
+                  },
+                ]}
+                setValue={setValue}
+                watch={watch}
+              />
+            )}
             {dataField.type === "date" && (
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -190,23 +209,6 @@ const FormFilters = () => {
                 )}
               />
             )}
-            {/* TODO: Corregir `MultiSelectTags` no esta importado. */}
-            {/* {dataField.type === "tags" && (
-              <Controller
-                name={`fields[${index}].value`}
-                control={control}
-                defaultValue={[]}
-                render={({ field }) => (
-                  <MultiSelectTags
-                    {...field}
-                    getValues={getValues}
-                    setValue={setValue}
-                    name={`fields[${index}].value`}
-                    label={dataField.name}
-                  />
-                )}
-              />
-            )} */}
           </div>
         );
       })}

@@ -6,6 +6,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
 import Table from "./components/Table";
+import { usePathname } from "next/navigation";
 import axios from "axios";
 import {
   Cog8ToothIcon,
@@ -38,6 +39,7 @@ import {
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalConfigGmail from "../mails/components/ModalConfigGmail";
+import ConnectEmail from "./components/ConnectEmail";
 import Signature from "./components/Signature";
 import AddSignature from "./components/AddSignature";
 import { toast } from "react-toastify";
@@ -49,7 +51,8 @@ function classNames(...classes) {
 export default function WebmailLayout({ children }) {
   const session = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
   const {
     setSidebarOpenEmail,
     selectOauth,
@@ -67,6 +70,8 @@ export default function WebmailLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const [initialFetch, setInitialFetch] = useState(false);
   const [page, setPage] = useState(1);
+
+  params.set("connectemail", "true");
 
   useEffect(() => {
     allOauthPromise();
@@ -92,7 +97,8 @@ export default function WebmailLayout({ children }) {
   }, [selectOauth, selectedFolder]);
 
   useEffect(() => {
-    if (selectOauth) {
+    if (selectOauth && initialFetch) {
+      console.log(page)
       fetchData(false);
     }
   }, [page]);
@@ -175,18 +181,17 @@ export default function WebmailLayout({ children }) {
     }
   };
 
-  const fetchMails = async (reset = false) => {
+  const fetchMails = async (reset) => {
     try {
       const response = await getAxiosMails(selectedFolder);
-      setDMails((prevMails) =>
-        reset ? response : [...prevMails, ...response]
-      );
+      setDMails(reset ? response : (prevMails) => [...prevMails, ...response]);
     } catch (error) {
       console.error("Error fetching mails:", error);
     }
   };
 
-  const fetchData = async (reset = false) => {
+  const fetchData = async (reset) => {
+    console.log(reset);
     try {
       if (session.data.user.id && selectOauth?.id) {
         await fetchUserData();
@@ -235,18 +240,17 @@ export default function WebmailLayout({ children }) {
       { imapFolderId: "STARRED", mailboxName: "STARRED", type: "system" },
       { imapFolderId: "UNREAD", mailboxName: "UNREAD", type: "system" },
     ];
-    await updateLabelId(usergoogle_id, folders);
-    fetchData();
+    // await updateLabelId(usergoogle_id, folders);
+    // fetchData();
   }
 
   function allOauthPromise() {
-    if (!selectOauth)
-      getAllOauth(session.data.user.id).then((res) => {
-        if (!selectOauth) {
-          setSelectOauth(res[0]);
-        }
-        setAllOauth(res);
-      });
+    getAllOauth(session.data.user.id).then((res) => {
+      if (!selectOauth) {
+        setSelectOauth(res[0]);
+      }
+      setAllOauth(res);
+    });
   }
 
   const itemOptions = [
@@ -367,8 +371,9 @@ export default function WebmailLayout({ children }) {
       {loading && <LoaderSpinner />}
       <Signature />
       <AddSignature />
-      <ModalConfigGmail isEdit={true} />
-      <ModalAddFolders isConfig={true} fetchUserData={fetchUserData} />
+      <ConnectEmail />
+      <ModalConfigGmail isEdit={true} fetchUserData={fetchUserData} />
+      <ModalAddFolders isConfig={true} fetchUserData={fetchUserData} fetchData={fetchData} allOauthPromise={allOauthPromise} />
       <SendMessage
         colorTag="bg-easywork-main"
         userData={userData}
@@ -499,7 +504,7 @@ export default function WebmailLayout({ children }) {
                       <div
                         onClick={() =>
                           router.push(
-                            `${window.location.href}?connectemail=true`
+                            `${url.origin}${url.pathname}?${params.toString()}`
                           )
                         }
                       >

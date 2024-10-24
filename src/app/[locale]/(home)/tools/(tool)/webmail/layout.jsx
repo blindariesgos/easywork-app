@@ -89,6 +89,7 @@ export default function WebmailLayout({ children }) {
 
   useEffect(() => {
     if (selectOauth) {
+      setPage(1);
       fetchData(true);
       if (!initialFetch) {
         setInitialFetch(true);

@@ -32,8 +32,8 @@ const General = () => {
           <div className="flex items-center">
             <Image
               className="h-12 w-12 rounded-full object-cover"
-              width={36}
-              height={36}
+              width={200}
+              height={200}
               src={session?.data?.user?.avatar || "/img/avatar.svg"}
               alt=""
             />

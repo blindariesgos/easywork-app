@@ -48,6 +48,7 @@ export default function Info({ user, id }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log(session?.data?.user);
     if (session?.data?.user) {
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
@@ -61,7 +62,10 @@ export default function Info({ user, id }) {
             (option) => option.id === session?.data?.user?.source?.id
           )[0]
         );
-      setSelectedProfileImage({ base64: session?.data?.user?.photo || null, file: null });
+      setSelectedProfileImage({
+        base64: session?.data?.user?.photo || null,
+        file: null,
+      });
     }
   }, [session?.data?.user, lists]);
 
@@ -97,30 +101,35 @@ export default function Info({ user, id }) {
     formState: { isValid, errors },
   } = useForm({
     mode: "onChange",
-    resolver: yupResolver(schema),
+    // resolver: yupResolver(schema),
   });
 
   useEffect(() => {
-    if (!params.get("profile")) {
-      setIsEdit(true);
-      return;
-    }
-
-    if (session?.data?.user?.fullName) setValue("name", session?.data?.user?.fullName);
-    if (session?.data?.user?.cargo) setValue("position", session?.data?.user?.cargo);
-    if (session?.data?.user?.phone) setValue("phone", session?.data?.user?.phone);
-    if (session?.data?.user?.email) setValue("email", session?.data?.user?.email);
+    if (session?.data?.user?.fullName)
+      setValue("name", session?.data?.user?.fullName);
+    if (session?.data?.user?.cargo)
+      setValue("position", session?.data?.user?.cargo);
+    if (session?.data?.user?.phone)
+      setValue("phone", session?.data?.user?.phone);
+    if (session?.data?.user?.email)
+      setValue("email", session?.data?.user?.email);
     if (session?.data?.user?.curp) setValue("rfc", session?.data?.user?.curp);
     if (session?.data?.user?.cua) setValue("cua", session?.data?.user?.cua);
-    if (session?.data?.user?.type?.id) setValue("typeContact", session?.data?.user?.type?.id);
-    if (session?.data?.user?.source?.id) setValue("origin", session?.data?.user?.source?.id);
-    if (session?.data?.user?.birthdate) setValue("birthday", session?.data?.user?.birthdate);
-    if (session?.data?.user?.address) setValue("address", session?.data?.user?.address);
+    if (session?.data?.user?.type?.id)
+      setValue("typeContact", session?.data?.user?.type?.id);
+    if (session?.data?.user?.source?.id)
+      setValue("origin", session?.data?.user?.source?.id);
+    if (session?.data?.user?.birthdate)
+      setValue("birthday", session?.data?.user?.birthdate);
+    if (session?.data?.user?.address)
+      setValue("address", session?.data?.user?.address);
     if (session?.data?.user?.bio) setValue("bio", session?.data?.user?.bio);
     if (session?.data?.user?.profile?.firstName)
       setValue("firstName", session?.data?.user?.profile?.firstName);
-    if (session?.data?.user?.profile?.lastName) setValue("lastName", session?.data?.user?.profile?.lastName);
-    if (session?.data?.user?.avatar) setSelectedProfileImage({ base64: session?.data?.user?.avatar });
+    if (session?.data?.user?.profile?.lastName)
+      setValue("lastName", session?.data?.user?.profile?.lastName);
+    if (session?.data?.user?.avatar)
+      setSelectedProfileImage({ base64: session?.data?.user?.avatar });
   }, [session?.data?.user, params.get("profile")]);
 
   const handleProfileImageChange = useCallback((event) => {
@@ -176,21 +185,15 @@ export default function Info({ user, id }) {
 
   const handleFormSubmit = async (data) => {
     const body = {
-      name: data.name,
-      fullName: data.name,
+      firstName: data.firstName,
+      lastName: data.lastName,
       photo: id ? "" : selectedProfileImage?.file || "",
-      cargo: data.position,
-      typeId: data.typeContact,
-      curp: data.rfc,
       cua: data.cua,
-      address: data.address,
-      birthdate: data.birthday,
-      sourceId: data.origin,
-      emails_dto: JSON.stringify([{ email: data.email }]),
-      phones_dto: [{ number: data.phone }],
-      observerId: data.responsible,
-      assignedById: data.responsible,
+      emails: data.email,
+      phone: data.phone,
     };
+
+    console.log(body);
 
     const formData = new FormData();
     for (const key in body) {
@@ -208,23 +211,17 @@ export default function Info({ user, id }) {
 
     try {
       setLoading(true);
-      if (!session?.data?.user) {
-        await createContact(formData);
-        await mutate(`/sales/crm/contacts?limit=10&page=1`);
-        toast.success(t("contacts:create:msg"));
-      } else {
-        await updateContact(body, id);
-        if (selectedProfileImage.file) {
-          const photo = new FormData();
-          photo.append("photo", selectedProfileImage.file);
-          await updatePhotoContact(photo, id);
-        }
+      await updateContact(body, id);
+      if (selectedProfileImage.file) {
+        const photo = new FormData();
+        photo.append("photo", selectedProfileImage.file);
+        await updatePhotoContact(photo, id);
         await mutate(`/sales/crm/contacts?limit=10&page=1`);
         await mutate(`/sales/crm/contacts/${id}`);
         toast.success(t("contacts:edit:updated-contact"));
       }
       setLoading(false);
-      router.push(`/sales/crm/contacts?page=1`);
+      // router.push(`/sales/crm/contacts?page=1`);
     } catch (error) {
       handleApiError(error.message);
       setLoading(false);
@@ -236,7 +233,12 @@ export default function Info({ user, id }) {
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
   return (
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user" className="bg-gray-600 p-8 rounded-3xl">
+    <SlideOver
+      openModal={true}
+      colorTag="bg-easywork-main"
+      labelTag="user"
+      className="bg-gray-600 p-8 rounded-3xl"
+    >
       {/* <Tag onclick={() => router.back()} className="bg-easywork-main" /> */}
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
@@ -264,8 +266,8 @@ export default function Info({ user, id }) {
               ) : (
                 <div className="p-2">
                   <Image
-                    width={96}
-                    height={96}
+                    width={1080}
+                    height={1080}
                     src={session?.data?.user?.avatar || "/img/avatar.svg"}
                     alt="Profile picture"
                     className="h-64 w-64 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
@@ -342,7 +344,6 @@ export default function Info({ user, id }) {
             {session?.data?.user && (
               <button
                 type="button"
-                disabled={!id}
                 onClick={() => setIsEdit(!isEdit)}
                 title="Editar"
               >
@@ -406,32 +407,31 @@ export default function Info({ user, id }) {
             />
           </div>
         </div>
+        {/* Botones de acción */}
+        {isEdit && (
+          <div className="flex w-full justify-center px-4 py-4 gap-4 fixed -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
+            <Button
+              type="submit"
+              label={
+                loading ? t("common:buttons:saving") : t("common:buttons:save")
+              }
+              disabled={loading}
+              buttonStyle="primary"
+              className="px-3 py-2"
+              // onclick={() => handleSubmit(handleFormSubmit)}
+            />
+            <Button
+              type="button"
+              label={t("common:buttons:cancel")}
+              disabled={loading}
+              buttonStyle="secondary"
+              onclick={() => router.back()}
+              className="px-3 py-2"
+            />
+          </div>
+        )}
       </form>
       {/* )} */}
-
-      {/* Botones de acción */}
-      {/* {(isEdit || !params.get("profile")) && (
-        <div className="flex w-full justify-center px-4 py-4 gap-4 fixed -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
-          <Button
-            type="submit"
-            label={
-              loading ? t("common:buttons:saving") : t("common:buttons:save")
-            }
-            disabled={loading}
-            buttonStyle="primary"
-            className="px-3 py-2"
-            // onclick={() => handleSubmit(handleFormSubmit)}
-          />
-          <Button
-            type="button"
-            label={t("common:buttons:cancel")}
-            disabled={loading}
-            buttonStyle="secondary"
-            onclick={() => router.back()}
-            className="px-3 py-2"
-          />
-        </div>
-      )} */}
     </SlideOver>
   );
 }

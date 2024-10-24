@@ -17,7 +17,7 @@ export default function TasksContextProvider({ children }) {
     page: 1,
     limit: 5,
     orderBy: "deadline",
-    order: "DESC"
+    order: "ASC"
   })
   const { tasks, isLoading, isError, mutate } = useTasks({
     config, filters: {

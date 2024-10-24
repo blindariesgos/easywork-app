@@ -20,7 +20,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ModalAddFolders({ fetchUserData }) {
+export default function ModalAddFolders({ fetchUserData, fetchData, allOauthPromise }) {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
@@ -145,6 +145,8 @@ export default function ModalAddFolders({ fetchUserData }) {
     if (!params.get("isEdit")) {
       toast.success("Conexión con éxito");
       router.push("/tools/webmail?configlabelid=false");
+      fetchData(true);
+      allOauthPromise();
     } else {
       fetchUserData();
       toast.success("Carpetas actualizadas");

@@ -23,7 +23,7 @@ import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
 import Tag from "../../../../../../../components/Tag";
 
-export default function ModalConfigGmail() {
+export default function ModalConfigGmail({ fetchUserData }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -286,7 +286,7 @@ export default function ModalConfigGmail() {
                 <h1 className="text-gray-400 font-medium text-lg ml-1">
                   Gmail
                 </h1>
-                {selectOauth || userData ? (
+                {selectOauth || userData && params.get("isEdit") === "true" ? (
                   <div className="flex ml-2 items-center">
                     <Image
                       src={

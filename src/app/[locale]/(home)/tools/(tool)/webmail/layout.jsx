@@ -1,15 +1,12 @@
 "use client";
 import useAppContext from "../../../../../../context/app";
 import EmailHeader from "./components/EmailHeader";
-import React, { useState, useEffect, Fragment } from "react";
-import LoaderSpinner, {
-  LoadingSpinnerSmall,
-} from "@/src/components/LoaderSpinner";
-import clsx from "clsx";
-import { itemsByPage } from "@/src/lib/common";
+import React, { useState, useEffect } from "react";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SendMessage from "./components/SendMessage";
 import ModalAddFolders from "../mails/components/ModalAddFolders";
 import Table from "./components/Table";
+import { usePathname } from "next/navigation";
 import axios from "axios";
 import {
   Cog8ToothIcon,
@@ -18,17 +15,13 @@ import {
   HeartIcon,
   FolderIcon,
   ArrowRightCircleIcon,
-  CheckIcon,
   ChatBubbleLeftIcon,
-  ChevronDownIcon,
   UsersIcon,
   UserIcon,
 } from "@heroicons/react/20/solid";
 import {
   ChevronUpIcon,
   ArrowPathIcon,
-  ChevronRightIcon,
-  PauseCircleIcon,
   ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -41,13 +34,12 @@ import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   updateLabelId,
-  deleteTokenGoogle,
   getMails,
-  deleteFoldersMail,
   getAllOauth,
 } from "../../../../../../lib/apis";
 import { useSession } from "next-auth/react";
 import ModalConfigGmail from "../mails/components/ModalConfigGmail";
+import ConnectEmail from "./components/ConnectEmail";
 import Signature from "./components/Signature";
 import AddSignature from "./components/AddSignature";
 import { toast } from "react-toastify";
@@ -56,14 +48,20 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function WebmailLayout({ children, table }) {
+export default function WebmailLayout({ children }) {
   const session = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { setSidebarOpenEmail, selectOauth, setSelectOauth, openModalFolders } =
-    useAppContext();
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const {
+    setSidebarOpenEmail,
+    selectOauth,
+    setSelectOauth,
+    openModalFolders,
+    userData,
+    setUserData,
+  } = useAppContext();
   const { t } = useTranslation();
-  const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
@@ -73,8 +71,9 @@ export default function WebmailLayout({ children, table }) {
   const [initialFetch, setInitialFetch] = useState(false);
   const [page, setPage] = useState(1);
 
+  params.set("connectemail", "true");
+
   useEffect(() => {
-    setSelectOauth(null);
     allOauthPromise();
     getAllOauth(session.data.user.id).then((response) => {
       if (response.length === 0) {
@@ -90,6 +89,7 @@ export default function WebmailLayout({ children, table }) {
 
   useEffect(() => {
     if (selectOauth) {
+      setPage(1);
       fetchData(true);
       if (!initialFetch) {
         setInitialFetch(true);
@@ -98,7 +98,8 @@ export default function WebmailLayout({ children, table }) {
   }, [selectOauth, selectedFolder]);
 
   useEffect(() => {
-    if (selectOauth) {
+    if (selectOauth && initialFetch) {
+      console.log(page)
       fetchData(false);
     }
   }, [page]);
@@ -181,18 +182,17 @@ export default function WebmailLayout({ children, table }) {
     }
   };
 
-  const fetchMails = async (reset = false) => {
+  const fetchMails = async (reset) => {
     try {
       const response = await getAxiosMails(selectedFolder);
-      setDMails((prevMails) =>
-        reset ? response : [...prevMails, ...response]
-      );
+      setDMails(reset ? response : (prevMails) => [...prevMails, ...response]);
     } catch (error) {
       console.error("Error fetching mails:", error);
     }
   };
 
-  const fetchData = async (reset = false) => {
+  const fetchData = async (reset) => {
+    console.log(reset);
     try {
       if (session.data.user.id && selectOauth?.id) {
         await fetchUserData();
@@ -241,8 +241,8 @@ export default function WebmailLayout({ children, table }) {
       { imapFolderId: "STARRED", mailboxName: "STARRED", type: "system" },
       { imapFolderId: "UNREAD", mailboxName: "UNREAD", type: "system" },
     ];
-    await updateLabelId(usergoogle_id, folders);
-    fetchData();
+    // await updateLabelId(usergoogle_id, folders);
+    // fetchData();
   }
 
   function allOauthPromise() {
@@ -372,8 +372,9 @@ export default function WebmailLayout({ children, table }) {
       {loading && <LoaderSpinner />}
       <Signature />
       <AddSignature />
-      <ModalConfigGmail isEdit={true} />
-      <ModalAddFolders isConfig={true} />
+      <ConnectEmail />
+      <ModalConfigGmail isEdit={true} fetchUserData={fetchUserData} />
+      <ModalAddFolders isConfig={true} fetchUserData={fetchUserData} fetchData={fetchData} allOauthPromise={allOauthPromise} />
       <SendMessage
         colorTag="bg-easywork-main"
         userData={userData}
@@ -504,7 +505,7 @@ export default function WebmailLayout({ children, table }) {
                       <div
                         onClick={() =>
                           router.push(
-                            `${window.location.href}?connectemail=true`
+                            `${url.origin}${url.pathname}?${params.toString()}`
                           )
                         }
                       >

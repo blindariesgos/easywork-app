@@ -28,7 +28,7 @@ const KanbanPolicies = () => {
     },
     cancelada: {
       id: "cancelada",
-      title: "Cancelada",
+      title: "No vigente",
       color: "#CD1100",
     },
   };
@@ -115,14 +115,6 @@ const KanbanPolicies = () => {
           ))}
         </div>
       </div>
-      {createPortal(
-        <DragOverlay>
-          {activeId && data?.items?.find((x) => x.id == activeId)?.id ? (
-            <Card policy={data?.items?.find((x) => x.id == activeId)} />
-          ) : null}
-        </DragOverlay>,
-        document.body
-      )}
     </DndContext>
   );
 };

@@ -8,21 +8,15 @@ import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
+import Vehicle from "./tabs/Vehicle";
 import { formatDate } from "@/src/utils/getFormatDate";
-import Vehicle from "./itemsView/vehicle";
 import Link from "next/link";
-import clsx from "clsx";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { putPoliza } from "@/src/lib/apis";
-import { useSWRConfig } from "swr";
-import { toast } from "react-toastify";
 
-export default function PolicyDetails({ data, id, mutate }) {
+export default function RenovationDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
   const headerRef = useRef();
-  const { mutate: mutateConfig } = useSWRConfig();
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -90,51 +84,9 @@ export default function PolicyDetails({ data, id, mutate }) {
     },
   ];
 
-  const updateStatus = async (status) => {
-    setLoading(true);
-    const body = {
-      status,
-    };
-    try {
-      const response = await putPoliza(id, body);
-
-      if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
-        );
-        setLoading(false);
-        return;
-      }
-      mutate();
-      toast.success("Paliza actualizada correctamente.");
-      mutateConfig("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
-    } catch (error) {
-      console.log({ error });
-      toast.error(
-        "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
-      );
-    }
-    setLoading(false);
-  };
-
-  const policyStatus = [
-    {
-      id: "en_proceso",
-      name: "En Trámite",
-    },
-    {
-      id: "activa",
-      name: "Vigente",
-    },
-    {
-      id: "cancelada",
-      name: "Cancelada",
-    },
-    {
-      id: "vencida",
-      name: "No Vigente",
-    },
-  ];
+  useEffect(() => {
+    console.log({ headerRef });
+  }, [headerRef]);
 
   return (
     <div className="flex flex-col h-screen relative w-full">
@@ -181,56 +133,16 @@ export default function PolicyDetails({ data, id, mutate }) {
                   <p className="text-sm">{getClientCode()}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Menu>
-                  <MenuButton>
-                    <label
-                      className={clsx(
-                        "py-2 px-3 rounded-lg capitalize cursor-pointer",
-                        {
-                          "bg-[#86BEDF]": data?.status == "en_proceso",
-                          "bg-[#A9EA44]": data?.status == "activa",
-                          "bg-[#FFC4C2]": ["cancelada", "vencida"].includes(
-                            data?.status
-                          ),
-                        }
-                      )}
-                    >
-                      {policyStatus.find((x) => x.id == data?.status)?.name ??
-                        "No Disponible"}
-                    </label>
-                  </MenuButton>
-                  <MenuItems
-                    transition
-                    anchor="bottom end"
-                    className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
-                  >
-                    {data &&
-                      policyStatus
-                        ?.filter((x) => x.id !== data?.status)
-                        .map((option, index) => (
-                          <MenuItem
-                            key={index}
-                            as="div"
-                            onClick={() => updateStatus(option.id)}
-                            className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
-                          >
-                            {option.name}
-                          </MenuItem>
-                        ))}
-                  </MenuItems>
-                </Menu>
-                <IconDropdown
-                  icon={
-                    <Cog8ToothIcon
-                      className="h-8 w-8 text-primary"
-                      aria-hidden="true"
-                    />
-                  }
-                  options={settingsPolicy}
-                  width="w-[140px]"
-                />
-              </div>
+              <IconDropdown
+                icon={
+                  <Cog8ToothIcon
+                    className="h-8 w-8 text-primary"
+                    aria-hidden="true"
+                  />
+                }
+                options={settingsPolicy}
+                width="w-[140px]"
+              />
             </div>
             <TabList className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
               {tabs.map((tab) => (

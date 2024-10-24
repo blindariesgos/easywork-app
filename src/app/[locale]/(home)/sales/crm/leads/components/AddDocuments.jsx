@@ -2,11 +2,11 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { forwardRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddDocumentDialog from "@/src/components/modals/AddDocument";
-import useSWR from "swr";
+import { useSWRConfig } from "swr";
 
 const AddDocuments = ({ leadId }) => {
   const { t } = useTranslation();
-  const { mutate } = useSWR();
+  const { mutate } = useSWRConfig();
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
     cmrType: "lead",

@@ -6,7 +6,7 @@ import {
   PhoneIcon,
   Bars3Icon,
   CheckIcon,
-  ChevronRightIcon,
+  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -19,176 +19,294 @@ import React, {
   Fragment,
   useCallback,
 } from "react";
+import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
-import { deleteContactId, deleteReceiptById } from "@/src/lib/apis";
+import { deleteContactId, deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { useReceiptTable } from "../../../../../../../hooks/useCommon";
+import {
+  usePoliciesTable,
+  useRenovationTable,
+} from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { formatToCurrency } from "@/src/utils/formatters";
-
 import {
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useReceiptContext from "../../../../../../../context/receipts";
-import { itemsByPage } from "@/src/lib/common";
+import usePolicyContext from "../../../../../../context/policies";
 import { useRouter } from "next/navigation";
-import useCrmContext from "@/src/context/crm";
+import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
-import moment from "moment";
+import DeleteItemModal from "@/src/components/modals/DeleteItem";
 
-export default function TableReceipts() {
-  const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
-    useReceiptContext();
+export default function Table() {
+  const {
+    data,
+    limit,
+    setLimit,
+    setOrderBy,
+    order,
+    orderBy,
+    page,
+    setPage,
+    mutate,
+  } = usePolicyContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
-  const {
-    selectedContacts: selectedReceipts,
-    setSelectedContacts: setSelectedReceipts,
-  } = useCrmContext();
-  const { columnTable } = useReceiptTable();
+  const { selectedContacts, setSelectedContacts } = useCrmContext();
+  const { columnTable } = useRenovationTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  const { onCloseAlertDialog } = useAlertContext();
   const [loading, setLoading] = useState(false);
+  const [deleteId, setDeleteId] = useState();
+  const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
 
   useLayoutEffect(() => {
     if (checkbox.current) {
       const isIndeterminate =
-        selectedReceipts &&
-        selectedReceipts.length > 0 &&
-        selectedReceipts.length < data?.meta?.totalItems;
-      setChecked(selectedReceipts?.length === data?.meta?.totalItems);
+        selectedContacts &&
+        selectedContacts?.length > 0 &&
+        selectedContacts?.length < data?.items?.length;
+      setChecked(selectedContacts?.length === data?.items?.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedReceipts]);
+  }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedReceipts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(checked || indeterminate ? [] : data?.items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
-  }, [checked, indeterminate, data, setSelectedReceipts]);
+  }, [checked, indeterminate, data, setSelectedContacts]);
 
-  const deleteReceipts = async (receipts) => {
+  const policyStatus = {
+    activa: "Vigente",
+    expirada: "No vigente",
+    cancelada: "Cancelada",
+    en_proceso: "En trámite",
+  };
+
+  const deletePolicy = async (id) => {
+    try {
+      setLoading(true);
+      const response = await deletePolicyById(id);
+      toast.success(t("common:alert:delete-success"));
+      mutate();
+      setLoading(false);
+      setIsOpenDelete(false);
+    } catch (err) {
+      setLoading(false);
+      handleApiError(err.message);
+    }
+  };
+
+  const deletePolicies = async () => {
+    setLoading(true);
     const response = await Promise.allSettled(
-      receipts.map((receiptId) => deleteReceiptById(receiptId))
+      selectedContacts.map((policyId) => deletePolicyById(policyId))
     );
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
-        `Se eliminaron ${response.filter((x) => x.status === "fulfilled").length} recibos de ${receipts.length} seleccionados`
+        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
       );
-      setSelectedReceipts([]);
-    } else {
-      toast.error("Ocurrio un error al eliminar los recibos");
     }
-    onCloseAlertDialog();
+
+    if (response.some((x) => x.status === "rejected")) {
+      toast.error(
+        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} elementos(s)`
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+    setIsOpenDeleteMasive(false);
+  };
+
+  const changeStatusPolicies = async (status) => {
+    setLoading(true);
+    const body = {
+      status: status.id,
+    };
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => putPoliza(policyId, body))
+    );
+    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
+      toast.success(
+        t("common:alert:update-items-succes", {
+          count: response.filter(
+            (x) => x.status == "fulfilled" && !x?.value?.hasError
+          ).length,
+          total: selectedContacts.length,
+        })
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
+      toast.error(
+        t("common:alert:update-items-error", {
+          count: response.filter(
+            (x) => x.status == "rejected" || x?.value?.hasError
+          ).length,
+        })
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+  };
+
+  const changeResponsible = async (responsible) => {
+    const body = {
+      assignedById: responsible.id,
+    };
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => putPoliza(policyId, body))
+    );
+    console.log({ response });
+    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
+      toast.success(
+        t("common:alert:update-items-succes", {
+          count: response.filter(
+            (x) => x.status == "fulfilled" && !x?.value?.hasError
+          ).length,
+          total: selectedContacts.length,
+        })
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
+      toast.error(
+        t("common:alert:update-items-error", {
+          count: response.filter(
+            (x) => x.status == "rejected" || x?.value?.hasError
+          ).length,
+        })
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
   };
 
   const masiveActions = [
-    // {
-    //   id: 1,
-    //   name: t("common:buttons:delete"),
-    //   onclick: () => deleteReceipts(selectedReceipts),
-    // },
     {
-      id: 2,
-      name: "Crear tarea",
-      // onclick: () => deleteReceipts(selectedReceipts),
+      id: 1,
+      name: "Asignar agente relacionado - subagente",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: "Asignar observador",
       disabled: true,
     },
     {
       id: 3,
-      name: "Agregar Observador",
-      // onclick: () => deleteReceipts(selectedReceipts),
+      name: "Cambiar Responsable",
+      onclick: changeResponsible,
+      selectUser: true,
+    },
+    {
+      id: 2,
+      name: t("common:table:checkbox:change-status"),
+      onclick: changeStatusPolicies,
+      selectOptions: [
+        {
+          id: "activa",
+          name: "Activa",
+        },
+        {
+          id: "expirada",
+          name: "Expirada",
+        },
+        {
+          id: "cancelada",
+          name: "Cancelada",
+        },
+        {
+          id: "en_proceso",
+          name: "En proceso",
+        },
+      ],
+    },
+    {
+      id: 1,
+      name: "Crear tarea",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: t("common:buttons:delete"),
+      onclick: () => setIsOpenDeleteMasive(true),
       disabled: true,
     },
   ];
 
-  const itemOptions = [
+  const itemActions = [
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
+        router.push(`/operations/renovations/renovation/${id}?show=true`),
+    },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        router.push(
+          `/operations/renovations/renovation/${id}?show=true&edit=true`
+        ),
+    },
+    {
+      name: "Eliminar",
+      handleClick: (id) => {
+        setDeleteId(id);
+        setIsOpenDelete(true);
+      },
+      disabled: true,
     },
     {
       name: "Planificar",
       options: [
         {
           name: "Tarea",
-          handleClick: (id) =>
+          handleClickContact: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
             ),
           disabled: true,
         },
         {
-          name: "Envío masivo SMS",
+          name: "Cita",
           disabled: true,
         },
         {
-          name: "Correo electrónico",
+          name: "Comentario",
+          disabled: true,
+        },
+        {
+          name: "Correo",
           disabled: true,
         },
       ],
     },
-    // { name: "Editar" },
-    // { name: "Copiar" },
   ];
-
-  const receiptStage = (receiptStage) => {
-    const colors = [
-      "bg-[#A9EA44]",
-      "bg-[#86BEDF]",
-      "bg-[#EAB544]",
-      "bg-[#EA8644]",
-      "bg-[#EA4444]",
-    ];
-    const stageIndex =
-      lists?.receipts?.receiptStages
-        ?.map((stage) => stage.id)
-        ?.findIndex((value) => receiptStage?.id == value) ?? -1;
-
-    const getColorClass = (item, currentIndex, stageInd) => {
-      if (item?.status == "pagado") return "bg-[#A9EA44]";
-      if (stageInd >= 5) return "bg-[#EA4444]";
-      if (item && stageInd < 5 && currentIndex <= stageInd)
-        return colors[stageIndex];
-      return "";
-    };
-
-    return (
-      <div className={`flex justify-center  ${"bg-gray-200"}`}>
-        {new Array(5).fill(1).map((_, index) => (
-          <div
-            key={index}
-            className={`w-4 h-4 ${getColorClass(receiptStage, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
-          />
-        ))}
-      </div>
-    );
-  };
 
   if (data?.items && data?.items.length === 0) {
     return (
@@ -209,7 +327,9 @@ export default function TableReceipts() {
               ></path>
             </svg>
           </div>
-          <p className="text-lg font-medium text-gray-400">No hay Recibos</p>
+          <p className="text-lg font-medium text-gray-400">
+            {t("operations:policies:table:not-data")}
+          </p>
         </div>
       </div>
     );
@@ -218,6 +338,11 @@ export default function TableReceipts() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
+      {selectedContacts.length > 0 && (
+        <div className="flex py-2">
+          <SelectedOptionsTable options={masiveActions} />
+        </div>
+      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -226,11 +351,11 @@ export default function TableReceipts() {
                 <tr>
                   <th
                     scope="col"
-                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5 flex items-center gap-2"
+                    className="relative px-4  rounded-xl py-5 flex gap-2 items-center"
                   >
                     <input
                       type="checkbox"
-                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      className=" h-4 w-4 border-gray-300 text-primary focus:ring-primary"
                       ref={checkbox}
                       checked={checked}
                       onChange={toggleAll}
@@ -273,45 +398,44 @@ export default function TableReceipts() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((receipt, index) => {
+                  data?.items.map((policy, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedReceipts.includes(receipt.id)
+                          selectedContacts.includes(policy.id)
                             ? "bg-gray-200"
                             : undefined,
-                          "hover:bg-indigo-100/40 cursor-default relative"
+                          "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
-                        <td className="pr-7 pl-4 sm:w-12">
-                          {selectedReceipts.includes(receipt.id) && (
+                        <td className="pr-7 pl-4 sm:w-12 relative">
+                          {selectedContacts.includes(policy.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
-                          <div className="flex items-center gap-x-1">
+                          <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={receipt.id}
-                              checked={selectedReceipts.includes(receipt.id)}
+                              value={policy.id}
+                              checked={selectedContacts.includes(policy.id)}
                               onChange={(e) =>
-                                setSelectedReceipts(
+                                setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedReceipts, receipt.id]
-                                    : selectedReceipts.filter(
-                                        (p) => p !== receipt.id
+                                    ? [...selectedContacts, policy.id]
+                                    : selectedContacts.filter(
+                                        (p) => p !== policy.id
                                       )
                                 )
                               }
                             />
-
                             <Menu
                               as="div"
                               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
                             >
-                              <MenuButton className=" flex items-center ">
+                              <MenuButton className="-m-1.5 flex items-center p-1.5">
                                 <Bars3Icon
-                                  className=" h-5 w-5 text-gray-400"
+                                  className="ml-3 h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
                               </MenuButton>
@@ -328,17 +452,22 @@ export default function TableReceipts() {
                                   anchor="right start"
                                   className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                 >
-                                  {itemOptions.map((item) =>
+                                  {itemActions.map((item) =>
                                     !item.options ? (
                                       <MenuItem
                                         key={item.name}
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(receipt.id);
+                                            item.handleClick(policy.id);
+                                          item.handleClickContact &&
+                                            item.handleClickContact(
+                                              policy?.contact?.id
+                                            );
                                         }}
                                       >
                                         <div
+                                          // onClick={item.onClick}
                                           className={
                                             "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           }
@@ -351,7 +480,7 @@ export default function TableReceipts() {
                                         <MenuButton className="flex items-center hover:bg-gray-50">
                                           <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
                                             {item.name}
-                                            <ChevronRightIcon className="h-6 w-6 ml-2" />
+                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
                                           </div>
                                         </MenuButton>
                                         <Transition
@@ -377,7 +506,11 @@ export default function TableReceipts() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      receipt.id
+                                                      policy.id
+                                                    );
+                                                  option.handleClickContact &&
+                                                    option.handleClickContact(
+                                                      policy?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -403,32 +536,28 @@ export default function TableReceipts() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div className="font-medium text-sm text-black hover:text-primary">
-                                {column.row == "responsible" ? (
-                                  <div className="flex gap-3 items-center">
-                                    <Image
-                                      className="h-8 w-8 rounded-full bg-zinc-200"
-                                      width={30}
-                                      height={30}
-                                      src={
-                                        receipt?.responsible?.avatar ||
-                                        "/img/avatar.svg"
-                                      }
-                                      alt=""
-                                    />
-                                    <div className="flex flex-col">
-                                      <p className="text-start">
-                                        {receipt?.responsible?.profile
-                                          ? `${receipt?.responsible?.profile?.firstName} ${receipt?.responsible?.profile?.lastName}`
-                                          : receipt?.responsible?.username}
-                                      </p>
-                                      {receipt?.responsible?.bio && (
-                                        <p className="text-start text-xs">
-                                          {receipt?.responsible?.bio}
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
+                              <div
+                                className={clsx(
+                                  "font-medium text-sm  text-black hover:text-primary",
+                                  {
+                                    "text-center": [
+                                      "vigenciaDesde",
+                                      "poliza",
+                                      "source",
+                                      "status",
+                                    ].includes(column.row),
+                                    "text-right": ["importePagar"].includes(
+                                      column.row
+                                    ),
+                                  }
+                                )}
+                              >
+                                {column.row == "name" ? (
+                                  <Link
+                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                  >
+                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                                  </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
                                     <button
@@ -468,58 +597,17 @@ export default function TableReceipts() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "title" ? (
-                                  <Link
-                                    href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
-                                  >
-                                    {receipt[column.row]}
-                                  </Link>
-                                ) : column.row === "client" ? (
-                                  <Link
-                                    href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}
-                                    className="pr-2"
-                                  >
-                                    {receipt?.poliza?.contact?.fullName ??
-                                      receipt?.poliza?.contact?.name ??
-                                      "S/N"}
-                                  </Link>
-                                ) : column.row === "stages" ? (
-                                  <div className="flex items-center flex-col">
-                                    <div className="flex justify-center">
-                                      {receiptStage(receipt?.stage)}
-                                    </div>
-                                    <p className="mt-1 text-xs text-[#969696] font-semibold">
-                                      {receipt?.stage?.name ?? "S/N"}
-                                    </p>
-                                  </div>
-                                ) : column.row === "paymentAmount" ? (
-                                  <p className="text-center">
-                                    {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? "MXN"} ${formatToCurrency(receipt?.paymentAmount)}`}
-                                  </p>
-                                ) : column.row === "createdAt" ||
-                                  column.row === "dueDate" ? (
-                                  <p className="text-center">
-                                    {moment(receipt[column.row])
-                                      .utc()
-                                      .format("DD/MM/yyyy") ?? null}
-                                  </p>
-                                ) : column.row === "policy" ? (
-                                  <Link
-                                    href={`/operations/policies/policy/${receipt?.poliza?.id}?show=true`}
-                                    className="text-center w-full"
-                                  >
-                                    <p className="text-center">
-                                      {receipt?.poliza?.poliza || "-"}
-                                    </p>
-                                  </Link>
+                                ) : column.row === "vigenciaDesde" ? (
+                                  (formatDate(
+                                    policy[column.row],
+                                    "dd/MM/yyyy"
+                                  ) ?? null)
+                                ) : column.row === "importePagar" ? (
+                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : column.row === "status" ? (
-                                  <p className="text-center capitalize">
-                                    {receipt?.status || "-"}
-                                  </p>
+                                  policyStatus[policy[column.row]]
                                 ) : (
-                                  <p className="text-center">
-                                    {receipt[column.row] || "-"}
-                                  </p>
+                                  policy[column.row] || "-"
                                 )}
                               </div>
                             </td>
@@ -532,7 +620,7 @@ export default function TableReceipts() {
           </div>
         </div>
       </div>
-      <div className="w-full mt-1 pt-4 sm:pt-0">
+      <div className="w-full pt-4 ">
         <FooterTable
           limit={limit}
           setLimit={setLimit}
@@ -541,15 +629,19 @@ export default function TableReceipts() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex flex-col justify-start gap-2 items-start">
-          {selectedReceipts.length > 0 && (
-            <Fragment>
-              <p>{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
-              <SelectedOptionsTable options={masiveActions} />
-            </Fragment>
-          )}
-        </div>
       </div>
+      <DeleteItemModal
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}
+        handleClick={() => deletePolicy(deleteId)}
+        loading={loading}
+      />
+      <DeleteItemModal
+        isOpen={isOpenDeleteMasive}
+        setIsOpen={setIsOpenDeleteMasive}
+        handleClick={() => deletePolicies()}
+        loading={loading}
+      />
     </Fragment>
   );
 }

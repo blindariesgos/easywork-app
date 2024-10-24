@@ -164,16 +164,16 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
       name: "Vigente",
     },
     {
-      id: "anulado",
-      name: "Anulado",
+      id: "cancelado",
+      name: "Cancelado",
     },
     {
       id: "vencido",
       name: "Vencido",
     },
     {
-      id: "liquidado",
-      name: "Liquidado",
+      id: "pagado",
+      name: "Pagado",
     },
   ];
 
@@ -227,10 +227,11 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                       className={clsx(
                         "py-2 px-3 rounded-lg capitalize font-semibold cursor-pointer",
                         {
-                          "bg-[#67FFAE]": data?.status == "vigente",
-                          "bg-[#FFD092]": data?.status == "anulado",
-                          "bg-[#FFC4C2]": data?.status == "vencido",
-                          "bg-[#C2E6FF]": data?.status == "liquidado",
+                          "bg-[#A9EA44]": data?.status == "pagado",
+                          "bg-[#86BEDF]": data?.status == "vigente",
+                          "bg-[#FFC4C2]": ["vencido", "cancelado"].includes(
+                            data?.status
+                          ),
                         }
                       )}
                     >

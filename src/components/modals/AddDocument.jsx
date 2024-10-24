@@ -12,6 +12,7 @@ import { MdUpload } from "react-icons/md";
 import { addReceiptDocument } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { addLeadDocument } from "../../lib/apis";
+import { handleApiError } from "@/src/utils/api/errors";
 
 const AddDocumentDialog = ({
   cmrType,
@@ -70,6 +71,7 @@ const AddDocumentDialog = ({
     } finally {
       setLoading(false);
       setIsOpen(false);
+      setFile(null);
     }
   };
   return (

@@ -4,7 +4,7 @@ import LoggedInProvider from "../../../components/Providers/LoggedInProvider";
 import SocketProvider from "../../../components/Providers/SocketProvider";
 import { SessionProvider } from "next-auth/react";
 import PageBody from "../../../components/PageBody";
-import HelpChat from "../../../components/HelpChat";
+import HelpChat from "../../../components/chatIntranet/HelpChat";
 import FirebaseMessaging from "@/src/components/FirebaseMessaging";
 import { NotifyContextProvider } from "@/src/context/notify";
 import NotifyDrawer from "@/src/components/notifier/drawer/NotifyDrawer";

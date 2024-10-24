@@ -38,7 +38,7 @@ export default function Header() {
   const params = new URLSearchParams(url.search);
   const pathname = usePathname();
 
-  params.set('profile', session.user.id);
+  params.set("profile", session.user.id);
 
   function ifWebmailPath() {
     if (pathname === "/tools/webmail") return true;
@@ -53,7 +53,11 @@ export default function Header() {
     setSidebarOpenDesktop2,
   } = useAppContext();
   const userNavigation = [
-    { name: t("common:header:profile"), onClick: () => router.push(`${url.origin}${url.pathname}?${params.toString()}`), },
+    {
+      name: t("common:header:profile"),
+      onClick: () =>
+        router.push(`${url.origin}${url.pathname}?${params.toString()}`),
+    },
     { name: t("common:header:signout"), onClick: () => logout() },
   ];
 

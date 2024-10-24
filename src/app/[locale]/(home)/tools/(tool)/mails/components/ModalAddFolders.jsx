@@ -20,12 +20,12 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ModalAddFolders() {
+export default function ModalAddFolders({ fetchUserData }) {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { userGoogle, selectOauth, userData } = useAppContext();
+  const { selectOauth, userData } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectFirst, setSelectFirst] = useState({
     label: "not specified",
@@ -47,7 +47,7 @@ export default function ModalAddFolders() {
     if (params.get("configlabelid") && selectOauth) {
       axios
         .get(
-          `https://www.googleapis.com/gmail/v1/users/${userGoogle?.usergoogle_id}/labels`,
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/labelId/${session.data.user.id}/${selectOauth.id}`,
           {
             headers: {
               Authorization: `Bearer ${selectOauth?.access_token}`,
@@ -55,16 +55,17 @@ export default function ModalAddFolders() {
           }
         )
         .then((labels) => {
-          let updatedLabels = labels.data.labels;
+          console.log(labels);
+          let updatedLabels = labels.data;
           if (!params.get("isEdit")) {
-            updatedLabels = labels.data.labels.map((label) => ({
+            updatedLabels = labels.data.map((label) => ({
               ...label,
               state: label.type === "system" ? true : false,
             }));
           } else {
-            updatedLabels = labels.data.labels.map((label) => ({
+            updatedLabels = labels.data.map((label) => ({
               ...label,
-              state: selectOauth.labelId.some(
+              state: userData.labelId.some(
                 (folder) => JSON.parse(folder).mailboxName === label.name
               ),
             }));
@@ -77,11 +78,11 @@ export default function ModalAddFolders() {
         ? {
             label: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules?.saveSentFolder
+                folder.value === userData?.labelIdRules?.saveSentFolder
             )?.label,
             value: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules?.saveSentFolder
+                folder.value === userData?.labelIdRules?.saveSentFolder
             )?.value,
           }
         : selectFirst
@@ -91,11 +92,11 @@ export default function ModalAddFolders() {
         ? {
             label: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules?.moveDeletedFolder
+                folder.value === userData?.labelIdRules?.moveDeletedFolder
             )?.label,
             value: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules?.moveDeletedFolder
+                folder.value === userData?.labelIdRules?.moveDeletedFolder
             )?.value,
           }
         : selectSecond
@@ -105,28 +106,22 @@ export default function ModalAddFolders() {
         ? {
             label: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules?.moveSpamFolder
+                folder.value === userData?.labelIdRules?.moveSpamFolder
             )?.label,
             value: folderList.find(
               (folder) =>
-                folder.value === selectOauth?.labelIdRules?.moveSpamFolder
+                folder.value === userData?.labelIdRules?.moveSpamFolder
             )?.value,
           }
         : selectThree
     );
-  }, [params.get("configlabelid")]);
+  }, [params.get("configlabelid"), selectOauth, userData]);
 
   async function deleteOauth() {
     try {
       await deleteTokenGoogle(session.data.user.id, selectOauth.id, null);
       router.push("/tools/mails?userdeleted=true");
     } catch (error) {}
-  }
-
-  async function saveMails() {
-    axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${userGoogle?.id}`
-    );
   }
 
   async function saveFoldersData() {
@@ -145,23 +140,15 @@ export default function ModalAddFolders() {
       moveDeletedFolder: selectSecond.value,
       moveSpamFolder: selectThree.value,
     };
-    await updateLabelId(userGoogle.usergoogle_id, folders);
-    await updateLabelIdRules(userGoogle.usergoogle_id, labelIdRules);
+    await updateLabelId(selectOauth?.usergoogle_id, folders);
+    await updateLabelIdRules(selectOauth?.usergoogle_id, labelIdRules);
     if (!params.get("isEdit")) {
-      await saveMails();
       toast.success("Conexión con éxito");
-      router.push("/tools/webmail");
+      router.push("/tools/webmail?configlabelid=false");
     } else {
+      fetchUserData();
       toast.success("Carpetas actualizadas");
     }
-  }
-
-  function checkAll() {
-    const newFolderData = folderData.map((folder) => ({
-      ...folder,
-      state: true,
-    }));
-    setFolderData(newFolderData);
   }
 
   const folderList = [
@@ -263,7 +250,7 @@ export default function ModalAddFolders() {
   };
 
   return (
-    <SliderOverShort openModal={params.get("configlabelid")}>
+    <SliderOverShort openModal={params.get("configlabelid") === "true"}>
       <Tag onclick={() => closeModal()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 pl-5 font-medium text-lg">
@@ -321,7 +308,11 @@ export default function ModalAddFolders() {
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
                       Save sent emails to folder{" "}
-                      <span className="text-cyan-500">{selectFirst.label}</span>
+                      <span className="text-cyan-500">
+                        {selectFirst.label
+                          ? selectFirst.label
+                          : "not specified"}
+                      </span>
                     </p>
                   </MenuButton>
                   <MenuItems
@@ -353,7 +344,9 @@ export default function ModalAddFolders() {
                     <p className="p-2">
                       Move deleted emails to folder{" "}
                       <span className="text-cyan-500">
-                        {selectSecond.label}
+                        {selectSecond.label
+                          ? selectSecond.label
+                          : "not specified"}
                       </span>
                     </p>
                   </MenuButton>
@@ -385,7 +378,11 @@ export default function ModalAddFolders() {
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
                       Move spam to folder{" "}
-                      <span className="text-cyan-500">{selectThree.label}</span>
+                      <span className="text-cyan-500">
+                        {selectThree.label
+                          ? selectThree.label
+                          : "not specified"}
+                      </span>
                     </p>
                   </MenuButton>
                   <MenuItems

@@ -46,10 +46,6 @@ export default function SlideOver({
   }, []); // Dependencia del parámetro de consulta 'show'
 
   useEffect(() => {
-    if (params.get("profile")) setShow(params.get("show") === "true");
-  }, [params.get("show")]);
-
-  useEffect(() => {
     switch (labelTag) {
       case "contact":
         setLabel(t("contacts:header:contact"));

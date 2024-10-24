@@ -9,7 +9,7 @@ import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import { formatDate } from "@/src/utils/getFormatDate";
-import Vehicle from "./itemsView/vehicle";
+import Vehicle from "./tabs/Vehicle";
 import Link from "next/link";
 import clsx from "clsx";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";

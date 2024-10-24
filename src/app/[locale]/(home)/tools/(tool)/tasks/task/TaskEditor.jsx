@@ -120,7 +120,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       startDate: edit?.startTime ?? copy?.startTime ?? "",
       endDate:
         edit?.startTime || copy?.startTime
-          ? edit?.deadline ?? copy?.deadline ?? ""
+          ? (edit?.deadline ?? copy?.deadline ?? "")
           : "",
       participants: edit?.participants ?? copy?.participants ?? [],
       responsible: edit?.responsible ?? copy?.responsible ?? [],
@@ -352,69 +352,63 @@ export default function TaskEditor({ edit, copy, subtask }) {
               copy={copy}
             />
             <div className="mt-6 flex flex-col gap-3">
-              <div>
-                <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">
-                    {t("tools:tasks:new:responsible")}
-                  </p>
-                  <div className="w-full md:w-[40%]">
-                    <Controller
-                      name="responsible"
-                      control={control}
-                      defaultValue={[]}
-                      render={({ field }) => (
-                        <MultipleSelect
-                          {...field}
-                          options={lists?.users || []}
-                          getValues={getValues}
-                          setValue={setValue}
-                          onlyOne
-                          name="responsible"
-                          error={errors.responsible}
-                        />
-                      )}
-                    />
+              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("tools:tasks:new:responsible")}
+                </p>
+                <div className="w-full md:w-[40%]">
+                  <Controller
+                    name="responsible"
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <MultipleSelect
+                        {...field}
+                        options={lists?.users || []}
+                        getValues={getValues}
+                        setValue={setValue}
+                        onlyOne
+                        name="responsible"
+                        error={errors.responsible}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6">
+                  <div
+                    className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
+                    onClick={() =>
+                      setOpenOptions({
+                        ...openOptions,
+                        created: !openOptions.created,
+                      })
+                    }
+                  >
+                    <p className="text-sm">{t("tools:tasks:new:created-by")}</p>
                   </div>
-                  <div className="flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6">
-                    <div
-                      className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
-                      onClick={() =>
-                        setOpenOptions({
-                          ...openOptions,
-                          created: !openOptions.created,
-                        })
-                      }
-                    >
-                      <p className="text-sm">
-                        {t("tools:tasks:new:created-by")}
-                      </p>
-                    </div>
-                    <div
-                      className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
-                      onClick={() =>
-                        setOpenOptions({
-                          ...openOptions,
-                          participants: !openOptions.participants,
-                        })
-                      }
-                    >
-                      <p className="text-sm">
-                        {t("tools:tasks:new:participants")}
-                      </p>
-                    </div>
-                    <div
-                      className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
-                      onClick={() =>
-                        setOpenOptions({
-                          ...openOptions,
-                          observers: !openOptions.observers,
-                        })
-                      }
-                    >
-                      <p className="text-sm">
-                        {t("tools:tasks:new:observers")}
-                      </p>
-                    </div>
+                  <div
+                    className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
+                    onClick={() =>
+                      setOpenOptions({
+                        ...openOptions,
+                        participants: !openOptions.participants,
+                      })
+                    }
+                  >
+                    <p className="text-sm">
+                      {t("tools:tasks:new:participants")}
+                    </p>
+                  </div>
+                  <div
+                    className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
+                    onClick={() =>
+                      setOpenOptions({
+                        ...openOptions,
+                        observers: !openOptions.observers,
+                      })
+                    }
+                  >
+                    <p className="text-sm">{t("tools:tasks:new:observers")}</p>
                   </div>
                 </div>
               </div>

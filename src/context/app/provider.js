@@ -23,6 +23,7 @@ export default function AppContextProvider({ children }) {
   const [openModal, setOpenModal] = useState(false);
   const [lists, setLists] = useState(null);
   const [filter, setFilter] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const appList = {};
@@ -126,7 +127,9 @@ export default function AppContextProvider({ children }) {
       setFilter,
       filter,
       setSelectedEmails,
-      selectedEmails
+      selectedEmails,
+      setUserData,
+      userData
     }),
     [
       sidebarOpen,
@@ -142,6 +145,7 @@ export default function AppContextProvider({ children }) {
       filter,
       selectOauth,
       selectedEmails,
+      userData,
     ],
   );
 

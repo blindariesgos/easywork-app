@@ -115,6 +115,14 @@ const KanbanPolicies = () => {
           ))}
         </div>
       </div>
+      {createPortal(
+        <DragOverlay>
+          {activeId && data?.items?.find((x) => x.id == activeId)?.id ? (
+            <Card policy={data?.items?.find((x) => x.id == activeId)} />
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 };

@@ -203,7 +203,7 @@ export default function SendMessage({
                       <h1 className="text-lg mb-4">Nuevo mensaje</h1>
                       <div className="bg-gray-100 text-sm p-5 h-auto">
                         <div className="pb-2 border-b-2">
-                          <p>De: {userData.email}</p>
+                          <p>De: {userData?.email}</p>
                         </div>
                         <div className="py-2 border-b-2">
                           <div className="flex items-center">

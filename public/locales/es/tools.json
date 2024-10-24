@@ -113,7 +113,8 @@
         "closed": "Terminado el",
         "name": "Nombre",
         "participant": "Participante",
-        "observer": "Observador"
+        "observer": "Observador",
+        "show-closed": "Mostrar Cerrados"
       }
     },
     "new": {

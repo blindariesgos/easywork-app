@@ -28,7 +28,8 @@ export default function ModalConfigGmail() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const session = useSession();
-  const { lists, selectOauth, setSelectOauth, userGoogle, setUserGoogle } = useAppContext();
+  const { lists, selectOauth, setSelectOauth, userData, setUserData } =
+    useAppContext();
   const [editParams, setEditParams] = useState(false);
   const [crmConfig, setCrmConfig] = useState(false);
   const [countProcessMessagesDays, setCountProcessMessagesDays] =
@@ -50,14 +51,21 @@ export default function ModalConfigGmail() {
     createUsingAttachedVCard: false,
     contactLeadDistribution: null,
     mailboxAccess: null,
-    email: null,
+    email: selectOauth?.email,
   });
 
   const connectGmail = async () => {
-    if (!userGoogle) {
+    if (!selectOauth) {
       toast.error("Por favor autentique su Gmail");
       return;
     }
+
+    try {
+      axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth.id}`
+      );
+    } catch (error) {}
+
     let data = configData;
 
     if (!countProcessMessagesDays) data.countProcessMessagesDays = null;
@@ -88,13 +96,12 @@ export default function ModalConfigGmail() {
       data.mailboxAccess = null;
     else data.mailboxAccess = watch("responsibleAccess");
 
-    data.countExtractMessagesDays = configData.countExtractMessagesDays.value;
-    data.email = userGoogle.email;
+    if (!countExtractMessagesDays) data.countExtractMessagesDays = null;
+    else
+      data.countExtractMessagesDays = configData.countExtractMessagesDays.value;
 
     const emailConfig = await createEmailConfig(data);
     if (emailConfig)
-      console.log(userGoogle);
-      setSelectOauth(userGoogle);
       router.push(`${window.location.pathname}?configlabelid=true`);
   };
 
@@ -122,12 +129,15 @@ export default function ModalConfigGmail() {
       senderName: configData.senderName,
       email: selectOauth.email,
     };
-    const response = await updateEmailConfig(data);
-    console.log(response);
+    await updateEmailConfig(data);
   };
 
   useEffect(() => {
-    if (params.get("isEdit") === "true") {      
+    if (params.get("isEdit") === "false") {
+      setSelectOauth(null);
+      setUserData(null);
+    }
+    if (params.get("isEdit") === "true") {
       getEmailConfig(selectOauth?.email).then((res) => {
         console.log(res);
         let data = res;
@@ -205,6 +215,8 @@ export default function ModalConfigGmail() {
   async function deleteOauth() {
     try {
       await deleteTokenGoogle(session.data.user.id, selectOauth.id, null);
+      setSelectOauth(null);
+      setUserData(null);
       router.push("/tools/mails?userdeleted=true");
     } catch (error) {}
   }
@@ -232,24 +244,13 @@ export default function ModalConfigGmail() {
     }, 1000);
   }
 
-  useEffect(() => {
-    if (params.get("configemail")) getDataGoogleUser();
-  }, [params.get("configemail")]);
-
   async function getDataNewGoogleUser() {
-    setUserGoogle(null);
     try {
       const res = await getAllOauth(session.data.user.id);
-      setUserGoogle(res.slice(-1).pop());
+      setSelectOauth(res.slice(-1).pop());
     } catch (error) {
       console.log(error);
     }
-  }
-
-  async function getDataGoogleUser() {
-    setUserGoogle(null);
-    if (params.get("isEdit") === "false") return;
-    setUserGoogle(selectOauth);
   }
 
   const timeMails = [
@@ -285,16 +286,20 @@ export default function ModalConfigGmail() {
                 <h1 className="text-gray-400 font-medium text-lg ml-1">
                   Gmail
                 </h1>
-                {userGoogle ? (
+                {selectOauth || userData ? (
                   <div className="flex ml-2 items-center">
                     <Image
-                      src={userGoogle.picture}
-                      alt=""
+                      src={
+                        selectOauth ? selectOauth?.picture : userData?.picture
+                      }
+                      alt="user"
                       width={27}
                       height={27}
                       className="rounded-xl"
                     />
-                    <p className="ml-2">{userGoogle.email}</p>
+                    <p className="ml-2">
+                      {selectOauth ? selectOauth?.email : userData?.email}
+                    </p>
                   </div>
                 ) : (
                   <button

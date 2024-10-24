@@ -14,7 +14,7 @@ export const getExplorer = async (config, filters, id) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .get(url)
-    .catch((error) => error);
+    .catch((error) => ({ hasError: true, ...error }));
   console.log("Response", response);
   console.log(process.env.NEXT_PUBLIC_API_DRIVE_HOST);
   return response;

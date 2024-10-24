@@ -97,10 +97,26 @@ export default function TablePolicies() {
   }, [checked, indeterminate, data, setSelectedContacts]);
 
   const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
+    activa: {
+      name: "Vigente",
+      color: "#0077BF",
+      id: 1,
+    },
+    expirada: {
+      name: "No vigente",
+      color: "#CD1100",
+      id: 2,
+    },
+    cancelada: {
+      name: "Cancelada",
+      color: "#CD1100",
+      id: 2,
+    },
+    en_proceso: {
+      name: "En trámite",
+      color: "#0091CD",
+      id: 0,
+    },
   };
 
   const deletePolicy = async (id) => {
@@ -115,6 +131,23 @@ export default function TablePolicies() {
       setLoading(false);
       handleApiError(err.message);
     }
+  };
+
+  const getStatusTag = (status) => {
+    const currentState = policyStatus[status];
+    return (
+      <div className={`flex justify-center  ${"bg-gray-200"}`}>
+        {new Array(3).fill(1).map((_, index) => (
+          <div
+            key={index}
+            className={`w-8 h-4  border-t border-b border-l last:border-r border-gray-400`}
+            style={{
+              background: index <= currentState.id ? currentState.color : "",
+            }}
+          />
+        ))}
+      </div>
+    );
   };
 
   const deletePolicies = async () => {
@@ -287,7 +320,7 @@ export default function TablePolicies() {
           name: "Tarea",
           handleClickContact: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=policy&prev_id=${id}`
             ),
         },
         {
@@ -596,14 +629,17 @@ export default function TablePolicies() {
                                     </button>
                                   </div>
                                 ) : column.row === "vigenciaDesde" ? (
-                                  formatDate(
+                                  (formatDate(
                                     policy[column.row],
                                     "dd/MM/yyyy"
-                                  ) ?? null
+                                  ) ?? null)
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                  <div className="flex flex-col items-center justify-center">
+                                    {getStatusTag(policy[column.row])}
+                                    {policyStatus[policy[column.row]].name}
+                                  </div>
                                 ) : (
                                   policy[column.row] || "-"
                                 )}

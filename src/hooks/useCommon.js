@@ -249,7 +249,7 @@ export const useSidebar = () => {
         {
           id: "operations:endorsements",
           name: "Renovaciones",
-          href: "",
+          href: "/operations/renovations",
           image: "/img/operations/renovations.svg",
           iconShortBar: GlobeAltIcon,
         },
@@ -1728,7 +1728,7 @@ export const useReceiptTable = () => {
       row: "activities",
       check: true,
     },
-    
+
   ];
   return { columnTable };
 };
@@ -1782,6 +1782,62 @@ export const usePoliciesTable = () => {
     {
       id: 8,
       name: t("operations:policies:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useRenovationTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:renovations:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:renovations:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:renovations:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:renovations:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 1,
+      name: t("operations:renovations:table:origin"),
+      row: "source",
+      order: "source",
+      check: true,
+      permanent: true,
+    },
+    {
+      id: 6,
+      name: t("operations:renovations:table:amount"),
+      row: "importePagar",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:renovations:table:activities"),
       row: "activities",
       check: true,
     },

@@ -194,5 +194,8 @@
     "update-items-succes": "Se Actualizo con exito {{count}} elemento(s) de {{total}} seleccionado(s)",
     "update-items-error": "Ocurrio un error al tratar de eliminar {{count}} elemento(s)"
   },
-  "add-document": "Añadir Documento ({{document}})"
+  "add-document": "Añadir Documento ({{document}})",
+  "slide": {
+    "renovations": "Renovaciones"
+  }
 }

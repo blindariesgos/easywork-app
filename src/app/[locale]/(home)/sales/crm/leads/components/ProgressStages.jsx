@@ -1,28 +1,20 @@
 "use client";
 import { useLeads } from "../../../../../../../hooks/useCommon";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import DialogPositiveStage from "./DialogPositiveStage";
-import DialogNegativeStage from "./DialogNegativeStage";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";
-import {
-  postComment,
-  putLeadCancelled,
-  putLeadStage,
-  updateLead,
-} from "@/src/lib/apis";
+import { putLeadCancelled, putLeadStage } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
 
-export default function ProgressStages({ stage, leadId, mutate, disabled }) {
+export default function ProgressStages({ stage, leadId, disabled }) {
   const { isOpen, setIsOpen } = useLeads();
   const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
   const [stageIndex, setStageIndex] = useState(0);
-  const [isOpenNegative, setIsOpenNegative] = useState(false);
   const router = useRouter();
   const { mutate: mutateContext } = useSWRConfig();
 
@@ -40,7 +32,6 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
         toast.error("Ocurrio un error al actualizar el estado");
         return;
       }
-      mutate();
       mutateContext(`/sales/crm/leads/${leadId}/activities`);
       toast.success("Prospecto actualizado con exito");
     } catch {
@@ -58,7 +49,6 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
         return;
       }
       router.back();
-      mutate();
       mutateContext(
         "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
       );

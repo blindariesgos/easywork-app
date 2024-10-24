@@ -54,6 +54,7 @@ export default function Info({ user, id }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log(session?.data?.user);
     if (session?.data?.user) {
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
@@ -312,7 +313,6 @@ export default function Info({ user, id }) {
                               )}
                             </div>
                           </div>
-
                           <div className="w-full p-1 rounded-lg bg-white">
                             <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
                               Compañia: Tu Agencia
@@ -381,7 +381,6 @@ export default function Info({ user, id }) {
                             </div>
                           </div>
                         </div>
-
                         {/* Menu Derecha */}
                         <div className=" bg-white h-auto rounded-lg">
                           <div className="flex justify-between bg-white p-4 rounded-md">
@@ -433,7 +432,6 @@ export default function Info({ user, id }) {
                               name="email"
                               disabled={!isEdit}
                             />
-
                             <Controller
                               render={({ field: { ref, ...field } }) => {
                                 return (

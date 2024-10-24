@@ -28,7 +28,7 @@ const KanbanPolicies = () => {
     },
     cancelada: {
       id: "cancelada",
-      title: "Cancelada",
+      title: "No vigente",
       color: "#CD1100",
     },
   };

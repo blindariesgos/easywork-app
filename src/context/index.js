@@ -15,3 +15,4 @@ export const ReceiptsContext = createContext(null);
 export const PoliciesContext = createContext(null);
 export const FilterTableContext = createContext(null);
 export const CalendarContext = createContext(null);
+export const RenovationsContext = createContext(null);

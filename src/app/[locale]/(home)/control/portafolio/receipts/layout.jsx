@@ -5,12 +5,12 @@ import ReceiptsContextProvider from "../../../../../../context/receipts/provider
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import SubMenu from "./components/SubMenu";
 
-export default async function ReceiptLayout({ children, table }) {
+export default async function ReceiptLayout({ children, table, kanban }) {
   const tabs = [
     {
       name: "Kanban",
-      component: "",
-      disabled: true,
+      component: kanban,
+      // disabled: true,
     },
     {
       name: "Lista",

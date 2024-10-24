@@ -50,10 +50,15 @@ export default function WebmailLayout({ children }) {
   const session = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setSidebarOpenEmail, selectOauth, setSelectOauth, openModalFolders } =
-    useAppContext();
+  const {
+    setSidebarOpenEmail,
+    selectOauth,
+    setSelectOauth,
+    openModalFolders,
+    userData,
+    setUserData,
+  } = useAppContext();
   const { t } = useTranslation();
-  const [userData, setUserData] = useState([]);
   const [dmails, setDMails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState("INBOX");
@@ -64,7 +69,6 @@ export default function WebmailLayout({ children }) {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setSelectOauth(null);
     allOauthPromise();
     getAllOauth(session.data.user.id).then((response) => {
       if (response.length === 0) {
@@ -236,12 +240,13 @@ export default function WebmailLayout({ children }) {
   }
 
   function allOauthPromise() {
-    getAllOauth(session.data.user.id).then((res) => {
-      if (!selectOauth) {
-        setSelectOauth(res[0]);
-      }
-      setAllOauth(res);
-    });
+    if (!selectOauth)
+      getAllOauth(session.data.user.id).then((res) => {
+        if (!selectOauth) {
+          setSelectOauth(res[0]);
+        }
+        setAllOauth(res);
+      });
   }
 
   const itemOptions = [
@@ -363,7 +368,7 @@ export default function WebmailLayout({ children }) {
       <Signature />
       <AddSignature />
       <ModalConfigGmail isEdit={true} />
-      <ModalAddFolders isConfig={true} />
+      <ModalAddFolders isConfig={true} fetchUserData={fetchUserData} />
       <SendMessage
         colorTag="bg-easywork-main"
         userData={userData}

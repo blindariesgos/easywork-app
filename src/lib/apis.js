@@ -5,6 +5,29 @@ import { auth, signIn, signOut } from "../../auth";
 import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
 
+
+const getQueries = (filters) => {
+  const getRepitKeys = (key, arr) =>
+    arr.map((item) => `${key}=${item.id}`).join("&");
+  if (Object.keys(filters).length == 0) return "";
+
+  const getValue = (key) => {
+    switch (key) {
+      default:
+        return `${key}=${filters[key]}`;
+    }
+  };
+
+  return Object.keys(filters)
+    .filter((key) => filters[key])
+    .map((key) =>
+      Array.isArray(filters[key])
+        ? getRepitKeys(key, filters[key])
+        : getValue(key),
+    )
+    .join("&");
+};
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };
@@ -97,6 +120,18 @@ export const getContactId = async (id) => {
     // throw new Error(error);
   }
 };
+
+export const getReceiptKanbanByStateId = async (params) => {
+  try {
+    const queries = getQueries(params)
+    const url = `/sales/crm/polizas/receipts/kanban?${queries}`
+    console.log("urllllll", url)
+    const response = await axios().get(url).catch(error => ({ hasError: true, ...error }));
+    return response;
+  } catch (error) {
+
+  }
+}
 
 export const getPolicyById = async (id) => {
   try {
@@ -517,3 +552,17 @@ export const getPoliciesNeedAttention = async () => {
   const response = await axios().get(`/tools/tasks/home/lists/polizas`);
   return response;
 };
+
+export const addReceiptDocument = async (receiptId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/polizas/receipts/upload/${receiptId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response
+}
+
+export const addLeadDocument = async (leadId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/upload/${leadId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response
+}

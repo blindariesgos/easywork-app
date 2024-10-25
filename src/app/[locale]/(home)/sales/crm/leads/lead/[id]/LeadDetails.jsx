@@ -2,7 +2,7 @@ import SlideOver from "../../../../../../../../components/SlideOver";
 import React, { Suspense } from "react";
 import CreateLead from "../../components/CreateLead";
 
-export default function LeadDetails({ leadInfo, id, mutate }) {
+export default function LeadDetails({ leadInfo, id }) {
   return (
     <SlideOver colorTag="bg-primary" labelTag="lead">
       <Suspense
@@ -12,7 +12,7 @@ export default function LeadDetails({ leadInfo, id, mutate }) {
           </div>
         }
       >
-        <CreateLead lead={leadInfo} id={id} updateLead={mutate} />
+        <CreateLead lead={leadInfo} id={id} />
       </Suspense>
     </SlideOver>
   );

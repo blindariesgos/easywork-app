@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Column from "./components/Column";
 import { toast } from "react-toastify";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
@@ -8,6 +8,8 @@ import { createPortal } from "react-dom";
 import useAppContext from "@/src/context/app";
 import { putReceipt } from "@/src/lib/apis";
 import moment from "moment";
+import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import useCrmContext from "@/src/context/crm";
 
 const KanbanReceipts = () => {
   const [isLoading, setLoading] = useState(false);
@@ -16,6 +18,7 @@ const KanbanReceipts = () => {
   const { lists } = useAppContext();
   const [itemDrag, setItemDrag] = useState();
   const [updateStages, setUpdateStages] = useState([]);
+  const { selectedContacts: selectedReceipts } = useCrmContext();
 
   const handleDragEnd = async (result) => {
     setActiveId(null);
@@ -101,33 +104,60 @@ const KanbanReceipts = () => {
     },
   };
 
-  return (
-    <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-      {isLoading && <LoaderSpinner />}
-      <div className="overflow-x-auto">
-        <div className="grid grid-cols-9 min-w-full w-max gap-2">
-          {lists?.receipts?.receiptStages?.map((column) => (
-            <Column
-              key={column.id}
-              id={column.id}
-              color={colors[column.name]}
-              title={column.name}
-              activeId={activeId}
-              setItemDrag={setItemDrag}
-              status={column.status}
-              updateStages={updateStages}
-              setUpdateStages={setUpdateStages}
-            />
-          ))}
-        </div>
-      </div>
+  const masiveActions = [
+    // {
+    //   id: 1,
+    //   name: t("common:buttons:delete"),
+    //   onclick: () => deleteReceipts(selectedReceipts),
+    // },
+    {
+      id: 2,
+      name: "Crear tarea",
+      // onclick: () => deleteReceipts(selectedReceipts),
+      disabled: true,
+    },
+    {
+      id: 3,
+      name: "Agregar Observador",
+      // onclick: () => deleteReceipts(selectedReceipts),
+      disabled: true,
+    },
+  ];
 
-      <DragOverlay>
-        {activeId && itemDrag ? (
-          <Card receipt={itemDrag} minWidthClass="240px" />
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+  return (
+    <Fragment>
+      {isLoading && <LoaderSpinner />}
+      {selectedReceipts.length > 0 && (
+        <div className="flex flex-col justify-start gap-2 items-start pb-2">
+          <SelectedOptionsTable options={masiveActions} />
+        </div>
+      )}
+      <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-9 min-w-full w-max gap-2">
+            {lists?.receipts?.receiptStages?.map((column) => (
+              <Column
+                key={column.id}
+                id={column.id}
+                color={colors[column.name]}
+                title={column.name}
+                activeId={activeId}
+                setItemDrag={setItemDrag}
+                status={column.status}
+                updateStages={updateStages}
+                setUpdateStages={setUpdateStages}
+              />
+            ))}
+          </div>
+        </div>
+
+        <DragOverlay>
+          {activeId && itemDrag ? (
+            <Card receipt={itemDrag} minWidthClass="240px" />
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </Fragment>
   );
 };
 

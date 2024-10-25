@@ -217,6 +217,14 @@ export default function TableReceipts() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
+      <div className="flex flex-col justify-start gap-2 items-start pb-2">
+        {selectedReceipts.length > 0 && (
+          <Fragment>
+            <p className="text-sm">{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
+            <SelectedOptionsTable options={masiveActions} />
+          </Fragment>
+        )}
+      </div>
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -542,14 +550,6 @@ export default function TableReceipts() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex flex-col justify-start gap-2 items-start">
-          {selectedReceipts.length > 0 && (
-            <Fragment>
-              <p>{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
-              <SelectedOptionsTable options={masiveActions} />
-            </Fragment>
-          )}
-        </div>
       </div>
     </Fragment>
   );

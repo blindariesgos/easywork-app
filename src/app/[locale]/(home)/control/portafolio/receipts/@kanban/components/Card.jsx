@@ -25,12 +25,19 @@ import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { formatToCurrency } from "@/src/utils/formatters";
 import "moment/locale/es.js";
+import useCrmContext from "@/src/context/crm";
+import clsx from "clsx";
 
 const Card = ({ receipt, minWidthClass, stageId }) => {
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const route = useRouter();
+
+  const {
+    selectedContacts: selectedReceipts,
+    setSelectedContacts: setSelectedReceipts,
+  } = useCrmContext();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: receipt.id,
     data: {
@@ -99,25 +106,32 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
       style={style}
       {...otherAttributes}
       onPointerDown={(event) => {
+        console.log({ event });
         if (event?.target?.onclick) {
-          event?.target?.onclick();
+          event?.target?.onclick(event);
           return;
         }
+
         onPointerDown && onPointerDown(event);
       }}
     >
       <div
-        className="bg-white rounded-md p-3 grid grid-cols-12"
+        className={clsx("bg-white rounded-md p-3 grid grid-cols-12", {
+          "shadow-md border-[0.5px] border-primary": selectedReceipts.includes(
+            receipt.id
+          ),
+        })}
         style={{
           minWidth: minWidthClass ?? "auto",
         }}
       >
-        <div className="col-span-11 flex flex-col gap-2 justify-start">
+        <div className="col-span-10 flex flex-col gap-2 justify-start">
           <p
             className="font-bold cursor-pointer text-sm"
             onClick={() => handleClickPolicy(receipt.id)}
           >
-            {`${receipt?.poliza?.company?.name ?? ""} ${receipt?.poliza?.poliza} ${receipt?.poliza?.type?.name}`}
+            {receipt?.title}
+            {/* {`${receipt?.poliza?.company?.name ?? ""} ${receipt?.poliza?.poliza} ${receipt?.poliza?.type?.name}`} */}
           </p>
 
           <p className="text-sm text-[#9A9A9A]">{`${receipt?.currency?.symbol ?? ""} ${formatToCurrency(+receipt?.paymentAmount ?? 0)}`}</p>
@@ -147,7 +161,20 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
             </div>
           </div>
         </div>
-        <div className="col-span-1 flex flex-col items-end gap-1">
+        <div className="col-span-2 flex flex-col items-end gap-1">
+          <input
+            type="checkbox"
+            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-0 "
+            value={receipt.id}
+            checked={selectedReceipts.includes(receipt.id)}
+            onClick={(e) => {
+              const elements = e.target.checked
+                ? [...selectedReceipts, receipt.id]
+                : selectedReceipts.filter((p) => p !== receipt.id);
+              console.log(elements, e, !e.target.checked);
+              setSelectedReceipts(elements);
+            }}
+          />
           <button
             type="button"
             className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

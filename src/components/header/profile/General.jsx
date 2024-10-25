@@ -22,7 +22,7 @@ const General = () => {
   const params = new URLSearchParams(searchParams);
   const { setIsOpen } = useNotifyContext();
 
-  params.set("show", true);
+  params.set("infoP", true);
   
   return (
     <SliderOverShord openModal={params.get("profile")}>

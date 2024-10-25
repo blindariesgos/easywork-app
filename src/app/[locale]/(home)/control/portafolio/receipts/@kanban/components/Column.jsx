@@ -79,16 +79,6 @@ const Column = ({ id, color, title, activeId, setItemDrag }) => {
           ))}
         </div>
       </InfiniteScroll>
-      {/* <p className="pt-1 text-sm text-center">{`$ ${policies.reduce((acc, policy) => acc + policy.importePagar, 0).toFixed(2)}`}</p>
-      <div
-        className={clsx(
-          "grid grid-cols-1 gap-2 pt-2 max-h-[60vh] overflow-y-auto"
-        )}
-      >
-        {items.map((policy, index) => (
-          <Card policy={policy} index={index} key={policy.id} />
-        ))}
-      </div> */}
     </div>
   );
 };

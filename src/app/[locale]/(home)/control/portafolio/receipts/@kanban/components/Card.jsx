@@ -111,7 +111,6 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
           event?.target?.onclick(event);
           return;
         }
-
         onPointerDown && onPointerDown(event);
       }}
     >

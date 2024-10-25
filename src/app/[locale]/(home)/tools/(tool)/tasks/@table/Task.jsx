@@ -92,7 +92,7 @@ const ColumnTable = ({
         {selectedTasks.includes(task.id) && (
           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
         )}
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -108,9 +108,9 @@ const ColumnTable = ({
           />
           <Menu
             as="div"
-            className="relative hover:bg-slate-50/30 py-2 px-1 rounded-lg"
+            className="relative hover:bg-slate-50/30 py-2  rounded-lg"
           >
-            <MenuButton className="flex items-center p-1.5">
+            <MenuButton className="flex items-center">
               <Bars3Icon className="h-5 w-5 text-gray-400" aria-hidden="true" />
             </MenuButton>
 

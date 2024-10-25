@@ -12,15 +12,16 @@ const KanbanReceipts = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeId, setActiveId] = useState(null);
   const { lists } = useAppContext();
-
+  const [itemDrag, setItemDrag] = useState();
   const handleDragEnd = (result) => {
     setActiveId(null);
     setIsDragging(false);
     setLoading(true);
-
+    setItemDrag(null);
     const body = {
       status: result?.over?.id,
     };
+    setLoading(false);
   };
 
   function handleDragStart(event) {
@@ -67,33 +68,29 @@ const KanbanReceipts = () => {
     },
   };
 
-  useEffect(() => {
-    console.log("receiptStages", lists?.receipts?.receiptStages);
-  }, [lists]);
-
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       {isLoading && <LoaderSpinner />}
       <div className="overflow-x-auto">
-        <div className="pt-2 grid grid-cols-9 min-w-full w-max gap-2">
-          {lists?.receipts?.receiptStages?.map((column) => (
+        <div className="grid grid-cols-9 min-w-full w-max gap-2">
+          {lists?.receipts?.receiptStages?.reverse()?.map((column) => (
             <Column
               key={column.id}
               id={column.id}
               color={colors[column.name]}
               title={column.name}
+              activeId={activeId}
+              setItemDrag={setItemDrag}
             />
           ))}
         </div>
       </div>
-      {/* {createPortal(
-        <DragOverlay>
-          {activeId && data?.items?.find((x) => x.id == activeId)?.id ? (
-            <Card policy={data?.items?.find((x) => x.id == activeId)} />
-          ) : null}
-        </DragOverlay>,
-        document.body
-      )} */}
+
+      <DragOverlay>
+        {activeId && itemDrag ? (
+          <Card receipt={itemDrag} minWidthClass="240px" />
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };

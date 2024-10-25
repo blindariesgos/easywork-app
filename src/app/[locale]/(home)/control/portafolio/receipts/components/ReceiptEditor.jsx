@@ -6,7 +6,7 @@ import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import ActivityPanel from "@/src/components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon, PlusIcon } from "@heroicons/react/24/solid";

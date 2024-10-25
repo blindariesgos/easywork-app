@@ -326,19 +326,21 @@ export default function TableLeads() {
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5 flex items-center gap-2"
+                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                   >
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      ref={checkbox}
-                      checked={checked}
-                      onChange={toggleAll}
-                    />
-                    <AddColumnsTable
-                      columns={columnTable}
-                      setSelectedColumns={setSelectedColumns}
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        ref={checkbox}
+                        checked={checked}
+                        onChange={toggleAll}
+                      />
+                      <AddColumnsTable
+                        columns={columnTable}
+                        setSelectedColumns={setSelectedColumns}
+                      />
+                    </div>
                   </th>
                   {selectedColumns.length > 0 &&
                     selectedColumns.map((column, index) => (
@@ -382,11 +384,11 @@ export default function TableLeads() {
                         "hover:bg-indigo-100/40 cursor-default"
                       )}
                     >
-                      <td className=" px-7 sm:w-12 sm:px-6 relative">
+                      <td className="pl-4 pr-7 sm:w-12  relative">
                         {selectedLeads.includes(lead.id) && (
                           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-2">
                           <input
                             type="checkbox"
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -402,9 +404,9 @@ export default function TableLeads() {
                           />
                           <Menu
                             as="div"
-                            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
                           >
-                            <MenuButton className="flex items-center p-1.5">
+                            <MenuButton className="flex items-center">
                               <Bars3Icon
                                 className=" h-5 w-5 text-gray-400"
                                 aria-hidden="true"
@@ -562,8 +564,9 @@ export default function TableLeads() {
                                   </button>
                                 </div>
                               ) : column.row === "createdAt" ? (
-                                moment(lead[column.row]).format("DD/MM/YYYY") ??
-                                "N/A"
+                                (moment(lead[column.row]).format(
+                                  "DD/MM/YYYY"
+                                ) ?? "N/A")
                               ) : column.row === "source" ? (
                                 lead?.source?.name
                               ) : (

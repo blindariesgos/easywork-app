@@ -16,10 +16,11 @@ const Column = ({ id, color, title }) => {
     const response = await getReceiptKanbanByStateId({
       limit: 10,
       page: page + 1,
-      stageId: id,
+      stageIds: id, // ---> para filtrar por etapa este es el nombre de la propiedad.
     });
     console.log(title, response);
-    const auxItems = [...items, ...response.receipts];
+    const auxItems = [...items, ...response[0]?.receipts]; // ---> La respuesta es un array por stages, en este caso, solo devuelve 1 porque solicita 1, pero sigue siendo un array por lo que debes acceder a el como tal.
+
 
     setItems(auxItems);
     if (auxItems.length >= response.totalReceipts) {
@@ -60,7 +61,7 @@ const Column = ({ id, color, title }) => {
         }
       >
         {items.map((i, index) => (
-          <div style={style} key={index}>
+          <div key={index}>
             div - #{index}
           </div>
         ))}

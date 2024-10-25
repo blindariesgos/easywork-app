@@ -24,14 +24,18 @@ import { deletePolicyById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { formatToCurrency } from "@/src/utils/formatters";
+import "moment/locale/es.js";
 
-const Card = ({ receipt, minWidthClass }) => {
+const Card = ({ receipt, minWidthClass, stageId }) => {
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const route = useRouter();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: receipt.id,
+    data: {
+      stageId,
+    },
   });
   const style = transform
     ? {
@@ -43,20 +47,7 @@ const Card = ({ receipt, minWidthClass }) => {
     {
       name: "Ver",
       handleClick: (id) =>
-        route.push(`/operations/policies/policy/${id}?show=true`),
-    },
-    {
-      name: "Editar",
-      handleClick: (id) =>
-        route.push(`/operations/policies/policy/${id}?show=true&edit=true`),
-    },
-    {
-      name: "Eliminar",
-      handleClick: (id) => {
-        setDeleteId(id);
-        setIsOpenDelete(true);
-      },
-      disabled: true,
+        route.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
     },
     {
       name: "Planificar",
@@ -64,35 +55,34 @@ const Card = ({ receipt, minWidthClass }) => {
         {
           name: "Tarea",
           handleClick: (id) =>
-            route.push(`/tools/tasks/task?show=true&prev=policy&prev_id=${id}`),
+            route.push(
+              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+            ),
         },
         {
-          name: "Cita",
+          name: "Envío masivo SMS",
           disabled: true,
         },
         {
-          name: "Comentario",
-          disabled: true,
-        },
-        {
-          name: "Correo",
+          name: "Correo electrónico",
           disabled: true,
         },
       ],
     },
   ];
-  const deletePolicy = async (id) => {
-    try {
-      setLoading(true);
-      const response = await deletePolicyById(id);
-      toast.success(t("common:alert:delete-success"));
-      setIsOpenDelete(false);
-      setLoading(false);
-    } catch (err) {
-      handleApiError(err.message);
-      setLoading(false);
-    }
-  };
+
+  // const deletePolicy = async (id) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await deletePolicyById(id);
+  //     toast.success(t("common:alert:delete-success"));
+  //     setIsOpenDelete(false);
+  //     setLoading(false);
+  //   } catch (err) {
+  //     handleApiError(err.message);
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleClickContact = (id) =>
     route.push(`/sales/crm/contacts/contact/${id}?show=true`);
@@ -113,7 +103,7 @@ const Card = ({ receipt, minWidthClass }) => {
           event?.target?.onclick();
           return;
         }
-        onPointerDown(event);
+        onPointerDown && onPointerDown(event);
       }}
     >
       <div
@@ -273,7 +263,13 @@ const Card = ({ receipt, minWidthClass }) => {
             </Transition>
           </Menu>
           <p className="text-xs text-[#9A9A9A]">
-            {moment(receipt?.dueDate).format("DD MMMM yyyy")}
+            {moment(
+              receipt.status == "pagado"
+                ? receipt?.paymentDate
+                : receipt?.dueDate
+            )
+              .locale("es")
+              .fromNow()}
           </p>
         </div>
       </div>

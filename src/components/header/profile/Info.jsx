@@ -307,7 +307,7 @@ export default function Info({ user, id }) {
                               )}
                             </div>
                           </div>
-                          {data.user.groups.map((group) => (
+                          {data?.user?.groups?.map((group) => (
                             <div className="w-full p-1 rounded-lg bg-white">
                               <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
                                 Compañía: {group.name}

@@ -17,12 +17,11 @@ export default function TasksContextProvider({ children }) {
     page: 1,
     limit: 5,
     orderBy: "deadline",
-    order: "DESC"
+    order: "ASC"
   })
   const { tasks, isLoading, isError, mutate } = useTasks({
     config, filters: {
       ...filters,
-      // showCompleted: true
     }, userId: session?.data?.user?.id
   });
   const { status } = useTasksConfigs();
@@ -179,6 +178,13 @@ export default function TasksContextProvider({ children }) {
         check: false,
         code: "observers",
         options: lists?.users,
+      },
+      {
+        id: 12,
+        name: t("tools:tasks:filters:fields:show-closed"),
+        type: "boolean",
+        check: false,
+        code: "showCompleted",
       },
     ])
   }, [lists?.users, status])

@@ -1,7 +1,7 @@
 import Card from "./Card";
-import { Fragment, useEffect, useMemo } from "react";
 import { useDroppable, DragOverlay } from "@dnd-kit/core";
 import clsx from "clsx";
+
 const Column = ({ id, color, title, policies, activeId }) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
@@ -20,7 +20,7 @@ const Column = ({ id, color, title, policies, activeId }) => {
       >
         {title} ({policies.length})
       </p>
-      <p className="pt-1 text-sm text-center">{`$ ${policies.reduce((acc, policy) => acc + policy.importePagar, 0).toFixed(2)}`}</p>
+      <p className="pt-1 text-base font-semibold text-center">{`$ ${policies.reduce((acc, policy) => acc + policy.importePagar, 0).toFixed(2)}`}</p>
       <div
         className={clsx(
           "grid grid-cols-1 gap-2 pt-2 max-h-[60vh] overflow-y-auto"

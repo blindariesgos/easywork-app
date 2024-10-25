@@ -523,7 +523,7 @@ export const getAllRoles = async () => {
 };
 
 export const updateUser = async (id, body) => {
-  const response = await axios()
+  const response = await axios({ contentType: "multipart/form-data" })
     .put(`/users/${id}`, body)
     .catch((error) => ({ ...error, hasError: true }));
   return response;

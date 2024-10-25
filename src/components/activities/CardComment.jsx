@@ -21,23 +21,56 @@ export default function CardComment({ data }) {
 
 function SystemNotification({ data }) {
   const { t } = useTranslation();
-  const { createdAt, comment, createdBy } = data;
+  const { createdAt, comment, createdBy, metadata } = data;
 
   return (
-    <div className="flex gap-2 md:gap-4 2xl:gap-6 mt-4">
-      <p className="text-xs text-gray-50">
-        {comment}
-        {", por "}
-        <span
-          className={clsx({
-            "hover:underline cursor-pointer": createdBy,
-          })}
-        >
-          {createdBy?.profile?.firstName
-            ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
-            : createdBy.username ?? "System"}
-        </span>
-      </p>
+    <div className="flex gap-2 md:gap-4 2xl:gap-6 mt-4 justify-between">
+      {metadata.subType === "drive" ? (
+        <p className="text-xs text-gray-50">
+          {"Se ha subido el archivo "}
+          <span
+            className={clsx({
+              "hover:underline cursor-pointer":
+                !!metadata?.file?.name && !!metadata?.file?.url,
+            })}
+            onClick={() =>
+              metadata?.file?.url &&
+              window.open(
+                metadata?.file?.url,
+                "self",
+                "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
+              )
+            }
+          >
+            {metadata?.file?.name ?? "System"}
+          </span>
+          {", por "}
+          <span
+            className={clsx({
+              "hover:underline cursor-pointer": !!createdBy,
+            })}
+          >
+            {createdBy?.profile?.firstName
+              ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+              : (createdBy.username ?? "System")}
+          </span>
+        </p>
+      ) : (
+        <p className="text-xs text-gray-50">
+          {comment}
+          {", por "}
+          <span
+            className={clsx({
+              "hover:underline cursor-pointer": createdBy,
+            })}
+          >
+            {createdBy?.profile?.firstName
+              ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+              : (createdBy.username ?? "System")}
+          </span>
+        </p>
+      )}
+
       <p className="text-xs text-gray-50 whitespace-nowrap">
         {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
       </p>

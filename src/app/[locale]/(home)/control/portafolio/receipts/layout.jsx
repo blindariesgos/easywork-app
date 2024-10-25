@@ -24,7 +24,7 @@ export default async function ReceiptLayout({ children, table, kanban }) {
           <Suspense fallback={<LoaderSpinner />}>
             <TabGroup
               defaultIndex={1}
-              className="w-full flex flex-col items-start"
+              className="w-full flex flex-col items-start gap-4"
             >
               <div className="flex gap-2 items-center">
                 <TabList className="bg-zinc-300/40 rounded-full flex gap-1 items-center p-1 ">

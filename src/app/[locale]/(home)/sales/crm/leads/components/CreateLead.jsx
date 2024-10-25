@@ -9,7 +9,7 @@ import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import ActivityPanel from "@/src/components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import Button from "@/src/components/form/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";

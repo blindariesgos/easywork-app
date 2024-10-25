@@ -23,20 +23,19 @@ import DeleteModal from "@/src/components/modals/DeleteItem";
 import { deletePolicyById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
+import { formatToCurrency } from "@/src/utils/formatters";
 
-const Card = ({ policy }) => {
-  const { lists } = useAppContext();
+const Card = ({ receipt, minWidthClass }) => {
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const route = useRouter();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: policy.id,
+    id: receipt.id,
   });
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        position: "fixed",
       }
     : undefined;
 
@@ -82,6 +81,7 @@ const Card = ({ policy }) => {
       ],
     },
   ];
+
   const deletePolicy = async (id) => {
     try {
       setLoading(true);
@@ -117,27 +117,45 @@ const Card = ({ policy }) => {
         onPointerDown(event);
       }}
     >
-      <div className="bg-white rounded-md p-3 grid grid-cols-12">
-        <div className="col-span-11">
+      <div
+        className="bg-white rounded-md p-3 grid grid-cols-12"
+        style={{
+          minWidth: minWidthClass ?? "auto",
+        }}
+      >
+        <div className="col-span-11 flex flex-col gap-2 justify-start">
           <p
-            className="font-semibold cursor-pointer text-sm"
-            onClick={() => handleClickPolicy(policy.id)}
+            className="font-bold cursor-pointer text-sm"
+            onClick={() => handleClickPolicy(receipt.id)}
           >
-            {`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}
+            {`${receipt?.poliza?.company?.name ?? ""} ${receipt?.poliza?.poliza} ${receipt?.poliza?.type?.name}`}
           </p>
 
-          <p className="text-sm text-gray-50">{`${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${(policy?.importePagar ?? 0).toFixed(2)}`}</p>
-          <div className="py-6">
-            <p
-              className="text-start text-easy-400 cursor-pointer text-sm"
-              onClick={() => handleClickContact(policy?.contact?.id)}
-            >
-              {policy?.contact?.fullName}
-            </p>
-
-            <p className="text-sm text-gray-50">
-              {moment(policy?.vigenciaDesde).format("DD MMMM yyyy")}
-            </p>
+          <p className="text-sm text-[#9A9A9A]">{`${receipt?.currency?.symbol ?? ""} ${formatToCurrency(+receipt?.paymentAmount ?? 0)}`}</p>
+          <p
+            className="text-start cursor-pointer text-sm text-[#9A9A9A]"
+            onClick={() => handleClickContact(receipt?.poliza?.contact?.id)}
+          >
+            {receipt?.poliza?.contact?.fullName}
+          </p>
+          <div className="flex items-center gap-2">
+            <Image
+              className="h-8 w-8 rounded-full bg-zinc-200"
+              width={30}
+              height={30}
+              src={receipt?.responsible?.avatar || "/img/avatar.svg"}
+              alt=""
+            />
+            <div>
+              <p className="text-xs text-[#9A9A9A] font-bold">
+                {receipt?.responsible?.profile
+                  ? `${receipt?.responsible?.profile?.firstName} ${receipt?.responsible?.profile?.lastName}`
+                  : ""}
+              </p>
+              <p className="text-[8px] text-[#9A9A9A]">
+                {receipt?.responsible?.bio ?? ""}
+              </p>
+            </div>
           </div>
         </div>
         <div className="col-span-1 flex flex-col items-end gap-1">
@@ -169,12 +187,12 @@ const Card = ({ policy }) => {
             <PhoneIcon className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
-        <div className="col-span-12 flex justify-between">
+        <div className="col-span-12 flex justify-between items-end pt-4">
           <Menu
             as="div"
-            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+            className="relative hover:bg-slate-50/30 w-10 md:w-auto  rounded-lg"
           >
-            <MenuButton className="-m-1.5 flex items-center p-1.5 text-sm">
+            <MenuButton className="flex items-center text-xs">
               + Actividades
             </MenuButton>
             <Transition
@@ -196,7 +214,7 @@ const Card = ({ policy }) => {
                       key={item.name}
                       disabled={item.disabled}
                       onClick={() => {
-                        item.handleClick && item.handleClick(policy.id);
+                        item.handleClick && item.handleClick(receipt.id);
                       }}
                     >
                       <div className="block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 leading-6 text-xs text-black cursor-pointer">
@@ -239,7 +257,7 @@ const Card = ({ policy }) => {
                               disabled={option.disabled}
                               onClick={() => {
                                 option.handleClick &&
-                                  option.handleClick(policy.id);
+                                  option.handleClick(receipt.id);
                               }}
                             >
                               <div className="block px-3 py-1 text-xs leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50">
@@ -255,13 +273,9 @@ const Card = ({ policy }) => {
               </MenuItems>
             </Transition>
           </Menu>
-          <Image
-            className="h-8 w-8 rounded-full bg-zinc-200"
-            width={30}
-            height={30}
-            src={policy?.assignedBy?.avatar || "/img/avatar.svg"}
-            alt=""
-          />
+          <p className="text-xs text-[#9A9A9A]">
+            {moment(receipt?.dueDate).format("DD MMMM yyyy")}
+          </p>
         </div>
       </div>
       <DeleteModal

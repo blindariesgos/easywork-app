@@ -6,7 +6,7 @@ import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent"
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import clsx from "clsx";
 import { formatToCurrency } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";

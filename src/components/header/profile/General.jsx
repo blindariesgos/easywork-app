@@ -38,7 +38,7 @@ const General = () => {
               alt=""
             />
             <div className="ml-2 flex flex-col justify-center">
-              <p className="text-sm">{session?.data?.user?.name}</p>
+              <p className="text-sm">{`${session?.data?.user?.profile?.firstName} ${session?.data?.user?.profile?.lastName}`}</p>
               <p className="text-xs">{session?.data?.user?.bio}</p>
             </div>
           </div>

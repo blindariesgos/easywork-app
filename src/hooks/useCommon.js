@@ -44,6 +44,7 @@ import { useSWRConfig } from "swr";
 export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
+  console.log(session);
 
   // Obtener los permisos de menú del usuario
   const userMenuPermissions =

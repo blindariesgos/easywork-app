@@ -45,6 +45,8 @@ export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
 
+  console.log(session);
+
   // Obtener los permisos de menú del usuario
   const userMenuPermissions =
     session?.user?.roles?.flatMap((role) => role.menuPermissions) || [];
@@ -908,7 +910,6 @@ export const useCommon = () => {
     },
   ];
 
-
   const settingsLead = [
     {
       value: 0,
@@ -1729,7 +1730,6 @@ export const useReceiptTable = () => {
       row: "activities",
       check: true,
     },
-
   ];
   return { columnTable };
 };

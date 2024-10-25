@@ -81,7 +81,6 @@ const Card = ({ receipt, minWidthClass }) => {
       ],
     },
   ];
-
   const deletePolicy = async (id) => {
     try {
       setLoading(true);

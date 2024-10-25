@@ -141,7 +141,6 @@ export default function TableReceipts() {
             router.push(
               `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
             ),
-          disabled: true,
         },
         {
           name: "Envío masivo SMS",

@@ -4,39 +4,58 @@ import { useDroppable, DragOverlay } from "@dnd-kit/core";
 import clsx from "clsx";
 import { getContactId, getReceiptKanbanByStateId } from "@/src/lib/apis";
 import InfiniteScroll from "react-infinite-scroll-component";
-const Column = ({ id, color, title, activeId, setItemDrag }) => {
+const Column = ({
+  id,
+  color,
+  title,
+  activeId,
+  setItemDrag,
+  status,
+  updateStages,
+  setUpdateStages,
+}) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
+    data: {
+      status,
+    },
   });
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [totalItems, setTotalItems] = useState();
 
-  const getReceipts = async () => {
+  const getReceipts = async (defaultPage) => {
     const response = await getReceiptKanbanByStateId({
       "pagination[0][stageId]": id,
       "pagination[0][limit]": 10,
-      "pagination[0][page]": page + 1,
+      "pagination[0][page]": (defaultPage ? defaultPage : page) + 1,
       stageIds: id,
     });
     console.log(title, response);
     const auxItems = [...items, ...response[0].receipts];
 
     setItems(auxItems);
-    if (!totalItems) {
+    if (page == 0 || defaultPage == 0) {
       setTotalItems(response[0].totalReceipts);
     }
     if (auxItems.length >= response[0].totalReceipts) {
       setHasMore(false);
     }
 
-    setPage(page + 1);
+    setPage((defaultPage ? defaultPage : page) + 1);
   };
 
   useEffect(() => {
     getReceipts();
   }, []);
+
+  useEffect(() => {
+    if (updateStages.includes(id)) {
+      setItems([]);
+      getReceipts(0);
+    }
+  }, [updateStages]);
 
   useEffect(() => {
     if (activeId) {
@@ -48,11 +67,9 @@ const Column = ({ id, color, title, activeId, setItemDrag }) => {
   return (
     <div
       ref={setNodeRef}
-      className={clsx("w-[250px] p-1 rounded-md", {
-        "bg-easy-100": isOver,
-      })}
+      className={clsx("w-[250px] p-1 rounded-md")}
       style={{
-        background: color.secondary,
+        background: isOver ? "#DCDAF1" : color.secondary,
       }}
     >
       <p
@@ -75,7 +92,12 @@ const Column = ({ id, color, title, activeId, setItemDrag }) => {
       >
         <div className={clsx("grid grid-cols-1 gap-2 pt-2")}>
           {items.map((receipt, index) => (
-            <Card receipt={receipt} index={index} key={receipt.id} />
+            <Card
+              receipt={receipt}
+              index={index}
+              key={receipt.id}
+              stageId={id}
+            />
           ))}
         </div>
       </InfiniteScroll>

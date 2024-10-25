@@ -24,8 +24,7 @@ export async function refreshAuthToken() {
       response.status < 300 &&
       response.data.token
     ) {
-      const newAccessToken = response.data.token;
-      return newAccessToken;
+      return response.data;
     } else {
       throw new Error("Failed to refresh token: Invalid response");
     }

@@ -120,7 +120,7 @@ export default function Header() {
                   className="ml-2 text-sm whitespace-nowrap font-semibold leading-6 text-black"
                   aria-hidden="true"
                 >
-                  {`${session?.user?.name}`}
+                  {`${session?.user?.profile?.firstName} ${session?.user?.profile?.lastName}`}
                 </span>
                 <ChevronDownIcon
                   className="ml-1 h-5 w-5 text-gray-400"

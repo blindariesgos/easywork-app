@@ -227,37 +227,39 @@ export default function TableTask() {
       {selectedColumns && selectedColumns.length > 0 && (
         <div className="flow-root">
           {loading && <LoaderSpinner />}
-          <div className="min-w-full py-2">
+          <div className="min-w-full">
             {selectedTasks.length > 0 && (
               <div className="p-2 flex">
                 <SelectedOptionsTable options={optionsCheckBox} />
               </div>
             )}
-            <div className="sm:rounded-lg ">
-              <div className="overflow-x-auto min-h-[60vh] h-full">
+            <div className="overflow-x-auto">
+              <div className=" min-h-[60vh] h-full">
                 <table className="min-w-full rounded-md bg-gray-100 table-auto relative ">
                   <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                     <tr>
                       <th
                         scope="col"
-                        className="flex justify-center items-center gap-2  px-4 rounded-s-xl py-4"
+                        className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                       >
-                        <input
-                          type="checkbox"
-                          className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          ref={checkbox}
-                          checked={checked}
-                          onChange={toggleAll}
-                        />
-                        <AddColumnsTable
-                          columns={columnTable.map((x) => ({
-                            ...x,
-                            check: selectedColumns
-                              .map((s) => s.id)
-                              .includes(x.id),
-                          }))}
-                          setSelectedColumns={setSelectedColumns}
-                        />
+                        <div className="flex gap-2 items-center">
+                          <input
+                            type="checkbox"
+                            className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            ref={checkbox}
+                            checked={checked}
+                            onChange={toggleAll}
+                          />
+                          <AddColumnsTable
+                            columns={columnTable.map((x) => ({
+                              ...x,
+                              check: selectedColumns
+                                .map((s) => s.id)
+                                .includes(x.id),
+                            }))}
+                            setSelectedColumns={setSelectedColumns}
+                          />
+                        </div>
                       </th>
                       {selectedColumns.length > 0 &&
                         selectedColumns.map((column, index) => (

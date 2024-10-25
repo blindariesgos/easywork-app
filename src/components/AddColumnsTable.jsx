@@ -23,8 +23,8 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data }) => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block">
-      <MenuButton className="inline-flex text-gray-60 bg-transparent text-xs font-semibold gap-2 mt-1.5 focus:ring-0">
+    <Menu as="div" className="relative">
+      <MenuButton className="text-gray-60 bg-transparent text-xs font-semibold focus:ring-0 flex items-center">
         <Cog8ToothIcon className="h-5 w-5 text-primary " aria-hidden="true" />
       </MenuButton>
       <Transition
@@ -38,7 +38,7 @@ const AddColumnsTable = ({ setSelectedColumns, columns: data }) => {
       >
         <MenuItems
           anchor="bottom start"
-          className={`absolute left-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-96 p-2`}
+          className={`mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-96 p-2`}
         >
           <div className="grid grid-cols-2 gap-4">
             {columns.map((col, index) => (

@@ -638,7 +638,7 @@ export const useSidebar = () => {
 
 export const useCommon = () => {
   const { t } = useTranslation();
-  const router = useRouter();
+  const router = useRouter()
   const calendarViews = [
     t("tools:calendar:day"),
     t("tools:calendar:week"),
@@ -744,13 +744,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("contacts:header:delete:trash"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -759,13 +759,13 @@ export const useCommon = () => {
       value: 0,
       name: t("leads:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("leads:header:delete:trash"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -773,25 +773,25 @@ export const useCommon = () => {
     {
       value: 0,
       name: t("contacts:header:settings:vcard"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 1,
       name: t("contacts:header:settings:gmail"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 2,
       name: t("contacts:header:settings:outlook"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 3,
       name: t("contacts:header:settings:yahoo"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
@@ -803,43 +803,43 @@ export const useCommon = () => {
     {
       value: 5,
       name: t("contacts:header:settings:crm"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 8,
       name: t("contacts:header:settings:export"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 9,
       name: t("contacts:header:settings:control"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: true,
     },
   ];
@@ -848,13 +848,13 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: false,
     },
   ];
@@ -863,19 +863,19 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => {},
+      onclick: () => { },
       disabled: false,
     },
     {
       value: 0,
       name: "Imprimir pdf",
-      onclick: () => {},
+      onclick: () => { },
       icon: DocumentTextIcon,
     },
   ];
@@ -885,13 +885,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:excel:export"),
       icon: RiFileExcel2Fill,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       icon: RiFileExcel2Fill,
       name: t("contacts:header:excel:print"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -900,13 +900,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:edit:policies:consult:settings:download"),
       icon: ArrowDownTrayIcon,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       icon: DocumentTextIcon,
       name: t("contacts:edit:policies:consult:settings:print"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -915,43 +915,43 @@ export const useCommon = () => {
       value: 0,
       name: "Importación vCard",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: "Gmail Importar",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: "Yahoo! Importar",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: "Outlook Importar",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: "Importación personalizada",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: "Exportar a Excel",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       name: "Exportar a CSV",
       disabled: true,
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -1311,13 +1311,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:excel:alone"),
       icon: RiFileExcel2Fill,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 0,
       name: t("tools:tasks:header:excel:all"),
       icon: RiFileExcel2Fill,
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
   const optionsTrash = [
@@ -1325,13 +1325,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => {},
+      onclick: () => { },
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("tools:tasks:header:delete:trash"),
-      onclick: () => {},
+      onclick: () => { },
     },
   ];
 
@@ -1400,13 +1400,13 @@ export const useTasksConfigs = () => {
     {
       value: 0,
       name: t("tools:tasks:new:download"),
-      onclick: () => {},
+      onclick: () => { },
       icon: ArrowDownTrayIcon,
     },
     {
       value: 0,
       name: t("tools:tasks:new:print"),
-      onclick: () => {},
+      onclick: () => { },
       icon: DocumentTextIcon,
     },
   ];

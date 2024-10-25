@@ -44,6 +44,7 @@ import { useSWRConfig } from "swr";
 export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
+  console.log(session);
 
   console.log(session);
 

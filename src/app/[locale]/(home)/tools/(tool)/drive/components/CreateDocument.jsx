@@ -93,7 +93,7 @@ const CreateDocumentButton = () => {
         >
           <MenuItems
             anchor="bottom start"
-            className="divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="divide-y z-10 divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="py-1">
               <MenuItem

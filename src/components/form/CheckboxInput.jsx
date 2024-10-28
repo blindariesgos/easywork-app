@@ -14,13 +14,13 @@ function CheckboxInput({
   const [checked, setChecked] = useState(!!defaultValue);
 
   return (
-    <div className="flex flex-col gap-y-1 w-full">
+    <div className="flex flex-col gap-y-1 w-full ">
       <label htmlFor={name} className="flex items-center gap-2">
         <div className="w-5 h-5 rounded flex justify-center items-center border border-gray-200">
           {checked && <ImCheckmark className="w-4 h-4 text-primary" />}
         </div>
         {label && (
-          <p className="block text-sm font-medium leading-6 text-gray-900 px-3">
+          <p className="block text-sm font-medium leading-6 text-gray-900">
             {label}
           </p>
         )}

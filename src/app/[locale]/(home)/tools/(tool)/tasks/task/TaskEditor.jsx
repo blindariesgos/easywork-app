@@ -145,9 +145,11 @@ export default function TaskEditor({ edit, copy, subtask }) {
     ]);
     setValue("name", "CRM - Contacto: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
   };
 
   const setCrmLead = async (leadId) => {
+    console.log("paso por lead");
     const response = await getLeadById(leadId);
     setValue("crm", [
       {
@@ -158,6 +160,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     ]);
     setValue("name", "CRM - Prospecto: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
   };
 
   const setCrmReceipt = async (receiptId) => {
@@ -172,6 +175,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     console.log("receipt", response);
     setValue("name", "CRM - Recibo: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
   };
 
   const setCrmPolicy = async (policyId) => {
@@ -185,27 +189,32 @@ export default function TaskEditor({ edit, copy, subtask }) {
     ]);
     setValue("name", "CRM - Póliza: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
   };
 
   useEffect(() => {
     const prevId = params.get("prev_id");
 
     if (params.get("prev") === "contact") {
+      setLoading(true);
       setCrmContact(prevId);
       return;
     }
 
-    if (params.get("prev") === "leads") {
+    if (params.get("prev") === "lead") {
+      setLoading(true);
       setCrmLead(prevId);
       return;
     }
 
     if (params.get("prev") === "policy") {
+      setLoading(true);
       setCrmPolicy(prevId);
       return;
     }
 
     if (params.get("prev") === "receipt") {
+      setLoading(true);
       setCrmReceipt(prevId);
       return;
     }

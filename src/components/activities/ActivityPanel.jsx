@@ -21,6 +21,7 @@ import CardComment from "./CardComment";
 import { useEntityActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
 import { IoMdCheckboxOutline } from "react-icons/io";
+import Image from "next/image";
 
 export default function ActivityPanel({
   entityId,
@@ -61,9 +62,12 @@ export default function ActivityPanel({
         );
       default:
         return (
-          <IoMdCheckboxOutline
+          <Image
             className="h-5 w-5 text-white"
-            aria-hidden="true"
+            width={10}
+            height={10}
+            alt="task icon"
+            src="/img/activities/task-icon.svg"
           />
         );
     }
@@ -91,15 +95,18 @@ export default function ActivityPanel({
                         "bg-gray-200 h-10 w-10 rounded-full flex items-center justify-center"
                       )}
                     >
-                      <UserIcon
-                        className="h-5 w-5 text-white"
-                        aria-hidden="true"
+                      <Image
+                        src="/img/activities/easy-icon.svg"
+                        className="h-5 w-5"
+                        width={10}
+                        height={10}
+                        alt="easy icon"
                       />
                     </span>
                   </div>
 
                   <div
-                    className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg`}
+                    className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg sticky top-0`}
                   >
                     <ActivityHeader
                       entityId={entityId}

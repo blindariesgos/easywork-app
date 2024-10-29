@@ -86,9 +86,11 @@ export const createLead = async (data) => {
 };
 
 export const updateLead = async (data, id) => {
-  const response = await axios()
+  const response = await axios({ contentType: "multipart/form-data" })
     .put(`/sales/crm/leads/${id}`, data)
     .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/sales/crm/leads", "layout");
+  console.log("aaaaaaaaaalalal jal jaljala jlajal", response)
   return response;
 };
 export const updateContact = async (data, id) => {

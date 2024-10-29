@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
@@ -20,7 +20,7 @@ import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import clsx from "clsx";
-import { putPoliza, putReceipt } from "@/src/lib/apis";
+import { putReceipt } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
@@ -154,7 +154,15 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   };
 
   const options = [
-    { name: "Soporte de pago", type: "pago" },
+    {
+      name: "Soporte de pago",
+      type: "pago",
+      onFinished: () => {
+        toast.warning(
+          "El soporte de pago ha sido cargado, debe actualizar el estado del recibo a 'Pagado'"
+        );
+      },
+    },
     { name: "Factura", type: "factura" },
   ];
 
@@ -183,6 +191,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
       isOpen: true,
       documentType: document.type,
       title: t("common:add-document", { document: document.name }),
+      onFinished: document.onFinished,
     });
   };
 

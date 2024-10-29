@@ -23,6 +23,7 @@ const AddDocumentDialog = ({
   title,
   update,
   accept,
+  onFinished,
 }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState(null);
@@ -66,6 +67,7 @@ const AddDocumentDialog = ({
         throw { message };
       }
       toast.success("Documento agregado con exito");
+      onFinished && onFinished();
       update && update();
     } catch (error) {
       handleApiError(error.message);

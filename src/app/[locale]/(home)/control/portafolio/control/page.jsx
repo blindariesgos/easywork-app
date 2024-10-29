@@ -39,7 +39,7 @@ const Page = () => {
           <h2 className="text-primary text-2xl">
             {t("control:portafolio:control:title")}
           </h2>
-          <ButtonAdd />
+          {/* <ButtonAdd /> */}
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FiltersControl />

@@ -197,7 +197,7 @@ export default function CreateLead({ lead, id }) {
   const handleFormSubmit = async (data) => {
     let body = { ...data };
 
-    if (selectedProfileImage?.file && !lead) {
+    if (selectedProfileImage?.file) {
       body = {
         ...body,
         photo: selectedProfileImage?.file || "",
@@ -606,7 +606,7 @@ export default function CreateLead({ lead, id }) {
               <ActivityPanel
                 entityId={id}
                 crmType="lead"
-                className="lg:col-span-7"
+                className="lg:col-span-7 md:pb-[280px]"
               />
             )}
           </div>

@@ -106,7 +106,7 @@ export default function ActivityPanel({
                   </div>
 
                   <div
-                    className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg`}
+                    className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 rounded-t-lg sticky top-0`}
                   >
                     <ActivityHeader
                       entityId={entityId}

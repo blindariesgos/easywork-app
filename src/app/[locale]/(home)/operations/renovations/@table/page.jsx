@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useTranslation } from "react-i18next";
 import { XCircleIcon } from "@heroicons/react/20/solid";
-import usePolicyContext from "@/src/context/policies";
+import useRenovationContext from "@/src/context/renovations";
 
 export default function Page({ searchParams }) {
   const { t } = useTranslation();
-  const { setPage, isLoading, isError, data } = usePolicyContext();
+  const { setPage, isLoading, isError, data } = useRenovationContext();
 
   useEffect(() => {
     setPage(searchParams.page || 1);

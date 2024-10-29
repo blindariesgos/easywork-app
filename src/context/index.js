@@ -16,4 +16,7 @@ export const PoliciesContext = createContext(null);
 export const FilterTableContext = createContext(null);
 export const CalendarContext = createContext(null);
 export const RenovationsContext = createContext(null);
+export const ProgramationsContext = createContext(null);
+export const ClaimsContext = createContext(null);
+export const RefundsContext = createContext(null);
 export const ImportationsContext = createContext(null);

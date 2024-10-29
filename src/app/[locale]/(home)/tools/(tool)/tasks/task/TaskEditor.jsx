@@ -243,7 +243,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
   }, [edit, copy]);
 
   const createTask = async (data, isNewTask) => {
-    if (value === "") return toast.error(t("tools:tasks:description"));
     if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
     const crm =

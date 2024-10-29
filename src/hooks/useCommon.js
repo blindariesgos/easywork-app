@@ -259,15 +259,22 @@ export const useSidebar = () => {
         {
           id: "operations:sinisters",
           name: "Siniestros",
-          href: "",
+          href: "/operations/claims",
           image: "/img/operations/accidents.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           id: "operations:refunds",
           name: "Reembolsos",
-          href: "",
+          href: "/operations/refunds",
           image: "/img/operations/refunds.svg",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          id: "operations:refunds",
+          name: "Programaciones",
+          href: "/operations/programations",
+          image: "/img/operations/programations.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
@@ -1664,11 +1671,12 @@ export const useReceiptTable = () => {
   const { t } = useTranslation();
   const columnTable = [
     {
-      id: 4,
-      name: t("control:portafolio:receipt:table:client"),
-      row: "client",
-      order: "client",
+      id: 1,
+      name: t("control:portafolio:receipt:table:receipt"),
+      row: "title",
+      order: "receipt",
       check: true,
+      permanent: true,
     },
     {
       id: 5,
@@ -1677,12 +1685,11 @@ export const useReceiptTable = () => {
       check: true,
     },
     {
-      id: 1,
-      name: t("control:portafolio:receipt:table:receipt"),
-      row: "title",
-      order: "receipt",
+      id: 4,
+      name: t("control:portafolio:receipt:table:client"),
+      row: "client",
+      order: "client",
       check: true,
-      permanent: true,
     },
     // {
     //   id: 2,
@@ -1840,6 +1847,152 @@ export const useRenovationTable = () => {
     {
       id: 8,
       name: t("operations:renovations:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useClaimTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:claims:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:claims:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:claims:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:claims:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:claims:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:claims:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+export const useRefundTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:refunds:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:refunds:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:refunds:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:refunds:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:refunds:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:refunds:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useProgramationTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:programations:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:programations:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:programations:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:programations:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:programations:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:programations:table:activities"),
       row: "activities",
       check: true,
     },

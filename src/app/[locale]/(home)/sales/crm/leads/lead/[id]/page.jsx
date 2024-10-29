@@ -6,7 +6,7 @@ import { useLead } from "@/src/lib/api/hooks/leads";
 import { getLeadById } from "@/src/lib/apis";
 
 export default function PageContactId({ params: { id } }) {
-  const [lead, setLead] = useState(true);
+  const [lead, setLead] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

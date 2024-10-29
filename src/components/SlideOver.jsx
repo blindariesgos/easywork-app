@@ -180,7 +180,7 @@ export default function SlideOver({
                         />
                       )}
                     </div>
-                    <div className={`${className} w-full`}>{children}</div>
+                    {children}
                   </div>
                 </DialogPanel>
               </TransitionChild>

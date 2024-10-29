@@ -18,6 +18,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:overdue"),
     id: 2,
     color: "#FFEB04",
+    color: "#b60f0f",
     amount: "$0,00",
     value: "0",
   },
@@ -25,6 +26,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:delay"),
     id: 4,
     color: "#A9EA44",
+    color: "#b60f0f",
     amount: "$0,00",
     value: "0",
   },
@@ -32,6 +34,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:urgent"),
     id: 3,
     color: "#86BEDF",
+    color: "#b60f0f",
     amount: "$0,00",
     value: "0",
   },
@@ -39,6 +42,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:by-overcoming"),
     id: 1,
     color: "#6b6c6d",
+    color: "#86BEDF",
     amount: "$0,00",
     value: "0",
   },
@@ -46,6 +50,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:on-time"),
     id: 5,
     color: "#8D9194",
+    color: "#86BEDF",
     amount: "$0,00",
     value: "0",
   },
@@ -53,6 +58,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:charged"),
     id: 9,
     color: "#DFE3E6",
+    color: "#A9EA44",
     amount: "$0,00",
     value: "0",
   },
@@ -60,6 +66,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:cancelled"),
     id: 7,
     color: "#0F8BBF",
+    color: "#8D9194",
     amount: "$0,00",
     value: "0",
   },
@@ -67,6 +74,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:trash"),
     id: 6,
     color: "#AF8764",
+    color: "#8D9194",
     amount: "$0,00",
     value: "0",
   },
@@ -74,6 +82,7 @@ const cards = (t) => [
     name: t("control:portafolio:control:cards:trash-more"),
     id: 8,
     color: "#b60f0f",
+    color: "#8D9194",
     amount: "$0,00",
     value: "0",
   },
@@ -86,7 +95,7 @@ const Control = () => {
   return (
     <Fragment>
       <div className="bg-white rounded-md shadow-sm">
-        <div className="flex gap-6 py-4 px-4">
+        <div className="flex gap-6">
           <div className="flex min-h-screen w-full px-4">
             <div className="w-full ">
               <div className="py-4 grid grid-cols-1 gap-4">
@@ -95,7 +104,7 @@ const Control = () => {
                     by="name"
                     value={cardSelected}
                     onChange={setCardSelected}
-                    className="hidden py-2 md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-4"
+                    className="hidden py-2 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
                   >
                     {cards(t).map((card) => (
                       <Radio

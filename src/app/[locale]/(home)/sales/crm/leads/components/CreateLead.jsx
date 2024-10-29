@@ -26,6 +26,7 @@ import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
+import { handleApiError } from "@/src/utils/api/errors";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -230,18 +231,19 @@ export default function CreateLead({ lead, id }) {
         }
         toast.success("Prospecto creado con exito");
       } else {
-        console.log({ body });
-        const response = await updateLead(body, id);
+        const response = await updateLead(formData, id);
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {
             message = response.errors.join(", ");
           }
+          console.log({ message, response });
           throw { message };
         }
         toast.success("¡Prospecto actualizado!");
       }
     } catch (error) {
+      console.log(error);
       handleApiError(error.message);
     } finally {
       mutate(`/sales/crm/leads/${id} `);

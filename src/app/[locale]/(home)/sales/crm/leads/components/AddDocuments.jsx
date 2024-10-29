@@ -14,10 +14,10 @@ const AddDocuments = ({ leadId }) => {
   });
 
   const options = [
-    { name: t("leads:add:quote"), type: "cotizacion" },
-    { name: t("leads:add:rfc"), type: "documentos" },
-    { name: t("leads:add:profile"), type: "perfil" },
-    { name: t("leads:add:policy"), type: "poliza" },
+    { name: t("leads:add:quote"), type: "cotizacion", accept: null },
+    { name: t("leads:add:rfc"), type: "documentos", accept: null },
+    { name: t("leads:add:profile"), type: "perfil", accept: null },
+    { name: t("leads:add:policy"), type: "poliza", accept: ".pdf" },
   ];
 
   const handleAddDocument = (document) => {
@@ -26,6 +26,7 @@ const AddDocuments = ({ leadId }) => {
       isOpen: true,
       documentType: document.type,
       title: t("common:add-document", { document: document.name }),
+      accept: document.accept,
     });
   };
 

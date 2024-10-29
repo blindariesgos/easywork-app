@@ -112,7 +112,7 @@ export default function SendMessage({
   const getSignature = async () => {
     try {
       const response = await getUserSignatures();
-      response.forEach((element) => {
+      response.items.forEach((element) => {
         const foundItem = element.metadata.senders.find((item) =>
           item.email === userData.email && item.state ? item.state : false
         );

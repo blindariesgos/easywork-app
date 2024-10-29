@@ -55,6 +55,7 @@ export default function Signature({
     setLoading(true);
     try {
       const response = await getUserSignatures();
+      console.log(response);
       setSignatures(response);
       setLoading(false);
     } catch (error) {
@@ -184,8 +185,8 @@ export default function Signature({
                           </tr>
                         </thead>
                         <tbody>
-                          {Array.isArray(signatures) &&
-                            signatures.map((signature, index) => (
+                          {Array.isArray(signatures.items) &&
+                            signatures.items.map((signature, index) => (
                               <tr key={index}>
                                 <td className="pb-2 py-2">
                                   <div className="flex items-center h-full pl-2">

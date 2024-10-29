@@ -1,7 +1,7 @@
 "use client";
 import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
-import RenovationDetails from "../../components/RenovationDetails";
+import ClaimDetails from "../../components/ClaimDetails";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { usePolicy } from "@/src/lib/api/hooks/policies";
 
@@ -31,7 +31,7 @@ export default function Page({ params: { id } }) {
       labelTag="renovations"
     >
       <Suspense fallback={<LoaderSpinner />}>
-        <RenovationDetails data={data} id={id} mutate={mutate} />
+        <ClaimDetails data={data} id={id} mutate={mutate} />
       </Suspense>
     </SlideOver>
   );

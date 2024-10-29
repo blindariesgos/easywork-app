@@ -22,6 +22,7 @@ const AddDocumentDialog = ({
   setIsOpen,
   title,
   update,
+  accept,
 }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState(null);
@@ -102,7 +103,10 @@ const AddDocumentDialog = ({
                     type="file"
                     className="peer hidden inset-0 h-full w-full  rounded-md opacity-0"
                     onChange={handleChangeFile}
-                    accept=".pdf, .doc, .txt, .key, .csv, .docx, .xls, .xlsx, .ppt, .pptx, .jpg, .jpeg, .png, .gif, .svg"
+                    accept={
+                      accept ??
+                      ".pdf, .doc, .txt, .key, .csv, .docx, .xls, .xlsx, .ppt, .pptx, .jpg, .jpeg, .png, .gif, .svg"
+                    }
                   />
                   <div className="flex gap-1">
                     <MdUpload className="w-6 h-6 text-pimary" />

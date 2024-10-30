@@ -280,7 +280,7 @@ export const useSidebar = () => {
         {
           id: "operations:fund-recovery",
           name: "Rescate de Fondos",
-          href: "",
+          href: "/operations/fundrecoveries",
           image: "/img/operations/fund_recovery.svg",
           iconShortBar: GlobeAltIcon,
         },
@@ -1993,6 +1993,55 @@ export const useProgramationTable = () => {
     {
       id: 8,
       name: t("operations:programations:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useFundRecoveriesTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:fundrecovery:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:fundrecovery:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:fundrecovery:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:fundrecovery:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:fundrecovery:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:fundrecovery:table:activities"),
       row: "activities",
       check: true,
     },

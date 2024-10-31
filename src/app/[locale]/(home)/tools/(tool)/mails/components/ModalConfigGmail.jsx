@@ -62,7 +62,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
     try {
       axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth.id}`
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/savemails/${session.data.user.id}/${selectOauth.id}`
       );
     } catch (error) {}
 

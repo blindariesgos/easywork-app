@@ -1,6 +1,6 @@
 "use client";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -40,15 +40,26 @@ export default function PolicyDetails({ data, id, mutate }) {
     {
       name: t("control:portafolio:receipt:details:consult"),
     },
-    {
-      name:
-        data?.type?.name === "GMM"
-          ? "Asegurados"
-          : data?.type?.name === "VIDA"
-            ? "Beneficiarios"
-            : "Vehiculos",
-      disabled: data?.type?.name != "AUTOS",
-    },
+    ...(() => {
+      return data?.type?.name === "VIDA"
+        ? [
+            {
+              name: "Asegurados",
+              disabled: true,
+            },
+            {
+              name: "Beneficiarios",
+              disabled: true,
+            },
+          ]
+        : [
+            {
+              name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
+              disabled: data?.type?.name != "AUTOS",
+            },
+          ];
+    })(),
+
     {
       name: "Pagos/Recibos",
     },
@@ -248,11 +259,19 @@ export default function PolicyDetails({ data, id, mutate }) {
             <TabPanel className={"w-full md:px-4"}>
               <General data={data} id={id} mutate={mutate} headerHeight={200} />
             </TabPanel>
-            <TabPanel className="w-full md:px-4">
-              {data?.type?.name === "AUTOS" && (
-                <Vehicle vehicles={data.vehicles} />
-              )}
-            </TabPanel>
+            {data?.type?.name === "VIDA" ? (
+              <Fragment>
+                <TabPanel className="w-full md:px-4"></TabPanel>
+                <TabPanel className="w-full md:px-4"></TabPanel>
+              </Fragment>
+            ) : (
+              <TabPanel className="w-full md:px-4">
+                {data?.type?.name === "AUTOS" && (
+                  <Vehicle vehicles={data.vehicles} />
+                )}
+              </TabPanel>
+            )}
+
             <TabPanel className="w-full">
               <Receipts policyId={data?.id} />
             </TabPanel>

@@ -44,7 +44,7 @@ export default function CardTask({ data }) {
     <div className="bg-white px-4 py-3 rounded-lg w-full">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <p className="text-xs text-primary font-medium">
+          <p className="text-xs text-primary font-bold">
             {t("tools:tasks:task")}
           </p>
           {isTaskOverdue(data) && (
@@ -63,6 +63,11 @@ export default function CardTask({ data }) {
             height={36}
             src={data?.createdBy?.avatar}
             alt=""
+            title={
+              data?.createdBy?.profile?.firstName
+                ? `${data?.createdBy?.profile?.firstName} ${data?.createdBy?.profile?.lastName}`
+                : (data?.createdBy?.username ?? "System")
+            }
           />
         </div>
       </div>

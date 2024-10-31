@@ -12,12 +12,9 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import { useReceiptsByPolicyId } from "@/src/lib/api/hooks/receipts";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { formatDate } from "@/src/utils/getFormatDate";
+import moment from "moment";
 
 export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
-  const { t } = useTranslation();
-  const checkbox = useRef();
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
   const { data, isLoading } = useReceiptsByPolicyId(policyId);
   const [selectedPolizas, setSelectedPolizas] = useState([]);
 
@@ -248,7 +245,7 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     {receipt?.methodCollection?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {receipt?.startDate}
+                    {moment(receipt?.startDate).format("DD/MM/YYYY")}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {formatDate(receipt?.dueDate, "dd/MM/yyyy")}

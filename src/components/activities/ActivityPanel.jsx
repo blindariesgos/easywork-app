@@ -7,6 +7,7 @@ import {
   CheckIcon,
   UserIcon,
 } from "@heroicons/react/20/solid";
+import { TiInfoLarge } from "react-icons/ti";
 import clsx from "clsx";
 import CardVideo from "./CardVideo";
 import CardTask from "./CardTask";
@@ -59,6 +60,10 @@ export default function ActivityPanel({
       case "comment":
         return (
           <MdModeComment className="h-5 w-5  text-white" aria-hidden="true" />
+        );
+      case "system":
+        return (
+          <TiInfoLarge className="h-5 w-5  text-white" aria-hidden="true" />
         );
       default:
         return (
@@ -136,11 +141,20 @@ export default function ActivityPanel({
                             "h-10 w-10 rounded-full flex items-center justify-center ",
                             {
                               "bg-primary": activity.type == "task",
-                              "bg-gray-200": activity.type == "comment",
+                              "bg-[#0f8bbf]":
+                                activity.type == "comment" &&
+                                activity?.metadata?.commentType != "system",
+                              "bg-gray-200":
+                                activity.type == "comment" &&
+                                activity?.metadata?.commentType == "system",
                             }
                           )}
                         >
-                          {getActivityIcon(activity.type)}
+                          {getActivityIcon(
+                            activity.type == "comment"
+                              ? (activity?.metadata?.commentType ?? "comment")
+                              : activity.type
+                          )}
                         </span>
                       </div>
                       <div

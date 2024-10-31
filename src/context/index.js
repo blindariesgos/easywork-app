@@ -18,5 +18,6 @@ export const CalendarContext = createContext(null);
 export const RenovationsContext = createContext(null);
 export const ProgramationsContext = createContext(null);
 export const ClaimsContext = createContext(null);
+export const FundRecoveriesContext = createContext(null);
 export const RefundsContext = createContext(null);
 export const ImportationsContext = createContext(null);

@@ -1,20 +1,19 @@
 "use client";
-import {
-  ChevronDownIcon,
-  CheckIcon,
-  Cog8ToothIcon,
-} from "@heroicons/react/20/solid";
+
 import ReceiptEmpty from "../ReceiptEmpty";
 import { useTranslation } from "react-i18next";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { formatToCurrency } from "@/src/utils/formatters";
 import { useReceiptsByPolicyId } from "@/src/lib/api/hooks/receipts";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { formatDate } from "@/src/utils/getFormatDate";
-import moment from "moment";
 
 export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
+  const { t } = useTranslation();
+  const checkbox = useRef();
+  const [checked, setChecked] = useState(false);
+  const [indeterminate, setIndeterminate] = useState(false);
   const { data, isLoading } = useReceiptsByPolicyId(policyId);
   const [selectedPolizas, setSelectedPolizas] = useState([]);
 
@@ -245,7 +244,7 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     {receipt?.methodCollection?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {moment(receipt?.startDate).format("DD/MM/YYYY")}
+                    {receipt?.startDate}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {formatDate(receipt?.dueDate, "dd/MM/yyyy")}

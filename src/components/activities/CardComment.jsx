@@ -1,10 +1,12 @@
 "use client";
 import { formatDate } from "@/src/utils/getFormatDate";
 import { ChatBubbleBottomCenterIcon } from "@heroicons/react/24/solid";
-import React, { useRef } from "react";
+import React, { Fragment, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import TextEditor from "../TextEditor";
 import clsx from "clsx";
+import Link from "next/link";
+import Image from "next/image";
 
 export const CommentType = {
   USER: "user",
@@ -24,56 +26,119 @@ function SystemNotification({ data }) {
   const { createdAt, comment, createdBy, metadata } = data;
 
   return (
-    <div className="flex gap-2 md:gap-4 2xl:gap-6 mt-4 justify-between">
+    <div className=" bg-white px-4 py-3 rounded-lg">
       {metadata.subType === "drive" ? (
-        <p className="text-xs text-gray-50">
-          {"Se ha subido el archivo "}
-          <span
-            className={clsx({
-              "hover:underline cursor-pointer":
-                !!metadata?.file?.name && !!metadata?.file?.url,
-            })}
-            onClick={() =>
-              metadata?.file?.url &&
-              window.open(
-                metadata?.file?.url,
-                "self",
-                "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
-              )
-            }
-          >
-            {metadata?.file?.name ?? "System"}
-          </span>
-          {", por "}
-          <span
-            className={clsx({
-              "hover:underline cursor-pointer": !!createdBy,
-            })}
-          >
-            {createdBy?.profile?.firstName
-              ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
-              : (createdBy.username ?? "System")}
-          </span>
-        </p>
+        <Fragment>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <p className="text-xs text-primary font-bold">Carga de archivo</p>
+              <p className="text-xs text-gray-50 whitespace-nowrap">
+                {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
+              </p>
+            </div>
+            <Image
+              className="h-6 w-6 rounded-full object-cover"
+              width={36}
+              height={36}
+              src={createdBy?.avatar}
+              alt=""
+              title={
+                createdBy?.profile?.firstName
+                  ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+                  : (createdBy.username ?? "System")
+              }
+            />
+          </div>
+
+          <p className="text-xs text-gray-50">
+            {"Se ha subido el archivo "}
+            <span
+              className={clsx({
+                "hover:underline cursor-pointer":
+                  !!metadata?.file?.name && !!metadata?.file?.url,
+              })}
+              onClick={() =>
+                metadata?.file?.url &&
+                window.open(
+                  metadata?.file?.url,
+                  "self",
+                  "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
+                )
+              }
+            >
+              {metadata?.file?.name ?? "System"}
+            </span>
+            .
+          </p>
+        </Fragment>
+      ) : metadata.subType === "contact" ? (
+        <Fragment>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <p className="text-xs text-primary font-bold">
+                Cierre positivo prospecto
+              </p>
+              <p className="text-xs text-gray-50 whitespace-nowrap">
+                {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
+              </p>
+            </div>
+            <Image
+              className="h-6 w-6 rounded-full object-cover"
+              width={36}
+              height={36}
+              src={createdBy?.avatar}
+              alt=""
+              title={
+                createdBy?.profile?.firstName
+                  ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+                  : (createdBy.username ?? "System")
+              }
+            />
+          </div>
+
+          <p className="text-xs text-gray-50">
+            {"Se ha creado al contacto "}
+            {metadata?.contact?.fullName && (
+              <Link
+                href={`/sales/crm/contacts/contact/${metadata?.contact?.id}?show=true`}
+                className="hover:underline cursor-pointer"
+              >
+                {metadata?.contact?.fullName}
+              </Link>
+            )}
+
+            {" a partir del prospecto."}
+          </p>
+        </Fragment>
       ) : (
-        <p className="text-xs text-gray-50">
-          {comment}
-          {", por "}
-          <span
-            className={clsx({
-              "hover:underline cursor-pointer": createdBy,
-            })}
-          >
-            {createdBy?.profile?.firstName
-              ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
-              : (createdBy.username ?? "System")}
-          </span>
-        </p>
+        <Fragment>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <p className="text-xs text-primary font-bold">Actualización</p>
+              <p className="text-xs text-gray-50 whitespace-nowrap">
+                {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
+              </p>
+            </div>
+            <Image
+              className="h-6 w-6 rounded-full object-cover"
+              width={36}
+              height={36}
+              src={createdBy?.avatar}
+              alt=""
+              title={
+                createdBy?.profile?.firstName
+                  ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+                  : (createdBy.username ?? "System")
+              }
+            />
+          </div>
+          <p className="text-xs text-gray-50">{comment}.</p>
+        </Fragment>
       )}
 
-      <p className="text-xs text-gray-50 whitespace-nowrap">
+      {/* <p className="text-xs text-gray-50 whitespace-nowrap">
         {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
-      </p>
+      </p> */}
     </div>
   );
 }

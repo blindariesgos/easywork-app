@@ -21,3 +21,5 @@ export const ClaimsContext = createContext(null);
 export const FundRecoveriesContext = createContext(null);
 export const RefundsContext = createContext(null);
 export const ImportationsContext = createContext(null);
+export const ManagementsContext = createContext(null);
+export const AccompanimentsContext = createContext(null);

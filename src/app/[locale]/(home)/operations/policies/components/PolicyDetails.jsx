@@ -16,6 +16,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { putPoliza } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
+import ReceiptEmpty from "./ReceiptEmpty";
 
 export default function PolicyDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -65,15 +66,12 @@ export default function PolicyDetails({ data, id, mutate }) {
     },
     {
       name: "Renovaciones",
-      disabled: true,
     },
     {
       name: "Siniestros",
-      disabled: true,
     },
     {
       name: "Reembolsos",
-      disabled: true,
     },
     {
       name: "Facturas",
@@ -93,11 +91,9 @@ export default function PolicyDetails({ data, id, mutate }) {
     },
     {
       name: "Programaciones",
-      disabled: true,
     },
     {
       name: "Rescate de fondos",
-      disabled: true,
     },
   ];
 
@@ -274,6 +270,25 @@ export default function PolicyDetails({ data, id, mutate }) {
 
             <TabPanel className="w-full">
               <Receipts policyId={data?.id} />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Renovaciones registradas" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Siniestros registrados" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Reembolsos registrados" />
+            </TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Programaciones registradas" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Rescate de fondos registrados" />
             </TabPanel>
           </TabPanels>
         </TabGroup>

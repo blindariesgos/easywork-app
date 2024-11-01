@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import SliderOverShord from "../../../../../../components/SliderOverShort";
 import Button from "../../../../../../components/form/Button";
 import Tag from "@/src/components/Tag";
-import { RiPencilFill } from "react-icons/ri";
 import SelectInput from "../../../../../../components/form/SelectInput";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";

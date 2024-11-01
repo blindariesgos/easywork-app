@@ -213,5 +213,41 @@
             "intermediary": "Intermediario",
             "responsible": "Responsable"
         }
+    },
+    "managements": {
+        "title": "Gestión",
+        "table": {
+            "client": "Datos de la Programacion",
+            "policy": "N° Póliza",
+            "origin": "Origen",
+            "state": "Estado de programacion",
+            "amount": "Importe",
+            "created-in": "Creado el",
+            "contact": "Cliente contratante",
+            "activities": "Actividades",
+            "not-data": "No hay programaciones"
+        },
+        "general": {
+            "title": "Datos generales de la póliza",
+            "address": "Dirección",
+            "rfc": "RFC",
+            "status": "Estado de la póliza",
+            "subbranch": "Sub-ramo",
+            "type": "Ramo",
+            "init-date": "Fecha de inicio de vigencia",
+            "expiration": "Fecha de vencimiento",
+            "coverage": "Cobertura",
+            "payment-method": "Forma de cobro",
+            "payment-frequency": "Frecuencia de pago",
+            "payment-term": "Plazo de pago",
+            "primaNeta": "Prima neta",
+            "recargoFraccionado": "Recargo de pago fraccionado",
+            "derechoPoliza": "Derecho de póliza",
+            "iva": "IVA",
+            "importePagar": "Importe a pagar",
+            "sub-agent": "Sub-agente",
+            "intermediary": "Intermediario",
+            "responsible": "Responsable"
+        }
     }
 }

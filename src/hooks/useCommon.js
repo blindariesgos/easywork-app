@@ -238,7 +238,7 @@ export const useSidebar = () => {
         {
           id: "operations:management",
           name: "Gestión",
-          href: "",
+          href: "/operations/managements",
           image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
@@ -400,7 +400,7 @@ export const useSidebar = () => {
     {
       id: "agent-management",
       name: t("common:menu:agent-management:name"),
-      href: "/",
+      href: "/agents-management",
       icon: ChevronRightIcon,
       current: false,
       iconShortBar: IdentificationIcon,
@@ -408,32 +408,37 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: t("common:menu:agent-management:accompaniment"),
-          href: "",
+          href: "/agents-management/accompaniment",
           iconShortBar: ArrowDownCircleIcon,
+          image: "/img/agentsManagement/accompaniment.svg",
         },
         {
           id: "agent-management",
           name: t("common:menu:agent-management:recruitement"),
           href: "",
           iconShortBar: UserPlusIcon,
+          image: "/img/agentsManagement/recruitement.svg",
         },
         {
           id: "agent-management",
           name: t("common:menu:agent-management:capacitations"),
           href: "",
           iconShortBar: NewspaperIcon,
+          image: "/img/agentsManagement/capacitations.svg",
         },
         {
           id: "agent-management",
           name: t("common:menu:agent-management:conections"),
           href: "",
           iconShortBar: ArrowPathIcon,
+          image: "/img/agentsManagement/conections.svg",
         },
         {
           id: "agent-management",
           name: "Reuniones y sesiones",
           href: "",
           icon: ChevronRightIcon,
+          image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,
           iconShortBar: IdentificationIcon,
           children: [
@@ -1902,6 +1907,63 @@ export const useClaimTable = () => {
   ];
   return { columnTable };
 };
+
+export const useAccompanimentsTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:accompaniments:table:agent"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:accompaniments:table:email"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:accompaniments:table:mobile"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:lastUpdate"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:manager"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:state"),
+      row: "activities",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:created-in"),
+      row: "activities",
+      check: true,
+    },
+
+  ];
+  return { columnTable };
+};
+
 export const useRefundTable = () => {
   const { t } = useTranslation();
   const columnTable = [

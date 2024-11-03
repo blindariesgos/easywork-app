@@ -42,7 +42,7 @@ const eventLocalizations = [
   { id: 5, name: "Zoom Personal", online: true },
 ];
 
-export default function EventDetails({ data }) {
+export default function EventDetails({ data, id }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const { mutate } = useCalendarContext();
@@ -205,10 +205,10 @@ export default function EventDetails({ data }) {
       repeat: repeat ?? "none",
       name,
     };
-
     try {
-      if (data) {
-        const response = await updateCalendarEvent(body, data.id);
+      if (id) {
+        const response = await updateCalendarEvent(body, id);
+        console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."

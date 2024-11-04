@@ -91,9 +91,6 @@ export default function Page() {
               res.data.id_token,
             )
               .then(() => {
-                getAllOauth(session.data.user.id).then((allOauth) => {
-                  console.log(allOauth);
-                });
                 close();
               })
               .catch(() => {

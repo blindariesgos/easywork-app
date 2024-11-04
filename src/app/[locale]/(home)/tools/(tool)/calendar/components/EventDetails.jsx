@@ -13,7 +13,7 @@ import {
   FireIcon,
 } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import ComboBox, { ComboBoxWithElement } from "./ComboBox";
 import { timezones } from "../../../../../../../lib/timezones";
@@ -48,7 +48,9 @@ export default function EventDetails({ data, id }) {
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
-  const [value, setValueText] = useState("");
+  const [value, setValueText] = useState("<p></p>");
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -205,10 +207,11 @@ export default function EventDetails({ data, id }) {
       repeat: repeat ?? "none",
       name,
     };
+    if (params.get("oauth")) body.oauth = params.get("oauth");
+    if (params.get("user")) body.user = params.get("user");
     try {
       if (id) {
         const response = await updateCalendarEvent(body, id);
-        console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
@@ -272,7 +275,8 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
-    if (data?.description) setValueText(data?.description ? data?.description : "<p></p>");
+    if (data?.description)
+      setValueText(data?.description ? data?.description : "<p></p>");
 
     const subscription = watch((data, { name }) => {
       setIsEdit(true);

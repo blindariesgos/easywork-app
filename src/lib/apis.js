@@ -472,8 +472,8 @@ export const getMails = async (idUser, page, perPage, folder, oauthId) => {
   return response;
 };
 
-export const getAllOauth = async (idUser) => {
-  const response = await axios().get(`/oauth/all/${idUser}`);
+export const getAllOauth = async (idUser, service) => {
+  const response = await axios().get(`/oauth/all/${idUser}?service=${service}`);
   return response;
 };
 

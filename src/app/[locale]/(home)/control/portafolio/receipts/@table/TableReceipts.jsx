@@ -20,10 +20,8 @@ import React, {
   useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
 import { deleteContactId, deleteReceiptById } from "@/src/lib/apis";
-import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useReceiptTable } from "../../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
@@ -38,14 +36,8 @@ import {
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useReceiptContext from "../../../../../../../context/receipts";
-import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";

@@ -75,7 +75,8 @@ export default function WebmailLayout({ children }) {
 
   useEffect(() => {
     allOauthPromise();
-    getAllOauth(session.data.user.id).then((response) => {
+    getAllOauth(session.data.user.id, "Gmail").then((response) => {
+      console.log(response);
       if (response.length === 0) {
         router.push("/tools/mails");
       }
@@ -246,7 +247,7 @@ export default function WebmailLayout({ children }) {
   }
 
   function allOauthPromise() {
-    getAllOauth(session.data.user.id).then((res) => {
+    getAllOauth(session.data.user.id, "Gmail").then((res) => {
       if (!selectOauth) {
         setSelectOauth(res[0]);
       }

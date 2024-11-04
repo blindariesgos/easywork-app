@@ -247,7 +247,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
   async function getDataNewGoogleUser() {
     try {
-      const res = await getAllOauth(session.data.user.id);
+      const res = await getAllOauth(session.data.user.id, "Gmail");
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {
       console.log(error);

@@ -48,6 +48,7 @@ export default function EventDetails({ data, id }) {
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
+  const [value, setValueText] = useState("");
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -176,7 +177,6 @@ export default function EventDetails({ data, id }) {
       endTime,
       reminderCustom,
       availability,
-      description,
       color,
       important,
       isPrivate,
@@ -198,7 +198,7 @@ export default function EventDetails({ data, id }) {
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
       availability: availability ? availability : availabilityOptions[0].id,
-      description: description ?? "<p></p>",
+      description: value ?? "<p></p>",
       color: color ?? "#141052",
       important: !!important,
       private: !!isPrivate,
@@ -272,6 +272,7 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
+    if (data?.description) setValueText(data?.description ? data?.description : "<p></p>");
 
     const subscription = watch((data, { name }) => {
       setIsEdit(true);
@@ -283,7 +284,7 @@ export default function EventDetails({ data, id }) {
   return (
     <form
       onSubmit={handleSubmit(handleSubmitForm)}
-      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] max-w-[calc(80vw)] w-full"
+      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] w-full flex-end"
     >
       {loading && <LoaderSpinner />}
       <div
@@ -652,10 +653,10 @@ export default function EventDetails({ data, id }) {
                         quillRef={quillRef}
                         className="w-full"
                         setValue={(e) => {
-                          setValue("description", e);
+                          setValueText(e);
                         }}
-                        value={watch("description") ?? ""}
-                        disabled={!isEdit}
+                        value={value}
+                        // disabled={!isEdit}
                       />
                     </div>
                   </div>

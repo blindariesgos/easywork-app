@@ -408,7 +408,7 @@ export const googleCallback = async (data, state) => {
     expires_in: data.expires_in,
     userId: state,
     usergoogle_id: data.usergoogle_id,
-    service: 1,
+    service: data.service,
     family_name: data.family_name,
     given_name: data.given_name,
     email: data.email,

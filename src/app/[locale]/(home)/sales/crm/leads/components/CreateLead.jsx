@@ -323,17 +323,17 @@ export default function CreateLead({ lead, id, update }) {
             >
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("leads:lead:lead-data")}</h1>
-                {lead &&
-                  !lead.cancelled &&
-                  !/Positivo/gi.test(lead?.stage?.name) && (
-                    <button
-                      type="button"
-                      disabled={!id}
-                      onClick={() => setIsEdit(!isEdit)}
-                    >
-                      <PencilIcon className="h-6 w-6 text-primary" />
-                    </button>
-                  )}
+                {lead && (
+                  // !lead.cancelled &&
+                  // !/Positivo/gi.test(lead?.stage?.name) &&
+                  <button
+                    type="button"
+                    disabled={!id}
+                    onClick={() => setIsEdit(!isEdit)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-primary" />
+                  </button>
+                )}
               </div>
               <div className="flex justify-center">
                 {isEdit ? (

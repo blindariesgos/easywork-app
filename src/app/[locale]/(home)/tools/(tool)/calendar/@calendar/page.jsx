@@ -7,16 +7,19 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import esLocale from "@fullcalendar/core/locales/es";
+import { useSession } from "next-auth/react";
 import clsx from "clsx";
 import { RadioGroup, Label, Radio } from "@headlessui/react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useCalendarContext from "../../../../../../../context/calendar";
+import { getAllOauth } from "../../../../../../../lib/apis";
 import { useRouter, useSearchParams } from "next/navigation";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 
 export default function CalendarHome({ children }) {
+  const session = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
@@ -24,6 +27,7 @@ export default function CalendarHome({ children }) {
   const calendarRef = useRef(null);
   const router = useRouter();
   const [calendarView, setCalendarView] = useState("timeGridDay");
+  const [selectOauth, setSelectOauth] = useState(null);
   const calendarViews = [
     {
       name: t("tools:calendar:day"),
@@ -44,6 +48,12 @@ export default function CalendarHome({ children }) {
   ];
 
   useEffect(() => {
+    getAllOauth(session.data.user.id, "Google Calendar").then((res) => {
+      setSelectOauth(res[0]);
+    });
+  }, []);
+
+  useEffect(() => {
     const changeView = () => {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.changeView(calendarView);
@@ -62,14 +72,14 @@ export default function CalendarHome({ children }) {
   };
 
   const handleClickEvent = (info) => {
-    router.push(`/tools/calendar/event/${info.event.id}?show=true`);
+    router.push(`/tools/calendar/event/${info.event.id}?show=true&oauth=${selectOauth.id}&user=${selectOauth.userId}`);
   };
 
   return (
     <div className="flex flex-col flex-grow">
-      <CalendarHeader />
+      <CalendarHeader selectOauth={selectOauth} />
       <CalendarConfig />
-      <CalendarConnect />
+      <CalendarConnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
       <CalendarDisconnect />
       <div className="h-full">
         <div className="flex-none items-center justify-between  py-4 flex">

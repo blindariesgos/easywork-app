@@ -2,22 +2,31 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { ControlContext } from "..";
-import { useTasks } from "../../lib/api/hooks/tasks";
+import { usePortfolioControl } from "../../lib/api/hooks/policies";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../app";
 import { useSession } from "next-auth/react";
+import { getAddListContacts, getPortafolioControlResume } from "@/src/lib/apis";
 
 export default function ControlContextProvider({ children }) {
-  const session = useSession()
-  const { t } = useTranslation()
+  const session = useSession();
+  const { t } = useTranslation();
   const { lists } = useAppContext();
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useState({});
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  const { tasks, isLoading, isError, mutate } = useTasks({ page, limit, filters, userId: session?.data?.user?.id });
-  const [displayFilters, setDisplayFilters] = useState({})
+  const [groupKey, setGroupKey] = useState("urgente_30");
+  const { data, isLoading, isError, mutate } = usePortfolioControl({
+    filters,
+    config: {
+      page,
+      limit,
+    },
+    groupKey,
+  });
+  const [displayFilters, setDisplayFilters] = useState({});
   const [filterFields, setFilterFields] = useState();
 
   useEffect(() => {
@@ -29,105 +38,104 @@ export default function ControlContextProvider({ children }) {
         options: lists?.users,
         type: "select",
         check: true,
-        code: "user",
+        code: "responsibleId",
       },
       {
         id: 2,
         name: t("control:portafolio:control:form:currency"),
         type: "select",
         check: false,
-        code: "currency",
+        code: "currencyId",
         options: [
           {
             name: "Todas las monedas",
-            value: "ALL",
-            id: 1
+            value: "",
+            id: 1,
           },
-          {
-            name: "Peso",
-            value: "PESO",
-            id: 2
-          },
-          {
-            name: "Dolar",
-            value: "DOLLAR",
-            id: 3
-          }
-        ]
+          ...lists?.receipts?.currencies,
+        ],
       },
-    ])
+    ]);
 
     setFilters({
-      user: lists?.users[0]?.id,
-      currency: "ALL"
-    })
+      responsibleId: lists?.users[0]?.id,
+      currencyId: "",
+    });
     setDisplayFilters([
       {
         id: 1,
         name: t("control:portafolio:control:form:agent"),
         options: lists?.users,
         type: "select",
-        value: lists?.users[0]?.id
+        value: lists?.users[0]?.id,
+        code: "responsibleId",
       },
       {
         id: 2,
         name: t("control:portafolio:control:form:currency"),
-        code: "currency",
+        code: "currencyId",
         type: "select",
         options: [
           {
             name: "Todas las monedas",
             value: "ALL",
-            id: 1
+            id: "",
           },
-          {
-            name: "Peso",
-            value: "PESO",
-            id: 2
-          },
-          {
-            name: "Dolar",
-            value: "DOLLAR",
-            id: 3
-          }
+          ...lists?.receipts?.currencies,
         ],
-        value: 1
-      }])
-  }, [lists?.users])
+        value: "",
+      },
+    ]);
+  }, [lists]);
+
+  useEffect(() => {
+    console.log({ lists });
+  }, [lists?.receipts]);
 
   useEffect(() => {
     if (Object.keys(filters).length == 0 && filterFields) {
-      setFilterFields(filterFields?.map(field => ({
-        ...field,
-        check: field.code === "role"
-      })))
+      setFilterFields(
+        filterFields?.map((field) => ({
+          ...field,
+          check: field.code === "role",
+        }))
+      );
     }
-  }, [filters])
+  }, [filters]);
 
   useEffect(() => {
-    setPage(1)
-  }, [limit])
+    setPage(1);
+  }, [limit]);
+
+  const getTotalsByState = async () => {
+    const response = await getPortafolioControlResume().catch((error) => error);
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaa", response);
+  };
+
+  useEffect(() => {
+    getTotalsByState();
+  }, []);
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
       selectedTasks,
       setSelectedTasks,
-      tasks,
+      data,
       isLoading,
       isError,
       page,
@@ -141,11 +149,12 @@ export default function ControlContextProvider({ children }) {
       setFilterFields,
       displayFilters,
       setDisplayFilters,
-      removeFilter
+      removeFilter,
+      setGroupKey,
     }),
     [
       selectedTasks,
-      tasks,
+      data,
       isLoading,
       isError,
       mutate,
@@ -157,7 +166,7 @@ export default function ControlContextProvider({ children }) {
     ]
   );
 
-  return <ControlContext.Provider value={values}>
-    {children}
-  </ControlContext.Provider>;
+  return (
+    <ControlContext.Provider value={values}>{children}</ControlContext.Provider>
+  );
 }

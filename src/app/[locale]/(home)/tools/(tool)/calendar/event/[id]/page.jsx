@@ -1,6 +1,6 @@
 "use client";
 import SlideOver from "../../../../../../../../components/SlideOver";
-import React from "react";
+import React, { useEffect } from "react";
 import EventDetails from "../../components/EventDetails";
 import { useEvent } from "../../../../../../../../lib/api/hooks/calendar";
 import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
@@ -20,7 +20,7 @@ export default function Page({ params: { id } }) {
 
   return (
     <SlideOver colorTag="bg-easywork-main" samePage={`/tools/calendar`}>
-      <EventDetails data={data} />
+      <EventDetails data={data} id={id} />
     </SlideOver>
   );
 }

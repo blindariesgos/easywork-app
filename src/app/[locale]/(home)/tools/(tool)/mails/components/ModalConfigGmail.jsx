@@ -106,7 +106,6 @@ export default function ModalConfigGmail({ fetchUserData }) {
   };
 
   const updateConfig = async () => {
-    console.log(configData);
     let data = {
       contactLeadDistribution: configData.contactLeadDistribution,
       countExtractMessagesDays: configData.countExtractMessagesDays
@@ -222,6 +221,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
   }
 
   async function openWindowOauth() {
+    localStorage.setItem("service", "Gmail");
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
     );
@@ -234,6 +234,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
     const checkWindowClosed = setInterval(async function () {
       if (oauthWindow.closed && params.get("configemail")) {
         clearInterval(checkWindowClosed);
+        if (localStorage.getItem("service")) localStorage.removeItem("service");
         if (localStorage.getItem("connectBuzon")) {
           toast.error("Este email ya está conectado");
           localStorage.removeItem("connectBuzon");
@@ -246,7 +247,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
   async function getDataNewGoogleUser() {
     try {
-      const res = await getAllOauth(session.data.user.id);
+      const res = await getAllOauth(session.data.user.id, "Gmail");
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {
       console.log(error);
@@ -286,7 +287,8 @@ export default function ModalConfigGmail({ fetchUserData }) {
                 <h1 className="text-gray-400 font-medium text-lg ml-1">
                   Gmail
                 </h1>
-                {selectOauth || userData && params.get("isEdit") === "true" ? (
+                {selectOauth ||
+                (userData && params.get("isEdit") === "true") ? (
                   <div className="flex ml-2 items-center">
                     <Image
                       src={

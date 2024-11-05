@@ -424,7 +424,7 @@ export const googleCallback = async (data, state) => {
     expires_in: data.expires_in,
     userId: state,
     usergoogle_id: data.usergoogle_id,
-    service: 1,
+    service: data.service,
     family_name: data.family_name,
     given_name: data.given_name,
     email: data.email,
@@ -488,8 +488,8 @@ export const getMails = async (idUser, page, perPage, folder, oauthId) => {
   return response;
 };
 
-export const getAllOauth = async (idUser) => {
-  const response = await axios().get(`/oauth/all/${idUser}`);
+export const getAllOauth = async (idUser, service) => {
+  const response = await axios().get(`/oauth/all/${idUser}?service=${service}`);
   return response;
 };
 

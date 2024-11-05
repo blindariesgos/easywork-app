@@ -38,7 +38,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import useReceiptContext from "../../../../../../../context/receipts";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
@@ -53,6 +53,8 @@ export default function TableReceipts() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const {
     selectedContacts: selectedReceipts,
     setSelectedContacts: setSelectedReceipts,
@@ -98,6 +100,13 @@ export default function TableReceipts() {
     onCloseAlertDialog();
   };
 
+  const handleShowReceipt = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("receipt", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const masiveActions = [
     // {
     //   id: 1,
@@ -121,8 +130,7 @@ export default function TableReceipts() {
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        router.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
+      handleClick: (id) => handleShowReceipt(id),
     },
     {
       name: "Planificar",
@@ -470,11 +478,14 @@ export default function TableReceipts() {
                                     </button>
                                   </div>
                                 ) : column.row === "title" ? (
-                                  <Link
-                                    href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
+                                  <p
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      handleShowReceipt(receipt.id)
+                                    }
                                   >
                                     {receipt[column.row]}
-                                  </Link>
+                                  </p>
                                 ) : column.row === "client" ? (
                                   <Link
                                     href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}

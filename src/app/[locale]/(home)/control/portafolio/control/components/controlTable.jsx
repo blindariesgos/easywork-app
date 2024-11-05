@@ -31,7 +31,12 @@ import { Bars3Icon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
 import useCrmContext from "@/src/context/crm";
-import { useRouter } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import useAppContext from "@/src/context/app";
 import { formatToCurrency } from "@/src/utils/formatters";
 import moment from "moment";
@@ -41,7 +46,8 @@ export default function ControlTable({ name }) {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
     useControlContext();
   const { lists } = useAppContext();
-
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const checkbox = useRef();
@@ -108,11 +114,17 @@ export default function ControlTable({ name }) {
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedReceipts]);
 
+  const handleShowReceipt = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("receipt", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        router.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
+      handleClick: (id) => handleShowReceipt(id),
     },
     {
       name: "Planificar",
@@ -411,11 +423,14 @@ export default function ControlTable({ name }) {
                                           </button>
                                         </div>
                                       ) : column.row === "title" ? (
-                                        <Link
-                                          href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
+                                        <p
+                                          onClick={() =>
+                                            handleShowReceipt(receipt.id)
+                                          }
+                                          className="cursor-pointer"
                                         >
                                           {receipt[column.row]}
-                                        </Link>
+                                        </p>
                                       ) : column.row === "client" ? (
                                         <Link
                                           href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}

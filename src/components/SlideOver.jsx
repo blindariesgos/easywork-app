@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -8,7 +8,7 @@ import {
 } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function SlideOver({
   children,
@@ -17,16 +17,17 @@ export default function SlideOver({
   previousModalPadding,
   subLabelTag,
   className,
+  remove,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
-  const [taskId, setTaskId] = useState(null);
-  const [contactId, setContactId] = useState(null);
-  const [previousPage, setPreviousPage] = useState(null);
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const pathname = usePathname();
+  const params = useMemo(() => {
+    return new URLSearchParams(searchParams);
+  }, [searchParams]);
   // Nuevo estado para controlar la transición
   const [show, setShow] = useState(false);
 
@@ -122,7 +123,13 @@ export default function SlideOver({
 
   const closeModal = () => {
     setShow(false);
-    params.set("show", "false");
+    if (remove) {
+      setTimeout(() => {
+        params.delete("show");
+        params.delete(remove);
+        router.replace(`${pathname}?${params.toString()}`);
+      }, 301);
+    }
   };
 
   return (
@@ -130,7 +137,7 @@ export default function SlideOver({
       show={show}
       as={Fragment}
       afterLeave={() => {
-        router.back();
+        if (!remove) router.back();
         // if (taskId) {
         //   router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
         //   return;

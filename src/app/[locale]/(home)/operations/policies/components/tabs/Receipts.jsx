@@ -13,29 +13,21 @@ import { useReceiptsByPolicyId } from "@/src/lib/api/hooks/receipts";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { formatDate } from "@/src/utils/getFormatDate";
 import moment from "moment";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
   const { data, isLoading } = useReceiptsByPolicyId(policyId);
   const [selectedPolizas, setSelectedPolizas] = useState([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  // useLayoutEffect(() => {
-  //   if (checkbox.current) {
-  //     const isIndeterminate =
-  //       selectedPolizas &&
-  //       selectedPolizas.length > 0 &&
-  //       selectedPolizas.length < receipts.length;
-  //     setChecked(selectedPolizas?.length === receipts?.length);
-  //     setIndeterminate(isIndeterminate);
-  //     checkbox.current.indeterminate = isIndeterminate;
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedPolizas]);
-
-  // function toggleAll() {
-  //   setSelectedPolizas(checked || indeterminate ? [] : receipts);
-  //   setChecked(!checked && !indeterminate);
-  //   setIndeterminate(false);
-  // }
+  const handleShowReceipt = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("receipt", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   if (isLoading) {
     return <LoadingSpinnerSmall />;
@@ -230,13 +222,12 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     />
                   </td>
                   <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
-                    <Link
-                      href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
+                    <div
+                      className="flex gap-2 px-2 hover:text-primary"
+                      onClick={() => handleShowReceipt(receipt.id)}
                     >
-                      <div className="flex gap-2 px-2 hover:text-primary">
-                        {receipt.title}
-                      </div>
-                    </Link>
+                      {receipt.title}
+                    </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
                     {receipt.status}

@@ -89,7 +89,7 @@ const AddDocumentDialog = ({
       {/* Full-screen container to center the panel */}
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
         {/* The actual dialog panel  */}
-        <DialogPanel className="max-w-lg space-y-4 bg-white px-12 py-6 rounded-xl">
+        <DialogPanel className="max-w-lg w-full space-y-4 bg-white px-12 py-6 rounded-xl">
           <DialogTitle className="">{title}</DialogTitle>
           <Description>
             <div className="text-center">
@@ -125,7 +125,10 @@ const AddDocumentDialog = ({
           <div className="flex gap-4 justify-center">
             <Button
               buttonStyle="secondary"
-              onclick={() => setIsOpen(false)}
+              onclick={() => {
+                setIsOpen(false);
+                setFile(null);
+              }}
               label={t("common:buttons:cancel")}
               className="px-2 py-1"
             />

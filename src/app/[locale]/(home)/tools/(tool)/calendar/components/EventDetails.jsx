@@ -13,7 +13,7 @@ import {
   FireIcon,
 } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import ComboBox, { ComboBoxWithElement } from "./ComboBox";
 import { timezones } from "../../../../../../../lib/timezones";
@@ -42,12 +42,15 @@ const eventLocalizations = [
   { id: 5, name: "Zoom Personal", online: true },
 ];
 
-export default function EventDetails({ data }) {
+export default function EventDetails({ data, id }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
+  const [value, setValueText] = useState("<p></p>");
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -176,7 +179,6 @@ export default function EventDetails({ data }) {
       endTime,
       reminderCustom,
       availability,
-      description,
       color,
       important,
       isPrivate,
@@ -198,17 +200,18 @@ export default function EventDetails({ data }) {
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
       availability: availability ? availability : availabilityOptions[0].id,
-      description: description ?? "<p></p>",
+      description: value ?? "<p></p>",
       color: color ?? "#141052",
       important: !!important,
       private: !!isPrivate,
       repeat: repeat ?? "none",
       name,
     };
-
+    if (params.get("oauth")) body.oauth = params.get("oauth");
+    if (params.get("user")) body.user = params.get("user");
     try {
-      if (data) {
-        const response = await updateCalendarEvent(body, data.id);
+      if (id) {
+        const response = await updateCalendarEvent(body, id);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
@@ -272,6 +275,8 @@ export default function EventDetails({ data }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
+    if (data?.description)
+      setValueText(data?.description ? data?.description : "<p></p>");
 
     const subscription = watch((data, { name }) => {
       setIsEdit(true);
@@ -283,7 +288,7 @@ export default function EventDetails({ data }) {
   return (
     <form
       onSubmit={handleSubmit(handleSubmitForm)}
-      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] max-w-[calc(80vw)] w-full"
+      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] w-full flex-end"
     >
       {loading && <LoaderSpinner />}
       <div
@@ -652,10 +657,10 @@ export default function EventDetails({ data }) {
                         quillRef={quillRef}
                         className="w-full"
                         setValue={(e) => {
-                          setValue("description", e);
+                          setValueText(e);
                         }}
-                        value={watch("description") ?? ""}
-                        disabled={!isEdit}
+                        value={value}
+                        // disabled={!isEdit}
                       />
                     </div>
                   </div>

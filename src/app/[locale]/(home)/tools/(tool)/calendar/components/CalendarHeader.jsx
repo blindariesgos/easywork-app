@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useCommon } from "../../../../../../../hooks/useCommon";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function CalendarHeader() {
+export default function CalendarHeader({ selectOauth }) {
   const { calendarView, setCalendarView } = useAppContext();
   const { calendarViews } = useCommon();
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export default function CalendarHeader() {
         <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
           {t("tools:calendar:name")}
         </h1>
-        <CreateEventButton />
+        <CreateEventButton selectOauth={selectOauth} />
         <div className="flex-grow">
           <label htmlFor="search" className="sr-only">
             {t("tools:calendar:search")}

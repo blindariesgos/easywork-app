@@ -1,22 +1,19 @@
 "use client";
 import Image from "next/image";
-import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import useAppContext from "../../../../../../../context/app/index";
 import { useRouter, useSearchParams } from "next/navigation";
-import { saveFolders } from "../../../../../../../lib/apis";
-import { getTokenGoogle } from "../../../../../../../lib/apis";
-import Tag from "../../../../../../../components/Tag";
+import { toast } from "react-toastify";
 import {
-  EllipsisHorizontalIcon,
   CalendarDaysIcon,
   CheckCircleIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/20/solid";
+import SliderOverShort from "../../../../../../../components/SliderOverShort";
+import Tag from "../../../../../../../components/Tag";
 
-export default function CalendarConnect() {
+export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
@@ -28,16 +25,49 @@ export default function CalendarConnect() {
     replace(`/tools/calendar?${params.toString()}`);
   };
 
-
   const closeConfig = () => {
     params.delete("connect");
     const newSearch = params.toString();
     router.push(`?${newSearch}`, undefined, { shallow: true });
   };
 
+  async function openWindowOauth() {
+    localStorage.setItem("service", "Google Calendar");
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
+    );
+    const oauthWindow = window.open(
+      response.data.url,
+      "_blank",
+      "width=500, height=500"
+    );
+
+    const checkWindowClosed = setInterval(async function () {
+      if (oauthWindow.closed && params.get("connect")) {
+        clearInterval(checkWindowClosed);
+        if (localStorage.getItem("service")) localStorage.removeItem("service");
+        if (localStorage.getItem("connectBuzon")) {
+          toast.error("Este email ya está conectado");
+          localStorage.removeItem("connectBuzon");
+        } else {
+          getDataNewGoogleUser();
+        }
+      }
+    }, 1000);
+  }
+
+  async function getDataNewGoogleUser() {
+    try {
+      const res = await getAllOauth(session.data.user.id, "Google Calendar");
+      setSelectOauth(res.slice(-1).pop());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <SliderOverShort openModal={params.get("connect")}>
-      <Tag onclick={() => closeConfig()} className="bg-green-500" />
+      <Tag onclick={() => closeConfig()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 text-lg flex items-center">
           <CalendarDaysIcon className="h-14 w-14 text-easywork-main" />
@@ -61,18 +91,35 @@ export default function CalendarConnect() {
                   alt=""
                 />
               </div>
-              <div>
+              <div className="flex items-center">
                 <div className="mb-3 p-1">
                   <h1 className="text-sm">Calendario de Google</h1>
-                  <p className="text-xs">Hace 6 minutos atrás</p>
+                  {/* <p className="text-xs">Hace 6 minutos atrás</p> */}
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end">
-              <CheckCircleIcon className="h-4 w-4 text-green-500" />
-              <p className="text-xs ml-2">Contectado</p>
-              <Cog6ToothIcon className="ml-2 h-4 w-4 text-gray-50 cursor-pointer" onClick={() => {openDisconnect()}} />
-            </div>
+            {!selectOauth ? (
+              <div className="flex items-center justify-end">
+                <button
+                  onClick={() => openWindowOauth()}
+                  type="button"
+                  className="rounded-md bg-primary px-3 mr-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Conectar
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-end">
+                <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                <p className="text-xs ml-2">Contectado</p>
+                <Cog6ToothIcon
+                  className="ml-2 h-4 w-4 text-gray-50 cursor-pointer"
+                  onClick={() => {
+                    openDisconnect();
+                  }}
+                />
+              </div>
+            )}
           </div>
           <div className="bg-white p-2 m-3 flex justify-between">
             <div className="flex">
@@ -85,7 +132,7 @@ export default function CalendarConnect() {
                   alt=""
                 />
               </div>
-              <div>
+              <div className="flex items-center">
                 <div className="mb-3 p-1">
                   <h1 className="text-sm">Calendario de Office365</h1>
                   <p className="text-xs"></p>
@@ -112,7 +159,7 @@ export default function CalendarConnect() {
                   alt=""
                 />
               </div>
-              <div>
+              <div className="flex items-center">
                 <div className="mb-3 p-1">
                   <h1 className="text-sm">Calendario de iCloud</h1>
                   <p className="text-xs"></p>

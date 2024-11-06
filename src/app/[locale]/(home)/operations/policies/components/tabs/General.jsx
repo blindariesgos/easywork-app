@@ -18,22 +18,23 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
 import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 
 export default function PolicyDetails({
   data,
   id,
   mutate: updatePolicy,
-  headerHeight,
+  edit,
 }) {
   const { t } = useTranslation();
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(!!edit);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
   const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const pathname = usePathname();
   const router = useRouter();
 
   const schema = Yup.object().shape({
@@ -130,14 +131,28 @@ export default function PolicyDetails({
         return;
       }
       setIsEdit(false);
-      router.back();
+      setIsEdit(false);
       updatePolicy();
       toast.success("Poliza actualizada correctamente.");
       mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
+
+      if (params.get("editPolicy")) {
+        params.delete("editPolicy");
+        router.replace(`${pathname}?${params.toString()}`);
+      }
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
       );
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEdit(false);
+
+    if (params.get("editPolicy")) {
+      params.delete("editPolicy");
+      router.replace(`${pathname}?${params.toString()}`);
     }
   };
 
@@ -501,7 +516,7 @@ export default function PolicyDetails({
             label={t("common:buttons:cancel")}
             disabled={loading}
             buttonStyle="secondary"
-            onclick={() => router.back()}
+            onclick={handleCancelEdit}
             className="px-3 py-2"
           />
         </div>

@@ -9,16 +9,11 @@ import { FaChevronDown } from "react-icons/fa";
 import useControlContext from "@/src/context/control";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 
-const currencies = [
-  { name: "Todas las monedas", value: "ALL" },
-  { name: "Peso", value: "PESO" },
-  { name: "Dolar", value: "DOLLAR" },
-];
-
 const cards = (t) => [
   {
     name: t("control:portafolio:control:cards:overdue"),
     id: "urgente_30",
+    key: "urgente_30_dias",
     color: "#FFEB04",
     color: "#b60f0f",
     amount: "$0,00",
@@ -27,6 +22,7 @@ const cards = (t) => [
   {
     name: t("control:portafolio:control:cards:delay"),
     id: "urgente_15",
+    key: "urgente_15_dias",
     color: "#A9EA44",
     color: "#b60f0f",
     amount: "$0,00",
@@ -35,6 +31,7 @@ const cards = (t) => [
   {
     name: t("control:portafolio:control:cards:urgent"),
     id: "urgente_7",
+    key: "urgente_7_dias",
     color: "#86BEDF",
     color: "#b60f0f",
     amount: "$0,00",
@@ -75,6 +72,7 @@ const cards = (t) => [
   {
     name: t("control:portafolio:control:cards:trash"),
     id: "basura_45",
+    key: "basura_45_dias",
     color: "#AF8764",
     color: "#8D9194",
     amount: "$0,00",
@@ -83,6 +81,7 @@ const cards = (t) => [
   {
     name: t("control:portafolio:control:cards:trash-more"),
     id: "basura_60",
+    key: "basura_60_dias",
     color: "#b60f0f",
     color: "#8D9194",
     amount: "$0,00",
@@ -91,7 +90,7 @@ const cards = (t) => [
 ];
 
 const Control = () => {
-  const { setGroupKey, isLoading } = useControlContext();
+  const { setGroupKey, isLoading, totalsByStage } = useControlContext();
   const { t } = useTranslation();
   const [cardSelected, setCardSelected] = useState(cards(t)[0]);
 
@@ -127,7 +126,9 @@ const Control = () => {
                           />
                           <p className="text-sm">{card.name}</p>
                           <div className="w-full">
-                            <p className="text-4xl text-right">{card.value}</p>
+                            <p className="text-4xl text-right">
+                              {totalsByStage[card.key ?? card.id]}
+                            </p>
                             <p className="text-sm text-right">{card.amount}</p>
                           </div>
                         </Radio>

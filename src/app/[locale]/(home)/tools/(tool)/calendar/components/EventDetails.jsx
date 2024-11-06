@@ -27,7 +27,11 @@ import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import SelectInput from "@/src/components/form/SelectInput";
 import TextEditor from "@/src/components/TextEditor";
 import RadioGroupColors from "./RadioGroupColors";
-import { addCalendarEvent, updateCalendarEvent } from "@/src/lib/apis";
+import {
+  addCalendarEvent,
+  updateCalendarEvent,
+  deleteCalendarEvent,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import useCalendarContext from "@/src/context/calendar";
@@ -284,6 +288,16 @@ export default function EventDetails({ data, id }) {
 
     return () => subscription.unsubscribe();
   }, [data]);
+
+  const deleteEvent = () => {
+    try {
+      deleteCalendarEvent(id);
+      toast.success("Evento eliminado");
+      router.push(`/tools/calendar`);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
 
   return (
     <form
@@ -798,6 +812,15 @@ export default function EventDetails({ data, id }) {
           >
             {t("common:buttons:cancel")}
           </button>
+          {data && (
+            <button
+              type="button"
+              className="inline-flex ml-4 justify-center rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              onClick={() => deleteEvent()}
+            >
+              Eliminar
+            </button>
+          )}
         </div>
       )}
     </form>

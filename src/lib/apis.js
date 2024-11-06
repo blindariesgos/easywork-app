@@ -454,9 +454,14 @@ export const getTokenGoogle = async (userId, oauthId) => {
   return response;
 };
 
-export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
+export const deleteTokenGoogle = async (
+  userId,
+  oauthId,
+  refreshtoken,
+  fromCalendar
+) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`
   );
   return response;
 };
@@ -555,6 +560,13 @@ export const addCalendarEvent = async (body) => {
 export const updateCalendarEvent = async (body, eventId) => {
   const response = await axios()
     .put(`/calendar/events/${eventId}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const deleteCalendarEvent = async (eventId) => {
+  const response = await axios()
+    .delete(`/calendar/events/${eventId}`)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

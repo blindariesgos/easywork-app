@@ -78,9 +78,9 @@ export default function CalendarHome({ children }) {
   return (
     <div className="flex flex-col flex-grow">
       <CalendarHeader selectOauth={selectOauth} />
-      <CalendarConfig />
+      <CalendarConfig selectOauth={selectOauth} />
       <CalendarConnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
-      <CalendarDisconnect />
+      <CalendarDisconnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
       <div className="h-full">
         <div className="flex-none items-center justify-between  py-4 flex">
           <div className="flex gap-2 items-center">

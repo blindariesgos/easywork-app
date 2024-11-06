@@ -49,7 +49,6 @@ const Page = () => {
         <ActiveFiltersDrawer
           displayFilters={displayFilters}
           removeFilter={removeFilter}
-          notRemove
         />
       </div>
       <Control />

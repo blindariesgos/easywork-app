@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/20/solid";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import Tag from "../../../../../../../components/Tag";
+import { getAllOauth } from "../../../../../../../lib/apis";
 
 export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   async function getDataNewGoogleUser() {
     try {
       const res = await getAllOauth(session.data.user.id, "Google Calendar");
+      console.log(res);
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {
       console.log(error);

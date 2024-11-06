@@ -29,6 +29,7 @@ import Button from "@/src/components/form/Button";
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import SubTaskTable from "./components/SubTaskTable";
+import CrmItems from "../../components/CrmItems";
 
 export default function TaskView({ id, mutateTask, task }) {
   const { lists } = useAppContext();
@@ -205,11 +206,18 @@ export default function TaskView({ id, mutateTask, task }) {
                   />
                 </div>
                 {/* CRM */}
-                {task?.crm?.length > 0 && (
+                {/* {task?.crm?.length > 0 && (
                   <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
                     {task.crm.map((info) => {
                       return getCMRView(info);
                     })}
+                  </div>
+                )} */}
+                {task?.crm?.length > 0 && (
+                  <div className="flex justify-end">
+                    <div className="w-full sm:w-2/3 lg:w-1/2 2xl:w-1/3 flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
+                      <CrmItems conections={task.crm} />
+                    </div>
                   </div>
                 )}
                 {task.parentTask && (

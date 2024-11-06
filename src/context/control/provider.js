@@ -18,6 +18,16 @@ export default function ControlContextProvider({ children }) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [groupKey, setGroupKey] = useState("urgente_30");
+  const [totalsByStage, setTotalByStage] = useState({
+    urgente_30: 0,
+    urgente_15: 0,
+    urgente_7: 0,
+    atencion_media: 0,
+    a_tiempo: 0,
+    cobrados: 0,
+    basura_45: 0,
+    basura_60: 0,
+  });
   const { data, isLoading, isError, mutate } = usePortfolioControl({
     filters,
     config: {
@@ -28,7 +38,24 @@ export default function ControlContextProvider({ children }) {
   });
   const [displayFilters, setDisplayFilters] = useState({});
   const [filterFields, setFilterFields] = useState();
-
+  const defaultFilterFields = [
+    {
+      id: 1,
+      name: t("control:portafolio:control:form:agent"),
+      options: lists?.users,
+      type: "select",
+      check: true,
+      code: "responsibleId",
+    },
+    {
+      id: 2,
+      name: t("control:portafolio:control:form:currency"),
+      type: "select",
+      check: false,
+      code: "currencyId",
+      options: lists?.receipts?.currencies,
+    },
+  ];
   useEffect(() => {
     if (!lists?.users) return;
     setFilterFields([
@@ -44,72 +71,33 @@ export default function ControlContextProvider({ children }) {
         id: 2,
         name: t("control:portafolio:control:form:currency"),
         type: "select",
-        check: false,
+        check: true,
         code: "currencyId",
-        options: [
-          {
-            name: "Todas las monedas",
-            value: "",
-            id: 1,
-          },
-          ...lists?.receipts?.currencies,
-        ],
-      },
-    ]);
-
-    setFilters({
-      responsibleId: lists?.users[0]?.id,
-      currencyId: "",
-    });
-    setDisplayFilters([
-      {
-        id: 1,
-        name: t("control:portafolio:control:form:agent"),
-        options: lists?.users,
-        type: "select",
-        value: lists?.users[0]?.id,
-        code: "responsibleId",
-      },
-      {
-        id: 2,
-        name: t("control:portafolio:control:form:currency"),
-        code: "currencyId",
-        type: "select",
-        options: [
-          {
-            name: "Todas las monedas",
-            value: "ALL",
-            id: "",
-          },
-          ...lists?.receipts?.currencies,
-        ],
-        value: "",
+        options: lists?.receipts?.currencies,
       },
     ]);
   }, [lists]);
-
-  useEffect(() => {
-    console.log({ lists });
-  }, [lists?.receipts]);
-
-  useEffect(() => {
-    if (Object.keys(filters).length == 0 && filterFields) {
-      setFilterFields(
-        filterFields?.map((field) => ({
-          ...field,
-          check: field.code === "role",
-        }))
-      );
-    }
-  }, [filters]);
 
   useEffect(() => {
     setPage(1);
   }, [limit]);
 
   const getTotalsByState = async () => {
-    const response = await getPortafolioControlResume().catch((error) => error);
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaa", response);
+    const response = await getPortafolioControlResume().catch((error) => ({
+      hasError: true,
+      error,
+    }));
+    if (response.hasError) {
+      console.log(response.error.message);
+      return;
+    }
+    console.log("totalsByStage", response);
+    setTotalByStage(
+      response.reduce(
+        (acc, item) => ({ ...acc, [item.key]: item?.count ?? 0 }),
+        totalsByStage
+      )
+    );
   };
 
   useEffect(() => {
@@ -151,6 +139,8 @@ export default function ControlContextProvider({ children }) {
       setDisplayFilters,
       removeFilter,
       setGroupKey,
+      totalsByStage,
+      defaultFilterFields,
     }),
     [
       selectedTasks,
@@ -163,6 +153,7 @@ export default function ControlContextProvider({ children }) {
       filters,
       filterFields,
       displayFilters,
+      totalsByStage,
     ]
   );
 

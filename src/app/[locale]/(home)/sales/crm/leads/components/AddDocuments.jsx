@@ -17,6 +17,9 @@ const AddDocuments = ({ leadId }) => {
     { name: t("leads:add:quote"), type: "cotizacion", accept: null },
     { name: t("leads:add:rfc"), type: "documentos", accept: null },
     { name: t("leads:add:profile"), type: "perfil", accept: null },
+    { name: t("leads:add:medica"), type: "medica", accept: null },
+    { name: t("leads:add:solicitud"), type: "solicitud", accept: null },
+    { name: t("leads:add:address"), type: "domicilio", accept: null },
     { name: t("leads:add:policy"), type: "poliza", accept: ".pdf" },
   ];
 

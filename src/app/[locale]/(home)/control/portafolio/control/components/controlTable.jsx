@@ -451,7 +451,7 @@ export default function ControlTable({ name }) {
                                         </div>
                                       ) : column.row === "paymentAmount" ? (
                                         <p className="text-center">
-                                          {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? "MXN"} ${formatToCurrency(receipt?.paymentAmount)}`}
+                                          {`${receipt?.currency?.symbol ?? "$"} ${formatToCurrency(receipt?.paymentAmount)}`}
                                         </p>
                                       ) : column.row === "createdAt" ||
                                         column.row === "dueDate" ? (

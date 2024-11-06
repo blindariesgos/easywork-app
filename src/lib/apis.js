@@ -454,9 +454,14 @@ export const getTokenGoogle = async (userId, oauthId) => {
   return response;
 };
 
-export const deleteTokenGoogle = async (userId, oauthId, refreshtoken, fromCalendar) => {
+export const deleteTokenGoogle = async (
+  userId,
+  oauthId,
+  refreshtoken,
+  fromCalendar
+) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`,
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`
   );
   return response;
 };

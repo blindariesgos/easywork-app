@@ -16,7 +16,7 @@ export default function CreateEventButton({ selectOauth }) {
   const items = [
     {
       name: t("tools:calendar:event"),
-      href: `/tools/calendar/addEvent?show=true&oauth=${selectOauth?.id}&user=${selectOauth?.userId}`,
+      href: `/tools/calendar/addEvent?show=true&${selectOauth ? `oauth=${selectOauth?.id}` : ""}`,
     },
   ];
   return (

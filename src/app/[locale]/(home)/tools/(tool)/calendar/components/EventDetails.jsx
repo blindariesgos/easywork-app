@@ -35,6 +35,7 @@ import {
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import useCalendarContext from "@/src/context/calendar";
+import { useSession } from "next-auth/react";
 
 const calendarios = [{ name: "Mi calendario", value: 1 }];
 
@@ -55,6 +56,7 @@ export default function EventDetails({ data, id }) {
   const [value, setValueText] = useState("<p></p>");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const session = useSession();
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -212,7 +214,7 @@ export default function EventDetails({ data, id }) {
       name,
     };
     if (params.get("oauth")) body.oauth = params.get("oauth");
-    if (params.get("user")) body.user = params.get("user");
+    body.user = session?.data?.user?.id;
     try {
       if (id) {
         const response = await updateCalendarEvent(body, id);

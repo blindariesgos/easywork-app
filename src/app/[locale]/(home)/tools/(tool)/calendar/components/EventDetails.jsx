@@ -35,6 +35,7 @@ import {
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import useCalendarContext from "@/src/context/calendar";
+import { useSession } from "next-auth/react";
 
 const calendarios = [{ name: "Mi calendario", value: 1 }];
 
@@ -55,6 +56,7 @@ export default function EventDetails({ data, id }) {
   const [value, setValueText] = useState("<p></p>");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const session = useSession();
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -212,7 +214,7 @@ export default function EventDetails({ data, id }) {
       name,
     };
     if (params.get("oauth")) body.oauth = params.get("oauth");
-    if (params.get("user")) body.user = params.get("user");
+    body.user = session?.data?.user?.id;
     try {
       if (id) {
         const response = await updateCalendarEvent(body, id);
@@ -227,6 +229,7 @@ export default function EventDetails({ data, id }) {
         }
       } else {
         const response = await addCalendarEvent(body);
+        console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
@@ -289,11 +292,18 @@ export default function EventDetails({ data, id }) {
     return () => subscription.unsubscribe();
   }, [data]);
 
-  const deleteEvent = () => {
+  const deleteEvent = async () => {
     try {
-      deleteCalendarEvent(id);
-      toast.success("Evento eliminado");
-      router.push(`/tools/calendar`);
+      const response = await deleteCalendarEvent(id);
+      if (response.hasError) {
+        toast.error(
+          "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."
+        );
+      } else {
+        toast.success("Evento eliminado.");
+        mutate();
+        router.back();
+      }
     } catch (error) {
       toast.error(error);
     }

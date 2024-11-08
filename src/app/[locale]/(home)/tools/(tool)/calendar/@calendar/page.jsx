@@ -72,7 +72,7 @@ export default function CalendarHome({ children }) {
   };
 
   const handleClickEvent = (info) => {
-    router.push(`/tools/calendar/event/${info.event.id}?show=true&oauth=${selectOauth.id}&user=${selectOauth.userId}`);
+    router.push(`/tools/calendar/event/${info.event.id}?show=true${selectOauth ? `&oauth=${selectOauth?.id}` : ""}`);
   };
 
   return (

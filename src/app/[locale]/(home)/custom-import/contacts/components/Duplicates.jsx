@@ -10,6 +10,7 @@ import FileInput from "@/src/components/form/FileInput";
 import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
 import { Fragment } from "react";
+import { useRouter } from "next/navigation";
 
 const Duplicates = ({ handleNext, handleBack }) => {
   const { t } = useTranslation();
@@ -17,7 +18,7 @@ const Duplicates = ({ handleNext, handleBack }) => {
   const schema = yup.object().shape({
     fields: yup.array().of(yup.object().shape({})),
   });
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -109,6 +110,7 @@ const Duplicates = ({ handleNext, handleBack }) => {
             label={t("common:buttons:cancel")}
             className="px-2 py-1"
             buttonStyle="secondary"
+            onclick={() => router.back()}
           />
         </div>
       </div>

@@ -177,6 +177,7 @@ export default function EventDetails({ data, id }) {
   });
 
   const handleSubmitForm = async (data) => {
+    console.log(data);
     setLoading(true);
     const {
       participants,
@@ -274,6 +275,8 @@ export default function EventDetails({ data, id }) {
 
     setIsEdit(false);
 
+    console.log(data.participants);
+
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
@@ -284,6 +287,21 @@ export default function EventDetails({ data, id }) {
     if (data?.private) setValue("isPrivate", data?.private);
     if (data?.description)
       setValueText(data?.description ? data?.description : "<p></p>");
+    if (data?.participants)
+      setValue(
+        "participants",
+        data?.participants
+          ? data?.participants.map((participant) => ({
+              avatar: participant.avatar,
+              bio: participant.bio,
+              email: participant.email,
+              id: participant.id,
+              name: `${participant.profile.firstName} ${participant.profile.lastName}`,
+              phone: participant.phone,
+              username: participant.username,
+            }))
+          : []
+      );
 
     const subscription = watch((data, { name }) => {
       setIsEdit(true);

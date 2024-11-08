@@ -128,7 +128,7 @@ export const getReceiptKanbanByStateId = async (params) => {
   try {
     const queries = getQueries(params);
     const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
-    console.log("urllllll", url);
+    console.log(url);
     const response = await axios()
       .get(url)
       .catch((error) => ({ hasError: true, ...error }));
@@ -173,9 +173,10 @@ export const getAddListContacts = async () => {
   return response;
 };
 
-export const getPortafolioControlResume = async () => {
+export const getPortafolioControlResume = async ({ filters }) => {
+  const queries = getQueries(filters);
   const response = await axios()
-    .get(`/sales/crm/polizas/receipts/collection_report/header`)
+    .get(`/sales/crm/polizas/receipts/collection_report/header?${queries}`)
     .catch((error) => ({ hasError: true, error }));
   return response;
 };

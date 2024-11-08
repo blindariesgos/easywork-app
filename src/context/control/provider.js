@@ -83,10 +83,12 @@ export default function ControlContextProvider({ children }) {
   }, [limit]);
 
   const getTotalsByState = async () => {
-    const response = await getPortafolioControlResume().catch((error) => ({
-      hasError: true,
-      error,
-    }));
+    const response = await getPortafolioControlResume({ filters }).catch(
+      (error) => ({
+        hasError: true,
+        error,
+      })
+    );
     if (response.hasError) {
       console.log(response.error.message);
       return;
@@ -103,6 +105,10 @@ export default function ControlContextProvider({ children }) {
   useEffect(() => {
     getTotalsByState();
   }, []);
+
+  useEffect(() => {
+    getTotalsByState();
+  }, [filters]);
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)

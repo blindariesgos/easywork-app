@@ -40,7 +40,9 @@ export default function ActivityPanel({
     if (activities) {
       //   const sortedItems = parseAndSortByDate(activities);
 
-      console.log({ activities });
+      // Verificar si las actividades es un array
+      if (!Array.isArray(activities))
+        return;      
       setBulkActivity(activities);
     }
   }, [activities]);

@@ -229,6 +229,7 @@ export default function EventDetails({ data, id }) {
         }
       } else {
         const response = await addCalendarEvent(body);
+        console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
@@ -291,11 +292,18 @@ export default function EventDetails({ data, id }) {
     return () => subscription.unsubscribe();
   }, [data]);
 
-  const deleteEvent = () => {
+  const deleteEvent = async () => {
     try {
-      deleteCalendarEvent(id);
-      toast.success("Evento eliminado");
-      router.push(`/tools/calendar`);
+      const response = await deleteCalendarEvent(id);
+      if (response.hasError) {
+        toast.error(
+          "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."
+        );
+      } else {
+        toast.success("Evento eliminado.");
+        mutate();
+        router.back();
+      }
     } catch (error) {
       toast.error(error);
     }

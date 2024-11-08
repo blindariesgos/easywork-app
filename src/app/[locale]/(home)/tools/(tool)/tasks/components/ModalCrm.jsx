@@ -54,11 +54,15 @@ const ModalCrm = ({ conections }) => {
     if (!config) return null;
 
     return (
-      <Link
-        href={config.href}
-        className={`${config.bgClass} p-2 rounded-lg flex gap-2 flex-col hover:shadow-[-2px_2px_5px_1px_#00000082]`}
-      >
-        {`${t(`${config.labelKey}`)}: ${config.name}`}
+      <Link href={config.href} className="px-1">
+        <div
+          className={`${config.bgClass}  group p-1.5 rounded-lg gap-2 hover:shadow-[-2px_2px_5px_1px_#00000082] max-w-[200px]  w-full`}
+        >
+          <p className="hidden group-hover:block text-xs w-full">{`${t(`${config.labelKey}`)}: ${config.name}`}</p>
+          <p className="group-hover:hidden text-xs whitespace-nowrap text-ellipsis overflow-hidden ">
+            {config.name}
+          </p>
+        </div>
       </Link>
     );
   };

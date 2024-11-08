@@ -70,6 +70,7 @@ const AddDocumentDialog = ({
       onFinished && onFinished();
       update && update();
     } catch (error) {
+      console.log({ error });
       handleApiError(error.message);
     } finally {
       setLoading(false);

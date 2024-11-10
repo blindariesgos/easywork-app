@@ -559,9 +559,9 @@ export const updateCalendarEvent = async (body, eventId) => {
   return response;
 };
 
-export const deleteCalendarEvent = async (eventId) => {
+export const deleteCalendarEvent = async (eventId, userId, oauthId) => {
   const response = await axios()
-    .delete(`/calendar/events/${eventId}`)
+    .delete(`/calendar/events/${eventId}?userId=${userId}&oauthId=${oauthId}`)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

@@ -33,7 +33,7 @@
                 "comment": "Comentario",
                 "website": "Página Web",
                 "social-network": "Red Social",
-                "contact": "Contacto",
+                "contact": "Cliente",
                 "company": "Compañia",
                 "customer-rfc": "Nombre del cliente / RFC",
                 "customer-code": "Código del cliente",
@@ -53,11 +53,13 @@
                 "amount-to-pay": "Importe a Pagar",
                 "forms-of-payment": "Formas de Cobro",
                 "related-agent": "Agente Relacionado",
-                "insurance-company": "Compañia Aseguradora",
+                "insurance-company": "Compañia",
                 "category": "Categoría o Plan",
-                "branch": "Sub - Ramo",
+                "branch": "Ramo",
                 "health-branch": "Sub - Ramo Salud",
-                "currency": "Moneda"
+                "currency": "Moneda",
+                "responsible": "Responsable",
+                "subAgente": "Sub - Agente"
             },
             "table": {
                 "contact": "Cliente Contratante",

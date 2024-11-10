@@ -7,30 +7,9 @@ const Cards = () => {
   const { t } = useTranslation();
   const cards = [
     {
-      name: t("operations:policies:title"),
+      name: `${t("operations:policies:title")} nuevas`,
       id: 2,
       color: "#FFEB04",
-      amount: "$0,00",
-      value: "0",
-    },
-    {
-      name: t("operations:renovations:title"),
-      id: 4,
-      color: "#A9EA44",
-      amount: "$0,00",
-      value: "0",
-    },
-    {
-      name: t("operations:claims:title"),
-      id: 3,
-      color: "#86BEDF",
-      amount: "$0,00",
-      value: "0",
-    },
-    {
-      name: t("operations:refunds:title"),
-      id: 1,
-      color: "#6b6c6d",
       amount: "$0,00",
       value: "0",
     },
@@ -42,9 +21,30 @@ const Cards = () => {
       value: "0",
     },
     {
+      name: `${t("operations:refunds:title")} nuevos`,
+      id: 1,
+      color: "#6b6c6d",
+      amount: "$0,00",
+      value: "0",
+    },
+    {
+      name: t("operations:renovations:title"),
+      id: 4,
+      color: "#A9EA44",
+      amount: "$0,00",
+      value: "0",
+    },
+    {
       name: t("operations:fundrecovery:title"),
       id: 6,
       color: "#AF8764",
+      amount: "$0,00",
+      value: "0",
+    },
+    {
+      name: `${t("operations:claims:title")} nuevos`,
+      id: 3,
+      color: "#86BEDF",
       amount: "$0,00",
       value: "0",
     },

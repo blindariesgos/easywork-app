@@ -230,6 +230,7 @@ export default function EventDetails({ data, id }) {
         }
       } else {
         const response = await addCalendarEvent(body);
+        console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."

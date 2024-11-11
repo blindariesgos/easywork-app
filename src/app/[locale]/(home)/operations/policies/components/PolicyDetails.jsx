@@ -18,7 +18,7 @@ import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
 import ReceiptEmpty from "./ReceiptEmpty";
 
-export default function PolicyDetails({ data, id, mutate }) {
+export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -253,7 +253,7 @@ export default function PolicyDetails({ data, id, mutate }) {
           </div>
           <TabPanels className="w-full">
             <TabPanel className={"w-full md:px-4"}>
-              <General data={data} id={id} mutate={mutate} headerHeight={200} />
+              <General data={data} id={id} mutate={mutate} edit={edit} />
             </TabPanel>
             {data?.type?.name === "VIDA" ? (
               <Fragment>

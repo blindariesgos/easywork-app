@@ -312,7 +312,7 @@ export default function EventDetails({ data, id }) {
 
   const deleteEvent = async () => {
     try {
-      const response = await deleteCalendarEvent(id);
+      const response = await deleteCalendarEvent(id, session?.data?.user?.id, params.get("oauth"));
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."

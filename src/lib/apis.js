@@ -128,7 +128,7 @@ export const getReceiptKanbanByStateId = async (params) => {
   try {
     const queries = getQueries(params);
     const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
-    console.log("urllllll", url);
+    console.log(url);
     const response = await axios()
       .get(url)
       .catch((error) => ({ hasError: true, ...error }));
@@ -173,9 +173,10 @@ export const getAddListContacts = async () => {
   return response;
 };
 
-export const getPortafolioControlResume = async () => {
+export const getPortafolioControlResume = async ({ filters }) => {
+  const queries = getQueries(filters);
   const response = await axios()
-    .get(`/sales/crm/polizas/receipts/collection_report/header`)
+    .get(`/sales/crm/polizas/receipts/collection_report/header?${queries}`)
     .catch((error) => ({ hasError: true, error }));
   return response;
 };
@@ -454,9 +455,14 @@ export const getTokenGoogle = async (userId, oauthId) => {
   return response;
 };
 
-export const deleteTokenGoogle = async (userId, oauthId, refreshtoken, fromCalendar) => {
+export const deleteTokenGoogle = async (
+  userId,
+  oauthId,
+  refreshtoken,
+  fromCalendar
+) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`,
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`
   );
   return response;
 };

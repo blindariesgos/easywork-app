@@ -32,16 +32,6 @@ export default function SlideOver({
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (params.get("prev") === "task") {
-      setTaskId(params.get("prev_id"));
-    } else if (params.get("prev") === "contact") {
-      setContactId(params.get("prev_id"));
-    } else if (params.get("prev") === "tasks") {
-      setPreviousPage("tasks");
-    }
-  }, [params]);
-
-  useEffect(() => {
     // Parsear el valor de `show` del parámetro de consulta
     setShow(params.get("show") === "true");
   }, []); // Dependencia del parámetro de consulta 'show'

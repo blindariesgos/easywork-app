@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
-
+import ModalCrm from "../components/ModalCrm";
 import Image from "next/image";
 import {
   formatDate,
@@ -106,6 +106,13 @@ export const renderCellContent = (
 
     case "important":
       return !!taskValue ? t("common:yes") : t("common:no");
+
+    case "crm":
+      return (
+        <div className="flex justify-center">
+          <ModalCrm conections={task?.crm} />
+        </div>
+      );
 
     case "contact":
       if (task?.crm?.length === 0) return "No especificado";

@@ -71,6 +71,9 @@ const Cards = () => {
           <p className="text-sm">{card.name}</p>
           <div className="w-full">
             <p className="text-4xl text-right">{card.value}</p>
+            <p className="text-sm text-gray-50 text-right">USD 0,00</p>
+            <p className="text-sm text-gray-50 text-right">$ 0,00</p>
+            <p className="text-sm text-gray-50 text-right">UDIS 0,00</p>
             {/* <p className="text-sm text-right">{card.amount}</p> */}
           </div>
         </Radio>

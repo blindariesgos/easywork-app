@@ -32,29 +32,17 @@ import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
-import {
-  Description,
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+
 import {
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import useContactContext from "@/src/context/contacts";
-import { itemsByPage } from "@/src/lib/common";
 import { useRouter } from "next/navigation";
-import Button from "@/src/components/form/Button";
 import FooterTable from "@/src/components/FooterTable";
 
 function classNames(...classes) {
@@ -111,7 +99,7 @@ export default function TableContacts() {
     setSelectedContacts(
       checked || indeterminate
         ? []
-        : dataContacts?.items?.map((x) => x.id) ?? []
+        : (dataContacts?.items?.map((x) => x.id) ?? [])
     );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
@@ -165,7 +153,7 @@ export default function TableContacts() {
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append("observadorId", observer.id);
+      formData.append("observerId", observer.id);
 
       await Promise.all(
         selectedContacts.map((id) => updateContact(formData, id))
@@ -184,9 +172,10 @@ export default function TableContacts() {
   const masiveOptions = [
     {
       id: 1,
-      name: "Asignar Observador",
+      name: "Agregar Observador",
       onclick: changeObserver,
       selectUser: true,
+      disabled: true,
     },
     {
       id: 2,
@@ -199,12 +188,12 @@ export default function TableContacts() {
       onclick: changeResponsible,
       selectUser: true,
     },
-    {
-      id: 4,
-      name: "Cambiar Observador",
-      onclick: changeObserver,
-      selectUser: true,
-    },
+    // {
+    //   id: 4,
+    //   name: "Cambiar Observador",
+    //   onclick: changeObserver,
+    //   selectUser: true,
+    // },
     {
       id: 5,
       name: "Crear Boletín",
@@ -326,26 +315,28 @@ export default function TableContacts() {
     <Fragment>
       {loading && <LoaderSpinner />}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto">
-              <thead className="text-sm bg-white drop-shadow-sm">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
+              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5"
+                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                   >
-                    <input
-                      type="checkbox"
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      ref={checkbox}
-                      checked={checked}
-                      onChange={toggleAll}
-                    />
-                    <AddColumnsTable
-                      columns={columnTable}
-                      setSelectedColumns={setSelectedColumns}
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        ref={checkbox}
+                        checked={checked}
+                        onChange={toggleAll}
+                      />
+                      <AddColumnsTable
+                        columns={columnTable}
+                        setSelectedColumns={setSelectedColumns}
+                      />
+                    </div>
                   </th>
                   {selectedColumns.length > 0 &&
                     selectedColumns.map((column, index) => (
@@ -396,7 +387,7 @@ export default function TableContacts() {
                           {selectedContacts.includes(contact.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-2">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -414,11 +405,11 @@ export default function TableContacts() {
                             />
                             <Menu
                               as="div"
-                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
                             >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <MenuButton className=" flex items-center">
                                 <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
+                                  className="h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
                               </MenuButton>
@@ -605,11 +596,15 @@ export default function TableContacts() {
                                     "-"
                                   )
                                 ) : column.row === "birthdate" ? (
-                                  formatDate(contact.birthdate, "dd/MM/yyyy") ??
-                                  null
+                                  (formatDate(
+                                    contact.birthdate,
+                                    "dd/MM/yyyy"
+                                  ) ?? null)
                                 ) : column.row === "createdAt" ? (
-                                  formatDate(contact.createdAt, "dd/MM/yyyy") ??
-                                  null
+                                  (formatDate(
+                                    contact.createdAt,
+                                    "dd/MM/yyyy"
+                                  ) ?? null)
                                 ) : column.row === "source" ? (
                                   contact?.source?.name
                                 ) : (

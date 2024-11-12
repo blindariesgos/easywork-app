@@ -8,7 +8,7 @@ export default function ReceiptDetails({ id }) {
   const { data, isLoading, isError, mutate } = useReceipt(id);
 
   if (isError) {
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="payments">
       <div>
         <p>Error</p>
       </div>
@@ -21,8 +21,9 @@ export default function ReceiptDetails({ id }) {
     <SlideOver
       openModal={true}
       colorTag="bg-easywork-main"
-      labelTag="user"
+      labelTag="payments"
       samePage={`/settings/permissions/users?page=1`}
+      remove="receipt"
     >
       <Suspense fallback={<LoaderSpinner />}>
         <ReceiptEditor data={data} id={id} updateReceipt={mutate} />

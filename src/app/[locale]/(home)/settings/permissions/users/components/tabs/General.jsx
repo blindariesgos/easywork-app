@@ -182,7 +182,7 @@ export default function General({ user, id }) {
       sourceId: data.origin,
       emails_dto: JSON.stringify([{ email: data.email }]),
       phones_dto: [{ number: data.phone }],
-      observadorId: data.responsible,
+      observerId: data.responsible,
       assignedById: data.responsible,
     };
 

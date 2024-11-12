@@ -39,7 +39,7 @@ import {
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import usePolicyContext from "../../../../../../context/policies";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
@@ -67,6 +67,8 @@ export default function TablePolicies() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { selectedContacts, setSelectedContacts } = useCrmContext();
   const { columnTable } = usePoliciesTable();
   const [selectedColumns, setSelectedColumns] = useState(
@@ -97,10 +99,26 @@ export default function TablePolicies() {
   }, [checked, indeterminate, data, setSelectedContacts]);
 
   const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
+    activa: {
+      name: "Vigente",
+      color: "#0077BF",
+      id: 1,
+    },
+    expirada: {
+      name: "No vigente",
+      color: "#CD1100",
+      id: 2,
+    },
+    cancelada: {
+      name: "Cancelada",
+      color: "#CD1100",
+      id: 2,
+    },
+    en_proceso: {
+      name: "En trámite",
+      color: "#0091CD",
+      id: 0,
+    },
   };
 
   const deletePolicy = async (id) => {
@@ -115,6 +133,23 @@ export default function TablePolicies() {
       setLoading(false);
       handleApiError(err.message);
     }
+  };
+
+  const getStatusTag = (status) => {
+    const currentState = policyStatus[status];
+    return (
+      <div className={`flex justify-center  ${"bg-gray-200"}`}>
+        {new Array(3).fill(1).map((_, index) => (
+          <div
+            key={index}
+            className={`w-8 h-4  border-t border-b border-l last:border-r border-gray-400`}
+            style={{
+              background: index <= currentState.id ? currentState.color : "",
+            }}
+          />
+        ))}
+      </div>
+    );
   };
 
   const deletePolicies = async () => {
@@ -210,6 +245,16 @@ export default function TablePolicies() {
 
   const masiveActions = [
     {
+      id: 1,
+      name: "Asignar agente relacionado - subagente",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: "Asignar observador",
+      disabled: true,
+    },
+    {
       id: 3,
       name: "Cambiar Responsable",
       onclick: changeResponsible,
@@ -240,21 +285,39 @@ export default function TablePolicies() {
     },
     {
       id: 1,
+      name: "Crear tarea",
+      disabled: true,
+    },
+    {
+      id: 1,
       name: t("common:buttons:delete"),
       onclick: () => setIsOpenDeleteMasive(true),
+      disabled: true,
     },
   ];
+
+  const handleShowPolicy = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("policy", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleShowEditPolicy = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("editPolicy", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const itemActions = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        router.push(`/operations/policies/policy/${id}?show=true`),
+      handleClick: (id) => handleShowPolicy(id),
     },
     {
       name: "Editar",
-      handleClick: (id) =>
-        router.push(`/operations/policies/policy/${id}?show=true&edit=true`),
+      handleClick: (id) => handleShowEditPolicy(id),
     },
     {
       name: "Eliminar",
@@ -262,6 +325,7 @@ export default function TablePolicies() {
         setDeleteId(id);
         setIsOpenDelete(true);
       },
+      disabled: true,
     },
     {
       name: "Planificar",
@@ -270,7 +334,7 @@ export default function TablePolicies() {
           name: "Tarea",
           handleClickContact: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=policy&prev_id=${id}`
             ),
         },
         {
@@ -319,27 +383,34 @@ export default function TablePolicies() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
+      {selectedContacts.length > 0 && (
+        <div className="flex py-2">
+          <SelectedOptionsTable options={masiveActions} />
+        </div>
+      )}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto">
-              <thead className="text-sm bg-white drop-shadow-sm">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
+              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-4  rounded-s-xl py-5 flex gap-2 items-center"
+                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                   >
-                    <input
-                      type="checkbox"
-                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      ref={checkbox}
-                      checked={checked}
-                      onChange={toggleAll}
-                    />
-                    <AddColumnsTable
-                      columns={columnTable}
-                      setSelectedColumns={setSelectedColumns}
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        className=" h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                        ref={checkbox}
+                        checked={checked}
+                        onChange={toggleAll}
+                      />
+                      <AddColumnsTable
+                        columns={columnTable}
+                        setSelectedColumns={setSelectedColumns}
+                      />
+                    </div>
                   </th>
                   {selectedColumns.length > 0 &&
                     selectedColumns.map((column, index) => (
@@ -389,7 +460,7 @@ export default function TablePolicies() {
                           {selectedContacts.includes(policy.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-2">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -407,11 +478,11 @@ export default function TablePolicies() {
                             />
                             <Menu
                               as="div"
-                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
                             >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <MenuButton className="flex items-center">
                                 <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
+                                  className="h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
                               </MenuButton>
@@ -529,11 +600,10 @@ export default function TablePolicies() {
                                 )}
                               >
                                 {column.row == "name" ? (
-                                  <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
-                                  >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
-                                  </Link>
+                                  <p
+                                    className="cursor-pointer"
+                                    onClick={() => handleShowPolicy(policy.id)}
+                                  >{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
                                     <button
@@ -574,14 +644,17 @@ export default function TablePolicies() {
                                     </button>
                                   </div>
                                 ) : column.row === "vigenciaDesde" ? (
-                                  formatDate(
+                                  (formatDate(
                                     policy[column.row],
                                     "dd/MM/yyyy"
-                                  ) ?? null
+                                  ) ?? null)
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                  <div className="flex flex-col items-center justify-center">
+                                    {getStatusTag(policy[column.row])}
+                                    {policyStatus[policy[column.row]].name}
+                                  </div>
                                 ) : (
                                   policy[column.row] || "-"
                                 )}
@@ -605,11 +678,6 @@ export default function TablePolicies() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex">
-          {selectedContacts.length > 0 && (
-            <SelectedOptionsTable options={masiveActions} />
-          )}
-        </div>
       </div>
       <DeleteItemModal
         isOpen={isOpenDelete}

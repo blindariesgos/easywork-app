@@ -18,6 +18,7 @@ export default function IngresarEmail() {
   const [modalG, setModalG] = useState(false);
   const [modalC, setModalC] = useState(false);
   const searchParams = useSearchParams();
+  const { setSelectOauth, setUserData } = useAppContext();
 
   // getAllOauth(session.data.user.id).then((response) => {
   //   if (response.length > 0) {
@@ -31,6 +32,11 @@ export default function IngresarEmail() {
       router.push(window.location.pathname);
     }
   }, [searchParams.get("userdeleted")]);
+
+  useEffect(() => {
+    setSelectOauth(null);
+    setUserData(null);
+  }, []);
 
   const [ImapData, setImapData] = useState({
     host: null,
@@ -83,7 +89,14 @@ export default function IngresarEmail() {
     {
       name: "Gmail",
       src: "/icons/emails/gmail.svg",
-      click: () => router.push(`${window.location.pathname}?configemail=true&isEdit=false`),
+      click: () =>
+        searchParams.get("page")
+          ? router.push(
+              `${window.location.pathname}?page=${searchParams.get("page")}&configemail=true&isEdit=false`
+            )
+          : router.push(
+              `${window.location.pathname}?configemail=true&isEdit=false`
+            ),
     },
     {
       name: "ICloud",

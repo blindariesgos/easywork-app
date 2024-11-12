@@ -28,7 +28,6 @@ export const useReceipts = ({ config = {}, filters = {} }) => {
     url,
     fetcher,
   );
-  console.log({ data, error })
   return {
     data,
     isLoading,

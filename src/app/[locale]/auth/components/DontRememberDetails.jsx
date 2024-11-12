@@ -1,18 +1,40 @@
+"use client";
 import React, { useCallback, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import { EnvelopeIcon } from "@heroicons/react/24/solid";
 import { useDataContext } from "../context";
-import IntlTelInput from "react-intl-tel-input";
-import "react-intl-tel-input/dist/main.css";
 import { sendOtpEmail, sendOtpPhone } from "@/src/lib/api/hooks/auths";
+import InputPhone from "../../../../components/form/InputPhone";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schemaInputs = yup.object().shape({
+  phone: yup.string(),
+});
 
 export default function DontRememberDetails() {
+  const { t } = useTranslation();
   const { contextData, setContextData } = useDataContext();
   const [mode, setMode] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [phoneValue, setPhoneValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    setValue,
+    watch,
+    formState: { isValid, errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schemaInputs),
+  });
 
   const handleModeChange = useCallback((newMode) => {
     setMode(newMode);
@@ -24,13 +46,14 @@ export default function DontRememberDetails() {
   };
 
   const handleSendOtp = useCallback(async () => {
+    let phone = "+" + watch("phone").toString()
     setIsLoading(true);
     setError(null);
     try {
       if (mode === "email") {
         await sendOtpEmail(inputValue);
       } else if (mode === "cellphone") {
-        await sendOtpPhone(phoneValue);
+        await sendOtpPhone(phone);
       }
       setContextData(4);
     } catch (err) {
@@ -39,7 +62,7 @@ export default function DontRememberDetails() {
     } finally {
       setIsLoading(false);
     }
-  }, [inputValue, mode, setContextData]);
+  }, [inputValue, mode, phoneValue, setContextData]);
 
   if (contextData !== 3) {
     return null;
@@ -56,7 +79,7 @@ export default function DontRememberDetails() {
         <h1>No recuerdo mis datos</h1>
       </div>
       {/* Dato de usuario */}
-      <div className="relative text-gray-600 focus-within:text-gray-400">
+      <div className="relative text-gray-600 focus-within:text-gray-400 w-full">
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
           <button
             type="submit"
@@ -100,20 +123,20 @@ export default function DontRememberDetails() {
         )}
         {mode === "cellphone" && (
           <div className="mt-2">
-            <IntlTelInput
-              containerClassName="intl-tel-input"
-              inputClassName="form-control"
-              preferredCountries={['mx']}
-              value={inputValue}
-              onPhoneNumberChange={(
-                _isValid,
-                value,
-                _selectedCountryData,
-                fullNumber
-              ) => {
-                setInputValue(value);
-                setPhoneValue(fullNumber);
+            <Controller
+              render={({ field: { ref, ...field } }) => {
+                return (
+                  <InputPhone
+                    name="phone"
+                    field={field}
+                    label={t("leads:lead:fields:phone-number")}
+                    defaultValue={field.value}
+                  />
+                );
               }}
+              name="phone"
+              control={control}
+              defaultValue=""
             />
           </div>
         )}

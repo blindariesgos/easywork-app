@@ -6,6 +6,7 @@ import {
   PhoneIcon,
   Bars3Icon,
   CheckIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -19,10 +20,8 @@ import React, {
   useCallback,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { PaginationV2 } from "@/src/components/pagination/PaginationV2";
 import Link from "next/link";
 import { deleteContactId, deleteReceiptById } from "@/src/lib/apis";
-import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useReceiptTable } from "../../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
@@ -37,18 +36,13 @@ import {
   MenuItem,
   MenuItems,
   Transition,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
 } from "@headlessui/react";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useReceiptContext from "../../../../../../../context/receipts";
-import { itemsByPage } from "@/src/lib/common";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
+import moment from "moment";
 
 export default function TableReceipts() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage } =
@@ -59,6 +53,8 @@ export default function TableReceipts() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const {
     selectedContacts: selectedReceipts,
     setSelectedContacts: setSelectedReceipts,
@@ -104,23 +100,94 @@ export default function TableReceipts() {
     onCloseAlertDialog();
   };
 
-  const options = [
+  const handleShowReceipt = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("receipt", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const masiveActions = [
+    // {
+    //   id: 1,
+    //   name: t("common:buttons:delete"),
+    //   onclick: () => deleteReceipts(selectedReceipts),
+    // },
     {
-      id: 1,
-      name: t("common:buttons:delete"),
-      onclick: () => deleteReceipts(selectedReceipts),
+      id: 2,
+      name: "Crear tarea",
+      // onclick: () => deleteReceipts(selectedReceipts),
+      disabled: true,
+    },
+    {
+      id: 3,
+      name: "Agregar Observador",
+      // onclick: () => deleteReceipts(selectedReceipts),
+      disabled: true,
     },
   ];
 
   const itemOptions = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        router.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
+      handleClick: (id) => handleShowReceipt(id),
+    },
+    {
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClick: (id) =>
+            router.push(
+              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+            ),
+        },
+        {
+          name: "Envío masivo SMS",
+          disabled: true,
+        },
+        {
+          name: "Correo electrónico",
+          disabled: true,
+        },
+      ],
     },
     // { name: "Editar" },
     // { name: "Copiar" },
   ];
+
+  const receiptStage = (receiptStage) => {
+    const colors = [
+      "bg-[#A9EA44]",
+      "bg-[#86BEDF]",
+      "bg-[#EAB544]",
+      "bg-[#EA8644]",
+      "bg-[#EA4444]",
+    ];
+    const stageIndex =
+      lists?.receipts?.receiptStages
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => receiptStage?.id == value) ?? -1;
+
+    const getColorClass = (item, currentIndex, stageInd) => {
+      if (item?.status == "pagado") return "bg-[#A9EA44]";
+      if (stageInd >= 5) return "bg-[#EA4444]";
+      if (item && stageInd < 5 && currentIndex <= stageInd)
+        return colors[stageIndex];
+      return "";
+    };
+
+    return (
+      <div className={`flex justify-center  ${"bg-gray-200"}`}>
+        {new Array(5).fill(1).map((_, index) => (
+          <div
+            key={index}
+            className={`w-4 h-4 ${getColorClass(receiptStage, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+          />
+        ))}
+      </div>
+    );
+  };
 
   if (data?.items && data?.items.length === 0) {
     return (
@@ -150,27 +217,37 @@ export default function TableReceipts() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
+      <div className="flex flex-col justify-start gap-2 items-start pb-2">
+        {selectedReceipts.length > 0 && (
+          <Fragment>
+            <p className="text-sm">{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
+            <SelectedOptionsTable options={masiveActions} />
+          </Fragment>
+        )}
+      </div>
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto">
-              <thead className="text-sm bg-white drop-shadow-sm">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
+              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5 flex items-center gap-2"
+                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                   >
-                    <input
-                      type="checkbox"
-                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      ref={checkbox}
-                      checked={checked}
-                      onChange={toggleAll}
-                    />
-                    <AddColumnsTable
-                      columns={columnTable}
-                      setSelectedColumns={setSelectedColumns}
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        ref={checkbox}
+                        checked={checked}
+                        onChange={toggleAll}
+                      />
+                      <AddColumnsTable
+                        columns={columnTable}
+                        setSelectedColumns={setSelectedColumns}
+                      />
+                    </div>
                   </th>
                   {selectedColumns.length > 0 &&
                     selectedColumns.map((column, index) => (
@@ -220,7 +297,7 @@ export default function TableReceipts() {
                           {selectedReceipts.includes(receipt.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
-                          <div className="flex items-center">
+                          <div className="flex items-center gap-2">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
@@ -239,11 +316,11 @@ export default function TableReceipts() {
 
                             <Menu
                               as="div"
-                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
                             >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
+                              <MenuButton className=" flex items-center ">
                                 <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
+                                  className=" h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
                               </MenuButton>
@@ -256,28 +333,77 @@ export default function TableReceipts() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <MenuItems className="absolute left-0 z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-                                  {itemOptions.map((item) => (
-                                    <MenuItem
-                                      key={item.name}
-                                      onClick={() =>
-                                        item.handleClick &&
-                                        item.handleClick(receipt.id)
-                                      }
-                                    >
-                                      {({ active }) => (
+                                <MenuItems
+                                  anchor="right start"
+                                  className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                >
+                                  {itemOptions.map((item) =>
+                                    !item.options ? (
+                                      <MenuItem
+                                        key={item.name}
+                                        disabled={item.disabled}
+                                        onClick={() => {
+                                          item.handleClick &&
+                                            item.handleClick(receipt.id);
+                                        }}
+                                      >
                                         <div
-                                          // onClick={item.onClick}
-                                          className={clsx(
-                                            active ? "bg-gray-50" : "",
-                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                                          )}
+                                          className={
+                                            "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
+                                          }
                                         >
                                           {item.name}
                                         </div>
-                                      )}
-                                    </MenuItem>
-                                  ))}
+                                      </MenuItem>
+                                    ) : (
+                                      <Menu key={item.name}>
+                                        <MenuButton className="flex items-center hover:bg-gray-50">
+                                          <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
+                                            {item.name}
+                                            <ChevronRightIcon className="h-6 w-6 ml-2" />
+                                          </div>
+                                        </MenuButton>
+                                        <Transition
+                                          as={Fragment}
+                                          enter="transition ease-out duration-100"
+                                          enterFrom="transform opacity-0 scale-95"
+                                          enterTo="transform opacity-100 scale-100"
+                                          leave="transition ease-in duration-75"
+                                          leaveFrom="transform opacity-100 scale-100"
+                                          leaveTo="transform opacity-0 scale-95"
+                                        >
+                                          <MenuItems
+                                            anchor={{
+                                              to: "right start",
+                                              gap: "4px",
+                                            }}
+                                            className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                          >
+                                            {item.options.map((option) => (
+                                              <MenuItem
+                                                key={option.name}
+                                                disabled={option.disabled}
+                                                onClick={() => {
+                                                  option.handleClick &&
+                                                    option.handleClick(
+                                                      receipt.id
+                                                    );
+                                                }}
+                                              >
+                                                <div
+                                                  className={clsx(
+                                                    "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
+                                                  )}
+                                                >
+                                                  {option.name}
+                                                </div>
+                                              </MenuItem>
+                                            ))}
+                                          </MenuItems>
+                                        </Transition>
+                                      </Menu>
+                                    )
+                                  )}
                                 </MenuItems>
                               </Transition>
                             </Menu>
@@ -352,34 +478,42 @@ export default function TableReceipts() {
                                     </button>
                                   </div>
                                 ) : column.row === "title" ? (
-                                  <Link
-                                    href={`/control/portafolio/receipts/receipt/${receipt.id}?show=true`}
+                                  <p
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      handleShowReceipt(receipt.id)
+                                    }
                                   >
                                     {receipt[column.row]}
-                                  </Link>
+                                  </p>
                                 ) : column.row === "client" ? (
                                   <Link
                                     href={`/sales/crm/contacts/contact/${receipt?.poliza?.contact?.id}?show=true`}
+                                    className="pr-2"
                                   >
                                     {receipt?.poliza?.contact?.fullName ??
                                       receipt?.poliza?.contact?.name ??
                                       "S/N"}
                                   </Link>
                                 ) : column.row === "stages" ? (
-                                  <p className="text-center">
-                                    {receipt?.metadata?.Etapa ?? "S/N"}
-                                  </p>
+                                  <div className="flex items-center flex-col">
+                                    <div className="flex justify-center">
+                                      {receiptStage(receipt?.stage)}
+                                    </div>
+                                    <p className="mt-1 text-xs text-[#969696] font-semibold">
+                                      {receipt?.stage?.name ?? "S/N"}
+                                    </p>
+                                  </div>
                                 ) : column.row === "paymentAmount" ? (
                                   <p className="text-center">
-                                    {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? ""} ${formatToCurrency(receipt?.paymentAmount)}`}
+                                    {`${lists?.policies?.currencies?.find((x) => x.id == receipt?.currency?.id)?.symbol ?? "MXN"} ${formatToCurrency(receipt?.paymentAmount)}`}
                                   </p>
                                 ) : column.row === "createdAt" ||
                                   column.row === "dueDate" ? (
                                   <p className="text-center">
-                                    {formatDate(
-                                      receipt[column.row],
-                                      "dd/MM/yyyy"
-                                    ) ?? null}
+                                    {moment(receipt[column.row])
+                                      .utc()
+                                      .format("DD/MM/yyyy") ?? null}
                                   </p>
                                 ) : column.row === "policy" ? (
                                   <Link
@@ -390,6 +524,10 @@ export default function TableReceipts() {
                                       {receipt?.poliza?.poliza || "-"}
                                     </p>
                                   </Link>
+                                ) : column.row === "status" ? (
+                                  <p className="text-center capitalize">
+                                    {receipt?.status || "-"}
+                                  </p>
                                 ) : (
                                   <p className="text-center">
                                     {receipt[column.row] || "-"}
@@ -415,14 +553,6 @@ export default function TableReceipts() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex flex-col justify-start gap-2 items-start">
-          {selectedReceipts.length > 0 && (
-            <Fragment>
-              <p>{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
-              <SelectedOptionsTable options={options} />
-            </Fragment>
-          )}
-        </div>
       </div>
     </Fragment>
   );

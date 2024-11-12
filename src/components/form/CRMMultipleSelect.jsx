@@ -25,7 +25,7 @@ const CMRMultipleSelectWithFilters = ({
   const [filterSelect, setFilterSelect] = useState(1);
   const [query, setQuery] = useState("");
   const { contacts, isLoading: isLoadingContacts } = useContacts({
-    filters: { fullName: query },
+    filters: { [fullName]: query },
     page: 1,
     limit: 5,
   });
@@ -75,7 +75,10 @@ const CMRMultipleSelectWithFilters = ({
 
     const newOption = {
       id: option.id,
-      name: option.fullName || option.name,
+      name:
+        type === "poliza"
+          ? `${option?.company?.name} ${option?.poliza} ${option?.company?.type}`
+          : option.fullName || option.name,
       username: option.username,
       title: option.title,
       type,
@@ -116,7 +119,7 @@ const CMRMultipleSelectWithFilters = ({
           onClick={handleToggle}
           className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
-          <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
+          <div className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
               getValues(name).map((res) => (
                 <div
@@ -141,10 +144,10 @@ const CMRMultipleSelectWithFilters = ({
               <PlusIcon className="h-3 w-3" />
               <p className="text-xs">{t("common:buttons:add")}</p>
             </div>
-          </span>
-          <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
+          </div>
+          <div className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
             <ChevronDownIcon className="h-4 w-4" />
-          </span>
+          </div>
         </button>
         {isOpen && (
           <div
@@ -192,7 +195,7 @@ const CMRMultipleSelectWithFilters = ({
                           className="w-6 h-6 rounded-full mr-2"
                         />
                       )}
-                      <span
+                      <div
                         className={`text-xs ${
                           getValues(name) &&
                           getValues(name).some((res) => res.id === option.id)
@@ -200,12 +203,14 @@ const CMRMultipleSelectWithFilters = ({
                             : "text-black"
                         }`}
                       >
-                        {option.fullName ||
-                          option.name ||
-                          option.username ||
-                          option.title ||
-                          option.id}
-                      </span>
+                        {filterSelect == 2
+                          ? `${option?.company?.name} ${option?.poliza} ${option?.company?.type}`
+                          : option.fullName ||
+                            option.name ||
+                            option.username ||
+                            option.title ||
+                            option.id}
+                      </div>
                     </div>
                   ))
                 )}

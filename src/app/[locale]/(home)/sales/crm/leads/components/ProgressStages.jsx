@@ -1,35 +1,33 @@
 "use client";
 import { useLeads } from "../../../../../../../hooks/useCommon";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import DialogPositiveStage from "./DialogPositiveStage";
-import DialogNegativeStage from "./DialogNegativeStage";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";
 import {
-  postComment,
+  postPositiveStagePolicy,
   putLeadCancelled,
   putLeadStage,
-  updateLead,
 } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useSWRConfig } from "swr";
 
-export default function ProgressStages({ stage, leadId, mutate, disabled }) {
+export default function ProgressStages({ stage, leadId, disabled, update }) {
   const { isOpen, setIsOpen } = useLeads();
   const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
   const [stageIndex, setStageIndex] = useState(0);
-  const [isOpenNegative, setIsOpenNegative] = useState(false);
   const router = useRouter();
+  const { mutate: mutateContext } = useSWRConfig();
 
   useEffect(() => {
     let index = lists?.listLead?.leadStages?.findIndex(
       (x) => x.name == stage?.name
     );
     setStageIndex(index);
-  }, [lists?.listLead?.leadStages]);
+  }, [lists?.listLead?.leadStages, stage]);
 
   const handleUpdateState = async (stageId) => {
     try {
@@ -38,11 +36,30 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
         toast.error("Ocurrio un error al actualizar el estado");
         return;
       }
-      mutate();
+      mutateContext(`/sales/crm/leads/${leadId}/activities`);
+      update && update();
       toast.success("Prospecto actualizado con exito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
     }
+  };
+
+  const handleAddPolicy = async () => {
+    const response = await postPositiveStagePolicy(leadId);
+    if (response.hasError) {
+      console.log({ response });
+      toast.error(
+        response?.message ??
+          "Se ha producido un error al actualizar el prospecto, inténtelo de nuevo."
+      );
+      return;
+    }
+    mutateContext(`/sales/crm/leads/${leadId}/activities`);
+    mutateContext(
+      "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
+    );
+    toast.success("Prospecto actualizado con exito");
+    router.back();
   };
 
   const handleSubmitNegativeStage = async () => {
@@ -55,7 +72,9 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
         return;
       }
       router.back();
-      mutate();
+      mutateContext(
+        "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
+      );
       toast.success("Prospecto actualizado con exito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
@@ -63,10 +82,15 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
   };
 
   return (
-    <div className="flex md:flex-row items-center md:justify-center gap-2 md:gap-3 flex-wrap">
-      {lists?.listLead?.leadStages?.map((stage, index, arr) => {
+    <div
+      className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${lists?.listLead?.leadStages ? `lg:grid-cols-${lists?.listLead?.leadStages?.length + 1}` : "lg:grid-cols-6"} gap-1`}
+    >
+      {lists?.listLead?.leadStages?.map((leadStage, index) => {
         return (
-          <div key={stage?.id} className="flex flex-row items-center relative">
+          <div
+            key={leadStage?.id}
+            className="flex flex-row items-center relative w-full"
+          >
             {index !== 0 && (
               <div className="text-blue-800 flex h-7 w-7 bg-white rounded-full justify-center items-center absolute -left-5">
                 <MdKeyboardArrowRight className="h-6 w-6 text-easy-600" />
@@ -74,51 +98,74 @@ export default function ProgressStages({ stage, leadId, mutate, disabled }) {
             )}
             <div
               className={clsx(
-                "px-3 py-2 rounded-lg text-sm text-white hover:opacity-100",
+                "px-3 py-2 rounded-lg text-sm text-white hover:opacity-100 w-full bg-easy-600 ",
                 {
-                  "opacity-60": index > stageIndex,
-                  "bg-easy-600":
-                    index < lists?.listLead?.leadStages.length - 2 &&
-                    stageIndex < lists?.listLead?.leadStages.length - 2,
+                  "opacity-60":
+                    (index > stageIndex && stageIndex !== -1) || !stage,
                   "bg-green-500":
-                    index === lists?.listLead?.leadStages.length - 2,
+                    stageIndex == -1 && /Positivo/gi.test(stage?.name) && stage,
                   "bg-red-500":
-                    index === lists?.listLead?.leadStages.length - 1 ||
-                    stageIndex == lists?.listLead?.leadStages.length - 1,
+                    stageIndex == -1 &&
+                    !/Positivo/gi.test(stage?.name) &&
+                    stage,
                   "cursor-pointer": !disabled,
                 }
               )}
               onClick={() => {
                 if (disabled) return;
-                if (index < arr.length - 2) {
-                  handleUpdateState(stage?.id);
-                }
-                if (index == arr.length - 2) {
-                  setIsOpen(true);
-                }
-                if (index == arr.length - 1) {
-                  setIsOpenNegative(true);
-                }
+                handleUpdateState(leadStage?.id);
               }}
             >
-              {stage?.name}
+              <p className="whitespace-nowrap text-ellipsis overflow-hidden">
+                {leadStage?.name}
+              </p>
             </div>
           </div>
         );
       })}
+      <div className="flex flex-row items-center relative w-full">
+        <div className="text-blue-800 flex h-7 w-7 bg-white rounded-full justify-center items-center absolute -left-5">
+          <MdKeyboardArrowRight className="h-6 w-6 text-easy-600" />
+        </div>
+        <div
+          className={clsx(
+            "px-3 py-2 rounded-lg text-sm text-white hover:opacity-100 w-full ",
+            {
+              "bg-easy-600": stageIndex !== -1 || !stage,
+              "opacity-60": stageIndex !== -1 || !stage,
+              "bg-green-500":
+                stageIndex == -1 && stage && /Positivo/gi.test(stage?.name),
+              "bg-red-500":
+                stageIndex == -1 && stage && !/Positivo/gi.test(stage?.name),
+              "cursor-pointer": !disabled,
+            }
+          )}
+          onClick={() => {
+            if (disabled) return;
+            setIsOpen(true);
+          }}
+        >
+          <p
+            className="whitespace-nowrap text-ellipsis overflow-hidden"
+            title={
+              stageIndex !== -1 || !stage
+                ? "Definir estado del negocio"
+                : stage?.name
+            }
+          >
+            {stageIndex !== -1 || !stage
+              ? "Definir estado del negocio"
+              : stage?.name}
+          </p>
+        </div>
+      </div>
       <DialogPositiveStage
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         setSelectedReason={setSelectedReason}
         selectedReason={selectedReason}
-      />
-
-      <DialogNegativeStage
-        isOpen={isOpenNegative}
-        setIsOpen={setIsOpenNegative}
-        setSelectedReason={setSelectedReason}
-        selectedReason={selectedReason}
-        handleSubmit={handleSubmitNegativeStage}
+        handleSubmitCancel={handleSubmitNegativeStage}
+        handleAddPolicy={handleAddPolicy}
       />
     </div>
   );

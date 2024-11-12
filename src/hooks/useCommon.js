@@ -44,22 +44,26 @@ import { useSWRConfig } from "swr";
 export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
+  console.log(session);
 
-  // Obtener los roles del usuario
-  const userRoles = session?.user?.roles || [];
+  console.log(session);
 
-  // Name
-  const userRoleNames = userRoles.map((role) => role.name);
+  // Obtener los permisos de menú del usuario
+  const userMenuPermissions =
+    session?.user?.roles?.flatMap((role) => role.menuPermissions) || [];
 
   const sidebarNavigation = [
     {
+      id: "home",
       name: t("common:menu:home:name"),
       href: "/home",
       icon: ChevronRightIcon,
       iconShortBar: HomeIcon,
       current: true,
+      roles: ["admin", "user"],
     },
     {
+      id: "tools",
       name: t("common:menu:tools:name"),
       href: "/tools",
       icon: ChevronRightIcon,
@@ -67,24 +71,28 @@ export const useSidebar = () => {
       current: false,
       children: [
         {
+          id: "tools:tasks",
           name: t("common:menu:tools:tasks"),
           href: "/tools/tasks?page=1",
           image: "/img/herramientas/tareas.png",
           iconShortBar: BookOpenIcon,
         },
         {
+          id: "tools:calendar",
           name: t("common:menu:tools:calendar"),
           href: "/tools/calendar",
           image: "/img/herramientas/calendario.png",
           iconShortBar: CalendarDaysIcon,
         },
         {
+          id: "tools:drive",
           name: t("common:menu:tools:drive"),
           href: "/tools/drive",
           image: "/img/herramientas/drive.png",
           iconShortBar: ArchiveBoxIcon,
         },
         {
+          id: "tools:email",
           name: t("common:menu:tools:email"),
           href: "/tools/webmail?page=1",
           image: "/img/herramientas/correo.png",
@@ -93,6 +101,7 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "sales",
       name: t("common:menu:sales:name"),
       icon: ChevronRightIcon,
       current: false,
@@ -100,18 +109,21 @@ export const useSidebar = () => {
       iconShortBar: TagIcon,
       children: [
         {
+          id: "sales:crm",
           name: t("common:menu:sales:crm:name"),
           href: "/sales/crm",
           image: "/img/ventas/crm.png",
           iconShortBar: NewspaperIcon,
           children: [
             {
+              id: "sales:crm:contacts",
               name: t("common:menu:sales:crm:contacts"),
               href: "/sales/crm/contacts?page=1",
               image: "/img/crm/contacto.png",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:crm:leads",
               name: t("common:menu:sales:crm:prospects"),
               href: "/sales/crm/leads?page=1",
               image: "/img/crm/prospecto.png",
@@ -120,33 +132,38 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "sales:reports",
           name: t("common:menu:sales:reports:name"),
           href: "",
           image: "/img/ventas/reportes.png",
           iconShortBar: PresentationChartBarIcon,
           children: [
             {
+              id: "sales:reports:activities",
               name: t("common:menu:sales:reports:activities"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:reports:history",
               name: t("common:menu:sales:reports:history"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:reports:reports",
               name: t("common:menu:sales:reports:reports"),
-
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "sales:reports:agent",
               name: t("common:menu:sales:reports:agent"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
               children: [
                 {
+                  id: "sales:reports:agent:performance",
                   name: "Embudo de ventas sin conversión",
                   href: "",
                   iconShortBar: ArrowDownCircleIcon,
@@ -158,24 +175,27 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "control",
       name: t("common:menu:control:name"),
       icon: ChevronRightIcon,
       current: false,
       href: "/control",
-      roles: ["user"],
       iconShortBar: WalletIcon,
       children: [
         {
+          id: "control:commissions",
           name: t("common:menu:control:portfolio:commissions"),
           href: "",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "control:commissions:commission-simulator",
               name: t("common:menu:control:portfolio:commission-simulator"),
               href: "",
               iconShortBar: GlobeAltIcon,
             },
             {
+              id: "control:commissions:commissions-generated",
               name: t("common:menu:control:portfolio:commissions-generated"),
               href: "",
               iconShortBar: GlobeAltIcon,
@@ -183,18 +203,21 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "control:portfolio",
           name: t("common:menu:control:portfolio:name"),
           href: "/control/portafolio",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "control:portfolio:receipts",
               name: t("common:menu:control:portfolio:receipts"),
               href: "/control/portafolio/receipts",
               image: "/img/cobranza/recibos.png",
               iconShortBar: GlobeAltIcon,
             },
             {
+              id: "control:portfolio:control",
               name: t("common:menu:control:portfolio:control"),
               href: "/control/portafolio/control",
               image: "/img/cobranza/cobranzasub.png",
@@ -205,96 +228,116 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "operations",
       name: "OPERACIONES",
       icon: ChevronRightIcon,
       current: false,
       href: "/operations",
-      roles: ["user"],
       iconShortBar: WalletIcon,
       children: [
         {
+          id: "operations:management",
           name: "Gestión",
-          href: "",
+          href: "/operations/managements",
           image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:policies",
           name: "Pólizas",
           href: "/operations/policies",
           image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:endorsements",
           name: "Renovaciones",
-          href: "",
+          href: "/operations/renovations",
           image: "/img/operations/renovations.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:sinisters",
           name: "Siniestros",
-          href: "",
+          href: "/operations/claims",
           image: "/img/operations/accidents.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:refunds",
           name: "Reembolsos",
-          href: "",
+          href: "/operations/refunds",
           image: "/img/operations/refunds.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "operations:refunds",
+          name: "Programaciones",
+          href: "/operations/programations",
+          image: "/img/operations/programations.svg",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          id: "operations:fund-recovery",
           name: "Rescate de Fondos",
-          href: "",
+          href: "/operations/fundrecoveries",
           image: "/img/operations/fund_recovery.svg",
           iconShortBar: GlobeAltIcon,
         },
       ],
     },
     {
+      id: "marketing",
       name: t("common:menu:sales:marketing:name"),
       icon: ChevronRightIcon,
       current: false,
       href: "/marketing",
-      roles: ["user"],
       iconShortBar: PuzzlePieceIcon,
       children: [
         {
+          id: "marketing:campaigns",
           name: "Canales (REDES SOCIALES)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:phone",
           name: "Telefonía (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:sms",
           name: "SMS (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:widgets",
           name: "WIDGETS (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:forms",
           name: "Formularios (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:websites",
           name: "Sitios Web (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "marketing:landing",
           name: "Landing (PRÓXIMAMENTE)",
           href: "",
           image: "/img/cobranza/portafolio.png",
@@ -303,44 +346,50 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "services",
       name: t("common:menu:services:name"),
       icon: ChevronRightIcon,
       current: false,
       href: "/services",
-      roles: ["user"],
       iconShortBar: PuzzlePieceIcon,
       children: [
         {
+          id: "services:automations",
           name: t("common:menu:services:automations"),
           href: "",
           image: "/img/services/automatizaciones.png",
           iconShortBar: GlobeAltIcon,
         },
         {
+          id: "services:funnels",
           name: t("common:menu:services:funnels"),
           href: "",
           image: "/img/services/embudos.png",
           iconShortBar: FunnelIcon,
         },
         {
+          id: "services:chat",
           name: t("common:menu:services:soport"),
           href: "",
           image: "/img/services/soporte.png",
           iconShortBar: ChatBubbleOvalLeftEllipsisIcon,
         },
         {
+          id: "services:trash",
           name: t("common:menu:services:trash"),
           href: "",
           image: "/img/services/papelera.png",
           iconShortBar: TrashIcon,
         },
         {
+          id: "services:logs",
           name: t("common:menu:services:logs"),
           href: "",
           image: "/img/services/logs.png",
           iconShortBar: ShieldCheckIcon,
         },
         {
+          id: "services:academy",
           name: t("common:menu:services:academy"),
           href: "",
           image: "/img/services/academia.png",
@@ -349,46 +398,58 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "agent-management",
       name: t("common:menu:agent-management:name"),
-      href: "/",
+      href: "/agents-management",
       icon: ChevronRightIcon,
       current: false,
-      roles: ["user"],
       iconShortBar: IdentificationIcon,
       children: [
         {
+          id: "agent-management",
           name: t("common:menu:agent-management:accompaniment"),
-          href: "",
+          href: "/agents-management/accompaniment",
           iconShortBar: ArrowDownCircleIcon,
+          image: "/img/agentsManagement/accompaniment.svg",
         },
         {
+          id: "agent-management",
           name: t("common:menu:agent-management:recruitement"),
           href: "",
           iconShortBar: UserPlusIcon,
+          image: "/img/agentsManagement/recruitement.svg",
         },
         {
+          id: "agent-management",
           name: t("common:menu:agent-management:capacitations"),
           href: "",
           iconShortBar: NewspaperIcon,
+          image: "/img/agentsManagement/capacitations.svg",
         },
         {
+          id: "agent-management",
           name: t("common:menu:agent-management:conections"),
           href: "",
           iconShortBar: ArrowPathIcon,
+          image: "/img/agentsManagement/conections.svg",
         },
         {
+          id: "agent-management",
           name: "Reuniones y sesiones",
           href: "",
           icon: ChevronRightIcon,
+          image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,
           iconShortBar: IdentificationIcon,
           children: [
             {
+              id: "agent-management",
               name: t("common:menu:agent-management:team-meetings"),
               href: "",
               iconShortBar: SparklesIcon,
             },
             {
+              id: "agent-management",
               name: t("common:menu:agent-management:individual-meetings"),
               href: "",
               iconShortBar: SparklesIcon,
@@ -398,54 +459,63 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "companies",
       name: t("common:menu:companies:name"),
       href: "/",
-      roles: ["user"],
       icon: ChevronRightIcon,
       current: false,
       iconShortBar: BuildingOfficeIcon,
       children: [
         {
+          id: "companies:insurance",
           name: t("common:menu:companies:insurance"),
           href: "",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "companies:insurance:gnp",
               name: t("common:menu:companies:gnp"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:axa",
               name: t("common:menu:companies:axa"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:banorte",
               name: t("common:menu:companies:banorte"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:atlas",
               name: t("common:menu:companies:atlas"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:zurich",
               name: t("common:menu:companies:zurich"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:qualitas",
               name: t("common:menu:companies:qualitas"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:afirme",
               name: t("common:menu:companies:afirme"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:insurance:others",
               name: t("common:menu:companies:others"),
               href: "",
               iconShortBar: ArrowDownCircleIcon,
@@ -453,16 +523,19 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "companies:agency-addresses",
           name: t("common:menu:companies:agency-addresses"),
           href: "",
           iconShortBar: GlobeAltIcon,
           children: [
             {
+              id: "companies:agency-addresses:gya",
               name: "GYA TUS SUEÑOS",
               href: "",
               iconShortBar: ArrowDownCircleIcon,
             },
             {
+              id: "companies:agency-addresses:blinda",
               name: "BLINDARIESGOS",
               href: "",
               iconShortBar: ArrowDownCircleIcon,
@@ -472,6 +545,7 @@ export const useSidebar = () => {
       ],
     },
     {
+      id: "settings",
       name: t("common:menu:settings:name"),
       href: "/settings",
       icon: ChevronRightIcon,
@@ -479,19 +553,21 @@ export const useSidebar = () => {
       iconShortBar: ArrowDownCircleIcon,
       children: [
         {
+          id: "settings:permissions",
           name: t("common:menu:settings:permissions"),
           href: "/settings/permissions",
           iconShortBar: ArrowDownCircleIcon,
-          roles: ["user"],
           image: "/img/settings/permissions.png",
           children: [
             {
+              id: "settings:permissions:invite",
               name: t("common:menu:settings:invite"),
               href: `${window.location.pathname}?inviteuser=true`,
               image: "/img/settings/invitar.png",
               iconShortBar: ArchiveBoxIcon,
             },
             {
+              id: "settings:permissions:user-list",
               name: t("common:menu:settings:user-list"),
               href: "/settings/permissions/users",
               image: "/img/settings/listausuarios.png",
@@ -500,35 +576,37 @@ export const useSidebar = () => {
           ],
         },
         {
+          id: "settings:others",
           name: t("common:menu:settings:others"),
           href: "/settings/others",
           iconShortBar: ArrowDownCircleIcon,
           image: "/img/settings/others.png",
           children: [
             {
+              id: "settings:others:other-settings",
               name: t("common:menu:settings:other-settings"),
               href: `${window.location.pathname}?othersettings=true`,
-              roles: ["user"],
               image: "/img/settings/othersettings.png",
               iconShortBar: BookOpenIcon,
             },
             {
+              id: "settings:others:change-password",
               name: t("common:menu:settings:change-password"),
               href: `${window.location.pathname}?changepassword=true`,
               image: "/img/settings/changepassword.png",
               iconShortBar: InboxArrowDownIcon,
             },
             {
+              id: "settings:others:other-notifications",
               name: t("common:menu:settings:other-notifications"),
               href: `${window.location.pathname}?othernotifications=true`,
-              roles: ["user"],
               image: "/img/settings/otrasnotificaciones.png",
               iconShortBar: InboxArrowDownIcon,
             },
             {
+              id: "settings:others:subscriptions",
               name: "Suscripciones",
               href: "",
-              roles: ["user"],
               image: "/img/settings/subscriptions.png",
               iconShortBar: ArchiveBoxIcon,
             },
@@ -538,22 +616,19 @@ export const useSidebar = () => {
     },
   ];
 
-  // Función para filtrar las opciones según los roles
-  const filterMenuByRoles = (menuItems) => {
+  // Función para filtrar el menú según los permisos del usuario
+  const filterMenuByPermissions = (menuItems) => {
     return menuItems
       .filter((item) => {
-        // Si no hay roles definidos, se muestra a todos
-        if (!item.roles) return true;
-
-        // Verificar si el usuario tiene alguno de los roles permitidos
-        return item.roles.some((role) => userRoleNames.includes(role));
+        // Verificar si el id del menú está en los permisos del usuario
+        return userMenuPermissions.includes(item.id);
       })
       .map((item) => {
         // Si tiene hijos, aplicar el filtro recursivamente
         if (item.children) {
           return {
             ...item,
-            children: filterMenuByRoles(item.children),
+            children: filterMenuByPermissions(item.children),
           };
         }
         return item;
@@ -567,7 +642,7 @@ export const useSidebar = () => {
       });
   };
 
-  const filteredSidebarNavigation = filterMenuByRoles(sidebarNavigation);
+  const filteredSidebarNavigation = filterMenuByPermissions(sidebarNavigation);
 
   return {
     sidebarNavigation: filteredSidebarNavigation,
@@ -576,6 +651,7 @@ export const useSidebar = () => {
 
 export const useCommon = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const calendarViews = [
     t("tools:calendar:day"),
     t("tools:calendar:week"),
@@ -734,7 +810,7 @@ export const useCommon = () => {
     {
       value: 4,
       name: t("contacts:header:settings:import"),
-      onclick: () => {},
+      onClick: () => router.push("/custom-import/contacts"),
       disabled: false,
     },
     {
@@ -747,13 +823,13 @@ export const useCommon = () => {
       value: 6,
       name: t("contacts:header:settings:csv"),
       onclick: () => {},
-      disabled: false,
+      disabled: true,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
       onclick: () => {},
-      disabled: false,
+      disabled: true,
     },
     {
       value: 8,
@@ -765,19 +841,19 @@ export const useCommon = () => {
       value: 9,
       name: t("contacts:header:settings:control"),
       onclick: () => {},
-      disabled: false,
+      disabled: true,
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
       onclick: () => {},
-      disabled: false,
+      disabled: true,
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
       onclick: () => {},
-      disabled: false,
+      disabled: true,
     },
   ];
 
@@ -850,14 +926,44 @@ export const useCommon = () => {
   const settingsLead = [
     {
       value: 0,
-      name: t("leads:header:excel:alone"),
-      icon: RiFileExcel2Fill,
+      name: "Importación vCard",
+      disabled: true,
       onclick: () => {},
     },
     {
-      value: 0,
-      name: t("leads:header:excel:all"),
-      icon: RiFileExcel2Fill,
+      value: 1,
+      name: "Gmail Importar",
+      disabled: true,
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: "Yahoo! Importar",
+      disabled: true,
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: "Outlook Importar",
+      disabled: true,
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: "Importación personalizada",
+      disabled: true,
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: "Exportar a Excel",
+      disabled: true,
+      onclick: () => {},
+    },
+    {
+      value: 1,
+      name: "Exportar a CSV",
+      disabled: true,
       onclick: () => {},
     },
   ];
@@ -944,7 +1050,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:policies:branches:life"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/life/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/life/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policies/branch/life/${contactID}`,
     },
@@ -954,7 +1060,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/cars/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/cars/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/cars/${contactID}?show=true`
         ),
     },
     {
@@ -963,7 +1069,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}?show=true`
         ),
     },
     {
@@ -972,7 +1078,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/damages/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/damages/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/damages/${contactID}?show=true`
         ),
     },
     {
@@ -981,7 +1087,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/various/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/various/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/various/${contactID}?show=true`
         ),
     },
     {
@@ -1002,7 +1108,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:name"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/consult/${contactID}`,
     },
@@ -1011,7 +1117,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:payments"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/payments/${contactID}`,
     },
@@ -1020,7 +1126,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:claims"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/claims/${contactID}`,
     },
@@ -1029,7 +1135,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:refund"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/refunds/${contactID}`,
     },
@@ -1038,7 +1144,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:invoices"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/invoices/${contactID}`,
     },
@@ -1047,7 +1153,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:versions"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/versions/${contactID}`,
     },
@@ -1056,7 +1162,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:commissions"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/commissions/${contactID}`,
     },
@@ -1065,7 +1171,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:quotes"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/quotes/${contactID}`,
     },
@@ -1074,7 +1180,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:schedules"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/schedules/${contactID}`,
     },
@@ -1258,23 +1364,29 @@ export const useTasksConfigs = () => {
       check: true,
     },
     {
-      id: 3,
-      name: t("tools:tasks:table:contact"),
-      row: "contact",
+      id: 15,
+      name: "Conexiones CRM",
+      row: "crm",
       check: true,
     },
-    {
-      id: 4,
-      name: t("tools:tasks:table:policy"),
-      row: "policy",
-      check: true,
-    },
-    {
-      id: 4,
-      name: t("tools:tasks:table:lead"),
-      row: "lead",
-      check: true,
-    },
+    // {
+    //   id: 3,
+    //   name: t("tools:tasks:table:contact"),
+    //   row: "contact",
+    //   check: true,
+    // },
+    // {
+    //   id: 4,
+    //   name: t("tools:tasks:table:policy"),
+    //   row: "policy",
+    //   check: true,
+    // },
+    // {
+    //   id: 4,
+    //   name: t("tools:tasks:table:lead"),
+    //   row: "lead",
+    //   check: true,
+    // },
     {
       id: 5,
       name: t("tools:tasks:table.limit-date"),
@@ -1570,13 +1682,6 @@ export const useReceiptTable = () => {
   const { t } = useTranslation();
   const columnTable = [
     {
-      id: 4,
-      name: t("control:portafolio:receipt:table:client"),
-      row: "client",
-      order: "client",
-      check: true,
-    },
-    {
       id: 1,
       name: t("control:portafolio:receipt:table:receipt"),
       row: "title",
@@ -1585,10 +1690,43 @@ export const useReceiptTable = () => {
       permanent: true,
     },
     {
+      id: 5,
+      name: t("control:portafolio:receipt:table:stages"),
+      row: "stages",
+      check: true,
+    },
+    {
+      id: 4,
+      name: t("control:portafolio:receipt:table:client"),
+      row: "client",
+      order: "client",
+      check: true,
+    },
+    // {
+    //   id: 2,
+    //   name: t("control:portafolio:receipt:table:policy"),
+    //   row: "policy",
+    //   order: "policy",
+    //   check: true,
+    // },
+    {
       id: 2,
-      name: t("control:portafolio:receipt:table:policy"),
-      row: "policy",
-      order: "policy",
+      name: t("control:portafolio:receipt:table:status"),
+      row: "status",
+      order: "status",
+      check: true,
+    },
+    {
+      id: 6,
+      name: t("control:portafolio:receipt:table:amount"),
+      row: "paymentAmount",
+      check: true,
+    },
+    {
+      id: 9,
+      name: t("control:portafolio:receipt:table:expiration-date"),
+      row: "dueDate",
+      order: "dueDate",
       check: true,
     },
     {
@@ -1600,34 +1738,15 @@ export const useReceiptTable = () => {
       photo: true,
     },
     {
-      id: 6,
-      name: t("control:portafolio:receipt:table:amount"),
-      row: "paymentAmount",
+      id: 7,
+      name: t("control:portafolio:receipt:table:created-in"),
+      row: "createdAt",
       check: true,
     },
     {
       id: 8,
       name: t("control:portafolio:receipt:table:activities"),
       row: "activities",
-      check: true,
-    },
-    {
-      id: 9,
-      name: t("control:portafolio:receipt:table:expiration-date"),
-      row: "dueDate",
-      order: "dueDate",
-      check: true,
-    },
-    {
-      id: 5,
-      name: t("control:portafolio:receipt:table:stages"),
-      row: "stages",
-      check: true,
-    },
-    {
-      id: 7,
-      name: t("control:portafolio:receipt:table:created-in"),
-      row: "createdAt",
       check: true,
     },
   ];
@@ -1683,6 +1802,313 @@ export const usePoliciesTable = () => {
     {
       id: 8,
       name: t("operations:policies:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useRenovationTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:renovations:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:renovations:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:renovations:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:renovations:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 1,
+      name: t("operations:renovations:table:origin"),
+      row: "source",
+      order: "source",
+      check: true,
+      permanent: true,
+    },
+    {
+      id: 6,
+      name: t("operations:renovations:table:amount"),
+      row: "importePagar",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:renovations:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useClaimTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:claims:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:claims:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:claims:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:claims:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:claims:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:claims:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useAccompanimentsTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:accompaniments:table:agent"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:accompaniments:table:email"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:accompaniments:table:mobile"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:lastUpdate"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:manager"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:state"),
+      row: "activities",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:created-in"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useRefundTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:refunds:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:refunds:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:refunds:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:refunds:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:refunds:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:refunds:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useProgramationTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:programations:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:programations:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:programations:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:programations:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:programations:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:programations:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useFundRecoveriesTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:fundrecovery:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:fundrecovery:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:fundrecovery:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:fundrecovery:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:fundrecovery:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:fundrecovery:table:activities"),
       row: "activities",
       check: true,
     },

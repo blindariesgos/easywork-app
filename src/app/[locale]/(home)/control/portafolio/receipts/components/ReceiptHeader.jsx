@@ -18,7 +18,7 @@ import ButtonAdd from "../../components/ButtonAdd";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useReceiptContext from "@/src/context/receipts";
 
-export default function ReceiptHeader() {
+export default function ReceiptHeader({ hiddeConfig }) {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
@@ -30,7 +30,6 @@ export default function ReceiptHeader() {
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
             {t("control:portafolio:receipt:title")}
           </h1>
-          <ButtonAdd />
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FiltersReceipt />
@@ -48,17 +47,18 @@ export default function ReceiptHeader() {
               width="w-72"
             />
           )}
-
-          <IconDropdown
-            icon={
-              <Cog8ToothIcon
-                className="h-8 w-8 text-primary"
-                aria-hidden="true"
-              />
-            }
-            options={settings}
-            width="w-[180px]"
-          />
+          {!hiddeConfig && (
+            <IconDropdown
+              icon={
+                <Cog8ToothIcon
+                  className="h-8 w-8 text-primary"
+                  aria-hidden="true"
+                />
+              }
+              options={settings}
+              width="w-[180px]"
+            />
+          )}
         </div>
         <ActiveFiltersDrawer
           displayFilters={displayFilters}

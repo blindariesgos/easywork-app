@@ -1,17 +1,20 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { forwardRef, Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import AddPolicy from "./addPolicy";
 import { FaChevronDown } from "react-icons/fa";
-import Button from "@/src/components/form/Button";
 const ButtonAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const options = [
-    { name: "CREAR OT", disabled: true },
-    { name: "CREAR PÓLIZA", onclick: () => setIsOpen(true) },
-    { name: "PAGAR RECIBO", disabled: true },
-    { name: "CREAR ENDOSO", disabled: true },
-    { name: "CAPTURAR SINIESTRO", disabled: true },
+    {
+      name: "Póliza (casos nuevos - clientes existentes)",
+      onclick: () => setIsOpen(true),
+    },
+    { name: "Programaciones", disabled: true },
+    { name: "Reembolsos", disabled: true },
+    { name: "Renovaciones", disabled: true },
+    { name: "Rescate de fondos", disabled: true },
+    { name: "Siniestros", disabled: true },
   ];
 
   return (

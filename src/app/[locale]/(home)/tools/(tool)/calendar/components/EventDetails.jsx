@@ -13,7 +13,7 @@ import {
   FireIcon,
 } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import ComboBox, { ComboBoxWithElement } from "./ComboBox";
 import { timezones } from "../../../../../../../lib/timezones";
@@ -27,10 +27,15 @@ import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import SelectInput from "@/src/components/form/SelectInput";
 import TextEditor from "@/src/components/TextEditor";
 import RadioGroupColors from "./RadioGroupColors";
-import { addCalendarEvent, updateCalendarEvent } from "@/src/lib/apis";
+import {
+  addCalendarEvent,
+  updateCalendarEvent,
+  deleteCalendarEvent,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import useCalendarContext from "@/src/context/calendar";
+import { useSession } from "next-auth/react";
 
 const calendarios = [{ name: "Mi calendario", value: 1 }];
 
@@ -42,12 +47,16 @@ const eventLocalizations = [
   { id: 5, name: "Zoom Personal", online: true },
 ];
 
-export default function EventDetails({ data }) {
+export default function EventDetails({ data, id }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(true);
+  const [value, setValueText] = useState("<p></p>");
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const session = useSession();
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -168,6 +177,7 @@ export default function EventDetails({ data }) {
   });
 
   const handleSubmitForm = async (data) => {
+    console.log(data);
     setLoading(true);
     const {
       participants,
@@ -176,7 +186,6 @@ export default function EventDetails({ data }) {
       endTime,
       reminderCustom,
       availability,
-      description,
       color,
       important,
       isPrivate,
@@ -198,17 +207,18 @@ export default function EventDetails({ data }) {
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
       availability: availability ? availability : availabilityOptions[0].id,
-      description: description ?? "<p></p>",
+      description: value ?? "<p></p>",
       color: color ?? "#141052",
       important: !!important,
       private: !!isPrivate,
       repeat: repeat ?? "none",
       name,
     };
-
+    if (params.get("oauth")) body.oauth = params.get("oauth");
+    body.user = session?.data?.user?.id;
     try {
-      if (data) {
-        const response = await updateCalendarEvent(body, data.id);
+      if (id) {
+        const response = await updateCalendarEvent(body, id);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
@@ -220,6 +230,7 @@ export default function EventDetails({ data }) {
         }
       } else {
         const response = await addCalendarEvent(body);
+        console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
@@ -264,6 +275,8 @@ export default function EventDetails({ data }) {
 
     setIsEdit(false);
 
+    console.log(data.participants);
+
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
@@ -272,6 +285,23 @@ export default function EventDetails({ data }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
+    if (data?.description)
+      setValueText(data?.description ? data?.description : "<p></p>");
+    if (data?.participants)
+      setValue(
+        "participants",
+        data?.participants
+          ? data?.participants.map((participant) => ({
+              avatar: participant.avatar,
+              bio: participant.bio,
+              email: participant.email,
+              id: participant.id,
+              name: `${participant.profile.firstName} ${participant.profile.lastName}`,
+              phone: participant.phone,
+              username: participant.username,
+            }))
+          : []
+      );
 
     const subscription = watch((data, { name }) => {
       setIsEdit(true);
@@ -280,10 +310,27 @@ export default function EventDetails({ data }) {
     return () => subscription.unsubscribe();
   }, [data]);
 
+  const deleteEvent = async () => {
+    try {
+      const response = await deleteCalendarEvent(id, session?.data?.user?.id, params.get("oauth"));
+      if (response.hasError) {
+        toast.error(
+          "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."
+        );
+      } else {
+        toast.success("Evento eliminado.");
+        mutate();
+        router.back();
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(handleSubmitForm)}
-      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] max-w-[calc(80vw)] w-full"
+      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] w-full flex-end"
     >
       {loading && <LoaderSpinner />}
       <div
@@ -652,10 +699,10 @@ export default function EventDetails({ data }) {
                         quillRef={quillRef}
                         className="w-full"
                         setValue={(e) => {
-                          setValue("description", e);
+                          setValueText(e);
                         }}
-                        value={watch("description") ?? ""}
-                        disabled={!isEdit}
+                        value={value}
+                        // disabled={!isEdit}
                       />
                     </div>
                   </div>
@@ -793,6 +840,15 @@ export default function EventDetails({ data }) {
           >
             {t("common:buttons:cancel")}
           </button>
+          {data && (
+            <button
+              type="button"
+              className="inline-flex ml-4 justify-center rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              onClick={() => deleteEvent()}
+            >
+              Eliminar
+            </button>
+          )}
         </div>
       )}
     </form>

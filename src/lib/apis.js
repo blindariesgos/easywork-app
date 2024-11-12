@@ -5,6 +5,28 @@ import { auth, signIn, signOut } from "../../auth";
 import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
 
+const getQueries = (filters) => {
+  const getRepitKeys = (key, arr) =>
+    arr.map((item) => `${key}=${item.id}`).join("&");
+  if (Object.keys(filters).length == 0) return "";
+
+  const getValue = (key) => {
+    switch (key) {
+      default:
+        return `${key}=${filters[key]}`;
+    }
+  };
+
+  return Object.keys(filters)
+    .filter((key) => filters[key])
+    .map((key) =>
+      Array.isArray(filters[key])
+        ? getRepitKeys(key, filters[key])
+        : getValue(key)
+    )
+    .join("&");
+};
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };
@@ -58,14 +80,16 @@ export const createLead = async (data) => {
     .post("/sales/crm/leads/new", data)
     .catch((error) => ({ ...error, hasError: true }));
 
-  revalidatePath('/sales/crm/leads', "layout");
+  revalidatePath("/sales/crm/leads", "layout");
   return response;
 };
 
 export const updateLead = async (data, id) => {
-  const response = await axios()
+  const response = await axios({ contentType: "multipart/form-data" })
     .put(`/sales/crm/leads/${id}`, data)
     .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/sales/crm/leads", "layout");
+  console.log("aaaaaaaaaalalal jal jaljala jlajal", response);
   return response;
 };
 export const updateContact = async (data, id) => {
@@ -91,11 +115,25 @@ export const getContacts = async (page = 1) => {
 
 export const getContactId = async (id) => {
   try {
-    const response = await axios().get(`/sales/crm/contacts/${id}`);
+    const response = await axios()
+      .get(`/sales/crm/contacts/${id}`)
+      .catch((error) => ({ hasError: true, ...error }));
     return response;
   } catch (error) {
     // throw new Error(error);
   }
+};
+
+export const getReceiptKanbanByStateId = async (params) => {
+  try {
+    const queries = getQueries(params);
+    const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
+    console.log(url);
+    const response = await axios()
+      .get(url)
+      .catch((error) => ({ hasError: true, ...error }));
+    return response;
+  } catch (error) {}
 };
 
 export const getPolicyById = async (id) => {
@@ -123,7 +161,9 @@ export const deletePolicyById = async (id) => {
 
 export const deleteReceiptById = async (receiptId) => {
   // try {
-  const response = await axios().delete(`/sales/crm/polizas/receipts/${receiptId}`);
+  const response = await axios().delete(
+    `/sales/crm/polizas/receipts/${receiptId}`
+  );
   revalidatePath("/control/portafolio/receipts", "page");
   return response;
 };
@@ -133,8 +173,23 @@ export const getAddListContacts = async () => {
   return response;
 };
 
+export const getPortafolioControlResume = async ({ filters }) => {
+  const queries = getQueries(filters);
+  const response = await axios()
+    .get(`/sales/crm/polizas/receipts/collection_report/header?${queries}`)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
 export const getAddListLeads = async () => {
   const response = await axios().get(`/sales/crm/leads/get_add_lists`);
+  return response;
+};
+
+export const getAddListReceipts = async () => {
+  const response = await axios().get(
+    `/sales/crm/polizas/receipts/get_add_lists`
+  );
   return response;
 };
 
@@ -209,7 +264,10 @@ export const putTaskId = async (id, body) => {
 
 export const putTaskIdRelations = async (taskId, body) => {
   console.log("Updating task relations");
-  const response = await axios().put(`/tools/tasks/${taskId}/update_relations`, body);
+  const response = await axios().put(
+    `/tools/tasks/${taskId}/update_relations`,
+    body
+  );
   return response;
 };
 
@@ -223,18 +281,29 @@ export const putTaskRestart = async (id) => {
   return response;
 };
 
+export const convertToSubtaskOf = async (taskId, parentId) => {
+  const response = await axios().put(
+    `/tools/tasks/${taskId}/convert_to_subtask_of/${parentId}`
+  );
+  return response;
+};
+
 export const postComment = async (body, id) => {
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;
 };
 
 export const putLeadStage = async (leadId, stageId) => {
-  const response = await axios().put(`/sales/crm/leads/${leadId}/stage/${stageId}`).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/leads/${leadId}/stage/${stageId}`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const putLeadCancelled = async (leadId, body) => {
-  const response = await axios().put(`/sales/crm/leads/${leadId}/cancel`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/leads/${leadId}/cancel`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -265,12 +334,16 @@ export const getTags = async () => {
 };
 
 export const postSubAgent = async (body) => {
-  const response = await axios().put(`/sales/crm/polizas/receipts/sub-agents`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/polizas/receipts/sub-agents`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const deleteSubAgent = async (subAgentId) => {
-  const response = await axios().delete(`/sales/crm/polizas/receipts/sub-agents/${subAgentId}`);
+  const response = await axios().delete(
+    `/sales/crm/polizas/receipts/sub-agents/${subAgentId}`
+  );
   return response;
 };
 
@@ -295,7 +368,9 @@ export const getPolizaByContact = async (id) => {
 };
 
 export const putPoliza = async (policyId, body) => {
-  const response = await axios().put(`/sales/crm/polizas/${policyId}`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/polizas/${policyId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
 
   revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
 
@@ -303,7 +378,9 @@ export const putPoliza = async (policyId, body) => {
 };
 
 export const putReceipt = async (receiptId, body) => {
-  const response = await axios().put(`/sales/crm/polizas/receipts/${receiptId}`, body).catch(error => ({ hasError: true, ...error }));
+  const response = await axios()
+    .put(`/sales/crm/polizas/receipts/${receiptId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -318,6 +395,14 @@ export const getLeadById = async (id) => {
   const response = await axios().get(`/sales/crm/leads/${id}`);
   return response;
 };
+
+export const getReceiptById = async (receiptId) => {
+  const response = await axios().get(
+    `/sales/crm/polizas/receipts/${receiptId}`
+  );
+  return response;
+};
+
 export const postLead = async (body) => {
   const response = await axios().post(`/sales/crm/leads`, body);
   return response;
@@ -340,7 +425,7 @@ export const googleCallback = async (data, state) => {
     expires_in: data.expires_in,
     userId: state,
     usergoogle_id: data.usergoogle_id,
-    service: 1,
+    service: data.service,
     family_name: data.family_name,
     given_name: data.given_name,
     email: data.email,
@@ -370,9 +455,14 @@ export const getTokenGoogle = async (userId, oauthId) => {
   return response;
 };
 
-export const deleteTokenGoogle = async (userId, oauthId, refreshtoken) => {
+export const deleteTokenGoogle = async (
+  userId,
+  oauthId,
+  refreshtoken,
+  fromCalendar
+) => {
   const response = await axios().delete(
-    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}`
+    `/oauth/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`
   );
   return response;
 };
@@ -404,8 +494,8 @@ export const getMails = async (idUser, page, perPage, folder, oauthId) => {
   return response;
 };
 
-export const getAllOauth = async (idUser) => {
-  const response = await axios().get(`/oauth/all/${idUser}`);
+export const getAllOauth = async (idUser, service) => {
+  const response = await axios().get(`/oauth/all/${idUser}?service=${service}`);
   return response;
 };
 
@@ -422,8 +512,30 @@ export const updateLabelId = async (usergoogle_id, newLabelId) => {
   return response;
 };
 
-export const addContactComment = async (body, crmType = "contacts") => {
-  const response = await axios().post(`/sales/crm/${crmType}/comments`, body);
+export const updateLabelIdRules = async (usergoogle_id, newLabelIdRules) => {
+  const response = await axios().put(`/oauth/labelIdRules`, {
+    usergoogle_id,
+    newLabelIdRules,
+  });
+  return response;
+};
+
+const getCommentPath = (cmrtype) => {
+  switch (cmrtype) {
+    case "policy":
+      return "polizas";
+    case "lead":
+      return "leads";
+    case "receipt":
+      return "polizas/receipts";
+    default:
+      return "contacts";
+  }
+};
+export const addContactComment = async (body, cmrType) => {
+  const url = `/sales/crm/${getCommentPath(cmrType)}/comments`;
+  console.log(url, body);
+  const response = await axios().post(url, body);
   return response;
 };
 
@@ -433,7 +545,7 @@ export const getAllRoles = async () => {
 };
 
 export const updateUser = async (id, body) => {
-  const response = await axios()
+  const response = await axios({ contentType: "multipart/form-data" })
     .put(`/users/${id}`, body)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
@@ -449,6 +561,47 @@ export const addCalendarEvent = async (body) => {
 export const updateCalendarEvent = async (body, eventId) => {
   const response = await axios()
     .put(`/calendar/events/${eventId}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const deleteCalendarEvent = async (eventId, userId, oauthId) => {
+  const response = await axios()
+    .delete(`/calendar/events/${eventId}?userId=${userId}&oauthId=${oauthId}`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getContactsNeedAttention = async () => {
+  const response = await axios().get(`/tools/tasks/home/lists/contacts`);
+  return response;
+};
+
+export const getPoliciesNeedAttention = async () => {
+  const response = await axios().get(`/tools/tasks/home/lists/polizas`);
+  return response;
+};
+
+export const addReceiptDocument = async (receiptId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(
+      `/sales/crm/polizas/receipts/upload/${receiptId}?category=${category}`,
+      body
+    )
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addLeadDocument = async (leadId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/upload/${leadId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const postPositiveStagePolicy = async (leadId) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/${leadId}/generate_poliza`)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

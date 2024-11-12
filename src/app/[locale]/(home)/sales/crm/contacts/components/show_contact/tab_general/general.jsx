@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
-import ActivityPanel from "@/src/components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import { createContact, getContactId, updateContact } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
@@ -23,6 +23,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
+import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -92,15 +93,15 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     assignedById: Yup.string(),
     birthdate: Yup.string(),
     typePerson: Yup.string(),
-    observadorId: Yup.string(),
+    observerId: Yup.string(),
     subAgentId: Yup.string(),
     intermediarioId: Yup.string(),
     typeId: Yup.string(),
-    comments: Yup.string(),
+    observations: Yup.string(),
     emails_dto: Yup.array().of(
       Yup.object().shape({
         email: Yup.string().matches(
-          /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/,
+          VALIDATE_EMAIL_REGEX,
           t("common:validations:email")
         ),
         relation: Yup.string(),
@@ -126,18 +127,28 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: {
-      emails_dto: [
-        {
-          email: "",
-          relation: "",
-        },
-      ],
-      phones_dto: [
-        {
-          number: "",
-          relation: "",
-        },
-      ],
+      emails_dto: contact?.emails?.length
+        ? contact?.emails?.map((e) => ({
+            email: e?.email?.email,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              email: "",
+              relation: "",
+            },
+          ],
+      phones_dto: contact?.phones?.length
+        ? contact?.phones?.map((e) => ({
+            number: e?.phone?.number,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              number: "",
+              relation: "",
+            },
+          ],
     },
   });
 
@@ -160,8 +171,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     }
     if (contact?.lastName) setValue("lastName", contact?.lastName);
     if (contact?.cargo) setValue("cargo", contact?.cargo);
-    if (contact?.phones[0]?.phone?.number)
-      setValue("phone", contact?.phones[0]?.phone?.number);
     if (contact?.type?.id) setValue("typeId", contact?.type?.id);
     if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
     if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
@@ -170,44 +179,12 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
     if (contact?.intermediario)
       setValue("intermediarioId", contact?.intermediario?.id);
-    if (contact?.observador) setValue("observadorId", contact?.observador?.id);
+    if (contact?.observer) setValue("observerId", contact?.observer?.id);
     if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
-    if (contact?.comments) setValue("comments", contact?.comments);
+    if (contact?.observations) setValue("observations", contact?.observations);
     if (contact?.activitySector)
       setValue("activitySector", contact?.activitySector);
 
-    if (contact?.emails?.length) {
-      setValue(
-        "emails_dto",
-        contact?.emails?.map((e) => ({
-          email: e?.email?.email,
-          relation: e?.relation ?? "",
-        }))
-      );
-    } else {
-      setValue("emails_dto", [
-        {
-          email: "",
-          relation: "",
-        },
-      ]);
-    }
-    if (contact?.phones?.length) {
-      setValue(
-        "phones_dto",
-        contact?.phones?.map((e) => ({
-          number: e?.phone?.number,
-          relation: e?.relation ?? "",
-        }))
-      );
-    } else {
-      setValue("phones_dto", [
-        {
-          number: "",
-          relation: "",
-        },
-      ]);
-    }
     setLoading(false);
   }, [contact, id]);
 
@@ -319,20 +296,18 @@ export default function ContactGeneral({ contact, id, refPrint }) {
 
           {/* Menu Izquierda */}
           <div className=" bg-gray-100 p-4 lg:overflow-y-scroll rounded-lg lg:col-span-5 ">
-            <div className="pr-2">
-              <div className="flex justify-between bg-white py-4 px-3 rounded-md">
-                <h1 className="">{t("contacts:create:data")}</h1>
-                {contact && (
-                  <button
-                    type="button"
-                    disabled={!id}
-                    onClick={() => setIsEdit(!isEdit)}
-                    title="Editar"
-                  >
-                    <PencilIcon className="h-6 w-6 text-primary" />
-                  </button>
-                )}
-              </div>
+            <div className="flex justify-between bg-white py-4 px-3 rounded-md">
+              <h1 className="">{t("contacts:create:data")}</h1>
+              {contact && (
+                <button
+                  type="button"
+                  disabled={!id}
+                  onClick={() => setIsEdit(!isEdit)}
+                  title="Editar"
+                >
+                  <PencilIcon className="h-6 w-6 text-primary" />
+                </button>
+              )}
             </div>
             <div className="flex justify-center">
               {isEdit ? (
@@ -449,7 +424,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   defaultValue=""
                 />
               )}
-              {/* <SelectInput
+              <SelectInput
                 label={t("contacts:create:typePerson")}
                 options={[
                   {
@@ -464,10 +439,10 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 placeholder="- Seleccionar -"
                 watch={watch}
                 name="typePerson"
-                disabled={!isEdit}
+                disabled
                 setValue={setValue}
                 error={!watch("typePerson") && errors.typePerson}
-              /> */}
+              />
               <SelectInput
                 label={
                   type == "fisica"
@@ -537,11 +512,11 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   />
                   <SelectDropdown
                     label={t("contacts:create:observer")}
-                    name="observadorId"
+                    name="observerId"
                     options={lists?.users}
                     register={register}
                     disabled={!isEdit}
-                    error={errors.observadorId}
+                    error={errors.observerId}
                     setValue={setValue}
                     watch={watch}
                     placeholder="- Seleccionar -"
@@ -592,9 +567,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
               )}
               <TextInput
                 label={t("contacts:create:comments")}
-                error={errors.comments}
+                error={errors.observations}
                 register={register}
-                name="comments"
+                name="observations"
                 disabled={!isEdit}
                 multiple
               />
@@ -604,7 +579,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
           {/* Menu Derecha */}
           {id && contact && (
             <ActivityPanel
-              contactId={id}
+              entityId={id}
               contactType={type}
               className="lg:col-span-7"
             />

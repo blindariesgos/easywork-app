@@ -7,6 +7,7 @@ import { logout } from "./apis";
 const logger = getLogger("Session Updater");
 
 export const updateSession = async (newAccessToken) => {
+  console.log(newAccessToken);
   const currentSession = await auth();
 
   if (!currentSession) return;
@@ -14,8 +15,8 @@ export const updateSession = async (newAccessToken) => {
   const updatedSession = {
     ...currentSession,
     user: {
-      ...currentSession.user,
-      accessToken: newAccessToken,
+      ...newAccessToken.user,
+      accessToken: newAccessToken.token,
     },
   };
 
@@ -31,6 +32,7 @@ export async function clearSession() {
     const response = await signOut({ redirect: true });
     logger.info("Session cleared:", response);
   } catch (error) {
+    console.log("Error cerrando cesion", error);
     logger.error("Error clearing session:", error);
     throw error; // Relanza el error para manejarlo en otro lugar
   }

@@ -26,6 +26,7 @@ import { add, addHours, format, formatISO, parseISO } from "date-fns";
 import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import SelectInput from "@/src/components/form/SelectInput";
 import TextEditor from "@/src/components/TextEditor";
+import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import RadioGroupColors from "./RadioGroupColors";
 import {
   addCalendarEvent,
@@ -191,6 +192,7 @@ export default function EventDetails({ data, id }) {
       isPrivate,
       repeat,
       name,
+      crm,
     } = data;
     let reminderValue;
     if (reminder && reminder?.value) {
@@ -213,7 +215,9 @@ export default function EventDetails({ data, id }) {
       private: !!isPrivate,
       repeat: repeat ?? "none",
       name,
+      crm: crm?.map((item) => ({ id: item.id, type: item.type })) || [],
     };
+    console.log(body);
     if (params.get("oauth")) body.oauth = params.get("oauth");
     body.user = session?.data?.user?.id;
     try {
@@ -268,6 +272,7 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
+    console.log(data);
     if (!data) {
       setIsEdit(true);
       return;
@@ -659,6 +664,10 @@ export default function EventDetails({ data, id }) {
                   </span>
                   ,{" "}
                   <span className="hover:underline">
+                    {t("tools:tasks:new:crm")}
+                  </span>
+                  ,{" "}
+                  <span className="hover:underline">
                     {t("tools:calendar:new-event:reminder")}
                   </span>
                   ,{" "}
@@ -703,6 +712,19 @@ export default function EventDetails({ data, id }) {
                         }}
                         value={value}
                         // disabled={!isEdit}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                  <p className="text-sm text-left w-full md:w-36">
+                      {t("tools:tasks:new:crm")}
+                    </p>
+                    <div className="w-full md:w-[40%]">
+                      <CRMMultipleSelectV2
+                        getValues={getValues}
+                        setValue={setValue}
+                        name="crm"
+                        error={errors.crm}
                       />
                     </div>
                   </div>
@@ -836,7 +858,7 @@ export default function EventDetails({ data, id }) {
           <button
             type="button"
             className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => setOpen(false)}
+            onClick={() => router.back()}
           >
             {t("common:buttons:cancel")}
           </button>

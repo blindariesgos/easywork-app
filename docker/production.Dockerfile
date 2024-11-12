@@ -1,46 +1,47 @@
 # Etapa 1: Construcción
 FROM node:20-alpine AS builder
 
-# Instala pnpm manualmente en lugar de usar corepack
+# Instalar pnpm manualmente
 RUN npm install -g pnpm
 
-# Establece el directorio de trabajo en la carpeta de la aplicación
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos de configuración y el archivo .env necesario para la compilación
+# Copiar archivos de configuración necesarios
 COPY package.json pnpm-lock.yaml .env ./
 
-# Instala las dependencias necesarias para construir el proyecto
+# Instalar todas las dependencias
 RUN pnpm install --frozen-lockfile
 
-# Copia el resto de los archivos de la aplicación
+# Copiar el resto de los archivos de la aplicación
 COPY . .
 
-# Compila el proyecto
+# Compilar el proyecto
 RUN pnpm build
 
-# Etapa 2: Imagen de producción
+# Eliminar las dependencias de desarrollo para reducir el tamaño de node_modules
+RUN pnpm prune --prod
+
+# Etapa 2: Imagen de Producción
 FROM node:20-alpine AS runner
 
-# Instala pnpm manualmente en la etapa de producción también
-RUN npm install -g pnpm
-
-# Establece el directorio de trabajo
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copia solo los archivos necesarios desde la etapa de construcción
+# Copiar solo los archivos necesarios desde la etapa de construcción
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.env .env
 
-# Establece las variables de entorno para Next.js
+# Configurar variables de entorno para producción
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
 
-# Expone el puerto en el que se ejecuta la aplicación de Next.js
+# Exponer el puerto en el que se ejecutará la aplicación
 EXPOSE 3000
 
-# Define el comando para iniciar la aplicación en modo de producción
+# Mantener el comando de inicio con pnpm
 CMD ["pnpm", "start"]

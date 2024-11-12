@@ -25,6 +25,9 @@ RUN pnpm prune --prod
 # Etapa 2: Imagen de Producción
 FROM node:20-alpine AS runner
 
+# Instala pnpm manualmente en la etapa de producción también
+RUN npm install -g pnpm
+
 # Establecer el directorio de trabajo
 WORKDIR /app
 

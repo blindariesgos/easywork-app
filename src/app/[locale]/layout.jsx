@@ -25,6 +25,8 @@ const i18nNamespaces = [
   "users",
   "control",
   "operations",
+  "import",
+  "agentsmanagement",
 ];
 export default async function RootLayout({ children, params: { locale } }) {
   const { resources } = await initTranslations(locale, i18nNamespaces);

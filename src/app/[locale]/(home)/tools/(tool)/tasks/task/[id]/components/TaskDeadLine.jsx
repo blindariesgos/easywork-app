@@ -42,9 +42,9 @@ const TaskDeadLine = ({ task }) => {
     try {
       close();
       await toast.promise(putTaskId(task?.id, body), {
-        pending: "Actualizando fecha limite",
+        pending: "Actualizando fecha límite",
         success: t("tools:tasks:update-msg"),
-        error: "Error al actualizar fecha limite",
+        error: "Error al actualizar fecha límite",
       });
       mutate(`/tools/tasks/${task?.id}`);
       mutateTasks();

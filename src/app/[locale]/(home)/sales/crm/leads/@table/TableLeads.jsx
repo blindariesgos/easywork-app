@@ -5,10 +5,23 @@ import {
   EnvelopeIcon,
   PhoneIcon,
 } from "@heroicons/react/20/solid";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { useOrderByColumn } from "../../../../../../../hooks/useOrderByColumn";
@@ -19,21 +32,47 @@ import moment from "moment";
 import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
 import useLeadContext from "@/src/context/leads";
 import FooterTable from "@/src/components/FooterTable";
+import { Bars3Icon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/navigation";
+import DeleteModal from "@/src/components/modals/DeleteItem";
+import { deleteLeadById, updateLead } from "@/src/lib/apis";
+import { handleApiError } from "@/src/utils/api/errors";
+import { toast } from "react-toastify";
+import useCrmContext from "@/src/context/crm";
+import useAppContext from "@/src/context/app";
 
 export default function TableLeads() {
-  const { data, limit, setLimit, orderBy, setOrderBy, order, page, setPage } =
-    useLeadContext();
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
+  const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
+  const [deleteId, setDeleteId] = useState();
+  const { lists } = useAppContext();
+
+  const {
+    data,
+    limit,
+    setLimit,
+    orderBy,
+    setOrderBy,
+    order,
+    page,
+    setPage,
+    mutate,
+  } = useLeadContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedLeads, setSelectedLeads] = useState([]);
   const { columnTable } = useLeads();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
   const [dataLeads, setDataLeads] = useState();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const {
+    selectedContacts: selectedLeads,
+    setSelectedContacts: setSelectedLeads,
+  } = useCrmContext();
 
   useEffect(() => {
     if (data) setDataLeads(data);
@@ -53,75 +92,255 @@ export default function TableLeads() {
   }, [selectedLeads, dataLeads]);
 
   function toggleAll() {
-    setSelectedLeads(checked || indeterminate ? [] : dataLeads?.items);
+    setSelectedLeads(
+      checked || indeterminate ? [] : dataLeads?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
 
   const ColorDivisionsStages = (data) => {
-    const stages = [
-      "Contacto Inicial",
-      "Presentar Propuesta",
-      "Propuesta en revisión",
-      "Trámite para emisión",
-      "Emisión de póliza",
-      "Cierre Positivo: Póliza pagada",
-      "Cierre Negativo: Póliza anulada",
-    ];
+    const stageIndex =
+      lists?.listLead?.leadStages
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => data?.id == value) ?? -1;
 
-    const colors = [
-      "bg-green-primary",
-      "bg-green-primary",
-      "bg-green-primary",
-      "bg-green-primary",
-      "bg-yellow-500",
-      "bg-yellow-500",
-      "bg-red-500",
-    ];
+    const getColorClass = (item, currentIndex, stageInd) => {
+      if (currentIndex <= stageInd && stageInd != -1) return "bg-yellow-500";
+      if (item && stageInd == -1 && /Positivo/gi.test(item?.name))
+        return "bg-green-primary";
+      if (item && stageInd == -1 && !/Positivo/gi.test(item?.name))
+        return "bg-red-500";
 
-    const getColorClass = (currentIndex) => {
-      const stageIndex = stages.findIndex((value) => data?.name == value);
-      const stageColor = colors[stageIndex];
-
-      return currentIndex <= stageIndex ? stageColor : "";
+      return "";
     };
 
     return (
-      <div className={`flex justify-center w-28 ${"bg-gray-200"}`}>
-        {[0, 1, 2, 3, 4, 5, 6].map((index) => (
-          <div
-            key={index}
-            className={`w-4 h-4 ${getColorClass(index)} border-t border-b border-l last:border-r border-gray-400`}
-          />
-        ))}
+      <div className={`flex justify-center  ${"bg-gray-200"}`}>
+        {new Array((lists?.listLead?.leadStages?.length ?? 5) + 1)
+          .fill(1)
+          .map((_, index) => (
+            <div
+              key={index}
+              className={`w-4 h-4 ${getColorClass(data, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+            />
+          ))}
       </div>
     );
   };
 
+  const deleteLeads = async () => {
+    setLoading(true);
+    const response = await Promise.allSettled(
+      selectedLeads.map((leadId) => deleteLeadById(leadId))
+    );
+
+    if (response.some((x) => x.status === "fulfilled")) {
+      toast.success(
+        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} pospecto(s) de ${selectedLeads.length} seleccionado(s)`
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected")) {
+      toast.error(
+        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} prospecto(s)`
+      );
+    }
+
+    setSelectedLeads([]);
+    mutate();
+    setLoading(false);
+    setIsOpenDeleteMasive(false);
+  };
+
+  const changeResponsible = async (responsible) => {
+    try {
+      setLoading(true);
+      const body = {
+        assignedById: responsible.id,
+      };
+
+      await Promise.all(selectedLeads.map((id) => updateLead(body, id)));
+      toast.success(t("contacts:table:update-contacts"));
+      setSelectedLeads([]);
+    } catch (error) {
+      console.log({ error });
+      toast.error(t("contacts:table:update-contacts-error"));
+    } finally {
+      setLoading(false);
+      mutate && mutate();
+    }
+  };
+
+  const changeObserver = async (observer) => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("observerId", observer.id);
+
+      await Promise.all(
+        selectedContacts.map((id) => updateContact(formData, id))
+      );
+      toast.success(t("contacts:table:update-contacts"));
+      setSelectedContacts([]);
+    } catch (error) {
+      console.log({ error });
+      toast.error(t("contacts:table:update-contacts-error"));
+    } finally {
+      setLoading(false);
+      mutate && mutate();
+    }
+  };
+
+  const masiveOptions = [
+    {
+      id: 1,
+      name: "Agregar Observador",
+      onclick: changeObserver,
+      selectUser: true,
+      disabled: true,
+    },
+    {
+      id: 2,
+      name: "Agregar a un Segmento",
+      disabled: true,
+    },
+    {
+      id: 3,
+      name: "Cambiar Responsable",
+      onclick: changeResponsible,
+      selectUser: true,
+    },
+    // {
+    //   id: 4,
+    //   name: "Cambiar Observador",
+    //   onclick: changeObserver,
+    //   selectUser: true,
+    // },
+    {
+      id: 5,
+      name: "Crear Boletín",
+      disabled: true,
+    },
+    {
+      id: 6,
+      name: t("common:buttons:delete"),
+      onclick: () => setIsOpenDeleteMasive(true),
+    },
+    {
+      id: 7,
+      name: "Fusionar",
+      disabled: true,
+    },
+    {
+      id: 8,
+      name: "Programar Marcación Masiva",
+      disabled: true,
+    },
+    {
+      id: 9,
+      name: "Enviar SMS masivo",
+      disabled: true,
+    },
+  ];
+
+  const deleteLead = async (id) => {
+    try {
+      setLoading(true);
+      const response = await deleteLeadById(id);
+      toast.success("Prospecto(s) eliminado(s) con exito");
+      mutate();
+      setLoading(false);
+      setIsOpenDelete(false);
+    } catch (err) {
+      setLoading(false);
+      handleApiError(err.message);
+    }
+  };
+
+  const leadOptions = (lead) => [
+    {
+      name: "Ver",
+      handleClick: (id) => router.push(`/sales/crm/leads/lead/${id}?show=true`),
+    },
+    {
+      name: "Editar",
+      handleClick: (id) =>
+        router.push(`/sales/crm/leads/lead/${id}?show=true&edit=true`),
+      disabled: lead?.cancelled || /Positivo/gi.test(lead?.stage?.name),
+    },
+    {
+      name: "Copiar",
+      handleClick: (id) =>
+        router.push(`/sales/crm/leads/lead?show=true&copy=${id}`),
+    },
+    {
+      name: "Eliminar",
+      handleClick: (id) => {
+        setDeleteId(id);
+        setIsOpenDelete(true);
+      },
+    },
+    // { name: "Agregar Cita" },
+    {
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClick: (id) =>
+            router.push(`/tools/tasks/task?show=true&prev=leads&prev_id=${id}`),
+        },
+        {
+          name: "Whatsapp",
+          disabled: true,
+        },
+        {
+          name: "Cita",
+          disabled: true,
+        },
+        {
+          name: "Comentario",
+          disabled: true,
+        },
+        {
+          name: "Llamada",
+          disabled: true,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="flow-root ">
       {loading && <LoaderSpinner />}
+      <div className="flex pb-2">
+        {selectedLeads.length > 0 && (
+          <SelectedOptionsTable options={masiveOptions} />
+        )}
+      </div>
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto">
-              <thead className="text-sm bg-white drop-shadow-sm">
+            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
+              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
                 <tr>
                   <th
                     scope="col"
-                    className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5 flex items-center gap-2"
+                    className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                   >
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      ref={checkbox}
-                      checked={checked}
-                      onChange={toggleAll}
-                    />
-                    <AddColumnsTable
-                      columns={columnTable}
-                      setSelectedColumns={setSelectedColumns}
-                    />
+                    <div className="flex gap-2 items-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        ref={checkbox}
+                        checked={checked}
+                        onChange={toggleAll}
+                      />
+                      <AddColumnsTable
+                        columns={columnTable}
+                        setSelectedColumns={setSelectedColumns}
+                      />
+                    </div>
                   </th>
                   {selectedColumns.length > 0 &&
                     selectedColumns.map((column, index) => (
@@ -159,29 +378,122 @@ export default function TableLeads() {
                     <tr
                       key={index}
                       className={clsx(
-                        selectedLeads.includes(lead)
+                        selectedLeads.includes(lead.id)
                           ? "bg-gray-200"
                           : undefined,
                         "hover:bg-indigo-100/40 cursor-default"
                       )}
                     >
-                      <td className=" px-7 sm:w-12 sm:px-6">
-                        {selectedLeads.includes(lead) && (
+                      <td className="pl-4 pr-7 sm:w-12  relative">
+                        {selectedLeads.includes(lead.id) && (
                           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                         )}
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          value={lead.id}
-                          checked={selectedLeads.includes(lead)}
-                          onChange={(e) =>
-                            setSelectedLeads(
-                              e.target.checked
-                                ? [...selectedLeads, lead]
-                                : selectedLeads.filter((p) => p !== lead)
-                            )
-                          }
-                        />
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            value={lead.id}
+                            checked={selectedLeads.includes(lead.id)}
+                            onChange={(e) =>
+                              setSelectedLeads(
+                                e.target.checked
+                                  ? [...selectedLeads, lead.id]
+                                  : selectedLeads.filter((p) => p !== lead.id)
+                              )
+                            }
+                          />
+                          <Menu
+                            as="div"
+                            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 rounded-lg"
+                          >
+                            <MenuButton className="flex items-center">
+                              <Bars3Icon
+                                className=" h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </MenuButton>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-100"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <MenuItems
+                                anchor="right start"
+                                className=" z-50 mt-2.5 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                              >
+                                {leadOptions(lead).map((item) =>
+                                  !item.options ? (
+                                    <MenuItem
+                                      key={item.name}
+                                      disabled={item.disabled}
+                                      onClick={() =>
+                                        item.handleClick &&
+                                        item.handleClick(lead.id)
+                                      }
+                                    >
+                                      <div
+                                        className={
+                                          "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
+                                        }
+                                      >
+                                        {item.name}
+                                      </div>
+                                    </MenuItem>
+                                  ) : (
+                                    <Menu key={item.name}>
+                                      <MenuButton className="flex items-center hover:bg-gray-50">
+                                        <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
+                                          {item.name}
+                                          <ChevronRightIcon className="h-6 w-6 ml-2" />
+                                        </div>
+                                      </MenuButton>
+                                      <Transition
+                                        as={Fragment}
+                                        enter="transition ease-out duration-100"
+                                        enterFrom="transform opacity-0 scale-95"
+                                        enterTo="transform opacity-100 scale-100"
+                                        leave="transition ease-in duration-75"
+                                        leaveFrom="transform opacity-100 scale-100"
+                                        leaveTo="transform opacity-0 scale-95"
+                                      >
+                                        <MenuItems
+                                          anchor={{
+                                            to: "right start",
+                                            gap: "4px",
+                                          }}
+                                          className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                        >
+                                          {item.options.map((option) => (
+                                            <MenuItem
+                                              key={option.name}
+                                              disabled={option.disabled}
+                                              onClick={() =>
+                                                option.handleClick &&
+                                                option.handleClick(lead.id)
+                                              }
+                                            >
+                                              <div
+                                                className={clsx(
+                                                  "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
+                                                )}
+                                              >
+                                                {option.name}
+                                              </div>
+                                            </MenuItem>
+                                          ))}
+                                        </MenuItems>
+                                      </Transition>
+                                    </Menu>
+                                  )
+                                )}
+                              </MenuItems>
+                            </Transition>
+                          </Menu>
+                        </div>
                       </td>
                       {selectedColumns.length > 0 &&
                         selectedColumns.map((column, index) => (
@@ -199,7 +511,9 @@ export default function TableLeads() {
                                     src={lead.photo ?? "/img/avatar.svg"}
                                     alt=""
                                   />
-                                  {lead[column.row]}
+                                  <p className="text-left">
+                                    {lead[column.row]}
+                                  </p>
                                 </Link>
                               ) : column.row === "stage" ? (
                                 <div className="flex items-center flex-col">
@@ -250,8 +564,9 @@ export default function TableLeads() {
                                   </button>
                                 </div>
                               ) : column.row === "createdAt" ? (
-                                moment(lead[column.row]).format("DD/MM/YYYY") ??
-                                "N/A"
+                                (moment(lead[column.row]).format(
+                                  "DD/MM/YYYY"
+                                ) ?? "N/A")
                               ) : column.row === "source" ? (
                                 lead?.source?.name
                               ) : (
@@ -300,18 +615,20 @@ export default function TableLeads() {
           totalPages={data?.meta?.totalPages}
           total={data?.meta?.totalItems ?? 0}
         />
-        <div className="flex">
-          {selectedLeads.length > 0 && <SelectedOptionsTable options={10} />}
-        </div>
       </div>
-      {/* <div className="w-full mt-2">
-        <div className="flex justify-center items-center flex-wrap">
-          {selectedLeads.length > 0 && (
-            <SelectedOptionsTable options={optionsCheckBox} />
-          )}
-          <Pagination totalPages={10} />
-        </div>
-      </div> */}
+
+      {/* Delete ConfirmModal */}
+      <DeleteModal
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}
+        handleClick={() => deleteLead(deleteId)}
+      />
+
+      <DeleteModal
+        isOpen={isOpenDeleteMasive}
+        setIsOpen={setIsOpenDeleteMasive}
+        handleClick={() => deleteLeads()}
+      />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import useAppContext from "../app";
 import { useSession } from "next-auth/react";
 
-export default function TasksContextProvider({ children, userId }) {
+export default function TasksContextProvider({ children }) {
   const session = useSession()
   const { t } = useTranslation()
   const [filters, setFilters] = useState([])
@@ -17,12 +17,13 @@ export default function TasksContextProvider({ children, userId }) {
     page: 1,
     limit: 5,
     orderBy: "deadline",
-    order: "DESC"
+    order: "ASC"
   })
-  const { tasks, isLoading, isError, mutate } = useTasks({ config, filters:{
-    ...filters,
-    showCompleted: false
-  }, userId: session?.data?.user?.id });
+  const { tasks, isLoading, isError, mutate } = useTasks({
+    config, filters: {
+      ...filters,
+    }, userId: session?.data?.user?.id
+  });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();
   const [displayFilters, setDisplayFilters] = useState({})
@@ -177,6 +178,13 @@ export default function TasksContextProvider({ children, userId }) {
         check: false,
         code: "observers",
         options: lists?.users,
+      },
+      {
+        id: 12,
+        name: t("tools:tasks:filters:fields:show-closed"),
+        type: "boolean",
+        check: false,
+        code: "showCompleted",
       },
     ])
   }, [lists?.users, status])

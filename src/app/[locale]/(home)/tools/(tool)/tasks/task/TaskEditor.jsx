@@ -21,15 +21,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
-import { getContactId, postTask, putTaskId, getLeadById } from "@/src/lib/apis";
+import {
+  getContactId,
+  postTask,
+  putTaskId,
+  getLeadById,
+  getPolicyById,
+  getReceiptById,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
-import {
-  useTaskContactsPolizas,
-  useTasks,
-  useTasksList,
-} from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
@@ -118,7 +120,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       startDate: edit?.startTime ?? copy?.startTime ?? "",
       endDate:
         edit?.startTime || copy?.startTime
-          ? edit?.deadline ?? copy?.deadline ?? ""
+          ? (edit?.deadline ?? copy?.deadline ?? "")
           : "",
       participants: edit?.participants ?? copy?.participants ?? [],
       responsible: edit?.responsible ?? copy?.responsible ?? [],
@@ -132,7 +134,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
-  const setCmrContact = async (contactId) => {
+  const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [
       {
@@ -143,9 +145,11 @@ export default function TaskEditor({ edit, copy, subtask }) {
     ]);
     setValue("name", "CRM - Contacto: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
   };
 
-  const setCmrLead = async (leadId) => {
+  const setCrmLead = async (leadId) => {
+    console.log("paso por lead");
     const response = await getLeadById(leadId);
     setValue("crm", [
       {
@@ -156,18 +160,62 @@ export default function TaskEditor({ edit, copy, subtask }) {
     ]);
     setValue("name", "CRM - Prospecto: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmReceipt = async (receiptId) => {
+    const response = await getReceiptById(receiptId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "receipt",
+        name: response?.title,
+      },
+    ]);
+    console.log("receipt", response);
+    setValue("name", "CRM - Recibo: ");
+    setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmPolicy = async (policyId) => {
+    const response = await getPolicyById(policyId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "poliza",
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+      },
+    ]);
+    setValue("name", "CRM - Póliza: ");
+    setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
   };
 
   useEffect(() => {
     const prevId = params.get("prev_id");
 
     if (params.get("prev") === "contact") {
-      setCmrContact(prevId);
+      setLoading(true);
+      setCrmContact(prevId);
       return;
     }
 
-    if (params.get("prev") === "leads") {
-      setCmrLead(prevId);
+    if (params.get("prev") === "lead") {
+      setLoading(true);
+      setCrmLead(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "policy") {
+      setLoading(true);
+      setCrmPolicy(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "receipt") {
+      setLoading(true);
+      setCrmReceipt(prevId);
       return;
     }
   }, [params.get("prev")]);
@@ -195,7 +243,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
   }, [edit, copy]);
 
   const createTask = async (data, isNewTask) => {
-    if (value === "") return toast.error(t("tools:tasks:description"));
     if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
     const crm =
@@ -209,7 +256,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       listField,
       t
     );
-
+    console.log({ body });
     try {
       setLoading(true);
       if (edit) {
@@ -313,69 +360,63 @@ export default function TaskEditor({ edit, copy, subtask }) {
               copy={copy}
             />
             <div className="mt-6 flex flex-col gap-3">
-              <div>
-                <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">
-                    {t("tools:tasks:new:responsible")}
-                  </p>
-                  <div className="w-full md:w-[40%]">
-                    <Controller
-                      name="responsible"
-                      control={control}
-                      defaultValue={[]}
-                      render={({ field }) => (
-                        <MultipleSelect
-                          {...field}
-                          options={lists?.users || []}
-                          getValues={getValues}
-                          setValue={setValue}
-                          onlyOne
-                          name="responsible"
-                          error={errors.responsible}
-                        />
-                      )}
-                    />
+              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("tools:tasks:new:responsible")}
+                </p>
+                <div className="w-full md:w-[40%]">
+                  <Controller
+                    name="responsible"
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <MultipleSelect
+                        {...field}
+                        options={lists?.users || []}
+                        getValues={getValues}
+                        setValue={setValue}
+                        onlyOne
+                        name="responsible"
+                        error={errors.responsible}
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6">
+                  <div
+                    className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
+                    onClick={() =>
+                      setOpenOptions({
+                        ...openOptions,
+                        created: !openOptions.created,
+                      })
+                    }
+                  >
+                    <p className="text-sm">{t("tools:tasks:new:created-by")}</p>
                   </div>
-                  <div className="flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6">
-                    <div
-                      className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
-                      onClick={() =>
-                        setOpenOptions({
-                          ...openOptions,
-                          created: !openOptions.created,
-                        })
-                      }
-                    >
-                      <p className="text-sm">
-                        {t("tools:tasks:new:created-by")}
-                      </p>
-                    </div>
-                    <div
-                      className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
-                      onClick={() =>
-                        setOpenOptions({
-                          ...openOptions,
-                          participants: !openOptions.participants,
-                        })
-                      }
-                    >
-                      <p className="text-sm">
-                        {t("tools:tasks:new:participants")}
-                      </p>
-                    </div>
-                    <div
-                      className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
-                      onClick={() =>
-                        setOpenOptions({
-                          ...openOptions,
-                          observers: !openOptions.observers,
-                        })
-                      }
-                    >
-                      <p className="text-sm">
-                        {t("tools:tasks:new:observers")}
-                      </p>
-                    </div>
+                  <div
+                    className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
+                    onClick={() =>
+                      setOpenOptions({
+                        ...openOptions,
+                        participants: !openOptions.participants,
+                      })
+                    }
+                  >
+                    <p className="text-sm">
+                      {t("tools:tasks:new:participants")}
+                    </p>
+                  </div>
+                  <div
+                    className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
+                    onClick={() =>
+                      setOpenOptions({
+                        ...openOptions,
+                        observers: !openOptions.observers,
+                      })
+                    }
+                  >
+                    <p className="text-sm">{t("tools:tasks:new:observers")}</p>
                   </div>
                 </div>
               </div>
@@ -575,40 +616,25 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     </div>
                   </div>
                   {/* Sub Task */}
-                  <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                    <p className="text-sm text-left w-full md:w-36">
-                      {t("tools:tasks:new:subtask")}
-                    </p>
-                    <div className="w-full md:w-[40%]">
-                      {/* <Controller
-                        name="subTask"
-                        control={control}
-                        defaultValue={[]}
-                        render={({ field }) => (
-                          <MultipleSelect
-                            {...field}
-                            options={tasksList || []}
-                            getValues={getValues}
-                            setValue={setValue}
-                            name="subTask"
-                            disabled={subtask}
-                            error={errors.subTask}
-                            onlyOne
-                          />
-                        )}
-                      /> */}
-                      <SubTaskSelect
-                        name="subTask"
-                        getValues={getValues}
-                        setValue={setValue}
-                        disabled={subtask}
-                        error={errors.subTask}
-                        onlyOne
-                        subtitle="Seleccionar tarea padre"
-                        taskId={edit?.id ?? copy?.id ?? ""}
-                      />
+                  {!edit && (
+                    <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                      <p className="text-sm text-left w-full md:w-36">
+                        {t("tools:tasks:new:subtask")}
+                      </p>
+                      <div className="w-full md:w-[40%]">
+                        <SubTaskSelect
+                          name="subTask"
+                          getValues={getValues}
+                          setValue={setValue}
+                          disabled={subtask}
+                          error={errors.subTask}
+                          onlyOne
+                          subtitle="Seleccionar tarea padre"
+                          taskId={edit?.id ?? copy?.id ?? ""}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
@@ -688,6 +714,10 @@ const getCmrInfo = (cmr) => {
 
   if (type === "contact" || type === "lead") {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
+  }
+
+  if (type === "poliza") {
+    name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
   }
 
   return { id, type, name };

@@ -38,9 +38,9 @@ export default function TableInfo({
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-300 table-auto">
-                <thead className="bg-white">
+            <div className="overflow-x-auto h-full max-h-[60vh]">
+              <table className="min-w-full divide-y divide-gray-300 table-auto relative">
+                <thead className="bg-white sticky top-0 z-10">
                   <tr>
                     <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
                       <input
@@ -240,17 +240,19 @@ export default function TableInfo({
                                 onClick={() => handleOpenItem(file)}
                                 title={file.name}
                               >
-                                {file.name}
+                                {file?.metadata?.observableName ??
+                                  file?.metadata?.showName ??
+                                  file.name}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           <p className="text-center">
-                            {formatDate(file.updatedat, "dd/MM/yyyy")}
+                            {formatDate(file.updatedAt, "dd/MM/yyyy")}
                           </p>
                           <p className="text-center">
-                            {formatDate(file.updatedat, "hh:mm a")}
+                            {formatDate(file.updatedAt, "hh:mm a")}
                           </p>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">

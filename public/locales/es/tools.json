@@ -113,7 +113,8 @@
         "closed": "Terminado el",
         "name": "Nombre",
         "participant": "Participante",
-        "observer": "Observador"
+        "observer": "Observador",
+        "show-closed": "Mostrar Cerrados"
       }
     },
     "new": {
@@ -142,7 +143,7 @@
       "days": "días",
       "hours": "horas",
       "minutes": "minutos",
-      "person-responsible": "Persona responsable puede cambiar la fecha limite",
+      "person-responsible": "Persona responsable puede cambiar la fecha límite",
       "review-task": "Revisar la tarea después de completarla",
       "add-favorites": "Agregar favoritos",
       "add-plan": "Agregar al plan de día de trabajo",
@@ -202,6 +203,7 @@
       "more": "Más",
       "copy": "Copia",
       "subtask": "Crear subtarea",
+      "to-subtask": "Convertir en subtarea",
       "delegate": "Delegar",
       "comments": "Comentarios",
       "history": "Historial",

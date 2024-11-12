@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import Button from "./Button";
+import { useReceipts } from "@/src/lib/api/hooks/receipts";
 
 const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const { t } = useTranslation();
@@ -30,8 +31,8 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     page: 1,
     limit: 5,
   });
-  const { data: dataPolicies, isLoading: isLoadingPolicies } = usePolicies({
-    filters: { name: query },
+  const { data: policies, isLoading: isLoadingPolicies } = usePolicies({
+    filters: { poliza: query },
     config: {
       page: 1,
       limit: 5,
@@ -39,6 +40,14 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   });
   const { leads, isLoading: isLoadingLeads } = useLeads({
     filters: { fullName: query },
+    config: {
+      page: 1,
+      limit: 5,
+    },
+  });
+
+  const { data: receipts, isLoading: isLoadingReceipts } = useReceipts({
+    filters: { name: query },
     config: {
       page: 1,
       limit: 5,
@@ -53,13 +62,16 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const handleSelect = (option) => {
     const currentValues = getValues(name) || [];
 
-    const types = ["contact", "poliza", "lead"];
+    const types = ["contact", "poliza", "lead", "receipt"];
     // Determine the type based on filterSelect
     const type = types[filterSelect - 1];
 
     const newOption = {
       id: option.id,
-      name: option.fullName || option.name,
+      name:
+        type === "poliza"
+          ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
+          : option.fullName || option.name,
       username: option.username,
       title: option.title,
       type,
@@ -83,11 +95,12 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const filterData = useMemo(() => {
     const items = [
       contacts?.items ?? [],
-      dataPolicies?.items ?? [],
+      policies?.items ?? [],
       leads?.items ?? [],
+      receipts?.items ?? [],
     ];
     return items[filterSelect - 1];
-  }, [dataPolicies, contacts, leads, filterSelect, query]);
+  }, [policies, contacts, leads, filterSelect, query, receipts]);
 
   return (
     <div className="">
@@ -101,19 +114,19 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
-              getValues(name).map((res) => (
+              getValues(name).map((option) => (
                 <div
-                  key={res?.id}
+                  key={option?.id}
                   className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
                 >
-                  {res?.fullName ||
-                    res?.name ||
-                    res?.username ||
-                    res?.title ||
-                    res?.id}
+                  {option.fullName ||
+                    option.name ||
+                    option.username ||
+                    option.title ||
+                    option.id}
                   <div
                     type="button"
-                    onClick={() => handleRemove(res.id)}
+                    onClick={() => handleRemove(option.id)}
                     className="text-white"
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
@@ -172,6 +185,15 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                   >
                     Prospectos
                   </li>
+                  <li
+                    className={clsx(
+                      filterSelect === 4 && "bg-gray-300",
+                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
+                    )}
+                    onClick={() => setFilterSelect(4)}
+                  >
+                    Recibos
+                  </li>
                 </ul>
                 <div className="">
                   <div
@@ -224,17 +246,20 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                                 : "text-black"
                             }`}
                           >
-                            {option.fullName ||
-                              option.name ||
-                              option.username ||
-                              option.title ||
-                              option.id}
+                            {filterSelect == 2
+                              ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
+                              : option.fullName ||
+                                option.name ||
+                                option.username ||
+                                option.title ||
+                                option.id}
                           </span>
                         </div>
                       ))
                     )}
                     {(isLoadingContacts ||
                       isLoadingPolicies ||
+                      isLoadingReceipts ||
                       isLoadingLeads) && <LoadingSpinnerSmall />}
                   </div>
                 </div>

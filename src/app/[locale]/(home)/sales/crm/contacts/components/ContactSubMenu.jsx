@@ -1,9 +1,6 @@
 "use client";
 import { useTranslation } from "react-i18next";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 export default function ContactSubMenu() {
   const { t } = useTranslation();
   return (

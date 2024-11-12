@@ -14,7 +14,7 @@ import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import dynamic from "next/dynamic";
+import { getUserSignatures } from "@/src/lib/api/drive";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "./styles.css";
@@ -98,7 +98,7 @@ export default function SendMessage({
         return;
       }
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session.data.user.id}/${selectOauth.id}`,
         data
       );
       toast.success("Correo enviado");
@@ -111,15 +111,8 @@ export default function SendMessage({
 
   const getSignature = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_DRIVE_HOST}/files/signatures`,
-        {
-          headers: {
-            Authorization: `Bearer ${session.data.user.accessToken}`,
-          },
-        }
-      );
-      response.data.forEach((element) => {
+      const response = await getUserSignatures();
+      response.items.forEach((element) => {
         const foundItem = element.metadata.senders.find((item) =>
           item.email === userData.email && item.state ? item.state : false
         );
@@ -210,7 +203,7 @@ export default function SendMessage({
                       <h1 className="text-lg mb-4">Nuevo mensaje</h1>
                       <div className="bg-gray-100 text-sm p-5 h-auto">
                         <div className="pb-2 border-b-2">
-                          <p>De: {userData.email}</p>
+                          <p>De: {userData?.email}</p>
                         </div>
                         <div className="py-2 border-b-2">
                           <div className="flex items-center">

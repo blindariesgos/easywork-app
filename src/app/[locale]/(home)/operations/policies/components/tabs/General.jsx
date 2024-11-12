@@ -6,7 +6,7 @@ import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent"
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
+import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import clsx from "clsx";
 import { formatToCurrency } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";
@@ -18,17 +18,23 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
 import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 
-export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
+export default function PolicyDetails({
+  data,
+  id,
+  mutate: updatePolicy,
+  edit,
+}) {
   const { t } = useTranslation();
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(!!edit);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
   const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const pathname = usePathname();
   const router = useRouter();
 
   const schema = Yup.object().shape({
@@ -88,7 +94,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
       setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
-    if (data?.comments) setValue("comments", data?.comments);
+    if (data?.observations) setValue("observations", data?.observations);
     if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
@@ -125,10 +131,15 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
         return;
       }
       setIsEdit(false);
-      router.back();
+      setIsEdit(false);
       updatePolicy();
       toast.success("Poliza actualizada correctamente.");
       mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
+
+      if (params.get("editPolicy")) {
+        params.delete("editPolicy");
+        router.replace(`${pathname}?${params.toString()}`);
+      }
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
@@ -136,13 +147,27 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
     }
   };
 
+  const handleCancelEdit = () => {
+    setIsEdit(false);
+
+    if (params.get("editPolicy")) {
+      params.delete("editPolicy");
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={`grid grid-cols-1 md:grid-cols-2 overflow-y-auto md:overflow-hidden bg-gray-100 rounded-2xl py-4 px-4 w-full h-[calc(100vh_-_220px)]`}
+      className={clsx(
+        `grid grid-cols-1 lg:grid-cols-12 lg:overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full lg:h-[calc(100vh_-_220px)]`
+        // {
+        //   [`h-[calc(100vh_-_${headerHeight}px)]`]: headerHeight,
+        // }
+      )}
     >
       {/* Menu Derecha */}
-      <div className="h-auto rounded-2xl overflow-y-auto pr-2">
+      <div className="h-auto rounded-lg overflow-y-auto pr-2 lg:col-span-5">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
           {t("operations:policies:general:title")}
           {data && (
@@ -160,7 +185,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:type")}
             name="typeId"
             options={lists?.policies?.polizaTypes ?? []}
-            disabled={!isEdit}
+            disabled
             register={register}
             setValue={setValue}
             watch={watch}
@@ -181,7 +206,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
               name="cobertura"
               register={register}
               setValue={setValue}
-              disabled={!isEdit}
+              disabled
               watch={watch}
             />
           )}
@@ -235,6 +260,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             register={register}
             name="address"
             disabled
+            multiple
+            rows={2}
           />
 
           <Controller
@@ -246,7 +273,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
                   onChange={onChange}
                   onBlur={onBlur}
                   error={errors.vigenciaDesde}
-                  disabled={!isEdit}
+                  disabled
                 />
               );
             }}
@@ -263,7 +290,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
                   onChange={onChange}
                   onBlur={onBlur}
                   error={errors.vigenciaHasta}
-                  disabled={!isEdit}
+                  disabled
                 />
               );
             }}
@@ -314,7 +341,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             name="currencyId"
             register={register}
             setValue={setValue}
-            disabled={!isEdit}
+            disabled
             watch={watch}
           />
 
@@ -323,8 +350,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:primaNeta")}
             setValue={setValue}
             name="primaNeta"
-            disabled={!isEdit}
-            defaultValue={data?.primaNeta.toFixed(2) ?? null}
+            disabled
+            defaultValue={data?.primaNeta?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -336,8 +363,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:recargoFraccionado")}
             setValue={setValue}
             name="recargoFraccionado"
-            disabled={!isEdit}
-            defaultValue={data?.recargoFraccionado.toFixed(2) ?? null}
+            disabled
+            defaultValue={data?.recargoFraccionado?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -349,8 +376,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:derechoPoliza")}
             setValue={setValue}
             name="derechoPoliza"
-            disabled={!isEdit}
-            defaultValue={data?.derechoPoliza.toFixed(2) ?? null}
+            disabled
+            defaultValue={data?.derechoPoliza?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -362,8 +389,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:iva")}
             setValue={setValue}
             name="iva"
-            disabled={!isEdit}
-            defaultValue={data?.iva.toFixed(2) ?? null}
+            disabled
+            defaultValue={data?.iva?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -375,8 +402,8 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("operations:policies:general:importePagar")}
             setValue={setValue}
             name="importePagar"
-            disabled={!isEdit}
-            defaultValue={data?.importePagar.toFixed(2) ?? null}
+            disabled
+            defaultValue={data?.importePagar?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
                 (x) => x.id == watch("currencyId")
@@ -406,14 +433,14 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
-            error={errors.comments && errors.comments.message}
+            error={errors.observations && errors.observations.message}
             register={register}
-            name="comments"
+            name="observations"
             disabled={!isEdit}
             multiple
           />
         </div>
-        {data?.type?.name === "AUTOS" &&
+        {/* {data?.type?.name === "AUTOS" &&
           data?.vehicles.map((vehicle) => (
             <Fragment key={vehicle.id}>
               <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
@@ -464,12 +491,10 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
                 />
               </div>
             </Fragment>
-          ))}
+          ))} */}
       </div>
       {/* Menu Izquierda */}
-      <div className=" bg-gray-100 rounded-lg w-full">
-        <ActivityPanel contactId={data?.contact?.id} />
-      </div>
+      <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />
       {isEdit && (
         <div
           className={clsx(
@@ -491,7 +516,7 @@ export default function PolicyDetails({ data, id, mutate: updatePolicy }) {
             label={t("common:buttons:cancel")}
             disabled={loading}
             buttonStyle="secondary"
-            onclick={() => router.back()}
+            onclick={handleCancelEdit}
             className="px-3 py-2"
           />
         </div>

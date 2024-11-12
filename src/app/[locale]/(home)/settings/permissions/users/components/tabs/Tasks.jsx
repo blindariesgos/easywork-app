@@ -43,7 +43,7 @@ export default function General({ user, id }) {
       key: "updatedAt",
     },
     {
-      name: "Fecha limite",
+      name: "Fecha límite",
       key: "deadline",
     },
   ];

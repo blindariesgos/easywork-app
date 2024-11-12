@@ -7,11 +7,14 @@ import { useTranslation } from "react-i18next";
 import Tag from "../../../../../../../components/Tag";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTokenGoogle, getAllOauth } from "../../../../../../../lib/apis";
-import { getCookie } from "cookies-next";
-import useAppContext from "../../../../../../../context/app";
+import { toast } from "react-toastify";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-import axios from "@/src/lib/axios";
+import {
+  postUserSignatures,
+  putUserSignatures,
+  getUserSignature,
+} from "@/src/lib/api/drive";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import "./styles.css";
 
 export default function AddSignature({
@@ -22,21 +25,17 @@ export default function AddSignature({
   const { t } = useTranslation();
   const session = useSession();
   const router = useRouter();
-
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
   const [user, setUser] = useState("");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { selectOauth } = useAppContext();
   const fileInputRef = useRef(null);
-  const [signatures, setSignatures] = useState([]);
-  const [selectedCheckbox, setSelectedCheckbox] = useState(null);
   const [values, setValues] = useState([400]);
   const [archive, setArchive] = useState({ blob: null, file: null });
-  const [value, setValueText] = useState("");
   const [allOauth, setAllOauth] = useState(null);
   const [isEdit, setIsEdit] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const STEP = 0.1;
   const MIN = 100;
@@ -48,7 +47,7 @@ export default function AddSignature({
   };
 
   function allOauthPromise() {
-    getAllOauth(session.data.user.id).then((res) => {
+    getAllOauth(session.data.user.id, "Gmail").then((res) => {
       let newArray = [];
       res.forEach((element) => {
         newArray.push({ email: element.email, state: false });
@@ -91,10 +90,9 @@ export default function AddSignature({
     formData.append("size", values);
 
     try {
-      const response = await axios({
-        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-      }).post(`/files/signatures`, formData);
+      const response = await postUserSignatures(formData);
       if (response) {
+        toast.success("Firma cargada");
         back();
       }
       return response;
@@ -111,39 +109,28 @@ export default function AddSignature({
     };
 
     try {
-      const response = await axios({
-        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-      }).put(`/files/signatures/${params.get("isEdit")}/metadata`, {
-        metadata,
-      });
+      const response = await putUserSignatures(metadata, params.get("isEdit"));
       if (response) {
         back();
       }
       return response;
     } catch (error) {
-      console.error("Error uploading signature:", error);
+      toast.error(error);
     }
   };
 
-  const getSignatures = async () => {
-    try {
-      const response = await axios({
-        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-      }).get(`/files/signatures`);
-      setSignatures(response[0]);
-    } catch (error) {}
-  };
-
   const getSignature = async () => {
+    setLoading(true);
     try {
-      const response = await axios({
-        baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-      }).get(`/files/signatures/${params.get("isEdit")}`);
+      const response = await getUserSignature(params.get("isEdit"));
       if (response) {
-        setIsEdit(response.data);
-        setValues([response.data.metadata.size]);
+        setIsEdit(response);
+        setValues([response.metadata.size]);
+        setLoading(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error);
+    }
   };
 
   useEffect(() => {
@@ -165,6 +152,7 @@ export default function AddSignature({
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
+            {loading && <LoaderSpinner />}
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
               <Transition.Child
                 as={Fragment}

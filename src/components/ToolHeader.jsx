@@ -29,7 +29,7 @@ export default function ToolHeader({
     setLoading(false);
   };
   return (
-    <header className="flex flex-col">
+    <header className="flex flex-col w-full">
       <div className="lg:px-6 px-2 grid grid-cols-1 gap-2 bg-white py-4 rounded-md ">
         <div className="flex gap-3 items-center flex-wrap w-full">
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">

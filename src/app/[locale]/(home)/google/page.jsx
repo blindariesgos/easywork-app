@@ -1,9 +1,8 @@
 "use client";
 import { useEffect } from "react";
-import { googleCallback, deleteTokenGoogle } from "../../../../lib/apis";
+import { googleCallback, getAllOauth } from "../../../../lib/apis";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { setCookie, getCookie } from "cookies-next";
 import axios from "axios";
 import qs from "qs";
 
@@ -15,6 +14,7 @@ export default function Page() {
     access_token,
     expires_in,
     usergoogle_id,
+    service,
     family_name,
     given_name,
     email,
@@ -27,6 +27,7 @@ export default function Page() {
         access_token,
         expires_in,
         usergoogle_id,
+        service,
         family_name,
         given_name,
         email,
@@ -38,12 +39,14 @@ export default function Page() {
   };
 
   const handleReauthentication = () => {
-    // Construir la URL de autenticación de Google
     const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=email profile&access_type=offline&prompt=consent&state=${searchParams.get("state")}`;
-
-    // Redirigir al usuario a la URL de autenticación de Google
     window.location.href = googleAuthURL;
   };
+
+  const stateConnect = () => {
+    localStorage.setItem('connectBuzon', 'true');
+    close();
+  }
 
   useEffect(() => {
     axios
@@ -64,9 +67,7 @@ export default function Page() {
       )
       .then((res) => {
         if (!res.data.refresh_token) {
-          console.warn(
-            "No refresh token found. Redirecting to reauthentication."
-          );
+          console.warn("No refresh token found. Redirecting to reauthentication.");
           handleReauthentication();
           return;
         }
@@ -77,12 +78,12 @@ export default function Page() {
         axios
           .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json", config)
           .then((userInfo) => {
-            console.log("userInfo", userInfo);
             fetchData(
               res.data.refresh_token,
               res.data.access_token,
               res.data.expires_in,
               userInfo.data.id,
+              localStorage.getItem("service"),
               userInfo.data.family_name,
               userInfo.data.given_name,
               userInfo.data.email,
@@ -93,26 +94,16 @@ export default function Page() {
                 close();
               })
               .catch(() => {
-                setCookie("ConnectBuzon", true);
-                close()
-                // console.log(err);
-                // deleteTokenGoogle(
-                //   session.data.user.id,
-                //   "none",
-                //   res.data.refresh_token
-                // )
-                //   .then((res) => {
-                //     console.log(res);
-                    // Lógica adicional si es necesario
-                  // })
+                stateConnect();
               });
           });
       })
       .catch((err) => {
         console.error("Error getting token:", err);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data]);
+
   return (
     <div
       className="absolute w-screen h-screen bg-easywork-main"

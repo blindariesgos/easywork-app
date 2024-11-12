@@ -1,29 +1,34 @@
 "use client";
-import LoaderSpinner from "../../../../../../../components/LoaderSpinner";
-import ProfileImageInput from "../../../../../../../components/ProfileImageInput";
-import InputPhone from "../../../../../../../components/form/InputPhone";
-import SelectDropdown from "../../../../../../../components/form/SelectDropdown";
-import SelectInput from "../../../../../../../components/form/SelectInput";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import ProfileImageInput from "@/src/components/ProfileImageInput";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
+import SelectInput from "@/src/components/form/SelectInput";
+import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
+import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
+
 import { PencilIcon } from "@heroicons/react/20/solid";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import ActivityPanel from "../../../../../../../components/contactActivities/ActivityPanel";
-import Button from "../../../../../../../components/form/Button";
+import { useForm } from "react-hook-form";
+import ActivityPanel from "@/src/components/activities/ActivityPanel";
+import Button from "@/src/components/form/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import ProgressStages from "./ProgressStages";
-import TextInput from "../../../../../../../components/form/TextInput";
-import { useRouter } from "next/navigation";
+import TextInput from "@/src/components/form/TextInput";
+import { useRouter, useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import useAppContext from "@/src/context/app";
-import { createLead, updateContact, updateLead } from "@/src/lib/apis";
+import { createLead, getLeadById, updateLead } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
+import Image from "next/image";
+import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
+import { handleApiError } from "@/src/utils/api/errors";
 
-export default function CreateLead({ lead, id, updateLead: mutateLead }) {
+export default function CreateLead({ lead, id, update }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -31,28 +36,66 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   const { lists } = useAppContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const [type, setType] = useState("fisica");
 
   useEffect(() => {
     setIsEdit(id ? false : true);
   }, [id]);
 
+  useEffect(() => {
+    if (!params.get("type")) return;
+
+    setType(params.get("type"));
+    setValue("typePerson", params.get("type"));
+  }, [params.get("type")]);
+
+  useEffect(() => {
+    if (params.get("edit") === "true") {
+      setIsEdit(true);
+    }
+  }, [params.get("edit")]);
+
   const schema = Yup.object().shape({
-    email: Yup.string().email(t("common:validations:email")),
+    fullName: Yup.string(),
     name: Yup.string()
       .required(t("common:validations:required"))
       .min(2, t("common:validations:min", { min: 2 })),
-    lastName: Yup.string()
-      .required(t("common:validations:required"))
-      .min(2, t("common:validations:min", { min: 2 })),
+    lastName: Yup.string().when("typePerson", {
+      is: (value) => value === "fisica",
+      then: (schema) =>
+        schema
+          .required(t("common:validations:required"))
+          .min(2, t("common:validations:min", { min: 2 })),
+      otherwise: (schema) => schema,
+    }),
     cargo: Yup.string(),
-    phone: Yup.string(),
     rfc: Yup.string(),
     typeId: Yup.string(),
     sourceId: Yup.string(),
     typePerson: Yup.string(),
     address: Yup.string(),
     assignedById: Yup.string(),
-    amount: Yup.string(),
+    observerId: Yup.string(),
+    observations: Yup.string(),
+    quoteAmount: Yup.string(),
+    quoteCurrencyId: Yup.string(),
+    emails_dto: Yup.array().of(
+      Yup.object().shape({
+        email: Yup.string()
+          .matches(VALIDATE_EMAIL_REGEX, t("common:validations:email"))
+          .nullable() // Permite que el campo sea nulo
+          .notRequired(),
+        relation: Yup.string(),
+      })
+    ),
+    phones_dto: Yup.array().of(
+      Yup.object().shape({
+        number: Yup.string(),
+        relation: Yup.string(),
+      })
+    ),
   });
 
   const {
@@ -66,27 +109,73 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
+    defaultValues: {
+      emails_dto: lead?.emails?.length
+        ? lead?.emails?.map((e) => ({
+            email: e?.email?.email,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              email: null,
+              relation: "",
+            },
+          ],
+      phones_dto: lead?.phones?.length
+        ? lead?.phones?.map((e) => ({
+            number: e?.phone?.number,
+            relation: e?.relation ?? "",
+          }))
+        : [
+            {
+              number: "",
+              relation: "",
+            },
+          ],
+    },
   });
+
+  useEffect(() => {
+    if (!params.get("copy")) return;
+    setLoading(true);
+    const getLeadCopy = async (leadId) => {
+      const response = await getLeadById(leadId);
+      if (response?.name) {
+        setValue("name", response?.name);
+      } else {
+        setValue("name", response?.fullName);
+      }
+      if (response?.lastName) setValue("lastName", response?.lastName);
+      setLoading(false);
+    };
+    getLeadCopy(params.get("copy"));
+  }, [params.get("copy")]);
 
   useEffect(() => {
     if (!lead) return;
     if (lead?.fullName) setValue("fullName", lead?.fullName);
-    if (lead?.name) setValue("name", lead?.name);
+    if (lead?.name) {
+      setValue("name", lead?.name);
+    } else {
+      setValue("name", lead?.fullName);
+    }
     if (lead?.lastName) setValue("lastName", lead?.lastName);
     if (lead?.cargo) setValue("cargo", lead?.cargo);
-    if (lead?.phones?.length) setValue("phone", lead?.phones[0]?.phone?.number);
-    if (lead?.emails[0]?.email?.email)
-      setValue("email", lead?.emails[0]?.email?.email);
     if (lead?.type?.id) setValue("typeId", lead?.type?.id);
     if (lead?.source?.id) setValue("sourceId", lead?.source?.id);
     if (lead?.birthdate) setValue("birthdate", lead?.birthdate);
     if (lead?.address) setValue("address", lead?.address);
     if (lead?.rfc) setValue("rfc", lead?.rfc);
-    if (lead?.typePerson) setValue("typePerson", lead?.typePerson);
+    if (lead?.typePerson) {
+      setType(lead?.typePerson);
+      setValue("typePerson", lead?.typePerson);
+    }
     if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy.id);
-    if (lead?.currency) setValue("currencyId", lead?.currency.id);
-    if (lead?.quote) setValue("quote", lead?.quote);
-    // if (lead?.observador) setValue("observadorId", lead?.observador.id);
+    if (lead?.quoteCurrency)
+      setValue("quoteCurrencyId", lead?.quoteCurrency.id);
+    if (lead?.quoteAmount) setValue("quoteAmount", lead?.quoteAmount);
+    if (lead?.observations) setValue("observations", lead?.observations);
+    if (lead?.observer) setValue("observerId", lead?.observer.id);
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
   }, [lead]);
@@ -106,31 +195,15 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    const { phone, email, ...otherData } = data;
-    const phones = lead?.phones?.length
-      ? lead?.phones.map((p, index) => ({
-          number: index == 0 ? data.phone : p.phone?.number,
-        }))
-      : [{ number: phone }];
-    const amails = lead?.emails?.length
-      ? lead?.emails.map((e, index) => ({
-          email: index == 0 ? phone : e.email?.email,
-        }))
-      : [{ email }];
+    let body = { ...data };
 
-    let body = {
-      ...otherData,
-      emails_dto: amails,
-      phones_dto: phones,
-    };
-
-    if (selectedProfileImage?.file && !lead) {
+    if (selectedProfileImage?.file) {
       body = {
         ...body,
         photo: selectedProfileImage?.file || "",
       };
     }
-
+    console.log({ body });
     const formData = new FormData();
     for (const key in body) {
       if (body[key] === null || body[key] === undefined || body[key] === "") {
@@ -156,30 +229,27 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
           }
           throw { message };
         }
-        await mutate(`/sales/crm/leads?limit=5&page=1`);
         toast.success("Prospecto creado con exito");
       } else {
-        console.log({ body });
-        const response = await updateLead(body, id);
+        const response = await updateLead(formData, id);
         if (response.hasError) {
-          console.log({ response });
           let message = response.message;
           if (response.errors) {
             message = response.errors.join(", ");
           }
+          console.log({ message, response });
           throw { message };
         }
-        toast.success(t("contacts:edit:updated-contact"));
-        await mutate(`/sales/crm/leads?limit=5&page=1`);
-        mutateLead();
+        toast.success("¡Prospecto actualizado!");
       }
+    } catch (error) {
+      console.log(error);
+      handleApiError(error.message);
+    } finally {
+      mutate(`/sales/crm/leads/${id} `);
+      mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
       setLoading(false);
       router.back();
-    } catch (error) {
-      console.log({ error });
-      console.error(error.message);
-      handleApiError(error.message);
-      setLoading(false);
     }
   };
 
@@ -203,7 +273,7 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
           <div className="bg-transparent p-4">
             <div className="flex items-start flex-col justify-between gap-y-4 relative">
               <div className="flex gap-2 items-center">
-                <h1 className="text-xl pl-4">
+                <h1 className="text-xl pl-4 font-semibold">
                   {lead ? lead.fullName : t("leads:lead:new")}
                 </h1>
                 {/* <div>
@@ -212,19 +282,21 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
               </div>
               <div className="w-full relative">
                 <ProgressStages
-                  stage={lead.stage}
-                  mutate={mutateLead}
+                  stage={lead?.stage}
                   leadId={id}
                   setValue={setValue}
-                  disabled={lead.cancelled}
+                  disabled={
+                    lead?.cancelled || /Positivo/gi.test(lead?.stage?.name)
+                  }
+                  update={update}
                 />
               </div>
               <div className="bg-white rounded-md shadow-sm w-full">
                 <div className="flex gap-6 py-4 px-4 flex-wrap items-center">
                   <p className="text-gray-400 font-medium hover:text-primary">
-                    {t("leads:header:sales")}
+                    {t("leads:header:general")}
                   </p>
-                  <AddDocuments />
+                  <AddDocuments leadId={id} />
                 </div>
               </div>
             </div>
@@ -233,100 +305,208 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
         <div className="px-4 w-full h-full">
           <div
             className={clsx(
-              "grid grid-cols-1 h-full  w-full bg-gray-100 rounded-xl md:overflow-hidden",
+              "grid grid-cols-1 h-full  w-full bg-gray-100 rounded-xl lg:overflow-hidden",
               {
-                "md:grid-cols-2": lead,
+                "lg:grid-cols-12": lead,
               }
             )}
           >
             {/* Menu Izquierda */}
             <div
-              className={clsx("overflow-y-scroll rounded-lg px-4 pt-4 ", {
-                "md:pb-[280px]": lead,
-                "md:pb-[140px]": !lead,
-              })}
+              className={clsx(
+                "overflow-y-scroll rounded-lg px-4 pt-4 lg:col-span-5",
+                {
+                  "md:pb-[280px]": lead,
+                  "md:pb-[140px]": !lead,
+                }
+              )}
             >
-              <div className="flex justify-between bg-white py-4 px-4 rounded-md">
+              <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("leads:lead:lead-data")}</h1>
-                <button
-                  type="button"
-                  disabled={!id}
-                  onClick={() => setIsEdit(!isEdit)}
-                >
-                  <PencilIcon className="h-6 w-6 text-primary" />
-                </button>
+                {lead && (
+                  // !lead.cancelled &&
+                  // !/Positivo/gi.test(lead?.stage?.name) &&
+                  <button
+                    type="button"
+                    disabled={!id}
+                    onClick={() => setIsEdit(!isEdit)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-primary" />
+                  </button>
+                )}
               </div>
               <div className="flex justify-center">
-                <ProfileImageInput
-                  selectedProfileImage={selectedProfileImage}
-                  onChange={handleProfileImageChange}
-                />
+                {isEdit ? (
+                  <ProfileImageInput
+                    selectedProfileImage={selectedProfileImage}
+                    onChange={handleProfileImageChange}
+                    disabled={!isEdit}
+                    label={"Seleccionar foto o logo"}
+                  />
+                ) : (
+                  <div className="pb-2 pt-4">
+                    <Image
+                      width={96}
+                      height={96}
+                      src={selectedProfileImage?.base64 || "/img/avatar.svg"}
+                      alt="Profile picture"
+                      className="h-[150px] w-[150px] flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                      objectFit="fill"
+                    />
+                  </div>
+                )}
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-3 lg:px-12 px-2">
-                <TextInput
-                  type="text"
-                  label={t("leads:lead:fields:name")}
-                  placeholder={t("leads:lead:fields:placeholder-name")}
-                  error={errors.name}
-                  register={register}
-                  name="name"
-                  disabled={!isEdit}
-                  // value={watch('name')}
-                />
+              <div className="grid grid-cols-1 gap-x-6 gap-y-3 pt-4">
+                {type === "fisica" ? (
+                  <Fragment>
+                    {isEdit && (
+                      <Fragment>
+                        <TextInput
+                          type="text"
+                          label={t("contacts:create:name")}
+                          placeholder={t("contacts:create:placeholder-name")}
+                          error={errors.name}
+                          register={register}
+                          name="name"
+                          disabled={!isEdit}
+                        />
 
-                <TextInput
-                  type="text"
-                  label={t("leads:lead:fields:lastName")}
-                  placeholder={t("leads:lead:fields:placeholder-name")}
-                  error={errors.name}
-                  register={register}
-                  name="lastName"
-                  disabled={!isEdit}
-                  // value={watch('name')}
-                />
-                <TextInput
-                  label={t("leads:lead:fields:position")}
-                  placeholder={t("leads:lead:fields:position")}
-                  error={errors.cargo}
-                  register={register}
-                  name="cargo"
-                  disabled={!isEdit}
-                />
-                <Controller
-                  render={({ field: { ref, ...field } }) => {
-                    return (
-                      <InputPhone
-                        name="phone"
-                        field={field}
-                        error={errors.phone}
-                        label={t("leads:lead:fields:phone-number")}
-                        defaultValue={field.value}
+                        <TextInput
+                          type="text"
+                          label={t("contacts:create:lastName")}
+                          placeholder={t("contacts:create:placeholder-name")}
+                          error={errors.lastName}
+                          register={register}
+                          name="lastName"
+                          disabled={!isEdit}
+                        />
+                      </Fragment>
+                    )}
+                    {!isEdit && (
+                      <TextInput
+                        type="text"
+                        label={t("contacts:create:fullname")}
+                        placeholder={t("contacts:create:placeholder-name")}
+                        error={errors.fullName}
+                        register={register}
+                        name="fullName"
                         disabled={!isEdit}
                       />
-                    );
-                  }}
-                  name="phone"
-                  control={control}
-                  defaultValue=""
-                />
-                <TextInput
-                  label={t("leads:lead:fields:email")}
-                  placeholder={"Ej: example@gmail.com"}
-                  error={errors.email}
-                  register={register}
-                  name="email"
-                  // value={watch('email')}
-                  disabled={!isEdit}
-                />
-                <TextInput
-                  label={t("leads:lead:fields:rfc")}
-                  placeholder="XEXX010101000"
-                  error={errors.rfc}
-                  register={register}
-                  name="rfc"
-                  disabled={!isEdit}
-                  // value={watch('rfc')}
-                />
+                    )}
+                    <TextInput
+                      label={t("leads:lead:fields:position")}
+                      placeholder={t("leads:lead:fields:position")}
+                      error={errors.cargo}
+                      register={register}
+                      name="cargo"
+                      disabled={!isEdit}
+                    />
+                    <MultiplePhonesInput
+                      label={t("contacts:create:phone")}
+                      errors={errors.phones_dto}
+                      register={register}
+                      name="phones_dto"
+                      disabled={!isEdit}
+                      control={control}
+                      watch={watch}
+                      setValue={setValue}
+                    />
+
+                    <MultipleEmailsInput
+                      label={t("contacts:create:email")}
+                      errors={errors.emails_dto}
+                      register={register}
+                      name="emails_dto"
+                      disabled={!isEdit}
+                      control={control}
+                      watch={watch}
+                      setValue={setValue}
+                    />
+                    <TextInput
+                      label={t("leads:lead:fields:rfc")}
+                      placeholder="XEXX010101000"
+                      error={errors.rfc}
+                      register={register}
+                      name="rfc"
+                      disabled={!isEdit}
+                      // value={watch('rfc')}
+                    />
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    {isEdit && (
+                      <TextInput
+                        type="text"
+                        label={t("contacts:create:fullname-company")}
+                        placeholder={t("contacts:create:placeholder-name")}
+                        error={errors.name}
+                        register={register}
+                        name="name"
+                        disabled={!isEdit}
+                      />
+                    )}
+                    {!isEdit && (
+                      <TextInput
+                        type="text"
+                        label={t("contacts:create:fullname-company")}
+                        placeholder={t("contacts:create:placeholder-name")}
+                        error={errors.fullName}
+                        register={register}
+                        name="fullName"
+                        disabled={!isEdit}
+                      />
+                    )}
+
+                    <SelectInput
+                      label={t("contacts:create:company-activity")}
+                      options={[
+                        {
+                          name: "Servicios",
+                          id: "services",
+                        },
+                        {
+                          name: "Producción",
+                          id: "production",
+                        },
+                      ]}
+                      watch={watch}
+                      name="activitySector"
+                      disabled={!isEdit}
+                      setValue={setValue}
+                      error={!watch("activitySector") && errors.activitySector}
+                    />
+                    <TextInput
+                      label={t("leads:lead:fields:rfc")}
+                      placeholder="XEXX010101000"
+                      error={errors.rfc}
+                      register={register}
+                      name="rfc"
+                      disabled={!isEdit}
+                      // value={watch('rfc')}
+                    />
+                    <MultiplePhonesInput
+                      label={t("contacts:create:phone")}
+                      errors={errors.phones_dto}
+                      register={register}
+                      name="phones_dto"
+                      disabled={!isEdit}
+                      control={control}
+                      watch={watch}
+                      setValue={setValue}
+                    />
+
+                    <MultipleEmailsInput
+                      label={t("contacts:create:email")}
+                      errors={errors.emails_dto}
+                      register={register}
+                      name="emails_dto"
+                      disabled={!isEdit}
+                      control={control}
+                      watch={watch}
+                      setValue={setValue}
+                    />
+                  </Fragment>
+                )}
                 <TextInput
                   label={t("leads:lead:fields:address")}
                   error={errors.address}
@@ -335,45 +515,6 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                   placeholder={t("leads:lead:fields:placeholder-address")}
                   disabled={!isEdit}
                   // value={watch('address')}
-                />
-                <SelectInput
-                  label={t("leads:lead:fields:contact-type")}
-                  options={lists?.listLead?.leadTypes}
-                  name="typeId"
-                  error={errors.typeId}
-                  register={register}
-                  setValue={setValue}
-                  disabled={!isEdit}
-                  watch={watch}
-                />
-
-                <SelectDropdown
-                  label={t("leads:lead:fields:responsible")}
-                  name="assignedById"
-                  options={lists?.users ?? []}
-                  register={register}
-                  disabled={!isEdit}
-                  error={!watch("assignedById") && errors.assignedById}
-                  setValue={setValue}
-                  watch={watch}
-                />
-                <SelectInput
-                  label={t("contacts:create:typePerson")}
-                  options={[
-                    {
-                      name: "Fisica",
-                      id: "fisica",
-                    },
-                    {
-                      name: "Moral",
-                      id: "moral",
-                    },
-                  ]}
-                  watch={watch}
-                  name="typePerson"
-                  disabled={!isEdit}
-                  setValue={setValue}
-                  error={!watch("typePerson") && errors.typePerson}
                 />
                 <SelectInput
                   label={t("leads:lead:fields:origin")}
@@ -386,36 +527,89 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
                   watch={watch}
                 />
                 <SelectInput
-                  label={t("control:portafolio:receipt:details:form:currency")}
-                  name="currencyId"
-                  options={lists?.policies?.currencies ?? []}
-                  disabled={!isEdit}
+                  label={t("leads:lead:fields:contact-type")}
+                  options={lists?.listLead?.leadTypes}
+                  name="typeId"
+                  error={errors.typeId}
                   register={register}
+                  setValue={setValue}
+                  disabled={!isEdit}
+                  watch={watch}
+                />
+                <SelectDropdown
+                  label={t("leads:lead:fields:responsible")}
+                  name="assignedById"
+                  options={lists?.users ?? []}
+                  register={register}
+                  disabled={!isEdit}
+                  error={!watch("assignedById") && errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
-                <InputCurrency
-                  type="text"
-                  label={t("leads:lead:fields:amount")}
-                  setValue={setValue}
-                  name="quote"
+
+                <SelectDropdown
+                  label={t("leads:lead:fields:observer")}
+                  name="observerId"
+                  options={lists?.users ?? []}
+                  register={register}
                   disabled={!isEdit}
-                  defaultValue={
-                    lead?.quote && lead?.quote?.length
-                      ? (+lead?.quote)?.toFixed(2)
-                      : null
-                  }
-                  prefix={
-                    lists?.policies?.currencies?.find(
-                      (x) => x.id == watch("currencyId")
-                    )?.symbol ?? ""
-                  }
+                  error={!watch("observerId") && errors.observerId}
+                  setValue={setValue}
+                  watch={watch}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-2">
+                  <div className="md:col-span-2">
+                    <InputCurrency
+                      type="text"
+                      label={t("leads:lead:fields:amount")}
+                      setValue={setValue}
+                      name="quoteAmount"
+                      disabled={!isEdit}
+                      defaultValue={
+                        lead?.quoteAmount && lead?.quoteAmount?.length
+                          ? (+lead?.quoteAmount)?.toFixed(2)
+                          : null
+                      }
+                      prefix={
+                        lists?.policies?.currencies?.find(
+                          (x) => x.id == watch("quoteCurrencyId")
+                        )?.symbol ?? ""
+                      }
+                    />
+                  </div>
+                  <SelectInput
+                    label={t(
+                      "control:portafolio:receipt:details:form:currency"
+                    )}
+                    name="quoteCurrencyId"
+                    options={lists?.policies?.currencies ?? []}
+                    disabled={!isEdit}
+                    register={register}
+                    setValue={setValue}
+                    watch={watch}
+                  />
+                </div>
+
+                <TextInput
+                  label={t("leads:lead:fields:comments")}
+                  error={errors.observations}
+                  register={register}
+                  name="observations"
+                  disabled={!isEdit}
+                  multiple
                 />
               </div>
             </div>
 
             {/* Menu Derecha */}
-            {lead && <ActivityPanel contactId={id} crmType="leads" />}
+            {lead && (
+              <ActivityPanel
+                entityId={id}
+                crmType="lead"
+                className="lg:col-span-7 md:pb-[280px]"
+              />
+            )}
           </div>
         </div>
 
@@ -423,20 +617,20 @@ export default function CreateLead({ lead, id, updateLead: mutateLead }) {
         {(isEdit || !lead) && (
           <div className="flex justify-center px-4 py-4 gap-4 sticky -bottom-4 md:bottom-0 bg-white">
             <Button
+              type="button"
+              label={t("common:buttons:cancel")}
+              disabled={loading}
+              buttonStyle="secondary"
+              onclick={() => router.push(`/sales/crm/leads?page=1`)}
+              className="px-3 py-2"
+            />
+            <Button
               type="submit"
               label={
                 loading ? t("common:buttons:saving") : t("common:buttons:save")
               }
               disabled={loading}
               buttonStyle="primary"
-              className="px-3 py-2"
-            />
-            <Button
-              type="button"
-              label={t("common:buttons:cancel")}
-              disabled={loading}
-              buttonStyle="secondary"
-              onclick={() => router.push(`/sales/crm/leads?page=1`)}
               className="px-3 py-2"
             />
           </div>

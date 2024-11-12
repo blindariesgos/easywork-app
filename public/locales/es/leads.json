@@ -1,12 +1,21 @@
 {
   "header": {
     "sales": "Ventas",
+    "general": "General",
     "activities": "Actividades",
     "documents": "Documentos",
     "reports": "Reportes",
     "lead": "Prospecto",
     "create": "Crear",
     "search": "Búsqueda",
+    "elements": "Mis Prospectos",
+    "planned": "Planteados",
+    "invitation": "Invitaciones",
+    "entrees": "Entrantes",
+    "others": "Otros",
+    "expired": "Vencida",
+    "comments": "Comentarios",
+    "mark-all": "Marcar todo como leídos",
     "delete": {
       "remove": "Eliminar definitivamente",
       "trash": "Enviar a papelera de reciclaje"
@@ -53,7 +62,7 @@
     "no-data": "No hay prospectos"
   },
   "lead": {
-    "new": "Nuevo cliente",
+    "new": "Cliente potencial",
     "lead": "Prospecto",
     "lead-data": "Datos del prospecto",
     "fields": {
@@ -69,10 +78,12 @@
       "address": "Dirección",
       "contact-type": "Tipo de contacto",
       "responsible": "Persona responsable",
+      "observer": "Observador",
       "origin": "Origen",
       "amount": "Monto de la cotización",
       "ine": "Identificaciones INE, RFC o pasaporte",
       "quote": "Cotización",
+      "comments": "Comentarios",
       "client-profile": "Perfil del cliente"
     },
     "stages": {
@@ -84,7 +95,8 @@
       "positive-stage": "Etapa positiva",
       "negative-stage": "Etapa negativa",
       "modal": {
-        "select": "Seleccione el resultado del prospecto",
+        "select": "Seleccione la razón de pérdida del prospecto",
+        "select-positive": "Seleccione el resultado del prospecto",
         "policy": "Generar Póliza",
         "discard": "Póliza Descartada",
         "positive": {
@@ -94,8 +106,7 @@
           "policy": "Póliza"
         },
         "negative": {
-          "cancel": "Cancelada y no reagendada",
-          "canceled": "Cancelada",
+          "cancel": "Cancela cita y no reagenda",
           "person": "Lo verá con otra persona (familiar)",
           "documents": "Documentos incompletos",
           "noApproved": "No Aprobado por aseguradora",
@@ -116,9 +127,12 @@
   },
   "add": {
     "title": "Añadir documentos",
-    "rfc": "Identificaciones INE, RFC o Pasaporte",
+    "rfc": "INE, RFC o Pasaporte",
     "quote": "Cotización",
-    "profile": "Perfil del cliente",
-    "policy": "Póliza"
+    "profile": "Perfil del cliente o Notas adicionales",
+    "policy": "Póliza emitida",
+    "medica": "Información médica",
+    "solicitud": "Solicitud",
+    "address": "Comprobante de domicilio"
   }
 }

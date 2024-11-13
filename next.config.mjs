@@ -19,7 +19,6 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
       },
       {
-        protocol: "http",
         hostname: "gm-bitrix-bucket.s3.amazonaws.com",
       },
     ],

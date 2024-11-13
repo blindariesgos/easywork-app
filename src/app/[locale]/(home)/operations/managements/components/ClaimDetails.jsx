@@ -6,9 +6,9 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
-import General from "./tabs/General";
-import Receipts from "./tabs/Receipts";
-import Vehicle from "./tabs/Vehicle";
+// import General from "./tabs/General";
+// import Receipts from "./tabs/Receipts";
+// import Vehicle from "./tabs/Vehicle";
 import { formatDate } from "@/src/utils/getFormatDate";
 import Link from "next/link";
 
@@ -158,15 +158,15 @@ export default function RenovationDetails({ data, id, mutate }) {
           </div>
           <TabPanels className="w-full">
             <TabPanel className={"w-full md:px-4"}>
-              <General data={data} id={id} mutate={mutate} headerHeight={200} />
+              {/* <General data={data} id={id} mutate={mutate} headerHeight={200} /> */}
             </TabPanel>
             <TabPanel className="w-full md:px-4">
-              {data?.type?.name === "AUTOS" && (
+              {/* {data?.type?.name === "AUTOS" && (
                 <Vehicle vehicles={data.vehicles} />
-              )}
+              )} */}
             </TabPanel>
             <TabPanel className="w-full">
-              <Receipts policyId={data?.id} />
+              {/* <Receipts policyId={data?.id} /> */}
             </TabPanel>
           </TabPanels>
         </TabGroup>

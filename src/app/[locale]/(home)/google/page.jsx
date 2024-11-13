@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { googleCallback, getAllOauth } from "../../../../lib/apis";
+import { googleCallback } from "../../../../lib/apis";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import axios from "axios";

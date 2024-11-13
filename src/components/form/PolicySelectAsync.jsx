@@ -12,17 +12,19 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { usePolicies } from "@/src/lib/api/hooks/policies";
+import { LoadingSpinnerSmall } from "../LoaderSpinner";
+import { getContactId } from "@/src/lib/apis";
+import { useDebouncedCallback } from "use-debounce";
 
-function SelectInput({
+function PolicySelectAsync({
   label,
   selectedOption,
-  options,
   disabled,
   register,
   name,
   error,
   setValue,
-  object,
   border,
   value,
   watch,
@@ -30,35 +32,52 @@ function SelectInput({
   placeholder,
 }) {
   const { t } = useTranslation();
-  const props = register && register(name);
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState({});
+  const props = register && register(name);
+
+  const { data: options, isLoading } = usePolicies({
+    page: 1,
+    limit: 5,
+    filters,
+  });
+  const handleSearch = useDebouncedCallback(() => {
+    if (query.length > 0) {
+      setFilters({
+        poliza: query,
+      });
+    } else {
+      setFilters({});
+    }
+  }, 500);
 
   useEffect(() => {
-    if (selectedOption && !selected) {
+    handleSearch();
+  }, [query]);
+
+  useEffect(() => {
+    if (selectedOption) {
       setSelected(selectedOption);
     }
-  }, [selectedOption, selected]);
+  }, [selectedOption]);
 
   useEffect(() => {
     if (selected) {
-      setValue && setValue(name, object ? selected : selected.id);
+      setValue && setValue(name, selected);
       setSelectedOption && setSelectedOption(selected);
     }
-  }, [selected, setValue, name, object, setSelectedOption]);
-
-  const filteredElements =
-    query === ""
-      ? options
-      : options.filter((element) => {
-          return element.name.toLowerCase().includes(query.toLowerCase());
-        });
+  }, [selected, setValue, name]);
 
   useEffect(() => {
-    if (!watch || !options || !watch(name) || selected) return;
-    const option = options.find((option) => option.id == watch(name));
-    setSelected(option);
-  }, [watch && watch(name), options]);
+    if (!watch || !watch(name) || selected) return;
+    const getContact = async (contactId) => {
+      const response = await getContactId(contactId);
+      if (response.hasError) return;
+      setSelected(response);
+    };
+    getContact(watch(name));
+  }, [watch && watch(name)]);
 
   return (
     <div className="w-full">
@@ -89,7 +108,9 @@ function SelectInput({
                 "drop-shadow-sm": !disabled,
               }
             )}
-            displayValue={(person) => person?.name}
+            displayValue={(option) =>
+              `${option?.company?.name ?? ""} ${option?.poliza ?? ""} ${option?.type?.name ?? ""}`
+            }
             onChange={(event) => {
               setQuery && setQuery(event.target.value);
             }}
@@ -108,13 +129,18 @@ function SelectInput({
             anchor="bottom end"
             className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
-            {filteredElements?.length === 0 && query !== "" ? (
+            {isLoading && (
+              <div className="w-full h-[50px] flex justify-center items-center">
+                <LoadingSpinnerSmall />
+              </div>
+            )}
+            {options?.items?.length === 0 && query !== "" && !isLoading ? (
               <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                 {t("common:not-found")}
               </div>
             ) : (
-              filteredElements &&
-              filteredElements.map((option) => (
+              options?.items &&
+              options?.items?.map((option) => (
                 <ComboboxOption
                   key={option.id}
                   className={({ active }) =>
@@ -132,7 +158,7 @@ function SelectInput({
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {option.name}
+                        {`${option?.company?.name ?? ""} ${option?.poliza ?? ""} ${option?.type?.name ?? ""}`}
                       </span>
                       {selected ? (
                         <span
@@ -156,4 +182,4 @@ function SelectInput({
   );
 }
 
-export default SelectInput;
+export default PolicySelectAsync;

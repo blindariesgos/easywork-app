@@ -4,6 +4,7 @@ import LeadDetails from "./LeadDetails";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useLead } from "@/src/lib/api/hooks/leads";
 import { getLeadById } from "@/src/lib/apis";
+import SlideOver from "@/src/components/SlideOver";
 
 export default function PageLeadId({ params: { id } }) {
   const { lead, isLoading, isError } = useLead(id);

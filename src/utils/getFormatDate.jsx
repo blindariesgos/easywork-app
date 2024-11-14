@@ -37,6 +37,7 @@ export const formatDate = (date, formato = "MMMM d, h:mm a") => {
 
 export const isTaskOverdue = (task) => {
   if (!task?.deadline) return false; // No hay fecha limite
+  if (!task.status === "overdue") return false; // La tarea está completada
   const deadlineDate = parseISO(task.deadline);
   const now = new Date();
 

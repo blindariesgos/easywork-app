@@ -28,7 +28,7 @@ import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { handleApiError } from "@/src/utils/api/errors";
 
-export default function CreateLead({ lead, id, update }) {
+export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -288,7 +288,6 @@ export default function CreateLead({ lead, id, update }) {
                   disabled={
                     lead?.cancelled || /Positivo/gi.test(lead?.stage?.name)
                   }
-                  update={update}
                 />
               </div>
               <div className="bg-white rounded-md shadow-sm w-full">

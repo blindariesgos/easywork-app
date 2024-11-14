@@ -309,13 +309,15 @@ export default function Info({ user, id }) {
                             </div>
                           </div>
                           {data?.user?.groups?.map((group, index) => (
-                            <div className="w-full p-1 rounded-lg bg-white"  key={index}>
+                            <div
+                              className="w-full p-1 rounded-lg bg-white"
+                              key={index}
+                            >
                               <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
                                 Compañía: {group.name}
                               </h1>
-                              {
-                                group?.users?.map((user) => (
-                                  <div className="px-3 py-2 text-sm">
+                              {group?.users?.map((user, index) => (
+                                <div className="px-3 py-2 text-sm" key={index}>
                                   <div className="mb-3">
                                     <p className="text-gray-50">
                                       Miembro del equipo
@@ -337,9 +339,7 @@ export default function Info({ user, id }) {
                                     </div>
                                   </div>
                                 </div>
-                                ))
-                              }
-
+                              ))}
                             </div>
                           ))}
                         </div>

@@ -19,7 +19,7 @@ const getQueries = (filters) => {
     .map((key) =>
       Array.isArray(filters[key])
         ? getRepitKeys(key, filters[key])
-        : getValue(key),
+        : getValue(key)
     )
     .join("&");
 };
@@ -41,7 +41,7 @@ export const useContacts = ({ page = 1, limit = 15, filters = {} }) => {
 export const useContact = (id) => {
   const { data, error, isLoading } = useSWR(
     `/sales/crm/contacts/${id}`,
-    fetcher,
+    fetcher
   );
 
   return {
@@ -62,12 +62,11 @@ const getActivityPath = (cmrtype) => {
     default:
       return "contacts";
   }
-}
+};
 export const useEntityActivities = (id, cmrtype) => {
-
   const { data, error, isLoading, mutate } = useSWR(
     `/sales/crm/${getActivityPath(cmrtype)}/${id}/activities`,
-    fetcher,
+    fetcher
   );
   return {
     activities: data,

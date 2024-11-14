@@ -1,21 +1,35 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import SliderOverShord from "../../../../../../components/SliderOverShort";
-import Button from "../../../../../../components/form/Button";
+import SliderOverShord from "@/src/components/SliderOverShort";
+import Button from "@/src/components/form/Button";
 import Tag from "@/src/components/Tag";
-import { RiPencilFill } from "react-icons/ri";
-import SelectInput from "../../../../../../components/form/SelectInput";
+import SelectInput from "@/src/components/form/SelectInput";
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
+import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
+import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
+
+  const schema = yup.object().shape({
+    fields: yup.array().of(yup.object().shape({})),
+  });
+
+  const { register, handleSubmit, control, reset, setValue, getValues, watch } =
+    useForm({
+      mode: "onChange",
+      resolver: yupResolver(schema),
+    });
 
   const handleChangeFile = async (e) => {
     const files = e.target.files;
@@ -68,50 +82,33 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                   id: "moral",
                 },
               ]}
-              placeholder="- Seleccionar -"
+              name="typePerson"
+            />
+            <ContactSelectAsync
+              label={t("control:portafolio:control:form:contact")}
+              name={"contactId"}
+              setValue={setValue}
+              watch={watch}
             />
             <SelectInput
               label={t("control:portafolio:control:form:insurance-company")}
-              options={[
-                {
-                  name: "GNP",
-                  id: "physical",
-                },
-                {
-                  name: "Otro",
-                  id: "moral",
-                },
-                {
-                  name: "ALLIANZ",
-                  id: "moral1",
-                },
-                {
-                  name: "ARGOS",
-                  id: "moral11",
-                },
-                {
-                  name: "ATLAS",
-                  id: "moral2",
-                },
-                {
-                  name: "AVANZA",
-                  id: "moral3",
-                },
-                {
-                  name: "AXXA",
-                  id: "moral4",
-                },
-                {
-                  name: "BANORTE",
-                  id: "moral5",
-                },
-              ]}
-              placeholder="- Seleccionar -"
+              options={lists?.policies?.polizaCompanies}
+            />
+
+            <SelectInput
+              label={t("control:portafolio:control:form:branch")}
+              options={lists?.policies?.polizaSubRamo}
+            />
+            <SelectSubAgent
+              label={t("control:portafolio:control:form:subAgente")}
+              name="subAgenteId"
+              register={register}
+              setValue={setValue}
+              watch={watch}
             />
             <SelectInput
-              label={"Agente relacionado"}
+              label={t("control:portafolio:control:form:responsible")}
               options={lists?.users ?? []}
-              placeholder="- Seleccionar -"
             />
             {/* <SelectInput
               label={t("control:portafolio:control:form:category")}
@@ -151,44 +148,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               ]}
               placeholder="- Seleccionar -"
             />
-            <SelectInput
-              label={t("control:portafolio:control:form:branch")}
-              options={[
-                {
-                  name: "001-PARTICULAR",
-                  id: "physical",
-                },
-                {
-                  name: "002-COMERCIAL",
-                  id: "moral8",
-                },
-                {
-                  name: "003-NACIONAL",
-                  id: "moral6",
-                },
-                {
-                  name: "004-INTERNACIONAL",
-                  id: "moral5",
-                },
-                {
-                  name: "005-TEMPORAL",
-                  id: "moral3",
-                },
-                {
-                  name: "006-RETIRO",
-                  id: "moralw",
-                },
-                {
-                  name: "007-AHORRO",
-                  id: "moralb",
-                },
-                {
-                  name: "008-INVERSION",
-                  id: "moralf",
-                },
-              ]}
-              placeholder="- Seleccionar -"
-            />
+            
             <SelectInput
               label={t("control:portafolio:control:form:health-branch")}
               options={[
@@ -215,13 +175,13 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
               <label
                 className={`block text-sm font-medium leading-6 text-gray-900`}
               >
-                Póliza emitida
+                Póliza emitida pagada
               </label>
               <label
                 htmlFor="policy-file"
                 className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
               >
-                <p>Cargar Documento</p>
+                <p>Selecciona un PDF: GNP</p>
                 {file && (
                   <div className="flex flex-col gap-2 justify-center items-center pt-2">
                     <div className="p-10 bg-easy-500 rounded-md">
@@ -239,6 +199,12 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                 accept=".pdf"
                 onChange={handleChangeFile}
               />
+              <p className="text-xs italic text-center pt-2 text-gray-700">
+                próximamente:{" "}
+                <span className="font-bold">
+                  Beta solo Chubb/Quálitas/AXA - Autos
+                </span>
+              </p>
             </div>
             <div className="w-full flex justify-center gap-4 py-4">
               <Button

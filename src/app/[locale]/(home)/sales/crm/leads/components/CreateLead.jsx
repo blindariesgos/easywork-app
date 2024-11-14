@@ -26,6 +26,7 @@ import AddDocuments from "./AddDocuments";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
+import { handleApiError } from "@/src/utils/api/errors";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -196,7 +197,7 @@ export default function CreateLead({ lead, id }) {
   const handleFormSubmit = async (data) => {
     let body = { ...data };
 
-    if (selectedProfileImage?.file && !lead) {
+    if (selectedProfileImage?.file) {
       body = {
         ...body,
         photo: selectedProfileImage?.file || "",
@@ -230,18 +231,19 @@ export default function CreateLead({ lead, id }) {
         }
         toast.success("Prospecto creado con exito");
       } else {
-        console.log({ body });
-        const response = await updateLead(body, id);
+        const response = await updateLead(formData, id);
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {
             message = response.errors.join(", ");
           }
+          console.log({ message, response });
           throw { message };
         }
         toast.success("¡Prospecto actualizado!");
       }
     } catch (error) {
+      console.log(error);
       handleApiError(error.message);
     } finally {
       mutate(`/sales/crm/leads/${id} `);
@@ -320,17 +322,17 @@ export default function CreateLead({ lead, id }) {
             >
               <div className="flex justify-between bg-white py-4 px-3 rounded-md">
                 <h1 className="">{t("leads:lead:lead-data")}</h1>
-                {lead &&
-                  !lead.cancelled &&
-                  !/Positivo/gi.test(lead?.stage?.name) && (
-                    <button
-                      type="button"
-                      disabled={!id}
-                      onClick={() => setIsEdit(!isEdit)}
-                    >
-                      <PencilIcon className="h-6 w-6 text-primary" />
-                    </button>
-                  )}
+                {lead && (
+                  // !lead.cancelled &&
+                  // !/Positivo/gi.test(lead?.stage?.name) &&
+                  <button
+                    type="button"
+                    disabled={!id}
+                    onClick={() => setIsEdit(!isEdit)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-primary" />
+                  </button>
+                )}
               </div>
               <div className="flex justify-center">
                 {isEdit ? (
@@ -604,7 +606,7 @@ export default function CreateLead({ lead, id }) {
               <ActivityPanel
                 entityId={id}
                 crmType="lead"
-                className="lg:col-span-7"
+                className="lg:col-span-7 md:pb-[280px]"
               />
             )}
           </div>

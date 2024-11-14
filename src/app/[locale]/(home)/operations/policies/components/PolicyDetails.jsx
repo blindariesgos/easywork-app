@@ -1,6 +1,6 @@
 "use client";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -16,8 +16,9 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { putPoliza } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
+import ReceiptEmpty from "./ReceiptEmpty";
 
-export default function PolicyDetails({ data, id, mutate }) {
+export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -40,29 +41,37 @@ export default function PolicyDetails({ data, id, mutate }) {
     {
       name: t("control:portafolio:receipt:details:consult"),
     },
-    {
-      name:
-        data?.type?.name === "GMM"
-          ? "Asegurados"
-          : data?.type?.name === "VIDA"
-            ? "Beneficiarios"
-            : "Vehiculos",
-      disabled: data?.type?.name != "AUTOS",
-    },
+    ...(() => {
+      return data?.type?.name === "VIDA"
+        ? [
+            {
+              name: "Asegurados",
+              disabled: true,
+            },
+            {
+              name: "Beneficiarios",
+              disabled: true,
+            },
+          ]
+        : [
+            {
+              name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
+              disabled: data?.type?.name != "AUTOS",
+            },
+          ];
+    })(),
+
     {
       name: "Pagos/Recibos",
     },
     {
       name: "Renovaciones",
-      disabled: true,
     },
     {
       name: "Siniestros",
-      disabled: true,
     },
     {
       name: "Reembolsos",
-      disabled: true,
     },
     {
       name: "Facturas",
@@ -82,11 +91,9 @@ export default function PolicyDetails({ data, id, mutate }) {
     },
     {
       name: "Programaciones",
-      disabled: true,
     },
     {
       name: "Rescate de fondos",
-      disabled: true,
     },
   ];
 
@@ -246,15 +253,42 @@ export default function PolicyDetails({ data, id, mutate }) {
           </div>
           <TabPanels className="w-full">
             <TabPanel className={"w-full md:px-4"}>
-              <General data={data} id={id} mutate={mutate} headerHeight={200} />
+              <General data={data} id={id} mutate={mutate} edit={edit} />
             </TabPanel>
-            <TabPanel className="w-full md:px-4">
-              {data?.type?.name === "AUTOS" && (
-                <Vehicle vehicles={data.vehicles} />
-              )}
-            </TabPanel>
+            {data?.type?.name === "VIDA" ? (
+              <Fragment>
+                <TabPanel className="w-full md:px-4"></TabPanel>
+                <TabPanel className="w-full md:px-4"></TabPanel>
+              </Fragment>
+            ) : (
+              <TabPanel className="w-full md:px-4">
+                {data?.type?.name === "AUTOS" && (
+                  <Vehicle vehicles={data.vehicles} />
+                )}
+              </TabPanel>
+            )}
+
             <TabPanel className="w-full">
               <Receipts policyId={data?.id} />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Renovaciones registradas" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Siniestros registrados" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Reembolsos registrados" />
+            </TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Programaciones registradas" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Rescate de fondos registrados" />
             </TabPanel>
           </TabPanels>
         </TabGroup>

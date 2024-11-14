@@ -30,14 +30,15 @@ function SelectInput({
   placeholder,
 }) {
   const { t } = useTranslation();
+  const props = register && register(name);
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (selectedOption) {
+    if (selectedOption && !selected) {
       setSelected(selectedOption);
     }
-  }, [selectedOption]);
+  }, [selectedOption, selected]);
 
   useEffect(() => {
     if (selected) {

@@ -1,17 +1,28 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { forwardRef, Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import AddPolicy from "./addPolicy";
+import AddSchedule from "./addSchedule";
+import AddRefunds from "./addRefunds";
+import AddClaim from "./addClaim";
 import { FaChevronDown } from "react-icons/fa";
-import Button from "@/src/components/form/Button";
+import AddFundRescue from "./addFundRescue";
 const ButtonAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenClaim, setIsOpenClaim] = useState(false);
+  const [isOpenFundRescue, setIsOpenFundRescue] = useState(false);
+  const [isOpenRefunds, setIsOpenRefunds] = useState(false);
+  const [isOpenSchedule, setIsOpenSchedule] = useState(false);
 
   const options = [
-    { name: "CREAR OT", disabled: true },
-    { name: "CREAR PÓLIZA", onclick: () => setIsOpen(true) },
-    { name: "PAGAR RECIBO", disabled: true },
-    { name: "CREAR ENDOSO", disabled: true },
-    { name: "CAPTURAR SINIESTRO", disabled: true },
+    {
+      name: "Póliza (casos nuevos - clientes existentes)",
+      onclick: () => setIsOpen(true),
+    },
+    { name: "Programaciones", onclick: () => setIsOpenSchedule(true) },
+    { name: "Reembolsos", onclick: () => setIsOpenRefunds(true) },
+    { name: "Renovaciones", disabled: true },
+    { name: "Rescate de fondos", onclick: () => setIsOpenFundRescue(true) },
+    { name: "Siniestros", onclick: () => setIsOpenClaim(true) },
   ];
 
   return (
@@ -40,6 +51,13 @@ const ButtonAdd = () => {
         </MenuItems>
       </Menu>
       <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} />
+      <AddClaim isOpen={isOpenClaim} setIsOpen={setIsOpenClaim} />
+      <AddSchedule isOpen={isOpenSchedule} setIsOpen={setIsOpenSchedule} />
+      <AddRefunds isOpen={isOpenRefunds} setIsOpen={setIsOpenRefunds} />
+      <AddFundRescue
+        isOpen={isOpenFundRescue}
+        setIsOpen={setIsOpenFundRescue}
+      />
     </Fragment>
   );
 };

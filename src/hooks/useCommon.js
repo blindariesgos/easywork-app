@@ -238,7 +238,7 @@ export const useSidebar = () => {
         {
           id: "operations:management",
           name: "Gestión",
-          href: "",
+          href: "/operations/managements",
           image: "/img/operations/policies.svg",
           iconShortBar: GlobeAltIcon,
         },
@@ -259,21 +259,28 @@ export const useSidebar = () => {
         {
           id: "operations:sinisters",
           name: "Siniestros",
-          href: "",
+          href: "/operations/claims",
           image: "/img/operations/accidents.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           id: "operations:refunds",
           name: "Reembolsos",
-          href: "",
+          href: "/operations/refunds",
           image: "/img/operations/refunds.svg",
+          iconShortBar: GlobeAltIcon,
+        },
+        {
+          id: "operations:refunds",
+          name: "Programaciones",
+          href: "/operations/programations",
+          image: "/img/operations/programations.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
           id: "operations:fund-recovery",
           name: "Rescate de Fondos",
-          href: "",
+          href: "/operations/fundrecoveries",
           image: "/img/operations/fund_recovery.svg",
           iconShortBar: GlobeAltIcon,
         },
@@ -393,7 +400,7 @@ export const useSidebar = () => {
     {
       id: "agent-management",
       name: t("common:menu:agent-management:name"),
-      href: "/",
+      href: "/agents-management",
       icon: ChevronRightIcon,
       current: false,
       iconShortBar: IdentificationIcon,
@@ -401,32 +408,37 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: t("common:menu:agent-management:accompaniment"),
-          href: "",
+          href: "/agents-management/accompaniment",
           iconShortBar: ArrowDownCircleIcon,
+          image: "/img/agentsManagement/accompaniment.svg",
         },
         {
           id: "agent-management",
           name: t("common:menu:agent-management:recruitement"),
           href: "",
           iconShortBar: UserPlusIcon,
+          image: "/img/agentsManagement/recruitement.svg",
         },
         {
           id: "agent-management",
           name: t("common:menu:agent-management:capacitations"),
           href: "",
           iconShortBar: NewspaperIcon,
+          image: "/img/agentsManagement/capacitations.svg",
         },
         {
           id: "agent-management",
           name: t("common:menu:agent-management:conections"),
           href: "",
           iconShortBar: ArrowPathIcon,
+          image: "/img/agentsManagement/conections.svg",
         },
         {
           id: "agent-management",
           name: "Reuniones y sesiones",
           href: "",
           icon: ChevronRightIcon,
+          image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,
           iconShortBar: IdentificationIcon,
           children: [
@@ -639,7 +651,7 @@ export const useSidebar = () => {
 
 export const useCommon = () => {
   const { t } = useTranslation();
-  const router = useRouter()
+  const router = useRouter();
   const calendarViews = [
     t("tools:calendar:day"),
     t("tools:calendar:week"),
@@ -745,13 +757,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("contacts:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -760,13 +772,13 @@ export const useCommon = () => {
       value: 0,
       name: t("leads:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("leads:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -774,25 +786,25 @@ export const useCommon = () => {
     {
       value: 0,
       name: t("contacts:header:settings:vcard"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 1,
       name: t("contacts:header:settings:gmail"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 2,
       name: t("contacts:header:settings:outlook"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 3,
       name: t("contacts:header:settings:yahoo"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
@@ -804,43 +816,43 @@ export const useCommon = () => {
     {
       value: 5,
       name: t("contacts:header:settings:crm"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 8,
       name: t("contacts:header:settings:export"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 9,
       name: t("contacts:header:settings:control"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 10,
       name: t("contacts:header:settings:search"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
     {
       value: 11,
       name: t("contacts:header:settings:entity"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: true,
     },
   ];
@@ -849,13 +861,13 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
   ];
@@ -864,19 +876,19 @@ export const useCommon = () => {
     {
       value: 6,
       name: t("contacts:header:settings:csv"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 7,
       name: t("contacts:header:settings:excel"),
-      onclick: () => { },
+      onclick: () => {},
       disabled: false,
     },
     {
       value: 0,
       name: "Imprimir pdf",
-      onclick: () => { },
+      onclick: () => {},
       icon: DocumentTextIcon,
     },
   ];
@@ -886,13 +898,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:header:excel:export"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: RiFileExcel2Fill,
       name: t("contacts:header:excel:print"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -901,13 +913,13 @@ export const useCommon = () => {
       value: 0,
       name: t("contacts:edit:policies:consult:settings:download"),
       icon: ArrowDownTrayIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: DocumentTextIcon,
       name: t("contacts:edit:policies:consult:settings:print"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -916,43 +928,43 @@ export const useCommon = () => {
       value: 0,
       name: "Importación vCard",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       name: "Gmail Importar",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       name: "Yahoo! Importar",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       name: "Outlook Importar",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       name: "Importación personalizada",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       name: "Exportar a Excel",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       name: "Exportar a CSV",
       disabled: true,
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -1038,7 +1050,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:policies:branches:life"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/life/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/life/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policies/branch/life/${contactID}`,
     },
@@ -1048,7 +1060,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/cars/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/cars/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/cars/${contactID}?show=true`
         ),
     },
     {
@@ -1057,7 +1069,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/medicine/${contactID}?show=true`
         ),
     },
     {
@@ -1066,7 +1078,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/damages/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/damages/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/damages/${contactID}?show=true`
         ),
     },
     {
@@ -1075,7 +1087,7 @@ export const usePolicies = (contactID) => {
       route: `/sales/crm/contacts/contact/policies/branch/various/${contactID}`,
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policies/branch/various/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policies/branch/various/${contactID}?show=true`
         ),
     },
     {
@@ -1096,7 +1108,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:name"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/consult/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/consult/${contactID}`,
     },
@@ -1105,7 +1117,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:payments"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/payments/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/payments/${contactID}`,
     },
@@ -1114,7 +1126,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:claims"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/claims/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/claims/${contactID}`,
     },
@@ -1123,7 +1135,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:refund"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/refunds/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/refunds/${contactID}`,
     },
@@ -1132,7 +1144,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:invoices"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/invoices/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/invoices/${contactID}`,
     },
@@ -1141,7 +1153,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:versions"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/versions/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/versions/${contactID}`,
     },
@@ -1150,7 +1162,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:commissions"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/commissions/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/commissions/${contactID}`,
     },
@@ -1159,7 +1171,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:quotes"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/quotes/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/quotes/${contactID}`,
     },
@@ -1168,7 +1180,7 @@ export const usePolicies = (contactID) => {
       name: t("contacts:edit:policies:consult:schedules"),
       onclick: () =>
         push(
-          `/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`,
+          `/sales/crm/contacts/contact/policy/schedules/${contactID}?show=true`
         ),
       route: `/sales/crm/contacts/contact/policy/schedules/${contactID}`,
     },
@@ -1312,13 +1324,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:excel:alone"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 0,
       name: t("tools:tasks:header:excel:all"),
       icon: RiFileExcel2Fill,
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
   const optionsTrash = [
@@ -1326,13 +1338,13 @@ export const useTasksConfigs = () => {
       value: 0,
       name: t("tools:tasks:header:delete:remove"),
       icon: XMarkIcon,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       value: 1,
       icon: TrashIcon,
       name: t("tools:tasks:header:delete:trash"),
-      onclick: () => { },
+      onclick: () => {},
     },
   ];
 
@@ -1352,23 +1364,29 @@ export const useTasksConfigs = () => {
       check: true,
     },
     {
-      id: 3,
-      name: t("tools:tasks:table:contact"),
-      row: "contact",
+      id: 15,
+      name: "Conexiones CRM",
+      row: "crm",
       check: true,
     },
-    {
-      id: 4,
-      name: t("tools:tasks:table:policy"),
-      row: "policy",
-      check: true,
-    },
-    {
-      id: 4,
-      name: t("tools:tasks:table:lead"),
-      row: "lead",
-      check: true,
-    },
+    // {
+    //   id: 3,
+    //   name: t("tools:tasks:table:contact"),
+    //   row: "contact",
+    //   check: true,
+    // },
+    // {
+    //   id: 4,
+    //   name: t("tools:tasks:table:policy"),
+    //   row: "policy",
+    //   check: true,
+    // },
+    // {
+    //   id: 4,
+    //   name: t("tools:tasks:table:lead"),
+    //   row: "lead",
+    //   check: true,
+    // },
     {
       id: 5,
       name: t("tools:tasks:table.limit-date"),
@@ -1401,13 +1419,13 @@ export const useTasksConfigs = () => {
     {
       value: 0,
       name: t("tools:tasks:new:download"),
-      onclick: () => { },
+      onclick: () => {},
       icon: ArrowDownTrayIcon,
     },
     {
       value: 0,
       name: t("tools:tasks:new:print"),
-      onclick: () => { },
+      onclick: () => {},
       icon: DocumentTextIcon,
     },
   ];
@@ -1664,11 +1682,12 @@ export const useReceiptTable = () => {
   const { t } = useTranslation();
   const columnTable = [
     {
-      id: 4,
-      name: t("control:portafolio:receipt:table:client"),
-      row: "client",
-      order: "client",
+      id: 1,
+      name: t("control:portafolio:receipt:table:receipt"),
+      row: "title",
+      order: "receipt",
       check: true,
+      permanent: true,
     },
     {
       id: 5,
@@ -1677,12 +1696,11 @@ export const useReceiptTable = () => {
       check: true,
     },
     {
-      id: 1,
-      name: t("control:portafolio:receipt:table:receipt"),
-      row: "title",
-      order: "receipt",
+      id: 4,
+      name: t("control:portafolio:receipt:table:client"),
+      row: "client",
+      order: "client",
       check: true,
-      permanent: true,
     },
     // {
     //   id: 2,
@@ -1840,6 +1858,257 @@ export const useRenovationTable = () => {
     {
       id: 8,
       name: t("operations:renovations:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useClaimTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:claims:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:claims:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:claims:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:claims:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:claims:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:claims:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useAccompanimentsTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:accompaniments:table:agent"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:accompaniments:table:email"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:accompaniments:table:mobile"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:lastUpdate"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:manager"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:state"),
+      row: "activities",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:created-in"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useRefundTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:refunds:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:refunds:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:refunds:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:refunds:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:refunds:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:refunds:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useProgramationTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:programations:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:programations:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:programations:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:programations:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:programations:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:programations:table:activities"),
+      row: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useFundRecoveriesTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("operations:fundrecovery:table:client"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("operations:fundrecovery:table:policy"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("operations:fundrecovery:table:state"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("operations:fundrecovery:table:contact"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("operations:fundrecovery:table:created-in"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("operations:fundrecovery:table:activities"),
       row: "activities",
       check: true,
     },

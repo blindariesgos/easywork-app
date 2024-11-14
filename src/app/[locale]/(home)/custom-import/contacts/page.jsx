@@ -1,7 +1,12 @@
+import CustomImportContextProvider from "../../../../../context/custom-import/provider";
 import CustomImport from "./CustomImport";
 
 const page = () => {
-  return <CustomImport />;
+  return (
+    <CustomImportContextProvider>
+      <CustomImport />
+    </CustomImportContextProvider>
+  );
 };
 
 export default page;

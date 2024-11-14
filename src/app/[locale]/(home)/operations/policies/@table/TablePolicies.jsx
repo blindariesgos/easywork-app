@@ -39,7 +39,7 @@ import {
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
 import usePolicyContext from "../../../../../../context/policies";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
@@ -67,6 +67,8 @@ export default function TablePolicies() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { selectedContacts, setSelectedContacts } = useCrmContext();
   const { columnTable } = usePoliciesTable();
   const [selectedColumns, setSelectedColumns] = useState(
@@ -294,16 +296,28 @@ export default function TablePolicies() {
     },
   ];
 
+  const handleShowPolicy = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("policy", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleShowEditPolicy = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("editPolicy", id);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
   const itemActions = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        router.push(`/operations/policies/policy/${id}?show=true`),
+      handleClick: (id) => handleShowPolicy(id),
     },
     {
       name: "Editar",
-      handleClick: (id) =>
-        router.push(`/operations/policies/policy/${id}?show=true&edit=true`),
+      handleClick: (id) => handleShowEditPolicy(id),
     },
     {
       name: "Eliminar",
@@ -586,11 +600,10 @@ export default function TablePolicies() {
                                 )}
                               >
                                 {column.row == "name" ? (
-                                  <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
-                                  >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
-                                  </Link>
+                                  <p
+                                    className="cursor-pointer"
+                                    onClick={() => handleShowPolicy(policy.id)}
+                                  >{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
                                     <button

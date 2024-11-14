@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import usePolicyContext from "@/src/context/policies";
 import FilterTable from "@/src/components/FilterTable";
+import useRenovationContext from "@/src/context/renovations";
 
 const FiltersPolicies = () => {
-  const contextValues = usePolicyContext();
+  const contextValues = useRenovationContext();
 
   return <FilterTable contextValues={contextValues} />;
 };

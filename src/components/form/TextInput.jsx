@@ -40,9 +40,11 @@ function TextInput({
             rows={5}
             {...props}
             className={clsx(
-              "w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm",
+              "w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm",
               {
-                // "bg-gray-100": disabled,
+                "border border-gray-200 focus:ring-gray-200 focus:outline-0":
+                  border,
+                "border-none focus:ring-0 ": !border,
                 "drop-shadow-sm": !disabled,
               }
             )}

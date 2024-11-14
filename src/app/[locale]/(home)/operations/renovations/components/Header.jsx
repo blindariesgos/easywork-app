@@ -8,13 +8,13 @@ import { useCommon } from "@/src/hooks/useCommon";
 import IconDropdown from "@/src/components/SettingsButton";
 import useCrmContext from "@/src/context/crm";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
-import usePolicyContext from "@/src/context/policies";
+import useRenovationContext from "@/src/context/renovations";
 
 export default function PolicyHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
-  const { displayFilters, removeFilter } = usePolicyContext();
+  const { displayFilters, removeFilter } = useRenovationContext();
 
   return (
     <header className="flex flex-col">

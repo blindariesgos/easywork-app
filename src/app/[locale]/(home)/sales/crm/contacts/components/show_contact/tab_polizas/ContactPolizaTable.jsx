@@ -13,6 +13,7 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function ContactPolizaTable({ base = 0, contactId }) {
   const [page, setPage] = useState(1);
@@ -35,6 +36,9 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedPolizas, setSelectedPolizas] = useState([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const handleSorting = (fieldToSort) => {
     if (fieldClicked.order === "ASC") {
@@ -42,6 +46,13 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     } else {
       setFieldClicked({ orderBy: fieldToSort, order: "ASC" });
     }
+  };
+
+  const handleShowPolicy = (id) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("show", true);
+    params.set("policy", id);
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   useLayoutEffect(() => {
@@ -56,12 +67,6 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPolizas]);
-
-  function toggleAll() {
-    setSelectedPolizas(checked || indeterminate ? [] : data?.items);
-    setChecked(!checked && !indeterminate);
-    setIndeterminate(false);
-  }
 
   if ((!data || data?.items?.length === 0) && !isLoading) {
     return <PolizasEmpty />;
@@ -303,13 +308,12 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                     />
                   </td> */}
                   <td className="whitespace-nowrap py-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
-                    <Link
-                      href={`/operations/policies/policy/${poliza.id}?show=true`}
+                    <div
+                      className="flex gap-2 hover:text-primary pl-4 cursor-pointer"
+                      onClick={() => handleShowPolicy(poliza.id)}
                     >
-                      <div className="flex gap-2 hover:text-primary pl-4">
-                        {poliza.poliza}
-                      </div>
-                    </Link>
+                      {poliza.poliza}
+                    </div>
                   </td>
                   <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
                     <p>{poliza?.category?.name ?? "S/N"}</p>

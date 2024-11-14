@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { IoCloseCircle } from "react-icons/io5";
 import clsx from "clsx";
 
-const MultipleEmailInput = ({
+const MultipleEmailsInput = ({
   name,
   control,
   disabled,
@@ -100,4 +100,4 @@ const MultipleEmailInput = ({
   );
 };
 
-export default MultipleEmailInput;
+export default MultipleEmailsInput;

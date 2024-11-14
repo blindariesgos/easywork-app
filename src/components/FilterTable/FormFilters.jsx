@@ -97,6 +97,7 @@ const FormFilters = () => {
         .forEach((key) => {
           const index = fields.findIndex((x) => x.code == key);
           const filterField = filterFields.find((field) => field.code == key);
+          if (!filterField) return;
           const fieldValue =
             filterField.type == "date" ? getDate(filters[key]) : filters[key];
           if (index == -1) {

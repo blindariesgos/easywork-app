@@ -1,11 +1,16 @@
-import React, { Suspense } from "react";
+"use client";
+import React, { Suspense, useState } from "react";
 import LayoutReceipts from "./LayoutReceipts";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import ReceiptsContextProvider from "../../../../../../context/receipts/provider";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import SubMenu from "./components/SubMenu";
+import ReceiptHeader from "./components/ReceiptHeader";
+import Header from "@/src/components/header/Header";
 
-export default async function ReceiptLayout({ children, table, kanban }) {
+export default function ReceiptLayout({ children, table, kanban }) {
+  const [selectedIndex, setSelectedIndex] = useState(1);
+
   const tabs = [
     {
       name: "Kanban",
@@ -21,10 +26,13 @@ export default async function ReceiptLayout({ children, table, kanban }) {
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
       <ReceiptsContextProvider>
         <LayoutReceipts>
+          <Header />
+          <ReceiptHeader hiddeConfig={selectedIndex == 0} />
           <Suspense fallback={<LoaderSpinner />}>
             <TabGroup
-              defaultIndex={1}
               className="w-full flex flex-col items-start gap-4"
+              selectedIndex={selectedIndex}
+              onChange={setSelectedIndex}
             >
               <div className="flex gap-2 items-center">
                 <TabList className="bg-zinc-300/40 rounded-full flex gap-1 items-center p-1 ">

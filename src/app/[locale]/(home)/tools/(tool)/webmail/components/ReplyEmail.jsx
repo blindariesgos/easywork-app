@@ -84,14 +84,13 @@ export default function ReplyEmail({
         },
       ],
     };
-    console.log(data);
     try {
       if (!data.to) {
         toast.error("Debes colocar destinatario");
         return;
       }
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session.data.user.id}/${selectOauth.id}`,
         data
       );
       toast.success("Correo enviado");

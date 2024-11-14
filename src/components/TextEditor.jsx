@@ -74,13 +74,13 @@ const TextEditor = forwardRef(
 
     const handleChange = (newValue, delta, source, editor) => {
       setArroba(false);
-      const text = editor.getText();
-      if (delta && delta.ops && delta.ops.length > 0) {
+      const text = editor?.getText();
+      if (delta?.ops && delta.ops.length > 0) {
         delta.ops.forEach((obj) => {
           if (obj.insert === "@") {
-            const atIndex = text.indexOf("@");
-            const range = editor.getBounds(atIndex);
-            setModalPosition({ x: range.left, y: range.bottom });
+            const atIndex = text?.indexOf("@");
+            const range = editor?.getBounds(atIndex);
+            setModalPosition({ x: range?.left, y: range?.bottom });
             setArroba(true);
           }
         });

@@ -5,7 +5,11 @@ import DialogPositiveStage from "./DialogPositiveStage";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";
-import { putLeadCancelled, putLeadStage } from "@/src/lib/apis";
+import {
+  postPositiveStagePolicy,
+  putLeadCancelled,
+  putLeadStage,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
@@ -33,10 +37,29 @@ export default function ProgressStages({ stage, leadId, disabled }) {
         return;
       }
       mutateContext(`/sales/crm/leads/${leadId}/activities`);
+      mutateContext(`/sales/crm/leads/${leadId}`);
       toast.success("Prospecto actualizado con exito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
     }
+  };
+
+  const handleAddPolicy = async () => {
+    const response = await postPositiveStagePolicy(leadId);
+    if (response.hasError) {
+      console.log({ response });
+      toast.error(
+        response?.message ??
+          "Se ha producido un error al actualizar el prospecto, inténtelo de nuevo."
+      );
+      return;
+    }
+    mutateContext(`/sales/crm/leads/${leadId}/activities`);
+    mutateContext(
+      "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
+    );
+    toast.success("Prospecto actualizado con exito");
+    router.back();
   };
 
   const handleSubmitNegativeStage = async () => {
@@ -142,6 +165,7 @@ export default function ProgressStages({ stage, leadId, disabled }) {
         setSelectedReason={setSelectedReason}
         selectedReason={selectedReason}
         handleSubmitCancel={handleSubmitNegativeStage}
+        handleAddPolicy={handleAddPolicy}
       />
     </div>
   );

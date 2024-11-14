@@ -98,7 +98,7 @@ export default function SendMessage({
         return;
       }
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/send/${session.data.user.id}/${selectOauth.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session.data.user.id}/${selectOauth.id}`,
         data
       );
       toast.success("Correo enviado");
@@ -112,7 +112,7 @@ export default function SendMessage({
   const getSignature = async () => {
     try {
       const response = await getUserSignatures();
-      response.forEach((element) => {
+      response.items.forEach((element) => {
         const foundItem = element.metadata.senders.find((item) =>
           item.email === userData.email && item.state ? item.state : false
         );

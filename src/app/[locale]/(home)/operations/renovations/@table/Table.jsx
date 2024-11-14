@@ -41,7 +41,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import usePolicyContext from "../../../../../../context/policies";
+import useRenovationContext from "@/src/context/renovations";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
@@ -59,7 +59,7 @@ export default function Table() {
     page,
     setPage,
     mutate,
-  } = usePolicyContext();
+  } = useRenovationContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();

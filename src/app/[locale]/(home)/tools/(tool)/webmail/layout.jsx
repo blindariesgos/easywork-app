@@ -75,7 +75,8 @@ export default function WebmailLayout({ children }) {
 
   useEffect(() => {
     allOauthPromise();
-    getAllOauth(session.data.user.id).then((response) => {
+    getAllOauth(session.data.user.id, "Gmail").then((response) => {
+      console.log(response);
       if (response.length === 0) {
         router.push("/tools/mails");
       }
@@ -109,7 +110,7 @@ export default function WebmailLayout({ children }) {
       getAxiosMails("ALL", 1).then((res) => {
         if (res.length == 0)
           axios.get(
-            `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/savemails/${session.data.user.id}/${selectOauth?.id}`
+            `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/savemails/${session.data.user.id}/${selectOauth?.id}`
           );
       });
     }
@@ -126,7 +127,7 @@ export default function WebmailLayout({ children }) {
     setDMails([]);
     try {
       await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updateemail/${session.data.user.id}/${selectOauth.id}`
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updateemail/${session.data.user.id}/${selectOauth.id}`
       );
       fetchData();
     } catch (error) {
@@ -246,7 +247,7 @@ export default function WebmailLayout({ children }) {
   }
 
   function allOauthPromise() {
-    getAllOauth(session.data.user.id).then((res) => {
+    getAllOauth(session.data.user.id, "Gmail").then((res) => {
       if (!selectOauth) {
         setSelectOauth(res[0]);
       }

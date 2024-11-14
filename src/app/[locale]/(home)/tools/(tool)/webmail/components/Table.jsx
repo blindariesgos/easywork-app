@@ -57,8 +57,8 @@ export default function Table({
   async function updateLabelId(array, label) {
     const apiUrl =
       label === "inbox"
-        ? `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`
-        : `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`;
+        ? `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/inbox/${session.data.user.id}/${selectOauth?.id}`
+        : `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`;
 
     await axios.post(apiUrl, { data: array });
 

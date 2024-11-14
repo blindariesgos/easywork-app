@@ -21,10 +21,12 @@ import { postComment } from "../../lib/apis";
 import { toast } from "react-toastify";
 import { GrTask } from "react-icons/gr";
 import { GoTasklist } from "react-icons/go";
+import { useRouter } from "next/navigation";
+
 //is a component that must recieve its props
 export default function CardTask({ data }) {
   const { t } = useTranslation();
-
+  const router = useRouter();
   const options = [
     {
       value: 0,
@@ -42,7 +44,7 @@ export default function CardTask({ data }) {
     <div className="bg-white px-4 py-3 rounded-lg w-full">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <p className="text-xs text-primary font-medium">
+          <p className="text-xs text-primary font-bold">
             {t("tools:tasks:task")}
           </p>
           {isTaskOverdue(data) && (
@@ -61,24 +63,35 @@ export default function CardTask({ data }) {
             height={36}
             src={data?.createdBy?.avatar}
             alt=""
+            title={
+              data?.createdBy?.profile?.firstName
+                ? `${data?.createdBy?.profile?.firstName} ${data?.createdBy?.profile?.lastName}`
+                : (data?.createdBy?.username ?? "System")
+            }
           />
         </div>
       </div>
       <div className="flex gap-4 md:gap-8 mt-3">
         <div className="flex flex-col gap-2">
           <div className="p-4 bg-gray-100 rounded-lg">
-            <GoTasklist className="h-12 w-12 text-black" />
+            <Image
+              width={50}
+              height={50}
+              alt="task icon"
+              src="/img/activities/task.svg"
+            />
           </div>
+
           <Link
             href={`/tools/tasks/task/${data.id}?show=true`}
-            className="text-xs text-primary font-medium px-4 py-2 bg-gray-100 rounded-lg flex justify-center items-center hover:bg-gray-200/50"
+            className="flex items-center gap-x-2 rounded-md font-medium outline-none  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 justify-center bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm text-sm"
           >
             {t("contacts:panel:open")}
           </Link>
         </div>
         <div className="flex flex-col gap-2 w-full">
           <div className="flex gap-x-4 items-center">
-            <p className="text-sm text-black font-medium">
+            <p className="text-sm text-primary font-bold">
               {t("tools:tasks:panel:date")}:
             </p>
             {data?.deadline ? (
@@ -96,7 +109,7 @@ export default function CardTask({ data }) {
             )}
           </div>
           <div className="flex gap-x-4 items-center">
-            <p className="text-sm text-black font-medium">
+            <p className="text-sm text-primary font-bold">
               {t("tools:tasks:panel:title")}:
             </p>
             <p className="text-sm text-blue-700 font-normal">
@@ -106,7 +119,7 @@ export default function CardTask({ data }) {
             </p>
           </div>
           <div className="flex gap-x-4 items-center">
-            <p className="text-sm text-black font-medium">
+            <p className="text-sm text-primary font-bold">
               {t("tools:tasks:panel:responsible")}:
             </p>
             <Link

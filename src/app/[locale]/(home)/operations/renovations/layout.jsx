@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import LayoutPage from "./LayoutPage";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import PoliciesContextProvider from "@/src/context/policies/provider";
+import RenovationsContextProvider from "@/src/context/renovations/provider";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
 export default async function Layout({ children, table, kanban }) {
@@ -18,7 +18,7 @@ export default async function Layout({ children, table, kanban }) {
   ];
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
-      <PoliciesContextProvider>
+      <RenovationsContextProvider>
         <LayoutPage>
           <Suspense fallback={<LoaderSpinner />}>
             <TabGroup
@@ -47,7 +47,7 @@ export default async function Layout({ children, table, kanban }) {
             {children}
           </Suspense>
         </LayoutPage>
-      </PoliciesContextProvider>
+      </RenovationsContextProvider>
     </div>
   );
 }

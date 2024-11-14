@@ -15,7 +15,12 @@ export default function RenovationsContextProvider({ children }) {
   })
   const { lists } = useAppContext()
   const [filters, setFilters] = useState({})
-  const { data, isLoading, isError, mutate } = usePolicies({ config, filters })
+  const { data, isLoading, isError, mutate } = usePolicies({
+    config, filters: {
+      ...filters,
+      renewal: "true",
+    }
+  })
   const [filterFields, setFilterFields] = useState()
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({})

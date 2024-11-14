@@ -23,6 +23,7 @@ export default function ReceiptDetails({ id }) {
       colorTag="bg-easywork-main"
       labelTag="payments"
       samePage={`/settings/permissions/users?page=1`}
+      remove="receipt"
     >
       <Suspense fallback={<LoaderSpinner />}>
         <ReceiptEditor data={data} id={id} updateReceipt={mutate} />

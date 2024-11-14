@@ -1,7 +1,7 @@
 "use client";
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import useReceiptContext from "../../../../../../../../context/receipts";
-import FilterTable from "../../../../../../../../components/FilterTable";
+import useReceiptContext from "@/src/context/receipts";
+import FilterTable from "@/src/components/FilterTable";
 
 const FiltersReceipt = () => {
   const contextValues = useReceiptContext();

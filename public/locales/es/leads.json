@@ -130,6 +130,9 @@
     "rfc": "INE, RFC o Pasaporte",
     "quote": "Cotización",
     "profile": "Perfil del cliente o Notas adicionales",
-    "policy": "Póliza emitida"
+    "policy": "Póliza emitida",
+    "medica": "Información médica",
+    "solicitud": "Solicitud",
+    "address": "Comprobante de domicilio"
   }
 }

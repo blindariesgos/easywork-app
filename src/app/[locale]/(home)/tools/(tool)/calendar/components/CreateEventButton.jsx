@@ -11,12 +11,12 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 
-export default function CreateEventButton() {
+export default function CreateEventButton({ selectOauth }) {
   const { t } = useTranslation();
   const items = [
     {
       name: t("tools:calendar:event"),
-      href: "/tools/calendar/addEvent?show=true",
+      href: `/tools/calendar/addEvent?show=true&${selectOauth ? `oauth=${selectOauth?.id}` : ""}`,
     },
   ];
   return (

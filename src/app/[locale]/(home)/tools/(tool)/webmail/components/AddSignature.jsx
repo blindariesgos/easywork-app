@@ -47,7 +47,7 @@ export default function AddSignature({
   };
 
   function allOauthPromise() {
-    getAllOauth(session.data.user.id).then((res) => {
+    getAllOauth(session.data.user.id, "Gmail").then((res) => {
       let newArray = [];
       res.forEach((element) => {
         newArray.push({ email: element.email, state: false });

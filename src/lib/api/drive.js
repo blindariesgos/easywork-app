@@ -128,7 +128,7 @@ export const getUserSignatures = async () => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
-    .get(`/files/signatures`)
+    .get(`/files/signatures?limit=15&page=1`)
     .catch((error) => error);
   return response;
 };

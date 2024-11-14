@@ -47,7 +47,7 @@ export default function ModalAddFolders({ fetchUserData, fetchData, allOauthProm
     if (params.get("configlabelid") && selectOauth) {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/labelId/${session.data.user.id}/${selectOauth.id}`,
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/labelId/${session.data.user.id}/${selectOauth.id}`,
           {
             headers: {
               Authorization: `Bearer ${selectOauth?.access_token}`,

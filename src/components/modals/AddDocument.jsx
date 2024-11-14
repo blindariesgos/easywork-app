@@ -22,6 +22,8 @@ const AddDocumentDialog = ({
   setIsOpen,
   title,
   update,
+  accept,
+  onFinished,
 }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState(null);
@@ -65,8 +67,10 @@ const AddDocumentDialog = ({
         throw { message };
       }
       toast.success("Documento agregado con exito");
+      onFinished && onFinished();
       update && update();
     } catch (error) {
+      console.log({ error });
       handleApiError(error.message);
     } finally {
       setLoading(false);
@@ -86,7 +90,7 @@ const AddDocumentDialog = ({
       {/* Full-screen container to center the panel */}
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
         {/* The actual dialog panel  */}
-        <DialogPanel className="max-w-lg space-y-4 bg-white px-12 py-6 rounded-xl">
+        <DialogPanel className="max-w-lg w-full space-y-4 bg-white px-12 py-6 rounded-xl">
           <DialogTitle className="">{title}</DialogTitle>
           <Description>
             <div className="text-center">
@@ -102,7 +106,10 @@ const AddDocumentDialog = ({
                     type="file"
                     className="peer hidden inset-0 h-full w-full  rounded-md opacity-0"
                     onChange={handleChangeFile}
-                    accept=".pdf, .doc, .txt, .key, .csv, .docx, .xls, .xlsx, .ppt, .pptx, .jpg, .jpeg, .png, .gif, .svg"
+                    accept={
+                      accept ??
+                      ".pdf, .doc, .txt, .key, .csv, .docx, .xls, .xlsx, .ppt, .pptx, .jpg, .jpeg, .png, .gif, .svg"
+                    }
                   />
                   <div className="flex gap-1">
                     <MdUpload className="w-6 h-6 text-pimary" />
@@ -119,7 +126,10 @@ const AddDocumentDialog = ({
           <div className="flex gap-4 justify-center">
             <Button
               buttonStyle="secondary"
-              onclick={() => setIsOpen(false)}
+              onclick={() => {
+                setIsOpen(false);
+                setFile(null);
+              }}
               label={t("common:buttons:cancel")}
               className="px-2 py-1"
             />

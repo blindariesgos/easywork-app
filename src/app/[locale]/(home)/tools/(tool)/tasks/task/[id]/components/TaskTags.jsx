@@ -54,7 +54,7 @@ const TaskTags = ({ task }) => {
         toast.success(t("tools:tasks:update-msg"));
         await mutate(`/tools/tasks/${task.id}`);
       } catch (error) {
-        console.log(error);
+        toast.error(error.message);
       } finally {
         setIsEditing(false);
       }

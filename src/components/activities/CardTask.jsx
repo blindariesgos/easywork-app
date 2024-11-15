@@ -82,14 +82,12 @@ export default function CardTask({ data }) {
             />
           </div>
 
-          <Button
-            label={t("contacts:panel:open")}
-            onclick={() =>
-              router.push(`/tools/tasks/task/${data.id}?show=true`)
-            }
-            className="px-4 py-1"
-            buttonStyle="primary"
-          />
+          <Link
+            href={`/tools/tasks/task/${data.id}?show=true`}
+            className="flex items-center gap-x-2 rounded-md font-medium outline-none  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 justify-center bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm text-sm"
+          >
+            {t("contacts:panel:open")}
+          </Link>
         </div>
         <div className="flex flex-col gap-2 w-full">
           <div className="flex gap-x-4 items-center">

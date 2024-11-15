@@ -52,6 +52,7 @@ export default function Info({ user, id }) {
 
   useEffect(() => {
     if (data?.user) {
+      console.log(data);
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
           lists?.listContact?.contactTypes.filter(
@@ -300,7 +301,7 @@ export default function Info({ user, id }) {
                                       data?.user?.avatar || "/img/avatar.svg"
                                     }
                                     alt="Profile picture"
-                                    className="h-64 w-64 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                                    className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
                                     objectFit="fill"
                                   />
                                 </div>
@@ -308,72 +309,37 @@ export default function Info({ user, id }) {
                             </div>
                           </div>
                           {data?.user?.groups?.map((group, index) => (
-                            <div className="w-full p-1 rounded-lg bg-white"  key={index}>
+                            <div
+                              className="w-full p-1 rounded-lg bg-white"
+                              key={index}
+                            >
                               <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
                                 Compañía: {group.name}
                               </h1>
-                              <div className="px-3 py-2 text-sm">
-                                <div className="mb-3">
-                                  <p className="text-gray-50">
-                                    Miembros del equipo
-                                  </p>
-                                  <div className="flex">
-                                    <Image
-                                      className="h-12 w-12 rounded-full object-cover"
-                                      width={36}
-                                      height={36}
-                                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                      alt=""
-                                    />
-                                    <div className="ml-2">
-                                      <p>Nombre</p>
-                                      <h1 className="font-semibold">
-                                        Armando Graterol
-                                      </h1>
+                              {group?.users?.map((user, index) => (
+                                <div className="px-3 py-2 text-sm" key={index}>
+                                  <div className="mb-3">
+                                    <p className="text-gray-50">
+                                      Miembro del equipo
+                                    </p>
+                                    <div className="flex">
+                                      <Image
+                                        className="h-12 w-12 rounded-full object-cover"
+                                        width={100}
+                                        height={100}
+                                        src={user?.avatar}
+                                        alt="user"
+                                      />
+                                      <div className="ml-2">
+                                        <p>Nombre</p>
+                                        <h1 className="font-semibold">
+                                          {`${user?.profile?.firstName} ${user?.profile?.lastName}`}
+                                        </h1>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                                <div className="mb-3">
-                                  <p className="text-gray-50">
-                                    Miembros del equipo
-                                  </p>
-                                  <div className="flex">
-                                    <Image
-                                      className="h-12 w-12 rounded-full object-cover"
-                                      width={36}
-                                      height={36}
-                                      src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=1889&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                      alt=""
-                                    />
-                                    <div className="ml-2">
-                                      <p>Nombre</p>
-                                      <h1 className="font-semibold">
-                                        Otilio Graterol
-                                      </h1>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="mb-3">
-                                  <p className="text-gray-50">
-                                    Miembros del equipo
-                                  </p>
-                                  <div className="flex">
-                                    <Image
-                                      className="h-12 w-12 rounded-full object-cover"
-                                      width={36}
-                                      height={36}
-                                      src="https://images.unsplash.com/photo-1542309667-2a115d1f54c6?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                      alt=""
-                                    />
-                                    <div className="ml-2">
-                                      <p>Nombre</p>
-                                      <h1 className="font-semibold">
-                                        Nathaly Polin
-                                      </h1>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+                              ))}
                             </div>
                           ))}
                         </div>

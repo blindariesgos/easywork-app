@@ -146,7 +146,7 @@ export default function ProgressStages({ stage, leadId, disabled, update }) {
           }}
         >
           <p
-            className="whitespace-nowrap text-ellipsis overflow-hidden"
+            className="whitespace-nowrap text-ellipsis overflow-hidden ..."
             title={
               stageIndex !== -1 || !stage
                 ? "Definir estado del negocio"

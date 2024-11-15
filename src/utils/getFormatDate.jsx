@@ -15,6 +15,7 @@ import {
   endOfToday,
 } from "date-fns";
 import { es } from "date-fns/locale";
+import moment from "moment";
 
 export const getFormatDate = (date) => {
   const parsedDate = new Date(date);
@@ -88,13 +89,14 @@ export const getTaskOverdueTimeDelta = (task) => {
     return null; // No hay fecha límite, no hay retraso
   }
 
-  if (task.completedTime) return formatDate(task.deadline);
+  if (task.completedTime)
+    return moment(task?.deadline).format("DD/MM/YYYY hh:mm a");
 
   const deadlineDate = parseISO(task.deadline);
   const now = new Date();
 
   if (deadlineDate > now) {
-    return formatDate(task.deadline);
+    return moment(task?.deadline).format("DD/MM/YYYY hh:mm a");
   }
 
   return `- ${formatDistanceStrict(deadlineDate, now, { addSuffix: false, locale: es })}`;

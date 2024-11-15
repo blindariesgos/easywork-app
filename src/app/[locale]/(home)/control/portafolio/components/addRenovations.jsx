@@ -9,32 +9,29 @@ import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import TextInput from "@/src/components/form/TextInput";
-import InputDateV2 from "@/src/components/form/InputDateV2";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
-import { FaCalendarDay } from "react-icons/fa6";
 
-const AddClaim = ({ isOpen, setIsOpen }) => {
+const AddRenovations = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
-    policyId: yup.string().required(t("common:validations:required")),
-    ot: yup
+    policyId: yup.object().shape({}).required(t("common:validations:required")),
+    rfc: yup
       .string()
       .matches(
         VALIDATE_ALPHANUMERIC_REGEX,
         t("common:validations:alphanumeric")
       )
       .required(t("common:validations:required")),
-    sigre: yup.string().required(t("common:validations:required")),
+    version: yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -88,19 +85,14 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
     console.log({ data });
     setIsOpen(false);
   };
-
   const handleReset = () => {
     reset({
       ot: "",
       policyId: "",
-      sigre: "",
-      type: "",
-      affeccion: "",
+      rfc: "",
+      version: "",
       company: "",
       branch: "",
-      date: "",
-      paymentForm: "",
-      number: "",
     });
   };
 
@@ -108,23 +100,23 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
     <SliderOverShord openModal={isOpen}>
       <Tag
         onclick={() => {
-          handleReset();
           setIsOpen(false);
+          handleReset();
         }}
         className="bg-easywork-main"
       />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
-          <div className="bg-gray-100 rounded-md p-2 overflow-y-auto max-h-[calc(100vh_-_4rem)]">
+        <div className=" bg-gray-600  px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
+          <div className="bg-gray-100 rounded-md p-2 max-h-[calc(100vh_-_4rem)] overflow-y-auto">
             <h4 className="text-2xl pb-4">
-              {t("operations:managements:add:claim:title")}
+              {t("operations:managements:add:renovation:title")}
             </h4>
             <div className="bg-white rounded-md p-4 flex justify-between items-center">
-              <p>{t("operations:managements:add:claim:subtitle")}</p>
+              <p>{t("operations:managements:add:renovation:subtitle")}</p>
             </div>
             <div className="px-8 pt-4 grid grid-cols-1 gap-4">
               <PolicySelectAsync
-                label={t("operations:managements:add:claim:poliza")}
+                label={t("operations:managements:add:renovation:poliza")}
                 name={"policyId"}
                 setValue={setValue}
                 watch={watch}
@@ -132,86 +124,21 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                 error={errors?.policyId}
                 register={register}
               />
-              <SelectInput
-                label={t("operations:managements:add:claim:type")}
-                options={[
-                  {
-                    id: "Natural",
-                    name: "Natural",
-                  },
-                  {
-                    id: "Accidental",
-                    name: "Accidental",
-                  },
-                  {
-                    id: "Pérdida orgánica",
-                    name: "Pérdida orgánica",
-                  },
-                  {
-                    id: "Invalidez",
-                    name: "Invalidez",
-                  },
-                  {
-                    id: "Funerarios",
-                    name: "Funerarios",
-                  },
-                ]}
-                name="type"
-                error={errors?.procedure}
-                register={register}
-              />
-              <Controller
-                render={({ field: { value, onChange, ref, onBlur } }) => {
-                  return (
-                    <InputDateV2
-                      value={value}
-                      onChange={onChange}
-                      icon={<FaCalendarDay className="h-4 w-4 text-primary" />}
-                      watch={watch}
-                      label={t("operations:managements:add:claim:date")}
-                    />
-                  );
-                }}
-                name="date"
-                control={control}
-                defaultValue=""
-              />
-              <SelectInput
-                label={t("operations:managements:add:claim:paymentForm")}
-                options={[
-                  {
-                    id: "cheque",
-                    name: "Cheque",
-                  },
-                  {
-                    id: "transferencia",
-                    name: "Transferencia",
-                  },
-                ]}
-                name="paymentForm"
-                error={errors?.procedure}
+              <TextInput
+                label={t("operations:managements:add:renovation:rfc")}
+                name="rfc"
+                error={errors?.rfc}
                 register={register}
               />
               <TextInput
-                label={t("operations:managements:add:claim:ot")}
-                name="ot"
-                error={errors?.ot}
+                label={t("operations:managements:add:renovation:version")}
+                name="version"
+                error={errors?.version}
                 register={register}
               />
-              <TextInput
-                label={t("operations:managements:add:claim:folio-sigre")}
-                name="sigre"
-                register={register}
-                error={errors?.sigre}
-              />
-              <TextInput
-                label={t("operations:managements:add:claim:number")}
-                name="number"
-                error={errors?.number}
-                register={register}
-              />
+
               <SelectInput
-                label={t("operations:managements:add:claim:company")}
+                label={t("operations:managements:add:renovation:company")}
                 options={lists?.policies?.polizaCompanies}
                 name="company"
                 setValue={setValue}
@@ -219,7 +146,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                 register={register}
               />
               <SelectInput
-                label={t("operations:managements:add:claim:branch")}
+                label={t("operations:managements:add:renovation:branch")}
                 options={lists?.policies?.polizaTypes}
                 name="branch"
                 setValue={setValue}
@@ -231,7 +158,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                   htmlFor="policy-file"
                   className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                 >
-                  <p>{t("operations:managements:add:claim:button")}</p>
+                  <p>{t("operations:managements:add:renovation:button")}</p>
                   {file && (
                     <div className="flex flex-col gap-2 justify-center items-center pt-2">
                       <div className="p-10 bg-easy-500 rounded-md">
@@ -275,4 +202,4 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AddClaim;
+export default AddRenovations;

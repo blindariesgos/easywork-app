@@ -213,7 +213,12 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
   async function deleteOauth() {
     try {
-      await deleteTokenGoogle(session.data.user.id, selectOauth.id, null, false);
+      await deleteTokenGoogle(
+        session.data.user.id,
+        selectOauth.id,
+        null,
+        false
+      );
       setSelectOauth(null);
       setUserData(null);
       router.push("/tools/mails?userdeleted=true");
@@ -223,7 +228,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
   async function openWindowOauth() {
     localStorage.setItem("service", "Gmail");
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}&service=gmail`
     );
     const oauthWindow = window.open(
       response.data.url,

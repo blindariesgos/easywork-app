@@ -35,7 +35,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   async function openWindowOauth() {
     localStorage.setItem("service", "Google Calendar");
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}&service=calendar`
     );
     const oauthWindow = window.open(
       response.data.url,

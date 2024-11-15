@@ -6,8 +6,10 @@ import AddRefunds from "./addRefunds";
 import AddClaim from "./addClaim";
 import { FaChevronDown } from "react-icons/fa";
 import AddFundRescue from "./addFundRescue";
+import AddRenovations from "./addRenovations";
 const ButtonAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenRenovation, setIsOpenRenovation] = useState(false);
   const [isOpenClaim, setIsOpenClaim] = useState(false);
   const [isOpenFundRescue, setIsOpenFundRescue] = useState(false);
   const [isOpenRefunds, setIsOpenRefunds] = useState(false);
@@ -20,7 +22,7 @@ const ButtonAdd = () => {
     },
     { name: "Programaciones", onclick: () => setIsOpenSchedule(true) },
     { name: "Reembolsos", onclick: () => setIsOpenRefunds(true) },
-    { name: "Renovaciones", disabled: true },
+    { name: "Renovaciones", onclick: () => setIsOpenRenovation(true) },
     { name: "Rescate de fondos", onclick: () => setIsOpenFundRescue(true) },
     { name: "Siniestros", onclick: () => setIsOpenClaim(true) },
   ];
@@ -51,6 +53,10 @@ const ButtonAdd = () => {
         </MenuItems>
       </Menu>
       <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} />
+      <AddRenovations
+        isOpen={isOpenRenovation}
+        setIsOpen={setIsOpenRenovation}
+      />
       <AddClaim isOpen={isOpenClaim} setIsOpen={setIsOpenClaim} />
       <AddSchedule isOpen={isOpenSchedule} setIsOpen={setIsOpenSchedule} />
       <AddRefunds isOpen={isOpenRefunds} setIsOpen={setIsOpenRefunds} />

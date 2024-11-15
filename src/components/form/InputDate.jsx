@@ -22,7 +22,7 @@ const InputDate = ({
 }) => {
   const { t } = useTranslation();
   const { months } = useCommon();
-  const years = range(1924, getYear(new Date()) + 1, 1);
+  const years = range(1924, getYear(new Date()) + 3, 1);
   const [selected, setSelected] = useState(value);
 
   const handleChange = (e) => {

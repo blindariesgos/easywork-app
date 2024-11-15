@@ -22,14 +22,28 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
-    fields: yup.array().of(yup.object().shape({})),
+    contactId: yup
+      .object()
+      .shape({})
+      .required(t("common:validations:required")),
+    typePerson: yup.string().required(t("common:validations:required")),
+    company: yup.string().required(t("common:validations:required")),
+    branch: yup.string().required(t("common:validations:required")),
   });
 
-  const { register, handleSubmit, control, reset, setValue, getValues, watch } =
-    useForm({
-      mode: "onChange",
-      resolver: yupResolver(schema),
-    });
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    setValue,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema),
+  });
 
   const handleChangeFile = async (e) => {
     const files = e.target.files;
@@ -59,170 +73,147 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     reader.readAsDataURL(file);
   };
 
+  const onSubmit = (data) => {
+    console.log({ data });
+    setIsOpen(false);
+  };
+
+  const handleReset = () => {
+    reset({
+      policyId: "",
+      company: "",
+      branch: "",
+      typePerson: "",
+      subAgenteId: "",
+      responsibleId: "",
+    });
+    reset();
+  };
+
   return (
     <SliderOverShord openModal={isOpen}>
-      <Tag onclick={() => setIsOpen(false)} className="bg-easywork-main" />
-      <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
-        <div className="bg-gray-100 rounded-md p-2">
-          <h4 className="text-2xl pb-4">Crear póliza</h4>
-          <div className="bg-white rounded-md p-4 flex justify-between items-center">
-            <p>Datos de la póliza</p>
-            {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
-          </div>
-          <div className="px-8 pt-4 grid grid-cols-1 gap-4">
-            <SelectInput
-              label={t("control:portafolio:control:form:typePerson")}
-              options={[
-                {
-                  name: "Física",
-                  id: "fisica",
-                },
-                {
-                  name: "Moral",
-                  id: "moral",
-                },
-              ]}
-              name="typePerson"
-            />
-            <ContactSelectAsync
-              label={t("control:portafolio:control:form:contact")}
-              name={"contactId"}
-              setValue={setValue}
-              watch={watch}
-            />
-            <SelectInput
-              label={t("control:portafolio:control:form:insurance-company")}
-              options={lists?.policies?.polizaCompanies}
-            />
-
-            <SelectInput
-              label={t("control:portafolio:control:form:branch")}
-              options={lists?.policies?.polizaSubRamo}
-            />
-            <SelectSubAgent
-              label={t("control:portafolio:control:form:subAgente")}
-              name="subAgenteId"
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
-            <SelectInput
-              label={t("control:portafolio:control:form:responsible")}
-              options={lists?.users ?? []}
-            />
-            {/* <SelectInput
-              label={t("control:portafolio:control:form:category")}
-              options={[
-                {
-                  name: "AHORRO",
-                  id: "physical",
-                },
-                {
-                  name: "ALPHA MEDICAL INTEGRO",
-                  id: "moral7",
-                },
-                {
-                  name: "ALTA ASEGURADORA",
-                  id: "moral6",
-                },
-                {
-                  name: "ALTA RECIEN NACIDO",
-                  id: "moral5",
-                },
-                {
-                  name: "AMPLIA",
-                  id: "moral4",
-                },
-                {
-                  name: "C.F.P",
-                  id: "moral3",
-                },
-                {
-                  name: "C.F.P A MENSUAL",
-                  id: "mora2l",
-                },
-                {
-                  name: "C.F.P A SEMESTRAL",
-                  id: "moral1",
-                },
-              ]}
-              placeholder="- Seleccionar -"
-            />
-            
-            <SelectInput
-              label={t("control:portafolio:control:form:health-branch")}
-              options={[
-                {
-                  name: "Otros",
-                  id: "physical",
-                },
-                {
-                  name: "ACCIDENTES",
-                  id: "moral",
-                },
-                {
-                  name: "DENTAL",
-                  id: "morale",
-                },
-                {
-                  name: "EJECUTIVOS",
-                  id: "moralw",
-                },
-              ]}
-              placeholder="- Seleccionar -"
-            /> */}
-            <div className="w-full">
-              <label
-                className={`block text-sm font-medium leading-6 text-gray-900`}
-              >
-                Póliza emitida pagada
-              </label>
-              <label
-                htmlFor="policy-file"
-                className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
-              >
-                <p>Selecciona un PDF: GNP</p>
-                {file && (
-                  <div className="flex flex-col gap-2 justify-center items-center pt-2">
-                    <div className="p-10 bg-easy-500 rounded-md">
-                      <FiFileText className="w-10 h-10 text-white" />
-                    </div>
-                    <p className="text-center text-white">{file.name}</p>
-                  </div>
-                )}
-              </label>
-              <input
-                type="file"
-                name="policy-file"
-                id="policy-file"
-                className="hidden"
-                accept=".pdf"
-                onChange={handleChangeFile}
-              />
-              <p className="text-xs italic text-center pt-2 text-gray-700">
-                próximamente:{" "}
-                <span className="font-bold">
-                  Beta solo Chubb/Quálitas/AXA - Autos
-                </span>
-              </p>
+      <Tag
+        onclick={() => {
+          handleReset();
+          setIsOpen(false);
+        }}
+        className="bg-easywork-main"
+      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
+          <div className="bg-gray-100 rounded-md p-2">
+            <h4 className="text-2xl pb-4">Crear póliza</h4>
+            <div className="bg-white rounded-md p-4 flex justify-between items-center">
+              <p>Datos de la póliza</p>
+              {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
             </div>
-            <div className="w-full flex justify-center gap-4 py-4">
-              <Button
-                className="px-4 py-2"
-                buttonStyle="primary"
-                label="Guardar"
-                onclick={() => setIsOpen(false)}
+            <div className="px-8 pt-4 grid grid-cols-1 gap-4">
+              <SelectInput
+                label={t("control:portafolio:control:form:typePerson")}
+                options={[
+                  {
+                    name: "Física",
+                    id: "fisica",
+                  },
+                  {
+                    name: "Moral",
+                    id: "moral",
+                  },
+                ]}
+                name="typePerson"
+                error={errors?.typePerson}
               />
-              <Button
-                className="px-4 py-2"
-                buttonStyle="secondary"
-                label="Cancelar"
-                onclick={() => setIsOpen(false)}
+              <ContactSelectAsync
+                label={t("control:portafolio:control:form:contact")}
+                name={"contactId"}
+                setValue={setValue}
+                watch={watch}
+                error={errors?.contactId}
               />
+              <SelectInput
+                label={t("control:portafolio:control:form:insurance-company")}
+                options={lists?.policies?.polizaCompanies}
+                name="company"
+                error={errors?.company}
+              />
+
+              <SelectInput
+                label={t("control:portafolio:control:form:branch")}
+                options={lists?.policies?.polizaSubRamo}
+                error={errors?.branch}
+                name="branch"
+              />
+              <SelectSubAgent
+                label={t("control:portafolio:control:form:subAgente")}
+                name="subAgenteId"
+                register={register}
+                setValue={setValue}
+                watch={watch}
+                error={errors?.subAgenteId}
+              />
+              <SelectInput
+                label={t("control:portafolio:control:form:responsible")}
+                options={lists?.users ?? []}
+                name="responsibleId"
+                error={errors?.responsibleId}
+              />
+
+              <div className="w-full">
+                <label
+                  className={`block text-sm font-medium leading-6 text-gray-900`}
+                >
+                  Póliza emitida pagada
+                </label>
+                <label
+                  htmlFor="policy-file"
+                  className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
+                >
+                  <p>Selecciona un PDF: GNP</p>
+                  {file && (
+                    <div className="flex flex-col gap-2 justify-center items-center pt-2">
+                      <div className="p-10 bg-easy-500 rounded-md">
+                        <FiFileText className="w-10 h-10 text-white" />
+                      </div>
+                      <p className="text-center text-white">{file.name}</p>
+                    </div>
+                  )}
+                </label>
+                <input
+                  type="file"
+                  name="policy-file"
+                  id="policy-file"
+                  className="hidden"
+                  accept=".pdf"
+                  onChange={handleChangeFile}
+                />
+                <p className="text-xs italic text-center pt-2 text-gray-700">
+                  próximamente:{" "}
+                  <span className="font-bold">
+                    Beta solo Chubb/Quálitas/AXA - Autos
+                  </span>
+                </p>
+              </div>
+              <div className="w-full flex justify-center gap-4 py-4">
+                <Button
+                  className="px-4 py-2"
+                  buttonStyle="primary"
+                  label="Guardar"
+                  type="submit"
+                />
+                <Button
+                  className="px-4 py-2"
+                  buttonStyle="secondary"
+                  label="Cancelar"
+                  onclick={() => {
+                    handleReset();
+                    setIsOpen(false);
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </SliderOverShord>
   );
 };

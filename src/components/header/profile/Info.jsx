@@ -308,58 +308,24 @@ export default function Info({ user, id }) {
                               )}
                             </div>
                           </div>
-                          {data?.user?.groups?.map((group, index) => (
-                            <div
-                              className="w-full p-1 rounded-lg bg-white"
-                              key={index}
-                            >
-                              <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
-                                Compañía: {group.name}
-                              </h1>
-                              {group?.users?.map((user, index) => (
-                                <div className="px-3 py-2 text-sm" key={index}>
-                                  <div className="mb-3">
-                                    <p className="text-gray-50">
-                                      Miembro del equipo
-                                    </p>
-                                    <div className="flex">
-                                      <Image
-                                        className="h-12 w-12 rounded-full object-cover"
-                                        width={100}
-                                        height={100}
-                                        src={user?.avatar}
-                                        alt="user"
-                                      />
-                                      <div className="ml-2">
-                                        <p>Nombre</p>
-                                        <h1 className="font-semibold">
-                                          {`${user?.profile?.firstName} ${user?.profile?.lastName}`}
-                                        </h1>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          ))}
                         </div>
                         {/* Menu Derecha */}
-                        <div className=" bg-white h-auto rounded-lg">
-                          <div className="flex justify-between bg-white p-4 rounded-md">
-                            <h1 className="text-primary font-bold text-2xl">
-                              Información del usuario
-                            </h1>
-                            {data?.user && (
-                              <button
-                                type="button"
-                                onClick={() => setIsEdit(!isEdit)}
-                                title="Editar"
-                              >
-                                <PencilIcon className="h-6 w-6 text-primary" />
-                              </button>
-                            )}
-                          </div>
+                        <div className="h-auto rounded-lg">
                           <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
+                            <div className="flex justify-between py-4 px-2 rounded-md">
+                              <h1 className="text-primary font-bold text-2xl">
+                                Información del usuario
+                              </h1>
+                              {data?.user && (
+                                <button
+                                  type="button"
+                                  onClick={() => setIsEdit(!isEdit)}
+                                  title="Editar"
+                                >
+                                  <PencilIcon className="h-6 w-6 text-primary" />
+                                </button>
+                              )}
+                            </div>
                             <TextInput
                               type="text"
                               label={t("users:form:firstname")}
@@ -421,7 +387,41 @@ export default function Info({ user, id }) {
                               // placeholder={t('contacts:create:placeholder-address')}
                             />
                           </div>
-                        </div>
+                          {data?.user?.groups?.map((group, index) => (
+                            <div
+                              className="w-full p-1 mt-4 rounded-lg bg-white"
+                              key={index}
+                            >
+                              <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
+                                Compañía: {group.name}
+                              </h1>
+                              {group?.users?.map((user, index) => (
+                                <div className="px-3 py-2 text-sm" key={index}>
+                                  <div className="mb-3">
+                                    <p className="text-gray-50">
+                                      Miembro del equipo
+                                    </p>
+                                    <div className="flex">
+                                      <Image
+                                        className="h-12 w-12 rounded-full object-cover"
+                                        width={100}
+                                        height={100}
+                                        src={user?.avatar}
+                                        alt="user"
+                                      />
+                                      <div className="ml-2">
+                                        <p>Nombre</p>
+                                        <h1 className="font-semibold">
+                                          {`${user?.profile?.firstName} ${user?.profile?.lastName}`}
+                                        </h1>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>                
                         {/* Botones de acción */}
                         {isEdit && (
                           <div className="flex w-full justify-center px-4 py-4 gap-4 fixed -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">

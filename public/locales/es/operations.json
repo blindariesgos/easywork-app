@@ -248,6 +248,56 @@
             "sub-agent": "Sub-agente",
             "intermediary": "Intermediario",
             "responsible": "Responsable"
+        },
+        "add": {
+            "schedule": {
+                "title": "Agregar Programación",
+                "subtitle": "Datos de la Programación",
+                "poliza": "Nro de póliza",
+                "ot": "OT",
+                "folio-sigre": "Folio SIGRE",
+                "procedure": "Tipo de procedimiento",
+                "branch": "Ramo",
+                "company": "Compañía",
+                "button": "añadir documento"
+            },
+            "refund": {
+                "title": "Agregar Reembolso",
+                "subtitle": "Datos del Reembolso",
+                "poliza": "Nro de póliza",
+                "ot": "OT",
+                "folio-sigre": "Folio SIGRE",
+                "procedure": "Tipo de procedimiento",
+                "branch": "Ramo",
+                "company": "Compañía",
+                "button": "añadir documento",
+                "type": "Tipo de reembolso",
+                "affeccion": "Afección médica"
+            },
+            "fundrescue": {
+                "title": "Agregar Rescate de Fondos",
+                "subtitle": "Datos del Rescate",
+                "poliza": "Nro de póliza",
+                "ot": "OT",
+                "folio-sigre": "Folio SIGRE",
+                "button": "añadir documento",
+                "type": "Tipo de rescate"
+            },
+            "claim": {
+                "title": "Agregar Siniestro",
+                "subtitle": "Datos del Siniestro",
+                "poliza": "Nro de póliza",
+                "ot": "OT",
+                "folio-sigre": "Folio SIGRE",
+                "type": "Tipo de siniestro",
+                "branch": "Ramo",
+                "company": "Compañía",
+                "button": "añadir documento",
+                "affeccion": "Afección médica",
+                "date": "Fecha de captura",
+                "paymentForm": "Forma de pago",
+                "number": "Número de Siniestro"
+            }
         }
     }
 }

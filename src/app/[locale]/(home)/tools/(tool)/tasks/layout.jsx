@@ -19,7 +19,7 @@ import TasksContextProvider from "@/src/context/tasks/provider";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 
-export default function TaskLayout({ children, table }) {
+export default function TaskLayout({ children, table, kanban }) {
   const [loading, setLoading] = React.useState(false);
   const { onCloseAlertDialog } = useAlertContext();
   const { selectedTasks, setSelectedTasks } = useToolsContext();
@@ -68,8 +68,7 @@ export default function TaskLayout({ children, table }) {
     },
     {
       name: t("tools:tasks:limit-date"),
-      component: "",
-      // component: kanban,
+      component: kanban,
       // disabled: true,
     },
   ];

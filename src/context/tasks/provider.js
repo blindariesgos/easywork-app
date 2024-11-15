@@ -9,24 +9,29 @@ import useAppContext from "../app";
 import { useSession } from "next-auth/react";
 
 export default function TasksContextProvider({ children }) {
-  const session = useSession()
-  const { t } = useTranslation()
-  const [filters, setFilters] = useState([])
+  const session = useSession();
+  const { t } = useTranslation();
+  const [filters, setFilters] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
     orderBy: "deadline",
-    order: "ASC"
-  })
+    order: "ASC",
+  });
   const { tasks, isLoading, isError, mutate } = useTasks({
-    config, filters: {
+    config,
+    filters: {
       ...filters,
-    }, userId: session?.data?.user?.id
+    },
+    userId: session?.data?.user?.id,
+    srcConfig: {
+      refreshInterval: 1000,
+    },
   });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();
-  const [displayFilters, setDisplayFilters] = useState({})
+  const [displayFilters, setDisplayFilters] = useState({});
   const [filterFields, setFilterFields] = useState();
   const defaultFilterFields = [
     {
@@ -63,10 +68,10 @@ export default function TasksContextProvider({ children }) {
       check: false,
       code: "status",
     },
-  ]
+  ];
 
   useEffect(() => {
-    if (!lists?.users || lists?.users?.length == 0) return
+    if (!lists?.users || lists?.users?.length == 0) return;
     setFilterFields([
       {
         id: 1,
@@ -186,57 +191,58 @@ export default function TasksContextProvider({ children }) {
         check: false,
         code: "showCompleted",
       },
-    ])
-  }, [lists?.users, status])
+    ]);
+  }, [lists?.users, status]);
 
   useEffect(() => {
     if (Object.keys(filters).length == 0 && filterFields) {
-      setFilterFields(filterFields?.map(field => ({
-        ...field,
-        check: field.code === "role"
-      })))
+      setFilterFields(
+        filterFields?.map((field) => ({
+          ...field,
+          check: field.code === "role",
+        }))
+      );
     }
-  }, [filters])
+  }, [filters]);
 
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
-      [key]: value
-    }
+      [key]: value,
+    };
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy
-          ? "DESC"
-          : config.order === "ASC"
+        order:
+          value != config.orderBy
             ? "DESC"
-            : "ASC"
-      }
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
+      };
     }
 
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   useEffect(() => {
-    handleChangeConfig("page", 1)
-  }, [config.limit])
-
-
+    handleChangeConfig("page", 1);
+  }, [config.limit]);
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
@@ -261,7 +267,7 @@ export default function TasksContextProvider({ children }) {
       displayFilters,
       setDisplayFilters,
       removeFilter,
-      defaultFilterFields
+      defaultFilterFields,
     }),
     [
       selectedTasks,
@@ -276,7 +282,7 @@ export default function TasksContextProvider({ children }) {
     ]
   );
 
-  return <TasksContext.Provider value={values}>
-    {children}
-  </TasksContext.Provider>;
+  return (
+    <TasksContext.Provider value={values}>{children}</TasksContext.Provider>
+  );
 }

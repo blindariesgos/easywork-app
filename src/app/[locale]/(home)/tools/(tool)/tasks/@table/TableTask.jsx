@@ -13,7 +13,7 @@ import {
   putTaskCompleted,
   putTaskId,
   putTaskIdRelations,
-} from "@/src/lib/apis"; // Ajusta el path según sea necesario
+} from "@/src/lib/apis";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useAlertContext } from "@/src/context/common/AlertContext";
@@ -66,6 +66,8 @@ export default function TableTask() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   };
+
+  //#region MASIVE ACTIONS
 
   const deleteTasks = async () => {
     try {
@@ -221,6 +223,8 @@ export default function TableTask() {
       onclick: () => deleteTasks(),
     },
   ];
+
+  //#endregion
 
   return (
     <Fragment>

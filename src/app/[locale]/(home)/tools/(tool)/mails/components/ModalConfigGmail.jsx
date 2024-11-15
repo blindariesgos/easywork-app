@@ -227,18 +227,9 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
   async function openWindowOauth() {
     localStorage.setItem("service", "Gmail");
-
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}&service=gmail`
-      );
-      console.log("Respuesta del servidor:", response.data);
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-      if (error.response) {
-        console.error("Respuesta del servidor:", error.response.data);
-      }
-    }
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}&service=gmail`
+    );
     const oauthWindow = window.open(
       response.data.url,
       "_blank",

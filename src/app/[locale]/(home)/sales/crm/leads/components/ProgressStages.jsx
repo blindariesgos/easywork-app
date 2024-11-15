@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
 
-export default function ProgressStages({ stage, leadId, disabled, update }) {
+export default function ProgressStages({ stage, leadId, disabled }) {
   const { isOpen, setIsOpen } = useLeads();
   const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
@@ -37,7 +37,7 @@ export default function ProgressStages({ stage, leadId, disabled, update }) {
         return;
       }
       mutateContext(`/sales/crm/leads/${leadId}/activities`);
-      update && update();
+      mutateContext(`/sales/crm/leads/${leadId}`);
       toast.success("Prospecto actualizado con exito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");

@@ -17,7 +17,8 @@
     "file": "Debe cargar los documentos",
     "size": "El archivo es mayor de {{size}} MB",
     "min-array": "Al menos debe seleccionar {{min}} opción(es)",
-    "number": "Debe ser un número"
+    "number": "Debe ser un número",
+    "alphanumeric": "Solo se permiten letras y números."
   },
   "months": {
     "january": "Enero",

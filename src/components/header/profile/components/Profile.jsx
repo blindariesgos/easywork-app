@@ -46,7 +46,7 @@ export function Profile() {
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const { data, update } = useSession();
-  const [ groups, setGroups ] = useState([]);
+  const [groups, setGroups] = useState([]);
 
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -99,7 +99,7 @@ export function Profile() {
     getUsersGroup(data?.user?.id).then((res) => {
       console.log(res.groups);
       setGroups(res.groups);
-    })
+    });
   }, []);
 
   const {

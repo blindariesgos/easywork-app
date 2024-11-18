@@ -12,6 +12,7 @@ import {
   ChevronUpIcon,
   FireIcon,
 } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -53,7 +54,7 @@ export default function EventDetails({ data, id }) {
   const { lists } = useAppContext();
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
-  const [isEdit, setIsEdit] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
   const [value, setValueText] = useState("<p></p>");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -272,16 +273,12 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(data);
-    if (!data) {
+    console.log(data?.crm);
+    if(!data) {
       setIsEdit(true);
-      return;
+      return
     }
-
-    setIsEdit(false);
-
-    console.log(data.participants);
-
+      
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
@@ -290,6 +287,7 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
+    if (data?.crm) setValue("crm", data?.crm);
     if (data?.description)
       setValueText(data?.description ? data?.description : "<p></p>");
     if (data?.participants)
@@ -308,11 +306,11 @@ export default function EventDetails({ data, id }) {
           : []
       );
 
-    const subscription = watch((data, { name }) => {
-      setIsEdit(true);
-    });
+    // const subscription = watch((data, { name }) => {
+    //   setIsEdit(true);
+    // });
 
-    return () => subscription.unsubscribe();
+    // return () => subscription.unsubscribe();
   }, [data]);
 
   const deleteEvent = async () => {
@@ -382,6 +380,13 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
+            <button
+              type="button"
+              onClick={() => setIsEdit(!isEdit)}
+              title="Editar"
+            >
+              <PencilIcon className="h-6 w-6 text-primary" />
+            </button>
             <div className="relative flex items-start px-2 sm:px-0">
               <div className="flex h-6 items-center">
                 <input
@@ -858,7 +863,7 @@ export default function EventDetails({ data, id }) {
           <button
             type="button"
             className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => router.back()}
+            onClick={() => setIsEdit(false)}
           >
             {t("common:buttons:cancel")}
           </button>

@@ -53,7 +53,6 @@ function SelectDropdown({
   useEffect(() => {
     if (!watch || selected || !options) return;
     const id = watch(name);
-    console.log({ id, name, options });
     setSelected(options.find((option) => option.id == id));
   }, [watch && watch(name), options]);
 

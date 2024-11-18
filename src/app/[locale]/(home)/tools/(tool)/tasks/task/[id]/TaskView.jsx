@@ -63,47 +63,6 @@ export default function TaskView({ id, mutateTask, task }) {
     }
   };
 
-  const getCMRView = (data) => {
-    if (!data || !data.type || !data.crmEntity) return null;
-
-    const typeConfig = {
-      contact: {
-        href: `/sales/crm/contacts/contact/${data.crmEntity.id}?show=true`,
-        bgClass: "bg-primary hover:bg-indigo-700",
-        labelKey: "tools:tasks:edit:contact",
-        name: data?.crmEntity?.fullName ?? data?.crmEntity?.name ?? "",
-      },
-      poliza: {
-        href: `/operations/policies/policy/${data.crmEntity.id}?show=true`,
-        bgClass: "bg-blue-100 hover:bg-blue-500",
-        labelKey: "tools:tasks:edit:policy",
-        name:
-          `${data?.crmEntity?.company?.name} ${data?.crmEntity?.poliza} ${data?.crmEntity?.type?.name}` ??
-          "",
-      },
-      lead: {
-        href: `/sales/crm/leads/lead/${data.crmEntity.id}?show=true`,
-        bgClass: "bg-yellow-500 hover:bg-yellow-600",
-        labelKey: "tools:tasks:edit:lead",
-        name: data?.crmEntity?.fullName ?? data?.crmEntity?.name ?? "",
-      },
-    };
-
-    const config = typeConfig[data.type];
-
-    if (!config) return null;
-
-    return (
-      <Link
-        href={config.href}
-        className={`${config.bgClass} p-2 rounded-lg flex gap-2 justify-between`}
-      >
-        <p className="text-sm text-white">{t(`${config.labelKey}`)}:</p>
-        <p className="text-sm text-white">{config.name}</p>
-      </Link>
-    );
-  };
-
   useEffect(() => {
     if (params.get("action")) {
       setOpenEdit({ mode: params.get("action") });
@@ -206,13 +165,6 @@ export default function TaskView({ id, mutateTask, task }) {
                   />
                 </div>
                 {/* CRM */}
-                {/* {task?.crm?.length > 0 && (
-                  <div className="flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                    {task.crm.map((info) => {
-                      return getCMRView(info);
-                    })}
-                  </div>
-                )} */}
                 {task?.crm?.length > 0 && (
                   <div className="flex justify-end">
                     <div className="w-full sm:w-2/3 lg:w-1/2 2xl:w-1/3 flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">

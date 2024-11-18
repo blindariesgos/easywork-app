@@ -68,6 +68,8 @@ export const useEntityActivities = (id, cmrtype) => {
     `/sales/crm/${getActivityPath(cmrtype)}/${id}/activities`,
     fetcher
   );
+
+  console.log("activities data", data);
   return {
     activities: data,
     isLoading,

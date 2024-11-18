@@ -1,8 +1,8 @@
 "use client";
-import CalendarHeader from "../components/CalendarHeader";
-import CalendarConfig from "../components/CalendarConfig";
-import CalendarConnect from "../components/CalendarConnect";
-import CalendarDisconnect from "../components/CalendarDisconnect";
+import CalendarHeader from "@/src/app/[locale]/(home)/tools/(tool)/calendar/components/CalendarHeader";
+import CalendarConfig from "@/src/app/[locale]/(home)/tools/(tool)/calendar/components/CalendarConfig";
+import CalendarConnect from "@/src/app/[locale]/(home)/tools/(tool)/calendar/components/CalendarConnect";
+import CalendarDisconnect from "@/src/app/[locale]/(home)/tools/(tool)/calendar/components/CalendarDisconnect";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -12,22 +12,30 @@ import clsx from "clsx";
 import { RadioGroup, Label, Radio } from "@headlessui/react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import useCalendarContext from "../../../../../../../context/calendar";
-import { getAllOauth } from "../../../../../../../lib/apis";
+import { getAllOauth } from "@/src/lib/apis";
 import { useRouter, useSearchParams } from "next/navigation";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
+import { useCalendar } from "@/src/lib/api/hooks/calendar";
 
-export default function CalendarHome({ children }) {
+export function Calendar({ children }) {
   const session = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
-  const { events } = useCalendarContext();
   const calendarRef = useRef(null);
   const router = useRouter();
   const [calendarView, setCalendarView] = useState("timeGridDay");
   const [selectOauth, setSelectOauth] = useState(null);
+  const { data, isLoading } = useCalendar({
+    page: 1,
+    limit: 5,
+    orderBy: "name",
+    order: "DESC"
+  })
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
   const calendarViews = [
     {
       name: t("tools:calendar:day"),
@@ -75,10 +83,6 @@ export default function CalendarHome({ children }) {
     router.push(`/tools/calendar/event/${info.event.id}?show=true${selectOauth ? `&oauth=${selectOauth?.id}` : ""}`);
   };
 
-  useEffect(() => {
-    console.log(events);
-  }, [events]);
-
   return (
     <div className="flex flex-col flex-grow">
       <CalendarHeader selectOauth={selectOauth} />
@@ -120,7 +124,7 @@ export default function CalendarHome({ children }) {
               </p>
             </div>
           </div>
-          <button
+          {/* <button
             type="button"
             className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={() => {
@@ -128,7 +132,7 @@ export default function CalendarHome({ children }) {
             }}
           >
             {t("tools:calendar:connect")}
-          </button>
+          </button> */}
         </div>
         <FullCalendar
           locale={esLocale}
@@ -145,7 +149,14 @@ export default function CalendarHome({ children }) {
             center: "",
             right: "prev,today,next",
           }}
-          events={events}
+          events={data?.items?.map((item) => ({
+            color: item.color,
+            end: item.endTime,
+            id: item.id,
+            start: item.startTime,
+            title: item.name,
+          }
+          ))}
           initialView="dayGridMonth"
           nowIndicator={true}
           editable={true}

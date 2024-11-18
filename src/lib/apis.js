@@ -605,3 +605,8 @@ export const postPositiveStagePolicy = async (leadId) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const getUsersGroup = async (idUser) => {
+  const response = await axios().get(`/users/group/${idUser}`);
+  return response;
+};

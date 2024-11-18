@@ -44,9 +44,6 @@ import { useSWRConfig } from "swr";
 export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
-  console.log(session);
-
-  console.log(session);
 
   // Obtener los permisos de menú del usuario
   const userMenuPermissions =
@@ -951,8 +948,7 @@ export const useCommon = () => {
     {
       value: 1,
       name: "Importación personalizada",
-      disabled: true,
-      onclick: () => {},
+      onClick: () => router.push("/custom-import/leads"),
     },
     {
       value: 1,

@@ -366,32 +366,38 @@ const Configurations = ({ handleNext }) => {
         </div>
         <div className="overflow-auto">
           <table className="border border-gray-60 table-auto">
-            <tr>
-              {contactImportKeys.map((key) => (
-                <td
-                  key={key}
-                  className="min-w-[150px] border border-gray-60 p-2"
-                >
-                  <p className="text-sm font-bold whitespace-nowrap">
-                    {t(`import:contacts:fields:${key}`)}
-                  </p>
-                </td>
-              ))}
-            </tr>
-            {new Array(contactImportExample.length).fill(1).map((a, index) => (
-              <tr key={index}>
+            <thead>
+              <tr>
                 {contactImportKeys.map((key) => (
                   <td
                     key={key}
                     className="min-w-[150px] border border-gray-60 p-2"
                   >
-                    <p className="text-sm whitespace-nowrap">
-                      {contactImportExample[index][key] ?? ""}
+                    <p className="text-sm font-bold whitespace-nowrap">
+                      {t(`import:contacts:fields:${key}`)}
                     </p>
                   </td>
                 ))}
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {new Array(contactImportExample.length)
+                .fill(1)
+                .map((a, index) => (
+                  <tr key={index}>
+                    {contactImportKeys.map((key) => (
+                      <td
+                        key={key}
+                        className="min-w-[150px] border border-gray-60 p-2"
+                      >
+                        <p className="text-sm whitespace-nowrap">
+                          {contactImportExample[index][key] ?? ""}
+                        </p>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+            </tbody>
           </table>
         </div>
       </div>

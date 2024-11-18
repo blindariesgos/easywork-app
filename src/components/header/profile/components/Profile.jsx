@@ -33,7 +33,7 @@ import { useSWRConfig } from "swr";
 import Image from "next/image";
 import Tag from "@/src/components/Tag";
 
-export function Profile() {
+export function Profile({ user, id }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -195,7 +195,7 @@ export function Profile() {
     const body = {
       firstName: dataUser.firstName,
       lastName: dataUser.lastName,
-      image: id ? "" : selectedProfileImage?.file || "",
+      image: selectedProfileImage?.file || "",
       cua: dataUser.cua,
       email: dataUser.email !== previousData.email ? dataUser.email : undefined,
       phone: dataUser.phone !== previousData.phone ? dataUser.phone : undefined,

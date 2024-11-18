@@ -96,7 +96,13 @@ export default function ControlContextProvider({ children }) {
     console.log("totalsByStage", response);
     setTotalByStage(
       response.reduce(
-        (acc, item) => ({ ...acc, [item.key]: item?.count ?? 0 }),
+        (acc, item) => ({
+          ...acc,
+          [item.key]: {
+            count: item?.count ?? 0,
+            amount: item?.amount ?? 0,
+          },
+        }),
         totalsByStage
       )
     );

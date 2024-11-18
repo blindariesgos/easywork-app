@@ -172,3 +172,13 @@ export const getUserSignature = async (edit) => {
   console.log(response);
   return response;
 };
+
+export const uploadTemporalFile = async (data) => {
+  const response = await axios({
+    baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
+    contentType: "multipart/form-data",
+  })
+    .post(`/files/attach/temp`, data)
+    .catch((error) => error);
+  return response;
+};

@@ -30,7 +30,7 @@ const OptionsTask = ({
   const [userSelected, setUserSelected] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectText, setSelectText] = useState();
-  const [openList, setOpenList] = useState(edit ?? copy ? true : false);
+  const [openList, setOpenList] = useState((edit ?? copy) ? true : false);
   const [openFiles, setOpenFiles] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
@@ -229,6 +229,7 @@ const OptionsTask = ({
           files={files}
           deleteFiles={deleteFiles}
           setFiles={setFiles}
+          id={edit?.id ?? copy?.id}
         />
       )}
       {openList && (

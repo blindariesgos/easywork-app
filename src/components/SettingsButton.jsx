@@ -39,7 +39,7 @@ const IconDropdown = ({
               >
                 {opt.icon && (
                   <opt.icon
-                    className={`h-4 w-4 ${active ? "text-white" : `${colorIcon}`}`}
+                    className={`h-4 w-4 group-data-[focus]:text-white ${colorIcon}`}
                   />
                 )}
                 {opt.name}

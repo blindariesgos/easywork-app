@@ -1,4 +1,5 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import clsx from "clsx";
 
 const IconDropdown = ({
   options,
@@ -27,27 +28,21 @@ const IconDropdown = ({
           )}
           {options &&
             options.map((opt, index) => (
-              <MenuItem key={index}>
-                {({ active }) => (
-                  <button
-                    className={`group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm ${
-                      active
-                        ? opt.disabled
-                          ? "bg-gray-200 text-white"
-                          : "bg-easy-600 text-white"
-                        : "text-primary"
-                    }`}
-                    disabled={disabled || opt.disabled}
-                    onClick={opt.onClick}
-                  >
-                    {opt.icon && (
-                      <opt.icon
-                        className={`h-4 w-4 ${active ? "text-white" : `${colorIcon}`}`}
-                      />
-                    )}
-                    {opt.name}
-                  </button>
+              <MenuItem
+                key={index}
+                className={clsx(
+                  "group flex w-full items-center gap-3 cursor-pointer data-[disabled]:cursor-auto rounded-md px-2 py-2 text-sm text-primary  data-[disabled]:text-gray-50"
                 )}
+                disabled={disabled || opt.disabled}
+                onClick={opt.onClick}
+                as={"div"}
+              >
+                {opt.icon && (
+                  <opt.icon
+                    className={`h-4 w-4 ${active ? "text-white" : `${colorIcon}`}`}
+                  />
+                )}
+                {opt.name}
               </MenuItem>
             ))}
           {children}

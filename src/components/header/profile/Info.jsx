@@ -52,7 +52,6 @@ export default function Info({ user, id }) {
 
   useEffect(() => {
     if (data?.user) {
-      console.log(data);
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
           lists?.listContact?.contactTypes.filter(

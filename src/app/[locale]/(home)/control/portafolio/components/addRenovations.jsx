@@ -9,7 +9,6 @@ import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import TextInput from "@/src/components/form/TextInput";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
@@ -17,7 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
 
-const AddRefunds = ({ isOpen, setIsOpen }) => {
+const AddRenovations = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
   const MAX_FILE_SIZE = 5000000; //5MB
@@ -25,15 +24,14 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
 
   const schema = yup.object().shape({
     policyId: yup.object().shape({}).required(t("common:validations:required")),
-    ot: yup
+    rfc: yup
       .string()
       .matches(
         VALIDATE_ALPHANUMERIC_REGEX,
         t("common:validations:alphanumeric")
       )
       .required(t("common:validations:required")),
-    sigre: yup.string().required(t("common:validations:required")),
-    type: yup.string().required(t("common:validations:required")),
+    version: yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -87,14 +85,12 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     console.log({ data });
     setIsOpen(false);
   };
-
   const handleReset = () => {
     reset({
       ot: "",
       policyId: "",
-      sigre: "",
-      type: "",
-      affeccion: "",
+      rfc: "",
+      version: "",
       company: "",
       branch: "",
     });
@@ -113,14 +109,14 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
         <div className=" bg-gray-600  px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
           <div className="bg-gray-100 rounded-md p-2 max-h-[calc(100vh_-_4rem)] overflow-y-auto">
             <h4 className="text-2xl pb-4">
-              {t("operations:managements:add:refund:title")}
+              {t("operations:managements:add:renovation:title")}
             </h4>
             <div className="bg-white rounded-md p-4 flex justify-between items-center">
-              <p>{t("operations:managements:add:refund:subtitle")}</p>
+              <p>{t("operations:managements:add:renovation:subtitle")}</p>
             </div>
             <div className="px-8 pt-4 grid grid-cols-1 gap-4">
               <PolicySelectAsync
-                label={t("operations:managements:add:refund:poliza")}
+                label={t("operations:managements:add:renovation:poliza")}
                 name={"policyId"}
                 setValue={setValue}
                 watch={watch}
@@ -128,45 +124,21 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                 error={errors?.policyId}
                 register={register}
               />
-              <SelectInput
-                label={t("operations:managements:add:refund:type")}
-                options={[
-                  {
-                    id: "inicial",
-                    name: "Inicial",
-                  },
-                  {
-                    id: "subsecuente",
-                    name: "Subsecuente",
-                  },
-                ]}
-                name="type"
-                error={errors?.procedure}
+              <TextInput
+                label={t("operations:managements:add:renovation:rfc")}
+                name="rfc"
+                error={errors?.rfc}
                 register={register}
               />
               <TextInput
-                label={t("operations:managements:add:refund:ot")}
-                name="ot"
-                error={errors?.ot}
+                label={t("operations:managements:add:renovation:version")}
+                name="version"
+                error={errors?.version}
                 register={register}
-              />
-              <TextInput
-                label={t("operations:managements:add:refund:folio-sigre")}
-                name="sigre"
-                register={register}
-                error={errors?.sigre}
-              />
-              <TextInput
-                label={t("operations:managements:add:refund:affeccion")}
-                name="affeccion"
-                error={errors?.affeccion}
-                register={register}
-                multiple
-                rows={3}
               />
 
               <SelectInput
-                label={t("operations:managements:add:refund:company")}
+                label={t("operations:managements:add:renovation:company")}
                 options={lists?.policies?.polizaCompanies}
                 name="company"
                 setValue={setValue}
@@ -174,7 +146,7 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                 register={register}
               />
               <SelectInput
-                label={t("operations:managements:add:refund:branch")}
+                label={t("operations:managements:add:renovation:branch")}
                 options={lists?.policies?.polizaTypes}
                 name="branch"
                 setValue={setValue}
@@ -186,7 +158,7 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                   htmlFor="policy-file"
                   className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                 >
-                  <p>{t("operations:managements:add:refund:button")}</p>
+                  <p>{t("operations:managements:add:renovation:button")}</p>
                   {file && (
                     <div className="flex flex-col gap-2 justify-center items-center pt-2">
                       <div className="p-10 bg-easy-500 rounded-md">
@@ -230,4 +202,4 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AddRefunds;
+export default AddRenovations;

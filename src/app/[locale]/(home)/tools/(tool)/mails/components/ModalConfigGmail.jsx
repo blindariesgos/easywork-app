@@ -213,7 +213,12 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
   async function deleteOauth() {
     try {
-      await deleteTokenGoogle(session.data.user.id, selectOauth.id, null, false);
+      await deleteTokenGoogle(
+        session.data.user.id,
+        selectOauth.id,
+        null,
+        false
+      );
       setSelectOauth(null);
       setUserData(null);
       router.push("/tools/mails?userdeleted=true");

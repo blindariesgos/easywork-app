@@ -88,10 +88,27 @@ const AddFundRescue = ({ isOpen, setIsOpen }) => {
     setIsOpen(false);
   };
 
+  const handleReset = () => {
+    reset({
+      ot: "",
+      policyId: "",
+      sigre: "",
+      type: "",
+      company: "",
+      branch: "",
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <SliderOverShord openModal={isOpen}>
-        <Tag onclick={() => setIsOpen(false)} className="bg-easywork-main" />
+    <SliderOverShord openModal={isOpen}>
+      <Tag
+        onclick={() => {
+          handleReset();
+          setIsOpen(false);
+        }}
+        className="bg-easywork-main"
+      />
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
           <div className="bg-gray-100 rounded-md p-2">
             <h4 className="text-2xl pb-4">
@@ -178,14 +195,17 @@ const AddFundRescue = ({ isOpen, setIsOpen }) => {
                   className="px-4 py-2"
                   buttonStyle="secondary"
                   label="Cancelar"
-                  onclick={() => setIsOpen(false)}
+                  onclick={() => {
+                    handleReset();
+                    setIsOpen(false);
+                  }}
                 />
               </div>
             </div>
           </div>
         </div>
-      </SliderOverShord>
-    </form>
+      </form>
+    </SliderOverShord>
   );
 };
 

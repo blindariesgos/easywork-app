@@ -1,27 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ActivityHeader from "./ActivityHeader";
-import {
-  CameraIcon,
-  ChatBubbleLeftRightIcon,
-  CheckIcon,
-  UserIcon,
-} from "@heroicons/react/20/solid";
 import { TiInfoLarge } from "react-icons/ti";
 import clsx from "clsx";
-import CardVideo from "./CardVideo";
 import CardTask from "./CardTask";
-import {
-  ChatBubbleBottomCenterIcon,
-  EnvelopeIcon,
-} from "@heroicons/react/24/solid";
+import CardEvent from "./CardEvent";
+
 import { useTranslation } from "react-i18next";
-import CardWhatsapp from "./CardWhatsapp";
-import CardEmail from "./CardEmail";
 import CardComment from "./CardComment";
 import { useEntityActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
-import { IoMdCheckboxOutline } from "react-icons/io";
 import Image from "next/image";
 
 export default function ActivityPanel({
@@ -38,11 +26,9 @@ export default function ActivityPanel({
 
   useEffect(() => {
     if (activities) {
-      //   const sortedItems = parseAndSortByDate(activities);
+      if (!Array.isArray(activities)) return;
 
-      // Verificar si las actividades es un array
-      if (!Array.isArray(activities))
-        return;      
+      console.log("Bulk activities", activities);
       setBulkActivity(activities);
     }
   }, [activities]);
@@ -179,6 +165,8 @@ function ActivityCard({ activity }) {
   switch (activity.type) {
     case "task":
       return <CardTask data={activity} />;
+    case "event":
+      return <CardEvent data={activity} />;
     case "comment":
       return <CardComment data={activity} />;
 

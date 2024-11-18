@@ -612,6 +612,10 @@ export const postPositiveStagePolicy = async (leadId) => {
   return response;
 };
 
+export const getUsersGroup = async (idUser) => {
+  const response = await axios().get(`/users/group/${idUser}`);
+  return response;
+};
 export const getAllTasks = async ({
   filters = {},
   userId = "",

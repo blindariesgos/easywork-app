@@ -334,6 +334,18 @@
       "iernes": "iernes",
       "abado": "ábado",
       "omingo": "omingo"
+    },
+    "events": {
+      "event": "Evento",
+      "panel": {
+        "date": "Fecha",
+        "start-date": "Fecha de Inicio",
+        "title": "Título",
+        "responsible": "Responsable",
+        "participants": "Participantes",
+        "start": "Inicio",
+        "end": "Fin"
+      }
     }
   }
 }

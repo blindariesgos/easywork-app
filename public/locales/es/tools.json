@@ -236,6 +236,14 @@
         "export": "Exportar a microsoft Excel",
         "all": "Todas las tareas"
       }
+    },
+    "kanban": {
+      "deadline": "Vencidas",
+      "today": "Hoy",
+      "thisweek": "Para esta semana",
+      "nextweek": "Para la próxima semana",
+      "nextsecondweek": "Para dentro de 2 semanas",
+      "notdate": "Sin fecha límite"
     }
   },
   "calendar": {

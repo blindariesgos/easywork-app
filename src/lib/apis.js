@@ -5,24 +5,28 @@ import { auth, signIn, signOut } from "../../auth";
 import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
 
-const getQueries = (filters) => {
+const getQueries = (filters, userId) => {
   const getRepitKeys = (key, arr) =>
-    arr.map((item) => `${key}=${item.id}`).join("&");
+    arr.map((item) => `${key}=${item?.id ?? item}`).join("&");
   if (Object.keys(filters).length == 0) return "";
 
-  const getValue = (key) => {
+  const getValue = (key, userId) => {
     switch (key) {
+      case "role":
+        return `${filters[key]}=${userId}`;
+      case "deadline":
+        return `${key}=${filters[key] == "undefined" ? "" : filters[key]}`;
       default:
         return `${key}=${filters[key]}`;
     }
   };
 
   return Object.keys(filters)
-    .filter((key) => filters[key])
+    .filter((key) => typeof filters[key] !== "undefined")
     .map((key) =>
       Array.isArray(filters[key])
         ? getRepitKeys(key, filters[key])
-        : getValue(key)
+        : getValue(key, userId)
     )
     .join("&");
 };
@@ -255,7 +259,9 @@ export const postTask = async (body) => {
 
 export const putTaskId = async (id, body) => {
   console.log("Updating task");
-  const response = await axios().put(`/tools/tasks/${id}`, body);
+  const response = await axios()
+    .put(`/tools/tasks/${id}`, body)
+    .catch((error) => ({ hasError: true, error }));
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   revalidatePath(`/tools/tasks`, "layout");
 
@@ -603,5 +609,26 @@ export const postPositiveStagePolicy = async (leadId) => {
   const response = await axios()
     .post(`/sales/crm/leads/${leadId}/generate_poliza`)
     .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getUsersGroup = async (idUser) => {
+  const response = await axios().get(`/users/group/${idUser}`);
+  return response;
+};
+export const getAllTasks = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/tools/tasks/user?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };

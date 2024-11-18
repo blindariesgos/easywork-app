@@ -89,10 +89,31 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
     setIsOpen(false);
   };
 
+  const handleReset = () => {
+    reset({
+      ot: "",
+      policyId: "",
+      sigre: "",
+      type: "",
+      affeccion: "",
+      company: "",
+      branch: "",
+      date: "",
+      paymentForm: "",
+      number: "",
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <SliderOverShord openModal={isOpen}>
-        <Tag onclick={() => setIsOpen(false)} className="bg-easywork-main" />
+    <SliderOverShord openModal={isOpen}>
+      <Tag
+        onclick={() => {
+          handleReset();
+          setIsOpen(false);
+        }}
+        className="bg-easywork-main"
+      />
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
           <div className="bg-gray-100 rounded-md p-2 overflow-y-auto max-h-[calc(100vh_-_4rem)]">
             <h4 className="text-2xl pb-4">
@@ -151,7 +172,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                     />
                   );
                 }}
-                name="limitDate"
+                name="date"
                 control={control}
                 defaultValue=""
               />
@@ -167,7 +188,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                     name: "Transferencia",
                   },
                 ]}
-                name="type"
+                name="paymentForm"
                 error={errors?.procedure}
                 register={register}
               />
@@ -205,78 +226,6 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                 watch={watch}
                 register={register}
               />
-              {/* <SelectSubAgent
-              label={t("control:portafolio:control:form:subAgente")}
-              name="subAgenteId"
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
-            <SelectInput
-              label={t("control:portafolio:control:form:responsible")}
-              options={lists?.users ?? []}
-            /> */}
-              {/* <SelectInput
-              label={t("control:portafolio:control:form:category")}
-              options={[
-                {
-                  name: "AHORRO",
-                  id: "physical",
-                },
-                {
-                  name: "ALPHA MEDICAL INTEGRO",
-                  id: "moral7",
-                },
-                {
-                  name: "ALTA ASEGURADORA",
-                  id: "moral6",
-                },
-                {
-                  name: "ALTA RECIEN NACIDO",
-                  id: "moral5",
-                },
-                {
-                  name: "AMPLIA",
-                  id: "moral4",
-                },
-                {
-                  name: "C.F.P",
-                  id: "moral3",
-                },
-                {
-                  name: "C.F.P A MENSUAL",
-                  id: "mora2l",
-                },
-                {
-                  name: "C.F.P A SEMESTRAL",
-                  id: "moral1",
-                },
-              ]}
-              placeholder="- Seleccionar -"
-            />
-            
-            <SelectInput
-              label={t("control:portafolio:control:form:health-branch")}
-              options={[
-                {
-                  name: "Otros",
-                  id: "physical",
-                },
-                {
-                  name: "ACCIDENTES",
-                  id: "moral",
-                },
-                {
-                  name: "DENTAL",
-                  id: "morale",
-                },
-                {
-                  name: "EJECUTIVOS",
-                  id: "moralw",
-                },
-              ]}
-              placeholder="- Seleccionar -"
-            /> */}
               <div className="w-full">
                 <label
                   htmlFor="policy-file"
@@ -312,14 +261,17 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                   className="px-4 py-2"
                   buttonStyle="secondary"
                   label="Cancelar"
-                  onclick={() => setIsOpen(false)}
+                  onclick={() => {
+                    handleReset();
+                    setIsOpen(false);
+                  }}
                 />
               </div>
             </div>
           </div>
         </div>
-      </SliderOverShord>
-    </form>
+      </form>
+    </SliderOverShord>
   );
 };
 

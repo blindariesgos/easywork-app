@@ -16,6 +16,7 @@ import InputDate from "@/src/components/form/InputDate";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
 import useTasksContext from "@/src/context/tasks";
 import Button from "@/src/components/form/Button";
+import moment from "moment";
 
 const TaskDeadLine = ({ task }) => {
   const { t } = useTranslation();
@@ -38,6 +39,8 @@ const TaskDeadLine = ({ task }) => {
     const body = {
       deadline: getFormatDate(selectedDate),
     };
+
+    console.log({ body, selectedDate });
 
     try {
       close();
@@ -88,7 +91,7 @@ const TaskDeadLine = ({ task }) => {
                 )}
               >
                 {task?.deadline
-                  ? formatDate(task?.deadline, "dd/MM/yyyy hh:mm a")
+                  ? moment(task?.deadline).format("DD/MM/YYYY hh:mm a")
                   : "Ninguna"}
               </MenuButton>
               {task?.deadline && (

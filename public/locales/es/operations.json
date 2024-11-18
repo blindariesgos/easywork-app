@@ -297,6 +297,23 @@
                 "date": "Fecha de captura",
                 "paymentForm": "Forma de pago",
                 "number": "Número de Siniestro"
+            },
+            "renovation": {
+                "title": "Agregar Renovación",
+                "subtitle": "Datos de la Renovación",
+                "poliza": "Nro de póliza",
+                "ot": "OT",
+                "rfc": "RFC",
+                "version": "Versión",
+                "folio-sigre": "Folio SIGRE",
+                "type": "Tipo de Renovación",
+                "branch": "Ramo",
+                "company": "Compañía",
+                "button": "añadir documento",
+                "affeccion": "Afección médica",
+                "date": "Fecha de captura",
+                "paymentForm": "Forma de pago",
+                "number": "Número de Siniestro"
             }
         }
     }

@@ -11,6 +11,11 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import useAppContext from "@/src/context/app";
+import CardFile from "./CardFile";
+import { deleteFileTaskById } from "@/src/lib/apis";
+import { useSWRConfig } from "swr";
+import { toast } from "react-toastify";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 const OptionsTask = ({
   edit,
@@ -25,7 +30,7 @@ const OptionsTask = ({
   const quillRef = useRef(null);
   const mentionButtonRef = useRef(null);
   const [arroba, setArroba] = useState(false);
-  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [dataUsers, setDataUsers] = useState();
   const [userSelected, setUserSelected] = useState(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -33,6 +38,7 @@ const OptionsTask = ({
   const [openList, setOpenList] = useState((edit ?? copy) ? true : false);
   const [openFiles, setOpenFiles] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const { mutate } = useSWRConfig();
 
   const options = [
     {
@@ -186,23 +192,49 @@ const OptionsTask = ({
     />
   );
 
-  const deleteFiles = (indexToDelete) => {
-    const documents = files.filter((_, index) => index !== indexToDelete);
-    setFiles(documents);
+  const deleteFile = async (fileId) => {
+    setLoading(true);
+    const response = await deleteFileTaskById(edit?.id ?? copy?.id, {
+      attachmentIds: [fileId],
+    }).catch((error) => ({ hasError: true, error }));
+
+    if (response.hasError) {
+      console.log({ response });
+      toast.error(
+        "Se ha producido un error al eliminar el archivo, inténtelo de nuevo más tarde."
+      );
+      setLoading(false);
+      return;
+    }
+    toast.success("Archivo eliminado con exito.");
+    mutate(`/tools/tasks/${edit?.id ?? copy?.id}`);
+    setLoading(false);
   };
 
   return (
     <div>
-      <div className="bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative">
-        <TextEditor
-          ref={quillRef}
-          value={value}
-          className="sm:h-36 h-52 w-full"
-          onChangeSelection={handleTextSelection}
-          setValue={setValueText}
-          disabled={disabled}
-        />
-      </div>
+      {loading && <LoaderSpinner />}
+      {value && value.length > 0 && (
+        <div className="bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative">
+          <TextEditor
+            ref={quillRef}
+            value={value}
+            className="sm:h-36 h-52 w-full"
+            onChangeSelection={handleTextSelection}
+            setValue={setValueText}
+            disabled={disabled}
+          />
+        </div>
+      )}
+      {edit?.attachedObjects && edit?.attachedObjects?.length > 0 && (
+        <div className="flex flex-wrap gap-3 py-2">
+          {edit?.attachedObjects?.map((file, i) => (
+            <div key={i}>
+              <CardFile data={file} onClick={() => deleteFile(file.id)} />
+            </div>
+          ))}
+        </div>
+      )}
       <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
         {options
           .filter((opt) => !opt.disabled)
@@ -224,14 +256,7 @@ const OptionsTask = ({
           ))}
         {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
       </div>
-      {openFiles && (
-        <UploadDocuments
-          files={files}
-          deleteFiles={deleteFiles}
-          setFiles={setFiles}
-          id={edit?.id ?? copy?.id}
-        />
-      )}
+      {openFiles && <UploadDocuments id={edit?.id ?? copy?.id} />}
       {openList && (
         <div className="mt-2">
           <CheckList

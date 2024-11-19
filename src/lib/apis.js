@@ -665,3 +665,20 @@ export const getAllPolicies = async ({
     .catch((error) => ({ hasError: true, error }));
   return response;
 };
+
+export const getAllPolicies = async ({
+  filters = {},
+  config = {},
+  userId = "",
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/sales/crm/polizas?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};

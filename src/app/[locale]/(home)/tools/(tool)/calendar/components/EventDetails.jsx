@@ -179,7 +179,6 @@ export default function EventDetails({ data, id }) {
   });
 
   const handleSubmitForm = async (data) => {
-    console.log(data);
     setLoading(true);
     const {
       participants,
@@ -274,11 +273,11 @@ export default function EventDetails({ data, id }) {
 
   useEffect(() => {
     console.log(data?.crm);
-    if(!data) {
+    if (!data) {
       setIsEdit(true);
-      return
+      return;
     }
-      
+
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
@@ -315,7 +314,11 @@ export default function EventDetails({ data, id }) {
 
   const deleteEvent = async () => {
     try {
-      const response = await deleteCalendarEvent(id, session?.data?.user?.id, params.get("oauth"));
+      const response = await deleteCalendarEvent(
+        id,
+        session?.data?.user?.id,
+        params.get("oauth")
+      );
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."
@@ -721,7 +724,7 @@ export default function EventDetails({ data, id }) {
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
-                  <p className="text-sm text-left w-full md:w-36">
+                    <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
                     </p>
                     <div className="w-full md:w-[40%]">

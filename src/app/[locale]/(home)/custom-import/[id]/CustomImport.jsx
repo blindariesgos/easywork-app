@@ -7,7 +7,7 @@ import Fields from "./components/Fields";
 import Duplicates from "./components/Duplicates";
 import Import from "./components/Import";
 
-const CustomImport = () => {
+const CustomImport = ({ type }) => {
   const { t } = useTranslation();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [stepPassed, setStepPassed] = useState(0);
@@ -30,7 +30,7 @@ const CustomImport = () => {
 
   return (
     <div className="p-8">
-      <h3 className="font-bold pb-6">{t("import:contacts:title")}</h3>
+      <h3 className="font-bold pb-6">{t(`import:${type}:title`)}</h3>
       <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
         <TabList>
           {items.map((item, index) => (

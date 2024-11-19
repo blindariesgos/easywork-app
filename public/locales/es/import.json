@@ -113,5 +113,8 @@
             "subtitle2": "Duplicados procesados:",
             "other": "Importar otro archivo"
         }
+    },
+    "leads": {
+        "title": "Importar Prospectos"
     }
 }

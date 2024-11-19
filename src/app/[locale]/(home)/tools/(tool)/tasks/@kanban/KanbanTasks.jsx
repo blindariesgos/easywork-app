@@ -92,8 +92,16 @@ const KanbanTasks = () => {
       // secondary: "#EDECFF",
       filter: {
         deadline: [
-          moment().subtract(1, "year").format(),
-          moment().subtract(1, "day").format(),
+          moment()
+            .utc()
+            .subtract(1, "year")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .utc()
+            .subtract(1, "day")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },
@@ -102,7 +110,7 @@ const KanbanTasks = () => {
       primary: "#70B900",
       secondary: "#F7FFEB",
       filter: {
-        deadline: moment().format(),
+        deadline: moment().utc().format("YYYY-MM-DDTHH:mm:ss"),
       },
     },
     {
@@ -111,8 +119,16 @@ const KanbanTasks = () => {
       secondary: "#e3f7ff",
       filter: {
         deadline: [
-          moment().add(1, "days").format(),
-          moment().endOf("week").format(),
+          moment()
+            .utc()
+            .add(1, "days")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .utc()
+            .endOf("week")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },
@@ -122,8 +138,16 @@ const KanbanTasks = () => {
       secondary: "#E3F7FF",
       filter: {
         deadline: [
-          moment().endOf("week").add(1, "days").format(),
-          moment().endOf("week").add(7, "days").format(),
+          moment()
+            .endOf("week")
+            .add(1, "days")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .endOf("week")
+            .add(7, "days")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },

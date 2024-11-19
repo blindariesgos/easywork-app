@@ -16,6 +16,7 @@ import TaskList from "./components/taskList";
 import { addDays } from "date-fns";
 import ContactList from "./components/ContactList";
 import PolicyList from "./components/PolicyList";
+import moment from "moment";
 
 export default function Page() {
   const {
@@ -31,7 +32,7 @@ export default function Page() {
     isLoading: isLoadingDeadlineTodayTasks,
     mutate: mutateDeadlineTodayTasks,
   } = useTasks({
-    filters: { deadline: formatDate(new Date(), "yyyy-MM-dd") },
+    filters: { deadline: moment().utc().format("YYYY-MM-DDTHH:mm:ss") },
   });
 
   const {
@@ -41,8 +42,16 @@ export default function Page() {
   } = useTasks({
     filters: {
       deadline: [
-        formatDate(addDays(new Date(), 1).toDateString(), "yyyy-MM-dd"),
-        formatDate(addDays(new Date(), 8).toDateString(), "yyyy-MM-dd"),
+        moment()
+          .utc()
+          .add(1, "days")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .add(16, "days")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
     },
   });

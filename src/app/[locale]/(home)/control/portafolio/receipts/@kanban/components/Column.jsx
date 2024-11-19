@@ -86,7 +86,6 @@ const Column = ({
   }, [updateStages]);
 
   useEffect(() => {
-    console.log({ filters });
     getReceipts(0);
   }, [filters]);
 

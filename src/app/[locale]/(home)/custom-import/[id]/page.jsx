@@ -1,10 +1,11 @@
+"use client";
 import CustomImportContextProvider from "../../../../../context/custom-import/provider";
 import CustomImport from "./CustomImport";
 
-const page = () => {
+const page = ({ params: { id } }) => {
   return (
     <CustomImportContextProvider>
-      <CustomImport />
+      <CustomImport type={id} />
     </CustomImportContextProvider>
   );
 };

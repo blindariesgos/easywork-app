@@ -273,6 +273,17 @@ export const putTaskId = async (id, body) => {
   return response;
 };
 
+export const deleteFileTaskById = async (taskId, body) => {
+  console.log("Deleting task file", taskId, body);
+  const response = await axios()
+    .delete(`/tools/tasks/${taskId}/attachments`, { data: body })
+    .catch((error) => ({ hasError: true, error }));
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
+  revalidatePath(`/tools/tasks`, "layout");
+
+  return response;
+};
+
 export const putTaskIdRelations = async (taskId, body) => {
   console.log("Updating task relations");
   const response = await axios().put(

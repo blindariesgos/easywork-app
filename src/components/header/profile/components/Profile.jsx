@@ -242,167 +242,168 @@ export function Profile({ user, id }) {
   const eighteenYearsAgo = new Date();
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
   return (
-        <form
-          onSubmit={handleSubmit(handleFormSubmit)}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg w-full h-[calc(100vh_-_160px)]"
-        >
-          {/* Menu Izquierda */}
-          <div className="grid grid-cols-1 gap-4">
-            <div className="rounded-lg bg-white">
-              <div className="flex w-full justify-between pt-4">
-                <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
-                  {data?.user.roles[0].name}
-                  <ChevronDownIcon className="w-4 h-4" />
-                </div>
-                <p className="py-1 px-2">No molestar</p>
-              </div>
-              <div className="flex flex-col text-sm justify-center items-center w-full h-full">
-                {isEdit ? (
-                  <ProfileImageInput
-                    selectedProfileImage={selectedProfileImage}
-                    onChange={handleProfileImageChange}
-                    disabled={!isEdit}
-                  />
-                ) : (
-                  <div className="p-2">
-                    <Image
-                      width={1080}
-                      height={1080}
-                      src={data?.user?.avatar || "/img/avatar.svg"}
-                      alt="Profile picture"
-                      className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
-                      objectFit="fill"
-                    />
-                  </div>
-                )}
-              </div>
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg w-full h-[calc(100vh_-_160px)]"
+    >
+      {/* Menu Izquierda */}
+      <div className="grid grid-cols-1 gap-4">
+        <div className="rounded-lg bg-white">
+          <div className="flex w-full justify-between pt-4">
+            <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
+              {data?.user.roles[0].displayName ?? data?.user.roles[0].name}
+              <ChevronDownIcon className="w-4 h-4" />
             </div>
+            <p className="py-1 px-2">No molestar</p>
           </div>
-          {/* Menu Derecha */}
-          <div className="h-auto rounded-lg">
-            <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
-              <div className="flex justify-between py-4 px-2 rounded-md">
-                <h1 className="text-primary font-bold text-2xl">
-                  Información del usuario
-                </h1>
-                {data?.user && (
-                  <button
-                    type="button"
-                    onClick={() => setIsEdit(!isEdit)}
-                    title="Editar"
-                  >
-                    <PencilIcon className="h-6 w-6 text-primary" />
-                  </button>
-                )}
+          <div className="flex flex-col text-sm justify-center items-center w-full h-full">
+            {isEdit ? (
+              <ProfileImageInput
+                selectedProfileImage={selectedProfileImage}
+                onChange={handleProfileImageChange}
+                disabled={!isEdit}
+              />
+            ) : (
+              <div className="p-2">
+                <Image
+                  width={1080}
+                  height={1080}
+                  src={data?.user?.avatar || "/img/avatar.svg"}
+                  alt="Profile picture"
+                  className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                  objectFit="fill"
+                />
               </div>
-              <TextInput
-                type="text"
-                label={t("users:form:firstname")}
-                placeholder={t("contacts:create:placeholder-name")}
-                error={errors.firstName && errors.firstName.message}
-                register={register}
-                name="firstName"
-                disabled={!isEdit}
-              />
-              <TextInput
-                type="text"
-                label={t("users:form:lastname")}
-                placeholder={t("contacts:create:placeholder-name")}
-                error={errors.lastName && errors.lastName.message}
-                register={register}
-                name="lastName"
-                disabled={!isEdit}
-              />
-              <TextInput
-                label={t("contacts:create:email")}
-                placeholder={t("contacts:create:placeholder-lastname")}
-                error={errors.email}
-                register={register}
-                name="email"
-                disabled={!isEdit}
-              />
-              <Controller
-                render={({ field: { ref, ...field } }) => {
-                  return (
-                    <InputPhone
-                      name="phone"
-                      field={field}
-                      error={errors.phone}
-                      label={t("contacts:create:phone")}
-                      defaultValue={field.value}
-                      disabled={!isEdit}
+            )}
+          </div>
+        </div>
+      </div>
+      {/* Menu Derecha */}
+      <div className="h-auto rounded-lg">
+        <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
+          <div className="flex justify-between py-4 px-2 rounded-md">
+            <h1 className="text-primary font-bold text-2xl">
+              Información del usuario
+            </h1>
+            {data?.user && (
+              <button
+                type="button"
+                onClick={() => setIsEdit(!isEdit)}
+                title="Editar"
+              >
+                <PencilIcon className="h-6 w-6 text-primary" />
+              </button>
+            )}
+          </div>
+          <TextInput
+            type="text"
+            label={t("users:form:firstname")}
+            placeholder={t("contacts:create:placeholder-name")}
+            error={errors.firstName && errors.firstName.message}
+            register={register}
+            name="firstName"
+            disabled={!isEdit}
+          />
+          <TextInput
+            type="text"
+            label={t("users:form:lastname")}
+            placeholder={t("contacts:create:placeholder-name")}
+            error={errors.lastName && errors.lastName.message}
+            register={register}
+            name="lastName"
+            disabled={!isEdit}
+          />
+          <TextInput
+            label={t("contacts:create:email")}
+            placeholder={t("contacts:create:placeholder-lastname")}
+            error={errors.email}
+            register={register}
+            name="email"
+            disabled={!isEdit}
+          />
+          <Controller
+            render={({ field: { ref, ...field } }) => {
+              return (
+                <InputPhone
+                  name="phone"
+                  field={field}
+                  error={errors.phone}
+                  label={t("contacts:create:phone")}
+                  defaultValue={field.value}
+                  disabled={!isEdit}
+                />
+              );
+            }}
+            name="phone"
+            control={control}
+            defaultValue=""
+          />
+          <TextInput
+            label={t("contacts:create:cua")}
+            error={errors.cua}
+            register={register}
+            name="cua"
+            disabled={!isEdit}
+            //value={watch('cua')}
+            // placeholder={t('contacts:create:placeholder-address')}
+          />
+        </div>
+        {groups?.map((group, index) => (
+          <div
+            className="w-full p-1 mt-4 rounded-lg h-60 bg-white overflow-y-auto"
+            key={index}
+          >
+            <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
+              Compañía: {group.name}
+            </h1>
+            {group?.users?.map((user, index) => (
+              <div className="px-3 py-2 text-sm" key={index}>
+                <div className="mb-3">
+                  <p className="text-gray-50">Miembro del equipo</p>
+                  <div className="flex">
+                    <Image
+                      className="h-12 w-12 rounded-full object-cover"
+                      width={100}
+                      height={100}
+                      src={user?.avatar}
+                      alt="user"
                     />
-                  );
-                }}
-                name="phone"
-                control={control}
-                defaultValue=""
-              />
-              <TextInput
-                label={t("contacts:create:cua")}
-                error={errors.cua}
-                register={register}
-                name="cua"
-                disabled={!isEdit}
-                //value={watch('cua')}
-                // placeholder={t('contacts:create:placeholder-address')}
-              />
-            </div>
-            {groups?.map((group, index) => (
-              <div className="w-full p-1 mt-4 rounded-lg h-60 bg-white overflow-y-auto" key={index}>
-                <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
-                  Compañía: {group.name}
-                </h1>
-                {group?.users?.map((user, index) => (
-                  <div className="px-3 py-2 text-sm" key={index}>
-                    <div className="mb-3">
-                      <p className="text-gray-50">Miembro del equipo</p>
-                      <div className="flex">
-                        <Image
-                          className="h-12 w-12 rounded-full object-cover"
-                          width={100}
-                          height={100}
-                          src={user?.avatar}
-                          alt="user"
-                        />
-                        <div className="ml-2">
-                          <p>Nombre</p>
-                          <h1 className="font-semibold">
-                            {`${user?.profile?.firstName} ${user?.profile?.lastName}`}
-                          </h1>
-                        </div>
-                      </div>
+                    <div className="ml-2">
+                      <p>Nombre</p>
+                      <h1 className="font-semibold">
+                        {`${user?.profile?.firstName} ${user?.profile?.lastName}`}
+                      </h1>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             ))}
           </div>
-          {/* Botones de acción */}
-          {isEdit && (
-            <div className="flex w-full justify-center px-4 py-4 gap-4 fixed -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
-              <Button
-                type="submit"
-                label={
-                  loading
-                    ? t("common:buttons:saving")
-                    : t("common:buttons:save")
-                }
-                disabled={loading}
-                buttonStyle="primary"
-                className="px-3 py-2"
-                // onclick={() => handleSubmit(handleFormSubmit)}
-              />
-              <Button
-                type="button"
-                label={t("common:buttons:cancel")}
-                disabled={loading}
-                buttonStyle="secondary"
-                onclick={() => setIsEdit(false)}
-                className="px-3 py-2"
-              />
-            </div>
-          )}
-        </form>
+        ))}
+      </div>
+      {/* Botones de acción */}
+      {isEdit && (
+        <div className="flex w-full justify-center px-4 py-4 gap-4 fixed -bottom-4 md:bottom-0 bg-white shadow-[0px_-2px_6px_4px_#00000017]">
+          <Button
+            type="submit"
+            label={
+              loading ? t("common:buttons:saving") : t("common:buttons:save")
+            }
+            disabled={loading}
+            buttonStyle="primary"
+            className="px-3 py-2"
+            // onclick={() => handleSubmit(handleFormSubmit)}
+          />
+          <Button
+            type="button"
+            label={t("common:buttons:cancel")}
+            disabled={loading}
+            buttonStyle="secondary"
+            onclick={() => setIsEdit(false)}
+            className="px-3 py-2"
+          />
+        </div>
+      )}
+    </form>
   );
 }

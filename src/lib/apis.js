@@ -6,8 +6,11 @@ import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
 
 const getQueries = (filters, userId) => {
-  const getRepitKeys = (key, arr) =>
-    arr.map((item) => `${key}=${item?.id ?? item}`).join("&");
+  const getRepitKeys = (key, arr) => {
+    const params = arr.map((item) => `${key}=${item?.id ?? item}`).join("&");
+    return params;
+  };
+
   if (Object.keys(filters).length == 0) return "";
 
   const getValue = (key, userId) => {
@@ -21,7 +24,7 @@ const getQueries = (filters, userId) => {
     }
   };
 
-  return Object.keys(filters)
+  const paramsUrl = Object.keys(filters)
     .filter((key) => typeof filters[key] !== "undefined")
     .map((key) =>
       Array.isArray(filters[key])
@@ -29,6 +32,8 @@ const getQueries = (filters, userId) => {
         : getValue(key, userId)
     )
     .join("&");
+
+  return paramsUrl;
 };
 
 export const login = async (formdata) => {
@@ -263,6 +268,17 @@ export const putTaskId = async (id, body) => {
     .put(`/tools/tasks/${id}`, body)
     .catch((error) => ({ hasError: true, error }));
   revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks`, "layout");
+
+  return response;
+};
+
+export const deleteFileTaskById = async (taskId, body) => {
+  console.log("Deleting task file", taskId, body);
+  const response = await axios()
+    .delete(`/tools/tasks/${taskId}/attachments`, { data: body })
+    .catch((error) => ({ hasError: true, error }));
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   revalidatePath(`/tools/tasks`, "layout");
 
   return response;
@@ -629,7 +645,7 @@ export const getAllTasks = async ({
   console.log(url);
   const response = await axios()
     .get(url)
-    .catch((error) => ({ hasError: true, ...error }));
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };
 

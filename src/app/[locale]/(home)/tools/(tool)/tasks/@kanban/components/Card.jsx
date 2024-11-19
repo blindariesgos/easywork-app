@@ -39,8 +39,10 @@ import {
   isDateMoreFiveDayOverdue,
   isDateMoreTenDayOverdue,
 } from "@/src/utils/getFormatDate";
+import { useTranslation } from "react-i18next";
 
 const Card = ({ task, minWidthClass, stageId }) => {
+  const { t } = useTranslation();
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
@@ -126,7 +128,7 @@ const Card = ({ task, minWidthClass, stageId }) => {
       }}
     >
       <div
-        className={clsx("bg-white rounded-md p-3 grid grid-cols-12", {
+        className={clsx("bg-white rounded-md p-3 grid grid-cols-12 border ", {
           "shadow-md border-[0.5px] border-primary": selectedReceipts.includes(
             task.id
           ),

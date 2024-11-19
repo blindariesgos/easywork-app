@@ -178,7 +178,7 @@ export const uploadTemporalFile = async (data) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
     contentType: "multipart/form-data",
   })
-    .post(`/files/attach/temp`, data)
+    .post(`/files/temp`, data)
     .catch((error) => error);
   return response;
 };

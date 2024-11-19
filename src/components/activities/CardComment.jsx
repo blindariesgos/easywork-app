@@ -7,6 +7,7 @@ import TextEditor from "../TextEditor";
 import clsx from "clsx";
 import Link from "next/link";
 import Image from "next/image";
+import { correctSpecialCharacters } from "@/src/utils/formatters";
 
 export const CommentType = {
   USER: "user",
@@ -66,7 +67,9 @@ function SystemNotification({ data }) {
                 )
               }
             >
-              {metadata?.file?.name ?? "System"}
+              {metadata?.file?.name
+                ? correctSpecialCharacters(metadata?.file?.name)
+                : "System"}
             </span>
             .
           </p>

@@ -8,13 +8,14 @@ import { FaDropbox, FaGoogle } from "react-icons/fa6";
 import { uploadTemporalFile } from "../../../../../../../lib/api/drive";
 import { putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { useSWRConfig } from "swr";
 export default function UploadDocuments({ files, deleteFiles, id }) {
   const { t } = useTranslation();
   const inputFileRef = useRef();
   const [loading, setLoading] = useState(false);
-
+  const { mutate } = useSWRConfig();
   const handleFilesUpload = async (event) => {
-    console.log({ event });
     setLoading(true);
     const fileList = Array.from(event.target.files);
 
@@ -54,17 +55,11 @@ export default function UploadDocuments({ files, deleteFiles, id }) {
     }
     setLoading(false);
     toast.success("Archivo(s) guardado(s) con exito.");
+    mutate(`/tools/tasks/${id}`);
   };
   return (
-    <div>
-      <div className="flex flex-wrap gap-3 my-2 mt-4">
-        {files.length > 0 &&
-          files.map((file, i) => (
-            <div key={i}>
-              <CardFile data={file} onClick={() => deleteFiles(i)} />
-            </div>
-          ))}
-      </div>
+    <div className="pt-2">
+      {loading && <LoaderSpinner />}
       <hr className="text-gray-200 border border-dashed" />
       <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
         <div className="">

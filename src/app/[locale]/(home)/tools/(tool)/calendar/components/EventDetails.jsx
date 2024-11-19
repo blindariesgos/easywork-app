@@ -12,6 +12,7 @@ import {
   ChevronUpIcon,
   FireIcon,
 } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -53,7 +54,7 @@ export default function EventDetails({ data, id }) {
   const { lists } = useAppContext();
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
-  const [isEdit, setIsEdit] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
   const [value, setValueText] = useState("<p></p>");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -178,7 +179,6 @@ export default function EventDetails({ data, id }) {
   });
 
   const handleSubmitForm = async (data) => {
-    console.log(data);
     setLoading(true);
     const {
       participants,
@@ -272,15 +272,11 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(data);
+    console.log(data?.crm);
     if (!data) {
       setIsEdit(true);
       return;
     }
-
-    setIsEdit(false);
-
-    console.log(data.participants);
 
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
@@ -290,6 +286,7 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
+    if (data?.crm) setValue("crm", data?.crm);
     if (data?.description)
       setValueText(data?.description ? data?.description : "<p></p>");
     if (data?.participants)
@@ -308,16 +305,20 @@ export default function EventDetails({ data, id }) {
           : []
       );
 
-    const subscription = watch((data, { name }) => {
-      setIsEdit(true);
-    });
+    // const subscription = watch((data, { name }) => {
+    //   setIsEdit(true);
+    // });
 
-    return () => subscription.unsubscribe();
+    // return () => subscription.unsubscribe();
   }, [data]);
 
   const deleteEvent = async () => {
     try {
-      const response = await deleteCalendarEvent(id, session?.data?.user?.id, params.get("oauth"));
+      const response = await deleteCalendarEvent(
+        id,
+        session?.data?.user?.id,
+        params.get("oauth")
+      );
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."
@@ -382,6 +383,13 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
+            <button
+              type="button"
+              onClick={() => setIsEdit(!isEdit)}
+              title="Editar"
+            >
+              <PencilIcon className="h-6 w-6 text-primary" />
+            </button>
             <div className="relative flex items-start px-2 sm:px-0">
               <div className="flex h-6 items-center">
                 <input
@@ -716,7 +724,7 @@ export default function EventDetails({ data, id }) {
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
-                  <p className="text-sm text-left w-full md:w-36">
+                    <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
                     </p>
                     <div className="w-full md:w-[40%]">
@@ -858,7 +866,7 @@ export default function EventDetails({ data, id }) {
           <button
             type="button"
             className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => router.back()}
+            onClick={() => setIsEdit(false)}
           >
             {t("common:buttons:cancel")}
           </button>

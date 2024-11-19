@@ -9,12 +9,12 @@ import SelectInput from "../../components/form/SelectInput";
 import ContactSelectAsync from "../../components/form/ContactSelectAsync";
 import MultipleSelect from "../../components/form/MultipleSelect";
 import InputDate from "../../components/form/InputDate";
+import MultiSelectTags from "../../components/form/MultiSelectTags";
 import TextInput from "../../components/form/TextInput";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from "./AddFields";
 import SelectDropdown from "../../components/form/SelectDropdown";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useFilterTableContext from "../../context/filters-table";
 import moment from "moment";
 
@@ -41,14 +41,12 @@ const FormFilters = () => {
     });
 
   const handleFormFilters = (data) => {
-    console.log("folters", data);
     if (data.fields.length == 0) return;
     const displayAux = data.fields.filter((field) =>
       field.type == "multipleSelect"
         ? field.value.length > 0
         : typeof field.value !== "undefined" && field.value !== ""
     );
-    console.log({ displayAux });
     setDisplayFilters(displayAux);
 
     const newFilters = data.fields
@@ -61,7 +59,7 @@ const FormFilters = () => {
         let value = field.value;
 
         if (field.type == "date") {
-          value = moment(field.value).utc().format("yyyy-MM-DD");
+          value = moment(field.value).utc().format("YYYY-MM-DDTHH:mm:ss");
         }
 
         if (field.type == "select-contact") {
@@ -73,7 +71,6 @@ const FormFilters = () => {
           [field.code]: value,
         };
       }, {});
-    console.log({ newFilters });
     setFilters(newFilters);
   };
 
@@ -205,6 +202,22 @@ const FormFilters = () => {
                     options={dataField.options}
                     getValues={getValues}
                     setValue={setValue}
+                    label={dataField.name}
+                  />
+                )}
+              />
+            )}
+            {dataField.type === "tags" && (
+              <Controller
+                name={`fields[${index}].value`}
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <MultiSelectTags
+                    {...field}
+                    getValues={getValues}
+                    setValue={setValue}
+                    name={`fields[${index}].value`}
                     label={dataField.name}
                   />
                 )}

@@ -214,7 +214,7 @@ const OptionsTask = ({
   return (
     <div>
       {loading && <LoaderSpinner />}
-      {value && value.length > 0 && (
+      {((disabled && value && value.length > 0) || !disabled) && (
         <div className="bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative">
           <TextEditor
             ref={quillRef}

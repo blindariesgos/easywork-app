@@ -47,7 +47,9 @@ export const useSidebar = () => {
 
   // Obtener los permisos de menú del usuario
   const userMenuPermissions =
-    session?.user?.roles?.flatMap((role) => role.menuPermissions) || [];
+    session?.user?.menuPermissions ??
+    session?.user?.roles?.flatMap((role) => role.menuPermissions) ??
+    [];
 
   const sidebarNavigation = [
     {

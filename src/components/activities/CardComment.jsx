@@ -8,6 +8,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import Image from "next/image";
 import { correctSpecialCharacters } from "@/src/utils/formatters";
+import moment from "moment";
 
 export const CommentType = {
   USER: "user",
@@ -154,12 +155,12 @@ function CommentUser({ data }) {
     <div className="bg-white px-4 py-3 rounded-lg w-full">
       <div className="flex items-center">
         <div className="flex gap-2 items-center">
-          <p className="text-xs text-primary font-medium">
+          <p className="text-xs text-primary font-bold">
             {t("contacts:panel:comment")}
           </p>
-          <p className="text-xs text-primary font-medium">
-            {t("contacts:panel:date")}:{" "}
-            {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
+          <p className="text-xs text-primary">
+            {t("common:date:title")}:{" "}
+            {moment(createdAt).format("DD/MM/YYYY hh:mm a")}
           </p>
         </div>
       </div>

@@ -21,6 +21,28 @@ const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
       return item.value.fullName;
     }
 
+    if (item.type == "daterange") {
+      if (["lastNDays", "nextNDays"].includes(item.value.id)) {
+        return item.value.name.replace("N", item.range)
+      }
+      if (item.value.id == "month") {
+        return `${item.value.name} ${moment(item.range).utc().format("MM/YYYY")}`
+      }
+      if (item.value.id == "quarter") {
+        return `${item.value.name} ${moment(item.range).utc().format("[Q]Q YYYY")}`
+      }
+      if (item.value.id == "year") {
+        return `${item.value.name} ${moment(item.range).utc().format("YYYY")}`
+      }
+      if (item.value.id == "exactDate") {
+        return moment(item.range).utc().format("DD/MM/YYYY")
+      }
+      if (item.value.id == "dateRange") {
+        return `${moment(item.range[0]).utc().format("DD/MM/YYYY")} - ${moment(item.range[1]).utc().format("DD/MM/YYYY")}`
+      }
+      return item.value.name
+    }
+
     return item.value;
   };
 

@@ -657,94 +657,94 @@ export const useCommon = () => {
   ];
   const createdDate = [
     {
-      id: 1,
+      id: "yesterday",
       name: t("common:date:yesterday"),
     },
     {
-      id: 2,
+      id: "today",
       name: t("common:date:today"),
     },
     {
-      id: 3,
+      id: "tomorrow",
       name: t("common:date:tomorrow"),
     },
     {
-      id: 4,
+      id: "thisWeek",
       name: t("common:date:thisWeek"),
     },
     {
-      id: 5,
+      id: "thisMonth",
       name: t("common:date:thisMonth"),
     },
     {
-      id: 6,
+      id: "currentQuarter",
       name: t("common:date:currentQuarter"),
     },
     {
-      id: 7,
+      id: "last7Days",
       name: t("common:date:last7Days"),
     },
     {
-      id: 8,
+      id: "last30Days",
       name: t("common:date:last30Days"),
     },
     {
-      id: 9,
+      id: "last60Days",
       name: t("common:date:last60Days"),
     },
     {
-      id: 10,
+      id: "last90Days",
       name: t("common:date:last90Days"),
     },
     {
-      id: 11,
+      id: "lastNDays",
       name: t("common:date:lastNDays"),
       date: "input",
     },
     {
-      id: 12,
+      id: "nextNDays",
       name: t("common:date:nextNDays"),
       date: "input",
     },
     {
-      id: 13,
+      id: "month",
       name: t("common:date:month"),
       date: "month",
     },
     {
-      id: 14,
+      id: "quarter",
       name: t("common:date:quarter"),
       date: "quarter",
     },
     {
-      id: 15,
+      id: "year",
       name: t("common:date:year"),
       date: "year",
     },
     {
-      id: 16,
+      id: "exactDate",
       name: t("common:date:exactDate"),
       date: "exactDate",
     },
     {
-      id: 17,
+      id: "lastWeek",
       name: t("common:date:lastWeek"),
     },
     {
-      id: 18,
+      id: "lastMonth",
       name: t("common:date:lastMonth"),
     },
     {
-      id: 19,
+      id: "dateRange",
       name: t("common:date:dateRange"),
       date: "range",
     },
     {
-      id: 20,
+      id: "nextWeek",
       name: t("common:date:nextWeek"),
     },
     {
-      id: 21,
+      id: "nextMonth",
       name: t("common:date:nextMonth"),
     },
   ];

@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { postComment } from "../../lib/apis";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import moment from "moment";
 
 //is a component that must recieve its props
 export default function CardEvent({ data }) {
@@ -37,13 +38,14 @@ export default function CardEvent({ data }) {
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <p className="text-xs text-primary font-bold">
-            {t("tools:calendar:events:event")}
+            {t("common:activities:event")}
           </p>
-          <p className="text-xs text-slate-500/60 font-medium">
-            {formatDate(data.createdAt)}
+          <p className="text-xs text-primary">
+            {t("common:date:title")}:{" "}
+            {moment(data.startTime).format("DD/MM/YYYY hh:mm a")}
           </p>
         </div>
-        <div>
+        {data?.createdBy && (
           <Image
             className="h-6 w-6 rounded-full object-cover"
             width={36}
@@ -56,7 +58,7 @@ export default function CardEvent({ data }) {
                 : (data?.createdBy?.username ?? "System")
             }
           />
-        </div>
+        )}
       </div>
       <div className="flex gap-4 md:gap-8 mt-3">
         <div className="flex flex-col gap-2">
@@ -65,65 +67,38 @@ export default function CardEvent({ data }) {
               width={50}
               height={50}
               alt="event icon"
-              src="/img/activities/event.svg"
+              src="/img/activities/event-1-black.svg"
             />
           </div>
-
-          <Link
-            href={`/tools/calendar/event/${data.id}?show=true`}
-            className="flex items-center gap-x-2 rounded-md font-medium outline-none  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 justify-center bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm text-sm"
-          >
-            {t("contacts:panel:open")}
-          </Link>
         </div>
-        <div className="flex flex-col gap-2 w-full">
-          <div className="flex gap-x-4 items-center">
-            <p className="text-sm text-primary font-bold">
-              {t("tools:calendar:events:panel:start-date")}:
-            </p>
-            <p className="text-xs font-normal bg-yellow-200 rounded-xl px-2 py-1 text-slate-500 flex items-center cursor-pointer align-middle lining-nums">
-              <span className="leading-none align-middle">
-                {formatDate(data.startTime)}
-              </span>
-            </p>
-          </div>
-          <div className="flex gap-x-4 items-center">
-            <p className="text-sm text-primary font-bold">
-              {t("tools:calendar:events:panel:title")}:
-            </p>
-            <p className="text-sm text-blue-700 font-normal">
-              <Link href={`/tools/calendar/event/${data.id}?show=true`}>
-                {data.name}
-              </Link>
-            </p>
-          </div>
-          <div className="flex gap-x-4 items-center">
-            <p className="text-sm text-primary font-bold">
-              {t("tools:calendar:events:panel:participants")}:
-            </p>
-            <Link
-              href={`/user/${data.id}?show=true`}
-              className="text-sm text-blue-700 font-normal"
-            >
-              {data?.participants[0]?.profile?.firstName
-                ? `${data?.participants[0]?.profile?.firstName} ${data?.participants[0]?.profile?.lastName}`
-                : data?.participants[0]?.username}
+        <div className="flex flex-col gap-2 w-full justify-center">
+          <p className="text-sm text-[#0F8BBF] font-bold">
+            <Link href={`/tools/calendar/event/${data.id}?show=true`}>
+              {data.name}
             </Link>
-          </div>
-          <div className="flex justify-end mt-0 gap-2 items-center">
-            <div title="Ver Opciones">
-              <IconDropdown
-                icon={
-                  <EllipsisHorizontalIcon
-                    className="h-4 w-4 text-black"
-                    aria-hidden="true"
-                  />
-                }
-                options={options}
-                width="w-[100px]"
-              />
+          </p>
+          {data?.participants && data?.participants?.length > 0 && (
+            <div className="flex gap-x-2 items-center">
+              <p className="text-sm text-primary font-bold">
+                {t("common:with")}:
+              </p>
+
+              <div className="flex gap-1 flex-wrap">
+                {data?.participants &&
+                  data?.participants?.map((participant, index, arr) => (
+                    <Link
+                      href={`/settings/permissions/users/user/${participant.id}?show=true`}
+                      className="text-xs text-[#0F8BBF] hover:underline"
+                      key={participant.id}
+                    >
+                      {participant?.profile?.firstName
+                        ? `${participant?.profile?.firstName} ${participant?.profile?.lastName}`
+                        : participant?.username}
+                    </Link>
+                  ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

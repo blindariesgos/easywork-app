@@ -33,7 +33,7 @@ export default function UserDetails({ id }) {
       samePage={`/settings/permissions/users?page=1`}
     >
       <Suspense fallback={<LoaderSpinner />}>
-        <UserEditor user={data} id={id} />
+        {data && <UserEditor user={data} id={id} />}
       </Suspense>
     </SlideOver>
   );

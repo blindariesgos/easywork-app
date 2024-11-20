@@ -12,6 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import SelectInput from "@/src/components/form/SelectInput";
+import InputDateRange from "@/src/components/form/InputDateRange";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";

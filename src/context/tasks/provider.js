@@ -35,6 +35,15 @@ export default function TasksContextProvider({ children }) {
   const [filterFields, setFilterFields] = useState();
   const defaultFilterFields = [
     {
+      id: 8,
+      name: t("tools:tasks:filters:fields:limit-date"),
+      type: "daterange",
+      check: false,
+      code: "deadline",
+      date: "newDate",
+      state: 1,
+    },
+    {
       id: 1,
       name: t("tools:tasks:filters:fields:createdThe"),
       type: "date",
@@ -73,6 +82,15 @@ export default function TasksContextProvider({ children }) {
   useEffect(() => {
     if (!lists?.users || lists?.users?.length == 0) return;
     setFilterFields([
+      {
+        id: 8,
+        name: t("tools:tasks:filters:fields:limit-date"),
+        type: "daterange",
+        check: false,
+        code: "deadline",
+        date: "newDate",
+        state: 1,
+      },
       {
         id: 1,
         name: t("tools:tasks:filters:fields:createdThe"),
@@ -151,15 +169,6 @@ export default function TasksContextProvider({ children }) {
         type: "tags",
         check: false,
         code: "tags",
-      },
-      {
-        id: 8,
-        name: t("tools:tasks:filters:fields:limit-date"),
-        type: "date",
-        check: false,
-        code: "deadline",
-        date: "newDate",
-        state: 1,
       },
       {
         id: 9,

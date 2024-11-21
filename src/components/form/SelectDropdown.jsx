@@ -32,10 +32,10 @@ function SelectDropdown({
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (selectedOption) {
+    if (selectedOption && !selected) {
       setSelected(selectedOption);
     }
-  }, [selectedOption]);
+  }, [selectedOption, selected]);
 
   useEffect(() => {
     if (selected) setValue && setValue(name, selected?.id);

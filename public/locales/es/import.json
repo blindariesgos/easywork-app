@@ -115,6 +115,11 @@
         }
     },
     "leads": {
-        "title": "Importar Prospectos"
+        "title": "Importar Prospectos",
+        "import": {
+            "subtitle1": "Los prospectos se importaron exitosamente:",
+            "subtitle2": "Duplicados procesados:",
+            "other": "Importar otro archivo"
+        }
     }
 }

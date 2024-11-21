@@ -24,22 +24,15 @@ import { deletePolicyById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { formatToCurrency } from "@/src/utils/formatters";
-import "moment/locale/es.js";
-import useCrmContext from "@/src/context/crm";
-import clsx from "clsx";
 
-const Card = ({ receipt, minWidthClass, stageId }) => {
+const Card = ({ lead, minWidthClass, stageId }) => {
+  const { lists } = useAppContext();
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const route = useRouter();
-
-  const {
-    selectedContacts: selectedReceipts,
-    setSelectedContacts: setSelectedReceipts,
-  } = useCrmContext();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: receipt.id,
+    id: lead.id,
     data: {
       stageId,
     },
@@ -47,55 +40,83 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        position: "fixed",
       }
     : undefined;
+
+  const deleteLead = async (id) => {
+    try {
+      setLoading(true);
+      const response = await deleteLeadById(id);
+      toast.success("Prospecto(s) eliminado(s) con exito");
+      mutate();
+      setLoading(false);
+      setIsOpenDelete(false);
+    } catch (err) {
+      setLoading(false);
+      handleApiError(err.message);
+    }
+  };
 
   const options = [
     {
       name: "Ver",
-      handleClick: (id) =>
-        route.push(`/control/portafolio/receipts/receipt/${id}?show=true`),
+      handleClick: () =>
+        route.push(`/sales/crm/leads/lead/${lead.id}?show=true`),
+    },
+    {
+      name: "Editar",
+      handleClick: () =>
+        route.push(`/sales/crm/leads/lead/${lead.id}?show=true&edit=true`),
+      disabled: lead?.cancelled || /Positivo/gi.test(lead?.stage?.name),
+    },
+    {
+      name: "Copiar",
+      handleClick: () =>
+        route.push(`/sales/crm/leads/lead?show=true&copy=${lead.id}`),
+    },
+    {
+      name: "Eliminar",
+      handleClick: () => {
+        setDeleteId(lead.id);
+        setIsOpenDelete(true);
+      },
     },
     {
       name: "Planificar",
       options: [
         {
           name: "Tarea",
-          handleClick: (id) =>
+          handleClick: () =>
             route.push(
-              `/tools/tasks/task?show=true&prev=contact&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=leads&prev_id=${lead.id}`
             ),
         },
         {
-          name: "Envío masivo SMS",
+          name: "Whatsapp",
           disabled: true,
         },
         {
-          name: "Correo electrónico",
+          name: "Cita",
+          disabled: true,
+        },
+        {
+          name: "Comentario",
+          disabled: true,
+        },
+        {
+          name: "Llamada",
           disabled: true,
         },
       ],
     },
   ];
 
-  // const deletePolicy = async (id) => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await deletePolicyById(id);
-  //     toast.success(t("common:alert:delete-success"));
-  //     setIsOpenDelete(false);
-  //     setLoading(false);
-  //   } catch (err) {
-  //     handleApiError(err.message);
-  //     setLoading(false);
-  //   }
-  // };
+  const handleClickContact = () =>
+    route.push(`/sales/crm/contacts/contact/${lead.id}?show=true`);
 
-  const handleClickContact = (id) =>
-    route.push(`/sales/crm/contacts/contact/${id}?show=true`);
-
-  const handleClickPolicy = (id) =>
-    route.push(`/operations/policies/policy/${id}?show=true`);
+  const handleClickLead = () =>
+    route.push(`/sales/crm/leads/lead/${lead.id}?show=true`);
 
   const { role, ...otherAttributes } = attributes;
   const { onPointerDown } = listeners;
@@ -106,74 +127,45 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
       style={style}
       {...otherAttributes}
       onPointerDown={(event) => {
-        console.log({ event });
         if (event?.target?.onclick) {
-          event?.target?.onclick(event);
+          event?.target?.onclick();
           return;
         }
-        onPointerDown && onPointerDown(event);
+        onPointerDown(event);
       }}
     >
       <div
-        className={clsx("bg-white rounded-md p-3 grid grid-cols-12", {
-          "shadow-md border-[0.5px] border-primary": selectedReceipts.includes(
-            receipt.id
-          ),
-        })}
+        className="bg-white rounded-md p-3 grid grid-cols-12"
         style={{
-          width: minWidthClass ?? "auto",
+          minWidth: minWidthClass ?? "auto",
         }}
       >
-        <div className="col-span-10 flex flex-col gap-2 justify-start">
+        <div className="col-span-10">
           <p
-            className="font-bold cursor-pointer text-sm"
-            onClick={() => handleClickPolicy(receipt.id)}
+            className="font-semibold cursor-pointer text-sm"
+            onClick={() => handleClickLead(lead.id)}
           >
-            {receipt?.title}
-            {/* {`${receipt?.poliza?.company?.name ?? ""} ${receipt?.poliza?.poliza} ${receipt?.poliza?.type?.name}`} */}
+            {lead?.fullName}
           </p>
 
-          <p className="text-sm text-[#9A9A9A]">{`${receipt?.currency?.symbol ?? ""} ${formatToCurrency(+receipt?.paymentAmount ?? 0)}`}</p>
-          <p
-            className="text-start cursor-pointer text-sm text-[#9A9A9A]"
-            onClick={() => handleClickContact(receipt?.poliza?.contact?.id)}
-          >
-            {receipt?.poliza?.contact?.fullName}
-          </p>
-          <div className="flex items-center gap-2">
-            <Image
-              className="h-8 w-8 rounded-full bg-zinc-200"
-              width={30}
-              height={30}
-              src={receipt?.responsible?.avatar || "/img/avatar.svg"}
-              alt=""
-            />
-            <div>
-              <p className="text-xs text-[#9A9A9A] font-bold">
-                {receipt?.responsible?.profile
-                  ? `${receipt?.responsible?.profile?.firstName} ${receipt?.responsible?.profile?.lastName}`
-                  : ""}
-              </p>
-              <p className="text-[8px] text-[#9A9A9A]">
-                {receipt?.responsible?.bio ?? ""}
-              </p>
-            </div>
-          </div>
+          {lead?.source?.name && (
+            <p className="text-xs text-gray-50">{lead?.source?.name}</p>
+          )}
+          <p className="text-sm text-primary">{`${lead?.quoteCurrency?.symbol ?? "$"} ${formatToCurrency(lead?.quoteAmount ?? 0)}`}</p>
+          {/* <div className="py-6">
+            <p
+              className="text-start text-easy-400 cursor-pointer text-sm"
+              onClick={() => handleClickContact(lead?.contact?.id)}
+            >
+              {lead?.contact?.fullName}
+            </p>
+
+            <p className="text-sm text-gray-50">
+              {moment(lead?.vigenciaDesde).format("DD MMMM yyyy")}
+            </p>
+          </div> */}
         </div>
         <div className="col-span-2 flex flex-col items-end gap-1">
-          <input
-            type="checkbox"
-            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-0 "
-            value={receipt.id}
-            checked={selectedReceipts.includes(receipt.id)}
-            onClick={(e) => {
-              const elements = e.target.checked
-                ? [...selectedReceipts, receipt.id]
-                : selectedReceipts.filter((p) => p !== receipt.id);
-              console.log(elements, e, !e.target.checked);
-              setSelectedReceipts(elements);
-            }}
-          />
           <button
             type="button"
             className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -202,14 +194,9 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
             <PhoneIcon className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
-        <div className="col-span-12 flex justify-between items-end pt-4">
-          <Menu
-            as="div"
-            className="relative hover:bg-slate-50/30 w-10 md:w-auto  rounded-lg"
-          >
-            <MenuButton className="flex items-center text-xs">
-              + Actividades
-            </MenuButton>
+        <div className="col-span-12 flex justify-between items-center pt-2">
+          <Menu as="div" className="relative hover:bg-slate-50/30 md:w-auto ">
+            <MenuButton className="text-xs">+ Actividades</MenuButton>
             <Transition
               as={Fragment}
               enter="transition ease-out duration-100"
@@ -229,7 +216,7 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
                       key={item.name}
                       disabled={item.disabled}
                       onClick={() => {
-                        item.handleClick && item.handleClick(receipt.id);
+                        item.handleClick && item.handleClick();
                       }}
                     >
                       <div className="block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 leading-6 text-xs text-black cursor-pointer">
@@ -271,8 +258,7 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
                               key={option.name}
                               disabled={option.disabled}
                               onClick={() => {
-                                option.handleClick &&
-                                  option.handleClick(receipt.id);
+                                option.handleClick && option.handleClick();
                               }}
                             >
                               <div className="block px-3 py-1 text-xs leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50">
@@ -288,21 +274,21 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
               </MenuItems>
             </Transition>
           </Menu>
-          <p className="text-xs text-[#9A9A9A]">
-            {moment(
-              receipt.status == "pagado"
-                ? receipt?.paymentDate
-                : receipt?.dueDate
-            )
-              .locale("es")
-              .fromNow()}
-          </p>
+          {lead?.assignedBy && (
+            <Image
+              className="h-6 w-6 rounded-full bg-zinc-200"
+              width={30}
+              height={30}
+              src={lead?.assignedBy?.avatar || "/img/avatar.svg"}
+              alt=""
+            />
+          )}
         </div>
       </div>
       <DeleteModal
         isOpen={isOpenDelete}
         setIsOpen={setIsOpenDelete}
-        handleClick={() => deletePolicy(deleteId)}
+        handleClick={() => deleteLead(deleteId)}
         loading={loading}
       />
     </div>

@@ -11,14 +11,16 @@ import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
+import useCustomImportContext from "@/src/context/custom-import";
 
-const Import = ({ handleNext, handleBack }) => {
+const Import = ({ handleNext, handleBack, type }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const router = useRouter();
   const schema = yup.object().shape({
     fields: yup.array().of(yup.object().shape({})),
   });
+  const { info } = useCustomImportContext();
 
   const {
     register,
@@ -40,8 +42,8 @@ const Import = ({ handleNext, handleBack }) => {
       </p>
       <div className="pr-4 pl-8 grid grid-cols-1 gap-y-4">
         <div className="flex gap-2">
-          <p className="text-sm">{t("import:contacts:import:subtitle1")}</p>
-          <p className="text-sm font-bold">5</p>
+          <p className="text-sm">{t(`import:${type}:import:subtitle1`)}</p>
+          <p className="text-sm font-bold">{info?.items?.length ?? 0}</p>
         </div>
         <div className="flex gap-2">
           <p className="text-sm">{t("import:contacts:import:subtitle2")}</p>

@@ -70,7 +70,7 @@ const Column = ({
         setHasMore(false);
       }
 
-      setPage((defaultPage ? defaultPage : page) + 1);
+      setPage((typeof defaultPage !== "undefined" ? defaultPage : page) + 1);
     } catch (error) {
       console.log({ error });
     }

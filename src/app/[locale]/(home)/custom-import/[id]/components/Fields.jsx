@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 const Fields = ({ handleNext, handleBack }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
-  const { header, columns } = useCustomImportContext();
+  const { header, columns, info, setInfo } = useCustomImportContext();
   const schema = yup.object().shape({
     fields: yup.object().shape({}),
   });
@@ -114,6 +114,10 @@ const Fields = ({ handleNext, handleBack }) => {
       };
     });
     console.log({ object });
+    setInfo({
+      ...info,
+      items: object,
+    });
     handleNext();
   };
 

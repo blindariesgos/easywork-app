@@ -720,6 +720,10 @@ const getCmrInfo = (cmr) => {
     name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
   }
 
+  if (type === "receipt") {
+    name = cmr?.crmEntity?.title;
+  }
+
   return { id, type, name };
 };
 

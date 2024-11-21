@@ -45,7 +45,7 @@ const CustomImport = ({ type }) => {
         </TabList>
         <TabPanels className="bg-white">
           <TabPanel>
-            <Configurations handleNext={() => handleNext(0)} />
+            <Configurations handleNext={() => handleNext(0)} type={type} />
           </TabPanel>
           <TabPanel>
             <Fields handleNext={() => handleNext(1)} handleBack={handleBack} />
@@ -57,7 +57,11 @@ const CustomImport = ({ type }) => {
             />
           </TabPanel>
           <TabPanel>
-            <Import handleNext={() => handleNext(0)} handleBack={handleBack} />
+            <Import
+              handleNext={() => handleNext(0)}
+              handleBack={handleBack}
+              type={type}
+            />
           </TabPanel>
         </TabPanels>
       </TabGroup>

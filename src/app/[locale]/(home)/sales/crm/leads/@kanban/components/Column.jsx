@@ -1,35 +1,36 @@
 import Card from "./Card";
-import { useDroppable, DragOverlay } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import usePoliciesContext from "@/src/context/policies";
+import useLeadsContext from "@/src/context/leads";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { formatToCurrency } from "@/src/utils/formatters";
-import {
-  getAllPolicies,
-  getContactId,
-  getReceiptKanbanByStateId,
-} from "@/src/lib/apis";
+import { getAllLeads } from "@/src/lib/apis";
+
 const Column = ({
   id,
   color,
-  title,
   activeId,
   filter,
   setItemDrag,
   updateStages,
+  name,
+  type,
 }) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
+    data: {
+      type,
+    },
   });
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [totalItems, setTotalItems] = useState();
   const [totalAmount, setTotalAmount] = useState(0);
-  const { filters } = usePoliciesContext();
+  const { filters } = useLeadsContext();
 
-  const getPolicies = async (defaultPage) => {
+  const getLeads = async (defaultPage) => {
     try {
       const params = {
         filters: {
@@ -41,8 +42,8 @@ const Column = ({
           limit: 10,
         },
       };
-      const response = await getAllPolicies(params);
-      console.log(title, response, params);
+      const response = await getAllLeads(params);
+      console.log(name, response, params);
       const auxItems =
         page == 0 || defaultPage == 0
           ? response.items
@@ -63,17 +64,17 @@ const Column = ({
   };
 
   useEffect(() => {
-    getPolicies();
+    getLeads();
   }, []);
 
   useEffect(() => {
     if (updateStages.includes(id)) {
-      getPolicies(0);
+      getLeads(0);
     }
   }, [updateStages]);
 
   useEffect(() => {
-    getPolicies(0);
+    getLeads(0);
   }, [filters]);
 
   useEffect(() => {
@@ -86,20 +87,20 @@ const Column = ({
   return (
     <div
       ref={setNodeRef}
-      className={clsx("p-1", {
+      className={clsx("p-1 w-[250px]", {
         "bg-easy-100": isOver,
       })}
     >
       <p
-        className={`w-full text-white font-semibold px-2 py-3 rounded-md text-sm`}
+        className={`w-full text-white font-semibold px-2 py-3 rounded-md text-sm bg-primary`}
         style={{ background: color }}
       >
-        {title} ({totalItems ?? 0})
+        {name} ({totalItems ?? 0})
       </p>
 
       <InfiniteScroll
         dataLength={items.length}
-        next={getPolicies}
+        next={getLeads}
         hasMore={hasMore}
         loader={<h4>Cargando...</h4>}
         height="60vh"
@@ -110,8 +111,8 @@ const Column = ({
         // }
       >
         <div className={clsx("grid grid-cols-1 gap-2 pt-2")}>
-          {items.map((policy, index) => (
-            <Card policy={policy} index={index} key={policy.id} />
+          {items.map((lead, index) => (
+            <Card lead={lead} index={index} key={lead.id} stageId={id} />
           ))}
         </div>
       </InfiniteScroll>

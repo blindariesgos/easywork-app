@@ -10,6 +10,7 @@ export default function CustomImportContextProvider({ children }) {
   const [header, setHeader] = useState();
   const [columns, setColumns] = useState();
   const [columnsConfiguration, setColumnsConfiguration] = useState();
+  const [info, setInfo] = useState({});
 
   const values = useMemo(
     () => ({
@@ -19,8 +20,10 @@ export default function CustomImportContextProvider({ children }) {
       setHeader,
       setColumns,
       setColumnsConfiguration,
+      info,
+      setInfo,
     }),
-    [header, columns, columnsConfiguration]
+    [header, columns, columnsConfiguration, info]
   );
 
   return (

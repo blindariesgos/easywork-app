@@ -286,7 +286,19 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
-    if (data?.crm) setValue("crm", data?.crm);
+    if (data?.crm)
+      setValue(
+        "crm",
+        data?.crm
+          ? data?.crm.map((item) => ({
+              id: item.id,
+              name: item.crmEntity.name,
+              type: item.type,
+              title: item.crmEntity.title ? item.crmEntity.title : undefined,
+              username: undefined,
+            }))
+          : []
+      );
     if (data?.description)
       setValueText(data?.description ? data?.description : "<p></p>");
     if (data?.participants)
@@ -383,14 +395,17 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
-            <button
-              type="button"
-              onClick={() => setIsEdit(!isEdit)}
-              title="Editar"
-            >
-              <PencilIcon className="h-6 w-6 text-primary" />
-            </button>
-            <div className="relative flex items-start px-2 sm:px-0">
+            {data && (
+              <button
+                type="button"
+                onClick={() => setIsEdit(!isEdit)}
+                title="Editar"
+              >
+                <PencilIcon className="h-6 w-6 text-primary" />
+              </button>
+            )}
+
+            <div className="relative flex items-start px-2 ml-2 sm:px-0">
               <div className="flex h-6 items-center">
                 <input
                   id="important"
@@ -727,7 +742,7 @@ export default function EventDetails({ data, id }) {
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
                     </p>
-                    <div className="w-full md:w-[40%]">
+                    <div className="w-full">
                       <CRMMultipleSelectV2
                         getValues={getValues}
                         setValue={setValue}
@@ -866,7 +881,7 @@ export default function EventDetails({ data, id }) {
           <button
             type="button"
             className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => setIsEdit(false)}
+            onClick={() => (data ? setIsEdit(false) : router.back())}
           >
             {t("common:buttons:cancel")}
           </button>

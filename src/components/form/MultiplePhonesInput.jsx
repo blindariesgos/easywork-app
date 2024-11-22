@@ -108,12 +108,12 @@ const MultiplePhonesInput = ({
         );
       })}
       {!disabled && (
-        <div className="flex justify-start">
+        <div className="flex justify-end">
           <Button
-            label={t("common:buttons:add")}
+            label={`${t("common:buttons:add")} +`}
             buttonStyle="text"
             onclick={() => append({ number: "", relation: "" })}
-            className="p-1"
+            className="p-1 text-primary font-bold"
             type="button"
           />
         </div>

@@ -59,6 +59,7 @@ const AddDocumentDialog = ({
     try {
       setLoading(true);
       const response = await endpoints[cmrType](formData);
+      console.log({ response });
       if (response.hasError) {
         let message = response.message;
         if (response.errors) {
@@ -66,7 +67,17 @@ const AddDocumentDialog = ({
         }
         throw { message };
       }
-      toast.success("Documento agregado con exito");
+      if (response.client.fullName) {
+        toast.success(
+          `Se cargo con éxito póliza con contratante ${response.client.fullName}`
+        );
+      } else {
+        toast.success("Documento agregado con exito");
+      }
+
+      if (response?.warns?.length) {
+        toast.warning(response?.warns?.join(", "));
+      }
       onFinished && onFinished();
       update && update();
     } catch (error) {

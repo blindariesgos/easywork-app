@@ -49,7 +49,7 @@ const TaskResponsible = ({ task, lists, field }) => {
     resolver: yupResolver(schema),
   });
 
-  const handleDateChange = async (name, value) => {
+  const handleChangeResponsible = async (name, value) => {
     setIsLoading(true);
     setValue("responsible", value, { shouldValidate: true });
 
@@ -57,7 +57,6 @@ const TaskResponsible = ({ task, lists, field }) => {
       const responsibleIds = data.responsible.map((resp) => {
         return resp.id;
       });
-
       if (responsibleIds.length !== 1) return;
 
       const body = {
@@ -84,12 +83,12 @@ const TaskResponsible = ({ task, lists, field }) => {
     ? lists?.users.filter((user) => user.id !== task?.responsible[0]?.id)
     : [];
 
-  const handleDateRemove = (id) => {
-    const updatedResponsible = getValues("responsible").filter(
-      (res) => res.id !== id
-    );
-    setValue("responsible", updatedResponsible, { shouldValidate: true });
-  };
+  // const handleRemoveResponsible = (id) => {
+  //   const updatedResponsible = getValues("responsible").filter(
+  //     (res) => res.id !== id
+  //   );
+  //   setValue("responsible", updatedResponsible, { shouldValidate: true });
+  // };
 
   return (
     <div className="relative mb-4" ref={containerRef}>
@@ -125,12 +124,12 @@ const TaskResponsible = ({ task, lists, field }) => {
             <p className="font-semibold text-blue-800 text-sm">
               {resp?.name || resp?.username}
             </p>
-            {isHovering === index && (
+            {/* {isHovering === index && (
               <FaTimes
                 className="ml-2 text-red-500 cursor-pointer"
-                onClick={() => handleDateRemove(resp.id)}
+                onClick={() => handleRemoveResponsible(resp.id)}
               />
-            )}
+            )} */}
           </div>
         ))}
       <Transition
@@ -150,7 +149,7 @@ const TaskResponsible = ({ task, lists, field }) => {
             {...field}
             options={filteredUsers}
             getValues={getValues}
-            setValue={handleDateChange}
+            setValue={handleChangeResponsible}
             name="responsible"
             error={errors.responsible}
             isOpen={isEditing}

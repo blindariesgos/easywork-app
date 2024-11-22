@@ -50,7 +50,7 @@ export default function InputDateRange({
             onChange={(date) => setValue(nameDate, date)}
             showMonthYearPicker
             dateFormat="MM/yyyy"
-            className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            className="w-full border-none drop-shadow-md h-9 rounded-md text-sm focus:ring-0"
           />
         </div>
       )}
@@ -61,7 +61,7 @@ export default function InputDateRange({
             onChange={(date) => setValue(nameDate, date)}
             showQuarterYearPicker
             dateFormat="yyyy, QQQ"
-            className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            className="w-full border-none drop-shadow-md h-9 rounded-md text-sm focus:ring-0"
           />
         </div>
       )}
@@ -72,7 +72,7 @@ export default function InputDateRange({
             onChange={(date) => setValue(nameDate, date)}
             showYearPicker
             dateFormat="yyyy"
-            className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            className="w-full border-none drop-shadow-md h-9 rounded-md text-sm focus:ring-0"
           />
         </div>
       )}
@@ -81,7 +81,7 @@ export default function InputDateRange({
           <ReactDatePicker
             selected={watch(nameDate)}
             onChange={(date) => setValue(nameDate, date)}
-            className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            className="w-full border-none drop-shadow-md h-9 rounded-md text-sm focus:ring-0"
             dateFormat="dd/MM/yyyy"
           />
         </div>
@@ -97,7 +97,7 @@ export default function InputDateRange({
               setDateRange(update);
             }}
             isClearable={true}
-            className="w-full border-none drop-shadow-sm h-9 rounded-md text-sm focus:ring-0"
+            className="w-full border-none drop-shadow-md h-9 rounded-md text-sm focus:ring-0"
             dateFormat="dd/MM/yyyy"
           />
         </div>

@@ -125,7 +125,7 @@ const InputDate = ({
               border,
             "border-none focus:ring-0 ": !border,
             // "bg-gray-100": disabled,
-            "shadow-sm ": !disabled,
+            "drop-shadow-md ": !disabled,
           })}
           isClearable={!disabled}
           disabled={disabled}

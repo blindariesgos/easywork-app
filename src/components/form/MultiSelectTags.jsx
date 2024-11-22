@@ -104,7 +104,7 @@ const MultiSelectTags = ({ getValues, setValue, name, label, error }) => {
       <Menu>
         {({ close }) => (
           <Fragment>
-            <MenuButton className="text-left min-h-[36px] w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2">
+            <MenuButton className="text-left min-h-[36px] w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2">
               <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
                 {getValues(name)?.length > 0 &&
                   getValues(name).map((res) => (

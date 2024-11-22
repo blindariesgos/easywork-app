@@ -10,6 +10,8 @@ import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import { formatDate } from "@/src/utils/getFormatDate";
 import Vehicle from "./tabs/Vehicle";
+import Beneficiaries from "./tabs/Beneficiaries";
+import Insured from "./tabs/Insured";
 import Link from "next/link";
 import clsx from "clsx";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
@@ -46,17 +48,14 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
         ? [
             {
               name: "Asegurados",
-              disabled: true,
             },
             {
               name: "Beneficiarios",
-              disabled: true,
             },
           ]
         : [
             {
               name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
-              disabled: data?.type?.name != "AUTOS",
             },
           ];
     })(),
@@ -257,13 +256,20 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
             </TabPanel>
             {data?.type?.name === "VIDA" ? (
               <Fragment>
-                <TabPanel className="w-full md:px-4"></TabPanel>
-                <TabPanel className="w-full md:px-4"></TabPanel>
+                <TabPanel className="w-full md:px-4">
+                  <Insured items={data?.insured ?? []} />
+                </TabPanel>
+
+                <TabPanel className="w-full md:px-4">
+                  <Beneficiaries items={data?.beneficiaries ?? []} />
+                </TabPanel>
               </Fragment>
             ) : (
               <TabPanel className="w-full md:px-4">
-                {data?.type?.name === "AUTOS" && (
+                {data?.type?.name === "AUTOS" ? (
                   <Vehicle vehicles={data.vehicles} />
+                ) : (
+                  <Insured items={data?.insured ?? []} />
                 )}
               </TabPanel>
             )}

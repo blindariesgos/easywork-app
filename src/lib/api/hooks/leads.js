@@ -30,7 +30,9 @@ export const useLeads = ({ config = {}, filters = {} }) => {
     .join("&");
   const url = `/sales/crm/leads?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
+    refreshInterval: 1000,
+  });
   return {
     leads: data,
     isLoading,

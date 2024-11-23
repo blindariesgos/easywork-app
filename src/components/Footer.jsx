@@ -8,12 +8,13 @@ function classNames(...classes) {
 }
 
 export default function Footer() {
+  const commitHash = process.env.NEXT_PUBLIC_COMMIT_HASH;
   const language = ["Español", "English"];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="mt-2 w-full flex justify-center">
-      <ul className="flex w-96 justify-between ml-5 max-md:hidden text-xs">
+      <ul className="flex w-2/5 justify-between ml-5 max-md:hidden text-xs">
         <li className="cursor-pointer">© 2024 Easywork</li>
         <span>|</span>
         <li className="cursor-pointer">Soporte Easy</li>
@@ -50,6 +51,8 @@ export default function Footer() {
             ))}
           </MenuItems>
         </Menu>
+        <span>|</span>
+        <li className="cursor-pointer">Versión: {commitHash.slice(0, 7)}</li>
       </ul>
     </div>
   );

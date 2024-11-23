@@ -2,10 +2,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import clsx from "clsx";
 
 export default function Footer() {
   const commitHash = process.env.NEXT_PUBLIC_COMMIT_HASH;
@@ -39,7 +36,7 @@ export default function Footer() {
               <MenuItem key={index}>
                 {({ active }) => (
                   <div
-                    className={classNames(
+                    className={clsx(
                       active ? "bg-gray-50" : "",
                       "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                     )}

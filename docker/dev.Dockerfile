@@ -1,8 +1,10 @@
-# Utiliza una imagen base de Node.js con la versión más reciente (cámbiala según tu necesidad)
 FROM node:22-alpine
 
 # Instala PNPM globalmente
 RUN npm install -g pnpm
+
+# Instala git para permitir el uso del script que lo necesita
+RUN apk add --no-cache git
 
 # Establece el directorio de trabajo en la carpeta de la aplicación
 WORKDIR /app

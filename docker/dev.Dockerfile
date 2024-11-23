@@ -3,11 +3,12 @@ FROM node:22-alpine
 # Instala PNPM globalmente
 RUN npm install -g pnpm
 
-# Instala git para permitir el uso del script que lo necesita
-RUN apk add --no-cache git
-
 # Establece el directorio de trabajo en la carpeta de la aplicación
 WORKDIR /app
+
+# Acepta un argumento para el hash del commit
+ARG COMMIT_HASH
+ENV NEXT_PUBLIC_COMMIT_HASH=$COMMIT_HASH
 
 # Copia los archivos de configuración necesarios (package.json y pnpm-lock.yaml) a la carpeta de trabajo
 COPY package.json pnpm-lock.yaml ./

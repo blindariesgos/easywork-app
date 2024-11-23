@@ -9,6 +9,7 @@ try {
   const commitHash = execSync("git rev-parse HEAD").toString().trim();
 
   let envVars = {};
+
   if (fs.existsSync(outputPath)) {
     const envContent = fs.readFileSync(outputPath, "utf8");
     envVars = envContent
@@ -29,7 +30,7 @@ try {
 
   fs.writeFileSync(outputPath, newEnvContent, "utf8");
 
-  console.log(`Commit hash (${commitHash}) written to .env.local`);
+  console.log(`Commit hash (${commitHash}) written to .env file`);
 } catch (error) {
   console.error("Error generating commit hash:", error.message);
   process.exit(1);

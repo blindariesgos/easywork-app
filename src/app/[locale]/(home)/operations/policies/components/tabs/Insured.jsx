@@ -1,7 +1,7 @@
 import TextInput from "@/src/components/form/TextInput";
 import { Fragment } from "react";
 
-const Insures = ({ items }) => {
+const Insures = ({ items, typePoliza }) => {
   return (
     <div className="bg-gray-100 rounded-lg p-4">
       {items.map((beneficiary, index) => (
@@ -14,14 +14,14 @@ const Insures = ({ items }) => {
               <TextInput
                 type="text"
                 label={"Nombre"}
-                value={beneficiary?.fullName ?? "S/N"}
+                value={beneficiary?.insured?.fullName ?? "S/N"}
                 disabled
               />
             </div>
             <TextInput
               type="text"
               label={"Código"}
-              value={beneficiary?.codigo ?? "S/N"}
+              value={beneficiary?.insured?.codigo ?? "S/N"}
               disabled
             />
             <TextInput
@@ -48,12 +48,14 @@ const Insures = ({ items }) => {
               value={beneficiary?.metadata?.tipoRiesgo ?? "S/N"}
               disabled
             />
-            <TextInput
-              type="text"
-              label={"Fecha de Antiguedad"}
-              value={beneficiary?.metadata?.fechaAntiguedad ?? "S/N"}
-              disabled
-            />
+            {typePoliza === "GMM" && (
+              <TextInput
+                type="text"
+                label={"Fecha de Antiguedad"}
+                value={beneficiary?.metadata?.fechaAntiguedad ?? "S/N"}
+                disabled
+              />
+            )}
           </div>
         </Fragment>
       ))}

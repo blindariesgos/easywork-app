@@ -24,30 +24,38 @@ const Insures = ({ items, typePoliza }) => {
               value={beneficiary?.insured?.codigo ?? "S/N"}
               disabled
             />
-            <TextInput
-              type="text"
-              label={"Fecha de Nacimiento"}
-              value={beneficiary?.metadata?.fechaNacimiento ?? "S/N"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Edad de Contratación"}
-              value={beneficiary?.metadata?.edadContratacion ?? "S/N"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Es Fumador"}
-              value={beneficiary?.metadata?.fumador ? "Si" : "No"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Tipo de Riesgo"}
-              value={beneficiary?.metadata?.tipoRiesgo ?? "S/N"}
-              disabled
-            />
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Fecha de Nacimiento"}
+                value={beneficiary?.metadata?.fechaNacimiento ?? "S/N"}
+                disabled
+              />
+            )}
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Edad de Contratación"}
+                value={beneficiary?.metadata?.edadContratacion ?? "S/N"}
+                disabled
+              />
+            )}
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Es Fumador"}
+                value={beneficiary?.metadata?.fumador ? "Si" : "No"}
+                disabled
+              />
+            )}
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Tipo de Riesgo"}
+                value={beneficiary?.metadata?.tipoRiesgo ?? "S/N"}
+                disabled
+              />
+            )}
             {typePoliza === "GMM" && (
               <TextInput
                 type="text"

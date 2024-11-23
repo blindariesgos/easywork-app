@@ -270,9 +270,15 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
             ) : (
               <TabPanel className="w-full md:px-4">
                 {data?.type?.name === "AUTOS" ? (
-                  <Vehicle vehicles={data.vehicles} />
+                  <Vehicle
+                    vehicles={data.vehicles}
+                    typePoliza={data?.type?.name}
+                  />
                 ) : (
-                  <Insured items={data?.insured ?? []} />
+                  <Insured
+                    items={data?.insured ?? []}
+                    typePoliza={data?.type?.name}
+                  />
                 )}
               </TabPanel>
             )}

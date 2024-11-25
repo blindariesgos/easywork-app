@@ -26,7 +26,7 @@ export default function CalendarHome({ children }) {
   const { events } = useCalendarContext();
   const calendarRef = useRef(null);
   const router = useRouter();
-  const [calendarView, setCalendarView] = useState("timeGridDay");
+  const [calendarView, setCalendarView] = useState("timeGridWeek");
   const [selectOauth, setSelectOauth] = useState(null);
   const calendarViews = [
     {

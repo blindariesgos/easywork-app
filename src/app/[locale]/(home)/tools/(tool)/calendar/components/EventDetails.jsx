@@ -30,6 +30,10 @@ import TextEditor from "@/src/components/TextEditor";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import RadioGroupColors from "./RadioGroupColors";
 import {
+  getContactId,
+  getLeadById,
+  getPolicyById,
+  getReceiptById,
   addCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
@@ -323,6 +327,92 @@ export default function EventDetails({ data, id }) {
 
     // return () => subscription.unsubscribe();
   }, [data]);
+
+  const setCrmContact = async (contactId) => {
+    const response = await getContactId(contactId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "contact",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Contacto: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmLead = async (leadId) => {
+    console.log("paso por lead");
+    const response = await getLeadById(leadId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "lead",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Prospecto: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmReceipt = async (receiptId) => {
+    const response = await getReceiptById(receiptId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "receipt",
+        name: response?.title,
+      },
+    ]);
+    console.log("receipt", response);
+    setValue("name", "CRM - Recibo: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmPolicy = async (policyId) => {
+    const response = await getPolicyById(policyId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "poliza",
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+      },
+    ]);
+    setValue("name", "CRM - Póliza: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const prevId = params.get("prev_id");
+
+    if (params.get("prev") === "contact") {
+      setLoading(true);
+      setCrmContact(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "lead") {
+      setLoading(true);
+      setCrmLead(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "policy") {
+      setLoading(true);
+      setCrmPolicy(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "receipt") {
+      setLoading(true);
+      setCrmReceipt(prevId);
+      return;
+    }
+  }, [params.get("prev")]);
 
   const deleteEvent = async () => {
     try {

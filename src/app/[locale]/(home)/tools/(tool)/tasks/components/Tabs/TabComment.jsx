@@ -189,7 +189,7 @@ export default function TabComment({ info }) {
                           {formattedDate(dat)}
                         </span>
                       </div>
-                      {parse(dat.comment)}
+                      <div data-type="comment">{parse(dat.comment)}</div>
                     </div>
                   </div>
                   {openActions[index] && (

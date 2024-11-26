@@ -21,7 +21,7 @@ export default function AccompanimentsHeader() {
   const options = [
     { name: "Agente", disabled: true },
     { name: "Actividades", disabled: true },
-    { name: "Cita con Prospectos o Contactos", disabled: true },
+    { name: "Cita con Prospectos o Clientes", disabled: true },
     { name: "Reuniones de Coaching", disabled: true },
     { name: "Asingnar GDD", disabled: true },
     { name: "Reasignar GDD", disabled: true },

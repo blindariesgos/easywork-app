@@ -50,7 +50,7 @@
     "completed": "Completado",
     "not-completed": "No completado",
     "fullname": "Nombre y Apellido",
-    "contact-type": "Tipo de contacto",
+    "contact-type": "Tipo de cliente",
     "rfc": "RFC"
   },
   "table": {
@@ -76,7 +76,7 @@
       "email": "Correo electrónico",
       "rfc": "RFC",
       "address": "Dirección",
-      "contact-type": "Tipo de contacto",
+      "contact-type": "Tipo de cliente",
       "responsible": "Persona responsable",
       "observer": "Observador",
       "origin": "Origen",
@@ -100,8 +100,8 @@
         "policy": "Generar Póliza",
         "discard": "Póliza Descartada",
         "positive": {
-          "policyContact": "Póliza + Contacto + Compañia",
-          "contact": "Póliza + Contacto",
+          "policyContact": "Póliza + cliente + Compañia",
+          "contact": "Póliza + cliente",
           "company": "Póliza + Compañia",
           "policy": "Póliza"
         },

@@ -165,7 +165,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     )}
                     onClick={() => setFilterSelect(1)}
                   >
-                    Contactos
+                    Clientes
                   </li>
                   <li
                     className={clsx(

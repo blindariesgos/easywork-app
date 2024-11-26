@@ -92,7 +92,7 @@
       "name": "Ventas",
       "crm": {
         "name": "CRM",
-        "contacts": "Contactos",
+        "contacts": "Cliente contratante",
         "prospects": "Prospectos"
       },
       "reports": {

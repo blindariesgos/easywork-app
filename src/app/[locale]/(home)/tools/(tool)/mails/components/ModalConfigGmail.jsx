@@ -626,7 +626,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
                         }
                       />
                       <p className="ml-1">
-                        Crear contactos usando vCard adjunto
+                        Crear Clientes usando vCard adjunto
                       </p>
                     </div>
                     <div className="flex mt-4">

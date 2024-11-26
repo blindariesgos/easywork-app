@@ -614,6 +614,13 @@ export const addLeadDocument = async (leadId, category, body) => {
   return response;
 };
 
+export const addContactDocument = async (contactId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/contacts/upload/${contactId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const postPositiveStagePolicy = async (leadId) => {
   const response = await axios()
     .post(`/sales/crm/leads/${leadId}/generate_poliza`)

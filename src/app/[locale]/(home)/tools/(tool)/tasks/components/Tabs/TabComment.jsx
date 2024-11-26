@@ -176,7 +176,7 @@ export default function TabComment({ info }) {
                     className="h-7 w-7 rounded-full object-cover"
                     width={36}
                     height={36}
-                    src={"/img/avatar.svg"}
+                    src={dat?.createdBy?.avatar ?? "/img/avatar.svg"}
                     alt=""
                   />
                   <div className="bg-gray-200 rounded-md p-2 px-4 text-xs">

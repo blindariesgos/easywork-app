@@ -49,7 +49,9 @@ export default function Footer() {
           </MenuItems>
         </Menu>
         <span>|</span>
-        <li className="cursor-pointer">Versión: {commitHash.slice(0, 7)}</li>
+        <li className="cursor-pointer">
+          Versión: {commitHash ? commitHash?.slice(0, 7) : ""}
+        </li>
       </ul>
     </div>
   );

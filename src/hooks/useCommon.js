@@ -118,7 +118,7 @@ export const useSidebar = () => {
               id: "sales:crm:contacts",
               name: t("common:menu:sales:crm:contacts"),
               href: "/sales/crm/contacts?page=1",
-              image: "/img/crm/contacto.png",
+              image: "/img/crm/contacto.svg",
               iconShortBar: ArrowDownCircleIcon,
             },
             {

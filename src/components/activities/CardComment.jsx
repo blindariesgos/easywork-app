@@ -104,7 +104,7 @@ function SystemNotification({ data }) {
           </div>
 
           <p className="text-xs text-gray-50">
-            {"Se ha creado al contacto "}
+            {"Se ha creado al cliente"}
             {metadata?.contact?.fullName && (
               <Link
                 href={`/sales/crm/contacts/contact/${metadata?.contact?.id}?show=true`}
@@ -143,7 +143,7 @@ function SystemNotification({ data }) {
           </div>
 
           <p className="text-xs text-gray-50">
-            {"Se ha creado al contacto a partir del prospecto "}
+            {"Se ha creado al cliente a partir del prospecto "}
             {metadata?.lead?.fullName && (
               <Link
                 href={`/sales/crm/leads/lead/${metadata?.lead?.id}?show=true`}

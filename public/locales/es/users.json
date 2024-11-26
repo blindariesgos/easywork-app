@@ -9,7 +9,7 @@
         "not-data": "No hay usuarios"
     },
     "form": {
-        "title": "Información del contacto",
+        "title": "Información del Cliente",
         "firstname": "Nombre",
         "lastname": "Apellido",
         "phone": "Teléfono",

@@ -20,7 +20,7 @@ export default function Page() {
             <li>Inicio</li>
             <li>Módulos</li>
             <li>Planes</li>
-            <li>Contacto</li>
+            <li>Clientes</li>
             <li>blog</li>
             <li>
               <button className="bg-easywork-main hover:bg-easywork-mainhover py-2 px-3 rounded-md">

@@ -143,7 +143,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Contacto: ");
+    setValue("name", "CRM - Cliente: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };

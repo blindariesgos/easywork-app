@@ -1,11 +1,15 @@
 # Etapa 1: Construcción
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Instalar pnpm manualmente
 RUN npm install -g pnpm
 
 # Establecer el directorio de trabajo
 WORKDIR /app
+
+# Aceptar un argumento para el hash del commit
+ARG COMMIT_HASH
+ENV NEXT_PUBLIC_COMMIT_HASH=$COMMIT_HASH
 
 # Copiar archivos de configuración necesarios
 COPY package.json pnpm-lock.yaml .env ./
@@ -23,13 +27,17 @@ RUN pnpm build
 RUN pnpm prune --prod
 
 # Etapa 2: Imagen de Producción
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
-# Instala pnpm manualmente en la etapa de producción también
+# Instalar pnpm manualmente en la etapa de producción también
 RUN npm install -g pnpm
 
 # Establecer el directorio de trabajo
 WORKDIR /app
+
+# Reestablecer la variable de entorno
+ARG COMMIT_HASH
+ENV NEXT_PUBLIC_COMMIT_HASH=$COMMIT_HASH
 
 # Copiar solo los archivos necesarios desde la etapa de construcción
 COPY --from=builder /app/public ./public

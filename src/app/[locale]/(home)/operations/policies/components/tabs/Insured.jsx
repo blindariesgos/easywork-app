@@ -1,7 +1,7 @@
 import TextInput from "@/src/components/form/TextInput";
 import { Fragment } from "react";
 
-const Insures = ({ items }) => {
+const Insures = ({ items, typePoliza }) => {
   return (
     <div className="bg-gray-100 rounded-lg p-4">
       {items.map((beneficiary, index) => (
@@ -14,46 +14,56 @@ const Insures = ({ items }) => {
               <TextInput
                 type="text"
                 label={"Nombre"}
-                value={beneficiary?.fullName ?? "S/N"}
+                value={beneficiary?.insured?.fullName ?? "S/N"}
                 disabled
               />
             </div>
             <TextInput
               type="text"
               label={"Código"}
-              value={beneficiary?.codigo ?? "S/N"}
+              value={beneficiary?.insured?.codigo ?? "S/N"}
               disabled
             />
-            <TextInput
-              type="text"
-              label={"Fecha de Nacimiento"}
-              value={beneficiary?.metadata?.fechaNacimiento ?? "S/N"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Edad de Contratación"}
-              value={beneficiary?.metadata?.edadContratacion ?? "S/N"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Es Fumador"}
-              value={beneficiary?.metadata?.fumador ? "Si" : "No"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Tipo de Riesgo"}
-              value={beneficiary?.metadata?.tipoRiesgo ?? "S/N"}
-              disabled
-            />
-            <TextInput
-              type="text"
-              label={"Fecha de Antiguedad"}
-              value={beneficiary?.metadata?.fechaAntiguedad ?? "S/N"}
-              disabled
-            />
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Fecha de Nacimiento"}
+                value={beneficiary?.metadata?.fechaNacimiento ?? "S/N"}
+                disabled
+              />
+            )}
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Edad de Contratación"}
+                value={beneficiary?.metadata?.edadContratacion ?? "S/N"}
+                disabled
+              />
+            )}
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Es Fumador"}
+                value={beneficiary?.metadata?.fumador ? "Si" : "No"}
+                disabled
+              />
+            )}
+            {typePoliza === "VIDA" && (
+              <TextInput
+                type="text"
+                label={"Tipo de Riesgo"}
+                value={beneficiary?.metadata?.tipoRiesgo ?? "S/N"}
+                disabled
+              />
+            )}
+            {typePoliza === "GMM" && (
+              <TextInput
+                type="text"
+                label={"Fecha de Antiguedad"}
+                value={beneficiary?.metadata?.fechaAntiguedad ?? "S/N"}
+                disabled
+              />
+            )}
           </div>
         </Fragment>
       ))}

@@ -1,6 +1,6 @@
 {
     "contacts": {
-        "title": "Importar Contactos",
+        "title": "Importar Clientes Cotratantes",
         "tabs": {
             "config": "Configuración de importación",
             "fields": "Campos",
@@ -13,7 +13,7 @@
             "data-origin": "Datos de orígen:",
             "person-type": "Tipo de persona:",
             "encoding": "Codificación de archivos de datos:",
-            "contact-type": "Tipo de contacto (predeterminado):",
+            "contact-type": "Tipo de cliente (predeterminado):",
             "origin": "Origen (predeterminado):",
             "description": "Descripción (predeterminado):",
             "available": "Disponible para todos (predeterminado):",
@@ -83,7 +83,7 @@
             "vinculed-user": "Usuario vinculado",
             "cargo": "Cargo",
             "comment": "Comentario",
-            "contact-type": "Tipo de contacto",
+            "contact-type": "Tipo de cliente",
             "origin": "Origen",
             "origin-information": "Información de origen",
             "included": "Incluido en la exportación",

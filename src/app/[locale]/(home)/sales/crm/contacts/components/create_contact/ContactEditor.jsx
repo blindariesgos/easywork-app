@@ -24,7 +24,7 @@ export default function ContactEditor({ contact, id }) {
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0, module: "general" },
     {
-      name: contact?.typePerson === "moral" ? "Contactos" : "Compañias",
+      name: contact?.typePerson === "moral" ? "Clientes" : "Compañias",
       value: 1,
       module: "contact",
       hidden: contact?.relations?.length == 0 ?? true,
@@ -79,7 +79,7 @@ export default function ContactEditor({ contact, id }) {
             <div className="flex gap-2 items-center">
               <h1 className="text-xl sm:pl-6 pl-2 pb-6 font-semibold">
                 {contact
-                  ? contact.fullName ?? contact.name
+                  ? (contact.fullName ?? contact.name)
                   : t("leads:create:client")}
               </h1>
             </div>

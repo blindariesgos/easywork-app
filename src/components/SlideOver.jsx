@@ -39,7 +39,7 @@ export default function SlideOver({
   useEffect(() => {
     switch (labelTag) {
       case "contact":
-        setLabel(t("contacts:header:contact"));
+        setLabel(t("contacts:header:tab"));
         break;
       case "policy":
         setLabel(t("contacts:create:tabs:policies"));

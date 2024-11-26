@@ -70,7 +70,16 @@ export default function TaskEntiy({
       const body = updateTaskBody([...entityIds, ...taskEntityIds]);
 
       try {
-        await putTaskId(task.id, body);
+        const response = await putTaskId(task.id, body);
+        if (response?.hasError) {
+          toast.error(
+            response?.error?.message ??
+              "Ocurrio un error al editar la tarea, intente mas tarde"
+          );
+          setIsLoading(false);
+          return;
+        }
+        console.log({ response });
         toast.success(t("tools:tasks:update-msg"));
         await mutate(`/tools/tasks/${task.id}`);
       } catch (error) {
@@ -95,6 +104,15 @@ export default function TaskEntiy({
 
     try {
       const response = await putTaskId(task.id, body);
+      if (response?.hasError) {
+        toast.error(
+          response?.error?.message ??
+            "Ocurrio un error al editar la tarea, intente mas tarde"
+        );
+        setIsLoading(false);
+        return;
+      }
+      console.log({ response });
       toast.success(t("tools:tasks:update-msg"));
       await mutate(`/tools/tasks/${task.id}`);
     } catch (error) {

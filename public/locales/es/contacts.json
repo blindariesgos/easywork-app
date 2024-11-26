@@ -12,7 +12,8 @@
     "comment": "Comentario"
   },
   "header": {
-    "contact": "Contacto",
+    "tab": "Cliente",
+    "contact": "Cliente Contratante",
     "search": "Búsqueda",
     "create": "Crear",
     "mine": "Míos",
@@ -48,7 +49,7 @@
     }
   },
   "table": {
-    "not-data": "No hay contactos",
+    "not-data": "No hay clientes",
     "contact": "Cliente Contratante",
     "user": "Usuario",
     "birthday": "Cumpleaños",
@@ -58,12 +59,12 @@
     "created": "Creado el",
     "origin": "Origen",
     "activities": "Actividades",
-    "update-contacts": "Contacto(s) actualizado(s) exitosamente",
-    "update-contacts-error": "Error al actualizar Contacto(s)"
+    "update-contacts": "Cliente(s) actualizado(s) exitosamente",
+    "update-contacts-error": "Error al actualizar Cliente(s)"
   },
   "create": {
-    "msg": "¡Contacto creado!",
-    "error": "Error al crear el contacto!",
+    "msg": "Cliente creado!",
+    "error": "Error al crear el cliente!",
     "save": "Guardando...",
     "client": "Nuevo cliente",
     "data": "Datos del cliente contratante",
@@ -87,7 +88,7 @@
     "address": "Dirección",
     "placeholder-address": "Escriba la dirección del cliente.",
     "placeholder-name": "Ej.: Luis",
-    "contact-type": "Tipo de contacto",
+    "contact-type": "Tipo de cliente",
     "contact-type-company": "Tipo de compañía",
     "company-activity": "Sector de Actividad",
     "responsible": "Responsable",
@@ -128,9 +129,9 @@
     }
   },
   "edit": {
-    "not-contact": "Sin contacto",
-    "updated-contact": "¡Contacto Actualizado!",
-    "error": "Error al crear el contacto!",
+    "not-contact": "Sin cliente",
+    "updated-contact": "Cliente Actualizado!",
+    "error": "Error al crear el cliente!",
     "name": "Editar",
     "policies": {
       "exists": "Poliza ya existe",
@@ -304,7 +305,7 @@
       "table": {
         "empty": {
           "not-policies": "No hay pólizas registradas",
-          "register": "Registra una nueva póliza para el contacto.",
+          "register": "Registra una nueva póliza para el cliente.",
           "new": "Nueva Póliza"
         },
         "policy": "Póliza",
@@ -320,8 +321,8 @@
   },
   "filters": {
     "name": "Filtros",
-    "my-contact": "Mis Contactos",
-    "all-contact": "Todos los Contactos",
+    "my-contact": "Mis Clientes",
+    "all-contact": "Todos los Clientes",
     "save": "Guardar Filtro",
     "responsible": "Persona Responsable",
     "created": "Creado el",
@@ -338,7 +339,7 @@
     "item-name": "Nombre",
     "firstname": "Nombre",
     "lastname": "Apellido",
-    "contact-type": "Tipo de contacto",
+    "contact-type": "Tipo de cliente",
     "rfc": "RFC",
     "cargo": "Cargo",
     "observer": "Observador",
@@ -367,7 +368,7 @@
     }
   },
   "delete": {
-    "msg": "Contacto(s) eliminado exitosamente!"
+    "msg": "Clientes(s) eliminado exitosamente!"
   },
   "policies": {
     "ramo": "Ramo",

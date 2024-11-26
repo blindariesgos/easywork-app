@@ -227,7 +227,7 @@ const CMRMultipleSelectWithFilters = ({
                     )}
                     onClick={() => setFilterSelect(1)}
                   >
-                    Contactos
+                    Clientes
                   </li>
                   <li
                     className={clsx(

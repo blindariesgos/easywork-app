@@ -100,7 +100,7 @@ export default function WebmailLayout({ children }) {
 
   useEffect(() => {
     if (selectOauth && initialFetch) {
-      console.log(page)
+      console.log(page);
       fetchData(false);
     }
   }, [page]);
@@ -257,7 +257,7 @@ export default function WebmailLayout({ children }) {
 
   const itemOptions = [
     { name: "Volver a la lista", onClick: "" },
-    { name: "Contactos", onClick: "" },
+    { name: "Clientes", onClick: "" },
     {
       name: "Editar firmas",
       onClick: () => router.push(`${window.location.pathname}?signature=true`),
@@ -375,7 +375,12 @@ export default function WebmailLayout({ children }) {
       <AddSignature />
       <ConnectEmail />
       <ModalConfigGmail isEdit={true} fetchUserData={fetchUserData} />
-      <ModalAddFolders isConfig={true} fetchUserData={fetchUserData} fetchData={fetchData} allOauthPromise={allOauthPromise} />
+      <ModalAddFolders
+        isConfig={true}
+        fetchUserData={fetchUserData}
+        fetchData={fetchData}
+        allOauthPromise={allOauthPromise}
+      />
       <SendMessage
         colorTag="bg-easywork-main"
         userData={userData}

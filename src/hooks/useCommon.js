@@ -419,7 +419,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: t("common:menu:agent-management:capacitations"),
-          href: "",
+          href: "/agents-management/capacitations",
           iconShortBar: NewspaperIcon,
           image: "/img/agentsManagement/capacitations.svg",
         },

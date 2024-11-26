@@ -23,4 +23,5 @@ export const RefundsContext = createContext(null);
 export const ImportationsContext = createContext(null);
 export const ManagementsContext = createContext(null);
 export const AccompanimentsContext = createContext(null);
+export const CapacitationsContext = createContext(null);
 export const CustomImportContext = createContext(null);

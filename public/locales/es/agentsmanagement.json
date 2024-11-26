@@ -11,5 +11,18 @@
             "created-in": "Fecha de creación",
             "not-data": "No hay agentes"
         }
+    },
+    "capacitations": {
+        "title": "Capacitaciones",
+        "table": {
+            "agent": "Agente",
+            "email": "Correo Electrónico",
+            "mobile": "Móvil",
+            "lastUpdate": "Fecha de la última actividad",
+            "manager": "Gerente de desarrollo",
+            "state": "Estado del agente",
+            "created-in": "Fecha de creación",
+            "not-data": "No hay agentes"
+        }
     }
 }

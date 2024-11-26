@@ -368,3 +368,49 @@ button.ql-indent[value="+1"]::after {
 .ql-tooltip.ql-editing[data-mode="link"] {
   left: 0 !important;
 }
+
+nav ol,
+nav ul,
+nav menu {
+  list-style: none;
+  margin: 0;
+  padding: 0
+}
+
+ul[data-type="checklist"] {
+  list-style: none;
+  margin: 0;
+  padding: 0
+}
+
+ol,
+ul,
+menu {
+  list-style: revert;
+  margin: 0 0 0 16px;
+  padding: 0;
+}
+
+ul[data-checked] {
+  list-style: none;
+  margin: 0;
+}
+
+ul[data-checked]>li::before {
+  padding-right: 6px;
+}
+
+ul[data-checked=true]>li::before {
+  content: '\2611';
+}
+
+ul[data-checked=true]>li::before,
+ul[data-checked=false]>li::before {
+  color: #777;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+ul[data-checked=true]>li::before {
+  content: '\2611';
+}

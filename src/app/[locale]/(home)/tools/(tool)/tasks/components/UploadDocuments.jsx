@@ -46,9 +46,10 @@ export default function UploadDocuments({ files, deleteFiles, id }) {
     }));
     console.log({ update, body });
 
-    if (update.hasError) {
+    if (update?.hasError) {
       toast.error(
-        "Ocurrio un error al guardar archivo(s), intente de nuevo mas tarde."
+        update?.error?.message ??
+          "Ocurrio un error al guardar archivo(s), intente de nuevo mas tarde."
       );
       setLoading(false);
       return;

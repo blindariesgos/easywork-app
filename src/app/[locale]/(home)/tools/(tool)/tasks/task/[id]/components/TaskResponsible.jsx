@@ -64,7 +64,15 @@ const TaskResponsible = ({ task, lists, field }) => {
       };
 
       try {
-        await putTaskId(task.id, body);
+        const response = await putTaskId(task.id, body);
+        if (response?.hasError) {
+          toast.error(
+            response?.error?.message ??
+              "Ocurrio un error al editar la tarea, intente mas tarde"
+          );
+          setIsLoading(false);
+          return;
+        }
         toast.success(t("tools:tasks:update-msg"));
         await mutate(`/tools/tasks/${task.id}`);
         mutateTasks();

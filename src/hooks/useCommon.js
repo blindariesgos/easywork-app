@@ -435,7 +435,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: "Reuniones y sesiones",
-          href: "",
+          href: "/agents-management/meetings-and-sessions",
           icon: ChevronRightIcon,
           image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,

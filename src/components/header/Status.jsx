@@ -3,7 +3,7 @@ import { BellIcon, FlagIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export default function Status() {
+export default function Status({ status }) {
   const { notifications, setIsOpen } = useNotifyContext();
   const { t } = useTranslation();
 
@@ -20,7 +20,7 @@ export default function Status() {
       </div>
       <div className="flex items-center gap-1">
         <PlayCircleIcon className="h-3 w-3 text-black" aria-hidden="true" />
-        <p className="text-xs text-black">{t('common:header:working')}</p>
+        <p className="text-xs text-black whitespace-nowrap">{status}</p>
       </div>
     </div>
   );

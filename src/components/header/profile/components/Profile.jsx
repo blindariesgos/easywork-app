@@ -25,7 +25,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 
-export function Profile({ user, id }) {
+export function Profile({ status, statusData }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -200,25 +200,6 @@ export function Profile({ user, id }) {
     }
   };
 
-  const status = [
-    {
-      label: t("common:header:status:working"),
-      value: "working",
-    },
-    {
-      label: t("common:header:status:do_not_disturb"),
-      value: "do_not_disturb",
-    },
-    {
-      label: t("common:header:status:on_vacation"),
-      value: "on_vacation",
-    },
-    {
-      label: t("common:header:status:out_of_office"),
-      value: "out_of_office",
-    },
-  ];
-
   // Calculate the user 18th birthday
   const eighteenYearsAgo = new Date();
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
@@ -239,14 +220,14 @@ export function Profile({ user, id }) {
               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 pr-4 rounded-lg"
             >
               <MenuButton className="flex items-center">
-                <p className="py-1 px-2">{status.find(item => item.value === data?.user?.status)?.label}</p>
+                <p className="py-1 px-2">{status}</p>
               </MenuButton>
               <MenuItems
                 transition
                 anchor="bottom end"
                 className=" z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none"
               >
-                {status.map((item) => (
+                {statusData.map((item) => (
                   <MenuItem key={item.value}>
                     {({ active }) => (
                       <div

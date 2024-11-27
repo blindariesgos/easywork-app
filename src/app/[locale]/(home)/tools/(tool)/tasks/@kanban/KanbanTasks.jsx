@@ -174,7 +174,7 @@ const KanbanTasks = () => {
           moment()
             .utc()
             .endOf("week")
-            .add(40, "days")
+            .add(70, "days")
             .endOf("day")
             .format("YYYY-MM-DDTHH:mm:ss"),
         ],

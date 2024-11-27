@@ -45,7 +45,7 @@ function TextInput({
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
                 "border-none focus:ring-0 ": !border,
-                "drop-shadow-sm": !disabled,
+                "drop-shadow-md": !disabled,
               }
             )}
           />
@@ -70,7 +70,7 @@ function TextInput({
               {
                 "border border-gray-200 focus:ring-gray-200": border,
                 "border-none focus:ring-0": !border,
-                "drop-shadow-sm": !disabled,
+                "drop-shadow-md": !disabled,
               }
             )}
           />

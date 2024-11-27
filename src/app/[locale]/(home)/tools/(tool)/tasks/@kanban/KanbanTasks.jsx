@@ -92,8 +92,16 @@ const KanbanTasks = () => {
       // secondary: "#EDECFF",
       filter: {
         deadline: [
-          moment().subtract(1, "year").format("YYYY-MM-DD"),
-          moment().subtract(1, "day").format("YYYY-MM-DD"),
+          moment()
+            .utc()
+            .subtract(1, "year")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .utc()
+            .subtract(1, "day")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },
@@ -102,7 +110,7 @@ const KanbanTasks = () => {
       primary: "#70B900",
       secondary: "#F7FFEB",
       filter: {
-        deadline: moment().format("YYYY-MM-DD"),
+        deadline: moment().utc().format("YYYY-MM-DDTHH:mm:ss"),
       },
     },
     {
@@ -111,8 +119,16 @@ const KanbanTasks = () => {
       secondary: "#e3f7ff",
       filter: {
         deadline: [
-          moment().add(1, "days").format("YYYY-MM-DD"),
-          moment().endOf("week").format("YYYY-MM-DD"),
+          moment()
+            .utc()
+            .add(1, "days")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .utc()
+            .endOf("week")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },
@@ -122,8 +138,16 @@ const KanbanTasks = () => {
       secondary: "#E3F7FF",
       filter: {
         deadline: [
-          moment().endOf("week").add(1, "days").format("YYYY-MM-DD"),
-          moment().endOf("week").add(7, "days").format("YYYY-MM-DD"),
+          moment()
+            .endOf("week")
+            .add(1, "days")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .endOf("week")
+            .add(7, "days")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },
@@ -141,8 +165,18 @@ const KanbanTasks = () => {
       secondary: "#dbfaf8",
       filter: {
         deadline: [
-          moment().endOf("week").add(8, "days").format("YYYY-MM-DD"),
-          moment().endOf("week").add(29, "days").format("YYYY-MM-DD"),
+          moment()
+            .utc()
+            .endOf("week")
+            .add(8, "days")
+            .startOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .utc()
+            .endOf("week")
+            .add(70, "days")
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
     },

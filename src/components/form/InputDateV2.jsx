@@ -56,13 +56,13 @@ const InputDateV2 = ({
             <Fragment>
               <MenuButton
                 className={clsx(
-                  `w-full rounded-md text-sm h-9 focus:ring-0 z-50 flex items-center gap-2 px-2.5`,
+                  `w-full rounded-md text-sm h-9 focus:ring-0 z-50 flex items-center gap-2 px-2.5 bg-white `,
                   {
                     "border border-gray-200 focus:ring-gray-200 outline-none focus:outline-none":
                       border,
                     "border-none focus:ring-0 ": !border,
                     "bg-gray-100": disabled,
-                    "shadow-sm bg-white": !disabled,
+                    "drop-shadow-md ": !disabled,
                   }
                 )}
               >

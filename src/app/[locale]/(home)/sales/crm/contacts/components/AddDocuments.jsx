@@ -3,18 +3,50 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { forwardRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
+import AddDocumentDialog from "@/src/components/modals/AddDocument";
+import { useSWRConfig } from "swr";
 
-const AddDocuments = () => {
+const AddDocuments = ({ contactId }) => {
   const { t } = useTranslation();
-
+  const { mutate } = useSWRConfig();
+  const [addFileProps, setAddFileProps] = useState({
+    isOpen: false,
+    cmrType: "contact",
+    id: contactId,
+  });
   const options = [
-    { name: t("leads:add:rfc"), disabled: true },
-    { name: "Comprobante de domicilio o recibo de servicio", disabled: true },
-    { name: "Constancia de situación fiscal", disabled: true },
+    { name: t("leads:add:rfc"), type: "documentos", accept: null },
+    {
+      name: "Comprobante de domicilio o recibo de servicio",
+      type: "documentos",
+      accept: null,
+    },
+    {
+      name: "Constancia de situación fiscal",
+      type: "documentos",
+      accept: null,
+    },
   ];
+
+  const handleAddDocument = (document) => {
+    setAddFileProps({
+      ...addFileProps,
+      isOpen: true,
+      documentType: document.type,
+      title: t("common:add-document", { document: document.name }),
+      accept: document.accept,
+    });
+  };
 
   return (
     <Fragment>
+      <AddDocumentDialog
+        {...addFileProps}
+        setIsOpen={(open) => setAddFileProps({ ...addFileProps, isOpen: open })}
+        update={() => {
+          mutate(`/sales/crm/contacts/${contactId}/activities`);
+        }}
+      />
       <Menu>
         <MenuButton>
           <Button
@@ -33,7 +65,7 @@ const AddDocuments = () => {
             <MenuItem
               key={index}
               as="div"
-              onClick={option.onclick && option.onclick}
+              onClick={() => handleAddDocument(option)}
               disabled={option.disabled}
               className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
             >

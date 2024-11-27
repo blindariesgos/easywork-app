@@ -110,7 +110,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
       <div className="relative mt-1">
         <button
           type="button"
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
+          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
@@ -165,7 +165,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     )}
                     onClick={() => setFilterSelect(1)}
                   >
-                    Contactos
+                    Clientes
                   </li>
                   <li
                     className={clsx(

@@ -7,6 +7,7 @@ import {
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import TextInput from "./TextInput";
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 
 const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
   if (tagLabel)
@@ -36,25 +37,7 @@ const MultipleSelect = ({
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  // const [options, setOptions] = useState(data);
   const [query, setQuery] = useState("");
-
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (!dropdownRef) return;
-
-    document?.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document?.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
 
   const handleToggle = () => {
     setQuery("");
@@ -98,12 +81,10 @@ const MultipleSelect = ({
       <label className="text-sm font-medium leading-6 text-gray-900  px-3">
         {label}
       </label>
-      <div className="relative">
-        <button
-          type="button"
-          onClick={handleToggle}
+      <Menu>
+        <MenuButton
           disabled={disabled}
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
+          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
@@ -131,66 +112,65 @@ const MultipleSelect = ({
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
             <ChevronDownIcon className="h-4 w-4" />
           </span>
-        </button>
-        {isOpen && (
+        </MenuButton>
+        <MenuItems
+          anchor="bottom start"
+          className=" mt-1 w-[var(--button-width)] rounded-md bg-white shadow-lg z-50 py-2"
+        >
           <div
-            ref={dropdownRef}
-            className="absolute bottom-10 left-0 mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+            className="py-1 flex flex-col gap-2 px-2 max-h-60 overflow-y-auto"
+            aria-labelledby="options-menu"
           >
-            <div
-              className="py-1 flex flex-col gap-2 px-2 max-h-60 overflow-y-auto"
-              aria-labelledby="options-menu"
-            >
-              <div className="w-full">
-                <TextInput
-                  placeholder="Buscar"
-                  onChangeCustom={(e) => setQuery(e.target.value)}
-                  border
-                />
+            <div className="w-full">
+              <TextInput
+                placeholder="Buscar"
+                onChangeCustom={(e) => setQuery(e.target.value)}
+                border
+              />
+            </div>
+            {filterData?.length === 0 && query !== "" ? (
+              <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                {t("common:not-found")}
               </div>
-              {filterData?.length === 0 && query !== "" ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                  {t("common:not-found")}
-                </div>
-              ) : (
-                filterData &&
-                filterData.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
+            ) : (
+              filterData &&
+              filterData.map((option) => (
+                <MenuItem
+                  as="div"
+                  key={option.id}
+                  className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
+                    getValues(name) &&
+                    getValues(name).some((res) => res.id === option.id)
+                      ? "bg-primary"
+                      : "hover:bg-primary/10"
+                  }`}
+                  onClick={() => handleSelect(option)}
+                >
+                  {option.avatar && (
+                    <Image
+                      src={option.avatar}
+                      width={100}
+                      height={100}
+                      alt={`${option.name} avatar`}
+                      className="w-6 h-6 rounded-full mr-2"
+                    />
+                  )}
+                  <span
+                    className={`text-xs ${
                       getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
-                        ? "bg-primary"
-                        : "hover:bg-primary/10"
+                        ? "text-white"
+                        : "text-black"
                     }`}
-                    onClick={() => handleSelect(option)}
                   >
-                    {option.avatar && (
-                      <Image
-                        src={option.avatar}
-                        width={100}
-                        height={100}
-                        alt={`${option.name} avatar`}
-                        className="w-6 h-6 rounded-full mr-2"
-                      />
-                    )}
-                    <span
-                      className={`text-xs ${
-                        getValues(name) &&
-                        getValues(name).some((res) => res.id === option.id)
-                          ? "text-white"
-                          : "text-black"
-                      }`}
-                    >
-                      {option.name || option.username}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
+                    {option.name || option.username}
+                  </span>
+                </MenuItem>
+              ))
+            )}
           </div>
-        )}
-      </div>
+        </MenuItems>
+      </Menu>
       {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
     </div>
   );

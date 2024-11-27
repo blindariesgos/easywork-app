@@ -86,7 +86,7 @@ function SelectInput({
                   border,
                 "border-none focus:ring-0 ": !border,
                 // "bg-gray-100": disabled,
-                "drop-shadow-sm": !disabled,
+                "drop-shadow-md": !disabled,
               }
             )}
             displayValue={(person) => person?.name}

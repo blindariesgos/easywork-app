@@ -23,7 +23,7 @@ const ContactFolders = ({ id }) => {
       return;
     }
     if (response.items.length == 0) {
-      toast.error("El contacto no posee carpeta vinculada");
+      toast.error("El cliente no posee carpeta vinculada");
       setLoading(false);
       return;
     }

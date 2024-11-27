@@ -14,51 +14,35 @@ const KanbanPolicies = () => {
   const columnOrder = ["en_proceso", "activa", "cancelada"];
   const [isDragging, setIsDragging] = useState(false);
   const [activeId, setActiveId] = useState(null);
+  const [itemDrag, setItemDrag] = useState();
+  const [updateStages, setUpdateStages] = useState([]);
 
   const columns = {
     en_proceso: {
       id: "en_proceso",
       title: "En trámite",
       color: "#0091CD",
+      filter: {
+        status: "en_proceso",
+      },
     },
     activa: {
       id: "activa",
       title: "Vigente",
       color: "#0077BF",
+      filter: {
+        status: "activa",
+      },
     },
     cancelada: {
       id: "cancelada",
       title: "No vigente",
       color: "#CD1100",
+      filter: {
+        status: "expirada",
+      },
     },
   };
-
-  const [policies, setPolicies] = useState({
-    en_proceso: [],
-    activa: [],
-    cancelada: [],
-  });
-
-  useEffect(() => {
-    if (!data || !data?.items || !data?.items?.length === 0) return;
-    const auxData = data?.items?.reduce(
-      (acc, policy) => ({
-        ...acc,
-        [policy.status]: [...acc[policy.status], policy],
-      }),
-      {
-        en_proceso: [],
-        activa: [],
-        cancelada: [],
-        expirada: [],
-      }
-    );
-    const { cancelada, expirada, ...others } = auxData;
-    setPolicies({
-      ...others,
-      cancelada: [...expirada, ...cancelada],
-    });
-  }, [data]);
 
   const handleDragEnd = (result) => {
     setActiveId(null);
@@ -108,21 +92,18 @@ const KanbanPolicies = () => {
             <Column
               key={columns[column].id}
               {...columns[column]}
-              policies={policies[column]}
               isDragging={isDragging}
               activeId={activeId}
+              setItemDrag={setItemDrag}
+              updateStages={updateStages}
+              setUpdateStages={setUpdateStages}
             />
           ))}
         </div>
       </div>
-      {createPortal(
-        <DragOverlay>
-          {activeId && data?.items?.find((x) => x.id == activeId)?.id ? (
-            <Card policy={data?.items?.find((x) => x.id == activeId)} />
-          ) : null}
-        </DragOverlay>,
-        document.body
-      )}
+      <DragOverlay>
+        {activeId && itemDrag ? <Card policy={itemDrag} /> : null}
+      </DragOverlay>
     </DndContext>
   );
 };

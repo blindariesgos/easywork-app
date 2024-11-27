@@ -3,6 +3,7 @@
   "no": "No",
   "loading": "Cargando...",
   "saving": "Guardando...",
+  "with": "Con",
   "save": "¡Salvado con éxito!",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",
@@ -35,6 +36,7 @@
     "december": "Diciembre"
   },
   "date": {
+    "title": "Fecha",
     "yesterday": "Ayer",
     "today": "Hoy",
     "tomorrow": "Mañana",
@@ -90,7 +92,7 @@
       "name": "Ventas",
       "crm": {
         "name": "CRM",
-        "contacts": "Contactos",
+        "contacts": "Cliente contratante",
         "prospects": "Prospectos"
       },
       "reports": {
@@ -207,5 +209,8 @@
   "add-document": "Añadir Documento ({{document}})",
   "slide": {
     "renovations": "Renovaciones"
+  },
+  "activities": {
+    "event": "Reunión"
   }
 }

@@ -620,6 +620,12 @@ export const addPolicyByPdf = async (body) => {
     .catch((error) => ({ error, hasError: true }));
   return response;
 };
+export const addRenovationByPdf = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/renewal/pdf`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
 
 export const getMetadataOfPdf = async (category, body) => {
   const response = await axios({ contentType: "multipart/form-data" })

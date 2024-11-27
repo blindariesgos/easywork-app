@@ -88,13 +88,18 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     const formData = new FormData();
     formData.append("poliza", file);
     const response = await getMetadataOfPdf("nueva", formData);
-    console.log("paso por aqui", { response });
 
     if (response?.hasError) {
-      toast.error(
-        response?.error?.message ??
-          "Ocurrio un error al leer el archivo, intente nuevamente"
-      );
+      if (Array.isArray(response?.error?.message)) {
+        response?.error?.message.forEach((message) => {
+          toast.error(message);
+        });
+      } else {
+        toast.error(
+          response?.error?.message ??
+            "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
+        );
+      }
       setLoading(false);
       return;
     }
@@ -112,14 +117,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     if (type) {
       setValue("typeId", type.id);
     }
-    setHelpers({
-      contact: response?.client?.fullName
-        ? `En documento: ${response?.client?.fullName}`
-        : null,
-      subAgent: response?.agenteIntermediario?.nombre
-        ? `En documento: ${response?.agenteIntermediario?.nombre} - ${response?.agenteIntermediario?.codigo}`
-        : null,
-    });
+
     setLoading(false);
   };
 
@@ -146,12 +144,8 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       }
     }
 
-    console.log({ data, body });
     try {
-      console.log("paso por aquiiiiiiiii");
-
       const response = await addPolicyByPdf(formData);
-      console.log({ response });
       if (response?.hasError) {
         if (Array.isArray(response?.error?.message)) {
           response?.error?.message.forEach((message) => {
@@ -171,7 +165,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       setIsOpen(false);
       handleReset();
     } catch (error) {
-      console.log("paso por qqqqqqqqqqqqqqqqi");
       console.log(error);
       toast.error(
         error?.message ??
@@ -184,11 +177,10 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   const handleReset = () => {
     reset({
       contact: "",
-      aseguradora: "",
-      tipo: "",
-      typePerson: "",
       subAgente: "",
       responsibleId: "",
+      insuranceId: "",
+      typeId: "",
     });
     setPolicy();
     setHelpers({});

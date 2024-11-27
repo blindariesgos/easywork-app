@@ -456,6 +456,13 @@ export const updateEmailConfig = async (data) => {
   return response;
 };
 
+export const updateStatus = async (data) => {
+  const response = await axios().put(`/users/status`, {
+    status: data
+  });
+  return response;
+};
+
 export const getTokenGoogle = async (userId, oauthId) => {
   const response = await axios().get(`/oauth/config/${userId}/${oauthId}`);
   return response;

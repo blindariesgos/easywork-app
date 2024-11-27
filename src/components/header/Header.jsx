@@ -61,6 +61,25 @@ export default function Header() {
     { name: t("common:header:signout"), onClick: () => logout() },
   ];
 
+  const statusData = [
+    {
+      label: t("common:header:status:working"),
+      value: "working",
+    },
+    {
+      label: t("common:header:status:do_not_disturb"),
+      value: "do_not_disturb",
+    },
+    {
+      label: t("common:header:status:on_vacation"),
+      value: "on_vacation",
+    },
+    {
+      label: t("common:header:status:out_of_office"),
+      value: "out_of_office",
+    },
+  ];
+
   return (
     <div className="rounded-md flex h-16 shrink-0 items-center gap-x-4 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 w-full">
       {ifWebmailPath() ? (
@@ -172,9 +191,9 @@ export default function Header() {
             aria-hidden="true"
           />
 
-          <Status />
+          <Status status={statusData.find(item => item.value === session?.user?.status)?.label} />
           <General />
-          <Info />
+          <Info status={statusData.find(item => item.value === session?.user?.status)?.label} statusData={statusData} />
         </div>
       </div>
     </div>

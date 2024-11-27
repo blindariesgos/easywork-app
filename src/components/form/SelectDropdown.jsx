@@ -32,10 +32,10 @@ function SelectDropdown({
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (selectedOption) {
+    if (selectedOption && !selected) {
       setSelected(selectedOption);
     }
-  }, [selectedOption]);
+  }, [selectedOption, selected]);
 
   useEffect(() => {
     if (selected) setValue && setValue(name, selected?.id);
@@ -53,7 +53,6 @@ function SelectDropdown({
   useEffect(() => {
     if (!watch || selected || !options) return;
     const id = watch(name);
-    console.log({ id, name, options });
     setSelected(options.find((option) => option.id == id));
   }, [watch && watch(name), options]);
 
@@ -79,7 +78,7 @@ function SelectDropdown({
                   border,
                 "border-none focus:ring-0 ": !border,
                 // "bg-gray-100": disabled,
-                "drop-shadow-sm": !disabled,
+                "drop-shadow-md": !disabled,
               }
             )}
             displayValue={(person) => person?.name || person?.username}

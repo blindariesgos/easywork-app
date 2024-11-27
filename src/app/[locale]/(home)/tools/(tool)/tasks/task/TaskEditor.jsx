@@ -143,7 +143,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Contacto: ");
+    setValue("name", "CRM - Cliente: ");
     setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };
@@ -718,6 +718,10 @@ const getCmrInfo = (cmr) => {
 
   if (type === "poliza") {
     name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
+  }
+
+  if (type === "receipt") {
+    name = cmr?.crmEntity?.title;
   }
 
   return { id, type, name };

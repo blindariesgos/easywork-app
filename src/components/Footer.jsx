@@ -2,18 +2,16 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import clsx from "clsx";
 
 export default function Footer() {
+  const commitHash = process.env.NEXT_PUBLIC_COMMIT_HASH;
   const language = ["Español", "English"];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="mt-2 w-full flex justify-center">
-      <ul className="flex w-96 justify-between ml-5 max-md:hidden text-xs">
+      <ul className="flex w-2/5 justify-between ml-5 max-md:hidden text-xs">
         <li className="cursor-pointer">© 2024 Easywork</li>
         <span>|</span>
         <li className="cursor-pointer">Soporte Easy</li>
@@ -38,7 +36,7 @@ export default function Footer() {
               <MenuItem key={index}>
                 {({ active }) => (
                   <div
-                    className={classNames(
+                    className={clsx(
                       active ? "bg-gray-50" : "",
                       "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                     )}
@@ -50,6 +48,10 @@ export default function Footer() {
             ))}
           </MenuItems>
         </Menu>
+        <span>|</span>
+        <li className="cursor-pointer">
+          Versión: {commitHash ? commitHash?.slice(0, 7) : ""}
+        </li>
       </ul>
     </div>
   );

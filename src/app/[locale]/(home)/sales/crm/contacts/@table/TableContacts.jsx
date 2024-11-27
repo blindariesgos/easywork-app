@@ -113,13 +113,13 @@ export default function TableContacts() {
 
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
-        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} contacto(s) de ${selectedContacts.length} seleccionado(s)`
+        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} cliente(s) de ${selectedContacts.length} seleccionado(s)`
       );
     }
 
     if (response.some((x) => x.status === "rejected")) {
       toast.error(
-        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} contacto(s)`
+        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} cliente(s)`
       );
     }
 

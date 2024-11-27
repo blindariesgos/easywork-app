@@ -63,13 +63,13 @@ export default function TaskLayout({ children, table, kanban }) {
 
   const tabs = [
     {
-      name: t("tools:tasks:list"),
-      component: table,
-    },
-    {
-      name: t("tools:tasks:limit-date"),
+      name: "Kanban",
       component: kanban,
       // disabled: true,
+    },
+    {
+      name: t("tools:tasks:list"),
+      component: table,
     },
   ];
 
@@ -78,7 +78,7 @@ export default function TaskLayout({ children, table, kanban }) {
       <TasksContextProvider>
         <Suspense fallback={<LoaderSpinner />}>
           <TabGroup
-            defaultIndex={0}
+            defaultIndex={1}
             className="w-full flex flex-col items-start"
           >
             <ToolHeader

@@ -7,6 +7,8 @@ import TextEditor from "../TextEditor";
 import clsx from "clsx";
 import Link from "next/link";
 import Image from "next/image";
+import { correctSpecialCharacters } from "@/src/utils/formatters";
+import moment from "moment";
 
 export const CommentType = {
   USER: "user",
@@ -14,7 +16,10 @@ export const CommentType = {
 };
 
 export default function CardComment({ data }) {
-  if (data?.metadata?.commentType === CommentType.SYSTEM) {
+  if (
+    data?.metadata?.commentType === CommentType.SYSTEM ||
+    data?.metadata?.subType == "lead"
+  ) {
     return <SystemNotification data={data} />;
   }
 
@@ -66,7 +71,9 @@ function SystemNotification({ data }) {
                 )
               }
             >
-              {metadata?.file?.name ?? "System"}
+              {metadata?.file?.name
+                ? correctSpecialCharacters(metadata?.file?.name)
+                : "System"}
             </span>
             .
           </p>
@@ -97,7 +104,7 @@ function SystemNotification({ data }) {
           </div>
 
           <p className="text-xs text-gray-50">
-            {"Se ha creado al contacto "}
+            {"Se ha creado al cliente"}
             {metadata?.contact?.fullName && (
               <Link
                 href={`/sales/crm/contacts/contact/${metadata?.contact?.id}?show=true`}
@@ -108,6 +115,44 @@ function SystemNotification({ data }) {
             )}
 
             {" a partir del prospecto."}
+          </p>
+        </Fragment>
+      ) : metadata.subType === "lead" ? (
+        <Fragment>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <p className="text-xs text-primary font-bold">
+                Cierre positivo prospecto
+              </p>
+              <p className="text-xs text-gray-50 whitespace-nowrap">
+                {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
+              </p>
+            </div>
+            <Image
+              className="h-6 w-6 rounded-full object-cover"
+              width={36}
+              height={36}
+              src={createdBy?.avatar}
+              alt=""
+              title={
+                createdBy?.profile?.firstName
+                  ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+                  : (createdBy.username ?? "System")
+              }
+            />
+          </div>
+
+          <p className="text-xs text-gray-50">
+            {"Se ha creado al cliente a partir del prospecto "}
+            {metadata?.lead?.fullName && (
+              <Link
+                href={`/sales/crm/leads/lead/${metadata?.lead?.id}?show=true`}
+                className="hover:underline cursor-pointer"
+              >
+                {metadata?.lead?.fullName}
+              </Link>
+            )}
+            {"."}
           </p>
         </Fragment>
       ) : (
@@ -151,12 +196,12 @@ function CommentUser({ data }) {
     <div className="bg-white px-4 py-3 rounded-lg w-full">
       <div className="flex items-center">
         <div className="flex gap-2 items-center">
-          <p className="text-xs text-primary font-medium">
+          <p className="text-xs text-primary font-bold">
             {t("contacts:panel:comment")}
           </p>
-          <p className="text-xs text-primary font-medium">
-            {t("contacts:panel:date")}:{" "}
-            {formatDate(createdAt, "dd/MM/yyyy hh:mm a")}
+          <p className="text-xs text-primary">
+            {t("common:date:title")}:{" "}
+            {moment(createdAt).format("DD/MM/YYYY hh:mm a")}
           </p>
         </div>
       </div>

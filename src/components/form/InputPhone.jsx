@@ -31,10 +31,10 @@ const InputPhone = ({
               borderRadius: "0.5rem",
               outline: "none",
               fontSize: "14px",
-              boxShadow: disabled ? "" : "0 1px 1px rgb(0 0 0 / 0.05)",
             }}
             inputClass={clsx({
               "bg-gray-100": disabled,
+              "drop-shadow-md": !disabled,
             })}
             buttonStyle={{
               borderRadius: "0.5rem 0 0 0.5rem",

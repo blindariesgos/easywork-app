@@ -73,6 +73,7 @@ export default function CreateLead({ lead, id }) {
     cargo: Yup.string(),
     rfc: Yup.string(),
     typeId: Yup.string(),
+    policyTypeId: Yup.string(),
     sourceId: Yup.string(),
     typePerson: Yup.string(),
     address: Yup.string(),
@@ -555,6 +556,16 @@ export default function CreateLead({ lead, id }) {
                   error={!watch("observerId") && errors.observerId}
                   setValue={setValue}
                   watch={watch}
+                />
+
+                <SelectInput
+                  label={t("operations:policies:general:type")}
+                  name="policyTypeId"
+                  options={lists?.policies?.polizaTypes ?? []}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                  disabled={!isEdit}
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-2">

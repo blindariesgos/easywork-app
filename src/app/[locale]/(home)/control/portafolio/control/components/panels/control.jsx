@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { FaChevronDown } from "react-icons/fa";
 import useControlContext from "@/src/context/control";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { formatToCurrency } from "@/src/utils/formatters";
+import useAppContext from "@/src/context/app";
 
 const cards = (t) => [
   {
@@ -90,10 +92,11 @@ const cards = (t) => [
 ];
 
 const Control = () => {
-  const { setGroupKey, isLoading, totalsByStage } = useControlContext();
+  const { setGroupKey, isLoading, totalsByStage, filters } =
+    useControlContext();
   const { t } = useTranslation();
   const [cardSelected, setCardSelected] = useState(cards(t)[0]);
-
+  const { lists } = useAppContext();
   useEffect(() => {
     setGroupKey(cardSelected.id);
   }, [cardSelected]);
@@ -127,9 +130,13 @@ const Control = () => {
                           <p className="text-sm">{card.name}</p>
                           <div className="w-full">
                             <p className="text-4xl text-right">
-                              {totalsByStage[card.key ?? card.id]}
+                              {totalsByStage[card.key ?? card.id]?.count ?? 0}
                             </p>
-                            <p className="text-sm text-right">{card.amount}</p>
+                            <p className="text-sm text-right">
+                              {`${lists?.policies?.currencies?.find((c) => c.id == filters?.currencyId)?.symbol ?? "$"} ${formatToCurrency(
+                                totalsByStage[card.key ?? card.id]?.amount ?? 0
+                              )}`}
+                            </p>
                           </div>
                         </Radio>
                       ))}

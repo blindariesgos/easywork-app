@@ -121,10 +121,8 @@ export default function OtherNotifications({ previousModalPadding, colorTag }) {
                       </div>
                       <div className="text-sm flex mb-7">
                         <div className="w-1/2">
-                          <h1 className="font-semibold">
-                            Contacto asignado
-                          </h1>
-                          <p>Te han asignado un contacto</p>
+                          <h1 className="font-semibold">CLiente asignado</h1>
+                          <p>Te han asignado un cliente</p>
                         </div>
                         <div className="flex w-1/2 justify-between text-blue-500">
                           <div>
@@ -170,9 +168,7 @@ export default function OtherNotifications({ previousModalPadding, colorTag }) {
                       </div>
                       <div className="text-sm flex mb-7">
                         <div className="w-1/2">
-                          <h1 className="font-semibold">
-                            Tarea vencida
-                          </h1>
+                          <h1 className="font-semibold">Tarea vencida</h1>
                           <p>Tienes una tarea vencida</p>
                         </div>
                         <div className="flex w-1/2 justify-between text-blue-500">
@@ -219,9 +215,7 @@ export default function OtherNotifications({ previousModalPadding, colorTag }) {
                       </div>
                       <div className="text-sm flex mb-7">
                         <div className="w-1/2">
-                          <h1 className="font-semibold">
-                            Tarea adignada
-                          </h1>
+                          <h1 className="font-semibold">Tarea adignada</h1>
                           <p>Te han asignado una tarea</p>
                         </div>
                         <div className="flex w-1/2 justify-between text-blue-500">
@@ -268,9 +262,7 @@ export default function OtherNotifications({ previousModalPadding, colorTag }) {
                       </div>
                       <div className="text-sm flex mb-7">
                         <div className="w-1/2">
-                          <h1 className="font-semibold">
-                            Invitación a evento
-                          </h1>
+                          <h1 className="font-semibold">Invitación a evento</h1>
                           <p>Te han invitado a un evento</p>
                         </div>
                         <div className="flex w-1/2 justify-between text-blue-500">

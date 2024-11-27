@@ -6,8 +6,11 @@ import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
 
 const getQueries = (filters, userId) => {
-  const getRepitKeys = (key, arr) =>
-    arr.map((item) => `${key}=${item?.id ?? item}`).join("&");
+  const getRepitKeys = (key, arr) => {
+    const params = arr.map((item) => `${key}=${item?.id ?? item}`).join("&");
+    return params;
+  };
+
   if (Object.keys(filters).length == 0) return "";
 
   const getValue = (key, userId) => {
@@ -21,7 +24,7 @@ const getQueries = (filters, userId) => {
     }
   };
 
-  return Object.keys(filters)
+  const paramsUrl = Object.keys(filters)
     .filter((key) => typeof filters[key] !== "undefined")
     .map((key) =>
       Array.isArray(filters[key])
@@ -29,6 +32,8 @@ const getQueries = (filters, userId) => {
         : getValue(key, userId)
     )
     .join("&");
+
+  return paramsUrl;
 };
 
 export const login = async (formdata) => {
@@ -268,6 +273,17 @@ export const putTaskId = async (id, body) => {
   return response;
 };
 
+export const deleteFileTaskById = async (taskId, body) => {
+  console.log("Deleting task file", taskId, body);
+  const response = await axios()
+    .delete(`/tools/tasks/${taskId}/attachments`, { data: body })
+    .catch((error) => ({ hasError: true, error }));
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
+  revalidatePath(`/tools/tasks`, "layout");
+
+  return response;
+};
+
 export const putTaskIdRelations = async (taskId, body) => {
   console.log("Updating task relations");
   const response = await axios().put(
@@ -387,13 +403,6 @@ export const putReceipt = async (receiptId, body) => {
   const response = await axios()
     .put(`/sales/crm/polizas/receipts/${receiptId}`, body)
     .catch((error) => ({ hasError: true, ...error }));
-  return response;
-};
-
-export const getAllLeads = async (page = 1, limit = 6) => {
-  const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`
-  );
   return response;
 };
 
@@ -612,6 +621,20 @@ export const addLeadDocument = async (leadId, category, body) => {
   return response;
 };
 
+export const addPolicyByPdf = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/polizas/pdf`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addContactDocument = async (contactId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/contacts/upload/${contactId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const postPositiveStagePolicy = async (leadId) => {
   const response = await axios()
     .post(`/sales/crm/leads/${leadId}/generate_poliza`)
@@ -636,6 +659,45 @@ export const getAllTasks = async ({
   console.log(url);
   const response = await axios()
     .get(url)
-    .catch((error) => ({ hasError: true, ...error }));
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getAllPolicies = async ({
+  filters = {},
+  config = {},
+  userId = "",
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/sales/crm/polizas?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getAllLeads = async ({ config = {}, filters = {} }) => {
+  const queries = getQueries(filters);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/sales/crm/leads?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log({ url });
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getLeadCancelReazon = async () => {
+  const url = `/sales/crm/leads/cancel-reazon`;
+  const response = await axios()
+    .get(url)
+    .then((items) => ({ data: items }))
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };

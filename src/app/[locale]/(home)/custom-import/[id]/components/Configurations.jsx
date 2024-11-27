@@ -15,17 +15,21 @@ import Link from "next/link";
 import { contactImportExample, contactImportKeys } from "./contants";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
-const Configurations = ({ handleNext }) => {
+const Configurations = ({ handleNext, type }) => {
   const { t } = useTranslation();
+  const session = useSession();
   const { lists } = useAppContext();
   const schema = yup.object().shape({
     excel: yup
       .array()
       .required(t("common:validations:required"))
       .of(yup.array().of(yup.string().notRequired())),
+    responsibleId: yup.string().required(t("common:validations:required")),
   });
-  const { setHeader, setColumns } = useCustomImportContext();
+  const { setHeader, setColumns, info, setInfo } = useCustomImportContext();
   const router = useRouter();
   const {
     register,
@@ -40,8 +44,13 @@ const Configurations = ({ handleNext }) => {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    if (!session.data.user.id) return;
+    setValue("responsibleId", session.data.user.id);
+  }, [session?.data?.user?.id]);
+
   const handleSubmitNext = (data) => {
-    const { excel } = data;
+    const { excel, ...otherData } = data;
 
     const header = excel[0];
     const body = excel.slice(1);
@@ -59,6 +68,10 @@ const Configurations = ({ handleNext }) => {
     }
     setHeader(header);
     setColumns(body);
+    setInfo({
+      ...info,
+      ...otherData,
+    });
     handleNext();
   };
 
@@ -254,7 +267,7 @@ const Configurations = ({ handleNext }) => {
             <div className="col-span-3 md:col-span-2 xl:col-span-3">
               <Link
                 className="cursor-pointer text-blue-300 underline inline"
-                href="/templates/plantilla-importacion-contactos.xlsx"
+                href={`/templates/plantilla-importacion-${type == "contacts" ? "contactos" : "prospectos"}.xlsx`}
                 target="_blank"
                 download
               >
@@ -366,32 +379,38 @@ const Configurations = ({ handleNext }) => {
         </div>
         <div className="overflow-auto">
           <table className="border border-gray-60 table-auto">
-            <tr>
-              {contactImportKeys.map((key) => (
-                <td
-                  key={key}
-                  className="min-w-[150px] border border-gray-60 p-2"
-                >
-                  <p className="text-sm font-bold whitespace-nowrap">
-                    {t(`import:contacts:fields:${key}`)}
-                  </p>
-                </td>
-              ))}
-            </tr>
-            {new Array(contactImportExample.length).fill(1).map((a, index) => (
-              <tr key={index}>
+            <thead>
+              <tr>
                 {contactImportKeys.map((key) => (
                   <td
                     key={key}
                     className="min-w-[150px] border border-gray-60 p-2"
                   >
-                    <p className="text-sm whitespace-nowrap">
-                      {contactImportExample[index][key] ?? ""}
+                    <p className="text-sm font-bold whitespace-nowrap">
+                      {t(`import:contacts:fields:${key}`)}
                     </p>
                   </td>
                 ))}
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {new Array(contactImportExample.length)
+                .fill(1)
+                .map((a, index) => (
+                  <tr key={index}>
+                    {contactImportKeys.map((key) => (
+                      <td
+                        key={key}
+                        className="min-w-[150px] border border-gray-60 p-2"
+                      >
+                        <p className="text-sm whitespace-nowrap">
+                          {contactImportExample[index][key] ?? ""}
+                        </p>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+            </tbody>
           </table>
         </div>
       </div>

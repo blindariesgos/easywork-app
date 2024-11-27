@@ -94,7 +94,7 @@ export default function AddContactTabs({ tabs, refPrint, contact }) {
             icon={<PlusIcon className="h-4 w-4 text-white" />}
             className="py-2 px-3"
           /> */}
-          <AddDocuments />
+          <AddDocuments contactId={contact.id} />
         </TabList>
         <IconDropdown
           icon={

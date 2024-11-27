@@ -50,7 +50,8 @@ const Column = ({
       const params = {
         "pagination[0][stageId]": id,
         "pagination[0][limit]": 10,
-        "pagination[0][page]": (defaultPage ? defaultPage : page) + 1,
+        "pagination[0][page]":
+          (typeof defaultPage !== "undefined" ? defaultPage : page) + 1,
         stageIds: id,
         ...filters,
       };
@@ -69,7 +70,7 @@ const Column = ({
         setHasMore(false);
       }
 
-      setPage((defaultPage ? defaultPage : page) + 1);
+      setPage((typeof defaultPage !== "undefined" ? defaultPage : page) + 1);
     } catch (error) {
       console.log({ error });
     }
@@ -86,7 +87,6 @@ const Column = ({
   }, [updateStages]);
 
   useEffect(() => {
-    console.log({ filters });
     getReceipts(0);
   }, [filters]);
 

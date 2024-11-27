@@ -1,37 +1,29 @@
 "use client";
 import useAppContext from "@/src/context/app";
-import { PencilIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { PencilIcon } from "@heroicons/react/24/outline";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import SlideOver from "@/src/components/SlideOver";
 import InputPhone from "@/src/components/form/InputPhone";
-import SelectInput from "@/src/components/form/SelectInput";
-import InputDate from "@/src/components/form/InputDate";
-import { FaCalendarDays } from "react-icons/fa6";
 import { handleApiError } from "@/src/utils/api/errors";
 import {
-  Dialog,
-  DialogPanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
   Transition,
-  TransitionChild,
 } from "@headlessui/react";
-import { updateUser, getUsersGroup } from "@/src/lib/apis";
+import { updateUser, getUsersGroup, updateStatus } from "@/src/lib/apis";
 import { reloadSession } from "@/src/lib/axios";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import clsx from "clsx";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
-import Tag from "@/src/components/Tag";
 
 export function Profile({ user, id }) {
   const { lists } = useAppContext();
@@ -53,7 +45,6 @@ export function Profile({ user, id }) {
 
   useEffect(() => {
     if (data?.user) {
-      console.log(data);
       lists?.listContact?.contactTypes.length > 0 &&
         setContactType(
           lists?.listContact?.contactTypes.filter(
@@ -72,6 +63,10 @@ export function Profile({ user, id }) {
       });
     }
   }, [data?.user, lists]);
+
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
 
   const schema = Yup.object().shape({
     email: Yup.string()
@@ -97,7 +92,6 @@ export function Profile({ user, id }) {
 
   useEffect(() => {
     getUsersGroup(data?.user?.id).then((res) => {
-      console.log(res.groups);
       setGroups(res.groups);
     });
   }, []);
@@ -149,43 +143,6 @@ export function Profile({ user, id }) {
     }
   }, []);
 
-  const handleFilesUpload = (event, drop) => {
-    let uploadedImages = [...files];
-    const fileList = drop ? event.dataTransfer.files : event.target.files;
-
-    if (fileList) {
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error(t("common:validations:size", { size: 5 }));
-          return;
-        } else {
-          const reader = new FileReader();
-
-          reader.onload = (e) => {
-            setTimeout(() => {
-              const existFile = uploadedImages.some(
-                (item) => item.name === file.name
-              );
-              if (!existFile) {
-                uploadedImages = [
-                  ...uploadedImages,
-                  {
-                    base64: reader.result,
-                    type: file.type.split("/")[0],
-                    name: file.name,
-                  },
-                ];
-                setFiles(uploadedImages);
-              }
-            }, 500);
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-  };
-
   const handleFormSubmit = async (dataUser) => {
     const previousData = {
       email: data.user.email,
@@ -220,14 +177,9 @@ export function Profile({ user, id }) {
         formData.append(key, body[key]?.toString() || ""); // Convierte los demás valores a string
       }
     }
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
     try {
       setLoading(true);
-      const response = await updateUser(data?.user?.id, formData);
-      console.log(response);
+      await updateUser(data?.user?.id, formData);
       await reloadSession();
       update();
       setLoading(false);
@@ -237,6 +189,35 @@ export function Profile({ user, id }) {
       setLoading(false);
     }
   };
+
+  const changeStatus = async (item) => {
+    try {
+      await updateStatus(item);
+      await reloadSession();
+      update();
+    } catch (error) {
+      toast.error("Error al cambiar status");
+    }
+  };
+
+  const status = [
+    {
+      label: t("common:header:status:working"),
+      value: "working",
+    },
+    {
+      label: t("common:header:status:do_not_disturb"),
+      value: "do_not_disturb",
+    },
+    {
+      label: t("common:header:status:on_vacation"),
+      value: "on_vacation",
+    },
+    {
+      label: t("common:header:status:out_of_office"),
+      value: "out_of_office",
+    },
+  ];
 
   // Calculate the user 18th birthday
   const eighteenYearsAgo = new Date();
@@ -251,10 +232,37 @@ export function Profile({ user, id }) {
         <div className="rounded-lg bg-white">
           <div className="flex w-full justify-between pt-4">
             <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
-              {data?.user.roles[0].displayName ?? data?.user.roles[0].name}
-              <ChevronDownIcon className="w-4 h-4" />
+              {data?.user.roles[0].name}
             </div>
-            <p className="py-1 px-2">No molestar</p>
+            <Menu
+              as="div"
+              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 pr-4 rounded-lg"
+            >
+              <MenuButton className="flex items-center">
+                <p className="py-1 px-2">{status.find(item => item.value === data?.user?.status)?.label}</p>
+              </MenuButton>
+              <MenuItems
+                transition
+                anchor="bottom end"
+                className=" z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+              >
+                {status.map((item) => (
+                  <MenuItem key={item.value}>
+                    {({ active }) => (
+                      <div
+                        onClick={() => changeStatus(item.value)}
+                        className={classNames(
+                          active ? "bg-gray-50" : "",
+                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer text-end"
+                        )}
+                      >
+                        {item.label}
+                      </div>
+                    )}
+                  </MenuItem>
+                ))}
+              </MenuItems>
+            </Menu>
           </div>
           <div className="flex flex-col text-sm justify-center items-center w-full h-full">
             {isEdit ? (

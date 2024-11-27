@@ -16,6 +16,12 @@
         "title": "Capacitaciones",
         "table": {
             "agent": "Agente",
+            "stage": "Etapa",
+            "startDate": "Fecha de inicio del proceso",
+            "endDate": "Fecha final del proceso",
+            "processClosed": "Proceso cerrado",
+            "responsible": "Responsable",
+            "activity": "Actividad",
             "email": "Correo Electrónico",
             "mobile": "Móvil",
             "lastUpdate": "Fecha de la última actividad",

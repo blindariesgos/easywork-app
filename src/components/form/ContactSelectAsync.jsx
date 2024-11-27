@@ -30,6 +30,7 @@ function ContactSelectAsync({
   watch,
   setSelectedOption,
   placeholder,
+  helperText,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -43,7 +44,7 @@ function ContactSelectAsync({
   const handleSearch = useDebouncedCallback(() => {
     if (query.length > 0) {
       setFilters({
-        fullName: query,
+        name: query,
       });
     } else {
       setFilters({});
@@ -173,6 +174,9 @@ function ContactSelectAsync({
           </ComboboxOptions>
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
+        {helperText && (
+          <p className="mt-1 text-xs text-gray-50 italic">{helperText}</p>
+        )}
       </Combobox>
     </div>
   );

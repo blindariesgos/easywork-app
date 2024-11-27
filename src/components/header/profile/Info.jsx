@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Tag from "@/src/components/Tag";
 import { Profile, Tasks, Calendar, Drive } from "./components"
 
-export default function Info() {
+export default function Info({ status, statusData }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -87,7 +87,7 @@ export default function Info() {
                             </TabList>
                             <TabPanels className="w-full overflow-auto">
                               <TabPanel className="w-full">
-                                <Profile />
+                                <Profile status={status} statusData={statusData} />
                               </TabPanel>
                               <TabPanel className="w-full">
                                 <Tasks />

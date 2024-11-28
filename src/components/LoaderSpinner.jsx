@@ -1,16 +1,21 @@
 "use client";
+import Image from "next/image";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
 export default function LoaderSpinner() {
   const { t } = useTranslation();
   return (
-    <div className="absolute z-[100000000] inset-0 bg-easy-800/10 w-full h-screen rounded-lg">
+    <div className="fixed z-[100000000] inset-0 bg-easy-800/10 w-full h-screen">
       <div className="flex items-center justify-center h-full flex-col gap-2 cursor-progress">
-        <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-easy-600" />
-        <p className="text-easy-600 animate-pulse select-none">
-          {t("common:loading")}
-        </p>
+        {/* <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-easy-600" /> */}
+        <Image
+          src={"/icons/loader.gif"}
+          alt="Cargando..."
+          className="h-24 w-24"
+          width={100}
+          height={100}
+        />
       </div>
     </div>
   );

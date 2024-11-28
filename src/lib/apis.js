@@ -623,8 +623,21 @@ export const addLeadDocument = async (leadId, category, body) => {
 
 export const addPolicyByPdf = async (body) => {
   const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/sales/crm/polizas/pdf`, body)
-    .catch((error) => ({ ...error, hasError: true }));
+    .post(`/operations/management/poliza/new/pdf`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+export const addRenovationByPdf = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/renewal/pdf`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
+export const getMetadataOfPdf = async (category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/metadata/pdf?category=${category}`, body)
+    .catch((error) => ({ error, hasError: true }));
   return response;
 };
 

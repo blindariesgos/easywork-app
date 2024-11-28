@@ -165,7 +165,13 @@
     }
   },
   "header": {
-    "working": "Trabajando",
+    "status" : {
+      "working": "Trabajando",
+      "offline": "Desconectado",
+      "do_not_disturb": "No molestar",
+      "on_vacation": "De vacaciones",
+      "out_of_office": "Fuera de la oficina"
+    },
     "profile": "Tu perfil",
     "signout": "Cerrar sesión",
     "placeholder-search": "Buscar personas, documentos y más"

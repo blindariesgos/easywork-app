@@ -75,7 +75,7 @@ const ComboBoxMultiSelect = ({
           {label}
         </label>
         <div className="relative">
-          <div className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2">
+          <div className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm bg-white pl-2 py-2">
             <div className=" text-gray-60 flex gap-1 flex-wrap items-center">
               {getValues(name)?.length > 0 &&
                 getValues(name).map((selected) => (

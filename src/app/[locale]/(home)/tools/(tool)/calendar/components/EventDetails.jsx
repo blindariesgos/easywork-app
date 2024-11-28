@@ -276,7 +276,7 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(data?.crm);
+    console.log(data);
     if (!data) {
       setIsEdit(true);
       return;
@@ -296,7 +296,7 @@ export default function EventDetails({ data, id }) {
         data?.crm
           ? data?.crm.map((item) => ({
               id: item.id,
-              name: item.crmEntity.name,
+              name: item.crmEntity.name ? item.crmEntity.name : item.crmEntity.fullName,
               type: item.type,
               title: item.crmEntity.title ? item.crmEntity.title : undefined,
               username: undefined,

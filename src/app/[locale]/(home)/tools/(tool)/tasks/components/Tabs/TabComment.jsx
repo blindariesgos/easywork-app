@@ -100,20 +100,59 @@ export default function TabComment({ info }) {
 
   return (
     <div className="w-full p-3">
-      {comments?.length > 3 && (
-        <div
-          className="cursor-pointer pb-4"
-          onClick={() => setShowMore(!showMore)}
-        >
-          <p className="text-xs">
-            {t(`tools:tasks:edit:${showMore ? "pings-hide" : "pings"}`, {
-              qty: comments?.length - 3,
-            })}
-          </p>
+      {Object.keys(editComment).length === 0 && (
+        <div className="flex gap-2 mb-4 items-center w-full">
+          <Image
+            className="h-7 w-7 rounded-full object-cover"
+            width={36}
+            height={36}
+            src={"/img/avatar.svg"}
+            alt=""
+          />
+          {isAddComment ? (
+            <div className="flex gap-2 flex-col">
+              <div className="border rounded-md w-full">
+                <TextEditor
+                  ref={quillRef}
+                  value={value}
+                  className="w-full"
+                  setValue={setValueText}
+                />
+              </div>
+              <div className="flex justify-start items-center gap-2">
+                <Button
+                  type="button"
+                  onclick={handleComment}
+                  disabled={disabled}
+                  label={t("tools:tasks:edit:comment:send")}
+                  buttonStyle="primary"
+                  className="px-3 py-2"
+                />
+                <Button
+                  disabled={disabled}
+                  buttonStyle="secondary"
+                  label={t("common:buttons:cancel")}
+                  className="px-3 py-2"
+                  onclick={() => {
+                    setIsAddComment(false);
+                    setValueText("");
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div
+              className="w-full border rounded-full px-4 py-2 text-gray-50 text-sm cursor-pointer"
+              onClick={() => setIsAddComment(true)}
+            >
+              Agregar comentario
+            </div>
+          )}
         </div>
       )}
+
       {showComments?.length > 0 && (
-        <div className="gap-4 flex flex-col w-full md:overflow-y-auto md:max-h-[300px]">
+        <div className="gap-4 flex flex-col-reverse w-full md:overflow-y-auto md:max-h-[300px]">
           {showComments?.map((dat, index) => (
             <div
               className="flex gap-2 items-center w-full"
@@ -218,54 +257,16 @@ export default function TabComment({ info }) {
           ))}
         </div>
       )}
-      {Object.keys(editComment).length === 0 && (
-        <div className="flex gap-2 mt-4 items-center w-full">
-          <Image
-            className="h-7 w-7 rounded-full object-cover"
-            width={36}
-            height={36}
-            src={"/img/avatar.svg"}
-            alt=""
-          />
-          {isAddComment ? (
-            <div className="flex gap-2 flex-col">
-              <div className="border rounded-md w-full">
-                <TextEditor
-                  ref={quillRef}
-                  value={value}
-                  className="w-full"
-                  setValue={setValueText}
-                />
-              </div>
-              <div className="flex justify-start items-center gap-2">
-                <Button
-                  type="button"
-                  onclick={handleComment}
-                  disabled={disabled}
-                  label={t("tools:tasks:edit:comment:send")}
-                  buttonStyle="primary"
-                  className="px-3 py-2"
-                />
-                <Button
-                  disabled={disabled}
-                  buttonStyle="secondary"
-                  label={t("common:buttons:cancel")}
-                  className="px-3 py-2"
-                  onclick={() => {
-                    setIsAddComment(false);
-                    setValueText("");
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
-            <div
-              className="w-full border rounded-full px-4 py-2 text-gray-50 text-sm cursor-pointer"
-              onClick={() => setIsAddComment(true)}
-            >
-              Agregar comentario
-            </div>
-          )}
+      {comments?.length > 3 && (
+        <div
+          className="cursor-pointer pt-4"
+          onClick={() => setShowMore(!showMore)}
+        >
+          <p className="text-xs">
+            {t(`tools:tasks:edit:${showMore ? "pings-hide" : "pings"}`, {
+              qty: comments?.length - 3,
+            })}
+          </p>
         </div>
       )}
     </div>

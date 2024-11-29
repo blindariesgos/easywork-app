@@ -32,7 +32,7 @@ export default function ActivityHeader({
     },
     {
       name: t("contacts:create:activities:appointments"),
-      href: "/tools/calendar/addEvent?show=true",
+      href: `/tools/calendar/addEvent?show=true&prev=${crmType}&prev_id=${entityId}`,
       hidden: contactType == "moral" || ["receipt"].includes(crmType),
     },
     {

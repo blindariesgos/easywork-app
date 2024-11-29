@@ -9,12 +9,13 @@ import SelectInput from "../../components/form/SelectInput";
 import ContactSelectAsync from "../../components/form/ContactSelectAsync";
 import MultipleSelect from "../../components/form/MultipleSelect";
 import InputDate from "../../components/form/InputDate";
+import MultiSelectTags from "../../components/form/MultiSelectTags";
 import TextInput from "../../components/form/TextInput";
+import InputDateRange from "../../components/form/InputDateRange";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import "react-datepicker/dist/react-datepicker.css";
 import AddFields from "./AddFields";
 import SelectDropdown from "../../components/form/SelectDropdown";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useFilterTableContext from "../../context/filters-table";
 import moment from "moment";
 
@@ -40,15 +41,214 @@ const FormFilters = () => {
       resolver: yupResolver(schema),
     });
 
+  const getRangeValue = (field) => {
+    const fixedDates = {
+      yesterday: moment()
+        .utc()
+        .subtract(1, "day")
+        .format("YYYY-MM-DDTHH:mm:ss"),
+      today: moment().utc().format("YYYY-MM-DDTHH:mm:ss"),
+      tomorrow: moment().utc().add(1, "day").format("YYYY-MM-DDTHH:mm:ss"),
+      thisWeek: [
+        moment()
+          .utc()
+          .startOf("week")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment().utc().endOf("week").endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      thisMonth: [
+        moment()
+          .utc()
+          .startOf("month")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("month")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      currentQuarter: [
+        moment()
+          .utc()
+          .startOf("quarter")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("quarter")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      last7Days: [
+        moment()
+          .utc()
+          .subtract(7, "day")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      last30Days: [
+        moment()
+          .utc()
+          .subtract(30, "day")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      last60Days: [
+        moment()
+          .utc()
+          .subtract(60, "day")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      last90Days: [
+        moment()
+          .utc()
+          .subtract(90, "day")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      lastWeek: [
+        moment()
+          .utc()
+          .subtract(1, "week")
+          .startOf("week")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .subtract(1, "week")
+          .endOf("week")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      lastMonth: [
+        moment()
+          .utc()
+          .subtract(1, "month")
+          .startOf("month")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .subtract(1, "month")
+          .endOf("month")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      nextWeek: [
+        moment()
+          .utc()
+          .add(1, "week")
+          .startOf("week")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .add(1, "week")
+          .endOf("week")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      nextMonth: [
+        moment()
+          .utc()
+          .add(1, "month")
+          .startOf("month")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .add(1, "month")
+          .endOf("month")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+    };
+    const fixed = fixedDates[field.value.id];
+
+    if (fixed) return fixed;
+
+    const dependDates = {
+      lastNDays: (date) => [
+        moment()
+          .utc()
+          .subtract(date, "day")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      nextNDays: (date) => [
+        moment().utc().startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .add(date, "day")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      month: (date) => [
+        moment(date)
+          .utc()
+          .startOf("month")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment(date)
+          .utc()
+          .endOf("month")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      quarter: (date) => [
+        moment(date)
+          .utc()
+          .startOf("quarter")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment(date)
+          .utc()
+          .endOf("quarter")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      year: (date) => [
+        moment(date)
+          .utc()
+          .startOf("year")
+          .startOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment(date)
+          .utc()
+          .endOf("year")
+          .endOf("day")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      exactDate: (date) => moment(date).utc().format("YYYY-MM-DDTHH:mm:ss"),
+      dateRange: (range) => [
+        moment(range[0]).utc().startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment(range[1]).utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+    };
+
+    const calculateDateFunc = dependDates[field.value.id];
+
+    if (calculateDateFunc) return calculateDateFunc(+field.range);
+
+    return "";
+  };
+
   const handleFormFilters = (data) => {
-    console.log("folters", data);
     if (data.fields.length == 0) return;
+    console.log(data.fields);
     const displayAux = data.fields.filter((field) =>
       field.type == "multipleSelect"
         ? field.value.length > 0
         : typeof field.value !== "undefined" && field.value !== ""
     );
-    console.log({ displayAux });
     setDisplayFilters(displayAux);
 
     const newFilters = data.fields
@@ -61,11 +261,15 @@ const FormFilters = () => {
         let value = field.value;
 
         if (field.type == "date") {
-          value = moment(field.value).utc().format("yyyy-MM-DD");
+          value = moment(field.value).utc().format("YYYY-MM-DDTHH:mm:ss");
         }
 
         if (field.type == "select-contact") {
           value = field.value.id;
+        }
+
+        if (field.type == "daterange") {
+          value = getRangeValue(field);
         }
 
         return {
@@ -73,7 +277,6 @@ const FormFilters = () => {
           [field.code]: value,
         };
       }, {});
-    console.log({ newFilters });
     setFilters(newFilters);
   };
 
@@ -208,6 +411,40 @@ const FormFilters = () => {
                     label={dataField.name}
                   />
                 )}
+              />
+            )}
+            {dataField.type === "tags" && (
+              <Controller
+                name={`fields[${index}].value`}
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <MultiSelectTags
+                    {...field}
+                    getValues={getValues}
+                    setValue={setValue}
+                    name={`fields[${index}].value`}
+                    label={dataField.name}
+                  />
+                )}
+              />
+            )}
+            {dataField.type === "daterange" && (
+              <Controller
+                render={({ field }) => {
+                  return (
+                    <InputDateRange
+                      {...field}
+                      watch={watch}
+                      setValue={setValue}
+                      nameDate={`fields[${index}].range`}
+                      label={dataField.name}
+                    />
+                  );
+                }}
+                name={`fields[${index}].value`}
+                control={control}
+                defaultValue=""
               />
             )}
           </div>

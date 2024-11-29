@@ -53,6 +53,16 @@ export default function ActivityPanel({
         return (
           <TiInfoLarge className="h-5 w-5  text-white" aria-hidden="true" />
         );
+      case "event":
+        return (
+          <Image
+            className="h-5 w-5 text-white"
+            width={10}
+            height={10}
+            alt="task icon"
+            src="/img/activities/event-1.svg"
+          />
+        );
       default:
         return (
           <Image
@@ -130,8 +140,10 @@ export default function ActivityPanel({
                             {
                               "bg-primary": activity.type == "task",
                               "bg-[#0f8bbf]":
-                                activity.type == "comment" &&
-                                activity?.metadata?.commentType != "system",
+                                (activity.type == "comment" &&
+                                  activity?.metadata?.commentType !=
+                                    "system") ||
+                                activity.type == "event",
                               "bg-gray-200":
                                 activity.type == "comment" &&
                                 activity?.metadata?.commentType == "system",

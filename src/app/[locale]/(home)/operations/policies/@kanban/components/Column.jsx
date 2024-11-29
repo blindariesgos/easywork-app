@@ -37,7 +37,7 @@ const Column = ({
           ...filter,
         },
         config: {
-          page: (defaultPage ? defaultPage : page) + 1,
+          page: (typeof defaultPage !== "undefined" ? defaultPage : page) + 1,
           limit: 10,
         },
       };
@@ -56,7 +56,7 @@ const Column = ({
         setHasMore(false);
       }
 
-      setPage((defaultPage ? defaultPage : page) + 1);
+      setPage((typeof defaultPage !== "undefined" ? defaultPage : page) + 1);
     } catch (error) {
       console.log({ error });
     }

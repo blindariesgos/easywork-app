@@ -121,7 +121,7 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
           ),
         })}
         style={{
-          minWidth: minWidthClass ?? "auto",
+          width: minWidthClass ?? "auto",
         }}
       >
         <div className="col-span-10 flex flex-col gap-2 justify-start">

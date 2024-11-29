@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { GrTask } from "react-icons/gr";
 import { GoTasklist } from "react-icons/go";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 //is a component that must recieve its props
 export default function CardTask({ data }) {
@@ -40,6 +41,12 @@ export default function CardTask({ data }) {
     },
   ];
 
+  const status = {
+    overdue: "Vencida",
+    completed: "Completada",
+    pending: "Pendiente",
+  };
+
   return (
     <div className="bg-white px-4 py-3 rounded-lg w-full">
       <div className="flex justify-between items-center">
@@ -47,11 +54,18 @@ export default function CardTask({ data }) {
           <p className="text-xs text-primary font-bold">
             {t("tools:tasks:task")}
           </p>
-          {isTaskOverdue(data) && (
-            <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700">
-              Vencida
-            </span>
-          )}
+          <span
+            className={clsx(
+              "inline-flex items-center rounded-full  px-2 py-1 text-[10px] font-medium",
+              {
+                "bg-red-100 text-red-800": data.status === "overdue",
+                "bg-[#0f8bbf] text-white": data.status === "completed",
+                "bg-yellow-500 text-white": data.status === "pending",
+              }
+            )}
+          >
+            {status[data.status] ?? data.status}
+          </span>
           <p className="text-xs text-slate-500/60 font-medium">
             {formatDate(data.createdAt)}
           </p>

@@ -1,32 +1,49 @@
-import { useState, useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useSWRConfig } from 'swr';
-import { FaTimes } from 'react-icons/fa';
-import { Transition } from '@headlessui/react';
-import Image from 'next/image';
-import DropdownSelect from './DropdownSelect';
-import { toast } from 'react-toastify';
-import * as yup from 'yup';
-import { putTaskId } from '@/src/lib/apis';
-import { useTranslation } from 'react-i18next';
-import { useTasks } from '@/src/lib/api/hooks/tasks';
+import { useState, useRef } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSWRConfig } from "swr";
+import { FaTimes } from "react-icons/fa";
+import { Transition } from "@headlessui/react";
+import Image from "next/image";
+import DropdownSelect from "./DropdownSelect";
+import { toast } from "react-toastify";
+import * as yup from "yup";
+import { putTaskId } from "@/src/lib/apis";
+import { useTranslation } from "react-i18next";
+import { useTasks } from "@/src/lib/api/hooks/tasks";
 
 const schema = yup.object().shape({
   entities: yup.array(),
 });
 
-export default function TaskEntiy({ task, lists, entityKey, label, field, getFilteredUsers, updateTaskBody }) {
-  const { t } = useTranslation()
+export default function TaskEntiy({
+  task,
+  lists,
+  entityKey,
+  label,
+  field,
+  getFilteredUsers,
+  updateTaskBody,
+}) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
-  const { mutate: mutateTasks } = useTasks({})
+  const { mutate: mutateTasks } = useTasks({});
 
-  const { register, handleSubmit, formState: { errors }, control, getValues, reset, setValue, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    getValues,
+    reset,
+    setValue,
+    watch,
+  } = useForm({
     defaultValues: {
       entities: [],
     },
@@ -36,12 +53,15 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
   const handleEditClick = (e) => {
     setIsEditing(true);
     const containerRect = containerRef.current.getBoundingClientRect();
-    setPosition({ top: e.clientY - containerRect.top, left: e.clientX - containerRect.left });
+    setPosition({
+      top: e.clientY - containerRect.top,
+      left: e.clientX - containerRect.left,
+    });
   };
 
-  const handleDateChange = async (name, value) => {
+  const handleChangeEntity = async (name, value) => {
     setIsLoading(true);
-    setValue('entities', value, { shouldValidate: true });
+    setValue("entities", value, { shouldValidate: true });
 
     await handleSubmit(async (data) => {
       const entityIds = data.entities.map((entity) => entity.id);
@@ -50,7 +70,16 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
       const body = updateTaskBody([...entityIds, ...taskEntityIds]);
 
       try {
-        await putTaskId(task.id, body);
+        const response = await putTaskId(task.id, body);
+        if (response?.hasError) {
+          toast.error(
+            response?.error?.message ??
+              "Ocurrio un error al editar la tarea, intente mas tarde"
+          );
+          setIsLoading(false);
+          return;
+        }
+        console.log({ response });
         toast.success(t("tools:tasks:update-msg"));
         await mutate(`/tools/tasks/${task.id}`);
       } catch (error) {
@@ -59,22 +88,31 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
         reset();
         setIsLoading(false);
         setIsEditing(false);
-        mutateTasks()
+        mutateTasks();
       }
-    })({ preventDefault: () => { } });
+    })({ preventDefault: () => {} });
   };
 
-
-  const handleDateRemove = async (id) => {
-    const updatedEntities = task[entityKey].filter((entity) => entity.id !== id);
-    setValue('entities', updatedEntities, { shouldValidate: true });
+  const handleRemoveEntity = async (id) => {
+    const updatedEntities = task[entityKey].filter(
+      (entity) => entity.id !== id
+    );
+    setValue("entities", updatedEntities, { shouldValidate: true });
 
     const entityIds = updatedEntities.map((entity) => entity.id);
-
     const body = updateTaskBody(entityIds);
 
     try {
-      await putTaskId(task.id, body);
+      const response = await putTaskId(task.id, body);
+      if (response?.hasError) {
+        toast.error(
+          response?.error?.message ??
+            "Ocurrio un error al editar la tarea, intente mas tarde"
+        );
+        setIsLoading(false);
+        return;
+      }
+      console.log({ response });
       toast.success(t("tools:tasks:update-msg"));
       await mutate(`/tools/tasks/${task.id}`);
     } catch (error) {
@@ -94,9 +132,9 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
         <p className="text-sm text-black">{t(label)}</p>
         <p
           className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
-          onClick={isLoading ? () => { } : handleEditClick}
+          onClick={isLoading ? () => {} : handleEditClick}
         >
-          {isLoading ? t('common:loading') : t('tools:tasks:edit:add')}
+          {isLoading ? t("common:loading") : t("tools:tasks:edit:add")}
         </p>
       </div>
       {task[entityKey]?.length > 0 &&
@@ -115,11 +153,13 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
               alt=""
               objectFit="cover"
             />
-            <p className="font-semibold text-blue-800 text-sm">{entity?.name || entity?.username}</p>
+            <p className="font-semibold text-blue-800 text-sm">
+              {entity?.name || entity?.username}
+            </p>
             {isHovering === index && (
               <FaTimes
                 className="ml-2 text-indigo-500 cursor-pointer"
-                onClick={() => handleDateRemove(entity.id)}
+                onClick={() => handleRemoveEntity(entity.id)}
               />
             )}
           </div>
@@ -133,12 +173,15 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <div className="absolute w-full z-50 bg-white shadow-lg rounded-md" style={{ top: position.top + 20, left: 'auto', right: 'auto' }}>
+        <div
+          className="absolute w-full z-50 bg-white shadow-lg rounded-md"
+          style={{ top: position.top + 20, left: "auto", right: "auto" }}
+        >
           <DropdownSelect
             {...field}
             options={filteredUsers}
             getValues={getValues}
-            setValue={handleDateChange}
+            setValue={handleChangeEntity}
             name="entities"
             error={errors.entities}
             isOpen={isEditing}
@@ -148,4 +191,4 @@ export default function TaskEntiy({ task, lists, entityKey, label, field, getFil
       </Transition>
     </div>
   );
-};
+}

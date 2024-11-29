@@ -343,7 +343,7 @@ export default function TableUsers() {
                                     <div className="flex flex-col">
                                       <p className="text-start">
                                         {user?.profile
-                                          ? `${user?.profile.firstName} ${user?.profile?.lastName}`
+                                          ? `${user?.profile?.firstName} ${user?.profile?.lastName}`
                                           : user?.username}
                                       </p>
                                       {user.bio && (
@@ -396,7 +396,7 @@ export default function TableUsers() {
                                   column.row === "desk-app" ? (
                                   "No Instalado"
                                 ) : column.row === "email" ? (
-                                  user.email ?? "-"
+                                  (user.email ?? "-")
                                 ) : column.row === "phone" ? (
                                   user.phone.length > 0 ? (
                                     `+${user.phone}`
@@ -404,10 +404,10 @@ export default function TableUsers() {
                                     "-"
                                   )
                                 ) : column.row === "lastLogin" ? (
-                                  formatDate(
+                                  (formatDate(
                                     user.lastLogin,
                                     "dd/MM/yyyy, hh:mm a"
-                                  ) ?? null
+                                  ) ?? null)
                                 ) : (
                                   user[column.row] || "-"
                                 )}

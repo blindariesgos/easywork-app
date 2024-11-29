@@ -52,7 +52,7 @@ const Column = ({
           ...filter,
         },
         config: {
-          page: (defaultPage ? defaultPage : page) + 1,
+          page: (typeof defaultPage !== "undefined" ? defaultPage : page) + 1,
           limit: 10,
         },
       };
@@ -64,13 +64,13 @@ const Column = ({
           : [...items, ...response?.items];
       setItems(auxItems);
       if (page == 0 || defaultPage == 0) {
-        setTotalItems(response?.meta?.totalItems);
+        setTotalItems(response?.meta?.totalItems ?? 0);
       }
       if (auxItems?.length >= response?.meta?.totalItems) {
         setHasMore(false);
       }
 
-      setPage((defaultPage ? defaultPage : page) + 1);
+      setPage((typeof defaultPage !== "undefined" ? defaultPage : page) + 1);
     } catch (error) {
       console.log({ error });
     }

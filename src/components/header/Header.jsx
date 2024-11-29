@@ -61,6 +61,55 @@ export default function Header() {
     { name: t("common:header:signout"), onClick: () => logout() },
   ];
 
+  const statusList = [
+    {
+      label: t("common:header:status:working"),
+      value: "working",
+      icon: (
+        <div className="border-2 border-green-500 rounded-full size-3 mr-1.5"></div>
+      ),
+    },
+    {
+      label: t("common:header:status:do_not_disturb"),
+      value: "do_not_disturb",
+      icon: (
+        <Image
+          className="h-4 w-4 mr-0.5"
+          width={30}
+          height={30}
+          src={"/icons/state/donotdisturb.png"}
+          alt="no"
+        />
+      ),
+    },
+    {
+      label: t("common:header:status:on_vacation"),
+      value: "on_vacation",
+      icon: (
+        <Image
+          className="h-4 w-4 mr-0.5"
+          width={30}
+          height={30}
+          src={"/icons/state/palmer.png"}
+          alt="vacation"
+        />
+      ),
+    },
+    {
+      label: t("common:header:status:out_of_office"),
+      value: "out_of_office",
+      icon: (
+        <Image
+          className="h-4 w-4 mr-0.5"
+          width={30}
+          height={30}
+          src={"/icons/state/out.png"}
+          alt="vacation"
+        />
+      ),
+    },
+  ];
+
   return (
     <div className="rounded-md flex h-16 shrink-0 items-center gap-x-4 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 w-full">
       {ifWebmailPath() ? (
@@ -172,9 +221,28 @@ export default function Header() {
             aria-hidden="true"
           />
 
-          <Status />
+          <Status
+            status={{
+              label: statusList.find(
+                (item) => item.value === session?.user?.status
+              )?.label,
+              icon: statusList.find(
+                (item) => item.value === session?.user?.status
+              )?.icon,
+            }}
+          />
           <General />
-          <Info />
+          <Info
+            status={{
+              label: statusList.find(
+                (item) => item.value === session?.user?.status
+              )?.label,
+              icon: statusList.find(
+                (item) => item.value === session?.user?.status
+              )?.icon,
+            }}
+            statusList={statusList}
+          />
         </div>
       </div>
     </div>

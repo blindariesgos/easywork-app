@@ -4,7 +4,15 @@ import { useTranslation } from "react-i18next";
 import AddModal from "./AddModal";
 import clsx from "clsx";
 
-const SelectSubAgent = ({ setValue, name, label, error, watch, disabled }) => {
+const SelectSubAgent = ({
+  setValue,
+  name,
+  label,
+  error,
+  watch,
+  disabled,
+  helperText,
+}) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState();
@@ -38,7 +46,7 @@ const SelectSubAgent = ({ setValue, name, label, error, watch, disabled }) => {
             "text-left min-h-[36px] w-full outline-none bg-white focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md placeholder:text-xs focus:ring-0 text-sm py-2",
             {
               // "bg-gray-100": disabled,
-              "drop-shadow-sm  ": !disabled,
+              "drop-shadow-md  ": !disabled,
             }
           )}
         >
@@ -53,6 +61,9 @@ const SelectSubAgent = ({ setValue, name, label, error, watch, disabled }) => {
         </button>
       </div>
       {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
+      {helperText && (
+        <p className="mt-1 text-xs text-gray-50 italic">{helperText}</p>
+      )}
       <AddModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}

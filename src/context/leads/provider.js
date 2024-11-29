@@ -8,19 +8,19 @@ import useAppContext from "../app";
 import { useCommon } from "@/src/hooks/useCommon";
 
 export default function LeadsContextProvider({ children }) {
-  const { t } = useTranslation()
-  const { lists } = useAppContext()
-  const [filters, setFilters] = useState({})
-  const { stagesLead, statusLead } = useCommon()
+  const { t } = useTranslation();
+  const { lists } = useAppContext();
+  const [filters, setFilters] = useState({});
+  const { stagesLead, statusLead } = useCommon();
   const [config, setConfig] = useState({
     limit: 5,
     page: 1,
     orderBy: "createdAt",
-    order: "DESC"
-  })
-  const { leads, isLoading, isError, mutate } = useLeads({ config, filters })
-  const [filterFields, setFilterFields] = useState()
-  const [displayFilters, setDisplayFilters] = useState({})
+    order: "DESC",
+  });
+  const { leads, isLoading, isError, mutate } = useLeads({ config, filters });
+  const [filterFields, setFilterFields] = useState();
+  const [displayFilters, setDisplayFilters] = useState({});
   const defaultFilterFields = [
     {
       id: 1,
@@ -60,12 +60,12 @@ export default function LeadsContextProvider({ children }) {
       type: "dropdown",
       check: true,
       code: "assignedById",
-      options: lists?.users
+      options: lists?.users,
     },
-  ]
+  ];
   useEffect(() => {
-    handleChangeConfig("page", 1)
-  }, [config.limit])
+    handleChangeConfig("page", 1);
+  }, [config.limit]);
 
   useEffect(() => {
     setFilterFields([
@@ -107,15 +107,16 @@ export default function LeadsContextProvider({ children }) {
         type: "dropdown",
         check: true,
         code: "assignedById",
-        options: lists?.users
+        options: lists?.users,
       },
-      // {
-      //   id: 5,
-      //   name: t("contacts:filters:fullname"),
-      //   type: "input",
-      //   check: false,
-      //   code: "name",
-      // },
+      {
+        id: 6,
+        name: t("operations:policies:general:type"),
+        type: "select",
+        check: false,
+        code: "policyTypeId",
+        options: lists?.policies?.polizaTypes ?? [],
+      },
       // {
       //   id: 6,
       //   name: t("contacts:filters:contact-type"),
@@ -138,42 +139,43 @@ export default function LeadsContextProvider({ children }) {
       //   check: false,
       //   code: "rfc",
       // },
-    ])
-  }, [lists?.listContact])
+    ]);
+  }, [lists?.listContact]);
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
-      [key]: value
-    }
+      [key]: value,
+    };
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy
-          ? "DESC"
-          : config.order === "ASC"
+        order:
+          value != config.orderBy
             ? "DESC"
-            : "ASC"
-      }
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
+      };
     }
 
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   const values = useMemo(
     () => ({
@@ -195,7 +197,7 @@ export default function LeadsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
-      defaultFilterFields
+      defaultFilterFields,
     }),
     [
       leads,
@@ -205,9 +207,11 @@ export default function LeadsContextProvider({ children }) {
       displayFilters,
       filterFields,
       filters,
-      defaultFilterFields
+      defaultFilterFields,
     ]
   );
 
-  return <LeadsContext.Provider value={values}>{children}</LeadsContext.Provider>;
+  return (
+    <LeadsContext.Provider value={values}>{children}</LeadsContext.Provider>
+  );
 }

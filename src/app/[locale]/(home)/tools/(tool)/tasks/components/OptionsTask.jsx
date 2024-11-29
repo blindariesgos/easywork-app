@@ -16,6 +16,7 @@ import { deleteFileTaskById } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import clsx from "clsx";
 
 const OptionsTask = ({
   edit,
@@ -214,8 +215,13 @@ const OptionsTask = ({
   return (
     <div>
       {loading && <LoaderSpinner />}
-      {value && value.length > 0 && (
-        <div className="bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative">
+      {((disabled && value && value.length > 0) || !disabled) && (
+        <div
+          className={clsx(
+            "bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative ",
+            { "drop-shadow-md": !disabled }
+          )}
+        >
           <TextEditor
             ref={quillRef}
             value={value}

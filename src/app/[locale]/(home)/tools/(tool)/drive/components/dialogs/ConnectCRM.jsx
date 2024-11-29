@@ -68,10 +68,10 @@ const ConnectCRM = () => {
             className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
           >
             <DialogTitle as="h3" className="text-base font-medium text-primary">
-              {`Vincular Carpeta ${folderConnect?.name} a un Contacto`}
+              {`Vincular Carpeta ${folderConnect?.name} a un Cliente`}
             </DialogTitle>
             <div className="py-12">
-              <p>Seleccione un contacto</p>
+              <p>Seleccione un cliente</p>
               <Combobox
                 value={selected}
                 onChange={(value) => setSelected(value)}

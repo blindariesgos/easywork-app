@@ -30,5 +30,8 @@
             "created-in": "Fecha de creación",
             "not-data": "No hay agentes"
         }
+    },
+    "meetings-and-sessions": {
+        "title": "Mis Juntas"
     }
 }

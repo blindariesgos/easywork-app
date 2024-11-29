@@ -12,6 +12,7 @@ import {
   ChevronUpIcon,
   FireIcon,
 } from "@heroicons/react/20/solid";
+import Image from "next/image";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,6 +31,10 @@ import TextEditor from "@/src/components/TextEditor";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import RadioGroupColors from "./RadioGroupColors";
 import {
+  getContactId,
+  getLeadById,
+  getPolicyById,
+  getReceiptById,
   addCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
@@ -272,7 +277,7 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(data?.crm);
+    console.log(data);
     if (!data) {
       setIsEdit(true);
       return;
@@ -286,7 +291,21 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
-    if (data?.crm) setValue("crm", data?.crm);
+    if (data?.crm)
+      setValue(
+        "crm",
+        data?.crm
+          ? data?.crm.map((item) => ({
+              id: item.id,
+              name: item.crmEntity.name
+                ? item.crmEntity.name
+                : item.crmEntity.fullName,
+              type: item.type,
+              title: item.crmEntity.title ? item.crmEntity.title : undefined,
+              username: undefined,
+            }))
+          : []
+      );
     if (data?.description)
       setValueText(data?.description ? data?.description : "<p></p>");
     if (data?.participants)
@@ -311,6 +330,92 @@ export default function EventDetails({ data, id }) {
 
     // return () => subscription.unsubscribe();
   }, [data]);
+
+  const setCrmContact = async (contactId) => {
+    const response = await getContactId(contactId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "contact",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Cliente: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmLead = async (leadId) => {
+    console.log("paso por lead");
+    const response = await getLeadById(leadId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "lead",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Prospecto: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmReceipt = async (receiptId) => {
+    const response = await getReceiptById(receiptId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "receipt",
+        name: response?.title,
+      },
+    ]);
+    console.log("receipt", response);
+    setValue("name", "CRM - Recibo: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmPolicy = async (policyId) => {
+    const response = await getPolicyById(policyId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "poliza",
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+      },
+    ]);
+    setValue("name", "CRM - Póliza: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const prevId = params.get("prev_id");
+
+    if (params.get("prev") === "contact") {
+      setLoading(true);
+      setCrmContact(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "lead") {
+      setLoading(true);
+      setCrmLead(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "policy") {
+      setLoading(true);
+      setCrmPolicy(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "receipt") {
+      setLoading(true);
+      setCrmReceipt(prevId);
+      return;
+    }
+  }, [params.get("prev")]);
 
   const deleteEvent = async () => {
     try {
@@ -383,14 +488,17 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
-            <button
-              type="button"
-              onClick={() => setIsEdit(!isEdit)}
-              title="Editar"
-            >
-              <PencilIcon className="h-6 w-6 text-primary" />
-            </button>
-            <div className="relative flex items-start px-2 sm:px-0">
+            {data && (
+              <button
+                type="button"
+                onClick={() => setIsEdit(!isEdit)}
+                title="Editar"
+              >
+                <PencilIcon className="h-6 w-6 text-primary" />
+              </button>
+            )}
+
+            <div className="relative flex items-start px-2 ml-2 sm:px-0">
               <div className="flex h-6 items-center">
                 <input
                   id="important"
@@ -633,7 +741,24 @@ export default function EventDetails({ data, id }) {
                 {t("tools:calendar:new-event:wizards")}
               </h3>
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2 flex items-center">
+              {data && (
+                <div className="flex-shrink-0 max-w-48 hover:opacity-75 inline-flex gap-x-0.5 items-center bg-indigo-100 py-1 px-2 rounded-sm font-medium text-indigo-800">
+                  {data?.createdBy?.avatar && (
+                    <Image
+                      width={32}
+                      height={32}
+                      className="inline-block h-5 w-5 rounded-full"
+                      src={data?.createdBy?.avatar || "/img/avatar.svg"}
+                      alt={"avatar"}
+                    />
+                  )}
+                  <p className="text-xs text-zinc-700 ml-1 truncate">
+                    {data?.createdBy?.profile?.firstName}{" "}
+                    {data?.createdBy?.profile?.lastName}
+                  </p>
+                </div>
+              )}
               <div className="flex flex-col gap-x-2">
                 <Controller
                   name="participants"
@@ -727,7 +852,7 @@ export default function EventDetails({ data, id }) {
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
                     </p>
-                    <div className="w-full md:w-[40%]">
+                    <div className="w-full">
                       <CRMMultipleSelectV2
                         getValues={getValues}
                         setValue={setValue}
@@ -866,7 +991,7 @@ export default function EventDetails({ data, id }) {
           <button
             type="button"
             className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => setIsEdit(false)}
+            onClick={() => (data ? setIsEdit(false) : router.back())}
           >
             {t("common:buttons:cancel")}
           </button>

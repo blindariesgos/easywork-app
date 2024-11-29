@@ -406,13 +406,6 @@ export const putReceipt = async (receiptId, body) => {
   return response;
 };
 
-export const getAllLeads = async (page = 1, limit = 6) => {
-  const response = await axios().get(
-    `/sales/crm/leads?limit=${limit}&page=${page}`
-  );
-  return response;
-};
-
 export const getLeadById = async (id) => {
   const response = await axios().get(`/sales/crm/leads/${id}`);
   return response;
@@ -469,6 +462,13 @@ export const getEmailConfig = async (email) => {
 
 export const updateEmailConfig = async (data) => {
   const response = await axios().put(`/oauth/emailconfig`, data);
+  return response;
+};
+
+export const updateStatus = async (data) => {
+  const response = await axios().put(`/users/status`, {
+    status: data
+  });
   return response;
 };
 
@@ -621,6 +621,33 @@ export const addLeadDocument = async (leadId, category, body) => {
   return response;
 };
 
+export const addPolicyByPdf = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/poliza/new/pdf`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+export const addRenovationByPdf = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/renewal/pdf`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
+export const getMetadataOfPdf = async (category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/metadata/pdf?category=${category}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
+export const addContactDocument = async (contactId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/contacts/upload/${contactId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const postPositiveStagePolicy = async (leadId) => {
   const response = await axios()
     .post(`/sales/crm/leads/${leadId}/generate_poliza`)
@@ -662,6 +689,28 @@ export const getAllPolicies = async ({
   console.log(url);
   const response = await axios()
     .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getAllLeads = async ({ config = {}, filters = {} }) => {
+  const queries = getQueries(filters);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/sales/crm/leads?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log({ url });
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getLeadCancelReazon = async () => {
+  const url = `/sales/crm/leads/cancel-reazon`;
+  const response = await axios()
+    .get(url)
+    .then((items) => ({ data: items }))
     .catch((error) => ({ hasError: true, error }));
   return response;
 };

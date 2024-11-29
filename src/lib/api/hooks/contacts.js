@@ -66,7 +66,8 @@ const getActivityPath = (cmrtype) => {
 export const useEntityActivities = (id, cmrtype) => {
   const { data, error, isLoading, mutate } = useSWR(
     `/sales/crm/${getActivityPath(cmrtype)}/${id}/activities`,
-    fetcher
+    fetcher,
+    { refreshInterval: 1000 }
   );
 
   console.log("activities data", data);

@@ -25,7 +25,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 
-export function Profile({ status, statusData }) {
+export function Profile({ status, statusList }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -209,7 +209,7 @@ export function Profile({ status, statusData }) {
       className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg w-full h-[calc(100vh_-_160px)]"
     >
       {/* Menu Izquierda */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="gap-4">
         <div className="rounded-lg bg-white">
           <div className="flex w-full justify-between pt-4">
             <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
@@ -220,23 +220,25 @@ export function Profile({ status, statusData }) {
               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 pr-4 rounded-lg"
             >
               <MenuButton className="flex items-center">
-                <p className="py-1 px-2">{status}</p>
+                {status.icon}
+                <p className="py-1 pr-2">{status.label}</p>
               </MenuButton>
               <MenuItems
                 transition
                 anchor="bottom end"
-                className=" z-50 mt-2.5 w-32 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                className=" z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none"
               >
-                {statusData.map((item) => (
+                {statusList.map((item) => (
                   <MenuItem key={item.value}>
                     {({ active }) => (
                       <div
                         onClick={() => changeStatus(item.value)}
                         className={classNames(
                           active ? "bg-gray-50" : "",
-                          "block px-3 py-1 text-sm leading-6 text-black cursor-pointer text-end"
+                          "px-3 py-1 text-sm leading-6 text-black cursor-pointer flex items-center"
                         )}
                       >
+                        {item.icon}
                         {item.label}
                       </div>
                     )}
@@ -245,7 +247,7 @@ export function Profile({ status, statusData }) {
               </MenuItems>
             </Menu>
           </div>
-          <div className="flex flex-col text-sm justify-center items-center w-full h-full">
+          <div className="flex flex-col text-sm justify-center items-center w-full h-full py-24">
             {isEdit ? (
               <ProfileImageInput
                 selectedProfileImage={selectedProfileImage}
@@ -253,16 +255,14 @@ export function Profile({ status, statusData }) {
                 disabled={!isEdit}
               />
             ) : (
-              <div className="p-2">
-                <Image
-                  width={1080}
-                  height={1080}
-                  src={data?.user?.avatar || "/img/avatar.svg"}
-                  alt="Profile picture"
-                  className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
-                  objectFit="fill"
-                />
-              </div>
+              <Image
+                width={1080}
+                height={1080}
+                src={data?.user?.avatar || "/img/avatar.svg"}
+                alt="Profile picture"
+                className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
+                objectFit="fill"
+              />
             )}
           </div>
         </div>
@@ -271,7 +271,7 @@ export function Profile({ status, statusData }) {
       <div className="h-auto rounded-lg">
         <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
           <div className="flex justify-between py-4 px-2 rounded-md">
-            <h1 className="text-primary font-bold text-2xl">
+            <h1 className="text-primary font-bold text-xl">
               Información del usuario
             </h1>
             {data?.user && (
@@ -339,10 +339,10 @@ export function Profile({ status, statusData }) {
         </div>
         {groups?.map((group, index) => (
           <div
-            className="w-full p-1 mt-4 rounded-lg h-60 bg-white overflow-y-auto"
+            className="w-full py-4 px-2 mt-4 rounded-lg h-60 bg-white overflow-y-auto"
             key={index}
           >
-            <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
+            <h1 className="text-primary font-bold text-xl p-2 w-full">
               Compañía: {group.name}
             </h1>
             {group?.users?.map((user, index) => (

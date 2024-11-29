@@ -12,6 +12,7 @@ import {
   ChevronUpIcon,
   FireIcon,
 } from "@heroicons/react/20/solid";
+import Image from "next/image";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -296,7 +297,9 @@ export default function EventDetails({ data, id }) {
         data?.crm
           ? data?.crm.map((item) => ({
               id: item.id,
-              name: item.crmEntity.name ? item.crmEntity.name : item.crmEntity.fullName,
+              name: item.crmEntity.name
+                ? item.crmEntity.name
+                : item.crmEntity.fullName,
               type: item.type,
               title: item.crmEntity.title ? item.crmEntity.title : undefined,
               username: undefined,
@@ -738,7 +741,24 @@ export default function EventDetails({ data, id }) {
                 {t("tools:calendar:new-event:wizards")}
               </h3>
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2 flex items-center">
+              {data && (
+                <div className="flex-shrink-0 max-w-48 hover:opacity-75 inline-flex gap-x-0.5 items-center bg-indigo-100 py-1 px-2 rounded-sm font-medium text-indigo-800">
+                  {data?.createdBy?.avatar && (
+                    <Image
+                      width={32}
+                      height={32}
+                      className="inline-block h-5 w-5 rounded-full"
+                      src={data?.createdBy?.avatar || "/img/avatar.svg"}
+                      alt={"avatar"}
+                    />
+                  )}
+                  <p className="text-xs text-zinc-700 ml-1 truncate">
+                    {data?.createdBy?.profile?.firstName}{" "}
+                    {data?.createdBy?.profile?.lastName}
+                  </p>
+                </div>
+              )}
               <div className="flex flex-col gap-x-2">
                 <Controller
                   name="participants"

@@ -11,7 +11,7 @@ export const formatToCurrency = (amount) => {
     maximumFractionDigits: 2,
   };
 
-  return new Intl.NumberFormat("de-DE", options).format(amount);
+  return new Intl.NumberFormat("en-US", options).format(amount);
 };
 
 export function correctSpecialCharacters(texto) {

@@ -56,7 +56,7 @@ function SystemNotification({ data }) {
           </div>
 
           <p className="text-xs text-gray-50">
-            {"Se ha subido el archivo "}
+            {`Se ha subido el archivo ${metadata?.file?.fieldname ? `${metadata?.file?.fieldname} ` : ""}`}
             <span
               className={clsx({
                 "hover:underline cursor-pointer":
@@ -71,8 +71,10 @@ function SystemNotification({ data }) {
                 )
               }
             >
-              {metadata?.file?.name
-                ? correctSpecialCharacters(metadata?.file?.name)
+              {metadata?.file?.name || metadata?.file?.originalname
+                ? correctSpecialCharacters(
+                    metadata?.file?.name || metadata?.file?.originalname
+                  )
                 : "System"}
             </span>
             .

@@ -14,7 +14,11 @@ import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { addLeadDocument, addPolicyByPdf } from "@/src/lib/apis";
+import {
+  addLeadDocument,
+  addPolicyByPdf,
+  getMetadataOfPdf,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
@@ -23,12 +27,13 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [policy, setPolicy] = useState();
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
+  const [helpers, setHelpers] = useState({});
 
   const schema = yup.object().shape({
     contact: yup.object().shape({}).required(t("common:validations:required")),
     // typePerson: yup.string().required(t("common:validations:required")),
-    aseguradora: yup.string().required(t("common:validations:required")),
-    tipo: yup.string().required(t("common:validations:required")),
+    insuranceId: yup.string().required(t("common:validations:required")),
+    typeId: yup.string().required(t("common:validations:required")),
     responsibleId: yup.string().required(t("common:validations:required")),
     subAgente: yup.object().shape({}),
   });
@@ -48,6 +53,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   });
 
   const handleChangeFile = async (e) => {
+    setLoading(true);
     const files = e.target.files;
 
     if (!files) {
@@ -55,6 +61,10 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     }
 
     const file = Array.from(files)[0];
+
+    if (!file) {
+      return;
+    }
 
     if (file.size > MAX_FILE_SIZE) {
       toast.error("El archivo debe tener un tamaño menor a 5MB.");
@@ -74,15 +84,51 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       setPolicy(result);
     };
     reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append("poliza", file);
+    const response = await getMetadataOfPdf("nueva", formData);
+
+    if (response?.hasError) {
+      if (Array.isArray(response?.error?.message)) {
+        response?.error?.message.forEach((message) => {
+          toast.error(message);
+        });
+      } else {
+        toast.error(
+          response?.error?.message ??
+            "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
+        );
+      }
+      setLoading(false);
+      return;
+    }
+
+    const insurance = lists?.policies?.polizaCompanies.find(
+      (x) => x.name == response.insurance
+    );
+    if (insurance) {
+      setValue("insuranceId", insurance.id);
+    }
+
+    const type = lists?.policies?.polizaTypes.find(
+      (x) => x.name == response.type
+    );
+    if (type) {
+      setValue("typeId", type.id);
+    }
+
+    setLoading(false);
   };
 
   const onSubmit = async (data) => {
+    setLoading(true);
     const { contact, subAgente, ...otherData } = data;
     const body = {
       ...otherData,
       poliza: policy.file,
-      contactId: contact.id,
-      subAgenteId: subAgente.id,
+      clientId: contact.id,
+      subAgentId: subAgente.id,
     };
     const formData = new FormData();
     for (const key in body) {
@@ -98,38 +144,53 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       }
     }
 
-    console.log({ data, body });
     try {
       const response = await addPolicyByPdf(formData);
       if (response?.hasError) {
-        toast.error(
-          response?.error?.message ??
-            "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
-        );
+        if (Array.isArray(response?.error?.message)) {
+          response?.error?.message.forEach((message) => {
+            toast.error(message);
+          });
+        } else {
+          toast.error(
+            response?.error?.message ??
+              "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
+          );
+        }
         setLoading(false);
 
         return;
       }
-    } catch (error) {}
-    setIsOpen(false);
+      toast.success("Poliza cargada con exito");
+      setIsOpen(false);
+      handleReset();
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error?.message ??
+          "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
+      );
+    }
+    setLoading(false);
   };
 
   const handleReset = () => {
     reset({
       contact: "",
-      aseguradora: "",
-      tipo: "",
-      typePerson: "",
       subAgente: "",
       responsibleId: "",
+      insuranceId: "",
+      typeId: "",
     });
+    setPolicy();
+    setHelpers({});
     reset();
   };
 
   return (
     <Fragment>
-      {loading && <LoaderSpinner />}
       <SliderOverShord openModal={isOpen}>
+        {loading && <LoaderSpinner />}
         <Tag
           onclick={() => {
             handleReset();
@@ -146,52 +207,13 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                 {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
-                {/* <SelectInput
-                label={t("control:portafolio:control:form:typePerson")}
-                options={[
-                  {
-                    name: "Física",
-                    id: "fisica",
-                  },
-                  {
-                    name: "Moral",
-                    id: "moral",
-                  },
-                ]}
-                name="typePerson"
-                error={errors?.typePerson}
-              /> */}
                 <ContactSelectAsync
                   label={t("control:portafolio:control:form:contact")}
                   name={"contact"}
                   setValue={setValue}
                   watch={watch}
                   error={errors?.contact}
-                />
-                <SelectInput
-                  label={t("control:portafolio:control:form:insurance-company")}
-                  options={[
-                    {
-                      id: "gnp",
-                      name: "GNP",
-                    },
-                  ]}
-                  name="aseguradora"
-                  error={errors?.aseguradora}
-                  setValue={setValue}
-                />
-
-                <SelectInput
-                  label={t("control:portafolio:control:form:branch")}
-                  options={[
-                    {
-                      id: "vehiculos",
-                      name: "VEHICULO",
-                    },
-                  ]}
-                  error={errors?.branch}
-                  name="tipo"
-                  setValue={setValue}
+                  helperText={helpers?.contact}
                 />
                 <SelectSubAgent
                   label={t("control:portafolio:control:form:subAgente")}
@@ -200,6 +222,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                   setValue={setValue}
                   watch={watch}
                   error={errors?.subAgente}
+                  helperText={helpers?.subAgent}
                 />
                 <SelectInput
                   label={t("control:portafolio:control:form:responsible")}
@@ -208,6 +231,30 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                   error={errors?.responsibleId}
                   setValue={setValue}
                 />
+
+                {policy && (
+                  <Fragment>
+                    <SelectInput
+                      label={t(
+                        "control:portafolio:control:form:insurance-company"
+                      )}
+                      options={lists?.policies?.polizaCompanies ?? []}
+                      name="insuranceId"
+                      error={errors?.insuranceId}
+                      setValue={setValue}
+                      watch={watch}
+                    />
+
+                    <SelectInput
+                      label={t("control:portafolio:control:form:branch")}
+                      options={lists?.policies?.polizaTypes ?? []}
+                      error={errors?.typeId}
+                      name="typeId"
+                      setValue={setValue}
+                      watch={watch}
+                    />
+                  </Fragment>
+                )}
 
                 <div className="w-full">
                   <label
@@ -246,6 +293,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     </span>
                   </p>
                 </div>
+
                 <div className="w-full flex justify-center gap-4 py-4">
                   <Button
                     className="px-4 py-2"

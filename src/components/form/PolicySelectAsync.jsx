@@ -14,7 +14,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePolicies } from "@/src/lib/api/hooks/policies";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
-import { getContactId } from "@/src/lib/apis";
+import { getContactId, getPolicyById } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
 
 function PolicySelectAsync({
@@ -71,12 +71,12 @@ function PolicySelectAsync({
 
   useEffect(() => {
     if (!watch || !watch(name) || selected) return;
-    const getContact = async (contactId) => {
-      const response = await getContactId(contactId);
+    const getPolicy = async (policyId) => {
+      const response = await getPolicyById(policyId);
       if (response.hasError) return;
       setSelected(response);
     };
-    getContact(watch(name));
+    getPolicy(watch(name));
   }, [watch && watch(name)]);
 
   return (

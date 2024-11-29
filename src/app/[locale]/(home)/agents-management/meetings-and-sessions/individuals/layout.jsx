@@ -2,33 +2,19 @@
 import React, { Suspense } from "react";
 import LayoutPage from "./LayoutPage";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import ManagementsContextProvider from "@/src/context/managements/provider";
+import MeetingContextProvider from "@/src/context/meetings/provider";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 // import Cards from "./components/Cards";
 
-export default function Layout({ children, table, kanban }) {
+export default function Page({ children, table, kanban }) {
   const { t } = useTranslation();
-
-  const tabs = [
-    {
-      name: "Kanban",
-      // component: kanban,
-      disabled: true,
-    },
-    {
-      name: "Lista",
-      component: table,
-      disabled: true,
-    },
-  ];
 
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
-      <ManagementsContextProvider>
+      <MeetingContextProvider>
         <LayoutPage>
           {/* <Suspense fallback={<LoaderSpinner />}> */}
-          {/* <Cards /> */}
           {/* <TabGroup
               defaultIndex={1}
               className="w-full flex flex-col items-start"
@@ -56,7 +42,7 @@ export default function Layout({ children, table, kanban }) {
           {/* </Suspense> */}
           {table}
         </LayoutPage>
-      </ManagementsContextProvider>
+      </MeetingContextProvider>
     </div>
   );
 }

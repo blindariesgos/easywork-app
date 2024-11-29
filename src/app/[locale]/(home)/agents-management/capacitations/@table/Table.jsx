@@ -23,6 +23,7 @@ import { formatToCurrency } from '@/src/utils/formatters';
 import useAppContext from '@/src/context/app';
 import FooterTable from '@/src/components/FooterTable';
 import DeleteItemModal from '@/src/components/modals/DeleteItem';
+import StageProgress from '../components/StageProgress';
 
 export default function Table() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage, mutate } = useCapacitationsContext();
@@ -307,18 +308,18 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((policy, index) => {
+                  data?.items.map((capacitation, index) => {
                     return (
-                      <tr key={index} className={clsx(selectedContacts.includes(policy.id) ? 'bg-gray-200' : undefined, 'hover:bg-indigo-100/40 cursor-default')}>
+                      <tr key={index} className={clsx(selectedContacts.includes(capacitation.id) ? 'bg-gray-200' : undefined, 'hover:bg-indigo-100/40 cursor-default')}>
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(policy.id) && <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />}
+                          {selectedContacts.includes(capacitation.id) && <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={policy.id}
-                              checked={selectedContacts.includes(policy.id)}
-                              onChange={e => setSelectedContacts(e.target.checked ? [...selectedContacts, policy.id] : selectedContacts.filter(p => p !== policy.id))}
+                              value={capacitation.id}
+                              checked={selectedContacts.includes(capacitation.id)}
+                              onChange={e => setSelectedContacts(e.target.checked ? [...selectedContacts, capacitation.id] : selectedContacts.filter(p => p !== capacitation.id))}
                             />
                             <Menu as="div" className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg">
                               <MenuButton className="-m-1.5 flex items-center p-1.5">
@@ -340,8 +341,8 @@ export default function Table() {
                                         key={item.name}
                                         disabled={item.disabled}
                                         onClick={() => {
-                                          item.handleClick && item.handleClick(policy.id);
-                                          item.handleClickContact && item.handleClickContact(policy?.contact?.id);
+                                          item.handleClick && item.handleClick(capacitation.id);
+                                          item.handleClickContact && item.handleClickContact(capacitation?.contact?.id);
                                         }}
                                       >
                                         <div
@@ -380,8 +381,8 @@ export default function Table() {
                                                 key={option.name}
                                                 disabled={option.disabled}
                                                 onClick={() => {
-                                                  option.handleClick && option.handleClick(policy.id);
-                                                  option.handleClickContact && option.handleClickContact(policy?.contact?.id);
+                                                  option.handleClick && option.handleClick(capacitation.id);
+                                                  option.handleClickContact && option.handleClickContact(capacitation?.contact?.id);
                                                 }}
                                               >
                                                 <div className={clsx('block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50')}>
@@ -402,16 +403,9 @@ export default function Table() {
                         {selectedColumns.length > 0 &&
                           selectedColumns.map((column, index) => (
                             <td className="ml-4 py-4" key={index}>
-                              <div
-                                className={clsx('font-medium text-sm  text-black hover:text-primary', {
-                                  'text-center': ['vigenciaDesde', 'poliza', 'source', 'status'].includes(column.row),
-                                  'text-right': ['importePagar'].includes(column.row),
-                                })}
-                              >
+                              <div className="font-medium text-sm  text-black hover:text-primary text-center">
                                 {column.row == 'name' ? (
-                                  <Link href={`/operations/policies/policy/${policy.id}?show=true`}>
-                                    <p>{`${policy?.company?.name ?? ''} ${policy?.poliza} ${policy?.type?.name}`}</p>
-                                  </Link>
+                                  <p>{`${capacitation?.name}`}</p>
                                 ) : column.row == 'activities' ? (
                                   <div className="flex justify-center gap-2">
                                     <button
@@ -439,14 +433,31 @@ export default function Table() {
                                       <PhoneIcon className="h-4 w-4" aria-hidden="true" />
                                     </button>
                                   </div>
-                                ) : column.row === 'vigenciaDesde' ? (
-                                  (formatDate(policy[column.row], 'dd/MM/yyyy') ?? null)
-                                ) : column.row === 'importePagar' ? (
-                                  `${lists?.policies?.currencies?.find(x => x.id == policy?.currency?.id)?.symbol ?? ''} ${formatToCurrency(policy[column.row])}`
-                                ) : column.row === 'status' ? (
-                                  policyStatus[policy[column.row]]
+                                ) : column.row === 'stage' ? (
+                                  <>
+                                    {capacitation[column.row] && (
+                                      <>
+                                        <StageProgress stage={capacitation[column.row]} />
+                                        <p className="text-gray-50" style={{ fontSize: '0.7rem' }}>
+                                          Ejemplo
+                                        </p>
+                                      </>
+                                    )}
+                                  </>
+                                ) : column.row === 'startDate' ? (
+                                  (formatDate(capacitation[column.row], 'dd/MM/yyyy') ?? null)
+                                ) : column.row === 'endDate' ? (
+                                  (formatDate(capacitation[column.row], 'dd/MM/yyyy') ?? null)
+                                ) : column.row === 'processClosed' ? (
+                                  capacitation[column.row] ? (
+                                    'Si'
+                                  ) : (
+                                    'No'
+                                  )
+                                ) : column.row === 'responsible' ? (
+                                  (capacitation[column.row] ?? null)
                                 ) : (
-                                  policy[column.row] || '-'
+                                  capacitation[column.row] || '-'
                                 )}
                               </div>
                             </td>

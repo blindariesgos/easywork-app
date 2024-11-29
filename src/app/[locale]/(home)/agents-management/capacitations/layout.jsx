@@ -7,11 +7,8 @@ export default async function Layout({ children, table }) {
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
       <CapacitationsContextProvider>
-        <LayoutPage>
-          <Suspense fallback={<LoaderSpinner />}>
-            {table}
-            {children}
-          </Suspense>
+        <LayoutPage table={table}>
+          <Suspense fallback={<LoaderSpinner />}>{children}</Suspense>
         </LayoutPage>
       </CapacitationsContextProvider>
     </div>

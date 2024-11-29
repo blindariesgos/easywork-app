@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import SelectInput from "../../components/form/SelectInput";
 import ContactSelectAsync from "../../components/form/ContactSelectAsync";
+import PolicySelectAsync from "../../components/form/PolicySelectAsync";
+import LeadSelectAsync from "../../components/form/LeadSelectAsync";
 import MultipleSelect from "../../components/form/MultipleSelect";
 import InputDate from "../../components/form/InputDate";
 import MultiSelectTags from "../../components/form/MultiSelectTags";
@@ -347,6 +349,23 @@ const FormFilters = () => {
             )}
             {dataField.type === "select-contact" && (
               <ContactSelectAsync
+                label={dataField.name}
+                name={`fields[${index}].value`}
+                setValue={setValue}
+                watch={watch}
+              />
+            )}
+
+            {dataField.type === "select-policy" && (
+              <PolicySelectAsync
+                label={dataField.name}
+                name={`fields[${index}].value`}
+                setValue={setValue}
+                watch={watch}
+              />
+            )}
+            {dataField.type === "select-lead" && (
+              <LeadSelectAsync
                 label={dataField.name}
                 name={`fields[${index}].value`}
                 setValue={setValue}

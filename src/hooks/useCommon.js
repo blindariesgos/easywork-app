@@ -435,7 +435,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: "Reuniones y sesiones",
-          href: "/agents-management/meetings-and-sessions",
+          href: "/agents-management/meetings-and-sessions/my-meetings",
           icon: ChevronRightIcon,
           image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,
@@ -444,13 +444,13 @@ export const useSidebar = () => {
             {
               id: "agent-management",
               name: t("common:menu:agent-management:team-meetings"),
-              href: "",
+              href: "/agents-management/meetings-and-sessions/teams",
               iconShortBar: SparklesIcon,
             },
             {
               id: "agent-management",
               name: t("common:menu:agent-management:individual-meetings"),
-              href: "",
+              href: "/agents-management/meetings-and-sessions/individuals",
               iconShortBar: SparklesIcon,
             },
           ],

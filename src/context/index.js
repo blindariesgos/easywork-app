@@ -24,3 +24,4 @@ export const ImportationsContext = createContext(null);
 export const ManagementsContext = createContext(null);
 export const AccompanimentsContext = createContext(null);
 export const CustomImportContext = createContext(null);
+export const MeetingsContext = createContext(null);

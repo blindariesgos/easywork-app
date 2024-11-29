@@ -9,7 +9,7 @@ import { useCallback, useState } from "react";
 import Button from "../form/Button";
 import { useTranslation } from "react-i18next";
 import { MdUpload } from "react-icons/md";
-import { addReceiptDocument } from "@/src/lib/apis";
+import { addContactDocument, addReceiptDocument } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { addLeadDocument } from "../../lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
@@ -50,6 +50,7 @@ const AddDocumentDialog = ({
   const endpoints = {
     receipt: (data) => addReceiptDocument(id, documentType, data),
     lead: (data) => addLeadDocument(id, documentType, data),
+    contact: (data) => addContactDocument(id, documentType, data),
   };
 
   const handleFormSubmit = async () => {
@@ -59,19 +60,29 @@ const AddDocumentDialog = ({
     try {
       setLoading(true);
       const response = await endpoints[cmrType](formData);
-      if (response.hasError) {
+      if (response?.hasError) {
         let message = response.message;
         if (response.errors) {
           message = response.errors.join(", ");
         }
         throw { message };
       }
-      toast.success("Documento agregado con exito");
+      if (response?.client?.fullName) {
+        toast.success(
+          `Se cargo con éxito póliza con contratante ${response.client.fullName}`
+        );
+      } else {
+        toast.success("Documento agregado con exito");
+      }
+
+      if (response?.warns?.length) {
+        toast.warning(response?.warns?.join(", "));
+      }
       onFinished && onFinished();
       update && update();
     } catch (error) {
       console.log({ error });
-      handleApiError(error.message);
+      handleApiError(error);
     } finally {
       setLoading(false);
       setIsOpen(false);

@@ -32,8 +32,8 @@ export default function UserEditor({ user, id }) {
               <div className="flex gap-2 items-center">
                 <h1 className="text-xl sm:pl-6 pl-2">
                   {user
-                    ? `${user?.profile.firstName} ${user?.profile?.lastName}` ??
-                      user.name
+                    ? (`${user?.profile?.firstName} ${user?.profile?.lastName}` ??
+                      user.name)
                     : t("leads:create:client")}
                 </h1>
               </div>

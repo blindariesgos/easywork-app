@@ -28,6 +28,7 @@ function SelectInput({
   watch,
   setSelectedOption,
   placeholder,
+  helperText,
 }) {
   const { t } = useTranslation();
   const props = register && register(name);
@@ -86,7 +87,7 @@ function SelectInput({
                   border,
                 "border-none focus:ring-0 ": !border,
                 // "bg-gray-100": disabled,
-                "drop-shadow-sm": !disabled,
+                "drop-shadow-md": !disabled,
               }
             )}
             displayValue={(person) => person?.name}
@@ -151,6 +152,9 @@ function SelectInput({
           </ComboboxOptions>
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
+        {helperText && (
+          <p className="mt-1 text-xs text-gray-50 italic">{helperText}</p>
+        )}
       </Combobox>
     </div>
   );

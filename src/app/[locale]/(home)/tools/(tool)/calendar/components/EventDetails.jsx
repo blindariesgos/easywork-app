@@ -30,6 +30,10 @@ import TextEditor from "@/src/components/TextEditor";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import RadioGroupColors from "./RadioGroupColors";
 import {
+  getContactId,
+  getLeadById,
+  getPolicyById,
+  getReceiptById,
   addCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
@@ -272,7 +276,7 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(data?.crm);
+    console.log(data);
     if (!data) {
       setIsEdit(true);
       return;
@@ -286,7 +290,19 @@ export default function EventDetails({ data, id }) {
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
-    if (data?.crm) setValue("crm", data?.crm);
+    if (data?.crm)
+      setValue(
+        "crm",
+        data?.crm
+          ? data?.crm.map((item) => ({
+              id: item.id,
+              name: item.crmEntity.name ? item.crmEntity.name : item.crmEntity.fullName,
+              type: item.type,
+              title: item.crmEntity.title ? item.crmEntity.title : undefined,
+              username: undefined,
+            }))
+          : []
+      );
     if (data?.description)
       setValueText(data?.description ? data?.description : "<p></p>");
     if (data?.participants)
@@ -311,6 +327,92 @@ export default function EventDetails({ data, id }) {
 
     // return () => subscription.unsubscribe();
   }, [data]);
+
+  const setCrmContact = async (contactId) => {
+    const response = await getContactId(contactId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "contact",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Cliente: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmLead = async (leadId) => {
+    console.log("paso por lead");
+    const response = await getLeadById(leadId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "lead",
+        name: response?.fullName || response?.name,
+      },
+    ]);
+    setValue("name", "CRM - Prospecto: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmReceipt = async (receiptId) => {
+    const response = await getReceiptById(receiptId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "receipt",
+        name: response?.title,
+      },
+    ]);
+    console.log("receipt", response);
+    setValue("name", "CRM - Recibo: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  const setCrmPolicy = async (policyId) => {
+    const response = await getPolicyById(policyId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "poliza",
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+      },
+    ]);
+    setValue("name", "CRM - Póliza: ");
+    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const prevId = params.get("prev_id");
+
+    if (params.get("prev") === "contact") {
+      setLoading(true);
+      setCrmContact(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "lead") {
+      setLoading(true);
+      setCrmLead(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "policy") {
+      setLoading(true);
+      setCrmPolicy(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "receipt") {
+      setLoading(true);
+      setCrmReceipt(prevId);
+      return;
+    }
+  }, [params.get("prev")]);
 
   const deleteEvent = async () => {
     try {
@@ -383,14 +485,17 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
-            <button
-              type="button"
-              onClick={() => setIsEdit(!isEdit)}
-              title="Editar"
-            >
-              <PencilIcon className="h-6 w-6 text-primary" />
-            </button>
-            <div className="relative flex items-start px-2 sm:px-0">
+            {data && (
+              <button
+                type="button"
+                onClick={() => setIsEdit(!isEdit)}
+                title="Editar"
+              >
+                <PencilIcon className="h-6 w-6 text-primary" />
+              </button>
+            )}
+
+            <div className="relative flex items-start px-2 ml-2 sm:px-0">
               <div className="flex h-6 items-center">
                 <input
                   id="important"
@@ -727,7 +832,7 @@ export default function EventDetails({ data, id }) {
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:crm")}
                     </p>
-                    <div className="w-full md:w-[40%]">
+                    <div className="w-full">
                       <CRMMultipleSelectV2
                         getValues={getValues}
                         setValue={setValue}
@@ -866,7 +971,7 @@ export default function EventDetails({ data, id }) {
           <button
             type="button"
             className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => setIsEdit(false)}
+            onClick={() => (data ? setIsEdit(false) : router.back())}
           >
             {t("common:buttons:cancel")}
           </button>

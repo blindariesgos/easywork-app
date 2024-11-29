@@ -141,7 +141,7 @@ export default function ProgressStages({ stage, leadId, disabled }) {
             }
           )}
           onClick={() => {
-            if (disabled) return;
+            // if (disabled) return;
             setIsOpen(true);
           }}
         >

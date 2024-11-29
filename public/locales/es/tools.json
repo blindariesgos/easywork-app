@@ -76,7 +76,7 @@
     "table": {
       "name": "Nombre",
       "activity": "Actividad",
-      "contact": "Contacto",
+      "contact": "Cliente",
       "policy": "Póliza",
       "limit-date": "Fecha límite",
       "created-by": "Creado por",
@@ -195,7 +195,7 @@
       "see": "Observar",
       "dontsee": "No ver",
       "add": "Agregar",
-      "contact": "Contacto",
+      "contact": "Cliente",
       "policy": "Póliza",
       "lead": "Prospecto",
       "init": "Iniciar",

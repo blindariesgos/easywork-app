@@ -31,7 +31,7 @@ const ContactList = () => {
       )}
     >
       <h1 className="h-1/6 font-medium w-full">
-        Contactos que requieren atención
+        Clientes que requieren atención
       </h1>
       {isLoading ? (
         <LoadingSpinnerSmall color="primary" />
@@ -72,7 +72,7 @@ const ContactList = () => {
         <Fragment>
           <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
             <h1 className="text-sm p-2 ">
-              ¡Buen trabajo! tus contactos están al día
+              ¡Buen trabajo! tus clientes están al día
             </h1>
           </div>
         </Fragment>

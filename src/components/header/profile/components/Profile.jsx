@@ -40,7 +40,6 @@ export function Profile({ status, statusList }) {
   const { mutate } = useSWRConfig();
   const { data, update } = useSession();
   const [groups, setGroups] = useState([]);
-
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
 

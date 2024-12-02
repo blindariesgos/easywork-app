@@ -31,8 +31,8 @@ export default function Info({ status, statusList }) {
     { name: t("contacts:create:tabs:general"), value: 0 },
     { name: "Tareas", value: 1 },
     { name: "Calendario", value: 2 },
-    // { name: "Drive", value: 3 },
-    // { name: "Acompañamiento", value: 3 },
+    { name: "Drive", value: 3 },
+    { name: "Actividades", value: 4 },
     // { name: "Flujo de comunicación", value: 4 },
     // { name: "mas", value: 5 },
   ];

@@ -26,7 +26,9 @@ import { Controller, useForm } from "react-hook-form";
 import listPlugin from "@fullcalendar/list";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
+import { add, addHours, format, formatISO, parseISO } from "date-fns";
 import * as yup from "yup";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogPanel,
@@ -52,10 +54,10 @@ export default function CalendarHome({ children }) {
     start: null,
     end: null,
   });
-  const [isEdit, setIsEdit] = useState(false);
   const [allDay, setAllDay] = useState(false);
   const [timezoneStart, setTimezoneStart] = useState(false);
   const [timezoneEnd, setTimezoneEnd] = useState(false);
+  const [loading, setLoading] = useState(false);
   const calendarViews = [
     {
       name: t("tools:calendar:day"),
@@ -188,12 +190,7 @@ export default function CalendarHome({ children }) {
       reminder: formatISO(reminderValue ?? startTime),
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
-      availability: availability ? availability : availabilityOptions[0].id,
-      description: value ?? "<p></p>",
       color: color ?? "#141052",
-      important: !!important,
-      private: !!isPrivate,
-      repeat: repeat ?? "none",
       name,
       crm: crm?.map((item) => ({ id: item.id, type: item.type })) || [],
     };
@@ -514,6 +511,21 @@ export default function CalendarHome({ children }) {
                     error={errors.crm}
                   />
                 </div>
+              </div>
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                >
+                  {t("common:buttons:save")}
+                </button>
+                <button
+                  type="button"
+                  className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
+                  onClick={(prev) => setIsOpen({ ...prev, state: false })}
+                >
+                  {t("common:buttons:cancel")}
+                </button>
               </div>
             </form>
           </div>

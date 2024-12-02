@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import useManagementContext from "@/src/context/managements";
+import useMeetingContext from "@/src/context/meetings";
 import FilterTable from "@/src/components/FilterTable";
 
 const FilterManagements = () => {
-  const contextValues = useManagementContext();
+  const contextValues = useMeetingContext();
 
   return <FilterTable contextValues={contextValues} />;
 };

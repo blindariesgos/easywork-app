@@ -467,7 +467,7 @@ export const updateEmailConfig = async (data) => {
 
 export const updateStatus = async (data) => {
   const response = await axios().put(`/users/status`, {
-    status: data
+    status: data,
   });
   return response;
 };

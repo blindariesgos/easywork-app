@@ -1,6 +1,6 @@
 "use client";
 import useAppContext from "@/src/context/app";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -31,6 +31,7 @@ export function Profile({ status, statusList }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const [isEdit, setIsEdit] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [contactType, setContactType] = useState(null);
   const [contactSource, setContactSource] = useState(null);
   const [contactResponsible] = useState(null);
@@ -219,32 +220,42 @@ export function Profile({ status, statusList }) {
               as="div"
               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 pr-4 rounded-lg"
             >
-              <MenuButton className="flex items-center">
-                {status.icon}
-                <p className="py-1 pr-2">{status.label}</p>
-              </MenuButton>
-              <MenuItems
-                transition
-                anchor="bottom end"
-                className=" z-50 mt-2.5 w-40 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-              >
-                {statusList.map((item) => (
-                  <MenuItem key={item.value}>
-                    {({ active }) => (
-                      <div
-                        onClick={() => changeStatus(item.value)}
-                        className={classNames(
-                          active ? "bg-gray-50" : "",
-                          "px-3 py-1 text-sm leading-6 text-black cursor-pointer flex items-center"
-                        )}
-                      >
-                        {item.icon}
-                        {item.label}
-                      </div>
-                    )}
-                  </MenuItem>
-                ))}
-              </MenuItems>
+              {({ open }) => {
+                if (open !== isMenuOpen) {
+                  setIsMenuOpen(open);
+                }
+                return (
+                  <>
+                    <Menu.Button className="flex items-center">
+                      {status.icon} <p className="py-1 pr-2">{status.label}</p>
+                      <ChevronDownIcon
+                        className={`w-5 h-5 transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
+                      />
+                    </Menu.Button>
+                    <Menu.Items
+                      transition
+                      anchor="bottom end"
+                      className="z-50 mt-2.5 w-52 rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                    >
+                      {statusList.map((item) => (
+                        <Menu.Item key={item.value}>
+                          {({ active }) => (
+                            <div
+                              onClick={() => changeStatus(item.value)}
+                              className={classNames(
+                                active ? "bg-gray-50" : "",
+                                "px-3 py-1 text-sm leading-6 text-black cursor-pointer flex items-center"
+                              )}
+                            >
+                              {item.icon} {item.label}
+                            </div>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Items>
+                  </>
+                );
+              }}
             </Menu>
           </div>
           <div className="flex flex-col text-sm justify-center items-center w-full h-full py-24">

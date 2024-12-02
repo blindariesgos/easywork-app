@@ -693,12 +693,12 @@ export const getAllPolicies = async ({
   return response;
 };
 
-export const getAllLeads = async ({ config = {}, filters = {} }) => {
+export const getKanbanLeads = async ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/sales/crm/leads?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const url = `/sales/crm/leads/kanban?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
   const response = await axios()
     .get(url)

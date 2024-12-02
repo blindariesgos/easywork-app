@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import useLeadsContext from "@/src/context/leads";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { formatToCurrency } from "@/src/utils/formatters";
-import { getAllLeads } from "@/src/lib/apis";
+import { getKanbanLeads } from "@/src/lib/apis";
 
 const Column = ({
   id,
@@ -42,7 +42,7 @@ const Column = ({
           limit: 10,
         },
       };
-      const response = await getAllLeads(params);
+      const response = await getKanbanLeads(params);
       console.log(name, response, params);
       const auxItems =
         page == 0 || defaultPage == 0
@@ -51,7 +51,7 @@ const Column = ({
       setItems(auxItems);
       if (page == 0 || defaultPage == 0) {
         setTotalItems(response?.meta?.totalItems);
-        // setTotalAmount(response[0].totalAmount);
+        setTotalAmount(response?.meta?.amount ?? 0);
       }
       if (auxItems?.length >= response?.meta?.totalItems) {
         setHasMore(false);
@@ -97,6 +97,7 @@ const Column = ({
       >
         {name} ({totalItems ?? 0})
       </p>
+      <p className="text-center py-2">$ {formatToCurrency(totalAmount)}</p>
 
       <InfiniteScroll
         dataLength={items.length}

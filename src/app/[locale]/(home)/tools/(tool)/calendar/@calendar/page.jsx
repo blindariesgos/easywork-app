@@ -25,6 +25,7 @@ import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import { Controller, useForm } from "react-hook-form";
 import listPlugin from "@fullcalendar/list";
 import { XCircleIcon } from "@heroicons/react/24/outline";
+import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import * as yup from "yup";
 import {
   Dialog,
@@ -329,7 +330,7 @@ export default function CalendarHome({ children }) {
           <div className="fixed inset-0 flex items-center justify-center">
             <form
               onSubmit={handleSubmit(handleSubmitForm)}
-              className="flexl flex-col bg-zinc-100 opacity-100 w-2/5 shadow-xl p-5 rounded-[35px] flex-end"
+              className="flexl flex-col bg-zinc-100 opacity-100 w-3/5 shadow-xl p-5 rounded-[35px] flex-end"
             >
               <div className="flex flex-col sm:flex-row sm:items-center w-full bg-transparent">
                 <input
@@ -499,6 +500,19 @@ export default function CalendarHome({ children }) {
                       setValue={setFormLocalization}
                     />
                   </div>
+                </div>
+              </div>
+              <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("tools:tasks:new:crm")}
+                </p>
+                <div className="w-full">
+                  <CRMMultipleSelectV2
+                    getValues={getValues}
+                    setValue={setValue}
+                    name="crm"
+                    error={errors.crm}
+                  />
                 </div>
               </div>
             </form>

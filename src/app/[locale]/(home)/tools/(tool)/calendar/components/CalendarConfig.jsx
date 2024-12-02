@@ -9,6 +9,7 @@ import {
   ChevronDownIcon,
   EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
 
 export default function CalendarConfig({ selectOauth }) {
   const router = useRouter();
@@ -25,7 +26,11 @@ export default function CalendarConfig({ selectOauth }) {
         )
         .then((res) => {
           setListCalendars(res.data);
-        });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("El token de actualización no es válido o ha expirado. Vuelva a autenticarse.")
+        })
     }
   }, [params.get("config")]);
 
@@ -71,7 +76,7 @@ export default function CalendarConfig({ selectOauth }) {
               <h1 className="font-medium">Google {selectOauth?.email}</h1>
             </div>
             <div className="text-sm">
-              {listCalendars.map((item, index) => (
+              {listCalendars && listCalendars?.map((item, index) => (
                 <div className="flex ml-2 mt-2 justify-between" key={index}>
                   <div className="flex">
                     <input type="checkbox" />

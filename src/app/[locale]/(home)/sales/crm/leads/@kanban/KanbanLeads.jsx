@@ -28,6 +28,7 @@ const KanbanLeads = () => {
       filter: {
         stageId: "a233b765-d97b-43b8-8b6a-46727d97c844",
       },
+      color: "#0091cd",
     },
     {
       id: "92a2627b-dddc-4eb1-be37-1fb6ca018c89",
@@ -36,6 +37,7 @@ const KanbanLeads = () => {
         stageId: "92a2627b-dddc-4eb1-be37-1fb6ca018c89",
       },
       name: "Presentar Propuesta",
+      color: "#005b81",
     },
     {
       id: "0e9f3de8-0455-42ba-801c-d5ccf7358f99",
@@ -44,6 +46,7 @@ const KanbanLeads = () => {
         stageId: "0e9f3de8-0455-42ba-801c-d5ccf7358f99",
       },
       name: "Propuesta en revisión",
+      color: "#00374f",
     },
     {
       id: "eb58ffde-8fa6-4ac1-ac1b-3728b46cdc3b",
@@ -52,6 +55,7 @@ const KanbanLeads = () => {
         stageId: "eb58ffde-8fa6-4ac1-ac1b-3728b46cdc3b",
       },
       name: "Trámite para emisión",
+      color: "#234ebb",
     },
     {
       id: "38134146-c9a5-48a5-8175-aa2857bfd1a8",
@@ -60,6 +64,7 @@ const KanbanLeads = () => {
         stageId: "38134146-c9a5-48a5-8175-aa2857bfd1a8",
       },
       name: "Emisión de póliza",
+      color: "#234ebb",
     },
 
     {
@@ -69,6 +74,7 @@ const KanbanLeads = () => {
         cancelReasonId: "d0332445-0863-46cb-89c5-0b1435cf280c",
       },
       name: "Cancela cita y no reagenda",
+      color: "#bb2823",
     },
     {
       id: "eb8ffdd1-b5a4-41ce-ba94-eb5522cbcc64",
@@ -77,6 +83,7 @@ const KanbanLeads = () => {
         cancelReasonId: "eb8ffdd1-b5a4-41ce-ba94-eb5522cbcc64",
       },
       name: "Documentos incompletos",
+      color: "#bb2823",
     },
     {
       id: "5d44dc64-019c-4e94-9148-87cd5e5d30ba",
@@ -85,6 +92,7 @@ const KanbanLeads = () => {
         cancelReasonId: "5d44dc64-019c-4e94-9148-87cd5e5d30ba",
       },
       name: "Lo verá con otra persona (familiar)",
+      color: "#bb2823",
     },
     {
       id: "02f438aa-9298-420f-804e-62ee3559b777",
@@ -93,6 +101,7 @@ const KanbanLeads = () => {
         cancelReasonId: "02f438aa-9298-420f-804e-62ee3559b777",
       },
       name: "No aprobado por aseguradora",
+      color: "#bb2823",
     },
     {
       id: "e304b128-4ba6-4157-b6cb-656a6cdec85b",
@@ -101,6 +110,7 @@ const KanbanLeads = () => {
         cancelReasonId: "e304b128-4ba6-4157-b6cb-656a6cdec85b",
       },
       name: "No contesta",
+      color: "#bb2823",
     },
     {
       id: "dd3b68cd-4676-4bcc-899c-160e0ef2bbdd",
@@ -109,6 +119,7 @@ const KanbanLeads = () => {
         cancelReasonId: "dd3b68cd-4676-4bcc-899c-160e0ef2bbdd",
       },
       name: "No le interesó",
+      color: "#bb2823",
     },
     {
       id: "95b06de4-afb5-42c9-8205-fa072e5a1c29",
@@ -117,6 +128,7 @@ const KanbanLeads = () => {
         cancelReasonId: "95b06de4-afb5-42c9-8205-fa072e5a1c29",
       },
       name: "No reagendó cita",
+      color: "#bb2823",
     },
     {
       id: "d1cf3051-ecb4-41da-864f-c2c01877ad58",
@@ -125,6 +137,7 @@ const KanbanLeads = () => {
         cancelReasonId: "d1cf3051-ecb4-41da-864f-c2c01877ad58",
       },
       name: "No tiene recursos",
+      color: "#bb2823",
     },
     {
       id: "3ccd0900-ebcc-45d0-a7bf-a3f4aa7b7248",
@@ -133,6 +146,7 @@ const KanbanLeads = () => {
         cancelReasonId: "3ccd0900-ebcc-45d0-a7bf-a3f4aa7b7248",
       },
       name: "Otro motivo no específico",
+      color: "#bb2823",
     },
     {
       id: "4983f65d-b000-4406-821a-929ba1dca6d7",
@@ -141,6 +155,7 @@ const KanbanLeads = () => {
         cancelReasonId: "4983f65d-b000-4406-821a-929ba1dca6d7",
       },
       name: "Pidió retomar en otra fecha",
+      color: "#bb2823",
     },
     {
       id: "21ddc533-6c53-42c9-b088-c544222c9fcd",
@@ -149,6 +164,7 @@ const KanbanLeads = () => {
         cancelReasonId: "21ddc533-6c53-42c9-b088-c544222c9fcd",
       },
       name: "Precio",
+      color: "#bb2823",
     },
     {
       id: "195e1b3d-d2dc-44a8-89c9-12017a9044f7",
@@ -157,6 +173,7 @@ const KanbanLeads = () => {
         cancelReasonId: "195e1b3d-d2dc-44a8-89c9-12017a9044f7",
       },
       name: "Póliza emitida - anulada aseguradora",
+      color: "#bb2823",
     },
     {
       id: "46b04e7a-3775-4a00-abfa-c195d7e17b81",
@@ -164,7 +181,8 @@ const KanbanLeads = () => {
       filter: {
         stageId: "46b04e7a-3775-4a00-abfa-c195d7e17b81",
       },
-      name: "Cierre Positivo",
+      name: "Póliza Generada",
+      color: "#a9ea44",
     },
   ];
 

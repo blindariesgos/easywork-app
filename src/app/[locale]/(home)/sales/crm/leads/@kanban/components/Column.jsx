@@ -44,6 +44,11 @@ const Column = ({
       };
       const response = await getKanbanLeads(params);
       console.log(name, response, params);
+      if (response.hasError) {
+        setItems([]);
+        setHasMore(false);
+        return;
+      }
       const auxItems =
         page == 0 || defaultPage == 0
           ? response.items
@@ -92,7 +97,7 @@ const Column = ({
       })}
     >
       <p
-        className={`w-full text-white font-semibold px-2 py-3 rounded-md text-sm bg-primary`}
+        className={`w-full text-white font-semibold px-2 py-2 rounded-md text-sm bg-primary h-[56px] flex items-center`}
         style={{ background: color }}
       >
         {name} ({totalItems ?? 0})

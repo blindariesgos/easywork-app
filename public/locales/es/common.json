@@ -132,7 +132,11 @@
       "accompaniment": "Seguimiento",
       "commissions": "Comisiones",
       "recruitement": "Embudo de reclutamiento y selección",
-      "capacitations": "Capacitaciones",
+      "capacitations": {
+        "name":"Capacitaciones",
+        "e-learning": "E-Learning",
+        "academy": "Academia"
+      },
       "conections": "Conexiones",
       "development-agents": "Embudo de desarrollo de agentes",
       "team-meetings": "Juntas de equipo",

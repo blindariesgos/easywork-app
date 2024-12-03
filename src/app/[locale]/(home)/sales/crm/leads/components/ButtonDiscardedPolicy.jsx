@@ -47,10 +47,10 @@ export default function ButtonDiscardedPolicy({
               <PiWarningLight className="w-20 h-20 text-yellow-600" />
             </div>
             <DialogTitle className="font-bold">
-              ¿Seguro que quiere descartar la pospección?
+              ¿Esta seguro que quiere descartar al prospecto?
             </DialogTitle>
             <Description>
-              Si la descarta, no podrá volver a editar el prospecto.
+              Si lo descarta no podrá activarlo nuevamente.
             </Description>
             <div className="flex gap-4 justify-end">
               <Button

@@ -38,6 +38,13 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
       limit: 5,
     },
   });
+  const { data: renovations, isLoading: isLoadingRenovations } = usePolicies({
+    filters: { renewal: "true", poliza: query },
+    config: {
+      page: 1,
+      limit: 5,
+    },
+  });
   const { leads, isLoading: isLoadingLeads } = useLeads({
     filters: { fullName: query },
     config: {
@@ -62,16 +69,15 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const handleSelect = (option) => {
     const currentValues = getValues(name) || [];
 
-    const types = ["contact", "poliza", "lead", "receipt"];
+    const types = ["contact", "poliza", "lead", "receipt", "renovation"];
     // Determine the type based on filterSelect
     const type = types[filterSelect - 1];
 
     const newOption = {
       id: option.id,
-      name:
-        type === "poliza"
-          ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
-          : option.fullName || option.name,
+      name: ["poliza", "renovation"].includes(type)
+        ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
+        : option.fullName || option.name,
       username: option.username,
       title: option.title,
       type,
@@ -98,9 +104,10 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
       policies?.items ?? [],
       leads?.items ?? [],
       receipts?.items ?? [],
+      renovations?.items ?? [],
     ];
     return items[filterSelect - 1];
-  }, [policies, contacts, leads, filterSelect, query, receipts]);
+  }, [policies, contacts, leads, filterSelect, query, receipts, renovations]);
 
   return (
     <div className="">
@@ -194,6 +201,15 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                   >
                     Recibos
                   </li>
+                  <li
+                    className={clsx(
+                      filterSelect === 5 && "bg-gray-300",
+                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
+                    )}
+                    onClick={() => setFilterSelect(5)}
+                  >
+                    Renovaciones
+                  </li>
                 </ul>
                 <div className="">
                   <div
@@ -210,6 +226,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     query !== "" &&
                     !isLoadingContacts &&
                     !isLoadingPolicies &&
+                    !isLoadingRenovations &&
                     !isLoadingLeads ? (
                       <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                         {t("common:not-found")}
@@ -246,7 +263,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                                 : "text-black"
                             }`}
                           >
-                            {filterSelect == 2
+                            {[2, 5].includes(filterSelect)
                               ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
                               : option.fullName ||
                                 option.name ||
@@ -260,6 +277,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     {(isLoadingContacts ||
                       isLoadingPolicies ||
                       isLoadingReceipts ||
+                      isLoadingRenovations ||
                       isLoadingLeads) && <LoadingSpinnerSmall />}
                   </div>
                 </div>

@@ -36,6 +36,14 @@ const CrmItems = ({ conections }) => {
         labelKey: "Recibo",
         name: data?.crmEntity?.title ?? data?.crmEntity?.name ?? "",
       },
+      renovation: {
+        href: `/operations/renovations/renovation/${data.crmEntity.id}?show=true`,
+        bgClass: "bg-[#fff79d] text-[#241F61]",
+        labelKey: "Renovación",
+        name:
+          `${data?.crmEntity?.company?.name} ${data?.crmEntity?.poliza} ${data?.crmEntity?.type?.name}` ??
+          "",
+      },
     };
 
     const config = typeConfig[data.type];

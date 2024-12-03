@@ -54,6 +54,7 @@ export const useContact = (id) => {
 const getActivityPath = (cmrtype) => {
   switch (cmrtype) {
     case "policy":
+    case "renovation":
       return "polizas";
     case "lead":
       return "leads";

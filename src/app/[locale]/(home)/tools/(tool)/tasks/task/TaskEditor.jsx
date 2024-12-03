@@ -207,7 +207,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    if (["policy", "renovation"].includes(params.get("prev"))) {
+    if (["policy", "renewal"].includes(params.get("prev"))) {
       setLoading(true);
       setCrmPolicy(prevId, params.get("prev"));
       return;

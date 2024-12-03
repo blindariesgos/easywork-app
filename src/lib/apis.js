@@ -335,13 +335,13 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
-export const putComment = async (commentId, body, id) => {
-  console.log("Actualizando comentario", commentId, body, id);
+export const putComment = async (commentId, body, taskId) => {
+  console.log("Actualizando comentario", commentId, body, taskId);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 

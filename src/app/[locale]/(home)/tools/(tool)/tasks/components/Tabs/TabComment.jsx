@@ -6,7 +6,11 @@ import TextEditor from "../TextEditor";
 import { deleteComment, postComment, putComment } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useTaskComments } from "@/src/lib/api/hooks/tasks";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { format } from "date-fns";
@@ -14,6 +18,10 @@ import { es } from "date-fns/locale"; // Importa el locale español
 import { useSWRConfig } from "swr";
 import parse from "html-react-parser";
 import Button from "@/src/components/form/Button";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { GoKebabHorizontal } from "react-icons/go";
+import UploadDocumentsInComment from "../UploadDocumentsInComment";
+import FilePreview from "../FilePreview";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
@@ -28,6 +36,7 @@ export default function TabComment({ info }) {
   const [isAddComment, setIsAddComment] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [showComments, setShowComments] = useState([]);
+  const [upload, setUpload] = useState({});
 
   const handleComment = async (_, id) => {
     if (quillRef.current) {
@@ -35,7 +44,9 @@ export default function TabComment({ info }) {
         comment: value,
         isSummary: info.requireSummary,
         taskId: info.id,
+        fileIds: upload?.fileIds ?? [],
       };
+      console.log({ body });
       try {
         setDisabled(true);
         id
@@ -46,6 +57,7 @@ export default function TabComment({ info }) {
         setDisabled(false);
         setEditComment({});
         setValueText("");
+        setUpload({});
       } catch (error) {
         handleApiError(error.message);
         setDisabled(false);
@@ -98,6 +110,13 @@ export default function TabComment({ info }) {
     }
   };
 
+  const handleDeleteFile = (index) => {
+    setUpload({
+      fileIds: upload.fileIds.filter((_, i) => i != index),
+      files: upload.files.filter((_, i) => i != index),
+    });
+  };
+
   return (
     <div className="w-full p-3">
       {Object.keys(editComment).length === 0 && (
@@ -118,6 +137,17 @@ export default function TabComment({ info }) {
                   className="w-full"
                   setValue={setValueText}
                 />
+                {upload && upload?.files && (
+                  <div className="flex gap-1 flex-wrap p-1">
+                    {upload?.files?.map((file, index) => (
+                      <FilePreview
+                        info={file}
+                        key={index}
+                        handleDeleteFile={() => handleDeleteFile(index)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex justify-start items-center gap-2">
                 <Button
@@ -138,6 +168,22 @@ export default function TabComment({ info }) {
                     setValueText("");
                   }}
                 />
+                <Menu>
+                  <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">
+                    <GoKebabHorizontal className="text-gray-60" />
+                  </MenuButton>
+                  <MenuItems
+                    anchor={{
+                      to: "right end",
+                      gap: "4px",
+                    }}
+                    className={
+                      "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
+                    }
+                  >
+                    <UploadDocumentsInComment handleChangeFiles={setUpload} />
+                  </MenuItems>
+                </Menu>
               </div>
             </div>
           ) : (
@@ -182,6 +228,17 @@ export default function TabComment({ info }) {
                         setValue={setValueText}
                         disabled={disabled}
                       />
+                      {upload && upload?.files && (
+                        <div className="flex gap-1 flex-wrap p-1">
+                          {upload?.files?.map((file, index) => (
+                            <FilePreview
+                              info={file}
+                              key={index}
+                              handleDeleteFile={() => handleDeleteFile(index)}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="flex justify-start items-center gap-2">
                       <button
@@ -206,6 +263,24 @@ export default function TabComment({ info }) {
                       >
                         Cancelar
                       </button>
+                      <Menu>
+                        <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">
+                          <GoKebabHorizontal className="text-gray-60" />
+                        </MenuButton>
+                        <MenuItems
+                          anchor={{
+                            to: "right end",
+                            gap: "4px",
+                          }}
+                          className={
+                            "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
+                          }
+                        >
+                          <UploadDocumentsInComment
+                            handleChangeFiles={setUpload}
+                          />
+                        </MenuItems>
+                      </Menu>
                     </div>
                   </div>
                 </div>

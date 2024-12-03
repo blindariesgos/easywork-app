@@ -69,13 +69,13 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const handleSelect = (option) => {
     const currentValues = getValues(name) || [];
 
-    const types = ["contact", "poliza", "lead", "receipt", "renovation"];
+    const types = ["contact", "poliza", "lead", "receipt", "renewal"];
     // Determine the type based on filterSelect
     const type = types[filterSelect - 1];
 
     const newOption = {
       id: option.id,
-      name: ["poliza", "renovation"].includes(type)
+      name: ["poliza", "renewal"].includes(type)
         ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
         : option.fullName || option.name,
       username: option.username,

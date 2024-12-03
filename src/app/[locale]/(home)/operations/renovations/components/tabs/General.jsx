@@ -548,7 +548,7 @@ export default function PolicyDetails({
       {/* Menu Izquierda */}
       <ActivityPanel
         entityId={id}
-        crmType="renovation"
+        crmType="renewal"
         className="lg:col-span-7"
       />
       {isEdit && (

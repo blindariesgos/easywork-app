@@ -228,7 +228,9 @@ export default function CreateLead({ lead, id }) {
           if (response.errors) {
             message = response.errors.join(", ");
           }
-          throw { message };
+          toast.error(message);
+          setLoading(false);
+          return;
         }
         toast.success("Prospecto creado con exito");
       } else {
@@ -238,19 +240,19 @@ export default function CreateLead({ lead, id }) {
           if (response.errors) {
             message = response.errors.join(", ");
           }
-          console.log({ message, response });
-          throw { message };
+          toast.error(message);
+          setLoading(false);
+          return;
         }
         toast.success("¡Prospecto actualizado!");
+        mutate(`/sales/crm/leads/${id} `);
+        mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
+        setLoading(false);
+        router.back();
       }
     } catch (error) {
       console.log(error);
       handleApiError(error.message);
-    } finally {
-      mutate(`/sales/crm/leads/${id} `);
-      mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
-      setLoading(false);
-      router.back();
     }
   };
 

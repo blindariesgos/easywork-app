@@ -4,6 +4,11 @@ const FilePreview = ({ info, handleDeleteFile }) => {
   const [data, setData] = useState();
 
   useEffect(() => {
+    if (info.attached) {
+      setData(info.attached);
+      return;
+    }
+
     const reader = new FileReader();
     const file = info.file;
 

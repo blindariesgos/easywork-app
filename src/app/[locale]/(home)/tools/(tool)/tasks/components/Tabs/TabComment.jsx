@@ -166,6 +166,7 @@ export default function TabComment({ info }) {
                   onclick={() => {
                     setIsAddComment(false);
                     setValueText("");
+                    setUpload({});
                   }}
                 />
                 <Menu>
@@ -181,7 +182,14 @@ export default function TabComment({ info }) {
                       "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
                     }
                   >
-                    <UploadDocumentsInComment handleChangeFiles={setUpload} />
+                    <UploadDocumentsInComment
+                      handleChangeFiles={(data) =>
+                        setUpload({
+                          fileIds: [...upload.fileIds, ...data.fileIds],
+                          files: [...upload.files, ...data.files],
+                        })
+                      }
+                    />
                   </MenuItems>
                 </Menu>
               </div>
@@ -224,7 +232,7 @@ export default function TabComment({ info }) {
                       <TextEditor
                         ref={quillRef}
                         value={value}
-                        className="w-full max-h-[100px] overflow-y-auto"
+                        className="w-full max-h-[100px]"
                         setValue={setValueText}
                         disabled={disabled}
                       />
@@ -258,6 +266,7 @@ export default function TabComment({ info }) {
                         onClick={() => {
                           setEditComment({});
                           setValueText("");
+                          setUpload({});
                         }}
                         className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
                       >
@@ -277,7 +286,12 @@ export default function TabComment({ info }) {
                           }
                         >
                           <UploadDocumentsInComment
-                            handleChangeFiles={setUpload}
+                            handleChangeFiles={(data) =>
+                              setUpload({
+                                fileIds: [...upload.fileIds, ...data.fileIds],
+                                files: [...upload.files, ...data.files],
+                              })
+                            }
                           />
                         </MenuItems>
                       </Menu>
@@ -305,6 +319,31 @@ export default function TabComment({ info }) {
                       </div>
                       <div data-type="comment">{parse(dat.comment)}</div>
                     </div>
+                    {dat?.attachedObjects && (
+                      <div className="flex gap-1 flex-wrap p-1">
+                        {dat?.attachedObjects?.map((file, index) => (
+                          <div
+                            className="p-2 bg-white shadow-lg text-xs rounded-full cursor-pointer flex gap-1 items-center"
+                            title={file?.name}
+                            key={index}
+                          >
+                            <p
+                              onClick={() =>
+                                window.open(
+                                  file.url,
+                                  "self",
+                                  "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
+                                )
+                              }
+                            >
+                              {file?.name?.length > 16
+                                ? `${file?.name?.slice(0, 7)}...${file?.name?.slice(-6)}`
+                                : file?.name}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {openActions[index] && (
                     <div className="flex justify-end items-center gap-1">
@@ -313,13 +352,27 @@ export default function TabComment({ info }) {
                           if (dat.createdBy.id !== session?.user?.id) return;
                           setEditComment({ [index]: !editComment[index] });
                           setValueText(dat.comment);
+                          if (dat.attachedObjects) {
+                            setUpload({
+                              fileIds: dat.attachedObjects.map((x) => x.id),
+                              files: dat.attachedObjects.map((x) => ({
+                                attached: {
+                                  name: x.name,
+                                  url: x.url,
+                                },
+                              })),
+                            });
+                          }
                         }}
                         className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                       >
                         <PencilIcon className="h-3 w-3 text-blue-400" />
                       </div>
                       <div
-                        onClick={() => getDeleteComment(dat.id)}
+                        onClick={() => {
+                          if (dat.createdBy.id !== session?.user?.id) return;
+                          getDeleteComment(dat.id);
+                        }}
                         className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                       >
                         <TrashIcon className="h-3 w-3 text-red-500" />

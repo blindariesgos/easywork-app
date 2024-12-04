@@ -554,7 +554,7 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                    href={`/operations/renovations/renovation/${policy.id}?show=true`}
                                   >
                                     <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
                                   </Link>

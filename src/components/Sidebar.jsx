@@ -1,12 +1,18 @@
 "use client";
 import { Fragment } from "react";
-import { Dialog, Transition, TransitionChild, DialogPanel } from "@headlessui/react";
+import {
+  Dialog,
+  Transition,
+  TransitionChild,
+  DialogPanel,
+} from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import useAppContext from "../context/app/index";
 import Link from "next/link";
 import SidebarMenu from "./SidebarMenu";
 import { useTranslation } from "react-i18next";
+import LoaderSpinner from "./LoaderSpinner";
 
 export default function Sidebar() {
   const {
@@ -18,9 +24,11 @@ export default function Sidebar() {
     sidebarOpenDesktop2,
   } = useAppContext();
   const { t } = useTranslation();
+  const { loading } = useAppContext();
 
   return (
     <>
+      {loading && <LoaderSpinner />}
       <Transition show={sidebarOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -106,14 +114,16 @@ export default function Sidebar() {
             setSidebarOpenDesktop1(false);
           }
         }}
-        className={`hidden fixed lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${sidebarOpenDesktop1 ? "lg:w-72" : "lg:w-24"
-          }`}
+        className={`hidden fixed lg:z-50 lg:flex lg:flex-col h-screen transition-all duration-300 ${
+          sidebarOpenDesktop1 ? "lg:w-72" : "lg:w-24"
+        }`}
       >
         <div
-          className={`flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-4 pb-4 rounded-tr-[50px] rounded-br-[50px] ${sidebarOpenDesktop1 && !sidebarOpenDesktop2
-            ? "hover:opacity-85"
-            : "opacity-100"
-            }`}
+          className={`flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary px-4 pb-4 rounded-tr-[50px] rounded-br-[50px] ${
+            sidebarOpenDesktop1 && !sidebarOpenDesktop2
+              ? "hover:opacity-85"
+              : "opacity-100"
+          }`}
         >
           <div className="flex h-16 shrink-0 items-center mx-auto mt-10">
             <Link href="/home">

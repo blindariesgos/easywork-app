@@ -30,7 +30,7 @@ const DropdownVisibleUsers = ({
           : modalPosition.x,
       }}
     >
-      <div className="p-4">
+      <div className="p-4 max-h-[80vh]">
         <div className="flex justify-end gap-2">
           <div
             className="cursor-pointer"
@@ -42,7 +42,7 @@ const DropdownVisibleUsers = ({
         <div className="w-full mt-2">
           <TextInput onChangeCustom={onChangeCustom} border />
         </div>
-        <div className="grid grid-cols-1 gap-2 mt-6">
+        <div className="grid grid-cols-1 gap-2 mt-6 overflow-y-auto">
           {dataUsers &&
             dataUsers.map((user, index) => (
               <div

@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Tag from "@/src/components/Tag";
 import { Profile, Tasks, Calendar, Drive } from "./components"
 
-export default function Info({ status, statusData }) {
+export default function Info({ status, statusList }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -31,8 +31,8 @@ export default function Info({ status, statusData }) {
     { name: t("contacts:create:tabs:general"), value: 0 },
     { name: "Tareas", value: 1 },
     { name: "Calendario", value: 2 },
-    // { name: "Drive", value: 3 },
-    // { name: "Acompañamiento", value: 3 },
+    { name: "Drive", value: 3 },
+    { name: "Actividades", value: 4 },
     // { name: "Flujo de comunicación", value: 4 },
     // { name: "mas", value: 5 },
   ];
@@ -87,7 +87,7 @@ export default function Info({ status, statusData }) {
                             </TabList>
                             <TabPanels className="w-full overflow-auto">
                               <TabPanel className="w-full">
-                                <Profile status={status} statusData={statusData} />
+                                <Profile status={status} statusList={statusList} />
                               </TabPanel>
                               <TabPanel className="w-full">
                                 <Tasks />

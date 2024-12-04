@@ -17,8 +17,12 @@ const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
       return item.value.map((x) => x.name).join(", ");
     }
 
-    if (item.type == "select-contact") {
+    if (item.type == "select-contact" || item.type == "select-lead") {
       return item.value.fullName;
+    }
+
+    if (item.type == "select-policy") {
+      return `${item?.value?.company?.name ?? ""} ${item?.value?.poliza ?? ""} ${item?.value?.type?.name ?? ""}`;
     }
 
     if (item.type == "daterange") {

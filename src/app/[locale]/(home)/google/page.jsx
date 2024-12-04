@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import qs from "qs";
+import scopes from "./scopes.json";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -39,14 +40,23 @@ export default function Page() {
   };
 
   const handleReauthentication = () => {
-    const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=email profile&access_type=offline&prompt=consent&state=${searchParams.get("state")}`;
+    const service = localStorage.getItem("service");
+    let selectedScopes = "";
+    if (service === "Google Calendar") {
+      selectedScopes = scopes.scopes.calendar.join(" ");
+    } else if (service === "Gmail") {
+      selectedScopes = scopes.scopes.gmail.join(" ");
+    } else {
+      console.error("Service not recognized");
+      return;
+    }
+    const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&response_type=code&scope=${encodeURIComponent(selectedScopes)}&access_type=offline&prompt=consent&state=${searchParams.get("state")}`;
     window.location.href = googleAuthURL;
   };
-
   const stateConnect = () => {
-    localStorage.setItem('connectBuzon', 'true');
+    localStorage.setItem("connectBuzon", "true");
     close();
-  }
+  };
 
   useEffect(() => {
     axios
@@ -67,7 +77,9 @@ export default function Page() {
       )
       .then((res) => {
         if (!res.data.refresh_token) {
-          console.warn("No refresh token found. Redirecting to reauthentication.");
+          console.warn(
+            "No refresh token found. Redirecting to reauthentication."
+          );
           handleReauthentication();
           return;
         }
@@ -88,7 +100,7 @@ export default function Page() {
               userInfo.data.given_name,
               userInfo.data.email,
               userInfo.data.picture,
-              res.data.id_token,
+              res.data.id_token
             )
               .then(() => {
                 close();
@@ -101,7 +113,7 @@ export default function Page() {
       .catch((err) => {
         console.error("Error getting token:", err);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.data]);
 
   return (

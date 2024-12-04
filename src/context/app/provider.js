@@ -3,7 +3,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AppContext } from "..";
 import { contactTypes, driveViews } from "../../lib/common";
 import { useCommon } from "../../hooks/useCommon";
-import { getAddListContacts, getAddListLeads, getAddListPolicies, getAddListReceipts, getAllRoles, getUsersContacts } from "../../lib/apis";
+import {
+  getAddListContacts,
+  getAddListLeads,
+  getAddListPolicies,
+  getAddListReceipts,
+  getAllRoles,
+  getUsersContacts,
+} from "../../lib/apis";
 import { handleApiError } from "../../utils/api/errors";
 import { useSession } from "next-auth/react";
 
@@ -24,24 +31,27 @@ export default function AppContextProvider({ children }) {
   const [lists, setLists] = useState(null);
   const [filter, setFilter] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const appList = {};
     const getLists = async () => {
+      setLoading(true);
       const users = await getUsers();
       const listContact = await getListsContact();
-      const roles = await getRoles()
+      const roles = await getRoles();
       const policies = await getListsPolicies();
-      const listLead = await getListsLead()
-      const receipts = await getListsReceipts()
+      const listLead = await getListsLead();
+      const receipts = await getListsReceipts();
 
       appList.listContact = listContact;
       appList.users = users;
-      appList.roles = roles
-      appList.policies = policies
-      appList.listLead = listLead
-      appList.receipts = receipts
+      appList.roles = roles;
+      appList.policies = policies;
+      appList.listLead = listLead;
+      appList.receipts = receipts;
       setLists(appList);
+      setLoading(false);
     };
     if (session?.user?.accessToken && !lists) getLists();
   }, [session, lists]);
@@ -129,7 +139,8 @@ export default function AppContextProvider({ children }) {
       setSelectedEmails,
       selectedEmails,
       setUserData,
-      userData
+      userData,
+      loading,
     }),
     [
       sidebarOpen,
@@ -146,7 +157,8 @@ export default function AppContextProvider({ children }) {
       selectOauth,
       selectedEmails,
       userData,
-    ],
+      loading,
+    ]
   );
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

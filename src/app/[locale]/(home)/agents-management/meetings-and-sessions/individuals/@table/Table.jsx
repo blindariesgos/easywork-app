@@ -5,14 +5,10 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
-  CheckIcon,
-  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
-import Image from "next/image";
 import React, {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -25,10 +21,9 @@ import Link from "next/link";
 import { deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { useClaimTable } from "../../../../../../hooks/useCommon";
+import { useClaimTable } from "@/src/hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -38,7 +33,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useManagementsContext from "@/src/context/managements";
+import useMeetingsContext from "@/src/context/meetings";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
@@ -56,7 +51,7 @@ export default function Table() {
     page,
     setPage,
     mutate,
-  } = useManagementsContext();
+  } = useMeetingsContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -111,22 +106,46 @@ export default function Table() {
               ></path>
             </svg>
           </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("operations:policies:table:not-data")}
-          </p>
+          <p className="text-lg font-medium text-gray-400">No hay juntas</p>
         </div>
       </div>
     );
   }
 
+  const itemActions = [
+    {
+      name: "Ver",
+      disabled: true,
+    },
+    {
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          disabled: true,
+        },
+        {
+          name: "Envío masivo SMS",
+          disabled: true,
+        },
+        {
+          name: "Correo electrónico",
+          disabled: true,
+        },
+      ],
+    },
+    // { name: "Editar" },
+    // { name: "Copiar" },
+  ];
+
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      {selectedContacts.length > 0 && (
+      {/* {selectedContacts.length > 0 && (
         <div className="flex py-2">
           <SelectedOptionsTable options={masiveActions} />
         </div>
-      )}
+      )} */}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -389,7 +408,7 @@ export default function Table() {
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                  policy[column.row]
                                 ) : (
                                   policy[column.row] || "-"
                                 )}

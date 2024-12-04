@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import useLeadsContext from "@/src/context/leads";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { formatToCurrency } from "@/src/utils/formatters";
-import { getAllLeads } from "@/src/lib/apis";
+import { getKanbanLeads } from "@/src/lib/apis";
 
 const Column = ({
   id,
@@ -42,8 +42,13 @@ const Column = ({
           limit: 10,
         },
       };
-      const response = await getAllLeads(params);
+      const response = await getKanbanLeads(params);
       console.log(name, response, params);
+      if (response.hasError) {
+        setItems([]);
+        setHasMore(false);
+        return;
+      }
       const auxItems =
         page == 0 || defaultPage == 0
           ? response.items
@@ -51,7 +56,7 @@ const Column = ({
       setItems(auxItems);
       if (page == 0 || defaultPage == 0) {
         setTotalItems(response?.meta?.totalItems);
-        // setTotalAmount(response[0].totalAmount);
+        setTotalAmount(response?.meta?.amount ?? 0);
       }
       if (auxItems?.length >= response?.meta?.totalItems) {
         setHasMore(false);
@@ -92,11 +97,12 @@ const Column = ({
       })}
     >
       <p
-        className={`w-full text-white font-semibold px-2 py-3 rounded-md text-sm bg-primary`}
+        className={`w-full text-white font-semibold px-2 py-2 rounded-md text-sm bg-primary h-[56px] flex items-center`}
         style={{ background: color }}
       >
         {name} ({totalItems ?? 0})
       </p>
+      <p className="text-center py-2">$ {formatToCurrency(totalAmount)}</p>
 
       <InfiniteScroll
         dataLength={items.length}

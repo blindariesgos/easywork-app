@@ -93,8 +93,68 @@ export default function RenovationDetails({ data, id, mutate }) {
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
-        <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
+        <div className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
+          <div
+            id="policy-header"
+            className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
+            ref={headerRef}
+          >
+            <div className="flex justify-between pb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
+                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
+                  {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
+                </p>
+
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:date")}:
+                  </p>
+                  <p className="text-sm">
+                    {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:product")}:
+                  </p>
+                  <p className="text-sm">{data?.category?.name ?? "S/N"}</p>
+                </div>
+                <Link
+                  className="hover:text-easy-600 text-sm"
+                  href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
+                >
+                  {data?.contact?.fullName}
+                </Link>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:client-code")}:
+                  </p>
+                  <p className="text-sm">{getClientCode()}</p>
+                </div>
+              </div>
+              <IconDropdown
+                icon={
+                  <Cog8ToothIcon
+                    className="h-8 w-8 text-primary"
+                    aria-hidden="true"
+                  />
+                }
+                options={settingsPolicy}
+                width="w-[140px]"
+              />
+            </div>
+            <div className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
+              <div className="data-[selected]:bg-blue-100 disabled:opacity-60 data-[hover]:bg-blue-400 outline-none text-xs uppercase focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md p-2.5">
+                CONSULTA
+              </div>
+            </div>
+          </div>
+          <div className={"w-full md:px-4"}>
+            <General data={data} id={id} mutate={mutate} headerHeight={200} />
+          </div>
+        </div>
+        {/* <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           <div
             id="policy-header"
             className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
@@ -169,7 +229,7 @@ export default function RenovationDetails({ data, id, mutate }) {
               <Receipts policyId={data?.id} />
             </TabPanel>
           </TabPanels>
-        </TabGroup>
+        </TabGroup> */}
       </div>
     </div>
   );

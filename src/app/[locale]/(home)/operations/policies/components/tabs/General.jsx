@@ -99,7 +99,7 @@ export default function PolicyDetails({
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
     if (data?.contact?.address) setValue("address", data?.contact?.address);
-    if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
+    if (data?.contact?.rfc) setValue("rfc", data?.contact?.rfc);
     if (data?.type?.id) setValue("typeId", data?.type?.id);
   }, [data]);
 

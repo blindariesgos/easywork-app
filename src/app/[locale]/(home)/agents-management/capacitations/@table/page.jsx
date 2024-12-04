@@ -1,14 +1,14 @@
-"use client";
-import Table from "./Table";
-import { useEffect, useState } from "react";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { useTranslation } from "react-i18next";
-import { XCircleIcon } from "@heroicons/react/20/solid";
-import useManagementsContext from "@/src/context/managements";
+'use client';
+import Table from './Table';
+import { useEffect, useState } from 'react';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+import { useTranslation } from 'react-i18next';
+import { XCircleIcon } from '@heroicons/react/20/solid';
+import useCapacitationsContext from '@/src/context/capacitations';
 
 export default function Page({ searchParams }) {
   const { t } = useTranslation();
-  const { setPage, isLoading, isError, data } = useManagementsContext();
+  const { setPage, isLoading, isError, data } = useCapacitationsContext();
 
   useEffect(() => {
     setPage(searchParams.page || 1);
@@ -23,9 +23,7 @@ export default function Page({ searchParams }) {
             <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800">
-              {t("common:error-loading")}
-            </h3>
+            <h3 className="text-sm font-medium text-red-800">{t('common:error-loading')}</h3>
           </div>
         </div>
       </div>

@@ -24,7 +24,11 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
         )
         .then((res) => {
           setListCalendars(res.data);
-        });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("El token de actualización no es válido o ha expirado. Vuelva a autenticarse.")
+        })
     }
   }, [params.get("disconnect")]);
 
@@ -89,7 +93,7 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
               disponibles para los otros empleados.
             </p>
             <div className="text-sm">
-              {listCalendars.map((item, index) => (
+              {listCalendars && listCalendars?.map((item, index) => (
                 <div className="flex ml-2 justify-between mb-2" key={index}>
                   <div className="flex">
                     <input type="checkbox" />

@@ -48,9 +48,11 @@
             "not-data": "No hay Renovaciones"
         },
         "general": {
-            "title": "Datos generales de la póliza",
+            "subtitle": "Datos de la nueva póliza",
+            "title": "Datos generales",
             "address": "Dirección",
             "rfc": "RFC",
+            "version": "Versión",
             "status": "Estado de la póliza",
             "subbranch": "Sub-ramo",
             "type": "Ramo",

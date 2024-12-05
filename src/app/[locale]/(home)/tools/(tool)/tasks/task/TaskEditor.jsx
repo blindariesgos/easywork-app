@@ -178,16 +178,16 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setLoading(false);
   };
 
-  const setCrmPolicy = async (policyId) => {
+  const setCrmPolicy = async (policyId, type) => {
     const response = await getPolicyById(policyId);
     setValue("crm", [
       {
         id: response?.id,
-        type: "poliza",
         name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+        type,
       },
     ]);
-    setValue("name", "CRM - Póliza: ");
+    setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
     setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };
@@ -207,9 +207,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    if (params.get("prev") === "policy") {
+    if (["policy", "renewal"].includes(params.get("prev"))) {
       setLoading(true);
-      setCrmPolicy(prevId);
+      setCrmPolicy(prevId, params.get("prev"));
       return;
     }
 

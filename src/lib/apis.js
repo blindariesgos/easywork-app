@@ -84,6 +84,14 @@ export const createContact = async (data) => {
   return response;
 };
 
+export const createUser = async (data) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post("/users/register", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
 export const createLead = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post("/sales/crm/leads/new", data)
@@ -98,7 +106,6 @@ export const updateLead = async (data, id) => {
     .put(`/sales/crm/leads/${id}`, data)
     .catch((error) => ({ ...error, hasError: true }));
   revalidatePath("/sales/crm/leads", "layout");
-  console.log("aaaaaaaaaalalal jal jaljala jlajal", response);
   return response;
 };
 export const updateContact = async (data, id) => {
@@ -335,13 +342,13 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
-export const putComment = async (commentId, body, id) => {
-  console.log("Actualizando comentario", commentId, body, id);
+export const putComment = async (commentId, body, taskId) => {
+  console.log("Actualizando comentario", commentId, body, taskId);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 

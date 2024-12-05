@@ -11,15 +11,21 @@ import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useAccompanimentsContext from "@/src/context/accompaniments";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
 
 export default function AccompanimentsHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
   const { displayFilters, removeFilter } = useAccompanimentsContext();
+  const router = useRouter();
 
   const options = [
-    { name: "Agente", disabled: true },
+    {
+      name: "Agente",
+      onclick: () =>
+        router.push("/agents-management/accompaniment/agent?show=true"),
+    },
     { name: "Actividades", disabled: true },
     { name: "Cita con Prospectos o Clientes", disabled: true },
     { name: "Reuniones de Coaching", disabled: true },

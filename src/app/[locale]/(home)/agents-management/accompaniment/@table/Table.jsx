@@ -261,49 +261,51 @@ export default function Table() {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/operations/renovations/renovation/${id}?show=true`),
+        router.push(`/agents-management/accompaniment/agent/${id}?show=true`),
     },
     {
       name: "Editar",
-      handleClick: (id) =>
-        router.push(
-          `/operations/renovations/renovation/${id}?show=true&edit=true`
-        ),
-    },
-    {
-      name: "Eliminar",
-      handleClick: (id) => {
-        setDeleteId(id);
-        setIsOpenDelete(true);
-      },
       disabled: true,
     },
     {
-      name: "Planificar",
-      options: [
-        {
-          name: "Tarea",
-          handleClickContact: (id) =>
-            router.push(
-              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
-            ),
-          disabled: true,
-        },
-        {
-          name: "Cita",
-          disabled: true,
-        },
-        {
-          name: "Comentario",
-          disabled: true,
-        },
-        {
-          name: "Correo",
-          disabled: true,
-        },
-      ],
+      name: "Actividades",
+      disabled: true,
+    },
+    {
+      name: "Asignar GDD",
+      disabled: true,
+    },
+    {
+      name: "Reasignar GDD",
+      disabled: true,
+    },
+    {
+      name: "Inactivar",
+      disabled: true,
     },
   ];
+
+  const getStatus = (isActive) => {
+    return (
+      <div className="flex flex-col justify-center items-center">
+        <div className="flex border opacity-40 w-[100px]">
+          <div
+            className={clsx("w-[50px] h-[10px] border border-black", {
+              "bg-[#00CD26] ": isActive,
+            })}
+          />
+          <div
+            className={clsx("w-[50px] h-[10px] border border-black", {
+              "bg-[#CD0700]": !isActive,
+            })}
+          />
+        </div>
+        <p className="text-gray-50 text-sm">
+          {isActive ? "Activo" : "Inactivo"}
+        </p>
+      </div>
+    );
+  };
 
   if (data?.items && data?.items.length === 0) {
     return (
@@ -395,33 +397,33 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((policy, index) => {
+                  data?.items.map((user, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(policy.id)
+                          selectedContacts.includes(user.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(policy.id) && (
+                          {selectedContacts.includes(user.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={policy.id}
-                              checked={selectedContacts.includes(policy.id)}
+                              value={user.id}
+                              checked={selectedContacts.includes(user.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, policy.id]
+                                    ? [...selectedContacts, user.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== policy.id
+                                        (p) => p !== user.id
                                       )
                                 )
                               }
@@ -456,10 +458,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(policy.id);
+                                            item.handleClick(user.id);
                                           item.handleClickContact &&
                                             item.handleClickContact(
-                                              policy?.contact?.id
+                                              user?.contact?.id
                                             );
                                         }}
                                       >
@@ -502,12 +504,10 @@ export default function Table() {
                                                 disabled={option.disabled}
                                                 onClick={() => {
                                                   option.handleClick &&
-                                                    option.handleClick(
-                                                      policy.id
-                                                    );
+                                                    option.handleClick(user.id);
                                                   option.handleClickContact &&
                                                     option.handleClickContact(
-                                                      policy?.contact?.id
+                                                      user?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -551,9 +551,28 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                    href={`/agents-management/accompaniment/agent/${user.id}?show=true`}
+                                    className="flex gap-3 items-center"
                                   >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                                    <Image
+                                      className="h-8 w-8 rounded-full bg-zinc-200"
+                                      width={30}
+                                      height={30}
+                                      src={user.avatar || "/img/avatar.svg"}
+                                      alt=""
+                                    />
+                                    <div className="flex flex-col">
+                                      <p className="text-start">
+                                        {user?.profile
+                                          ? `${user?.profile?.firstName} ${user?.profile?.lastName}`
+                                          : user?.username}
+                                      </p>
+                                      {user.bio && (
+                                        <p className="text-start text-xs">
+                                          {user?.bio}
+                                        </p>
+                                      )}
+                                    </div>
                                   </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
@@ -594,17 +613,28 @@ export default function Table() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "vigenciaDesde" ? (
+                                ) : column.row === "email" ? (
+                                  (user.email ?? "-")
+                                ) : column.row === "phone" ? (
+                                  user.phone.length > 0 ? (
+                                    `+${user.phone}`
+                                  ) : (
+                                    "-"
+                                  )
+                                ) : column.row === "createdAt" ? (
+                                  (formatDate(user.createdAt, "dd/MM/yyyy") ??
+                                  null)
+                                ) : column.row === "updatedAt" ? (
                                   (formatDate(
-                                    policy[column.row],
-                                    "dd/MM/yyyy"
+                                    user.updatedAt,
+                                    "dd/MM/yyyy, hh:mm a"
                                   ) ?? null)
-                                ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
-                                ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                ) : column.row === "manager" ? (
+                                  "-"
+                                ) : column.row === "isActive" ? (
+                                  getStatus(user.isActive)
                                 ) : (
-                                  policy[column.row] || "-"
+                                  user[column.row] || "-"
                                 )}
                               </div>
                             </td>

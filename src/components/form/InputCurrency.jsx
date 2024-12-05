@@ -31,7 +31,7 @@ const InputCurrency = ({
     // Eliminar caracteres no numéricos
     const numericValue = val.replace(/[^0-9]/g, "");
     // Convertir a número y formatear
-    const formattedValue = new Intl.NumberFormat("de-DE", {
+    const formattedValue = new Intl.NumberFormat("en-US", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,

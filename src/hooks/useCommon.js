@@ -451,7 +451,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: "Reuniones y sesiones",
-          href: "/agents-management/meetings-and-sessions/my-meetings",
+          href: "/agents-management/meetings-and-sessions",
           icon: ChevronRightIcon,
           image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,
@@ -461,12 +461,14 @@ export const useSidebar = () => {
               id: "agent-management",
               name: t("common:menu:agent-management:team-meetings"),
               href: "/agents-management/meetings-and-sessions/teams",
+              image: "/img/agentsManagement/group-meet.svg",
               iconShortBar: SparklesIcon,
             },
             {
               id: "agent-management",
               name: t("common:menu:agent-management:individual-meetings"),
               href: "/agents-management/meetings-and-sessions/individuals",
+              image: "/img/agentsManagement/individual-meet.svg",
               iconShortBar: SparklesIcon,
             },
           ],
@@ -1291,6 +1293,12 @@ export const useLeads = () => {
       id: 4,
       name: t("leads:table:origin"),
       row: "source",
+      check: true,
+    },
+    {
+      id: 6,
+      name: t("leads:table:polizaType"),
+      row: "polizaType",
       check: true,
     },
     {

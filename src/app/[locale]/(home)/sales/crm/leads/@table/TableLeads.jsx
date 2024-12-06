@@ -569,6 +569,8 @@ export default function TableLeads() {
                                 ) ?? "N/A")
                               ) : column.row === "source" ? (
                                 lead?.source?.name
+                              ) : column.row === "polizaType" ? (
+                                lead?.polizaType?.name
                               ) : (
                                 lead[column.row] || "-"
                               )}

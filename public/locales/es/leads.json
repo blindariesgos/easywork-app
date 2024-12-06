@@ -59,6 +59,7 @@
     "created": "Creado el",
     "origin": "Origen",
     "activities": "Actividades",
+    "polizaType": "Ramo",
     "no-data": "No hay prospectos"
   },
   "lead": {

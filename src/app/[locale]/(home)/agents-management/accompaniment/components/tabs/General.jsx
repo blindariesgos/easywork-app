@@ -7,8 +7,6 @@ import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
 import InputPhone from "@/src/components/form/InputPhone";
-import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
-import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -17,19 +15,14 @@ import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
-import {
-  createContact,
-  createUser,
-  getContactId,
-  updateContact,
-  updateUser,
-} from "@/src/lib/apis";
+import { createAgent, updateAgent } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
+import moment from "moment";
 
 export default function General({ agent, id, refPrint }) {
   const { lists } = useAppContext();
@@ -49,21 +42,21 @@ export default function General({ agent, id, refPrint }) {
   }, [params.get("edit")]);
 
   const schema = Yup.object().shape({
-    name: Yup.string()
-      .required(t("common:validations:required"))
-      .min(2, t("common:validations:min", { min: 2 })),
-    curp: Yup.string(),
-    cua: Yup.string(),
-    typeId: Yup.string(),
-    sourceId: Yup.string(),
-    address: Yup.string(),
-    responsibleId: Yup.string(),
-    birthday: Yup.string(),
-    bio: Yup.string(),
-    lastName: Yup.string(),
     firstName: Yup.string(),
+    lastName: Yup.string(),
+    email: Yup.string().email(t("common:validations:email")),
     phone: Yup.string(),
-    email: Yup.string(),
+    birthdate: Yup.string(),
+    childrens: Yup.number(),
+    cua: Yup.string(),
+    rfc: Yup.string(),
+    bio: Yup.string(),
+    password: Yup.string(),
+    address: Yup.string(),
+    recruitmentManagerId: Yup.string(),
+    developmentManagerId: Yup.string(),
+    observerId: Yup.string(),
+    observations: Yup.string(),
   });
 
   const {
@@ -86,74 +79,85 @@ export default function General({ agent, id, refPrint }) {
     }
     setLoading(true);
 
-    if (agent?.fullName) setValue("name", agent?.fullName);
-    if (agent?.cargo) setValue("position", agent?.cargo);
-    if (agent?.phone) setValue("phone", agent?.phone);
-    if (agent?.email) setValue("email", agent?.email);
-    if (agent?.curp) setValue("curp", agent?.curp);
+    if (agent?.user?.profile?.firstName)
+      setValue("firstName", agent?.user?.profile?.firstName);
+    if (agent?.user?.profile?.lastName)
+      setValue("lastName", agent?.user?.profile?.lastName);
+    if (agent?.user?.email) setValue("email", agent?.user?.email);
+    if (agent?.user?.phone) setValue("phone", agent?.user?.phone);
+    if (agent?.user?.profile?.birthday)
+      setValue("birthdate", agent?.user?.profile?.birthday);
+    if (agent?.children) setValue("childrens", agent?.children);
     if (agent?.cua) setValue("cua", agent?.cua);
-    if (agent?.type?.id) setValue("typeId", agent?.type?.id);
-    if (agent?.source?.id) setValue("sourceId", agent?.source?.id);
-    if (agent?.profile?.birthday)
-      setValue("birthday", agent?.profile?.birthday);
+    if (agent?.user?.profile?.idcard)
+      setValue("rfc", agent?.user?.profile?.idcard);
+    if (agent?.user?.bio) setValue("bio", agent?.user?.bio);
     if (agent?.address) setValue("address", agent?.address);
-    if (agent?.bio) setValue("bio", agent?.bio);
-    if (agent?.profile?.firstName)
-      setValue("firstName", agent?.profile?.firstName);
-    if (agent?.profile?.lastName)
-      setValue("lastName", agent?.profile?.lastName);
-    if (agent?.avatar) setSelectedProfileImage({ base64: agent?.avatar });
-    if (agent?.age) setValue("age", agent?.age);
-    if (agent?.children) setValue("children", agent?.children);
+    if (agent?.recruitmentManager)
+      setValue("recruitmentManagerId", agent?.recruitmentManager?.id);
+    if (agent?.developmentManager)
+      setValue("developmentManagerId", agent?.developmentManager?.id);
+    if (agent?.observer) setValue("observerId", agent?.observer?.id);
+    if (agent?.observations) setValue("observations", agent?.observations);
 
     setLoading(false);
   }, [agent, id]);
 
-  const handleProfileImageChange = useCallback((event) => {
-    const file = event.target.files[0];
+  // const handleProfileImageChange = useCallback((event) => {
+  //   const file = event.target.files[0];
 
-    if (file) {
-      const reader = new FileReader();
+  //   if (file) {
+  //     const reader = new FileReader();
 
-      reader.onload = (e) => {
-        setSelectedProfileImage({ base64: e.target.result, file: file });
-      };
+  //     reader.onload = (e) => {
+  //       setSelectedProfileImage({ base64: e.target.result, file: file });
+  //     };
 
-      reader.readAsDataURL(file);
-    }
-  }, []);
+  //     reader.readAsDataURL(file);
+  //   }
+  // }, []);
 
-  const getFormData = (body) => {
-    const formData = new FormData();
-    for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]);
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key]));
-      } else {
-        formData.append(key, body[key]?.toString() || "");
-      }
-    }
-    return formData;
-  };
+  // const getFormData = (body) => {
+  //   const formData = new FormData();
+  //   for (const key in body) {
+  //     if (body[key] === null || body[key] === undefined || body[key] === "") {
+  //       continue;
+  //     }
+  //     if (body[key] instanceof File || body[key] instanceof Blob) {
+  //       formData.append(key, body[key]);
+  //     } else if (Array.isArray(body[key])) {
+  //       formData.append(key, JSON.stringify(body[key]));
+  //     } else {
+  //       formData.append(key, body[key]?.toString() || "");
+  //     }
+  //   }
+  //   return formData;
+  // };
 
   const handleFormSubmit = async (data) => {
-    let body = { ...data };
-
+    const { childrens, birthdate, phone, email, ...other } = data;
+    let body = {
+      ...other,
+      children: childrens,
+      birthdate: moment(birthdate).format("YYYY-MM-DD"),
+    };
     try {
       setLoading(true);
       if (!agent) {
-        if (selectedProfileImage?.file) {
-          body = {
-            ...body,
-            avatar: selectedProfileImage?.file || "",
-          };
-        }
-        const formData = getFormData(body);
-        const response = await createUser(formData);
+        // if (selectedProfileImage?.file) {
+        //   body = {
+        //     ...body,
+        //     avatar: selectedProfileImage?.file || "",
+        //   };
+        // }
+        // const formData = getFormData(body);
+
+        body = {
+          ...body,
+          phone,
+          email,
+        };
+        const response = await createAgent(body);
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {
@@ -164,14 +168,14 @@ export default function General({ agent, id, refPrint }) {
         // await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success("Agente creado exitosamente");
       } else {
-        if (selectedProfileImage?.file) {
-          body = {
-            ...body,
-            image: selectedProfileImage?.file || "",
-          };
-        }
-        const formData = getFormData(body);
-        const response = await updateUser(id, formData);
+        // if (selectedProfileImage?.file) {
+        //   body = {
+        //     ...body,
+        //     image: selectedProfileImage?.file || "",
+        //   };
+        // }
+        // const formData = getFormData(body);
+        const response = await updateAgent(body, id);
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {
@@ -192,10 +196,6 @@ export default function General({ agent, id, refPrint }) {
       setLoading(false);
     }
   };
-
-  // Calculate the agent's 18th birthday
-  const eighteenYearsAgo = new Date();
-  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
   return (
     <Fragment>
@@ -229,7 +229,7 @@ export default function General({ agent, id, refPrint }) {
                 </button>
               )}
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               {isEdit ? (
                 <ProfileImageInput
                   selectedProfileImage={selectedProfileImage}
@@ -248,13 +248,13 @@ export default function General({ agent, id, refPrint }) {
                   />
                 </div>
               )}
-            </div>
+            </div> */}
             <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-20 pt-4">
               <TextInput
                 type="text"
                 label={t("users:form:firstname")}
                 placeholder={t("contacts:create:placeholder-name")}
-                error={errors.firstName && errors.firstName.message}
+                error={errors.firstName}
                 register={register}
                 name="firstName"
                 disabled={!isEdit}
@@ -263,7 +263,7 @@ export default function General({ agent, id, refPrint }) {
                 type="text"
                 label={t("users:form:lastname")}
                 placeholder={t("contacts:create:placeholder-name")}
-                error={errors.lastName && errors.lastName.message}
+                error={errors.lastName}
                 register={register}
                 name="lastName"
                 disabled={!isEdit}
@@ -277,7 +277,7 @@ export default function General({ agent, id, refPrint }) {
                       error={errors.phone}
                       label={t("contacts:create:phone")}
                       defaultValue={field.value}
-                      disabled={!isEdit}
+                      disabled
                     />
                   );
                 }}
@@ -291,7 +291,7 @@ export default function General({ agent, id, refPrint }) {
                 error={errors.email}
                 register={register}
                 name="email"
-                disabled={!isEdit}
+                disabled
               />
 
               <TextInput
@@ -313,12 +313,12 @@ export default function General({ agent, id, refPrint }) {
                       icon={
                         <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                       }
-                      error={errors.birthday}
+                      error={errors.birthdate}
                       disabled={!isEdit}
                     />
                   );
                 }}
-                name="birthday"
+                name="birthdate"
                 control={control}
                 defaultValue=""
               />
@@ -333,39 +333,30 @@ export default function General({ agent, id, refPrint }) {
 
               <TextInput
                 label={t("agentsmanagement:accompaniments:agent:children")}
-                error={errors.children}
+                error={errors?.childrens}
                 register={register}
-                name="children"
+                name="childrens"
+                type="number"
                 disabled={!isEdit}
               />
               <TextInput
                 label={t("contacts:create:rfc")}
                 placeholder="XEXX010101000"
-                error={errors.curp}
+                error={errors?.rfc}
                 register={register}
-                name="curp"
+                name="rfc"
                 disabled={!isEdit}
               />
               <TextInput
                 label={t("contacts:create:cua")}
-                error={errors.cua}
+                error={errors?.cua}
                 register={register}
                 name="cua"
                 disabled={!isEdit}
               />
-              <SelectInput
-                label={t("contacts:create:contact-type")}
-                options={lists?.listContact?.contactTypes}
-                name="typeId"
-                error={!watch("typeId") && errors.typeId}
-                register={register}
-                setValue={setValue}
-                disabled={!isEdit}
-                watch={watch}
-              />
               <TextInput
                 label={t("contacts:create:address")}
-                error={errors.address}
+                error={errors?.address}
                 register={register}
                 name="address"
                 placeholder={t("contacts:create:placeholder-address")}
@@ -373,44 +364,31 @@ export default function General({ agent, id, refPrint }) {
                 multiple
                 rows={3}
               />
-              <SelectInput
-                label={t("contacts:create:origen")}
-                name="sourceId"
-                options={lists?.listContact?.contactSources}
-                error={!watch("sourceId") && errors.sourceId}
-                register={register}
-                setValue={setValue}
-                disabled={!isEdit}
-                watch={watch}
-              />
 
               <SelectDropdown
                 label={t("agentsmanagement:accompaniments:agent:responsible")}
-                name="responsibleId"
-                options={lists?.users}
-                register={register}
+                name="developmentManagerId"
+                options={lists?.users ?? []}
                 disabled={!isEdit}
-                error={!watch("responsibleId") && errors.responsibleId}
+                error={errors?.developmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
               <SelectDropdown
                 label={t("agentsmanagement:accompaniments:agent:manager")}
-                name="managerId"
-                options={lists?.users}
-                register={register}
+                name="recruitmentManagerId"
+                options={lists?.users ?? []}
                 disabled={!isEdit}
-                error={!watch("managerId") && errors.managerId}
+                error={errors?.recruitmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
               <SelectDropdown
                 label={t("agentsmanagement:accompaniments:agent:observer")}
                 name="observerId"
-                options={lists?.users}
-                register={register}
+                options={lists?.users ?? []}
                 disabled={!isEdit}
-                error={!watch("observerId") && errors.observerId}
+                error={errors?.observerId}
                 setValue={setValue}
                 watch={watch}
               />
@@ -418,7 +396,7 @@ export default function General({ agent, id, refPrint }) {
                 label={t("agentsmanagement:accompaniments:agent:comments")}
                 error={errors.address}
                 register={register}
-                name="address"
+                name="observations"
                 disabled={!isEdit}
                 multiple
               />

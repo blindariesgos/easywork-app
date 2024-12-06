@@ -44,6 +44,7 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import { P } from "pino";
 
 export default function Table() {
   const {
@@ -397,33 +398,33 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((user, index) => {
+                  data?.items.map((agent, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(user.id)
+                          selectedContacts.includes(agent.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(user.id) && (
+                          {selectedContacts.includes(agent.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={user.id}
-                              checked={selectedContacts.includes(user.id)}
+                              value={agent.id}
+                              checked={selectedContacts.includes(agent.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, user.id]
+                                    ? [...selectedContacts, agent.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== user.id
+                                        (p) => p !== agent.id
                                       )
                                 )
                               }
@@ -458,10 +459,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(user.id);
+                                            item.handleClick(agent.id);
                                           item.handleClickContact &&
                                             item.handleClickContact(
-                                              user?.contact?.id
+                                              agent?.contact?.id
                                             );
                                         }}
                                       >
@@ -504,10 +505,12 @@ export default function Table() {
                                                 disabled={option.disabled}
                                                 onClick={() => {
                                                   option.handleClick &&
-                                                    option.handleClick(user.id);
+                                                    option.handleClick(
+                                                      agent.id
+                                                    );
                                                   option.handleClickContact &&
                                                     option.handleClickContact(
-                                                      user?.contact?.id
+                                                      agent?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -535,41 +538,30 @@ export default function Table() {
                             <td className="ml-4 py-4" key={index}>
                               <div
                                 className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary",
-                                  {
-                                    "text-center": [
-                                      "vigenciaDesde",
-                                      "poliza",
-                                      "source",
-                                      "status",
-                                    ].includes(column.row),
-                                    "text-right": ["importePagar"].includes(
-                                      column.row
-                                    ),
-                                  }
+                                  "font-medium text-sm  text-black hover:text-primary"
                                 )}
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/agents-management/accompaniment/agent/${user.id}?show=true`}
+                                    href={`/agents-management/accompaniment/agent/${agent.id}?show=true`}
                                     className="flex gap-3 items-center"
                                   >
                                     <Image
                                       className="h-8 w-8 rounded-full bg-zinc-200"
                                       width={30}
                                       height={30}
-                                      src={user.avatar || "/img/avatar.svg"}
+                                      src={
+                                        agent?.user?.avatar || "/img/avatar.svg"
+                                      }
                                       alt=""
                                     />
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {user?.profile
-                                          ? `${user?.profile?.firstName} ${user?.profile?.lastName}`
-                                          : user?.username}
+                                        {agent?.name}
                                       </p>
-                                      {user.bio && (
+                                      {agent.bio && (
                                         <p className="text-start text-xs">
-                                          {user?.bio}
+                                          {agent?.bio}
                                         </p>
                                       )}
                                     </div>
@@ -614,27 +606,36 @@ export default function Table() {
                                     </button>
                                   </div>
                                 ) : column.row === "email" ? (
-                                  (user.email ?? "-")
+                                  <p className="text-center">
+                                    {agent?.user?.email ?? "-"}
+                                  </p>
                                 ) : column.row === "phone" ? (
-                                  user.phone.length > 0 ? (
-                                    `+${user.phone}`
+                                  agent?.user?.phone?.length > 0 ? (
+                                    <p className="text-center">{`+${agent?.user?.phone}`}</p>
                                   ) : (
                                     "-"
                                   )
                                 ) : column.row === "createdAt" ? (
-                                  (formatDate(user.createdAt, "dd/MM/yyyy") ??
-                                  null)
+                                  <p className="text-center">
+                                    {formatDate(
+                                      agent.createdAt,
+                                      "dd/MM/yyyy"
+                                    ) ?? "-"}
+                                  </p>
                                 ) : column.row === "updatedAt" ? (
-                                  (formatDate(
-                                    user.updatedAt,
-                                    "dd/MM/yyyy, hh:mm a"
-                                  ) ?? null)
-                                ) : column.row === "manager" ? (
-                                  "-"
+                                  <p className="text-center">
+                                    {formatDate(
+                                      agent.updatedAt,
+                                      "dd/MM/yyyy, hh:mm a"
+                                    )}
+                                  </p>
                                 ) : column.row === "isActive" ? (
-                                  getStatus(user.isActive)
+                                  getStatus(agent?.user?.isActive)
+                                ) : column.row === "manager" ? (
+                                  (agent?.recruitmentManager?.name ??
+                                  agent?.recruitmentManager?.username)
                                 ) : (
-                                  user[column.row] || "-"
+                                  agent[column.row] || "-"
                                 )}
                               </div>
                             </td>

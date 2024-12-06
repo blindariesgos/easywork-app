@@ -84,9 +84,17 @@ export const createContact = async (data) => {
   return response;
 };
 
-export const createUser = async (data) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post("/users/register", data)
+export const createAgent = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agents", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
+export const updateAgent = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agents/${agentId}`, data)
     .catch((error) => ({ ...error, hasError: true }));
   revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;

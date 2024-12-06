@@ -20,6 +20,10 @@ import {
   getMetadataOfPdf,
 } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
+import InputCurrency from "@/src/components/form/InputCurrency";
+import InputDate from "@/src/components/form/InputDate";
+import TextInput from "@/src/components/form/TextInput";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -30,11 +34,15 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [helpers, setHelpers] = useState({});
 
   const schema = yup.object().shape({
-    contact: yup.object().shape({}).required(t("common:validations:required")),
+    contact: yup.object().shape({}),
+    // .required(t("common:validations:required"))
     // typePerson: yup.string().required(t("common:validations:required")),
-    insuranceId: yup.string().required(t("common:validations:required")),
-    typeId: yup.string().required(t("common:validations:required")),
-    responsibleId: yup.string().required(t("common:validations:required")),
+    insuranceId: yup.string(),
+    // .required(t("common:validations:required"))
+    typeId: yup.string(),
+    // .required(t("common:validations:required"))
+    responsibleId: yup.string(),
+    // .required(t("common:validations:required"))
     subAgente: yup.object().shape({}),
   });
 
@@ -199,74 +207,24 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
           className="bg-easywork-main"
         />
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
+          <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d] overflow-y-auto">
             <div className="bg-gray-100 rounded-md p-2">
-              <h4 className="text-2xl pb-4">Crear póliza</h4>
               <div className="bg-white rounded-md p-4 flex justify-between items-center">
-                <p>Datos de la póliza</p>
+                <p>Información general de la póliza</p>
                 {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
-                <ContactSelectAsync
-                  label={t("control:portafolio:control:form:contact")}
-                  name={"contact"}
-                  setValue={setValue}
-                  watch={watch}
-                  error={errors?.contact}
-                  helperText={helpers?.contact}
-                />
-                <SelectSubAgent
-                  label={t("control:portafolio:control:form:subAgente")}
-                  name="subAgente"
-                  register={register}
-                  setValue={setValue}
-                  watch={watch}
-                  error={errors?.subAgente}
-                  helperText={helpers?.subAgent}
-                />
-                <SelectInput
-                  label={t("control:portafolio:control:form:responsible")}
-                  options={lists?.users ?? []}
-                  name="responsibleId"
-                  error={errors?.responsibleId}
-                  setValue={setValue}
-                />
-
-                {policy && (
-                  <Fragment>
-                    <SelectInput
-                      label={t(
-                        "control:portafolio:control:form:insurance-company"
-                      )}
-                      options={lists?.policies?.polizaCompanies ?? []}
-                      name="insuranceId"
-                      error={errors?.insuranceId}
-                      setValue={setValue}
-                      watch={watch}
-                    />
-
-                    <SelectInput
-                      label={t("control:portafolio:control:form:branch")}
-                      options={lists?.policies?.polizaTypes ?? []}
-                      error={errors?.typeId}
-                      name="typeId"
-                      setValue={setValue}
-                      watch={watch}
-                    />
-                  </Fragment>
-                )}
-
                 <div className="w-full">
                   <label
                     className={`block text-sm font-medium leading-6 text-gray-900`}
                   >
-                    Póliza emitida pagada
+                    Cargar póliza pagada
                   </label>
                   <label
                     htmlFor="policy-file"
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
-                    <p>Selecciona un PDF: GNP</p>
+                    <p>Leer datos de la póliza</p>
                     {policy && (
                       <div className="flex flex-col gap-2 justify-center items-center pt-2">
                         <div className="p-2 group-hover:bg-primary bg-easy-500 rounded-md">
@@ -287,12 +245,254 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     onChange={handleChangeFile}
                   />
                   <p className="text-xs italic text-center pt-2 text-gray-700">
-                    próximamente:{" "}
-                    <span className="font-bold">
-                      Beta solo Chubb/Quálitas/AXA - Autos
-                    </span>
+                    <span className="font-bold">Selecciona un PDF: </span>
+                    (Versión Beta para Chubb/Quálitas/GNP/AXA - en el Ramo
+                    Autos)
                   </p>
                 </div>
+                <SelectInput
+                  label={t("control:portafolio:control:form:typePerson")}
+                  options={[
+                    {
+                      name: "Física",
+                      id: "fisica",
+                    },
+                    {
+                      name: "Moral",
+                      id: "moral",
+                    },
+                  ]}
+                  name="typePerson"
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
+                  label={t("operations:policies:general:payment-frequency")}
+                  name="frecuenciaCobroId"
+                  options={lists?.policies?.polizaFrecuenciasPago ?? []}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
+                  label={t("operations:policies:general:intermediary")}
+                  name="agenteIntermediarioId"
+                  options={lists?.policies?.agentesIntermediarios ?? []}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+
+                <SelectDropdown
+                  label={t("operations:policies:general:responsible")}
+                  name="assignedById"
+                  options={lists?.users}
+                  register={register}
+                  error={!watch("assignedById") && errors.assignedById}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
+                  label={"Observador"}
+                  options={lists?.users ?? []}
+                  name="observerId"
+                  error={errors?.observerId}
+                  setValue={setValue}
+                />
+                <ContactSelectAsync
+                  label={t("control:portafolio:control:form:contact")}
+                  name={"contact"}
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors?.contact}
+                  helperText={helpers?.contact}
+                />
+                <TextInput
+                  type="text"
+                  label={"Número de póliza"}
+                  name="poliza"
+                  register={register}
+                />
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
+                        label={t("operations:policies:general:init-date")}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={errors.vigenciaDesde}
+                      />
+                    );
+                  }}
+                  name="vigenciaDesde"
+                  control={control}
+                  defaultValue=""
+                />
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
+                        label={t("operations:policies:general:expiration")}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={errors.vigenciaHasta}
+                      />
+                    );
+                  }}
+                  name="vigenciaHasta"
+                  control={control}
+                  defaultValue=""
+                />
+                <SelectInput
+                  label={"Aseguradora"}
+                  options={lists?.policies?.polizaCompanies}
+                  name="insuranceId"
+                  setValue={setValue}
+                  watch={watch}
+                  register={register}
+                  error={errors.insuranceId}
+                />
+                <SelectInput
+                  label={t("operations:policies:general:type")}
+                  name="typeId"
+                  options={lists?.policies?.polizaTypes ?? []}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
+                  label={"Moneda"}
+                  options={lists?.policies?.currencies ?? []}
+                  name="currencyId"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
+                  label={t("operations:policies:general:payment-method")}
+                  name="formaCobroId"
+                  options={lists?.policies?.polizaFormasCobro ?? []}
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <InputCurrency
+                  type="text"
+                  label={t("operations:policies:general:primaNeta")}
+                  setValue={setValue}
+                  name="primaNeta"
+                  // defaultValue={data?.primaNeta?.toFixed(2) ?? null}
+                  defaultValue={null}
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
+                />
+                <InputCurrency
+                  type="text"
+                  label={t("operations:policies:general:recargoFraccionado")}
+                  setValue={setValue}
+                  name="recargoFraccionado"
+                  // defaultValue={
+                  //   data?.recargoFraccionado?.toFixed(2) ?? null
+                  // }
+                  defaultValue={null}
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
+                />
+                <InputCurrency
+                  type="text"
+                  label={t("operations:policies:general:derechoPoliza")}
+                  setValue={setValue}
+                  name="derechoPoliza"
+                  // defaultValue={data?.derechoPoliza?.toFixed(2) ?? null}
+                  defaultValue={null}
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
+                />
+                <InputCurrency
+                  type="text"
+                  label={t("operations:policies:general:iva")}
+                  setValue={setValue}
+                  name="iva"
+                  // defaultValue={data?.iva?.toFixed(2) ?? null}
+                  defaultValue={null}
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
+                />
+                <InputCurrency
+                  type="text"
+                  label={t("operations:policies:general:importePagar")}
+                  setValue={setValue}
+                  name="importePagar"
+                  // defaultValue={data?.importePagar?.toFixed(2) ?? null}
+                  defaultValue={null}
+                  prefix={
+                    lists?.policies?.currencies?.find(
+                      (x) => x.id == watch("currencyId")
+                    )?.symbol ?? ""
+                  }
+                />
+                {/* <SelectSubAgent
+                  label={t("control:portafolio:control:form:subAgente")}
+                  name="subAgente"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors?.subAgente}
+                  helperText={helpers?.subAgent}
+                /> */}
+
+                {/* {policy && ( */}
+                {/* <Fragment> */}
+
+                {/* {data?.type?.name === "GMM" && (
+                  <SelectInput
+                    label={t("operations:policies:general:coverage")}
+                    options={[
+                      {
+                        id: "Nacional",
+                        name: "Nacional",
+                      },
+                      {
+                        id: "Internacional",
+                        name: "Internacional",
+                      },
+                    ]}
+                    name="cobertura"
+                    register={register}
+                    setValue={setValue}
+                    disabled
+                    watch={watch}
+                  />
+                )} */}
+
+                {/* {data?.type?.name === "VIDA" && (
+                      <SelectInput
+                        label={t("operations:policies:general:subbranch")}
+                        name="subramoId"
+                        options={lists?.policies?.polizaSubRamo ?? []}
+                        
+                        register={register}
+                        setValue={setValue}
+                        watch={watch}
+                      />
+                    )} */}
+
+                {/* </Fragment> */}
+                {/* )} */}
 
                 <div className="w-full flex justify-center gap-4 py-4">
                   <Button
@@ -300,6 +500,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     buttonStyle="primary"
                     label="Guardar"
                     type="submit"
+                    disabled={true}
                   />
                   <Button
                     className="px-4 py-2"

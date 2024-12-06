@@ -4,165 +4,109 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AccompanimentsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "../../lib/api/hooks/policies";
+import { useUsers } from "../../lib/api/hooks/users";
 
 export default function AccompanimentsContextProvider({ children }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
     orderBy: "name",
-    order: "DESC"
-  })
-  const { lists } = useAppContext()
-  const [filters, setFilters] = useState({})
-  const { data, isLoading, isError, mutate } = usePolicies({
-    config, filters: {
-      ...filters,
-      renewal: "true",
-    }
-  })
-  const [filterFields, setFilterFields] = useState()
+    order: "DESC",
+  });
+  const { lists } = useAppContext();
+  const [filters, setFilters] = useState({});
+  const { data, isLoading, isError, mutate } = useUsers({ config, filters });
+
+  const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const [displayFilters, setDisplayFilters] = useState({})
+  const [displayFilters, setDisplayFilters] = useState({});
   const defaultFilterFields = [
     {
-      id: 0,
-      name: t("control:portafolio:receipt:filters:responsible"),
-      type: "dropdown",
-      check: true,
-      code: "assignedById",
-      options: lists?.users,
-    },
-    {
       id: 1,
-      name: t("control:portafolio:receipt:filters:expiration-date"),
-      type: "date",
+      name: t("users:form:firstname"),
+      type: "input",
       check: true,
-      code: "vigenciaHasta",
+      code: "firstName",
     },
     {
       id: 2,
-      name: t("operations:policies:table:policy"),
+      name: t("users:form:lastname"),
+      type: "input",
+      check: true,
+      code: "lastName",
+    },
+    {
+      id: 3,
+      name: t("users:form:phone"),
       type: "input",
       check: false,
-      code: "poliza",
+      code: "phone",
     },
-  ]
+    {
+      id: 4,
+      name: t("users:form:email"),
+      type: "input",
+      check: false,
+      code: "email",
+    },
+  ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
-      [key]: value
-    }
+      [key]: value,
+    };
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy
-          ? "DESC"
-          : config.order === "ASC"
+        order:
+          value != config.orderBy
             ? "DESC"
-            : "ASC"
-      }
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
+      };
     }
 
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   useEffect(() => {
     setFilterFields([
       {
-        id: 0,
-        name: t("control:portafolio:receipt:filters:responsible"),
-        type: "dropdown",
-        check: true,
-        code: "assignedById",
-        options: lists?.users,
-      },
-      {
         id: 1,
-        name: t("control:portafolio:receipt:filters:expiration-date"),
-        type: "date",
+        name: t("users:form:firstname"),
+        type: "input",
         check: true,
-        code: "vigenciaHasta",
+        code: "firstName",
       },
       {
         id: 2,
-        name: t("operations:policies:table:policy"),
+        name: t("users:form:lastname"),
         type: "input",
-        check: false,
-        code: "poliza",
+        check: true,
+        code: "lastName",
       },
       {
         id: 3,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "dropdown",
+        name: t("users:form:phone"),
+        type: "input",
         check: false,
-        code: "client",
-        options: lists?.users,
+        code: "phone",
       },
       {
         id: 4,
-        name: t("operations:policies:general:intermediary"),
-        type: "select",
+        name: t("users:form:email"),
+        type: "input",
         check: false,
-        code: "agenteIntermediarioId",
-        options: lists?.policies?.agentesIntermediarios,
+        code: "email",
       },
-      {
-        id: 5,
-        name: t("operations:policies:table:state"),
-        type: "select",
-        check: false,
-        code: "status",
-        options: [
-          {
-            id: "activa",
-            name: "Vigente",
-          },
-          {
-            id: "expirada",
-            name: "No vigente",
-          },
-          {
-            id: "cancelada",
-            name: "Cancelada",
-          },
-          {
-            id: "en_proceso",
-            name: "En trámite",
-          },
-        ],
-      },
-      {
-        id: 6,
-        name: t("operations:policies:general:type"),
-        type: "select",
-        check: false,
-        code: "typeId",
-        options: lists?.policies?.polizaTypes,
-      },
-      {
-        id: 7,
-        name: t("operations:policies:general:payment-frequency"),
-        type: "select",
-        check: false,
-        code: "frecuenciaCobroId",
-        options: lists?.policies?.polizaFrecuenciasPago,
-      },
-      {
-        id: 8,
-        name: t("operations:policies:general:payment-method"),
-        type: "select",
-        check: false,
-        code: "formaCobroId",
-        options: lists?.policies?.polizaFormasCobro,
-      },
-    ])
-  }, [lists?.listContact, lists?.policies])
+    ]);
+  }, [lists]);
 
   useEffect(() => {
-    handleChangeConfig("page", 1)
-  }, [config.limit])
+    handleChangeConfig("page", 1);
+  }, [config.limit]);
 
   // useEffect(() => {
   //   if (Object.keys(filters).length == 0 && filterFields) {
@@ -176,17 +120,17 @@ export default function AccompanimentsContextProvider({ children }) {
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
@@ -210,7 +154,7 @@ export default function AccompanimentsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
-      defaultFilterFields
+      defaultFilterFields,
     }),
     [
       data,
@@ -222,9 +166,13 @@ export default function AccompanimentsContextProvider({ children }) {
       filterFields,
       filters,
       defaultFilterFields,
-      lists
+      lists,
     ]
   );
 
-  return <AccompanimentsContext.Provider value={values}>{children}</AccompanimentsContext.Provider>;
+  return (
+    <AccompanimentsContext.Provider value={values}>
+      {children}
+    </AccompanimentsContext.Provider>
+  );
 }

@@ -18,22 +18,23 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
 import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 
 export default function PolicyDetails({
   data,
   id,
   mutate: updatePolicy,
-  headerHeight,
+  edit,
 }) {
   const { t } = useTranslation();
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(!!edit);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
   const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const pathname = usePathname();
   const router = useRouter();
 
   const schema = Yup.object().shape({
@@ -56,6 +57,7 @@ export default function PolicyDetails({
     plazoPago: Yup.string(),
     formaCobroId: Yup.string(),
     currencyId: Yup.string(),
+    version: Yup.string(),
   });
 
   const {
@@ -81,6 +83,10 @@ export default function PolicyDetails({
       setValue("vigenciaDesde", data?.vigenciaDesde ?? "");
     if (data?.vigenciaHasta)
       setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
+    if (data?.vigenciaDesdeRenovacion)
+      setValue("vigenciaDesdeRenovacion", data?.vigenciaDesdeRenovacion ?? "");
+    if (data?.vigenciaHastaRenovacion)
+      setValue("vigenciaHastaRenovacion", data?.vigenciaHastaRenovacion ?? "");
     if (data?.status) setValue("status", data?.status);
     if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
@@ -98,8 +104,9 @@ export default function PolicyDetails({
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
     if (data?.contact?.address) setValue("address", data?.contact?.address);
-    if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
+    if (data?.contact?.rfc) setValue("rfc", data?.contact?.rfc);
     if (data?.type?.id) setValue("typeId", data?.type?.id);
+    if (data?.version) setValue("version", data?.version);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -130,14 +137,28 @@ export default function PolicyDetails({
         return;
       }
       setIsEdit(false);
-      router.back();
+      setIsEdit(false);
       updatePolicy();
       toast.success("Poliza actualizada correctamente.");
       mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
+
+      if (params.get("editPolicy")) {
+        params.delete("editPolicy");
+        router.replace(`${pathname}?${params.toString()}`);
+      }
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
       );
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEdit(false);
+
+    if (params.get("editPolicy")) {
+      params.delete("editPolicy");
+      router.replace(`${pathname}?${params.toString()}`);
     }
   };
 
@@ -154,7 +175,7 @@ export default function PolicyDetails({
       {/* Menu Derecha */}
       <div className="h-auto rounded-lg overflow-y-auto pr-2 lg:col-span-5">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-          {t("operations:policies:general:title")}
+          {t("operations:renovations:general:title")}
           {data && (
             <button
               type="button"
@@ -207,36 +228,11 @@ export default function PolicyDetails({
               watch={watch}
             />
           )}
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:status")}
-            options={[
-              {
-                id: "activa",
-                name: "Vigente",
-              },
-              {
-                id: "expirada",
-                name: "No vigente",
-              },
-              {
-                id: "cancelada",
-                name: "Cancelada",
-              },
-              {
-                id: "en_proceso",
-                name: "En trámite",
-              },
-            ]}
-            name="status"
-            register={register}
-            setValue={setValue}
-            disabled={!isEdit}
-            watch={watch}
-          />
           <TextInput
             type="text"
             label={t("operations:policies:general:rfc")}
             name="rfc"
+            register={register}
             disabled
           />
           <TextInput
@@ -425,61 +421,136 @@ export default function PolicyDetails({
             multiple
           />
         </div>
-        {/* {data?.type?.name === "AUTOS" &&
-          data?.vehicles.map((vehicle) => (
-            <Fragment key={vehicle.id}>
-              <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-                {"Datos del vehiculo asegurado"}
-              </div>
-              <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-                <TextInput
-                  type="text"
-                  label={"Descripción"}
-                  value={vehicle?.description ?? "S/N"}
+        <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
+          {t("operations:renovations:general:subtitle")}
+        </div>
+        <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
+          <TextInput
+            type="text"
+            label={t("operations:renovations:general:version")}
+            name="version"
+            register={register}
+            disabled
+          />
+          <Controller
+            render={({ field: { value, onChange, ref, onBlur } }) => {
+              return (
+                <InputDate
+                  label={`${t(
+                    "operations:policies:general:init-date"
+                  )} (Renovación)`}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  error={errors.vigenciaDesdeRenovacion}
                   disabled
                 />
-                <TextInput
-                  type="text"
-                  label={"Serie"}
-                  value={vehicle?.serial ?? "S/N"}
+              );
+            }}
+            name="vigenciaDesdeRenovacion"
+            control={control}
+            defaultValue=""
+          />
+          <Controller
+            render={({ field: { value, onChange, ref, onBlur } }) => {
+              return (
+                <InputDate
+                  label={`${t(
+                    "operations:policies:general:expiration"
+                  )} (Renovación)`}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  error={errors.vigenciaHastaRenovacion}
                   disabled
                 />
-                <TextInput
-                  type="text"
-                  label={"Placa"}
-                  value={vehicle?.plates ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Modelo"}
-                  value={vehicle?.model ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Motor"}
-                  value={vehicle?.motor ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Uso"}
-                  value={vehicle?.usage ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Circula en"}
-                  value={vehicle?.circulatesIn ?? "S/N"}
-                  disabled
-                />
-              </div>
-            </Fragment>
-          ))} */}
+              );
+            }}
+            name="vigenciaHastaRenovacion"
+            control={control}
+            defaultValue=""
+          />
+          <InputCurrency
+            type="text"
+            label={`${t("operations:policies:general:primaNeta")} (Renovación)`}
+            setValue={setValue}
+            name="primaNetaRenovacion"
+            disabled
+            defaultValue={data?.primaNetaRenovacion?.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
+          />
+          <InputCurrency
+            type="text"
+            label={`${t(
+              "operations:policies:general:recargoFraccionado"
+            )} (Renovación)`}
+            setValue={setValue}
+            name="recargoFraccionadoRenovacion"
+            disabled
+            defaultValue={
+              data?.recargoFraccionadoRenovacion?.toFixed(2) ?? null
+            }
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
+          />
+          <InputCurrency
+            type="text"
+            label={`${t(
+              "operations:policies:general:derechoPoliza"
+            )} (Renovación)`}
+            setValue={setValue}
+            name="derechoPolizaRenovacion"
+            disabled
+            defaultValue={data?.derechoPolizaRenovacion?.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
+          />
+          <InputCurrency
+            type="text"
+            label={`${t("operations:policies:general:iva")} (Renovación)`}
+            setValue={setValue}
+            name="ivaRenovacion"
+            disabled
+            defaultValue={data?.ivaRenovacion?.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
+          />
+          <InputCurrency
+            type="text"
+            label={`${t(
+              "operations:policies:general:importePagar"
+            )} (Renovación)`}
+            setValue={setValue}
+            name="importePagarRenovacion"
+            disabled
+            defaultValue={data?.importePagarRenovacion?.toFixed(2) ?? null}
+            prefix={
+              lists?.policies?.currencies?.find(
+                (x) => x.id == watch("currencyId")
+              )?.symbol ?? ""
+            }
+          />
+        </div>
       </div>
       {/* Menu Izquierda */}
-      <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />
+      <ActivityPanel
+        entityId={id}
+        crmType="renewal"
+        className="lg:col-span-7"
+      />
       {isEdit && (
         <div
           className={clsx(
@@ -501,7 +572,7 @@ export default function PolicyDetails({
             label={t("common:buttons:cancel")}
             disabled={loading}
             buttonStyle="secondary"
-            onclick={() => router.back()}
+            onclick={handleCancelEdit}
             className="px-3 py-2"
           />
         </div>

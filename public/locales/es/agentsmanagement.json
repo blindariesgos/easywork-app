@@ -10,6 +10,39 @@
             "state": "Estado del agente",
             "created-in": "Fecha de creación",
             "not-data": "No hay agentes"
+        },
+        "agent": {
+            "create": "Nuevo Agente",
+            "data": "Datos de Agente",
+            "age": "Edad",
+            "children": "Hijos",
+            "responsible": "Responsable del reclutamiento",
+            "manager": "Gerente de desarrollo",
+            "observer": "Observador",
+            "comments": "Comentarios",
+            "recruitment": "Reclutamiento y selección",
+            "training": "Capacitación",
+            "conexions": "Conexiones",
+            "mettings": "Juntas individuales"
+        }
+    },
+    "capacitations": {
+        "title": "Capacitaciones",
+        "table": {
+            "agent": "Agente",
+            "stage": "Etapa",
+            "startDate": "Fecha de inicio del proceso",
+            "endDate": "Fecha final del proceso",
+            "processClosed": "Proceso cerrado",
+            "responsible": "Responsable",
+            "activity": "Actividad",
+            "email": "Correo Electrónico",
+            "mobile": "Móvil",
+            "lastUpdate": "Fecha de la última actividad",
+            "manager": "Gerente de desarrollo",
+            "state": "Estado del agente",
+            "created-in": "Fecha de creación",
+            "not-data": "No hay agentes"
         }
     },
     "meetings-and-sessions": {

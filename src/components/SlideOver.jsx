@@ -95,7 +95,9 @@ export default function SlideOver({
       case "task":
         setLabel(t("tools:tasks:name"));
         break;
-
+      case "agent":
+        setLabel(t("agentsmanagement:accompaniments:table:agent"));
+        break;
       default:
         break;
     }

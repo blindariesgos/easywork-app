@@ -419,11 +419,27 @@ export const useSidebar = () => {
           image: "/img/agentsManagement/recruitement.svg",
         },
         {
-          id: "agent-management",
-          name: t("common:menu:agent-management:capacitations"),
-          href: "",
+          id: "agent-management:capacitations",
+          name: t("common:menu:agent-management:capacitations:name"),
+          href: "/agents-management/capacitations",
           iconShortBar: NewspaperIcon,
           image: "/img/agentsManagement/capacitations.svg",
+          children: [
+            {
+              id: "agent-management:capacitations",
+              name: t("common:menu:agent-management:capacitations:e-learning"),
+              href: "/agents-management/capacitations/e-learning/courses",
+              image: "/img/crm/contacto.png",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+            {
+              id: "agent-management:capacitations",
+              name: t("common:menu:agent-management:capacitations:academy"),
+              href: "/agents-management/capacitations/academy",
+              image: "/img/crm/contacto.png",
+              iconShortBar: ArrowDownCircleIcon,
+            },
+          ],
         },
         {
           id: "agent-management",
@@ -435,7 +451,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: "Reuniones y sesiones",
-          href: "/agents-management/meetings-and-sessions",
+          href: "/agents-management/meetings-and-sessions/my-meetings",
           icon: ChevronRightIcon,
           image: "/img/agentsManagement/metting-and-sessions.svg",
           current: false,
@@ -444,13 +460,13 @@ export const useSidebar = () => {
             {
               id: "agent-management",
               name: t("common:menu:agent-management:team-meetings"),
-              href: "",
+              href: "/agents-management/meetings-and-sessions/teams",
               iconShortBar: SparklesIcon,
             },
             {
               id: "agent-management",
               name: t("common:menu:agent-management:individual-meetings"),
-              href: "",
+              href: "/agents-management/meetings-and-sessions/individuals",
               iconShortBar: SparklesIcon,
             },
           ],
@@ -1925,41 +1941,97 @@ export const useAccompanimentsTable = () => {
     {
       id: 2,
       name: t("agentsmanagement:accompaniments:table:email"),
-      row: "poliza",
-      order: "poliza",
+      row: "email",
+      order: "email",
       check: true,
     },
     {
       id: 3,
       name: t("agentsmanagement:accompaniments:table:mobile"),
-      row: "status",
-      order: "status",
+      row: "phone",
+      order: "phone",
       check: true,
       photo: true,
     },
     {
       id: 7,
       name: t("agentsmanagement:accompaniments:table:lastUpdate"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "updatedAt",
+      order: "updatedAt",
       check: true,
     },
     {
       id: 7,
       name: t("agentsmanagement:accompaniments:table:manager"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "manager",
+      order: "manager",
       check: true,
     },
     {
       id: 8,
       name: t("agentsmanagement:accompaniments:table:state"),
-      row: "activities",
+      row: "isActive",
       check: true,
     },
     {
       id: 8,
       name: t("agentsmanagement:accompaniments:table:created-in"),
+      row: "createdAt",
+      order: "createdAt",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useCapacitationsTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:capacitations:table:agent"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:capacitations:table:stage"),
+      row: "stage",
+      order: "stage",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:capacitations:table:startDate"),
+      row: "startDate",
+      order: "startDate",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:capacitations:table:endDate"),
+      row: "endDate",
+      order: "endDate",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:capacitations:table:processClosed"),
+      row: "processClosed",
+      order: "processClosed",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:capacitations:table:responsible"),
+      row: "responsible",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:capacitations:table:activity"),
       row: "activities",
       check: true,
     },

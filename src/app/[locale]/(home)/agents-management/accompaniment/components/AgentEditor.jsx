@@ -84,7 +84,7 @@ export default function AgentEditor({ agent, id }) {
             <div className="pt-6 px-2 md:px-4 lg:px-8 pb-2 md:pb-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
                 <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {`${agent?.profile?.firstName ?? ""} ${agent?.profile?.lastName ?? ""}`}
+                  {agent?.name}
                 </p>
 
                 <div className="flex items-center gap-2">

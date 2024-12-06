@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AccompanimentsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { useUsers } from "../../lib/api/hooks/users";
+import { useAgents } from "../../lib/api/hooks/agents";
 
 export default function AccompanimentsContextProvider({ children }) {
   const { t } = useTranslation();
@@ -16,7 +16,7 @@ export default function AccompanimentsContextProvider({ children }) {
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
-  const { data, isLoading, isError, mutate } = useUsers({ config, filters });
+  const { data, isLoading, isError, mutate } = useAgents({ config, filters });
 
   const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);

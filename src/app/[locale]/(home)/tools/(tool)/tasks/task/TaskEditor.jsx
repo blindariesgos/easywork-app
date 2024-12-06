@@ -144,7 +144,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
       },
     ]);
     setValue("name", "CRM - Cliente: ");
-    setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };
 
@@ -159,7 +158,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
       },
     ]);
     setValue("name", "CRM - Prospecto: ");
-    setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };
 
@@ -174,7 +172,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     ]);
     console.log("receipt", response);
     setValue("name", "CRM - Recibo: ");
-    setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };
 
@@ -188,7 +185,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
       },
     ]);
     setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
-    setOpenOptions((prev) => ({ ...prev, more: true }));
     setLoading(false);
   };
 
@@ -360,6 +356,19 @@ export default function TaskEditor({ edit, copy, subtask }) {
               copy={copy}
             />
             <div className="mt-6 flex flex-col gap-3">
+              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("tools:tasks:new:crm")}
+                </p>
+                <div className="w-full md:w-[40%]">
+                  <CRMMultipleSelectV2
+                    getValues={getValues}
+                    setValue={setValue}
+                    name="crm"
+                    error={errors.crm}
+                  />
+                </div>
+              </div>
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                 <p className="text-sm text-left w-full md:w-36">
                   {t("tools:tasks:new:responsible")}
@@ -597,7 +606,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
                 <div className="flex gap-2 text-sm">
                   <p className="font-medium">{t("tools:tasks:new:more")}</p>
                   <p>({t("tools:tasks:new:tracking")},</p>
-                  <p>{t("tools:tasks:new:crm")},</p>
                   <p>{t("tools:tasks:new:tags")})</p>
                 </div>
               </div>
@@ -635,19 +643,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       </div>
                     </div>
                   )}
-                  <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                    <p className="text-sm text-left w-full md:w-36">
-                      {t("tools:tasks:new:crm")}
-                    </p>
-                    <div className="w-full md:w-[40%]">
-                      <CRMMultipleSelectV2
-                        getValues={getValues}
-                        setValue={setValue}
-                        name="crm"
-                        error={errors.crm}
-                      />
-                    </div>
-                  </div>
                   <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:tags")}

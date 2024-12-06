@@ -2,11 +2,11 @@
 import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
 import AgentEditor from "../../components/AgentEditor";
-import { useUser } from "@/src/lib/api/hooks/users";
+import { useAgent } from "@/src/lib/api/hooks/agents";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 export default function AgentDetails({ id }) {
-  const { data, isLoading, isError } = useUser(id);
+  const { data, isLoading, isError } = useAgent(id);
 
   if (isError) {
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">

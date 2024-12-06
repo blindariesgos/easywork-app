@@ -5,21 +5,22 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import ModulesSearchBox from '../components/ModulesSearchBox';
+import EvaluationMenuDropdown from '../components/EvaluationMenuDropdown';
 
 const BASE_ROUTE = '/agents-management/capacitations/e-learning';
 
 export default function ELearningHeader() {
   const pathname = usePathname();
 
-  const showModulesSearchBox = ['/e-learning/config', '/e-learning/courses/module'].some(pathToCompare => {
+  const showModulesSearchBox = ['/e-learning/config', '/e-learning/courses/module', '/e-learning/evaluations'].some(pathToCompare => {
     return pathname.indexOf(pathToCompare) !== -1;
   });
 
   const NAV_LINKS = [
-    { id: 1, name: 'Courses', href: `${BASE_ROUTE}/courses` },
-    { id: 2, name: 'Configuración', href: `${BASE_ROUTE}/config` },
-    { id: 3, name: 'Evaluaciones', href: `${BASE_ROUTE}/xxx` },
-    { id: 4, name: 'Mis cursos', href: `${BASE_ROUTE}/xxx2` },
+    { id: 1, name: 'Courses', href: `${BASE_ROUTE}/courses`, component: null },
+    { id: 2, name: 'Configuración', href: `${BASE_ROUTE}/config`, component: null },
+    { id: 3, name: 'Evaluaciones', href: ``, component: <EvaluationMenuDropdown /> },
+    { id: 4, name: 'Mis cursos', href: `${BASE_ROUTE}/my-courses`, component: null },
   ];
 
   return (
@@ -40,19 +41,19 @@ export default function ELearningHeader() {
         </div>
       )}
 
-      <nav class="flex h-16 shrink-0 items-center gap-x-4 px-4 sm:gap-x-6 sm:px-6 lg:px-8 w-full">
-        <ul class="flex space-x-4">
-          {NAV_LINKS.map(navLink => {
-            const isLinkActive = navLink.href === pathname;
+      <div class="flex p-4 items-center gap-4">
+        {NAV_LINKS.map(navLink => {
+          const isLinkActive = navLink.href === pathname;
 
-            return (
-              <li key={navLink.id} class={`text-gray-${isLinkActive ? '100' : '700'} hover:text-blue-500 bg-gray-${isLinkActive ? '400' : '100'} rounded py-1 px-2 cursor-pointer`}>
-                <Link href={navLink.href}>{navLink.name}</Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+          return navLink.component ? (
+            navLink.component
+          ) : (
+            <div key={navLink.id} class={`text-gray-${isLinkActive ? '100' : '700'} hover:text-blue-500 bg-gray-${isLinkActive ? '400' : '100'} rounded py-1 px-2 cursor-pointer`}>
+              <Link href={navLink.href}>{navLink.name}</Link>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

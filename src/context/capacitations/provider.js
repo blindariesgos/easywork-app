@@ -156,10 +156,12 @@ export default function CapacitationsContextProvider({ children }) {
         options: lists?.policies?.polizaFormasCobro,
       },
     ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lists?.listContact, lists?.policies]);
 
   useEffect(() => {
     handleChangeConfig('page', 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config.limit]);
 
   // useEffect(() => {
@@ -208,6 +210,7 @@ export default function CapacitationsContextProvider({ children }) {
       setFilters,
       defaultFilterFields,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, isLoading, isError, config, selectedContacts, displayFilters, filterFields, filters, defaultFilterFields, lists]
   );
 

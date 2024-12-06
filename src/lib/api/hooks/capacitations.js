@@ -1,6 +1,6 @@
 'use client';
 import useSWR from 'swr';
-// import fetcher from '../fetcher';
+import fetcher from '../fetcher';
 import axios from 'axios';
 
 const getQueries = (filters, userId) => {

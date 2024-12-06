@@ -84,6 +84,22 @@ export const createContact = async (data) => {
   return response;
 };
 
+export const createAgent = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agents", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
+export const updateAgent = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agents/${agentId}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
 export const createLead = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post("/sales/crm/leads/new", data)
@@ -98,7 +114,6 @@ export const updateLead = async (data, id) => {
     .put(`/sales/crm/leads/${id}`, data)
     .catch((error) => ({ ...error, hasError: true }));
   revalidatePath("/sales/crm/leads", "layout");
-  console.log("aaaaaaaaaalalal jal jaljala jlajal", response);
   return response;
 };
 export const updateContact = async (data, id) => {
@@ -335,13 +350,13 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
-export const putComment = async (commentId, body, id) => {
-  console.log("Actualizando comentario", commentId, body, id);
+export const putComment = async (commentId, body, taskId) => {
+  console.log("Actualizando comentario", commentId, body, taskId);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 
@@ -467,7 +482,7 @@ export const updateEmailConfig = async (data) => {
 
 export const updateStatus = async (data) => {
   const response = await axios().put(`/users/status`, {
-    status: data
+    status: data,
   });
   return response;
 };
@@ -693,12 +708,12 @@ export const getAllPolicies = async ({
   return response;
 };
 
-export const getAllLeads = async ({ config = {}, filters = {} }) => {
+export const getKanbanLeads = async ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/sales/crm/leads?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const url = `/sales/crm/leads/kanban?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
   const response = await axios()
     .get(url)

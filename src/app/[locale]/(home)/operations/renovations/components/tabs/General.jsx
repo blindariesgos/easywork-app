@@ -546,7 +546,11 @@ export default function PolicyDetails({
         </div>
       </div>
       {/* Menu Izquierda */}
-      <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />
+      <ActivityPanel
+        entityId={id}
+        crmType="renewal"
+        className="lg:col-span-7"
+      />
       {isEdit && (
         <div
           className={clsx(

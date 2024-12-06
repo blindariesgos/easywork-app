@@ -114,7 +114,7 @@ export default function LeadsContextProvider({ children }) {
         name: t("operations:policies:general:type"),
         type: "select",
         check: false,
-        code: "policyTypeId",
+        code: "polizaTypeId",
         options: lists?.policies?.polizaTypes ?? [],
       },
       // {

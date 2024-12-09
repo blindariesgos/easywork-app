@@ -1295,6 +1295,13 @@ export const useLeads = () => {
       row: "source",
       check: true,
     },
+
+    {
+      id: 5,
+      name: t("leads:lead:fields:amount"),
+      row: "quoteAmount",
+      check: true,
+    },
     {
       id: 6,
       name: t("leads:table:polizaType"),

@@ -55,5 +55,17 @@
             "date": "Fecha de Reunión",
             "revision": "Revisión del GDD"
         }
+    },
+    "recruitment": {
+        "title": "Reclutamiento y selección",
+        "table": {
+            "agent": "Agente",
+            "state": "Etapa de avance",
+            "initdate": "Fecha de inicio del proceso",
+            "indate": "Fecha de ingreso",
+            "responsible": "Responsable",
+            "origin": "Origen",
+            "activity": "Actividades"
+        }
     }
 }

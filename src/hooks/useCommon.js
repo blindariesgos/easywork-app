@@ -414,7 +414,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: t("common:menu:agent-management:recruitement"),
-          href: "",
+          href: "/agents-management/recruitment",
           iconShortBar: UserPlusIcon,
           image: "/img/agentsManagement/recruitement.svg",
         },
@@ -1295,6 +1295,13 @@ export const useLeads = () => {
       row: "source",
       check: true,
     },
+
+    {
+      id: 5,
+      name: t("leads:lead:fields:amount"),
+      row: "quoteAmount",
+      check: true,
+    },
     {
       id: 6,
       name: t("leads:table:polizaType"),
@@ -1936,6 +1943,98 @@ export const useClaimTable = () => {
   return { columnTable };
 };
 
+export const useIndividualMeetTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:meetings-and-sessions:table:name"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:meetings-and-sessions:table:gdd"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:meetings-and-sessions:table:conexions"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:meetings-and-sessions:table:time"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:date"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:revision"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+export const useTeamMeetTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:meetings-and-sessions:table:name"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:meetings-and-sessions:table:gdd"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:meetings-and-sessions:table:conexions"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:meetings-and-sessions:table:time"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:date"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
 export const useAccompanimentsTable = () => {
   const { t } = useTranslation();
   const columnTable = [
@@ -1986,6 +2085,62 @@ export const useAccompanimentsTable = () => {
       name: t("agentsmanagement:accompaniments:table:created-in"),
       row: "createdAt",
       order: "createdAt",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useRecruitmentTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:recruitment:table:agent"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:recruitment:table:state"),
+      row: "stage",
+      order: "stage",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:recruitment:table:initdate"),
+      row: "date",
+      order: "date",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:recruitment:table:indate"),
+      row: "date",
+      order: "date",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:recruitment:table:responsible"),
+      row: "manager",
+      order: "manager",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:recruitment:table:origin"),
+      row: "origin",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:recruitment:table:activity"),
+      row: "activities",
+      order: "activities",
       check: true,
     },
   ];

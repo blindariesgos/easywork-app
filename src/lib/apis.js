@@ -637,8 +637,8 @@ export const addLeadDocument = async (leadId, category, body) => {
 };
 
 export const addPolicyByPdf = async (body) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/operations/management/poliza/new/pdf`, body)
+  const response = await axios()
+    .post(`/operations/management/poliza/new?category=nueva`, body)
     .catch((error) => ({ error, hasError: true }));
   return response;
 };

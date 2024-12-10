@@ -40,6 +40,7 @@ import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import useCrmContext from "@/src/context/crm";
 import useAppContext from "@/src/context/app";
+import { formatToCurrency } from "@/src/utils/formatters";
 
 export default function TableLeads() {
   const [isOpenDelete, setIsOpenDelete] = useState(false);
@@ -571,6 +572,8 @@ export default function TableLeads() {
                                 lead?.source?.name
                               ) : column.row === "polizaType" ? (
                                 lead?.polizaType?.name
+                              ) : column.row === "quoteAmount" ? (
+                                `${lists?.policies?.currencies?.find((x) => x.id == lead?.quoteCurrency?.id)?.symbol ?? ""} ${formatToCurrency(lead[column.row])}`
                               ) : (
                                 lead[column.row] || "-"
                               )}

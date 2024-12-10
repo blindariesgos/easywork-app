@@ -5,10 +5,14 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
+  CheckIcon,
+  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
+import Image from "next/image";
 import React, {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -21,9 +25,10 @@ import Link from "next/link";
 import { deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { useTeamMeetTable } from "@/src/hooks/useCommon";
+import { useRecruitmentTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -33,12 +38,14 @@ import {
   Transition,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useMeetingsContext from "@/src/context/meetings";
+import useAccompanimentsContext from "@/src/context/accompaniments";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import moment from "moment";
+import { P } from "pino";
 
 export default function Table() {
   const {
@@ -51,7 +58,7 @@ export default function Table() {
     page,
     setPage,
     mutate,
-  } = useMeetingsContext();
+  } = useAccompanimentsContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -59,7 +66,7 @@ export default function Table() {
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
   const { selectedContacts, setSelectedContacts } = useCrmContext();
-  const { columnTable } = useTeamMeetTable();
+  const { columnTable } = useRecruitmentTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
@@ -87,65 +94,284 @@ export default function Table() {
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  // if (data?.items && data?.items.length === 0) {
-  //   return (
-  //     <div className="flex items-center justify-center h-96">
-  //       <div className="flex flex-col items-center space-y-3">
-  //         <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-  //           <svg
-  //             className="w-10 h-10 text-gray-400"
-  //             fill="none"
-  //             stroke="currentColor"
-  //             viewBox="0 0 24 24"
-  //           >
-  //             <path
-  //               strokeLinecap="round"
-  //               strokeLinejoin="round"
-  //               strokeWidth="2"
-  //               d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-  //             ></path>
-  //           </svg>
-  //         </div>
-  //         <p className="text-lg font-medium text-gray-400">No hay juntas</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  const policyStatus = {
+    activa: "Vigente",
+    expirada: "No vigente",
+    cancelada: "Cancelada",
+    en_proceso: "En trámite",
+  };
+
+  const deletePolicy = async (id) => {
+    try {
+      setLoading(true);
+      const response = await deletePolicyById(id);
+      toast.success(t("common:alert:delete-success"));
+      mutate();
+      setLoading(false);
+      setIsOpenDelete(false);
+    } catch (err) {
+      setLoading(false);
+      handleApiError(err.message);
+    }
+  };
+
+  const deletePolicies = async () => {
+    setLoading(true);
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => deletePolicyById(policyId))
+    );
+    if (response.some((x) => x.status === "fulfilled")) {
+      toast.success(
+        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected")) {
+      toast.error(
+        `Ocurrio un error al tratar de eliminar ${response.filter((x) => x.status == "rejected").length} elementos(s)`
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+    setIsOpenDeleteMasive(false);
+  };
+
+  const changeStatusPolicies = async (status) => {
+    setLoading(true);
+    const body = {
+      status: status.id,
+    };
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => putPoliza(policyId, body))
+    );
+    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
+      toast.success(
+        t("common:alert:update-items-succes", {
+          count: response.filter(
+            (x) => x.status == "fulfilled" && !x?.value?.hasError
+          ).length,
+          total: selectedContacts.length,
+        })
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
+      toast.error(
+        t("common:alert:update-items-error", {
+          count: response.filter(
+            (x) => x.status == "rejected" || x?.value?.hasError
+          ).length,
+        })
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+  };
+
+  const changeResponsible = async (responsible) => {
+    const body = {
+      assignedById: responsible.id,
+    };
+    const response = await Promise.allSettled(
+      selectedContacts.map((policyId) => putPoliza(policyId, body))
+    );
+    console.log({ response });
+    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
+      toast.success(
+        t("common:alert:update-items-succes", {
+          count: response.filter(
+            (x) => x.status == "fulfilled" && !x?.value?.hasError
+          ).length,
+          total: selectedContacts.length,
+        })
+      );
+    }
+
+    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
+      toast.error(
+        t("common:alert:update-items-error", {
+          count: response.filter(
+            (x) => x.status == "rejected" || x?.value?.hasError
+          ).length,
+        })
+      );
+    }
+
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+  };
+
+  const masiveActions = [
+    {
+      id: 1,
+      name: "Asignar agente relacionado - subagente",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: "Asignar observador",
+      disabled: true,
+    },
+    {
+      id: 3,
+      name: "Cambiar Responsable",
+      onclick: changeResponsible,
+      selectUser: true,
+    },
+    {
+      id: 2,
+      name: t("common:table:checkbox:change-status"),
+      onclick: changeStatusPolicies,
+      selectOptions: [
+        {
+          id: "activa",
+          name: "Activa",
+        },
+        {
+          id: "expirada",
+          name: "Expirada",
+        },
+        {
+          id: "cancelada",
+          name: "Cancelada",
+        },
+        {
+          id: "en_proceso",
+          name: "En proceso",
+        },
+      ],
+    },
+    {
+      id: 1,
+      name: "Crear tarea",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: t("common:buttons:delete"),
+      onclick: () => setIsOpenDeleteMasive(true),
+      disabled: true,
+    },
+  ];
 
   const itemActions = [
     {
       name: "Ver",
+      handleClick: (id) =>
+        router.push(`/agents-management/accompaniment/agent/${id}?show=true`),
+    },
+    {
+      name: "Editar",
       disabled: true,
     },
     {
-      name: "Planificar",
-      options: [
-        {
-          name: "Tarea",
-          disabled: true,
-        },
-        {
-          name: "Envío masivo SMS",
-          disabled: true,
-        },
-        {
-          name: "Correo electrónico",
-          disabled: true,
-        },
-      ],
+      name: "Actividades",
+      disabled: true,
     },
-    // { name: "Editar" },
-    // { name: "Copiar" },
+    {
+      name: "Asignar GDD",
+      disabled: true,
+    },
+    {
+      name: "Reasignar GDD",
+      disabled: true,
+    },
+    {
+      name: "Inactivar",
+      disabled: true,
+    },
   ];
+
+  const getStatus = (isActive) => {
+    return (
+      <div className="flex flex-col justify-center items-center">
+        <div className="flex border opacity-40 w-[100px]">
+          <div
+            className={clsx("w-[50px] h-[10px] border border-black", {
+              "bg-[#00CD26] ": isActive,
+            })}
+          />
+          <div
+            className={clsx("w-[50px] h-[10px] border border-black", {
+              "bg-[#CD0700]": !isActive,
+            })}
+          />
+        </div>
+        <p className="text-gray-50 text-sm">
+          {isActive ? "Activo" : "Inactivo"}
+        </p>
+      </div>
+    );
+  };
+
+  if (data?.items && data?.items.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+            <svg
+              className="w-10 h-10 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-gray-400">
+            {t("operations:policies:table:not-data")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const renderStage = (data) => {
+    const stageIndex = -1;
+
+    const getColorClass = (item, currentIndex, stageInd) => {
+      if (currentIndex <= stageInd && stageInd != -1) return "bg-yellow-500";
+      // if (item && stageInd == -1 )
+      //   return "bg-green-primary";
+      // if (item && stageInd == -1)
+      //   return "bg-red-500";
+
+      return "";
+    };
+
+    return (
+      <div className="flex flex-col gap-1 items-center">
+        <div className={`flex justify-center  ${"bg-gray-200"}`}>
+          {new Array(5).fill(1).map((_, index) => (
+            <div
+              key={index}
+              className={`w-4 h-4 ${getColorClass(data, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+            />
+          ))}
+        </div>
+        <p className="text-sm">Contacto Inicial</p>
+      </div>
+    );
+  };
 
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      {/* {selectedContacts.length > 0 && (
+      {selectedContacts.length > 0 && (
         <div className="flex py-2">
           <SelectedOptionsTable options={masiveActions} />
         </div>
-      )} */}
+      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -201,33 +427,33 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((policy, index) => {
+                  data?.items.map((agent, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(policy.id)
+                          selectedContacts.includes(agent.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(policy.id) && (
+                          {selectedContacts.includes(agent.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={policy.id}
-                              checked={selectedContacts.includes(policy.id)}
+                              value={agent.id}
+                              checked={selectedContacts.includes(agent.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, policy.id]
+                                    ? [...selectedContacts, agent.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== policy.id
+                                        (p) => p !== agent.id
                                       )
                                 )
                               }
@@ -262,10 +488,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(policy.id);
+                                            item.handleClick(agent.id);
                                           item.handleClickContact &&
                                             item.handleClickContact(
-                                              policy?.contact?.id
+                                              agent?.contact?.id
                                             );
                                         }}
                                       >
@@ -309,11 +535,11 @@ export default function Table() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      policy.id
+                                                      agent.id
                                                     );
                                                   option.handleClickContact &&
                                                     option.handleClickContact(
-                                                      policy?.contact?.id
+                                                      agent?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -341,25 +567,33 @@ export default function Table() {
                             <td className="ml-4 py-4" key={index}>
                               <div
                                 className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary",
-                                  {
-                                    "text-center": [
-                                      "vigenciaDesde",
-                                      "poliza",
-                                      "source",
-                                      "status",
-                                    ].includes(column.row),
-                                    "text-right": ["importePagar"].includes(
-                                      column.row
-                                    ),
-                                  }
+                                  "font-medium text-sm  text-black hover:text-primary"
                                 )}
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                    href={`/agents-management/accompaniment/agent/${agent.id}?show=true`}
+                                    className="flex gap-3 items-center"
                                   >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                                    <Image
+                                      className="h-8 w-8 rounded-full bg-zinc-200"
+                                      width={30}
+                                      height={30}
+                                      src={
+                                        agent?.user?.avatar || "/img/avatar.svg"
+                                      }
+                                      alt=""
+                                    />
+                                    <div className="flex flex-col">
+                                      <p className="text-start">
+                                        {agent?.name}
+                                      </p>
+                                      {agent.bio && (
+                                        <p className="text-start text-xs">
+                                          {agent?.bio}
+                                        </p>
+                                      )}
+                                    </div>
                                   </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
@@ -400,17 +634,42 @@ export default function Table() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "vigenciaDesde" ? (
-                                  (formatDate(
-                                    policy[column.row],
-                                    "dd/MM/yyyy"
-                                  ) ?? null)
-                                ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
-                                ) : column.row === "status" ? (
-                                  policy[column.row]
+                                ) : column.row === "email" ? (
+                                  <p className="text-center">
+                                    {agent?.user?.email ?? "-"}
+                                  </p>
+                                ) : column.row === "stage" ? (
+                                  <p className="flex justify-center">
+                                    {renderStage(agent.stage)}
+                                  </p>
+                                ) : column.row === "phone" ? (
+                                  agent?.user?.phone?.length > 0 ? (
+                                    <p className="text-center">{`+${agent?.user?.phone}`}</p>
+                                  ) : (
+                                    "-"
+                                  )
+                                ) : column.row === "date" ? (
+                                  <p className="text-center">
+                                    {moment().format("DD-MM-YYYY")}
+                                  </p>
+                                ) : column.row === "updatedAt" ? (
+                                  <p className="text-center">
+                                    {formatDate(
+                                      agent.updatedAt,
+                                      "dd/MM/yyyy, hh:mm a"
+                                    )}
+                                  </p>
+                                ) : column.row === "isActive" ? (
+                                  getStatus(agent?.user?.isActive)
+                                ) : column.row === "manager" ? (
+                                  <p className="text-center">
+                                    {agent?.recruitmentManager?.name ??
+                                      agent?.recruitmentManager?.username}
+                                  </p>
                                 ) : (
-                                  policy[column.row] || "-"
+                                  <p className="text-center">
+                                    {agent[column.row] || "-"}
+                                  </p>
                                 )}
                               </div>
                             </td>

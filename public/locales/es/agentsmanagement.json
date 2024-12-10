@@ -46,6 +46,14 @@
         }
     },
     "meetings-and-sessions": {
-        "title": "Mis Juntas"
+        "title": "Mis Juntas",
+        "table": {
+            "name": "Nombre de la reunión",
+            "gdd": "GDD",
+            "conexions": "Conexiones CRM",
+            "time": "Duración",
+            "date": "Fecha de Reunión",
+            "revision": "Revisión del GDD"
+        }
     }
 }

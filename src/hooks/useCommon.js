@@ -1943,6 +1943,98 @@ export const useClaimTable = () => {
   return { columnTable };
 };
 
+export const useIndividualMeetTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:meetings-and-sessions:table:name"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:meetings-and-sessions:table:gdd"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:meetings-and-sessions:table:conexions"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:meetings-and-sessions:table:time"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:date"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:revision"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+export const useTeamMeetTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:meetings-and-sessions:table:name"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:meetings-and-sessions:table:gdd"),
+      row: "poliza",
+      order: "poliza",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:meetings-and-sessions:table:conexions"),
+      row: "status",
+      order: "status",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:meetings-and-sessions:table:time"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:date"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
 export const useAccompanimentsTable = () => {
   const { t } = useTranslation();
   const columnTable = [

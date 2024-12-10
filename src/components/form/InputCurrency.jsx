@@ -53,6 +53,15 @@ const InputCurrency = ({
     });
   }, [defaultValue]);
 
+  useEffect(() => {
+    if (!watch || !watch(name) || currentValue) return;
+    handleChange({
+      target: {
+        value: watch(name),
+      },
+    });
+  }, [watch && watch(name)]);
+
   return (
     <div className="flex flex-col gap-y-1 w-full">
       <label className="block text-sm font-medium leading-6 text-gray-900 px-3">

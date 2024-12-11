@@ -1,3 +1,9 @@
+import ConfigView from './ConfigView';
+
 export default function Page() {
-  return <>Config</>;
+  return (
+    <>
+      <ConfigView />
+    </>
+  );
 }

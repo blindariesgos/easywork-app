@@ -10,6 +10,20 @@
             "state": "Estado del agente",
             "created-in": "Fecha de creación",
             "not-data": "No hay agentes"
+        },
+        "agent": {
+            "create": "Nuevo Agente",
+            "data": "Datos de Agente",
+            "age": "Edad",
+            "children": "Hijos",
+            "responsible": "Responsable del reclutamiento",
+            "manager": "Gerente de desarrollo",
+            "observer": "Observador",
+            "comments": "Comentarios",
+            "recruitment": "Reclutamiento y selección",
+            "training": "Capacitación",
+            "conexions": "Conexiones",
+            "mettings": "Juntas individuales"
         }
     },
     "capacitations": {
@@ -32,6 +46,26 @@
         }
     },
     "meetings-and-sessions": {
-        "title": "Mis Juntas"
+        "title": "Mis Juntas",
+        "table": {
+            "name": "Nombre de la reunión",
+            "gdd": "GDD",
+            "conexions": "Conexiones CRM",
+            "time": "Duración",
+            "date": "Fecha de Reunión",
+            "revision": "Revisión del GDD"
+        }
+    },
+    "recruitment": {
+        "title": "Reclutamiento y selección",
+        "table": {
+            "agent": "Agente",
+            "state": "Etapa de avance",
+            "initdate": "Fecha de inicio del proceso",
+            "indate": "Fecha de ingreso",
+            "responsible": "Responsable",
+            "origin": "Origen",
+            "activity": "Actividades"
+        }
     }
 }

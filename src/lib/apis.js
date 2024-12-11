@@ -84,6 +84,22 @@ export const createContact = async (data) => {
   return response;
 };
 
+export const createAgent = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agents", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
+export const updateAgent = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agents/${agentId}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
 export const createLead = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post("/sales/crm/leads/new", data)
@@ -334,13 +350,13 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
-export const putComment = async (commentId, body, id) => {
-  console.log("Actualizando comentario", commentId, body, id);
+export const putComment = async (commentId, body, taskId) => {
+  console.log("Actualizando comentario", commentId, body, taskId);
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
+  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 
@@ -620,9 +636,9 @@ export const addLeadDocument = async (leadId, category, body) => {
   return response;
 };
 
-export const addPolicyByPdf = async (body) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/operations/management/poliza/new/pdf`, body)
+export const addPolicyByPdf = async (body, category = "nueva") => {
+  const response = await axios()
+    .post(`/operations/management/poliza/new?category=${category}`, body)
     .catch((error) => ({ error, hasError: true }));
   return response;
 };

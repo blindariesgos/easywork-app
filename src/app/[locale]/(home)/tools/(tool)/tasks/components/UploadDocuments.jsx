@@ -10,6 +10,7 @@ import { putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
+
 export default function UploadDocuments({ files, deleteFiles, id }) {
   const { t } = useTranslation();
   const inputFileRef = useRef();

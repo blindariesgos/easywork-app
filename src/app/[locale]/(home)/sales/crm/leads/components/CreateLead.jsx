@@ -73,7 +73,7 @@ export default function CreateLead({ lead, id }) {
     cargo: Yup.string(),
     rfc: Yup.string(),
     typeId: Yup.string(),
-    policyTypeId: Yup.string(),
+    polizaTypeId: Yup.string(),
     sourceId: Yup.string(),
     typePerson: Yup.string(),
     address: Yup.string(),
@@ -161,6 +161,7 @@ export default function CreateLead({ lead, id }) {
       setValue("name", lead?.fullName);
     }
     if (lead?.lastName) setValue("lastName", lead?.lastName);
+    if (lead?.polizaType) setValue("polizaTypeId", lead?.polizaType?.id);
     if (lead?.cargo) setValue("cargo", lead?.cargo);
     if (lead?.type?.id) setValue("typeId", lead?.type?.id);
     if (lead?.source?.id) setValue("sourceId", lead?.source?.id);
@@ -562,7 +563,7 @@ export default function CreateLead({ lead, id }) {
 
                 <SelectInput
                   label={t("operations:policies:general:type")}
-                  name="policyTypeId"
+                  name="polizaTypeId"
                   options={lists?.policies?.polizaTypes ?? []}
                   register={register}
                   setValue={setValue}

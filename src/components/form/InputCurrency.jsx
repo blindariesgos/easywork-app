@@ -31,7 +31,7 @@ const InputCurrency = ({
     // Eliminar caracteres no numéricos
     const numericValue = val.replace(/[^0-9]/g, "");
     // Convertir a número y formatear
-    const formattedValue = new Intl.NumberFormat("de-DE", {
+    const formattedValue = new Intl.NumberFormat("en-US", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -52,6 +52,15 @@ const InputCurrency = ({
       },
     });
   }, [defaultValue]);
+
+  useEffect(() => {
+    if (!watch || !watch(name) || currentValue) return;
+    handleChange({
+      target: {
+        value: watch(name),
+      },
+    });
+  }, [watch && watch(name)]);
 
   return (
     <div className="flex flex-col gap-y-1 w-full">

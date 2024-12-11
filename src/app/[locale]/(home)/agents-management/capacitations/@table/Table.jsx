@@ -27,7 +27,6 @@ import StageProgress from '../components/StageProgress';
 
 export default function Table() {
   const { data, limit, setLimit, setOrderBy, order, orderBy, page, setPage, mutate } = useCapacitationsContext();
-  const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
@@ -56,13 +55,6 @@ export default function Table() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const policyStatus = {
-    activa: 'Vigente',
-    expirada: 'No vigente',
-    cancelada: 'Cancelada',
-    en_proceso: 'En trámite',
-  };
 
   const deletePolicy = async id => {
     try {
@@ -128,7 +120,7 @@ export default function Table() {
       assignedById: responsible.id,
     };
     const response = await Promise.allSettled(selectedContacts.map(policyId => putPoliza(policyId, body)));
-    console.log({ response });
+
     if (response.some(x => x.status === 'fulfilled' && !x?.value?.hasError)) {
       toast.success(
         t('common:alert:update-items-succes', {

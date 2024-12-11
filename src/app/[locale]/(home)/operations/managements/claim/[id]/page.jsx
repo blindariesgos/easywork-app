@@ -8,7 +8,6 @@ import { usePolicy } from "@/src/lib/api/hooks/policies";
 export default function Page({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
   const { data, isLoading, isError, mutate } = usePolicy(id);
-  console.log({ data });
 
   if (isError) {
     <SlideOver

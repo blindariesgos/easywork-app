@@ -314,7 +314,6 @@ export default function DriveContextProvider({ children }) {
       `Vinculando carpeta ${folderConnect?.name} a cliente ${contact?.name}`
     );
     const response = await assignCRMContact(folderConnect.id, contact.id);
-    console.log({ response });
     if (response?.statusCode == 500) {
       toast.update(id, {
         render: "Error al vincular cliente",

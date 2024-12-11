@@ -54,6 +54,14 @@
             "time": "Duración",
             "date": "Fecha de Reunión",
             "revision": "Revisión del GDD"
+        },
+        "new": {
+            "title": "Nueva reunión",
+            "description": "Introduzca el nombre de la reunión",
+            "responsible": "Responsable",
+            "date": "Fecha de Reunión",
+            "add": "Agregar junta de equipo",
+            "create-msg": "Reunión creada exitosamente"
         }
     },
     "recruitment": {

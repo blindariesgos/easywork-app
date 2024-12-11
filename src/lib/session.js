@@ -7,7 +7,6 @@ import { logout } from "./apis";
 const logger = getLogger("Session Updater");
 
 export const updateSession = async (newAccessToken) => {
-  console.log(newAccessToken);
   const currentSession = await auth();
 
   if (!currentSession) return;

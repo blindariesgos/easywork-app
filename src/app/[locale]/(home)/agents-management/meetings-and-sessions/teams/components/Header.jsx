@@ -12,12 +12,14 @@ import useMeetingsContext from "@/src/context/meetings";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa6";
 import Button from "@/src/components/form/Button";
+import { useRouter } from "next/navigation";
 
 export default function MeetingHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
   const { displayFilters, removeFilter } = useMeetingsContext();
+  const router = useRouter();
 
   return (
     <header className="flex flex-col">
@@ -26,7 +28,16 @@ export default function MeetingHeader() {
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
             {t("common:menu:agent-management:team-meetings")}
           </h1>
-          <Button className="px-4 py-2" buttonStyle="primary" label="Añadir" />
+          <Button
+            className="px-4 py-2"
+            buttonStyle="primary"
+            label="Añadir"
+            onclick={() =>
+              router.push(
+                "/agents-management/meetings-and-sessions/teams/meet?show=true"
+              )
+            }
+          />
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
               <FilterMettings />

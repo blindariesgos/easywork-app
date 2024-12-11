@@ -259,7 +259,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
         await putTaskId(edit.id, body);
         toast.success(t("tools:tasks:update-msg"));
         mutate(`/tools/tasks/task/${edit.id}`);
-        router.push("/tools/tasks?page=1");
+        router.back();
       } else {
         await postTask(body);
         toast.success(t("tools:tasks:success-msg"));
@@ -269,7 +269,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
           setValueText("");
           setValue("name", "");
         } else {
-          router.push("/tools/tasks?page=1");
+          router.back();
         }
       }
     } catch (error) {

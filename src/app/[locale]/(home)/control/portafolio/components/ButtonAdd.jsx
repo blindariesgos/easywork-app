@@ -17,7 +17,7 @@ const ButtonAdd = () => {
 
   const options = [
     {
-      name: "Póliza (casos nuevos - clientes existentes)",
+      name: "Póliza",
       onclick: () => setIsOpen(true),
     },
     { name: "Programaciones", onclick: () => setIsOpenSchedule(true) },

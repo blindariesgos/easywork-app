@@ -193,10 +193,10 @@ function SystemNotification({ data }) {
 function CommentUser({ data }) {
   const { t } = useTranslation();
   const quillRef = useRef();
-  const { createdAt, comment } = data;
+  const { createdAt, comment, createdBy } = data;
   return (
     <div className="bg-white px-4 py-3 rounded-lg w-full">
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <div className="flex gap-2 items-center">
           <p className="text-xs text-primary font-bold">
             {t("contacts:panel:comment")}
@@ -206,6 +206,18 @@ function CommentUser({ data }) {
             {moment(createdAt).format("DD/MM/YYYY hh:mm a")}
           </p>
         </div>
+        <Image
+          className="h-6 w-6 rounded-full object-cover"
+          width={36}
+          height={36}
+          src={createdBy?.avatar}
+          alt=""
+          title={
+            createdBy?.profile?.firstName
+              ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+              : (createdBy.username ?? "")
+          }
+        />
       </div>
       <div className="flex gap-4 md:gap-8 mt-3">
         <div className="">

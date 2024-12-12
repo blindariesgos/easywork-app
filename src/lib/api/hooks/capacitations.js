@@ -1,6 +1,7 @@
 'use client';
 import useSWR from 'swr';
 import fetcher from '../fetcher';
+import axios from 'axios';
 
 const getQueries = (filters, userId) => {
   const getRepitKeys = (key, arr) => arr.map(item => `${key}=${item?.id ?? item}`).join('&');
@@ -26,7 +27,7 @@ export const useCapacitations = ({ filters = {}, config = {}, userId = '' }) => 
   const configParams = Object.keys(config)
     .map(key => `${key}=${config[key]}`)
     .join('&');
-  const url = `/sales/crm/polizas?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
+  const url = `/capacitations?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
 
   const { data: _, error, isLoading, mutate } = useSWR(url, fetcher);
 

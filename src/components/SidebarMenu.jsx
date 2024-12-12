@@ -96,7 +96,7 @@ const SidebarMenu = () => {
                                     subItem.href === pathname
                                       ? "bg-primary text-white"
                                       : "text-slate-50 hover:text-white hover:bg-easy-300",
-                                    "block rounded-md py-2 pr-2",
+                                    "block rounded-md py-2 pr-2 uppercase",
                                     width < 100 ? "" : "pl-9",
                                     "text-sm leading-6"
                                   )}
@@ -163,7 +163,7 @@ const SidebarMenu = () => {
                                                 subSubItem.href === pathname
                                                   ? "bg-primary text-white"
                                                   : "text-slate-50 hover:text-white hover:bg-easy-300",
-                                                "block rounded-md py-2 pr-2 text-sm leading-6 ml-6",
+                                                "block rounded-md py-2 pr-2 text-sm leading-6 ml-6 uppercase",
                                                 width < 100 ? "" : "pl-9"
                                               )}
                                             >

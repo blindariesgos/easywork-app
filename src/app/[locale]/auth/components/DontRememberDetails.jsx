@@ -9,6 +9,7 @@ import { sendOtpEmail, sendOtpPhone } from "@/src/lib/api/hooks/auths";
 import InputPhone from "../../../../components/form/InputPhone";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const schemaInputs = yup.object().shape({
   phone: yup.string(),
@@ -16,12 +17,12 @@ const schemaInputs = yup.object().shape({
 
 export default function DontRememberDetails() {
   const { t } = useTranslation();
-  const { contextData, setContextData } = useDataContext();
   const [mode, setMode] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [phoneValue, setPhoneValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   const {
     register,
@@ -46,27 +47,23 @@ export default function DontRememberDetails() {
   };
 
   const handleSendOtp = useCallback(async () => {
-    let phone = "+" + watch("phone").toString()
     setIsLoading(true);
     setError(null);
     try {
       if (mode === "email") {
         await sendOtpEmail(inputValue);
       } else if (mode === "cellphone") {
+        let phone = "+" + watch("phone").toString();
         await sendOtpPhone(phone);
       }
-      setContextData(4);
+      router.push(`${window.location.pathname}?loginState=${4}`);
     } catch (err) {
       console.log(err);
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [inputValue, mode, phoneValue, setContextData]);
-
-  if (contextData !== 3) {
-    return null;
-  }
+  }, [inputValue, mode, phoneValue]);
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -145,7 +142,7 @@ export default function DontRememberDetails() {
       <div className="mt-4 w-full flex justify-center">
         <button
           onClick={() => {
-            setContextData(0);
+            router.push(`${window.location.pathname}?loginState=${0}`);
             setMode(null);
           }}
           className="hover:bg-gray-800 bg-gray-700 w-28 text-white font-bold py-2 px-4 rounded-md"

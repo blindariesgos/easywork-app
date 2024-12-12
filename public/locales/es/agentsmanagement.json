@@ -46,6 +46,34 @@
         }
     },
     "meetings-and-sessions": {
-        "title": "Mis Juntas"
+        "title": "Mis Juntas",
+        "table": {
+            "name": "Nombre de la reunión",
+            "gdd": "GDD",
+            "conexions": "Conexiones CRM",
+            "time": "Duración",
+            "date": "Fecha de Reunión",
+            "revision": "Revisión del GDD"
+        },
+        "new": {
+            "title": "Nueva reunión",
+            "description": "Introduzca el nombre de la reunión",
+            "responsible": "Responsable",
+            "date": "Fecha de Reunión",
+            "add": "Agregar junta de equipo",
+            "create-msg": "Reunión creada exitosamente"
+        }
+    },
+    "recruitment": {
+        "title": "Reclutamiento y selección",
+        "table": {
+            "agent": "Agente",
+            "state": "Etapa de avance",
+            "initdate": "Fecha de inicio del proceso",
+            "indate": "Fecha de ingreso",
+            "responsible": "Responsable",
+            "origin": "Origen",
+            "activity": "Actividades"
+        }
     }
 }

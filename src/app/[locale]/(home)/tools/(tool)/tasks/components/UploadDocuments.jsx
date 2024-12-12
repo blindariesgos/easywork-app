@@ -1,6 +1,5 @@
 "use client";
 import React, { useRef, useState } from "react";
-import CardFile from "./CardFile";
 import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";

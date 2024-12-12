@@ -93,7 +93,6 @@ export default function ControlContextProvider({ children }) {
       console.log(response.error.message);
       return;
     }
-    console.log("totalsByStage", response);
     setTotalByStage(
       response.reduce(
         (acc, item) => ({

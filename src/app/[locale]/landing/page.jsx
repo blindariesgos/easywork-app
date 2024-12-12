@@ -150,9 +150,9 @@ export default function Page() {
         <div>
           <Image
             // style={{ width: 150 }}
-            width={650}
-            height={650}
-            src="/img/landing/social.png"
+            width={450}
+            height={450}
+            src="/img/landing/social.svg"
             alt="social"
           />
         </div>

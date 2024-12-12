@@ -1,14 +1,11 @@
 import React from 'react';
 
 export default function NewCourseForm({ register, setValue, loading, errors }) {
-  console.log(errors);
   return (
     <div className="w-full">
       <div>
         <input
           {...register('name', { required: 'El nombre es obligatorio.' })}
-          // id="name"
-          // name="name"
           type="text"
           placeholder="Módulo"
           className={`w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border  focus:ring-gray-200 focus:outline-0 ${errors.name ? 'focus:border-red-300 border-red-300' : 'border-gray-200'}`}
@@ -19,8 +16,6 @@ export default function NewCourseForm({ register, setValue, loading, errors }) {
       <div className="w-full mt-4">
         <textarea
           {...register('description')}
-          // id="description"
-          // name="description"
           placeholder="Descripción"
           rows={5}
           className="w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border border-gray-200 focus:ring-gray-200 focus:outline-0"

@@ -220,7 +220,7 @@ export default function Page() {
         className="h-screen w-screen bg-white flex-col flex items-center justify-center text-blue-700 text-center bg-cover bg-center"
         style={{ backgroundImage: "url('/img/landing/floor.png')" }}
       >
-        <div className="flex items-center justify-center flex-col mb-5 mt-10">
+        <div className="flex items-center justify-center flex-col mb-5 mt-1">
           <h1 className="font-bold text-5xl mb-7">
             ¡Dale más facilidad a tu equipo con easywork!
           </h1>
@@ -294,9 +294,69 @@ export default function Page() {
         </div>
       </div>
       <div
-        className="h-screen w-screen bg-white flex-col flex items-center justify-center text-blue-700 text-center bg-cover bg-center"
+        className="h-screen w-screen bg-white flex items-center justify-center text-blue-700 text-center bg-cover bg-center"
         style={{ backgroundImage: "url('/img/landing/bg-stars.png')" }}
       >
+        {[
+          {
+            title: "Free",
+            price: 0,
+            content: [
+              "¡Disfruta de todo el poder de la herramienta, mientras decides quedarte con ella!",
+            ],
+          },
+          {
+            title: "Basic",
+            price: 697,
+            content: [
+              "2 usuarios",
+              "250 clientes",
+              "App agente basic",
+              "Soporte basic",
+              "Correo electrónico",
+            ],
+          },
+          {
+            title: "Professional",
+            price: 1897,
+            content: [
+              "5 usuarios",
+              "1000 clientes",
+              "App agente profesional",
+              "Correo electrónico",
+              "WhatsApp",
+              "Soporte pro",
+              "Acceso a comunidad para 1 usuario",
+              "Acceso a la academia",
+            ],
+          },
+          {
+            title: "Business",
+            price: 3897,
+            content: [
+              "+5 usuarios",
+              "Clientes ilimitados",
+              "App agente profesional",
+              "Correo electrónico",
+              "WhatsApp",
+              "Soporte dedicado",
+              "Acceso a comunidad para 1 usuario",
+              "Acceso a la academia",
+            ],
+          },
+        ].map((item, index) => (
+          <div key={index} className="bg-white ml-2 rounded-md p-3 w-72">
+            <h1 className="font-bold text-3xl">{item.title}</h1>
+            <h2 className="font-bold text-3xl">
+              {item.price}
+              <span className="text-2xl font-medium">/Mes</span>
+            </h2>
+            {item.content.map((des, index) => (
+              <p key={index}>{des}</p>
+            ))}
+            <button className="border-2 rounded-md px-2 py-1 font-semibold hover:bg-sky-500">Quiero una demo</button>
+          </div>
+        ))}
       </div>
     </div>
   );

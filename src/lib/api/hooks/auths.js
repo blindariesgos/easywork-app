@@ -48,7 +48,6 @@ export const getDataPassword = async (email) => {
 
 export const sendOtpPhone = async (phone) => {
   try {
-    console.log("Validando numero", phone);
     const response = await axios().post(`/auth/send-otp-phone`, { phone });
     return response.data;
   } catch (error) {

@@ -78,9 +78,11 @@ const MultipleSelect = ({
 
   return (
     <div className="w-full">
-      <label className="text-sm font-medium leading-6 text-gray-900  px-3">
-        {label}
-      </label>
+      {label && (
+        <label className="text-sm font-medium leading-6 text-gray-900  px-3">
+          {label}
+        </label>
+      )}
       <Menu>
         <MenuButton
           disabled={disabled}

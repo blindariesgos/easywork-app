@@ -114,8 +114,16 @@ export default function LeadsContextProvider({ children }) {
         name: t("operations:policies:general:type"),
         type: "select",
         check: false,
-        code: "policyTypeId",
+        code: "polizaTypeId",
         options: lists?.policies?.polizaTypes ?? [],
+      },
+      {
+        id: 7,
+        name: t("control:portafolio:control:form:currency"),
+        type: "select",
+        check: false,
+        code: "quoteCurrencyId",
+        options: lists?.receipts?.currencies,
       },
       // {
       //   id: 6,

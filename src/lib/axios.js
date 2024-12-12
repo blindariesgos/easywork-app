@@ -15,6 +15,7 @@ const createAxiosInstance = (props) => {
       "Content-Type": props?.contentType
         ? props?.contentType
         : "application/json",
+      "x-lang": "es",
     },
   });
 

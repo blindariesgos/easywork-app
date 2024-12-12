@@ -1,6 +1,5 @@
 "use client";
 import React, { useRef, useState } from "react";
-import CardFile from "./CardFile";
 import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
@@ -10,6 +9,7 @@ import { putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
+
 export default function UploadDocuments({ files, deleteFiles, id }) {
   const { t } = useTranslation();
   const inputFileRef = useRef();

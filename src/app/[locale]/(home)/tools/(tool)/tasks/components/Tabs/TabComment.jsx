@@ -6,7 +6,11 @@ import TextEditor from "../TextEditor";
 import { deleteComment, postComment, putComment } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useTaskComments } from "@/src/lib/api/hooks/tasks";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { format } from "date-fns";
@@ -14,6 +18,10 @@ import { es } from "date-fns/locale"; // Importa el locale español
 import { useSWRConfig } from "swr";
 import parse from "html-react-parser";
 import Button from "@/src/components/form/Button";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { GoKebabHorizontal } from "react-icons/go";
+import UploadDocumentsInComment from "../UploadDocumentsInComment";
+import FilePreview from "../FilePreview";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
@@ -28,6 +36,7 @@ export default function TabComment({ info }) {
   const [isAddComment, setIsAddComment] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [showComments, setShowComments] = useState([]);
+  const [upload, setUpload] = useState({});
 
   const handleComment = async (_, id) => {
     if (quillRef.current) {
@@ -35,7 +44,9 @@ export default function TabComment({ info }) {
         comment: value,
         isSummary: info.requireSummary,
         taskId: info.id,
+        fileIds: upload?.fileIds ?? [],
       };
+      console.log({ body });
       try {
         setDisabled(true);
         id
@@ -46,6 +57,7 @@ export default function TabComment({ info }) {
         setDisabled(false);
         setEditComment({});
         setValueText("");
+        setUpload({});
       } catch (error) {
         handleApiError(error.message);
         setDisabled(false);
@@ -98,6 +110,13 @@ export default function TabComment({ info }) {
     }
   };
 
+  const handleDeleteFile = (index) => {
+    setUpload({
+      fileIds: upload.fileIds.filter((_, i) => i != index),
+      files: upload.files.filter((_, i) => i != index),
+    });
+  };
+
   return (
     <div className="w-full p-3">
       {Object.keys(editComment).length === 0 && (
@@ -118,6 +137,17 @@ export default function TabComment({ info }) {
                   className="w-full"
                   setValue={setValueText}
                 />
+                {upload && upload?.files && (
+                  <div className="flex gap-1 flex-wrap p-1">
+                    {upload?.files?.map((file, index) => (
+                      <FilePreview
+                        info={file}
+                        key={index}
+                        handleDeleteFile={() => handleDeleteFile(index)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex justify-start items-center gap-2">
                 <Button
@@ -136,8 +166,32 @@ export default function TabComment({ info }) {
                   onclick={() => {
                     setIsAddComment(false);
                     setValueText("");
+                    setUpload({});
                   }}
                 />
+                <Menu>
+                  <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">
+                    <GoKebabHorizontal className="text-gray-60" />
+                  </MenuButton>
+                  <MenuItems
+                    anchor={{
+                      to: "right end",
+                      gap: "4px",
+                    }}
+                    className={
+                      "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
+                    }
+                  >
+                    <UploadDocumentsInComment
+                      handleChangeFiles={(data) =>
+                        setUpload({
+                          fileIds: [...upload.fileIds, ...data.fileIds],
+                          files: [...upload.files, ...data.files],
+                        })
+                      }
+                    />
+                  </MenuItems>
+                </Menu>
               </div>
             </div>
           ) : (
@@ -178,10 +232,21 @@ export default function TabComment({ info }) {
                       <TextEditor
                         ref={quillRef}
                         value={value}
-                        className="w-full max-h-[100px] overflow-y-auto"
+                        className="w-full max-h-[100px]"
                         setValue={setValueText}
                         disabled={disabled}
                       />
+                      {upload && upload?.files && (
+                        <div className="flex gap-1 flex-wrap p-1">
+                          {upload?.files?.map((file, index) => (
+                            <FilePreview
+                              info={file}
+                              key={index}
+                              handleDeleteFile={() => handleDeleteFile(index)}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="flex justify-start items-center gap-2">
                       <button
@@ -201,11 +266,35 @@ export default function TabComment({ info }) {
                         onClick={() => {
                           setEditComment({});
                           setValueText("");
+                          setUpload({});
                         }}
                         className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
                       >
                         Cancelar
                       </button>
+                      <Menu>
+                        <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">
+                          <GoKebabHorizontal className="text-gray-60" />
+                        </MenuButton>
+                        <MenuItems
+                          anchor={{
+                            to: "right end",
+                            gap: "4px",
+                          }}
+                          className={
+                            "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
+                          }
+                        >
+                          <UploadDocumentsInComment
+                            handleChangeFiles={(data) =>
+                              setUpload({
+                                fileIds: [...upload.fileIds, ...data.fileIds],
+                                files: [...upload.files, ...data.files],
+                              })
+                            }
+                          />
+                        </MenuItems>
+                      </Menu>
                     </div>
                   </div>
                 </div>
@@ -230,6 +319,31 @@ export default function TabComment({ info }) {
                       </div>
                       <div data-type="comment">{parse(dat.comment)}</div>
                     </div>
+                    {dat?.attachedObjects && (
+                      <div className="flex gap-1 flex-wrap p-1">
+                        {dat?.attachedObjects?.map((file, index) => (
+                          <div
+                            className="p-2 bg-white shadow-lg text-xs rounded-full cursor-pointer flex gap-1 items-center"
+                            title={file?.name}
+                            key={index}
+                          >
+                            <p
+                              onClick={() =>
+                                window.open(
+                                  file.url,
+                                  "self",
+                                  "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
+                                )
+                              }
+                            >
+                              {file?.name?.length > 16
+                                ? `${file?.name?.slice(0, 7)}...${file?.name?.slice(-6)}`
+                                : file?.name}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {openActions[index] && (
                     <div className="flex justify-end items-center gap-1">
@@ -238,13 +352,27 @@ export default function TabComment({ info }) {
                           if (dat.createdBy.id !== session?.user?.id) return;
                           setEditComment({ [index]: !editComment[index] });
                           setValueText(dat.comment);
+                          if (dat.attachedObjects) {
+                            setUpload({
+                              fileIds: dat.attachedObjects.map((x) => x.id),
+                              files: dat.attachedObjects.map((x) => ({
+                                attached: {
+                                  name: x.name,
+                                  url: x.url,
+                                },
+                              })),
+                            });
+                          }
                         }}
                         className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                       >
                         <PencilIcon className="h-3 w-3 text-blue-400" />
                       </div>
                       <div
-                        onClick={() => getDeleteComment(dat.id)}
+                        onClick={() => {
+                          if (dat.createdBy.id !== session?.user?.id) return;
+                          getDeleteComment(dat.id);
+                        }}
                         className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                       >
                         <TrashIcon className="h-3 w-3 text-red-500" />

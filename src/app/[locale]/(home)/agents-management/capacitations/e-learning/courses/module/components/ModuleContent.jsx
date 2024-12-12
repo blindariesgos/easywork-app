@@ -3,24 +3,24 @@
 import Link from 'next/link';
 import { projects } from '../../mocks';
 
-export const ModuleContent = ({ project, onNavigate }) => {
-  const currentIndex = projects.findIndex(p => p.id === project.id);
+export const ModuleContent = ({ course, onNavigate }) => {
+  const currentIndex = projects.findIndex(p => p.id === course.id);
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
   const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">{project.title}</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">{course.title}</h1>
 
       <div className="aspect-video relative rounded-xl overflow-hidden">
-        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+        <img src={course.coverPhotoSrc || ''} alt={course.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
       </div>
 
-      <p className="text-gray-600">{project.description}</p>
+      <p className="text-gray-600">{course.description}</p>
 
       <div className="my-5">
-        <Link href={`/agents-management/capacitations/e-learning/courses/module/${project.id}`} className="text-blue-100 font-bold text-">
+        <Link href={`/agents-management/capacitations/e-learning/courses/module/${course.id}`} className="text-blue-100 font-bold text-">
           Evaluación final
         </Link>
       </div>

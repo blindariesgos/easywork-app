@@ -187,6 +187,13 @@ export default function PolicyDetails({
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
+          <TextInput
+            type="text"
+            label={t("operations:renovations:general:version")}
+            name="version"
+            register={register}
+            disabled
+          />
           <SelectInput
             label={t("operations:policies:general:type")}
             name="typeId"
@@ -419,129 +426,6 @@ export default function PolicyDetails({
             name="observations"
             disabled={!isEdit}
             multiple
-          />
-        </div>
-        <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-          {t("operations:renovations:general:subtitle")}
-        </div>
-        <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-          <TextInput
-            type="text"
-            label={t("operations:renovations:general:version")}
-            name="version"
-            register={register}
-            disabled
-          />
-          <Controller
-            render={({ field: { value, onChange, ref, onBlur } }) => {
-              return (
-                <InputDate
-                  label={`${t(
-                    "operations:policies:general:init-date"
-                  )} (Renovación)`}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors.vigenciaDesdeRenovacion}
-                  disabled
-                />
-              );
-            }}
-            name="vigenciaDesdeRenovacion"
-            control={control}
-            defaultValue=""
-          />
-          <Controller
-            render={({ field: { value, onChange, ref, onBlur } }) => {
-              return (
-                <InputDate
-                  label={`${t(
-                    "operations:policies:general:expiration"
-                  )} (Renovación)`}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors.vigenciaHastaRenovacion}
-                  disabled
-                />
-              );
-            }}
-            name="vigenciaHastaRenovacion"
-            control={control}
-            defaultValue=""
-          />
-          <InputCurrency
-            type="text"
-            label={`${t("operations:policies:general:primaNeta")} (Renovación)`}
-            setValue={setValue}
-            name="primaNetaRenovacion"
-            disabled
-            defaultValue={data?.primaNetaRenovacion?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={`${t(
-              "operations:policies:general:recargoFraccionado"
-            )} (Renovación)`}
-            setValue={setValue}
-            name="recargoFraccionadoRenovacion"
-            disabled
-            defaultValue={
-              data?.recargoFraccionadoRenovacion?.toFixed(2) ?? null
-            }
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={`${t(
-              "operations:policies:general:derechoPoliza"
-            )} (Renovación)`}
-            setValue={setValue}
-            name="derechoPolizaRenovacion"
-            disabled
-            defaultValue={data?.derechoPolizaRenovacion?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={`${t("operations:policies:general:iva")} (Renovación)`}
-            setValue={setValue}
-            name="ivaRenovacion"
-            disabled
-            defaultValue={data?.ivaRenovacion?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={`${t(
-              "operations:policies:general:importePagar"
-            )} (Renovación)`}
-            setValue={setValue}
-            name="importePagarRenovacion"
-            disabled
-            defaultValue={data?.importePagarRenovacion?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
           />
         </div>
       </div>

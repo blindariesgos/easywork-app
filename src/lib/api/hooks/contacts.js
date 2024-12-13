@@ -55,18 +55,20 @@ const getActivityPath = (cmrtype) => {
   switch (cmrtype) {
     case "policy":
     case "renewal":
-      return "polizas";
+      return "/sales/crm/polizas";
     case "lead":
-      return "leads";
+      return "/sales/crm/leads";
+    case "agent":
+      return "/agent-management/agents";
     case "receipt":
-      return "polizas/receipts";
+      return "/sales/crm/polizas/receipts";
     default:
-      return "contacts";
+      return "/sales/crm/contacts";
   }
 };
 export const useEntityActivities = (id, cmrtype) => {
   const { data, error, isLoading, mutate } = useSWR(
-    `/sales/crm/${getActivityPath(cmrtype)}/${id}/activities`,
+    `${getActivityPath(cmrtype)}/${id}/activities`,
     fetcher,
     { refreshInterval: 1000 }
   );

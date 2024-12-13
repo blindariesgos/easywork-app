@@ -9,6 +9,7 @@ import Image from "next/image";
 import TextInput from "./TextInput";
 import clsx from "clsx";
 import { useContacts } from "../../lib/api/hooks/contacts";
+import { useAgents } from "../../lib/api/hooks/agents";
 import { usePolicies } from "../../lib/api/hooks/policies";
 import { useLeads } from "../../lib/api/hooks/leads";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
@@ -27,7 +28,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const [filterSelect, setFilterSelect] = useState(1);
   const [query, setQuery] = useState("");
   const { contacts, isLoading: isLoadingContacts } = useContacts({
-    filters: { fullName: query },
+    filters: { searchVector: query },
     page: 1,
     limit: 5,
   });
@@ -61,6 +62,14 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     },
   });
 
+  const { data: agents, isLoading: isLoadingAgents } = useAgents({
+    filters: { name: query },
+    config: {
+      page: 1,
+      limit: 5,
+    },
+  });
+
   const handleToggle = () => {
     setQuery("");
     setIsOpen(!isOpen);
@@ -69,7 +78,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const handleSelect = (option) => {
     const currentValues = getValues(name) || [];
 
-    const types = ["contact", "poliza", "lead", "receipt", "renewal"];
+    const types = ["contact", "poliza", "lead", "receipt", "renewal", "agent"];
     // Determine the type based on filterSelect
     const type = types[filterSelect - 1];
 
@@ -105,9 +114,19 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
       leads?.items ?? [],
       receipts?.items ?? [],
       renovations?.items ?? [],
+      agents?.items ?? [],
     ];
     return items[filterSelect - 1];
-  }, [policies, contacts, leads, filterSelect, query, receipts, renovations]);
+  }, [
+    policies,
+    contacts,
+    leads,
+    filterSelect,
+    query,
+    receipts,
+    renovations,
+    agents,
+  ]);
 
   return (
     <div className="">
@@ -210,6 +229,15 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                   >
                     Renovaciones
                   </li>
+                  <li
+                    className={clsx(
+                      filterSelect === 5 && "bg-gray-300",
+                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
+                    )}
+                    onClick={() => setFilterSelect(5)}
+                  >
+                    Agentes
+                  </li>
                 </ul>
                 <div className="">
                   <div
@@ -227,6 +255,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     !isLoadingContacts &&
                     !isLoadingPolicies &&
                     !isLoadingRenovations &&
+                    !isLoadingAgents &&
                     !isLoadingLeads ? (
                       <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                         {t("common:not-found")}
@@ -277,6 +306,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                     {(isLoadingContacts ||
                       isLoadingPolicies ||
                       isLoadingReceipts ||
+                      isLoadingAgents ||
                       isLoadingRenovations ||
                       isLoadingLeads) && <LoadingSpinnerSmall />}
                   </div>

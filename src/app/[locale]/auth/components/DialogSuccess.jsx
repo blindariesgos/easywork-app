@@ -2,9 +2,10 @@ import { Button, Dialog, DialogPanel } from "@tremor/react";
 import React, { useState } from "react";
 import { useDataContext } from "../context";
 import { CheckIcon } from "@heroicons/react/20/solid";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function DialogSuccess({ children, isOpen, callback }) {
-  const { contextData, setContextData } = useDataContext();
+  const router = useRouter();
   return (
     <>
       {children}
@@ -20,7 +21,7 @@ export function DialogSuccess({ children, isOpen, callback }) {
                 style={{ backgroundColor: "#262261" }}
                 className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
                 onClick={() => {
-                  setContextData(0);
+                  router.push(`${window.location.pathname}?loginState=${0}`);
                   callback(false);
                 }}
               >

@@ -36,13 +36,15 @@ export default function Page() {
             </ul>
           </nav>
         </header>
-        <div className="w-full relative mt-24 px-8">
+
+        {/* Sección de contenido principal */}
+        <div className="w-full relative mt-10">
           <div className="flex w-full h-full items-center justify-center">
             <Image
-              style={{ width: 590 }}
-              width={1000}
-              height={1000}
-              src="/img/landing/cellphone.png"
+              style={{ width: 330 }}
+              width={600}
+              height={600}
+              src="/img/landing/cellphone.svg"
               alt="cellphone"
             />
             <div className="text-white ml-8" style={{ width: 590 }}>
@@ -73,6 +75,13 @@ export default function Page() {
             </div>
           </div>
           <Image
+            width={180}
+            height={180}
+            src="/img/landing/maskgroup.svg"
+            alt="ball"
+            className="w-screen absolute top-36"
+          />
+          <Image
             style={{ width: 50 }}
             width={100}
             height={100}
@@ -96,52 +105,18 @@ export default function Page() {
             alt="ball"
             className="absolute -bottom-60 left-1"
           />
-          <Image
-            style={{ width: 150 }}
-            width={180}
-            height={180}
-            src="/img/landing/ball-1.png"
-            alt="ball"
-            className="absolute -bottom-20 right-0"
-          />
-        </div>
-        <div className="relative h-96 flex items-end">
-          <Image
-            className="w-screen absolute"
-            width={4000}
-            height={4000}
-            src="/img/landing/maskblue.svg"
-            alt="white"
-          />
-          <Image
-            className="w-screen absolute"
-            width={4000}
-            height={4000}
-            src="/img/landing/maskwhite.svg"
-            alt="white"
-          />
-          <Image
-            className="w-1/3 absolute -top-6"
-            width={4000}
-            height={4000}
-            src="/img/landing/play.png"
-            alt="ball"
-          />
         </div>
       </div>
-      <div
-        className="h-screen w-screen bg-white bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url('/img/landing/floor.png')" }}
-      >
+      <div className="h-screen w-screen bg-white bg-cover bg-center flex items-center justify-center pt-24">
         <div
-          className="bg-white p-14 text-easywork-main mb-52"
+          className="bg-white p-14 text-easywork-main flex items-center justify-center flex-col"
           style={{ width: 540 }}
         >
           <h1 className="font-bold text-6xl mb-7" style={{ width: 500 }}>
             Imagina un espacio único
           </h1>
-          <p className="text-lg leading-tight" style={{ width: 400 }}>
-            que agrupe varias de tus herramientas de trabajo, que combine
+          <p className="text-lg leading-tight" style={{ width: 500 }}>
+            Que agrupe varias de tus herramientas de trabajo, que combine
             comunicación con clientes, gestión de cartera para la cobranza
             efectiva y te permita operar y gestionar en comunidad procesos de
             atención al cliente.
@@ -198,14 +173,14 @@ export default function Page() {
             className=""
             width={400}
             height={400}
-            src="/img/landing/graphics.png"
+            src="/img/landing/graphics.svg"
             alt="white"
           />
           <h1
-            className="font-medium text-3xl mb-7 text-easywork-main"
+            className="font-medium text-3xl mb-7 ml-3 text-easywork-main"
             style={{ width: 650 }}
           >
-            Los usuarios que implementan EASYWORK
+            Los usuarios que implementan EASYWORK{" "}
             <b>incrementan su cartera en promedio un 28%</b> más, después de su
             primer año.
           </h1>
@@ -216,10 +191,7 @@ export default function Page() {
           }
         `}</style>
       </div>
-      <div
-        className="h-screen w-screen bg-white flex-col flex items-center justify-center text-blue-700 text-center bg-cover bg-center"
-        style={{ backgroundImage: "url('/img/landing/floor.png')" }}
-      >
+      <div className="w-screen bg-white flex-col flex items-center justify-center text-blue-700 text-center bg-cover bg-center mb-5">
         <div className="flex items-center justify-center flex-col mb-5 mt-1">
           <h1 className="font-bold text-5xl mb-7">
             ¡Dale más facilidad a tu equipo con easywork!
@@ -250,14 +222,14 @@ export default function Page() {
                   "Despídete de las tareas complicadas. <b>EASYWORK</b> simplifica cada paso, ahorra tiempo y libera tiempo para ti y tu equipo.",
               },
               {
-                title: "Eficiencia y productividad",
+                title: "Prospecta más e incrementa tus ventas",
                 content:
-                  "Despídete de las tareas complicadas. <b>EASYWORK</b> simplifica cada paso, ahorra tiempo y libera tiempo para ti y tu equipo.",
+                  "No es solo un sistema, es una herramienta en constante innovación. Con <b>EASYWORK</b>, siempre estarás a la vanguadia de las soluciones inteligentes conecta tus canales y conversa con tus clientes.",
               },
               {
-                title: "Eficiencia y productividad",
+                title: "Asistente virtual, pero con alma",
                 content:
-                  "Despídete de las tareas complicadas. <b>EASYWORK</b> simplifica cada paso, ahorra tiempo y libera tiempo para ti y tu equipo.",
+                  "Más que herramientas y organización, <b>EASYWORK</b> comprende tus necesidades. es como tener a tu propio asistente personal, listo para hacerte la vida más fácil. No olvides nada. Automatiza tareas repetitivas.",
               },
             ].map((item, index) => (
               <div
@@ -272,14 +244,14 @@ export default function Page() {
           <div className="flex justify-center mt-5 ml-5">
             {[
               {
-                title: "Eficiencia y productividad",
+                title: "Gestiona mejor tu operación",
                 content:
-                  "Despídete de las tareas complicadas. <b>EASYWORK</b> simplifica cada paso, ahorra tiempo y libera tiempo para ti y tu equipo.",
+                  "Con <b>EASYWORK</b>, podrás atender siniestros, blindarle a tus clientes mejor servicio y enviar notificaciones directas al titular desde el inicio hasta la resolución",
               },
               {
-                title: "Eficiencia y productividad",
+                title: "Pronostica ventas y cobranzas",
                 content:
-                  "Despídete de las tareas complicadas. <b>EASYWORK</b> simplifica cada paso, ahorra tiempo y libera tiempo para ti y tu equipo.",
+                  "Con nuestra herramienta, es más que rápido, fácil y preciso tener en tiempo real, las renovaciones para toda tu carrera y la gestión de cierre de ventas.",
               },
             ].map((item, index) => (
               <div
@@ -345,18 +317,54 @@ export default function Page() {
             ],
           },
         ].map((item, index) => (
-          <div key={index} className="bg-white ml-2 rounded-md p-3 w-72">
-            <h1 className="font-bold text-3xl">{item.title}</h1>
-            <h2 className="font-bold text-3xl">
+          <div
+            key={index}
+            className="bg-white ml-2 rounded-md p-3 w-72"
+            style={{ height: "450px" }}
+          >
+            <h1 className="font-bold text-3xl h-1/6">{item.title}</h1>
+            <h2 className="font-bold text-3xl h-1/6">
               {item.price}
               <span className="text-2xl font-medium">/Mes</span>
             </h2>
-            {item.content.map((des, index) => (
-              <p key={index}>{des}</p>
-            ))}
-            <button className="border-2 rounded-md px-2 py-1 font-semibold hover:bg-sky-500">Quiero una demo</button>
+            <div className="h-3/6">
+              {item.content.map((des, index) => (
+                <p key={index}>{des}</p>
+              ))}
+            </div>
+            <div className="h-1/6 flex items-center justify-center">
+              <button className="border-2 rounded-md px-2 py-1 font-semibold text-blue-900 hover:bg-blue-600">
+                QUIERO UNA DEMO <br />
+                {index === 0 ? "15 DÍAS" : ""}
+              </button>
+            </div>
           </div>
         ))}
+      </div>
+      <div className="h-screen w-screen bg-white bg-cover bg-center flex items-center justify-center pt-24">
+        <div>
+          <Image
+            style={{ width: 750 }}
+            width={2000}
+            height={2000}
+            src="/img/landing/time.png"
+            alt="social"
+          />
+        </div>
+        <div
+          className="bg-white p-14 text-easywork-main flex items-center justify-center flex-col"
+          style={{ width: 540 }}
+        >
+          <h1 className="font-bold text-6xl mb-7 text-right" style={{ width: 500 }}>
+            El tiempo corre no te quedes atrás
+          </h1>
+          <p className="text-lg leading-tight" style={{ width: 500 }}>
+            Que agrupe varias de tus herramientas de trabajo, que combine
+            comunicación con clientes, gestión de cartera para la cobranza
+            efectiva y te permita operar y gestionar en comunidad procesos de
+            atención al cliente.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
 import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
 import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
+import MultipleClientCodeByInsuranceInput from "@/src/components/form/MultipleClientCodeByInsuranceInput";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -114,6 +115,12 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         relation: Yup.string(),
       })
     ),
+    codigos_dto: Yup.array().of(
+      Yup.object().shape({
+        codigo: Yup.string(),
+        insuranceId: Yup.string(),
+      })
+    ),
   });
 
   const {
@@ -150,6 +157,19 @@ export default function ContactGeneral({ contact, id, refPrint }) {
               relation: "",
             },
           ],
+      codigos_dto:
+        //  contact?.codigos_dto?.length
+        //   ? contact?.codigos_dto?.map((e) => ({
+        //       email: e?.email?.email,
+        //       relation: e?.relation ?? "",
+        //     }))
+        //   :
+        [
+          {
+            codigo: "",
+            insuranceId: "",
+          },
+        ],
     },
   });
 
@@ -238,6 +258,8 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         formData.append(key, body[key]?.toString() || "");
       }
     }
+
+    console.log({ body });
 
     try {
       setLoading(true);
@@ -389,6 +411,16 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 errors={errors.emails_dto}
                 register={register}
                 name="emails_dto"
+                disabled={!isEdit}
+                control={control}
+                watch={watch}
+                setValue={setValue}
+              />
+              <MultipleClientCodeByInsuranceInput
+                label={t("contacts:create:codigo")}
+                errors={errors.codigos_dto}
+                register={register}
+                name="codigos_dto"
                 disabled={!isEdit}
                 control={control}
                 watch={watch}

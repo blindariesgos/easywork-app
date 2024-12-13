@@ -7,6 +7,8 @@ import AddClaim from "./addClaim";
 import { FaChevronDown } from "react-icons/fa";
 import AddFundRescue from "./addFundRescue";
 import AddRenovations from "./addRenovations";
+import AddVersion from "./addVersion";
+
 const ButtonAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenRenovation, setIsOpenRenovation] = useState(false);
@@ -14,17 +16,19 @@ const ButtonAdd = () => {
   const [isOpenFundRescue, setIsOpenFundRescue] = useState(false);
   const [isOpenRefunds, setIsOpenRefunds] = useState(false);
   const [isOpenSchedule, setIsOpenSchedule] = useState(false);
+  const [isOpenVersion, setIsOpenVersion] = useState(false);
 
   const options = [
     {
       name: "Póliza",
       onclick: () => setIsOpen(true),
     },
-    { name: "Programaciones", onclick: () => setIsOpenSchedule(true) },
-    { name: "Reembolsos", onclick: () => setIsOpenRefunds(true) },
-    { name: "Renovaciones", onclick: () => setIsOpenRenovation(true) },
+    { name: "Programación", onclick: () => setIsOpenSchedule(true) },
+    { name: "Reembolso", onclick: () => setIsOpenRefunds(true) },
+    { name: "Renovación", onclick: () => setIsOpenRenovation(true) },
     { name: "Rescate de fondos", onclick: () => setIsOpenFundRescue(true) },
-    { name: "Siniestros", onclick: () => setIsOpenClaim(true) },
+    { name: "Siniestro", onclick: () => setIsOpenClaim(true) },
+    { name: "Versión", onclick: () => setIsOpenVersion(true) },
   ];
 
   return (
@@ -57,6 +61,7 @@ const ButtonAdd = () => {
         isOpen={isOpenRenovation}
         setIsOpen={setIsOpenRenovation}
       />
+      <AddVersion isOpen={isOpenVersion} setIsOpen={setIsOpenVersion} />
       <AddClaim isOpen={isOpenClaim} setIsOpen={setIsOpenClaim} />
       <AddSchedule isOpen={isOpenSchedule} setIsOpen={setIsOpenSchedule} />
       <AddRefunds isOpen={isOpenRefunds} setIsOpen={setIsOpenRefunds} />

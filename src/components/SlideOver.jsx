@@ -5,6 +5,7 @@ import {
   DialogPanel,
   Transition,
   TransitionChild,
+  DialogBackdrop,
 } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
@@ -146,8 +147,8 @@ export default function SlideOver({
         // router.replace(`${samePage}`, undefined, { shallow: true });
       }}
     >
-      <Dialog as="div" className="relative z-[10000]" onClose={() => {}}>
-        <div className="fixed inset-0" />
+      <Dialog as="div" className="relative z-[10000]" onClose={closeModal}>
+        <DialogBackdrop className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-6 2xl:pl-52">
@@ -163,21 +164,21 @@ export default function SlideOver({
                 <DialogPanel
                   className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
                 >
-                  <div className="flex justify-end h-screen">
-                    <div className={`flex flex-col`}>
+                  <div className="flex justify-end h-screen relative">
+                    <div className={`absolute right-full top-0`}>
                       <Tag
                         title={label}
                         onclick={closeModal}
                         className={colorTag}
                       />
-                      {subLabelTag && (
+                      {/* {subLabelTag && (
                         <Tag
                           title={subLabel}
                           className="bg-green-primary pl-2"
                           closeIcon
                           second
                         />
-                      )}
+                      )} */}
                     </div>
                     {children}
                   </div>

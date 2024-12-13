@@ -29,6 +29,8 @@ export const useCapacitations = ({ filters = {}, config = {}, userId = '' }) => 
   const url = `/capacitations?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
 
   const { data, error, isLoading, mutate } = useSWR(url, async (endpoint, options = {}) => {
+    console.log('🚀 ~ const{data,error,isLoading,mutate}=useSWR ~ `${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}${endpoint}`:', `${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}${endpoint}`);
+
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}${endpoint}`).catch(error => error);
     return response.data;
   });

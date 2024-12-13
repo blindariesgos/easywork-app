@@ -1,5 +1,6 @@
 "use client";
 
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import SliderOverShord from "@/src/components/SliderOverShort";
 import Button from "@/src/components/form/Button";
@@ -202,6 +203,9 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     setValue("polizaFileId", response?.polizaFileId);
     setValue("status", response?.status);
     setValue("metadata", response?.metadata);
+    if (response?.relatedContacts && response?.relatedContacts.length > 0) {
+      setValue("relatedContacts", response?.relatedContacts);
+    }
 
     reader.readAsDataURL(file);
     setLoading(false);
@@ -217,6 +221,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       vigenciaDesde,
       vigenciaHasta,
       recargoFraccionado,
+      relatedContacts,
       ...otherData
     } = data;
     const body = {
@@ -277,67 +282,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     setPolicy();
     setHelpers({});
     reset();
-  };
-
-  const getNewContactContent = () => {
-    const contact = watch("newContact");
-    return (
-      <div className="shadow-inner p-2 border rounded-md">
-        <p className="text-xs pb-2">
-          No encontramos el cliente de la póliza en nuestros registros. ¿Ya está
-          registrado? Si es así, selecciónalo. Si no, crearemos uno nuevo con la
-          información de la póliza.
-        </p>
-        <Disclosure>
-          <DisclosureButton className="group flex items-center bg-primary justify-between w-full p-1 border rounded-md">
-            <p className="text-sm text-white">
-              Ver datos del cliente en la póliza
-            </p>
-            <ChevronDownIcon className="size-5  text-white  group-data-[open]:rotate-180" />
-          </DisclosureButton>
-          <DisclosurePanel>
-            <div className="p-2">
-              <TextInput
-                type="text"
-                label={"Nombre completo"}
-                name="name"
-                value={contact.fullName}
-                disabled
-              />
-              <TextInput
-                type="text"
-                label={"Código"}
-                name="codigo"
-                value={contact.codigo}
-                disabled
-              />
-              <TextInput
-                type="text"
-                label={t("operations:policies:general:rfc")}
-                name="rfc"
-                value={contact.rfc}
-                disabled
-              />
-              <TextInput
-                type="text"
-                label={t("operations:policies:general:address")}
-                name="address"
-                value={contact.address}
-                disabled
-                multiple
-                rows={2}
-              />
-              <InputDate
-                label={t("contacts:create:born-date")}
-                value={contact.birthdate}
-                error={errors.birthdate}
-                disabled
-              />
-            </div>
-          </DisclosurePanel>
-        </Disclosure>
-      </div>
-    );
   };
 
   const {
@@ -461,15 +405,118 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     error={errors?.observerId}
                     setValue={setValue}
                   />
-                  <ContactSelectAsync
-                    label={t("control:portafolio:control:form:contact")}
-                    name={"contact"}
-                    setValue={setValue}
-                    watch={watch}
-                    error={errors?.contact}
-                    helperText={helpers?.contact}
-                  />
-                  {watch("isNewContact") && getNewContactContent()}
+                  <div>
+                    <label
+                      className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
+                    >
+                      {t("control:portafolio:control:form:contact")}
+                    </label>
+                    <p
+                      className={clsx("text-xs py-2 px-3", {
+                        hidden: !watch("isNewContact"),
+                      })}
+                    >
+                      No encontramos el cliente de la póliza en nuestros
+                      registros. ¿Ya está registrado? Si es así, selecciónalo.
+                      Si no, crearemos uno nuevo con la información de la
+                      póliza.
+                    </p>
+                    <TabGroup
+                      className={clsx(" rounded-md", {
+                        "px-3 border": watch("isNewContact"),
+                      })}
+                    >
+                      <TabList
+                        className={clsx("flex gap-2 pt-2", {
+                          hidden: !watch("isNewContact"),
+                        })}
+                      >
+                        <Tab className="text-xs bg-white rounded-full px-2 py-1 data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold">
+                          Todos
+                        </Tab>
+                        <Tab
+                          className={clsx(
+                            "text-xs bg-white rounded-full  data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold",
+                            {
+                              hidden:
+                                !watch("relatedContacts") ||
+                                watch("relatedContacts").length == 0,
+                              "px-2 py-1": watch("isNewContact"),
+                            }
+                          )}
+                        >
+                          Coincidencias
+                        </Tab>
+                        <Tab className="text-xs bg-white rounded-full px-2 py-1  data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold">
+                          Por defecto
+                        </Tab>
+                      </TabList>
+                      <TabPanels>
+                        <TabPanel className="py-2">
+                          <ContactSelectAsync
+                            name={"contact"}
+                            setValue={setValue}
+                            watch={watch}
+                            error={errors?.contact}
+                            helperText={helpers?.contact}
+                          />
+                        </TabPanel>
+                        <TabPanel
+                          className={clsx("py-2", {
+                            hidden:
+                              !watch("relatedContacts") ||
+                              watch("relatedContacts").length == 0,
+                          })}
+                        >
+                          <SelectInput
+                            options={watch("relatedContacts") ?? []}
+                            name="observerId"
+                            error={errors?.observerId}
+                            setValue={setValue}
+                          />
+                        </TabPanel>
+                        <TabPanel className="py-2">
+                          <TextInput
+                            type="text"
+                            label={"Nombre completo"}
+                            name="newContact.fullName"
+                            register={register}
+                            disabled
+                          />
+                          <TextInput
+                            type="text"
+                            label={"Código"}
+                            name="newContact.codigo"
+                            register={register}
+                            disabled
+                          />
+                          <TextInput
+                            type="text"
+                            label={t("operations:policies:general:rfc")}
+                            name="newContact.rfc"
+                            register={register}
+                            disabled
+                          />
+                          <TextInput
+                            type="text"
+                            label={t("operations:policies:general:address")}
+                            name="newContact.address"
+                            register={register}
+                            disabled
+                            multiple
+                            rows={2}
+                          />
+                          {/* <InputDate
+                              label={t("contacts:create:born-date")}
+                              name="newContact.birthdate"
+                              error={errors.birthdate}
+                              register={register}
+                              disabled
+                            /> */}
+                        </TabPanel>
+                      </TabPanels>
+                    </TabGroup>
+                  </div>
                   <TextInput
                     type="text"
                     label={"Número de póliza"}

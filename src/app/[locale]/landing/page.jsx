@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import Header from "./sections/header";
+import Header from "./sections/Header";
 import MainContent from "./sections/MainContent";
-import Features from "./sections/features";
+import Features from "./sections/Features";
 import Plans from "./sections/Plans";
 import Footer from "./sections/Footer";
 import GetDemo from "./sections/GetDemo";

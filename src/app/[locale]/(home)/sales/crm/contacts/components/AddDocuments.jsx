@@ -26,6 +26,11 @@ const AddDocuments = ({ contactId }) => {
       type: "documentos",
       accept: null,
     },
+    {
+      name: "Endoso o versión de póliza",
+      type: "poliza",
+      accept: null,
+    },
   ];
 
   const handleAddDocument = (document) => {

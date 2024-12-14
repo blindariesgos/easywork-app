@@ -8,7 +8,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import clsx from "clsx";
-import { formatToCurrency } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
@@ -16,7 +15,7 @@ import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputDate from "@/src/components/form/InputDate";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
-import { postComment, putPoliza } from "@/src/lib/apis";
+import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
@@ -101,6 +100,7 @@ export default function PolicyDetails({
     if (data?.contact?.address) setValue("address", data?.contact?.address);
     if (data?.contact?.rfc) setValue("rfc", data?.contact?.rfc);
     if (data?.type?.id) setValue("typeId", data?.type?.id);
+    if (data?.category) setValue("categoryId", data?.category?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -181,6 +181,19 @@ export default function PolicyDetails({
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
+          {isEdit && (
+            <Fragment>
+              <SelectInput
+                label={t("control:portafolio:receipt:details:product")}
+                name="categoryId"
+                options={lists?.policies?.polizaCategories ?? []}
+                register={register}
+                setValue={setValue}
+                watch={watch}
+              />
+            </Fragment>
+          )}
+
           <SelectInput
             label={t("operations:policies:general:type")}
             name="typeId"
@@ -210,7 +223,6 @@ export default function PolicyDetails({
               watch={watch}
             />
           )}
-
           {data?.type?.name === "VIDA" && (
             <SelectInput
               label={t("operations:policies:general:subbranch")}
@@ -263,7 +275,6 @@ export default function PolicyDetails({
             multiple
             rows={2}
           />
-
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {
               return (
@@ -298,7 +309,6 @@ export default function PolicyDetails({
             control={control}
             defaultValue=""
           />
-
           <SelectInput
             label={t("operations:policies:general:payment-method")}
             name="formaCobroId"
@@ -344,7 +354,6 @@ export default function PolicyDetails({
             disabled
             watch={watch}
           />
-
           <InputCurrency
             type="text"
             label={t("operations:policies:general:primaNeta")}
@@ -419,7 +428,6 @@ export default function PolicyDetails({
             setValue={setValue}
             watch={watch}
           />
-
           <SelectDropdown
             label={t("operations:policies:general:responsible")}
             name="assignedById"

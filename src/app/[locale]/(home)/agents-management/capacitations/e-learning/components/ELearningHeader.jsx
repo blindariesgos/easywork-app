@@ -41,14 +41,14 @@ export default function ELearningHeader() {
         </div>
       )}
 
-      <div class="flex p-4 items-center gap-4">
+      <div className="flex p-4 items-center gap-4">
         {NAV_LINKS.map(navLink => {
           const isLinkActive = navLink.href === pathname;
 
           return navLink.component ? (
-            navLink.component
+            <div key={navLink.id}>{navLink.component}</div>
           ) : (
-            <div key={navLink.id} class={`text-gray-${isLinkActive ? '100' : '700'} hover:text-blue-500 bg-gray-${isLinkActive ? '400' : '100'} rounded py-1 px-2 cursor-pointer`}>
+            <div key={navLink.id} className={`text-gray-${isLinkActive ? '100' : '700'} hover:text-blue-500 bg-gray-${isLinkActive ? '400' : '100'} rounded py-1 px-2 cursor-pointer`}>
               <Link href={navLink.href}>{navLink.name}</Link>
             </div>
           );

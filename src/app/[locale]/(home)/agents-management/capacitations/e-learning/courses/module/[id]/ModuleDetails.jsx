@@ -1,36 +1,25 @@
 'use client';
-import React from 'react';
-// import { ArrowLeft, Calendar, Users, BarChart2, MessageSquare, FileText, Link2, CheckSquare } from 'lucide-react';
-import { projects } from '../../mocks';
+
+import { useState, useEffect } from 'react';
 import { AccordionItem } from '../components/AccordionItem';
 import { ModuleContent } from '../components/ModuleContent';
+import { getCourseById } from '../../services/get-courses';
 
-const mockTasks = [
-  { id: 1, title: 'Design system implementation', status: 'completed', assignee: 'Sarah Chen', dueDate: 'Oct 15, 2024' },
-  { id: 2, title: 'User research and interviews', status: 'in-progress', assignee: 'Marcus Rodriguez', dueDate: 'Oct 20, 2024' },
-  { id: 3, title: 'Prototype development', status: 'in-progress', assignee: 'Emily Parker', dueDate: 'Oct 25, 2024' },
-  { id: 4, title: 'Stakeholder presentation', status: 'todo', assignee: 'Alex Johnson', dueDate: 'Nov 1, 2024' },
-];
-
-const mockUpdates = [
-  { id: 1, user: 'Sarah Chen', message: 'Completed the initial design system setup', timestamp: '2 hours ago', type: 'milestone' },
-  { id: 2, user: 'Marcus Rodriguez', message: 'Updated the user interview questions', timestamp: '4 hours ago', type: 'change' },
-  { id: 3, user: 'Emily Parker', message: 'Great progress on the design system!', timestamp: '1 day ago', type: 'comment' },
-];
-
-export const ModuleDetails = ({ moduleId, onBack }) => {
-  const [openSections, setOpenSections] = React.useState(['']);
-
-  const project = projects.find(p => p.id === Number(moduleId));
-
-  if (!project) {
-    return <div>Project not found</div>;
-  }
+export const ModuleDetails = ({ moduleId }) => {
+  const [openSections, setOpenSections] = useState(['']);
+  const [course, setCourse] = useState(null);
 
   const toggleSection = section => {
     setOpenSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
   };
 
+  useEffect(() => {
+    getCourseById(moduleId).then(setCourse).catch(console.log);
+  }, [moduleId]);
+
+  if (!course) {
+    return <div>Module not found</div>;
+  }
   return (
     <div className="py-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -70,7 +59,7 @@ export const ModuleDetails = ({ moduleId, onBack }) => {
 
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <ModuleContent
-            project={project}
+            course={course}
             onNavigate={id => {
               setOpenSections(['overview']);
               projectId = id;

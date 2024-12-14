@@ -1,6 +1,5 @@
 'use client';
 import useSWR from 'swr';
-import fetcher from '../fetcher';
 import axios from 'axios';
 
 const getQueries = (filters, userId) => {
@@ -29,56 +28,13 @@ export const useCapacitations = ({ filters = {}, config = {}, userId = '' }) => 
     .join('&');
   const url = `/capacitations?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
 
-  const { data: _, error, isLoading, mutate } = useSWR(url, fetcher);
+  const { data, error, isLoading, mutate } = useSWR(url, async (endpoint, options = {}) => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}${endpoint}`).catch(error => error);
+    return response.data;
+  });
 
   return {
-    data: {
-      items: [
-        {
-          id: 1,
-          name: 'Armando Graterol',
-          stage: 4,
-          startDate: '2024-02-01',
-          endDate: '2024-03-01',
-          processClosed: false,
-          responsible: 'Ryan Vetrovs',
-        },
-        {
-          id: 2,
-          name: 'Armando Graterol',
-          stage: 5,
-          startDate: '2024-02-01',
-          endDate: '2024-03-01',
-          processClosed: false,
-          responsible: 'Ryan Vetrovs',
-        },
-        {
-          id: 3,
-          name: 'Armando Graterol',
-          stage: 2,
-          startDate: '2024-02-01',
-          endDate: '2024-03-01',
-          processClosed: true,
-          responsible: 'Ryan Vetrovs',
-        },
-        {
-          id: 3,
-          name: 'Armando Graterol',
-          stage: 6,
-          startDate: '2024-02-01',
-          endDate: '2024-03-01',
-          processClosed: false,
-          responsible: 'Ryan Vetrovs',
-        },
-      ],
-      meta: {
-        totalItems: 0,
-        itemCount: 0,
-        itemsPerPage: 5,
-        totalPages: 0,
-        currentPage: 1,
-      },
-    },
+    data,
     isLoading,
     isError: error,
     mutate,

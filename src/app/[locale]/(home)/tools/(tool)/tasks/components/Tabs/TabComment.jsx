@@ -151,23 +151,23 @@ export default function TabComment({ info }) {
               </div>
               <div className="flex justify-start items-center gap-2">
                 <Button
-                  type="button"
-                  onclick={handleComment}
-                  disabled={disabled}
-                  label={t("tools:tasks:edit:comment:send")}
-                  buttonStyle="primary"
-                  className="px-3 py-2"
-                />
-                <Button
                   disabled={disabled}
                   buttonStyle="secondary"
                   label={t("common:buttons:cancel")}
                   className="px-3 py-2"
                   onclick={() => {
                     setIsAddComment(false);
-                    setValueText("");
+                    // setValueText("");
                     setUpload({});
                   }}
+                />
+                <Button
+                  type="button"
+                  onclick={handleComment}
+                  disabled={disabled}
+                  label={t("tools:tasks:edit:comment:send")}
+                  buttonStyle="primary"
+                  className="px-3 py-2"
                 />
                 <Menu>
                   <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">

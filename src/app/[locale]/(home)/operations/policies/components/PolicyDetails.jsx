@@ -175,7 +175,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
                   <p className="text-sm">{data?.category?.name ?? "S/N"}</p>
                 </div>
                 <Link
-                  className="hover:text-easy-600 text-sm"
+                  className="font-semibold text-easy-600 text-sm hover:underline"
                   href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
                 >
                   {data?.contact?.fullName}

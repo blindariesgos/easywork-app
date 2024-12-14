@@ -1,5 +1,4 @@
 "use client";
-
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import SliderOverShord from "@/src/components/SliderOverShort";
@@ -15,6 +14,7 @@ import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { FaTrash } from "react-icons/fa";
 import {
   addLeadDocument,
   addPolicyByPdf,
@@ -34,7 +34,7 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
-const AddPolicy = ({ isOpen, setIsOpen }) => {
+const AddVersion = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -59,10 +59,11 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
         then: (schema) => schema.required(t("common:formValidator:required")),
         otherwise: (schema) => schema,
       }),
+
+    contactId: yup.string(),
     typeId: yup.string().required(t("common:validations:required")),
     responsibleId: yup.string().required(t("common:validations:required")),
     observerId: yup.string().required(t("common:validations:required")),
-    subAgente: yup.object().shape({}),
     isNewContact: yup.bool().default(false),
     poliza: yup.string().required(t("common:validations:required")),
     typePerson: yup.string().required(t("common:validations:required")),
@@ -71,6 +72,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     companyId: yup.string().required(t("common:validations:required")),
     currencyId: yup.string().required(t("common:validations:required")),
     primaNeta: yup.string().required(t("common:validations:required")),
+    version: yup.string().required(t("common:validations:required")),
     derechoPoliza: yup.string().default("0"),
     iva: yup.string().default("0"),
     importePagar: yup.string().required(t("common:validations:required")),
@@ -99,12 +101,15 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     const files = e.target.files;
 
     if (!files) {
+      setLoading(false);
       return;
     }
 
     const file = Array.from(files)[0];
 
     if (!file) {
+      setLoading(false);
+
       return;
     }
 
@@ -128,7 +133,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
 
     const formData = new FormData();
     formData.append("poliza", file);
-    const response = await getMetadataOfPdf("nueva", formData);
+    const response = await getMetadataOfPdf("version", formData);
     console.log(response);
 
     if (response?.hasError) {
@@ -148,6 +153,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
 
     if (response?.contact?.id) {
       setValue("contact", response?.contact?.id);
+      setValue("contactId", response?.contact?.id);
     } else {
       setValue("isNewContact", true);
       setValue("newContact", {
@@ -183,15 +189,26 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     // if (response?.contact?.address) setValue("address", response?.contact?.address);
     // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
-    if (response?.importePagar)
-      setValue("importePagar", response?.importePagar?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("primaNeta", response?.primaNeta?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("derechoPoliza", response?.derechoPoliza?.toFixed(2));
-    if (response?.iva) setValue("iva", response?.iva?.toFixed(2));
-    if (response?.recargoFraccionado)
-      setValue("recargoFraccionado", response?.recargoFraccionado?.toFixed(2));
+    if (response?.version) setValue("version", response?.version);
+    // if (response?.importePagar)
+    setValue(
+      "importePagar",
+      response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
+    );
+    // if (response?.primaNeta)
+    setValue("primaNeta", response?.primaNeta?.toFixed(2) ?? (0).toFixed(2));
+    // if (response?.primaNeta)
+    setValue(
+      "derechoPoliza",
+      response?.derechoPoliza?.toFixed(2) ?? (0).toFixed(2)
+    );
+    // if (response?.iva)
+    setValue("iva", response?.iva?.toFixed(2) ?? (0).toFixed(2));
+    // if (response?.recargoFraccionado)
+    setValue(
+      "recargoFraccionado",
+      response?.recargoFraccionado?.toFixed(2) ?? (0).toFixed(2)
+    );
     if (response?.company?.id) setValue("companyId", response?.company?.id);
     if (response?.beneficiaries)
       setValue("beneficiaries", response?.beneficiaries);
@@ -221,13 +238,14 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       vigenciaDesde,
       vigenciaHasta,
       recargoFraccionado,
+      version,
+      contact,
       relatedContacts,
       ...otherData
     } = data;
-    const body = {
+    let body = {
       ...otherData,
-      operacion: "produccion_nueva",
-      version: 0,
+      operacion: "cambio_version",
       renewal: false,
       iva: iva ? +iva : 0,
       primaNeta: primaNeta ? +primaNeta : 0,
@@ -236,12 +254,14 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
+      version: version ? +version : 0,
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
+
     console.log({ body });
 
     try {
-      const response = await addPolicyByPdf(body);
+      const response = await addPolicyByPdf(body, "renovacion");
       console.log({ response });
       if (response?.hasError) {
         if (Array.isArray(response?.error?.message)) {
@@ -273,11 +293,11 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
 
   const handleReset = () => {
     reset({
-      contact: "",
-      subAgente: "",
+      contact: {},
       responsibleId: "",
-      insuranceId: "",
       typeId: "",
+      poliza: "",
+      version: "",
     });
     setPolicy();
     setHelpers({});
@@ -316,7 +336,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
           <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d] overflow-y-auto">
             <div className="bg-gray-100 rounded-md p-2">
               <div className="bg-white rounded-md p-4 flex justify-between items-center">
-                <p>Información general de la póliza</p>
+                <p>Información general de la Versión</p>
                 {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
@@ -324,13 +344,13 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                   <label
                     className={`block text-sm font-medium leading-6 text-gray-900`}
                   >
-                    Cargar póliza pagada
+                    Cargar Versión pagada
                   </label>
                   <label
                     htmlFor="policy-file"
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
-                    <p>Leer datos de la póliza</p>
+                    <p>Leer datos de la Versión</p>
                     {policy && (
                       <div className="flex flex-col gap-2 justify-center items-center pt-2">
                         <div className="p-2 group-hover:bg-primary bg-easy-500 rounded-md">
@@ -517,10 +537,17 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                       </TabPanels>
                     </TabGroup>
                   </div>
+
                   <TextInput
                     type="text"
                     label={"Número de póliza"}
                     name="poliza"
+                    register={register}
+                  />
+                  <TextInput
+                    type="text"
+                    label={"Versión"}
+                    name="version"
                     register={register}
                   />
                   <Controller
@@ -648,45 +675,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                       )?.symbol ?? ""
                     }
                   />
-
-                  {beneficiaries && beneficiaries.length > 0 && (
-                    <div className="grid gap-y-1">
-                      <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-                        Beneficiarios
-                      </label>
-                      {beneficiaries.map((beneficiary, index) => (
-                        <div
-                          key={index}
-                          className={clsx(
-                            "grid gap-1 border rounded-md py-2 pl-2",
-                            {
-                              "pr-6": beneficiaries.length > 1,
-                              "pr-2": beneficiaries.length == 1,
-                            }
-                          )}
-                        >
-                          <p className="text-xs">Nombre completo</p>
-                          <p className="text-xs bg-white py-1 px-2 rounded-md">
-                            {beneficiary.nombre}
-                          </p>
-                          <div className="grid grid-cols-2 gap-1">
-                            <div className="grid gap-1">
-                              <p className="text-xs">Parentesco</p>
-                              <p className="text-xs bg-white py-1 px-2 rounded-md">
-                                {beneficiary.parentesco}
-                              </p>
-                            </div>
-                            <div className="grid gap-1">
-                              <p className="text-xs">Porcentaje</p>
-                              <p className="text-xs bg-white py-1 px-2 rounded-md">
-                                {beneficiary.porcentaje}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                   {insureds && insureds.length > 0 && (
                     <div className="grid gap-y-1">
                       <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
@@ -696,13 +684,22 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                         <div
                           key={index}
                           className={clsx(
-                            "grid gap-1 border rounded-md py-2 pl-2",
+                            "grid gap-1 border rounded-md py-2 pl-2 relative",
                             {
-                              "pr-6": insureds.length > 1,
+                              "pr-8": insureds.length > 1,
                               "pr-2": insureds.length == 1,
                             }
                           )}
                         >
+                          <FaTrash
+                            className={clsx(
+                              "text-red-800 w-4 h-4 absolute right-2 cursor-pointer top-2",
+                              {
+                                hidden: insureds.length == 1,
+                              }
+                            )}
+                            onClick={() => removeInsureds(index)}
+                          />
                           <p className="text-xs">Nombre completo</p>
                           <p className="text-xs bg-white py-1 px-2 rounded-md">
                             {beneficiary?.insured?.fullName ?? "No disponible"}
@@ -730,6 +727,53 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                               <p className="text-xs">Código</p>
                               <p className="text-xs bg-white py-1 px-2 rounded-md">
                                 {beneficiary?.insured?.codigo ? "Si" : "No"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {beneficiaries && beneficiaries.length > 0 && (
+                    <div className="grid gap-y-1">
+                      <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
+                        Beneficiarios
+                      </label>
+                      {beneficiaries.map((beneficiary, index) => (
+                        <div
+                          key={index}
+                          className={clsx(
+                            "grid gap-1 border rounded-md py-2 pl-2 relative",
+                            {
+                              "pr-8": beneficiaries.length > 1,
+                              "pr-2": beneficiaries.length == 1,
+                            }
+                          )}
+                        >
+                          <FaTrash
+                            className={clsx(
+                              "text-red-800 w-4 h-4 absolute right-2 cursor-pointer top-2",
+                              {
+                                hidden: beneficiaries.length == 1,
+                              }
+                            )}
+                            onClick={() => removeBeneficiaries(index)}
+                          />
+                          <p className="text-xs">Nombre completo</p>
+                          <p className="text-xs bg-white py-1 px-2 rounded-md">
+                            {beneficiary.nombre}
+                          </p>
+                          <div className="grid grid-cols-2 gap-1">
+                            <div className="grid gap-1">
+                              <p className="text-xs">Parentesco</p>
+                              <p className="text-xs bg-white py-1 px-2 rounded-md">
+                                {beneficiary.parentesco}
+                              </p>
+                            </div>
+                            <div className="grid gap-1">
+                              <p className="text-xs">Porcentaje</p>
+                              <p className="text-xs bg-white py-1 px-2 rounded-md">
+                                {beneficiary.porcentaje}
                               </p>
                             </div>
                           </div>
@@ -815,4 +859,4 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AddPolicy;
+export default AddVersion;

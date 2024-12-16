@@ -13,7 +13,6 @@ import {
   TagIcon,
   NewspaperIcon,
   PresentationChartBarIcon,
-  MegaphoneIcon,
   WalletIcon,
   PuzzlePieceIcon,
   GlobeAltIcon,

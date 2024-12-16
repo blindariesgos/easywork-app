@@ -633,8 +633,11 @@ export default function Table() {
                                 ) : column.row === "isActive" ? (
                                   getStatus(agent?.user?.isActive)
                                 ) : column.row === "manager" ? (
-                                  (agent?.developmentManager?.name ??
-                                  agent?.developmentManager?.username)
+                                  agent?.developmentManager?.profile ? (
+                                    `${agent?.developmentManager?.profile?.firstName ?? ""} ${agent?.developmentManager?.profile?.lastName ?? ""}`
+                                  ) : (
+                                    agent?.developmentManager?.username
+                                  )
                                 ) : (
                                   agent[column.row] || "-"
                                 )}

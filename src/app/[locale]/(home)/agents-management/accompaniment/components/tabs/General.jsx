@@ -367,7 +367,7 @@ export default function General({ agent, id, refPrint }) {
               />
 
               <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:responsible")}
+                label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="developmentManagerId"
                 options={lists?.users ?? []}
                 disabled={!isEdit}
@@ -376,7 +376,7 @@ export default function General({ agent, id, refPrint }) {
                 watch={watch}
               />
               <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:manager")}
+                label={t("agentsmanagement:accompaniments:agent:responsible")}
                 name="recruitmentManagerId"
                 options={lists?.users ?? []}
                 disabled={!isEdit}

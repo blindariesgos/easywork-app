@@ -22,13 +22,17 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deletePolicyById, putPoliza } from "@/src/lib/apis";
+import {
+  assignToDevelopmentManagerMasive,
+  deletePolicyById,
+  putPoliza,
+  updateAgent,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useAccompanimentsTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -40,11 +44,9 @@ import {
 import { formatDate } from "@/src/utils/getFormatDate";
 import useAccompanimentsContext from "@/src/context/accompaniments";
 import { useRouter } from "next/navigation";
-import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
-import { P } from "pino";
 
 export default function Table() {
   const {
@@ -93,13 +95,6 @@ export default function Table() {
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
-
   const deletePolicy = async (id) => {
     try {
       setLoading(true);
@@ -114,7 +109,24 @@ export default function Table() {
     }
   };
 
-  const deletePolicies = async () => {
+  const getFormData = (body) => {
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+    return formData;
+  };
+
+  const deleteAgentMasive = async () => {
     setLoading(true);
     const response = await Promise.allSettled(
       selectedContacts.map((policyId) => deletePolicyById(policyId))
@@ -171,12 +183,13 @@ export default function Table() {
     setLoading(false);
   };
 
-  const changeResponsible = async (responsible) => {
+  const changeResponsibleMasive = async (responsible) => {
     const body = {
-      assignedById: responsible.id,
+      recruitmentManager: responsible.id,
     };
+    const formData = getFormData(body);
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => putPoliza(policyId, body))
+      selectedContacts.map((agentId) => updateAgent(formData, agentId))
     );
     if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
       toast.success(
@@ -204,49 +217,48 @@ export default function Table() {
     setLoading(false);
   };
 
+  const assignGDDMasive = async (responsible) => {
+    const body = {
+      agentIds: selectedContacts,
+      developmentManagerId: responsible.id,
+    };
+    const response = await assignToDevelopmentManagerMasive(body);
+    if (response.hasError) {
+      let message = response.message;
+      if (response.errors) {
+        message = response.errors.join(", ");
+      }
+      toast.error(message);
+      setLoading(false);
+      return;
+    }
+    toast.success("Proceso exitoso");
+    setSelectedContacts([]);
+    mutate();
+    setLoading(false);
+  };
+
   const masiveActions = [
     {
-      id: 1,
-      name: "Asignar agente relacionado - subagente",
-      disabled: true,
-    },
-    {
-      id: 1,
-      name: "Asignar observador",
-      disabled: true,
-    },
-    {
       id: 3,
-      name: "Cambiar Responsable",
-      onclick: changeResponsible,
+      name: "Asignar Responsable",
+      onclick: changeResponsibleMasive,
       selectUser: true,
     },
     {
       id: 2,
-      name: t("common:table:checkbox:change-status"),
-      onclick: changeStatusPolicies,
-      selectOptions: [
-        {
-          id: "activa",
-          name: "Activa",
-        },
-        {
-          id: "expirada",
-          name: "Expirada",
-        },
-        {
-          id: "cancelada",
-          name: "Cancelada",
-        },
-        {
-          id: "en_proceso",
-          name: "En proceso",
-        },
-      ],
+      name: "Asignar GDD",
+      onclick: assignGDDMasive,
+      selectUser: true,
     },
     {
       id: 1,
       name: "Crear tarea",
+      disabled: true,
+    },
+    {
+      id: 1,
+      name: "Cambiar estado",
       disabled: true,
     },
     {
@@ -666,7 +678,7 @@ export default function Table() {
       <DeleteItemModal
         isOpen={isOpenDeleteMasive}
         setIsOpen={setIsOpenDeleteMasive}
-        handleClick={() => deletePolicies()}
+        handleClick={() => deleteAgentMasive()}
         loading={loading}
       />
     </Fragment>

@@ -92,6 +92,14 @@ export const createAgent = async (data) => {
   return response;
 };
 
+export const assignToDevelopmentManagerMasive = async (data) => {
+  const response = await axios()
+    .put("/agent-management/agents/assign-development-manager", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
 export const updateAgent = async (data, agentId) => {
   const response = await axios()
     .put(`/agent-management/agents/${agentId}`, data)
@@ -180,6 +188,11 @@ export const deletePolicyById = async (id) => {
   // try {
   const response = await axios().delete(`/sales/crm/polizas/${id}`);
   revalidatePath("/operations/policies", "layout");
+  return response;
+};
+export const deleteAgentById = async (agentId) => {
+  // try {
+  const response = await axios().delete(`/agent-management/agents/${agentId}`);
   return response;
 };
 

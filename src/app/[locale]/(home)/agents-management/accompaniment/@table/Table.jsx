@@ -47,6 +47,7 @@ import { useRouter } from "next/navigation";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import SelectUserModal from "@/src/components/modals/SelectUser";
 
 export default function Table() {
   const {
@@ -75,6 +76,7 @@ export default function Table() {
   const [deleteId, setDeleteId] = useState();
   const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
+  const [showAssignManager, setShowAssingManager] = useState();
 
   useLayoutEffect(() => {
     if (checkbox.current) {
@@ -149,43 +151,9 @@ export default function Table() {
     setIsOpenDeleteMasive(false);
   };
 
-  const changeStatusPolicies = async (status) => {
-    setLoading(true);
-    const body = {
-      status: status.id,
-    };
-    const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => putPoliza(policyId, body))
-    );
-    if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
-      toast.success(
-        t("common:alert:update-items-succes", {
-          count: response.filter(
-            (x) => x.status == "fulfilled" && !x?.value?.hasError
-          ).length,
-          total: selectedContacts.length,
-        })
-      );
-    }
-
-    if (response.some((x) => x.status === "rejected" || x?.value?.hasError)) {
-      toast.error(
-        t("common:alert:update-items-error", {
-          count: response.filter(
-            (x) => x.status == "rejected" || x?.value?.hasError
-          ).length,
-        })
-      );
-    }
-
-    setSelectedContacts([]);
-    mutate();
-    setLoading(false);
-  };
-
   const changeResponsibleMasive = async (responsible) => {
     const body = {
-      recruitmentManager: responsible.id,
+      recruitmentManagerId: responsible.id,
     };
     const formData = getFormData(body);
     const response = await Promise.allSettled(
@@ -269,7 +237,29 @@ export default function Table() {
     },
   ];
 
-  const itemActions = [
+  const assignGDD = async (responsibleId) => {
+    setLoading(true);
+    const body = {
+      developmentManagerId: responsibleId,
+    };
+    const formData = getFormData(body);
+    const response = await updateAgent(formData, showAssignManager);
+    if (response.hasError) {
+      let message = response.message;
+      if (response.errors) {
+        message = response.errors.join(", ");
+      }
+      toast.error(message);
+      setLoading(false);
+      return;
+    }
+    toast.success("Proceso exitoso");
+    setShowAssingManager();
+    mutate();
+    setLoading(false);
+  };
+
+  const itemActions = (item) => [
     {
       name: "Ver",
       handleClick: (id) =>
@@ -277,19 +267,19 @@ export default function Table() {
     },
     {
       name: "Editar",
-      disabled: true,
+      // disabled: true,
+      handleClick: (id) =>
+        router.push(
+          `/agents-management/accompaniment/agent/${id}?show=true&edit=true`
+        ),
     },
     {
       name: "Actividades",
       disabled: true,
     },
     {
-      name: "Asignar GDD",
-      disabled: true,
-    },
-    {
-      name: "Reasignar GDD",
-      disabled: true,
+      name: item.developmentManager ? "Reasignar GDD" : "Asignar GDD",
+      handleClick: (id) => setShowAssingManager(id),
     },
     {
       name: "Inactivar",
@@ -463,7 +453,7 @@ export default function Table() {
                                   anchor="right start"
                                   className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                 >
-                                  {itemActions.map((item) =>
+                                  {itemActions(agent).map((item) =>
                                     !item.options ? (
                                       <MenuItem
                                         key={item.name}
@@ -643,8 +633,8 @@ export default function Table() {
                                 ) : column.row === "isActive" ? (
                                   getStatus(agent?.user?.isActive)
                                 ) : column.row === "manager" ? (
-                                  (agent?.recruitmentManager?.name ??
-                                  agent?.recruitmentManager?.username)
+                                  (agent?.developmentManager?.name ??
+                                  agent?.developmentManager?.username)
                                 ) : (
                                   agent[column.row] || "-"
                                 )}
@@ -680,6 +670,12 @@ export default function Table() {
         setIsOpen={setIsOpenDeleteMasive}
         handleClick={() => deleteAgentMasive()}
         loading={loading}
+      />
+      <SelectUserModal
+        isOpen={!!showAssignManager}
+        setIsOpen={setShowAssingManager}
+        handleClick={(id) => assignGDD(id)}
+        title="Seleccionar Gerente de Desarrollo"
       />
     </Fragment>
   );

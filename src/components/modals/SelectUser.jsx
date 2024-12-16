@@ -49,7 +49,6 @@ export default function SelectUserModal({
   });
 
   const handleFormSubmit = async (data) => {
-    console.log("Lpaaaaaaaaaaaaa");
     handleClick(data?.developmentManager);
   };
 

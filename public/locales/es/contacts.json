@@ -85,6 +85,7 @@
     "typePerson": "Tipo de Persona",
     "observer": "Observador",
     "zip-code": "Código postal",
+    "codigo": "Código por Compañía",
     "address": "Dirección",
     "placeholder-address": "Escriba la dirección del cliente.",
     "placeholder-name": "Ej.: Luis",

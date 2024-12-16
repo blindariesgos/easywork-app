@@ -10,28 +10,18 @@ import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import {
-  addLeadDocument,
-  addPolicyByPdf,
-  getMetadataOfPdf,
-} from "@/src/lib/apis";
+import { IoMdCloseCircleOutline } from "react-icons/io";
+import { addPolicyByPdf, getMetadataOfPdf } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import InputDate from "@/src/components/form/InputDate";
 import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
@@ -64,6 +54,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     observerId: yup.string().required(t("common:validations:required")),
     subAgente: yup.object().shape({}),
     isNewContact: yup.bool().default(false),
+    polizaFileId: yup.string().required(t("common:validations:required")),
     poliza: yup.string().required(t("common:validations:required")),
     typePerson: yup.string().required(t("common:validations:required")),
     vigenciaDesde: yup.string().required(t("common:validations:required")),
@@ -99,17 +90,20 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     const files = e.target.files;
 
     if (!files) {
+      setLoading(false);
       return;
     }
 
     const file = Array.from(files)[0];
 
     if (!file) {
+      setLoading(false);
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
       toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      setLoading(false);
       return;
     }
 
@@ -148,6 +142,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
 
     if (response?.contact?.id) {
       setValue("contact", response?.contact?.id);
+      setValue("contactId", response?.contact?.id);
     } else {
       setValue("isNewContact", true);
       setValue("newContact", {
@@ -222,6 +217,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       vigenciaHasta,
       recargoFraccionado,
       relatedContacts,
+      contact,
       ...otherData
     } = data;
     const body = {
@@ -272,13 +268,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   };
 
   const handleReset = () => {
-    reset({
-      contact: "",
-      subAgente: "",
-      responsibleId: "",
-      insuranceId: "",
-      typeId: "",
-    });
     setPolicy();
     setHelpers({});
     reset();
@@ -331,16 +320,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
                     <p>Leer datos de la póliza</p>
-                    {policy && (
-                      <div className="flex flex-col gap-2 justify-center items-center pt-2">
-                        <div className="p-2 group-hover:bg-primary bg-easy-500 rounded-md">
-                          <FiFileText className="w-6 h-6 text-white" />
-                        </div>
-                        <p className="text-center text-xs text-white">
-                          {policy.name}
-                        </p>
-                      </div>
-                    )}
                   </label>
                   <input
                     type="file"
@@ -350,11 +329,32 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     accept=".pdf"
                     onChange={handleChangeFile}
                   />
-                  <p className="text-xs italic text-center pt-2 text-gray-700">
+                  {errors?.polizaFileId && errors?.polizaFileId?.message && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors?.polizaFileId?.message}
+                    </p>
+                  )}
+
+                  <p className="text-xs italic pt-2 text-gray-700">
                     <span className="font-bold">Selecciona un PDF: </span>
                     (Versión Beta para Chubb/Quálitas/GNP/AXA - en el Ramo
                     Autos)
                   </p>
+                  {policy && (
+                    <div className="flex flex-col gap-2 justify-center items-center pt-2 relative group">
+                      <IoMdCloseCircleOutline
+                        className="w-6 h-6 hidden absolute top-0 left-[calc(50%_+_20px)] group-hover:block cursor-pointer"
+                        onClick={() => {
+                          console.log("aqu");
+                          handleReset();
+                        }}
+                      />
+                      <div className="p-2 group-hover:bg-primary bg-easy-500 rounded-md">
+                        <FiFileText className="w-6 h-6 text-white" />
+                      </div>
+                      <p className="text-center text-xs ">{policy.name}</p>
+                    </div>
+                  )}
                 </div>
                 <Fragment>
                   <SelectInput
@@ -791,19 +791,19 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                 <div className="w-full flex justify-center gap-4 py-4">
                   <Button
                     className="px-4 py-2"
-                    buttonStyle="primary"
-                    label="Guardar"
-                    type="submit"
-                    disabled={!policy}
-                  />
-                  <Button
-                    className="px-4 py-2"
                     buttonStyle="secondary"
                     label="Cancelar"
                     onclick={() => {
                       handleReset();
                       setIsOpen(false);
                     }}
+                  />
+                  <Button
+                    className="px-4 py-2"
+                    buttonStyle="primary"
+                    label="Guardar"
+                    type="submit"
+                    disabled={!policy}
                   />
                 </div>
               </div>

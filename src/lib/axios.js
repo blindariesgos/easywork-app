@@ -62,7 +62,7 @@ const createAxiosInstance = (props) => {
         console.log("@@@@ Cerrando sesion");
         await clearSession();
         await logout();
-        window.location("/auth");
+        window.location.href = "/auth";
         throw tokenError;
       }
 

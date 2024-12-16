@@ -85,8 +85,16 @@ export const createContact = async (data) => {
 };
 
 export const createAgent = async (data) => {
-  const response = await axios()
+  const response = await axios({ contentType: "multipart/form-data" })
     .post("/agent-management/agents", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+
+export const assignToDevelopmentManagerMasive = async (data) => {
+  const response = await axios()
+    .put("/agent-management/agents/assign-development-manager", data)
     .catch((error) => ({ ...error, hasError: true }));
   revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
   return response;
@@ -180,6 +188,11 @@ export const deletePolicyById = async (id) => {
   // try {
   const response = await axios().delete(`/sales/crm/polizas/${id}`);
   revalidatePath("/operations/policies", "layout");
+  return response;
+};
+export const deleteAgentById = async (agentId) => {
+  // try {
+  const response = await axios().delete(`/agent-management/agents/${agentId}`);
   return response;
 };
 
@@ -433,6 +446,11 @@ export const getReceiptById = async (receiptId) => {
   return response;
 };
 
+export const getAgentById = async (agentId) => {
+  const response = await axios().get(`/agent-management/agents/${agentId}`);
+  return response;
+};
+
 export const postLead = async (body) => {
   const response = await axios().post(`/sales/crm/leads`, body);
   return response;
@@ -560,17 +578,20 @@ export const updateLabelIdRules = async (usergoogle_id, newLabelIdRules) => {
 const getCommentPath = (cmrtype) => {
   switch (cmrtype) {
     case "policy":
-      return "polizas";
+    case "renewal":
+      return "/sales/crm/polizas";
     case "lead":
-      return "leads";
+      return "/sales/crm/leads";
+    case "agent":
+      return "/agent-management/agents";
     case "receipt":
-      return "polizas/receipts";
+      return "/sales/crm/polizas/receipts";
     default:
-      return "contacts";
+      return "/sales/crm/contacts";
   }
 };
 export const addContactComment = async (body, cmrType) => {
-  const url = `/sales/crm/${getCommentPath(cmrType)}/comments`;
+  const url = `${getCommentPath(cmrType)}/comments`;
   console.log(url, body);
   const response = await axios().post(url, body);
   return response;

@@ -54,6 +54,8 @@ const Column = ({
         config: {
           page: (typeof defaultPage !== "undefined" ? defaultPage : page) + 1,
           limit: 10,
+          orderBy: "deadline",
+          order: "ASC",
         },
       };
       const response = await getAllTasks(params);

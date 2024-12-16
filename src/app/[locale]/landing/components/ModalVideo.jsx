@@ -5,18 +5,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 
 export default function ModalVideo({ buttonOpen }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [videoUrl, setVideoUrl] = useState(null);
 
-  useEffect(() => {
-    // Verifica si estamos en el cliente (navegador)
-    if (typeof window !== "undefined") {
-      setVideoUrl(`${window.location.origin}/video/easywork.ad.mp4`);
-    }
-  }, []);
-
-  if (!videoUrl) {
-    return <div>Loading...</div>; // Muestra algo mientras se obtiene el URL
-  }
 
   const ButtonOpen = React.cloneElement(buttonOpen, {
     onClick: () => setIsOpen(true),
@@ -45,7 +34,7 @@ export default function ModalVideo({ buttonOpen }) {
                   <iframe
                     width="100%"
                     height="100%"
-                    src={videoUrl}
+                    src="https://player.vimeo.com/video/1039757447?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
                     title="Video player"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

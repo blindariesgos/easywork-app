@@ -58,6 +58,14 @@ const createAxiosInstance = (props) => {
         }
       }
 
+      if (error.response?.status === 401) {
+        console.log("@@@@ Cerrando sesion");
+        await clearSession();
+        await logout();
+        window.location("/auth");
+        throw tokenError;
+      }
+
       return Promise.reject(error.response?.data || "Unknown Error");
     }
   );

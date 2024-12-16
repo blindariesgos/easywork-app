@@ -28,6 +28,7 @@ import {
   getLeadById,
   getPolicyById,
   getReceiptById,
+  getAgentById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -134,6 +135,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
+  //#region Logica conexion crm desde actividades
   const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [
@@ -146,7 +148,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", "CRM - Cliente: ");
     setLoading(false);
   };
-
   const setCrmLead = async (leadId) => {
     console.log("paso por lead");
     const response = await getLeadById(leadId);
@@ -160,7 +161,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", "CRM - Prospecto: ");
     setLoading(false);
   };
-
   const setCrmReceipt = async (receiptId) => {
     const response = await getReceiptById(receiptId);
     setValue("crm", [
@@ -174,7 +174,19 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", "CRM - Recibo: ");
     setLoading(false);
   };
-
+  const setCrmAgent = async (agentId) => {
+    const response = await getAgentById(agentId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "agent",
+        name: response?.name,
+      },
+    ]);
+    console.log("Agente", response);
+    setValue("name", "CRM - Agente: ");
+    setLoading(false);
+  };
   const setCrmPolicy = async (policyId, type) => {
     const response = await getPolicyById(policyId);
     setValue("crm", [
@@ -187,7 +199,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
     setLoading(false);
   };
-
   useEffect(() => {
     const prevId = params.get("prev_id");
 
@@ -214,7 +225,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setCrmReceipt(prevId);
       return;
     }
+
+    if (params.get("prev") === "agent") {
+      setLoading(true);
+      setCrmAgent(prevId);
+      return;
+    }
   }, [params.get("prev")]);
+  //#endregion
 
   useEffect(() => {
     if (session) {
@@ -707,7 +725,7 @@ const getCmrInfo = (cmr) => {
 
   let name = cmr.crmEntity.name;
 
-  if (type === "contact" || type === "lead") {
+  if (type === "contact" || type === "lead" || type === "agent") {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
   }
 

@@ -44,7 +44,10 @@ export const useAgents = ({ config = {}, filters = {} }) => {
 export const useAgent = (agentId) => {
   const { data, error, isLoading } = useSWR(
     `/agent-management/agents/${agentId}`,
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
   );
 
   return {

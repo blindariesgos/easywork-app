@@ -1,15 +1,9 @@
 "use client";
-import {
-  ChevronDownIcon,
-  CheckIcon,
-  Cog8ToothIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import PolizasEmpty from "./PolizasEmpty";
 import { useTranslation } from "react-i18next";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useLayoutEffect, useRef, useState } from "react";
 import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
-import { formatToCurrency } from "@/src/utils/formatters";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
@@ -48,11 +42,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     }
   };
 
-  const handleShowPolicy = (id) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("show", true);
-    params.set("policy", id);
-    router.replace(`${pathname}?${params.toString()}`);
+  const handleShowPolicy = (poliza) => {
+    if (poliza.operacion == "produccion_nueva") {
+      const params = new URLSearchParams(searchParams);
+      params.set("show", true);
+      params.set("policy", poliza.id);
+      router.replace(`${pathname}?${params.toString()}`);
+      return;
+    }
+    if (poliza.operacion == "renovacion") {
+      router.push(`/operations/renovations/renovation/${poliza.id}?show=true`);
+    }
   };
 
   useLayoutEffect(() => {
@@ -255,32 +255,38 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   </span>
                 </div>
               </th>
-              {base === 0 && (
-                <th
-                  scope="col"
-                  className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
-                  onClick={() => {
-                    handleSorting("ramo");
-                  }}
-                >
-                  <div className="group flex items-center">
-                    <p>{t("polizas:edit:policies:table:branch")}</p>
-                    <span
-                      className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
-                        fieldClicked.orderBy === "ramo" &&
-                        fieldClicked.order === "DESC"
-                          ? "transform rotate-180"
-                          : ""
-                      }`}
-                    >
-                      <ChevronDownIcon
-                        className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </div>
-                </th>
-              )}
+              <th
+                scope="col"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+                onClick={() => {
+                  handleSorting("ramo");
+                }}
+              >
+                <div className="group flex items-center">
+                  <p>{t("polizas:edit:policies:table:branch")}</p>
+                  <span
+                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                      fieldClicked.orderBy === "ramo" &&
+                      fieldClicked.order === "DESC"
+                        ? "transform rotate-180"
+                        : ""
+                    }`}
+                  >
+                    <ChevronDownIcon
+                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </div>
+              </th>
+              <th
+                scope="col"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
+              >
+                <div className="group flex items-center">
+                  <p>Tipo</p>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody className="bg-gray-100">
@@ -310,7 +316,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   <td className="whitespace-nowrap py-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
                     <div
                       className="flex gap-2 hover:text-primary pl-4 cursor-pointer"
-                      onClick={() => handleShowPolicy(poliza.id)}
+                      onClick={() => handleShowPolicy(poliza)}
                     >
                       {poliza.poliza}
                     </div>
@@ -333,11 +339,18 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   <td className="whitespace-nowrap py-4 text-sm text-gray-400">
                     <p>{`${poliza?.currency?.symbol ?? "$"} ${poliza?.importePagar?.toFixed(2) ?? "0.00"}`}</p>
                   </td>
-                  {base === 0 && (
-                    <td className="whitespace-nowrap py-4 text-sm text-gray-400">
-                      <p>{poliza?.type?.name || "S/N"}</p>
-                    </td>
-                  )}
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                    <p>{poliza?.type?.name || "S/N"}</p>
+                  </td>
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                    <p>
+                      {poliza?.operacion == "cambio_version"
+                        ? `Versión - ${poliza.version}`
+                        : poliza?.operacion == "renovacion"
+                          ? `Renovación - ${poliza.version ?? poliza.renovacion}`
+                          : "Póliza"}
+                    </p>
+                  </td>
                 </tr>
               ))}
           </tbody>

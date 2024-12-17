@@ -53,6 +53,7 @@ const schemaInputs = yup.object().shape({
   tags: yup.array(),
   listField: yup.array(),
   important: yup.boolean(),
+  fileIds: yup.array(),
 });
 
 export default function TaskEditor({ edit, copy, subtask }) {
@@ -372,6 +373,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
               setListField={setListField}
               edit={edit}
               copy={copy}
+              addFile={!edit && setValue}
+              files={!edit && (watch("fileIds") ?? [])}
             />
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
@@ -771,6 +774,7 @@ const buildTaskBody = (
   listField,
   t
 ) => {
+  console.log({ data });
   const body = {
     name: data.name,
     description,
@@ -811,6 +815,9 @@ const buildTaskBody = (
           completed: subItem.value,
         })),
     }));
+  }
+  if (data?.fileIds?.length) {
+    body.fileIds = data.fileIds;
   }
 
   body.deadline = getFormatDate(data.limitDate ?? data.endDate) ?? null;

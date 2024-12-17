@@ -25,6 +25,8 @@ const OptionsTask = ({
   setValueText,
   disabled,
   setListField,
+  addFile,
+  files,
 }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
@@ -194,6 +196,14 @@ const OptionsTask = ({
   );
 
   const deleteFile = async (fileId) => {
+    if (addFile) {
+      console.log(fileId, files);
+      addFile(
+        "fileIds",
+        files.filter((id) => id != fileId)
+      );
+      return;
+    }
     setLoading(true);
     const response = await deleteFileTaskById(edit?.id ?? copy?.id, {
       attachmentIds: [fileId],
@@ -262,7 +272,14 @@ const OptionsTask = ({
           ))}
         {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
       </div>
-      {openFiles && <UploadDocuments id={edit?.id ?? copy?.id} />}
+      {openFiles && (
+        <UploadDocuments
+          files={files}
+          addFile={addFile}
+          id={edit?.id ?? copy?.id}
+          deleteFile={deleteFile}
+        />
+      )}
       {openList && (
         <div className="mt-2">
           <CheckList

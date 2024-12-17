@@ -37,7 +37,10 @@ export const useTasks = ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/tools/tasks/user?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher, srcConfig);
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
+    ...srcConfig,
+    refreshInterval: 1000,
+  });
   return {
     tasks: data,
     isLoading,
@@ -49,7 +52,10 @@ export const useTasks = ({
 export const useTask = (id) => {
   const { data, error, isLoading, mutate } = useSWR(
     `/tools/tasks/${id}`,
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
   );
 
   return {
@@ -63,7 +69,10 @@ export const useTask = (id) => {
 export const useTaskComments = (id) => {
   const { data, error, isLoading } = useSWR(
     `/tools/tasks/comments/task/${id}`,
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
   );
 
   return {
@@ -76,7 +85,10 @@ export const useTaskComments = (id) => {
 export const useTaskContactsPolizas = () => {
   const { data, error, isLoading } = useSWR(
     `/tools/tasks/helpers/contacts_polizas`,
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
   );
   return {
     data,
@@ -88,7 +100,10 @@ export const useTaskContactsPolizas = () => {
 export const useTasksList = () => {
   const { data, error, isLoading, mutate } = useSWR(
     `/tools/tasks/helpers/tasks_list`,
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 1000,
+    }
   );
 
   return {

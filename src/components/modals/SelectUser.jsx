@@ -1,21 +1,9 @@
 "use client";
-import clsx from "clsx";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  Fragment,
-  useCallback,
-} from "react";
-
-import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Button from "@/src/components/form/Button";
 import {
-  Description,
   Dialog,
   DialogBackdrop,
   DialogPanel,
@@ -29,7 +17,6 @@ export default function SelectUserModal({
   isOpen,
   setIsOpen,
   handleClick,
-  loading,
   title,
 }) {
   const { t } = useTranslation();

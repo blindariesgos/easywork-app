@@ -36,6 +36,10 @@ const InputDate = ({
   };
 
   useEffect(() => {
+    if (value == "") {
+      setSelected(value);
+      return;
+    }
     if (value && !selected) {
       setSelected(value);
     }

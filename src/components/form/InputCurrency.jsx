@@ -54,7 +54,16 @@ const InputCurrency = ({
   }, [defaultValue]);
 
   useEffect(() => {
-    if (!watch || !watch(name) || currentValue) return;
+    if (!watch || !watch(name)) return;
+    if (watch(name) == "") {
+      handleChange({
+        target: {
+          value: "",
+        },
+      });
+      return;
+    }
+    if (currentValue) return;
     handleChange({
       target: {
         value: watch(name),

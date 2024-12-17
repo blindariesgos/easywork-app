@@ -56,7 +56,12 @@ function SelectInput({
         });
 
   useEffect(() => {
-    if (!watch || !options || !watch(name) || selected) return;
+    if (!watch || !options || !watch(name)) return;
+    if (watch(name) == "") {
+      setSelected();
+      return;
+    }
+    if (selected) return;
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);

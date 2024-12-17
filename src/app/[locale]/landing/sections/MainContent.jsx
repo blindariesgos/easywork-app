@@ -1,5 +1,8 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import ModalVideo from "../components/ModalVideo";
 export default function MainContent() {
+  const { push } = useRouter();
   return (
     <div className="w-full relative mt-10">
       <div className="flex flex-col md:flex-row w-full h-full items-center justify-center">
@@ -11,7 +14,7 @@ export default function MainContent() {
           alt="cellphone"
         />
         <div
-          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left"
+          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left z-50"
           style={{ maxWidth: 590 }}
         >
           <h2 className="font-semibold text-lg md:text-xl">
@@ -36,12 +39,19 @@ export default function MainContent() {
             ocasionales en devotos seguidores.
           </p>
           <div className="flex flex-col md:flex-row mt-4 space-y-3 md:space-y-0 md:space-x-3 mb-10">
-            <button className="bg-lime-400 hover:bg-lime-500 py-2 px-3 rounded-md text-black">
+            <button
+              className="bg-lime-400 hover:bg-lime-500 cursor-pointer py-2 px-3 rounded-md text-black"
+              onClick={() => push(`/auth`)}
+            >
               Ingresar
             </button>
-            <button className="bg-blue-300 hover:bg-blue-400 py-2 px-3 rounded-md text-easywork-main font-medium">
-              Video
-            </button>
+            <ModalVideo
+              buttonOpen={
+                <button className="bg-blue-300 w-full hover:bg-blue-400 cursor-pointer py-2 px-3 rounded-md text-easywork-main font-medium">
+                  Video
+                </button>
+              }
+            />
           </div>
         </div>
       </div>

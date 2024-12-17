@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { push } = useRouter();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -82,7 +84,10 @@ export default function Page() {
             </button>
           </li>
           <li>
-            <button className="bg-lime-400 hover:bg-lime-500 py-2 px-3 rounded-md text-black">
+            <button
+              className="bg-lime-400 hover:bg-lime-500 py-2 px-3 rounded-md text-black"
+              onClick={() => push(`/auth`)}
+            >
               Ingresar
             </button>
           </li>
@@ -102,7 +107,6 @@ export default function Page() {
         )}
       </button>
 
-      {/* Mobile Menu */}
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="absolute top-0 left-0 w-full bg-[rgba(14,164,233,0.64)] p-8 md:hidden">

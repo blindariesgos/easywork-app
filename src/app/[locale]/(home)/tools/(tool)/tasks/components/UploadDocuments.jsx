@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
@@ -9,18 +9,63 @@ import { putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
+import CardFile from "./CardFile";
 
-export default function UploadDocuments({ files, deleteFiles, id }) {
+export default function UploadDocuments({ files, addFile, id, deleteFile }) {
   const { t } = useTranslation();
   const inputFileRef = useRef();
   const [loading, setLoading] = useState(false);
   const { mutate } = useSWRConfig();
-  const handleFilesUpload = async (event) => {
-    setLoading(true);
-    const fileList = Array.from(event.target.files);
+  const [localFiles, setLocalFiles] = useState([]);
 
+  const handleLocalUpload = async (uploadfiles) => {
+    setLoading(true);
+    const fileList = Array.from(uploadfiles);
+
+    fileList.forEach(async (file) => {
+      const formData = new FormData();
+      formData.append("files", file, file.name);
+
+      const response = await uploadTemporalFile(formData)
+        .then((ids) => ({ ids }))
+        .catch((error) => ({ hasError: true, error }));
+      console.log({ response });
+      if (response.hasError) {
+        toast.error(
+          "Ocurrio un error al cargar archivo(s), intente de nuevo mas tarde."
+        );
+        setLoading(false);
+
+        return;
+      }
+      addFile("fileIds", [...files, ...response.ids]);
+
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const result = {
+          file: file,
+          size: file.size,
+          name: file.name,
+          result: reader.result,
+          id: response.ids[0],
+        };
+
+        setLocalFiles([...localFiles, result]);
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    setLoading(false);
+  };
+
+  const handleRemoteUpload = async (files) => {
+    setLoading(true);
+    const fileList = Array.from(files);
     const formData = new FormData();
-    fileList.forEach((file) => {
+
+    fileList.forEach(async (file) => {
       formData.append("files", file, file.name);
     });
 
@@ -58,9 +103,30 @@ export default function UploadDocuments({ files, deleteFiles, id }) {
     toast.success("Archivo(s) guardado(s) con exito.");
     mutate(`/tools/tasks/${id}`);
   };
+
+  const handleFilesUpload = async (event) => {
+    if (addFile) {
+      handleLocalUpload(event.target.files);
+    } else {
+      handleRemoteUpload(event.target.files);
+    }
+  };
+
+  useEffect(() => {
+    setLocalFiles(localFiles.filter((file) => files.includes(file.id)));
+  }, [files]);
   return (
     <div className="pt-2">
       {loading && <LoaderSpinner />}
+      {localFiles && localFiles?.length > 0 && (
+        <div className="flex flex-wrap gap-3 py-2">
+          {localFiles?.map((file, i) => (
+            <div key={i}>
+              <CardFile data={file} onClick={() => deleteFile(file.id)} />
+            </div>
+          ))}
+        </div>
+      )}
       <hr className="text-gray-200 border border-dashed" />
       <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
         <div className="">

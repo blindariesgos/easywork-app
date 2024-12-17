@@ -453,7 +453,7 @@ export default function Table() {
                                   anchor="right start"
                                   className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                 >
-                                  {itemActions(agent).map((item) =>
+                                  {itemActions.map((item) =>
                                     !item.options ? (
                                       <MenuItem
                                         key={item.name}
@@ -633,8 +633,11 @@ export default function Table() {
                                 ) : column.row === "isActive" ? (
                                   getStatus(agent?.user?.isActive)
                                 ) : column.row === "manager" ? (
-                                  (agent?.developmentManager?.name ??
-                                  agent?.developmentManager?.username)
+                                  agent?.developmentManager?.profile ? (
+                                    `${agent?.developmentManager?.profile?.firstName ?? ""} ${agent?.developmentManager?.profile?.lastName ?? ""}`
+                                  ) : (
+                                    agent?.developmentManager?.username
+                                  )
                                 ) : (
                                   agent[column.row] || "-"
                                 )}

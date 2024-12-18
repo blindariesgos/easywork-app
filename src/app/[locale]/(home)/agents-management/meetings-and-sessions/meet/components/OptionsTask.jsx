@@ -6,13 +6,12 @@ import CheckList from "./CheckList";
 import DropdownVisibleUsers from "./DropdownVisibleUsers";
 import { useTranslation } from "react-i18next";
 import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import useAppContext from "@/src/context/app";
 import CardFile from "./CardFile";
-import { deleteFileTaskById } from "@/src/lib/apis";
+import { deleteFileMeetById } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
@@ -25,6 +24,8 @@ const OptionsTask = ({
   setValueText,
   disabled,
   setListField,
+  addFile,
+  files,
 }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
@@ -48,32 +49,32 @@ const OptionsTask = ({
       icon: PaperClipIcon,
       onclick: () => setOpenFiles(!openFiles),
     },
-    {
-      id: 2,
-      name: t("tools:tasks:new:document"),
-      icon: DocumentTextIcon,
-    },
-    {
-      id: 3,
-      name: t("tools:tasks:new:mention"),
-      icon: AtSymbolIcon,
-      onclick: () => setDropdownVisible(!dropdownVisible),
-      disabled: arroba || disabled,
-    },
-    {
-      id: 5,
-      name: t("tools:tasks:new:verification-list"),
-      onclick: () => {
-        if (fields.length === 0) {
-          append({
-            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
-            subItems: [{ name: "", value: false, empty: true }],
-          });
-        }
-        setOpenList(!openList);
-      },
-    },
     // {
+    //   id: 2,
+    //   name: t("tools:tasks:new:document"),
+    //   icon: DocumentTextIcon,
+    // },
+    // {
+    //   id: 3,
+    //   name: t("tools:tasks:new:mention"),
+    //   icon: AtSymbolIcon,
+    //   onclick: () => setDropdownVisible(!dropdownVisible),
+    //   disabled: arroba || disabled,
+    // },
+    // {
+    //   id: 5,
+    //   name: t("tools:tasks:new:verification-list"),
+    //   onclick: () => {
+    //     if (fields.length === 0) {
+    //       append({
+    //         name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
+    //         subItems: [{ name: "", value: false, empty: true }],
+    //       });
+    //     }
+    //     setOpenList(!openList);
+    //   },
+    // },
+    // // {
     //   id: 6,
     //   name: t("tools:tasks:new:add-list"),
     //   onclick: () => { },
@@ -194,8 +195,16 @@ const OptionsTask = ({
   );
 
   const deleteFile = async (fileId) => {
+    if (addFile) {
+      console.log(fileId, files);
+      addFile(
+        "fileIds",
+        files.filter((id) => id != fileId)
+      );
+      return;
+    }
     setLoading(true);
-    const response = await deleteFileTaskById(edit?.id ?? copy?.id, {
+    const response = await deleteFileMeetById(edit?.id ?? copy?.id, {
       attachmentIds: [fileId],
     }).catch((error) => ({ hasError: true, error }));
 
@@ -208,7 +217,7 @@ const OptionsTask = ({
       return;
     }
     toast.success("Archivo eliminado con exito.");
-    mutate(`/tools/tasks/${edit?.id ?? copy?.id}`);
+    mutate(`/agent-management/meetings/${edit?.id ?? copy?.id}`);
     setLoading(false);
   };
 

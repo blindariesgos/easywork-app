@@ -5,7 +5,7 @@ import MeetEditor from "../../meet/MeetEditor";
 export default function page() {
   return (
     <SlideOver colorTag="bg-primary">
-      <MeetEditor />
+      <MeetEditor type={"group"} />
     </SlideOver>
   );
 }

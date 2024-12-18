@@ -26,6 +26,9 @@ import {
   getLeadById,
   getPolicyById,
   getReceiptById,
+  getAgentById,
+  postMeet,
+  putMeetById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -34,18 +37,20 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
 import useTasksContext from "@/src/context/tasks";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
 
 const schemaInputs = yup.object().shape({
-  name: yup.string().required(),
-  responsible: yup.array(),
+  title: yup.string().required(),
+  responsible: yup.string(),
   createdBy: yup.array(),
   participants: yup.array(),
   observers: yup.array(),
   crm: yup.array(),
   listField: yup.array(),
+  type: yup.string(),
 });
 
-export default function MeetEditor({ edit, copy }) {
+export default function MeetEditor({ edit, copy, type }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
@@ -72,17 +77,19 @@ export default function MeetEditor({ edit, copy }) {
     setValue,
   } = useForm({
     defaultValues: {
-      name: edit?.name ?? copy?.name ?? "",
-      limitDate: edit?.deadline ?? copy?.deadline ?? "",
-      participants: edit?.participants ?? copy?.participants ?? [],
-      responsible: edit?.responsible ?? copy?.responsible ?? [],
-      observers: edit?.observers ?? copy?.observers ?? [],
+      title: edit?.title ?? "",
+      startTime: edit?.startTime ?? "",
+      agentsIds: edit?.agents ?? [],
+      responsible: edit?.developmentManager.id ?? "",
+      observers: edit?.observers ?? [],
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
       createdBy: edit ? [edit.createdBy] : [],
+      type: type,
     },
     resolver: yupResolver(schemaInputs),
   });
 
+  //#region Logica conexion crm desde actividades
   const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [
@@ -92,10 +99,9 @@ export default function MeetEditor({ edit, copy }) {
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Cliente: ");
+    setValue("title", "CRM - Cliente: ");
     setLoading(false);
   };
-
   const setCrmLead = async (leadId) => {
     console.log("paso por lead");
     const response = await getLeadById(leadId);
@@ -106,10 +112,9 @@ export default function MeetEditor({ edit, copy }) {
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Prospecto: ");
+    setValue("title", "CRM - Prospecto: ");
     setLoading(false);
   };
-
   const setCrmReceipt = async (receiptId) => {
     const response = await getReceiptById(receiptId);
     setValue("crm", [
@@ -120,10 +125,22 @@ export default function MeetEditor({ edit, copy }) {
       },
     ]);
     console.log("receipt", response);
-    setValue("name", "CRM - Recibo: ");
+    setValue("title", "CRM - Recibo: ");
     setLoading(false);
   };
-
+  const setCrmAgent = async (agentId) => {
+    const response = await getAgentById(agentId);
+    setValue("crm", [
+      {
+        id: response?.id,
+        type: "agent",
+        name: response?.name,
+      },
+    ]);
+    console.log("Agente", response);
+    setValue("title", "CRM - Agente: ");
+    setLoading(false);
+  };
   const setCrmPolicy = async (policyId, type) => {
     const response = await getPolicyById(policyId);
     setValue("crm", [
@@ -133,10 +150,9 @@ export default function MeetEditor({ edit, copy }) {
         type,
       },
     ]);
-    setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
+    setValue("title", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
     setLoading(false);
   };
-
   useEffect(() => {
     const prevId = params.get("prev_id");
 
@@ -163,7 +179,14 @@ export default function MeetEditor({ edit, copy }) {
       setCrmReceipt(prevId);
       return;
     }
+
+    if (params.get("prev") === "agent") {
+      setLoading(true);
+      setCrmAgent(prevId);
+      return;
+    }
   }, [params.get("prev")]);
+  //#endregion
 
   useEffect(() => {
     if (session) {
@@ -177,47 +200,43 @@ export default function MeetEditor({ edit, copy }) {
   const createMeet = async (data, isNewTask) => {
     // if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
-    // const crm =
-    //   data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
-    // const body = buildTaskBody(
-    //   data,
-    //   value,
-    //   selectedOptions,
-    //   session,
-    //   crm,
-    //   listField,
-    //   t
-    // );
-    // console.log({ body });
-    // try {
-    //   setLoading(true);
-    //   if (edit) {
-    //     await putTaskId(edit.id, body);
-    //     toast.success(t("tools:tasks:update-msg"));
-    //     mutate(`/tools/tasks/task/${edit.id}`);
-    //     router.push("/tools/tasks?page=1");
-    //   } else {
-    //     await postTask(body);
-    //     toast.success(t("tools:tasks:success-msg"));
+    const crm =
+      data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
+    const body = buildMeetBody(
+      data,
+      value,
+      selectedOptions,
+      session,
+      crm,
+      listField,
+      t
+    );
+    console.log({ body });
+    try {
+      setLoading(true);
+      if (edit) {
+        await putMeetById(edit.id, body);
+        mutate(`/agent-management/meetings/${edit.id}`);
+        toast.success("Junta actualizada exitosamente!");
+        router.back();
+      } else {
+        await postMeet(body);
+        toast.success("Junta creada exitosamente!");
 
-    //     if (isNewTask) {
-    //       reset();
-    //       setValueText("");
-    //       setValue("name", "");
-    //     } else {
-    //       router.push("/tools/tasks?page=1");
-    //     }
-    //   }
-    // } catch (error) {
-    //   handleApiError(error.message);
-    // } finally {
-    //   setLoading(false);
-    // }
-    toast.success(t("tools:tasks:update-msg"));
-    setLoading(false);
-    router.back();
+        if (isNewTask) {
+          reset();
+          setValueText("");
+          setValue("title", "");
+        } else {
+          router.back();
+        }
+      }
+    } catch (error) {
+      handleApiError(error);
+    } finally {
+      setLoading(false);
+    }
   };
-
   const handleCancel = () => {
     router.back();
   };
@@ -231,11 +250,7 @@ export default function MeetEditor({ edit, copy }) {
         } relative w-full ${!edit && "overflow-y-auto"}`}
       >
         <div
-          className={`flex flex-col flex-1 ${
-            !edit && "bg-gray-600 shadow-xl"
-          } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${
-            edit ? "sm:p-0" : "sm:p-4"
-          }`}
+          className={`flex flex-col flex-1 bg-gray-600 shadow-xl opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4`}
         >
           {(!edit ?? !copy) && (
             <div className="flex justify-between items-center py-2">
@@ -258,7 +273,7 @@ export default function MeetEditor({ edit, copy }) {
             <div className="flex justify-between gap-2 items-center">
               <div className="flex flex-col w-full">
                 <input
-                  {...register("name")}
+                  {...register("title")}
                   placeholder={t(
                     "agentsmanagement:meetings-and-sessions:new:description"
                   )}
@@ -272,6 +287,8 @@ export default function MeetEditor({ edit, copy }) {
               setListField={setListField}
               edit={edit}
               copy={copy}
+              addFile={!edit && setValue}
+              files={!edit && (watch("fileIds") ?? [])}
             />
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
@@ -284,6 +301,7 @@ export default function MeetEditor({ edit, copy }) {
                     setValue={setValue}
                     name="crm"
                     error={errors.crm}
+                    hidden={["agent"]}
                   />
                 </div>
               </div>
@@ -295,15 +313,14 @@ export default function MeetEditor({ edit, copy }) {
                   <Controller
                     name="responsible"
                     control={control}
-                    defaultValue={[]}
                     render={({ field }) => (
-                      <MultipleSelect
+                      <SelectDropdown
                         {...field}
                         options={lists?.users || []}
                         getValues={getValues}
                         setValue={setValue}
-                        onlyOne
                         name="responsible"
+                        watch={watch}
                         error={errors.responsible}
                       />
                     )}
@@ -345,10 +362,11 @@ export default function MeetEditor({ edit, copy }) {
                     render={({ field }) => (
                       <MultipleSelect
                         {...field}
-                        options={lists?.users || []}
+                        options={lists?.policies?.agentesIntermediarios || []}
                         getValues={getValues}
                         setValue={setValue}
                         name="participants"
+                        onlyOne={type != "group"}
                         error={errors.participants}
                       />
                     )}
@@ -356,7 +374,7 @@ export default function MeetEditor({ edit, copy }) {
                 </div>
               </div>
 
-              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+              {/* <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                 <p className="text-sm text-left w-full md:w-36">
                   {t("tools:tasks:new:observers")}
                 </p>
@@ -377,7 +395,7 @@ export default function MeetEditor({ edit, copy }) {
                     )}
                   />
                 </div>
-              </div>
+              </div> */}
               <div className="">
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                   <p className="text-sm text-left w-full md:w-36">
@@ -398,7 +416,7 @@ export default function MeetEditor({ edit, copy }) {
                           />
                         );
                       }}
-                      name="limitDate"
+                      name="startTime"
                       control={control}
                       defaultValue=""
                     />
@@ -454,7 +472,7 @@ const getCmrInfo = (cmr) => {
 
   let name = cmr.crmEntity.name;
 
-  if (type === "contact" || type === "lead") {
+  if (type === "contact" || type === "lead" || type === "agent") {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
   }
 
@@ -474,24 +492,7 @@ const formatCrmData = (crmData) => {
   return crmData.map((item) => getCmrInfo(item));
 };
 
-const getSelectedOptions = (edit, t) => {
-  const optionsSelected = [];
-  if (edit?.requireRevision) {
-    optionsSelected.push({
-      id: 2,
-      name: t("tools:tasks:new:review-task"),
-    });
-  }
-  if (edit?.responsibleCanChangeDate) {
-    optionsSelected.push({
-      id: 1,
-      name: t("tools:tasks:new:person-responsible"),
-    });
-  }
-  return optionsSelected;
-};
-
-const buildTaskBody = (
+const buildMeetBody = (
   data,
   description,
   selectedOptions,
@@ -501,14 +502,11 @@ const buildTaskBody = (
   t
 ) => {
   const body = {
-    name: data.name,
+    title: data.title,
     description,
-    requireRevision: selectedOptions.some((sel) => sel.id === 2),
-    requireSummary: data.requireSummary,
-    responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
     createdById: session.user?.id,
     crm,
-    important: !!data?.important,
+    type: data?.type,
   };
 
   if (data.createdBy?.length) {
@@ -518,10 +516,10 @@ const buildTaskBody = (
     body.observersIds = data.observers.map((obs) => obs.id);
   }
   if (data.participants?.length) {
-    body.participantsIds = data.participants.map((part) => part.id);
+    body.agentsIds = data.participants.map((part) => part.id);
   }
   if (data.responsible?.length) {
-    body.responsibleIds = data.responsible.map((resp) => resp.id);
+    body.developmentManagerId = data.responsible;
   }
   if (data.subTask?.length) {
     body.parentId = data.subTask[0].id;
@@ -541,13 +539,12 @@ const buildTaskBody = (
         })),
     }));
   }
-
-  body.deadline = getFormatDate(data.limitDate ?? data.endDate) ?? null;
-  body.startTime = getFormatDate(data.startDate) ?? null;
+  if (data?.fileIds?.length) {
+    body.fileIds = data.fileIds;
+  }
+  body.startTime = getFormatDate(data.startTime) ?? null;
 
   console.log("body", body);
-  console.log(data.limitDate);
-  console.log(data.endDate);
 
   return body;
 };

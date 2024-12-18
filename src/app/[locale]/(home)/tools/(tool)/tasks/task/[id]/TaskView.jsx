@@ -29,7 +29,7 @@ import Button from "@/src/components/form/Button";
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import SubTaskTable from "./components/SubTaskTable";
-import CrmItems from "../../components/CrmItems";
+import CrmItems from "../../../../../../../../components/CrmItems";
 
 export default function TaskView({ id, mutateTask, task }) {
   const { lists } = useAppContext();

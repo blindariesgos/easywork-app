@@ -18,12 +18,9 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deletePolicyById, putPoliza } from "@/src/lib/apis";
-import { handleApiError } from "@/src/utils/api/errors";
-import { toast } from "react-toastify";
 import { useTeamMeetTable } from "@/src/hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
-import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import ModalCrm from "@/src/components/ModalCrm";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -32,13 +29,14 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useMeetingsContext from "@/src/context/meetings";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import Image from "next/image";
+import moment from "moment";
 
 export default function Table() {
   const {
@@ -201,33 +199,33 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((policy, index) => {
+                  data?.items.map((meet, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(policy.id)
+                          selectedContacts.includes(meet.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(policy.id) && (
+                          {selectedContacts.includes(meet.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={policy.id}
-                              checked={selectedContacts.includes(policy.id)}
+                              value={meet.id}
+                              checked={selectedContacts.includes(meet.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, policy.id]
+                                    ? [...selectedContacts, meet.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== policy.id
+                                        (p) => p !== meet.id
                                       )
                                 )
                               }
@@ -262,10 +260,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(policy.id);
+                                            item.handleClick(meet.id);
                                           item.handleClickContact &&
                                             item.handleClickContact(
-                                              policy?.contact?.id
+                                              meet?.contact?.id
                                             );
                                         }}
                                       >
@@ -308,12 +306,10 @@ export default function Table() {
                                                 disabled={option.disabled}
                                                 onClick={() => {
                                                   option.handleClick &&
-                                                    option.handleClick(
-                                                      policy.id
-                                                    );
+                                                    option.handleClick(meet.id);
                                                   option.handleClickContact &&
                                                     option.handleClickContact(
-                                                      policy?.contact?.id
+                                                      meet?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -341,26 +337,36 @@ export default function Table() {
                             <td className="ml-4 py-4" key={index}>
                               <div
                                 className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary",
-                                  {
-                                    "text-center": [
-                                      "vigenciaDesde",
-                                      "poliza",
-                                      "source",
-                                      "status",
-                                    ].includes(column.row),
-                                    "text-right": ["importePagar"].includes(
-                                      column.row
-                                    ),
-                                  }
+                                  "font-medium text-sm  text-black hover:text-primary"
                                 )}
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                    href={`/agents-management/meetings-and-sessions/teams/meet/${meet.id}?show=true`}
                                   >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                                    <p>{meet?.title ?? ""}</p>
                                   </Link>
+                                ) : column.row == "developmentManager" ? (
+                                  meet[column.row] ? (
+                                    <div className="flex gap-x-2 items-center justify-left">
+                                      <Image
+                                        className="h-6 w-6 rounded-full bg-zinc-200"
+                                        width={30}
+                                        height={30}
+                                        src={
+                                          meet[column.row]?.avatar ||
+                                          "/img/avatar.svg"
+                                        }
+                                        alt="avatar"
+                                      />
+                                      <div className="font-medium text-black">
+                                        {meet[column.row]?.name ??
+                                          `${meet[column.row]?.profile?.firstName} ${meet[column.row]?.profile?.lastName}`}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    "N/D"
+                                  )
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
                                     <button
@@ -400,17 +406,22 @@ export default function Table() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "vigenciaDesde" ? (
-                                  (formatDate(
-                                    policy[column.row],
-                                    "dd/MM/yyyy"
-                                  ) ?? null)
+                                ) : column.row == "crm" ? (
+                                  <div className="flex justify-center">
+                                    <ModalCrm conections={meet[column.row]} />
+                                  </div>
+                                ) : column.row === "startTime" ? (
+                                  meet[column.row] ? (
+                                    moment(meet[column.row]).format(
+                                      "DD/MM/YYYY hh:mm a"
+                                    )
+                                  ) : null
                                 ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
+                                  `${lists?.policies?.currencies?.find((x) => x.id == meet?.currency?.id)?.symbol ?? ""} ${formatToCurrency(meet[column.row])}`
                                 ) : column.row === "status" ? (
-                                  policy[column.row]
+                                  meet[column.row]
                                 ) : (
-                                  policy[column.row] || "-"
+                                  meet[column.row] || "-"
                                 )}
                               </div>
                             </td>

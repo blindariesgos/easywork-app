@@ -6,22 +6,65 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { FaDropbox, FaGoogle } from "react-icons/fa6";
 import { uploadTemporalFile } from "../../../../../../../lib/api/drive";
-import { putTaskId } from "@/src/lib/apis";
+import { putMeetById, putMeetComment, putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
 
-export default function UploadDocuments({ files, deleteFiles, id }) {
+export default function UploadDocuments({ files, addFile, id, deleteFile }) {
   const { t } = useTranslation();
   const inputFileRef = useRef();
   const [loading, setLoading] = useState(false);
   const { mutate } = useSWRConfig();
-  const handleFilesUpload = async (event) => {
-    setLoading(true);
-    const fileList = Array.from(event.target.files);
 
+  const handleLocalUpload = async (uploadfiles) => {
+    setLoading(true);
+    const fileList = Array.from(uploadfiles);
+
+    fileList.forEach(async (file) => {
+      const formData = new FormData();
+      formData.append("files", file, file.name);
+
+      const response = await uploadTemporalFile(formData)
+        .then((ids) => ({ ids }))
+        .catch((error) => ({ hasError: true, error }));
+      console.log({ response });
+      if (response.hasError) {
+        toast.error(
+          "Ocurrio un error al cargar archivo(s), intente de nuevo mas tarde."
+        );
+        setLoading(false);
+
+        return;
+      }
+      addFile("fileIds", [...files, ...response.ids]);
+
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const result = {
+          file: file,
+          size: file.size,
+          name: file.name,
+          result: reader.result,
+          id: response.ids[0],
+        };
+
+        setLocalFiles([...localFiles, result]);
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    setLoading(false);
+  };
+
+  const handleRemoteUpload = async (files) => {
+    setLoading(true);
+    const fileList = Array.from(files);
     const formData = new FormData();
-    fileList.forEach((file) => {
+
+    fileList.forEach(async (file) => {
       formData.append("files", file, file.name);
     });
 
@@ -41,7 +84,7 @@ export default function UploadDocuments({ files, deleteFiles, id }) {
     const body = {
       fileIds: response.ids,
     };
-    const update = await putTaskId(id, body).catch((error) => ({
+    const update = await putMeetById(id, body).catch((error) => ({
       hasError: true,
       error,
     }));
@@ -58,6 +101,14 @@ export default function UploadDocuments({ files, deleteFiles, id }) {
     setLoading(false);
     toast.success("Archivo(s) guardado(s) con exito.");
     mutate(`/tools/tasks/${id}`);
+  };
+
+  const handleFilesUpload = async (event) => {
+    if (addFile) {
+      handleLocalUpload(event.target.files);
+    } else {
+      handleRemoteUpload(event.target.files);
+    }
   };
   return (
     <div className="pt-2">

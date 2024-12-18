@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ModalForm from "../components/ModalForm";
 
 export default function Price() {
   const [showFreePlan, setShowFreePlan] = useState(false);
@@ -156,16 +157,43 @@ export default function Price() {
         "Asesoría Gratuita",
       ],
     },
+    {
+      title: "EASYTOTAL",
+      price: 99998,
+      content: [
+        "MÁS de 1000 Usuarios",
+        "Más de 500,000 Pólizas Vigentes",
+        "Contratantes y prospectos",
+        "Calendario de pendientes",
+        "Pendientes y tareas",
+        "Lector de Pólizas Pro",
+        "Generador de Reportes Pro",
+        "Envios vía Correos",
+        "Envios vía WhatsApp (ilimitado)",
+        "Notificaciones de cobranza",
+        "Notificación de pendientes",
+        "Vinculación Google Calendar/Office 365",
+        "Cobranza PLUS",
+        "Embudos de Ventas ilimitados",
+        "Reportes estratégicos / personalizados",
+        "Operaciones",
+        "Automatizaciones / personalizadas",
+        "Conexión con DA's",
+        "Gestión de Agentes",
+        "20TB Drive",
+        "Asesoría Gratuita",
+        "Soporte Personalizado",
+      ],
+    },
   ];
 
   return (
     <div
-      className="min-h-screen w-screen bg-white flex flex-col md:flex-row flex-wrap items-center justify-center text-blue-700 text-center bg-cover bg-center p-4"
+      className="min-h-screen w-screen bg-white flex flex-col items-center justify-center text-blue-700 text-center bg-cover bg-center p-4"
       style={{ backgroundImage: "url('/img/landing/bg-stars.png')" }}
     >
-      {/* Cambiar el layout de columnas a 5 si se muestra el plan Free */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-${showFreePlan ? "5" : "4"} gap-4 w-full`}
+        className={`grid grid-cols-1 md:grid-cols-3 gap-4 w-full`}
       >
         {plans
           .filter((item, index) => (index === 0 ? showFreePlan : true)) // Ocultar el plan Free si no está activado
@@ -232,9 +260,13 @@ export default function Price() {
                   </button>
                 </div>
                 <div className="flex items-center justify-center">
-                  <button className="border-2 rounded-md px-4 py-2 font-semibold text-blue-900 hover:bg-blue-600 transition duration-300">
-                    QUIERO UNA DEMO
-                  </button>
+                  <ModalForm
+                    buttonOpen={
+                      <button className="border-2 rounded-md px-4 py-2 font-semibold text-blue-900 hover:bg-blue-600 transition duration-300">
+                        QUIERO UNA DEMO
+                      </button>
+                    }
+                  />
                 </div>
               </div>
             </div>

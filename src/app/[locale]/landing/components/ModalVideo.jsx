@@ -6,7 +6,6 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 export default function ModalVideo({ buttonOpen }) {
   const [isOpen, setIsOpen] = useState(false);
 
-
   const ButtonOpen = React.cloneElement(buttonOpen, {
     onClick: () => setIsOpen(true),
   });
@@ -17,7 +16,10 @@ export default function ModalVideo({ buttonOpen }) {
 
       <Transition show={isOpen} as={Fragment}>
         <div className="fixed inset-0 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black opacity-50 -z-1"></div>
+          <div
+            className="fixed inset-0 bg-black opacity-50 -z-1"
+            onClick={() => setIsOpen(false)}
+          ></div>
 
           <Transition.Child
             as={Fragment}

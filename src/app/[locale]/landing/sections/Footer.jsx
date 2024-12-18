@@ -27,42 +27,69 @@ export default function Footer() {
           <li className="cursor-pointer">Políticas de cookies</li>
         </ul>
         <div className="flex justify-center items-center lg:justify-end space-x-4">
-          <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#1877F2] transition-colors duration-300">
-            <Image
-              className="w-6 lg:w-9 h-6 lg:h-9"
-              width={400}
-              height={400}
-              src="/img/landing/social/facebook.svg"
-              alt="Facebook"
-            />
-          </div>
-          <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#E4405F] transition-colors duration-300">
-            <Image
-              className="w-6 lg:w-9 h-6 lg:h-9"
-              width={400}
-              height={400}
-              src="/img/landing/social/instagram.svg"
-              alt="Instagram"
-            />
-          </div>
-          <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#0A66C2] transition-colors duration-300">
-            <Image
-              className="w-6 lg:w-9 h-6 lg:h-9"
-              width={400}
-              height={400}
-              src="/img/landing/social/linkedin.svg"
-              alt="LinkedIn"
-            />
-          </div>
-          <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#25D366] transition-colors duration-300">
-            <Image
-              className="w-6 lg:w-9 h-6 lg:h-9"
-              width={400}
-              height={400}
-              src="/img/landing/social/whatsapp.svg"
-              alt="WhatsApp"
-            />
-          </div>
+          <a
+            href="https://www.facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#1877F2] transition-colors duration-300">
+              <Image
+                className="w-6 lg:w-9 h-6 lg:h-9"
+                width={400}
+                height={400}
+                src="/img/landing/social/facebook.svg"
+                alt="Facebook"
+              />
+            </div>
+          </a>
+
+          <a
+            href="https://www.instagram.com/easy.workapp/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#E4405F] transition-colors duration-300">
+              <Image
+                className="w-6 lg:w-9 h-6 lg:h-9"
+                width={400}
+                height={400}
+                src="/img/landing/social/instagram.svg"
+                alt="Instagram"
+              />
+            </div>
+          </a>
+
+          <a
+            href="https://www.linkedin.com/in/easy-work-4602b133b"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#0A66C2] transition-colors duration-300">
+              <Image
+                className="w-6 lg:w-9 h-6 lg:h-9"
+                width={400}
+                height={400}
+                src="/img/landing/social/linkedin.svg"
+                alt="LinkedIn"
+              />
+            </div>
+          </a>
+
+          <a
+            href="https://www.whatsapp.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="rounded-full p-3 lg:p-5 bg-white hover:bg-[#25D366] transition-colors duration-300">
+              <Image
+                className="w-6 lg:w-9 h-6 lg:h-9"
+                width={400}
+                height={400}
+                src="/img/landing/social/whatsapp.svg"
+                alt="WhatsApp"
+              />
+            </div>
+          </a>
         </div>
       </div>
     </div>

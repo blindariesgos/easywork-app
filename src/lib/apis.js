@@ -117,6 +117,13 @@ export const createLead = async (data) => {
   return response;
 };
 
+export const createSimpleLeadLanding = async (data) => {
+  const response = await axios()
+    .post("/sales/crm/leads/landing/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const updateLead = async (data, id) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .put(`/sales/crm/leads/${id}`, data)

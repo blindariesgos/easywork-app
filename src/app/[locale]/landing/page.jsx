@@ -1,6 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import Header from "./sections/Header";
 import MainContent from "./sections/MainContent";
 import Features from "./sections/Features";
@@ -9,6 +11,32 @@ import Footer from "./sections/Footer";
 import GetDemo from "./sections/GetDemo";
 import Prices from "./sections/Prices";
 import Graphics from "./sections/Graphics";
+
+// Hook para aplicar la animación cuando el elemento entra en el viewport
+const ScrollAnimationWrapper = ({ children }) => {
+  const controls = useAnimation();
+  const { ref, inView } = useInView({ threshold: 0.2 });
+
+  useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    }
+  }, [controls, inView]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      variants={{
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+        hidden: { opacity: 0, y: 50 },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export default function Page() {
   return (
@@ -23,11 +51,17 @@ export default function Page() {
       <div className="overflow-x-hidden bg-white overflow-y-hidden">
         <div className="from-sky-500 to-blue-300 bg-gradient-to-t min-h-screen w-screen">
           <div id="inicio" className="h-24"></div> {/* Sección de Inicio */}
-          <Header />
-          <MainContent />
+          <ScrollAnimationWrapper>
+            <Header />
+          </ScrollAnimationWrapper>
+          <ScrollAnimationWrapper>
+            <MainContent />
+          </ScrollAnimationWrapper>
         </div>
         <section>
-          <Plans />
+          <ScrollAnimationWrapper>
+            <Plans />
+          </ScrollAnimationWrapper>
         </section>
         <div className="relative bg-gradient-to-t z-10 from-lime-400 to-lime-100 h-96 flex items-start">
           <Image
@@ -53,15 +87,23 @@ export default function Page() {
           />
         </div>
         <section>
-          <Graphics />
+          <ScrollAnimationWrapper>
+            <Graphics />
+          </ScrollAnimationWrapper>
         </section>
         <section id="modulos">
-          <Features />
+          <ScrollAnimationWrapper>
+            <Features />
+          </ScrollAnimationWrapper>
         </section>
         <section id="planes">
-          <Prices />
+          <ScrollAnimationWrapper>
+            <Prices />
+          </ScrollAnimationWrapper>
         </section>
-        <GetDemo />
+        <ScrollAnimationWrapper>
+          <GetDemo />
+        </ScrollAnimationWrapper>
         <Footer />
       </div>
     </>

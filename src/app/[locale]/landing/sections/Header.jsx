@@ -44,7 +44,7 @@ export default function Page() {
     >
       <div>
         <Image
-          className="w-24"
+          className={`w-24 max-lg:w-16`}
           width={400}
           height={400}
           src="/img/landing/logo.svg"
@@ -84,12 +84,11 @@ export default function Page() {
             </button>
           </li>
           <li>
-            <button
-              className="bg-lime-400 hover:bg-lime-500 py-2 px-3 rounded-md text-black"
-              onClick={() => push(`/auth`)}
-            >
-              Ingresar
-            </button>
+            <a href="/auth" target="_blank" rel="noopener noreferrer">
+              <div className="bg-lime-400 hover:bg-lime-500 py-2 px-3 rounded-md text-black">
+                Ingresar
+              </div>
+            </a>
           </li>
         </ul>
       </nav>

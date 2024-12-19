@@ -11,6 +11,33 @@ import Footer from "./sections/Footer";
 import GetDemo from "./sections/GetDemo";
 import Prices from "./sections/Prices";
 import Graphics from "./sections/Graphics";
+import CookieModal from "./components/Cookies";
+
+// Hook para aplicar la animación cuando el elemento entra en el viewport
+const ScrollAnimationWrapper = ({ children }) => {
+  const controls = useAnimation();
+  const { ref, inView } = useInView({ threshold: 0.2 });
+
+  useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    }
+  }, [controls, inView]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      variants={{
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+        hidden: { opacity: 0, y: 50 },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 // Hook para aplicar la animación cuando el elemento entra en el viewport
 const ScrollAnimationWrapper = ({ children }) => {
@@ -63,7 +90,7 @@ export default function Page() {
             <Plans />
           </ScrollAnimationWrapper>
         </section>
-        <div className="relative bg-gradient-to-t z-10 from-lime-400 to-lime-100 h-96 flex items-start">
+        <div className="relative bg-gradient-to-t z-10 from-lime-400 to-lime-100 h-96 max-md:h-40 flex items-start">
           <Image
             className="absolute top-"
             width={900}
@@ -105,6 +132,7 @@ export default function Page() {
           <GetDemo />
         </ScrollAnimationWrapper>
         <Footer />
+        <CookieModal />
       </div>
     </>
   );

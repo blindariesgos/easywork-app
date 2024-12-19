@@ -29,6 +29,7 @@ import {
   getPolicyById,
   getReceiptById,
   getAgentById,
+  getUserById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -75,6 +76,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { mutate: mutateTasks } = useTasksContext({});
+  const [taggedUsers, setTaggedUsers] = useState([]);
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
     participants:
@@ -132,6 +134,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
       createdBy: edit ? [edit.createdBy] : [],
       important: edit?.important ?? copy?.important ?? false,
+      metadata: edit?.metadata ?? copy?.metadata ?? {},
     },
     resolver: yupResolver(schemaInputs),
   });
@@ -200,6 +203,32 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
     setLoading(false);
   };
+  const setCrmMeet = async (agentId) => {
+    const response = localStorage.getItem(agentId);
+    console.log(response, agentId);
+
+    if (!response) {
+      console.log("no hay meet 1");
+      setLoading(false);
+      return;
+    }
+
+    const data = JSON.parse(response);
+
+    if (!data) {
+      console.log("no hay meet 2");
+      setLoading(false);
+      return;
+    }
+    const { userId, ...metadata } = data;
+
+    const user = lists.users.find((x) => x.id == userId);
+
+    setValue("responsible", [user]);
+    setValue("metadata", metadata);
+    setValue("name", "CRM - Junta: ");
+    setLoading(false);
+  };
   useEffect(() => {
     const prevId = params.get("prev_id");
 
@@ -232,8 +261,18 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setCrmAgent(prevId);
       return;
     }
+
+    if (params.get("prev") === "meet") {
+      setLoading(true);
+      setCrmMeet(prevId);
+      return;
+    }
   }, [params.get("prev")]);
   //#endregion
+
+  useEffect(() => {
+    setValue("metadata.taggedUsers", taggedUsers);
+  }, [taggedUsers]);
 
   useEffect(() => {
     if (session) {
@@ -373,6 +412,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
               setListField={setListField}
               edit={edit}
               copy={copy}
+              taggedUsers={taggedUsers}
+              setTaggedUsers={setTaggedUsers}
               addFile={!edit && setValue}
               files={!edit && (watch("fileIds") ?? [])}
             />
@@ -784,6 +825,7 @@ const buildTaskBody = (
     createdById: session.user?.id,
     crm,
     important: !!data?.important,
+    metadata: data.metadata,
   };
 
   if (data.createdBy?.length) {

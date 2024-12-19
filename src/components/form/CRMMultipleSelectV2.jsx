@@ -22,11 +22,26 @@ import {
 import Button from "./Button";
 import { useReceipts } from "@/src/lib/api/hooks/receipts";
 
-const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
+const CRMMultipleSelectV2 = ({
+  getValues,
+  setValue,
+  name,
+  label,
+  error,
+  hidden = [],
+}) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [filterSelect, setFilterSelect] = useState(1);
+  const [filterSelect, setFilterSelect] = useState(0);
   const [query, setQuery] = useState("");
+  const [crmTypes, setCrmTypes] = useState([
+    "contact",
+    "poliza",
+    "lead",
+    "receipt",
+    "renewal",
+    "agent",
+  ]);
   const { contacts, isLoading: isLoadingContacts } = useContacts({
     filters: { searchVector: query },
     page: 1,
@@ -47,7 +62,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     },
   });
   const { leads, isLoading: isLoadingLeads } = useLeads({
-    filters: { fullName: query },
+    filters: { searchVector: query },
     config: {
       page: 1,
       limit: 5,
@@ -70,6 +85,12 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
     },
   });
 
+  useEffect(() => {
+    if (hidden && hidden.length > 0) {
+      setCrmTypes(crmTypes.filter((type) => !hidden.includes(type)));
+    }
+  }, [hidden]);
+
   const handleToggle = () => {
     setQuery("");
     setIsOpen(!isOpen);
@@ -78,9 +99,8 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   const handleSelect = (option) => {
     const currentValues = getValues(name) || [];
 
-    const types = ["contact", "poliza", "lead", "receipt", "renewal", "agent"];
     // Determine the type based on filterSelect
-    const type = types[filterSelect - 1];
+    const type = crmTypes[filterSelect];
 
     const newOption = {
       id: option.id,
@@ -108,15 +128,20 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
   };
 
   const filterData = useMemo(() => {
-    const items = [
-      contacts?.items ?? [],
-      policies?.items ?? [],
-      leads?.items ?? [],
-      receipts?.items ?? [],
-      renovations?.items ?? [],
-      agents?.items ?? [],
+    const items = {
+      contact: contacts?.items ?? [],
+      poliza: policies?.items ?? [],
+      lead: leads?.items ?? [],
+      receipt: receipts?.items ?? [],
+      renewal: renovations?.items ?? [],
+      agent: agents?.items ?? [],
+    };
+
+    const key = Object.keys(items).filter((key) => !hidden.includes(key))[
+      filterSelect
     ];
-    return items[filterSelect - 1];
+
+    return items[key];
   }, [
     policies,
     contacts,
@@ -180,66 +205,24 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
           className="relative w-full  z-[10000] py-2"
         >
           <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-            <DialogPanel className="max-w-lg w-full space-y-4 border bg-white p-4 h-[380px] rounded-md shadow-lg">
-              <DialogTitle className="font-bold">{label}</DialogTitle>
-              <Description>
-                <ul className="gap-x-2 flex">
-                  <li
-                    className={clsx(
-                      filterSelect === 1 && "bg-gray-300",
-                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
-                    )}
-                    onClick={() => setFilterSelect(1)}
-                  >
-                    Clientes
-                  </li>
-                  <li
-                    className={clsx(
-                      filterSelect === 2 && "bg-gray-300",
-                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
-                    )}
-                    onClick={() => setFilterSelect(2)}
-                  >
-                    Pólizas
-                  </li>
-                  <li
-                    className={clsx(
-                      filterSelect === 3 && "bg-gray-300",
-                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
-                    )}
-                    onClick={() => setFilterSelect(3)}
-                  >
-                    Prospectos
-                  </li>
-                  <li
-                    className={clsx(
-                      filterSelect === 4 && "bg-gray-300",
-                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
-                    )}
-                    onClick={() => setFilterSelect(4)}
-                  >
-                    Recibos
-                  </li>
-                  <li
-                    className={clsx(
-                      filterSelect === 5 && "bg-gray-300",
-                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
-                    )}
-                    onClick={() => setFilterSelect(5)}
-                  >
-                    Renovaciones
-                  </li>
-                  <li
-                    className={clsx(
-                      filterSelect === 5 && "bg-gray-300",
-                      "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
-                    )}
-                    onClick={() => setFilterSelect(5)}
-                  >
-                    Agentes
-                  </li>
-                </ul>
-                <div className="">
+            <DialogPanel className="max-w-lg w-full space-y-4 border bg-white p-4 h-[380px] rounded-md shadow-lg flex flex-col justify-between">
+              <div>
+                <DialogTitle className="font-bold">{label}</DialogTitle>
+                <Description>
+                  <ul className="gap-x-2 flex">
+                    {crmTypes.map((type, index) => (
+                      <li
+                        key={type}
+                        className={clsx(
+                          filterSelect === index && "bg-gray-300",
+                          "cursor-pointer hover:bg-gray-200 px-2 text-xs py-1.5 rounded-3xl"
+                        )}
+                        onClick={() => setFilterSelect(index)}
+                      >
+                        {t(`common:crmTypes:${type}`)}
+                      </li>
+                    ))}
+                  </ul>
                   <div
                     className="py-1 flex flex-col gap-2 px-2 flex-1"
                     aria-labelledby="options-menu"
@@ -292,7 +275,7 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                                 : "text-black"
                             }`}
                           >
-                            {[2, 5].includes(filterSelect)
+                            {["poliza"].includes(crmTypes[filterSelect])
                               ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
                               : option.fullName ||
                                 option.name ||
@@ -310,8 +293,8 @@ const CRMMultipleSelectV2 = ({ getValues, setValue, name, label, error }) => {
                       isLoadingRenovations ||
                       isLoadingLeads) && <LoadingSpinnerSmall />}
                   </div>
-                </div>
-              </Description>
+                </Description>
+              </div>
 
               <div className="flex justify-end">
                 <Button

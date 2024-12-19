@@ -4,9 +4,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { MeetingsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "../../lib/api/hooks/policies";
+import { useMeetings } from "../../lib/api/hooks/meetings";
 
-export default function MeetingsContextProvider({ children }) {
+export default function MeetingsContextProvider({ children, type }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
@@ -16,11 +16,11 @@ export default function MeetingsContextProvider({ children }) {
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
-  const { data, isLoading, isError, mutate } = usePolicies({
+  const { data, isLoading, isError, mutate } = useMeetings({
     config,
     filters: {
+      type,
       ...filters,
-      renewal: "true",
     },
   });
   const [filterFields, setFilterFields] = useState();
@@ -164,10 +164,7 @@ export default function MeetingsContextProvider({ children }) {
 
   const values = useMemo(
     () => ({
-      data: {
-        items: [],
-        metadata: {},
-      },
+      data,
       isLoading,
       isError,
       mutate,

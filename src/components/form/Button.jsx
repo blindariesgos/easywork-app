@@ -21,7 +21,7 @@ export default function Button({
       case "error":
         return "text-white bg-[#CE0000] shadow-xs text-sm hover:bg-primary";
       case "text":
-        return `text-gray-400 bg-transparent ${fontSize} `;
+        return `text-gray-400 bg-transparent underline ${fontSize} `;
       case "outlined":
         return "text-primary border border-primary";
       case "green":

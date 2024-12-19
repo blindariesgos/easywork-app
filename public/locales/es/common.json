@@ -133,7 +133,7 @@
       "commissions": "Comisiones",
       "recruitement": "Embudo de reclutamiento y selección",
       "capacitations": {
-        "name":"Capacitaciones",
+        "name": "Capacitaciones",
         "e-learning": "E-Learning",
         "academy": "Academia"
       },
@@ -169,7 +169,7 @@
     }
   },
   "header": {
-    "status" : {
+    "status": {
       "working": "Trabajando",
       "offline": "Desconectado",
       "do_not_disturb": "No molestar",
@@ -216,5 +216,13 @@
   },
   "activities": {
     "event": "Reunión"
+  },
+  "crmTypes": {
+    "contact": "Clientes",
+    "poliza": "Pólizas",
+    "lead": "Prospectos",
+    "receipt": "Recibos",
+    "renewal": "Renovaciones",
+    "agent": "Agentes"
   }
 }

@@ -51,15 +51,16 @@ const createAxiosInstance = (props) => {
           await reloadSession(originalRequest);
           return axiosInstance(originalRequest);
         } catch (tokenError) {
-          console.log("@@@@ Cerrando sesion");
+          console.log("@@@@ Cerrando sesion 1");
           await clearSession();
           await logout();
+          window.location.href = "/auth";
           throw tokenError;
         }
       }
 
       if (error.response?.status === 401) {
-        console.log("@@@@ Cerrando sesion");
+        console.log("@@@@ Cerrando sesion 2");
         await clearSession();
         await logout();
         window.location.href = "/auth";
@@ -80,6 +81,7 @@ export const reloadSession = async (originalRequest = null) => {
   if (!updatedAuthToken) {
     await clearSession();
     await logout();
+    window.location.href = "/auth";
     throw new Error("Failed to refresh auth token");
   }
   if (originalRequest)

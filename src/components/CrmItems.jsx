@@ -42,6 +42,12 @@ const CrmItems = ({ conections }) => {
         labelKey: "Renovación",
         name: data?.crmEntity?.name,
       },
+      agent: {
+        href: `/agents-management/accompaniment/agent/${data.crmEntity.id}?show=true`,
+        bgClass: "bg-easy-400 text-white",
+        labelKey: "Agente",
+        name: data?.crmEntity?.name,
+      },
     };
 
     const config = typeConfig[data.type];

@@ -1,7 +1,7 @@
 import Image from "next/image";
 export default function Plans() {
   return (
-    <div className="w-screen bg-white bg-cover bg-center flex flex-col md:flex-row items-center justify-center pt-20 md:pt-48 px-6 md:px-0">
+    <div className="w-screen bg-white bg-cover max-md:pt-1 bg-center flex flex-col md:flex-row items-center justify-center pt-20 md:pt-48 px-6 md:px-0">
       <div
         className="bg-white px-6 md:px-14 pt-14 text-easywork-main flex items-center justify-center flex-col text-center md:text-left"
         style={{ maxWidth: 540 }}

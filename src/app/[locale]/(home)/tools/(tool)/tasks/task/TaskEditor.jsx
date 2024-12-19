@@ -29,6 +29,7 @@ import {
   getPolicyById,
   getReceiptById,
   getAgentById,
+  getUserById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -200,6 +201,32 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
     setLoading(false);
   };
+  const setCrmMeet = async (agentId) => {
+    const response = localStorage.getItem(agentId);
+    console.log(response, agentId);
+
+    if (!response) {
+      console.log("no hay meet 1");
+      setLoading(false);
+      return;
+    }
+
+    const data = JSON.parse(response);
+
+    if (!data) {
+      console.log("no hay meet 2");
+      setLoading(false);
+      return;
+    }
+    const { userId, ...metadata } = data;
+
+    const user = lists.users.find((x) => x.id == userId);
+
+    setValue("responsible", [user]);
+    setValue("metadata", metadata);
+    setValue("name", "CRM - Junta: ");
+    setLoading(false);
+  };
   useEffect(() => {
     const prevId = params.get("prev_id");
 
@@ -230,6 +257,12 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (params.get("prev") === "agent") {
       setLoading(true);
       setCrmAgent(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "meet") {
+      setLoading(true);
+      setCrmMeet(prevId);
       return;
     }
   }, [params.get("prev")]);
@@ -784,6 +817,7 @@ const buildTaskBody = (
     createdById: session.user?.id,
     crm,
     important: !!data?.important,
+    metadata: data.metadata,
   };
 
   if (data.createdBy?.length) {

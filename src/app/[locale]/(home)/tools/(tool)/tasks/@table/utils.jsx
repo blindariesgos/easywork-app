@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import React from "react";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
-import ModalCrm from "../components/ModalCrm";
+import ModalCrm from "../../../../../../../components/ModalCrm";
 import Image from "next/image";
 import {
   formatDate,

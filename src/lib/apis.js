@@ -296,7 +296,11 @@ export const postTask = async (body) => {
   revalidatePath("/tools/tasks", "page");
   return response;
 };
-
+export const postMeet = async (body) => {
+  const response = await axios().post(`/agent-management/meetings`, body);
+  // revalidatePath("/tools/tasks", "page");
+  return response;
+};
 export const putTaskId = async (id, body) => {
   console.log("Updating task");
   const response = await axios()
@@ -304,6 +308,17 @@ export const putTaskId = async (id, body) => {
     .catch((error) => ({ hasError: true, error }));
   revalidatePath(`/tools/tasks/task/${id}`, "page");
   revalidatePath(`/tools/tasks`, "layout");
+
+  return response;
+};
+
+export const putMeetById = async (meetingId, body) => {
+  console.log("Updating meet");
+  const response = await axios()
+    .put(`/agent-management/meetings/${meetingId}`, body)
+    .catch((error) => ({ hasError: true, error }));
+  // revalidatePath(`/tools/tasks/task/${id}`, "page");
+  // revalidatePath(`/tools/tasks`, "layout");
 
   return response;
 };
@@ -316,6 +331,20 @@ export const deleteFileTaskById = async (taskId, body) => {
   revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   revalidatePath(`/tools/tasks`, "layout");
 
+  return response;
+};
+
+export const deleteFileMeetById = async (meetingId, body) => {
+  console.log("Deleting meet file", meetingId, body);
+  const response = await axios()
+    .delete(`/agent-management/meetings/${meetingId}/attachments`, {
+      data: body,
+    })
+    .catch((error) => ({ hasError: true, error }));
+  revalidatePath(
+    `/agents-management/meetings-and-sessions/teams/meet/${meetingId}`,
+    "page"
+  );
   return response;
 };
 
@@ -349,6 +378,13 @@ export const postComment = async (body, id) => {
   const response = await axios().post(`/tools/tasks/comments`, body);
   return response;
 };
+export const postMeetComment = async (body) => {
+  const response = await axios().post(
+    `/agent-management/meetings/comments`,
+    body
+  );
+  return response;
+};
 
 export const putLeadStage = async (leadId, stageId) => {
   const response = await axios()
@@ -370,6 +406,13 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
+export const deleteMeetComment = async (commentId) => {
+  const response = await axios().delete(
+    `/agent-management/meetings/comments/${commentId}`
+  );
+  return response;
+};
+
 export const putComment = async (commentId, body, taskId) => {
   console.log("Actualizando comentario", commentId, body, taskId);
   const response = await axios().put(
@@ -377,6 +420,16 @@ export const putComment = async (commentId, body, taskId) => {
     body
   );
   revalidatePath(`/tools/tasks/task/${taskId}`, "page");
+  return response;
+};
+
+export const putMeetComment = async (commentId, body, meetId) => {
+  console.log("Actualizando comentario", commentId, body, meetId);
+  const response = await axios().put(
+    `/agent-management/meetings/comments/${commentId}`,
+    body
+  );
+  revalidatePath(`/tools/tasks/task/${meetId}`, "page");
   return response;
 };
 
@@ -616,6 +669,13 @@ export const updateUser = async (id, body) => {
   return response;
 };
 
+export const getUserById = async (id) => {
+  const response = await axios()
+    .get(`/users/${id}`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const addCalendarEvent = async (body) => {
   const response = await axios()
     .post(`/calendar/events`, body)
@@ -754,6 +814,13 @@ export const getLeadCancelReazon = async () => {
   const response = await axios()
     .get(url)
     .then((items) => ({ data: items }))
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getMeetById = async (id) => {
+  const response = await axios()
+    .get(`/agent-management/meetings/${id}`)
     .catch((error) => ({ hasError: true, error }));
   return response;
 };

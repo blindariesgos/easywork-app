@@ -62,7 +62,25 @@
             "date": "Fecha de Reunión",
             "add": "Agregar junta de equipo",
             "create-msg": "Reunión creada exitosamente"
-        }
+        },
+        "state": {
+            "title": "Estado",
+            "cancelled": "Cancelada",
+            "active": "Activa",
+            "completed": "Completada",
+            "pending": "Pendiente"
+        },
+        "date": "Fecha de Inicio",
+        "time": "Duración",
+        "group": {
+            "title": "Junta de equipo",
+            "agent": "Agentes"
+        },
+        "individual": {
+            "title": "Junta individual",
+            "agent": "Agente"
+        },
+        "gdd": "Gerente de Desarrollo"
     },
     "recruitment": {
         "title": "Reclutamiento y selección",

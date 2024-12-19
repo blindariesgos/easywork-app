@@ -27,6 +27,8 @@ const OptionsTask = ({
   setListField,
   addFile,
   files,
+  taggedUsers,
+  setTaggedUsers,
 }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
@@ -154,6 +156,7 @@ const OptionsTask = ({
   useEffect(() => {
     if (userSelected) {
       addUserSelected(userSelected.name);
+      setTaggedUsers([...taggedUsers, userSelected.id]);
     }
   }, [userSelected]);
 

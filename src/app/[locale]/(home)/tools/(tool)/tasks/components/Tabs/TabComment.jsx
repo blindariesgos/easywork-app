@@ -37,7 +37,7 @@ export default function TabComment({ info }) {
   const [showMore, setShowMore] = useState(false);
   const [showComments, setShowComments] = useState([]);
   const [upload, setUpload] = useState({});
-
+  const [taggedUsers, setTaggedUsers] = useState([]);
   const handleComment = async (_, id) => {
     if (quillRef.current) {
       const body = {
@@ -46,6 +46,12 @@ export default function TabComment({ info }) {
         taskId: info.id,
         fileIds: upload?.fileIds ?? [],
       };
+
+      if (taggedUsers.length > 0) {
+        body.metadata = {
+          taggedUsers,
+        };
+      }
       console.log({ body });
       try {
         setDisabled(true);
@@ -58,6 +64,7 @@ export default function TabComment({ info }) {
         setEditComment({});
         setValueText("");
         setUpload({});
+        setTaggedUsers([]);
       } catch (error) {
         handleApiError(error.message);
         setDisabled(false);
@@ -136,6 +143,8 @@ export default function TabComment({ info }) {
                   value={value}
                   className="w-full"
                   setValue={setValueText}
+                  taggedUsers={taggedUsers}
+                  setTaggedUsers={setTaggedUsers}
                 />
                 {upload && upload?.files && (
                   <div className="flex gap-1 flex-wrap p-1">
@@ -235,6 +244,8 @@ export default function TabComment({ info }) {
                         className="w-full max-h-[100px]"
                         setValue={setValueText}
                         disabled={disabled}
+                        taggedUsers={taggedUsers}
+                        setTaggedUsers={setTaggedUsers}
                       />
                       {upload && upload?.files && (
                         <div className="flex gap-1 flex-wrap p-1">

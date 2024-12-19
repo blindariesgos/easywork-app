@@ -76,6 +76,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { mutate: mutateTasks } = useTasksContext({});
+  const [taggedUsers, setTaggedUsers] = useState([]);
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
     participants:
@@ -133,6 +134,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
       createdBy: edit ? [edit.createdBy] : [],
       important: edit?.important ?? copy?.important ?? false,
+      metadata: edit?.metadata ?? copy?.metadata ?? {},
     },
     resolver: yupResolver(schemaInputs),
   });
@@ -267,6 +269,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
     }
   }, [params.get("prev")]);
   //#endregion
+
+  useEffect(() => {
+    setValue("metadata.taggedUsers", taggedUsers);
+  }, [taggedUsers]);
 
   useEffect(() => {
     if (session) {
@@ -406,6 +412,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
               setListField={setListField}
               edit={edit}
               copy={copy}
+              taggedUsers={taggedUsers}
+              setTaggedUsers={setTaggedUsers}
               addFile={!edit && setValue}
               files={!edit && (watch("fileIds") ?? [])}
             />

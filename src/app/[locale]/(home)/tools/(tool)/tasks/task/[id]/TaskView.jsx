@@ -113,22 +113,22 @@ export default function TaskView({ id, mutateTask, task }) {
               )}
             </div>
             {!openEdit?.mode &&
-              edit?.metadata?.meet &&
-              edit?.metadata?.developmentManagerId === session.data.user.id && (
-                <button></button>
+              task?.metadata?.meet &&
+              task?.metadata?.developmentManagerId === session.data.user.id && (
+                <button>Revisar</button>
               )}
-            <IconDropdown
-              icon={
-                openEdit?.mode === "edit" ? (
+            {openEdit?.mode === "edit" && (
+              <IconDropdown
+                icon={
                   <Cog8ToothIcon
                     className="h-8 w-8 text-primary"
                     aria-hidden="true"
                   />
-                ) : null
-              }
-              options={settings}
-              width="w-44"
-            />
+                }
+                options={settings}
+                width="w-44"
+              />
+            )}
           </div>
         )}
         <div className="w-full grid gap-2 sm:gap-4 grid-cols-1 md:grid-cols-12 h-full max-h-[calc(100vh-50px)] overflow-y-auto pr-2">

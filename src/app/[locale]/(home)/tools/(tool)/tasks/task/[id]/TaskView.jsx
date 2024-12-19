@@ -30,10 +30,12 @@ import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import SubTaskTable from "./components/SubTaskTable";
 import CrmItems from "../../../../../../../../components/CrmItems";
+import { useSession } from "next-auth/react";
 
 export default function TaskView({ id, mutateTask, task }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
+  const session = useSession();
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
@@ -110,6 +112,11 @@ export default function TaskView({ id, mutateTask, task }) {
                 />
               )}
             </div>
+            {!openEdit?.mode &&
+              edit?.metadata?.meet &&
+              edit?.metadata?.developmentManagerId === session.data.user.id && (
+                <button></button>
+              )}
             <IconDropdown
               icon={
                 openEdit?.mode === "edit" ? (

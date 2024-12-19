@@ -272,7 +272,7 @@ const OptionsTask = ({
         {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
       </div>
       {openFiles && <UploadDocuments id={edit?.id ?? copy?.id} />}
-      {openList && (
+      {/* {openList && (
         <div className="mt-2">
           <CheckList
             handleSubmit={handleSubmit}
@@ -288,7 +288,7 @@ const OptionsTask = ({
             setListField={setListField}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

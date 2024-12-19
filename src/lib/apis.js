@@ -669,6 +669,13 @@ export const updateUser = async (id, body) => {
   return response;
 };
 
+export const getUserById = async (id) => {
+  const response = await axios()
+    .get(`/users/${id}`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const addCalendarEvent = async (body) => {
   const response = await axios()
     .post(`/calendar/events`, body)

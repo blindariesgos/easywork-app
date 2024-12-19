@@ -79,7 +79,7 @@ export default function MeetEditor({ edit, copy, type }) {
     defaultValues: {
       title: edit?.title ?? "",
       startTime: edit?.startTime ?? "",
-      agentsIds: edit?.agents ?? [],
+      participants: edit?.agents ?? [],
       responsible: edit?.developmentManager.id ?? "",
       observers: edit?.observers ?? [],
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
@@ -291,20 +291,22 @@ export default function MeetEditor({ edit, copy, type }) {
               files={!edit && (watch("fileIds") ?? [])}
             />
             <div className="mt-6 flex flex-col gap-3">
-              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                <p className="text-sm text-left w-full md:w-36">
-                  {t("tools:tasks:new:crm")}
-                </p>
-                <div className="w-full md:w-[40%]">
-                  <CRMMultipleSelectV2
-                    getValues={getValues}
-                    setValue={setValue}
-                    name="crm"
-                    error={errors.crm}
-                    hidden={["agent"]}
-                  />
+              {type == "individual" && (
+                <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                  <p className="text-sm text-left w-full md:w-36">
+                    {t("tools:tasks:new:crm")}
+                  </p>
+                  <div className="w-full md:w-[40%]">
+                    <CRMMultipleSelectV2
+                      getValues={getValues}
+                      setValue={setValue}
+                      name="crm"
+                      error={errors.crm}
+                      hidden={["poliza", "receipt", "renewal", "agent"]}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                 <p className="text-sm text-left w-full md:w-36">
                   {t("agentsmanagement:meetings-and-sessions:new:responsible")}
@@ -352,7 +354,9 @@ export default function MeetEditor({ edit, copy, type }) {
               </div>
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                 <p className="text-sm text-left w-full md:w-36">
-                  {t("tools:tasks:new:participants")}
+                  {type == "individual"
+                    ? "Agente"
+                    : t("tools:tasks:new:participants")}
                 </p>
                 <div className="w-full md:w-[40%]">
                   <Controller

@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import CrmItems from "@/src/components/CrmItems";
 import Button from "@/src/components/form/Button";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 export default function MeetView({ meet, id }) {
   const [loading, setLoading] = useState(false);
@@ -20,11 +21,29 @@ export default function MeetView({ meet, id }) {
   const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
   const router = useRouter();
+
   useEffect(() => {
     if (meet) {
       setTaskDescription(meet.description);
     }
   }, [meet]);
+
+  const handleCreateMeetTask = () => {
+    if (!meet.agents[0]?.user?.id) {
+      toast.error("El agente no posee usuario en el sistema");
+      return;
+    }
+    const agentId = meet.agents[0].id;
+    localStorage.setItem(
+      agentId,
+      JSON.stringify({
+        meet: id,
+        developmentManagerId: meet?.developmentManager?.id,
+        userId: meet.agents[0]?.user?.id,
+      })
+    );
+    router.push(`/tools/tasks/task?prev=meet&prev_id=${agentId}&show=true`);
+  };
 
   return (
     <div className="flex flex-col h-screen relative w-full overflow-y-auto">
@@ -43,36 +62,50 @@ export default function MeetView({ meet, id }) {
           <div
             className={`w-full col-span-12 grid grid-cols-1 gap-y-2 md:col-span-7 lg:col-span-8 xl:col-span-9`}
           >
-            <div className="bg-white rounded-lg">
-              <div className="flex justify-between gap-2 items-center bg-gray-300 p-2 rounded-t-lg">
-                <h1 className="text-lg font-medium">{meet?.title}</h1>
-                <Button
-                  label={"Editar"}
-                  buttonStyle="text"
-                  className={"text-primary"}
-                  onclick={() =>
-                    router.push(
-                      `/agents-management/meetings-and-sessions/${meet?.type == "group" ? "teams" : "individuals"}/meet/${id}/edit?show=true`
-                    )
-                  }
-                />
-              </div>
-              <div className="p-2 sm:p-4">
-                <OptionsTask
-                  edit={meet}
-                  setValueText={setTaskDescription}
-                  value={taskDescription}
-                  disabled={meet ? true : false}
-                />
-              </div>
-              {/* CRM */}
-              {meet?.crm?.length > 0 && (
-                <div className="flex justify-end">
-                  <div className="w-full sm:w-2/3 lg:w-1/2 2xl:w-1/3 flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                    <CrmItems conections={meet.crm} />
-                  </div>
+            <div className="bg-white rounded-lg flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between gap-2 items-center bg-gray-300 p-2 rounded-t-lg">
+                  <h1 className="text-lg font-medium">{meet?.title}</h1>
+                  <Button
+                    label={"Editar"}
+                    buttonStyle="text"
+                    className={"text-primary"}
+                    onclick={() =>
+                      router.push(
+                        `/agents-management/meetings-and-sessions/${meet?.type == "group" ? "teams" : "individuals"}/meet/${id}/edit?show=true`
+                      )
+                    }
+                  />
                 </div>
-              )}
+                <div className="p-2 sm:p-4">
+                  <OptionsTask
+                    edit={meet}
+                    setValueText={setTaskDescription}
+                    value={taskDescription}
+                    disabled={meet ? true : false}
+                  />
+                </div>
+                {/* CRM */}
+                {meet?.crm?.length > 0 && (
+                  <div className="flex justify-end">
+                    <div className="w-full sm:w-2/3 lg:w-1/2 2xl:w-1/3 flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
+                      <CrmItems conections={meet.crm} />
+                    </div>
+                  </div>
+                )}
+              </div>
+              {meet.type == "individual" &&
+                meet?.developmentManager &&
+                meet?.agents?.length > 0 && (
+                  <div className="p-2 sm:p-4">
+                    <Button
+                      buttonStyle="primary"
+                      label="Agregar tarea"
+                      className="px-3 py-2"
+                      onclick={handleCreateMeetTask}
+                    />
+                  </div>
+                )}
             </div>
             <div className="w-full relative">
               <TabsMeet data={meet} />

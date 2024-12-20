@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/20/solid";
 import Button from "@/src/components/form/Button";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { putTaskId } from "@/src/lib/apis";
+import { putMeetById, putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useSWRConfig } from "swr";
 
@@ -59,16 +59,16 @@ export default function CheckList({
     };
 
     try {
-      const response = await putTaskId(task.id, body);
+      const response = await putMeetById(task.id, body);
       if (response?.hasError) {
         toast.error(
           response?.error?.message ??
-            "Ocurrio un error al editar la tarea, intente mas tarde"
+            "Ocurrio un error al editar la junta, intente mas tarde"
         );
         return;
       }
-      !check && toast.success(t("tools:tasks:update-msg"));
-      await mutate(`/tools/tasks/${task.id}`);
+      !check && toast.success("Junta actualizada correctamente");
+      await mutate(`/agent-management/meetings/${task.id}`);
     } catch (error) {
       console.log(error);
     } finally {

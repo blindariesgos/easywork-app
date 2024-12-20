@@ -1,7 +1,8 @@
 import Image from "next/image";
+import ModalForm from "../components/ModalForm";
 export default function GetDemo() {
   return (
-    <div className="min-h-screen w-screen bg-white bg-cover bg-center flex flex-col lg:flex-row items-center justify-center pt-24 p-5">
+    <div className="min-h-screen w-screen bg-white bg-cover bg-center flex flex-col lg:flex-row items-center justify-center max-md:pt-5 pt-24 p-5">
       <div className="w-full lg:w-auto mb-8 lg:mb-0">
         <Image
           className="w-full lg:w-auto"
@@ -28,12 +29,16 @@ export default function GetDemo() {
           <b>EASYWORK</b> está cambiando el juego para agentes como tú.
         </p>
         <div className="flex justify-center lg:justify-end">
-          <button
-            type="button"
-            className="rounded-md bg-primary p-2 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            QUIERO UNA DEMO
-          </button>
+          <ModalForm
+            buttonOpen={
+              <button
+                type="button"
+                className="rounded-md bg-primary p-2 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                QUIERO UNA DEMO
+              </button>
+            }
+          />
         </div>
       </div>
     </div>

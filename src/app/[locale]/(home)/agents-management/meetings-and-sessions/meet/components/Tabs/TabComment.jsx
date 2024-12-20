@@ -3,7 +3,14 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextEditor from "../TextEditor";
-import { deleteComment, postComment, putComment } from "@/src/lib/apis";
+import {
+  deleteComment,
+  deleteMeetComment,
+  postComment,
+  postMeetComment,
+  putComment,
+  putMeetComment,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
 import {
@@ -22,9 +29,10 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { GoKebabHorizontal } from "react-icons/go";
 import UploadDocumentsInComment from "../UploadDocumentsInComment";
 import FilePreview from "../FilePreview";
+import { useMeetComments } from "@/src/lib/api/hooks/meetings";
 
 export default function TabComment({ info }) {
-  const { comments, isLoading, isError } = useTaskComments(info.id);
+  const { comments, isLoading, isError } = useMeetComments(info.id);
   const { t } = useTranslation();
   const quillRef = useRef(null);
   const { data: session } = useSession();
@@ -37,7 +45,7 @@ export default function TabComment({ info }) {
   const [showMore, setShowMore] = useState(false);
   const [showComments, setShowComments] = useState([]);
   const [upload, setUpload] = useState({});
-  const [taggedUsers, setTaggedUsers] = useState([]);
+
   const handleComment = async (_, id) => {
     if (quillRef.current) {
       const body = {
@@ -46,25 +54,18 @@ export default function TabComment({ info }) {
         taskId: info.id,
         fileIds: upload?.fileIds ?? [],
       };
-
-      if (taggedUsers.length > 0) {
-        body.metadata = {
-          taggedUsers,
-        };
-      }
       console.log({ body });
       try {
         setDisabled(true);
         id
-          ? await putComment(id, body, info.id)
-          : await postComment(body, info.id);
+          ? await putMeetComment(id, body, info.id)
+          : await postMeetComment(body, info.id);
 
-        await mutate(`/tools/tasks/comments/task/${info.id}`);
+        await mutate(`/agent-management/meetings/comments/meet/${info.id}`);
         setDisabled(false);
         setEditComment({});
         setValueText("");
         setUpload({});
-        setTaggedUsers([]);
       } catch (error) {
         handleApiError(error.message);
         setDisabled(false);
@@ -87,7 +88,7 @@ export default function TabComment({ info }) {
   };
 
   useEffect(() => {
-    if (comments.length > 3 && !showMore) {
+    if (comments?.length > 3 && !showMore) {
       return setShowComments(comments.slice(-3));
     }
 
@@ -109,7 +110,7 @@ export default function TabComment({ info }) {
   const getDeleteComment = async (id) => {
     try {
       setDisabled(true);
-      await deleteComment(id, info.id);
+      await deleteMeetComment(id);
       setDisabled(false);
     } catch (error) {
       handleApiError(error.message);
@@ -143,8 +144,6 @@ export default function TabComment({ info }) {
                   value={value}
                   className="w-full"
                   setValue={setValueText}
-                  taggedUsers={taggedUsers}
-                  setTaggedUsers={setTaggedUsers}
                 />
                 {upload && upload?.files && (
                   <div className="flex gap-1 flex-wrap p-1">
@@ -244,8 +243,6 @@ export default function TabComment({ info }) {
                         className="w-full max-h-[100px]"
                         setValue={setValueText}
                         disabled={disabled}
-                        taggedUsers={taggedUsers}
-                        setTaggedUsers={setTaggedUsers}
                       />
                       {upload && upload?.files && (
                         <div className="flex gap-1 flex-wrap p-1">

@@ -60,6 +60,8 @@ const TextEditor = forwardRef(
       setValue,
       disabled = false,
       handleKeyDown,
+      taggedUsers,
+      setTaggedUsers,
     },
     ref
   ) => {
@@ -105,6 +107,7 @@ const TextEditor = forwardRef(
     }, [lists]);
 
     const addUserSelected = (user) => {
+      setTaggedUsers([...taggedUsers, user.id]);
       const editor = localQuillRef.current?.getEditor();
       if (editor) {
         const quillEditor = editor;

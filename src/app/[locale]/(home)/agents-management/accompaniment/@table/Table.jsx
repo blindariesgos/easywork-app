@@ -453,7 +453,7 @@ export default function Table() {
                                   anchor="right start"
                                   className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
                                 >
-                                  {itemActions.map((item) =>
+                                  {itemActions(agent).map((item) =>
                                     !item.options ? (
                                       <MenuItem
                                         key={item.name}

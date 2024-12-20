@@ -12,7 +12,7 @@ export default function Page({ children, table, kanban }) {
 
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative">
-      <MeetingContextProvider>
+      <MeetingContextProvider type="group">
         <LayoutPage>
           {/* <Suspense fallback={<LoaderSpinner />}> */}
           {/* <TabGroup

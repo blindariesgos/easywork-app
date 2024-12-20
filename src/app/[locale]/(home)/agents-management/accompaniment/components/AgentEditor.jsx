@@ -70,7 +70,7 @@ export default function AgentEditor({ agent, id }) {
           "max-h-screen h-full bg-gray-600 relative opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px]  overflow-y-auto lg:overflow-y-hidden",
           {
             "w-full": agent,
-            "max-w-xl w-full": !agent,
+            "w-[600px]": !agent,
           }
         )}
       >

@@ -242,6 +242,8 @@ const OptionsTask = ({
             onChangeSelection={handleTextSelection}
             setValue={setValueText}
             disabled={disabled}
+            taggedUsers={taggedUsers}
+            setTaggedUsers={setTaggedUsers}
           />
         </div>
       )}

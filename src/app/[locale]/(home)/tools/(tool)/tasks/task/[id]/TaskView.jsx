@@ -10,7 +10,7 @@ import ButtonMore from "../../components/ButtonMore";
 import TabsTask from "../../components/Tabs/TabsTask";
 import moment from "moment";
 import TaskEditor from "../TaskEditor";
-import { putTaskCompleted } from "@/src/lib/apis";
+import { putTaskCompleted, putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
@@ -31,6 +31,7 @@ import clsx from "clsx";
 import SubTaskTable from "./components/SubTaskTable";
 import CrmItems from "../../../../../../../../components/CrmItems";
 import { useSession } from "next-auth/react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 export default function TaskView({ id, mutateTask, task }) {
   const { lists } = useAppContext();
@@ -82,6 +83,28 @@ export default function TaskView({ id, mutateTask, task }) {
     toast.success("Copiado en el Portapapeles");
   };
 
+  const handleChangeGddStatus = async (status) => {
+    const body = {
+      metadata: {
+        ...task.metadata,
+        gddStatus: status,
+      },
+    };
+    setLoading(true);
+    try {
+      await putTaskId(task.id, body);
+      toast.success(t("tools:tasks:update-msg"));
+      mutateTask();
+      mutate("/tools/tasks/user?limit=15&page=1");
+    } catch (error) {
+      handleApiError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const gddTaskStatus = ["pending", "completed", "not-completed"];
+
   return (
     <div className="flex flex-col h-screen relative w-full overflow-y-auto">
       {loading && <LoaderSpinner />}
@@ -115,7 +138,41 @@ export default function TaskView({ id, mutateTask, task }) {
             {!openEdit?.mode &&
               task?.metadata?.meet &&
               task?.metadata?.developmentManagerId === session.data.user.id && (
-                <button>Revisar</button>
+                <div className="flex gap-2 items-center">
+                  <p className="text-xl font-medium">Revisión de GDD</p>
+                  <Menu>
+                    <MenuButton
+                      className={clsx("px-3 py-2 rounded-md", {
+                        "bg-[#B5B5B5] text-white":
+                          task?.metadata?.gddStatus == "pending" ||
+                          !task?.metadata?.gddStatus,
+                        "bg-[#A9EA44] text-primary":
+                          task?.metadata?.gddStatus == "completed",
+                        "bg-[#C30000] text-white":
+                          task?.metadata?.gddStatus == "not-completed",
+                      })}
+                    >
+                      {t(
+                        `tools:tasks:gdd-status:${task?.metadata?.gddStatus ?? "pending"}`
+                      )}
+                    </MenuButton>
+                    <MenuItems
+                      anchor="bottom end"
+                      className="mt-1 w-[var(--button-width)] rounded-md bg-white z-50 py-2 shadow-xl"
+                    >
+                      {gddTaskStatus.map((status) => (
+                        <MenuItem
+                          key={status}
+                          as="div"
+                          onClick={() => handleChangeGddStatus(status)}
+                          className="data-[focus]:bg-primary data-[focus]:text-white px-2 py-2 text-sm cursor-pointer"
+                        >
+                          {t(`tools:tasks:gdd-status:${status}`)}
+                        </MenuItem>
+                      ))}
+                    </MenuItems>
+                  </Menu>
+                </div>
               )}
             {openEdit?.mode === "edit" && (
               <IconDropdown

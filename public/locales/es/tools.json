@@ -52,6 +52,11 @@
       "pending_review": "Pendiente por revisión",
       "overdue": "Atrasada"
     },
+    "gdd-status": {
+      "pending": "Pendiente",
+      "completed": "Hecho",
+      "not-completed": "No realizado"
+    },
     "delegate-to": "Delegar a:",
     "delegate": "Delegar",
     "delegating": "Delegando...",

@@ -223,7 +223,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
     const { userId, ...metadata } = data;
 
     const user = lists.users.find((x) => x.id == userId);
-
+    setValue(
+      "createdBy",
+      lists?.users.filter((user) => user.id === data.developmentManagerId)
+    );
     setValue("responsible", [user]);
     setValue("metadata", metadata);
     setValue("name", "CRM - Junta: ");
@@ -275,7 +278,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   }, [taggedUsers]);
 
   useEffect(() => {
-    if (session) {
+    if (session && params.get("prev") != "meet") {
       setValue(
         "createdBy",
         lists?.users.filter((user) => user.id === session.user?.id)

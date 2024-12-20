@@ -2,17 +2,17 @@ import Image from "next/image";
 import ModalForm from "../components/ModalForm";
 export default function GetDemo() {
   return (
-    <div className="min-h-screen w-screen bg-white bg-cover bg-center flex flex-col lg:flex-row items-center justify-center max-md:pt-5 pt-24 p-5">
+    <div className="w-screen bg-white bg-cover bg-center flex flex-col lg:flex-row items-center justify-center max-md:pt-5 pt-10 p-5">
       <div className="w-full lg:w-auto mb-8 lg:mb-0">
         <Image
           className="w-full lg:w-auto"
           width={2000}
           height={2000}
           src="/img/landing/time.png"
-          alt="social"
+          alt="time"
         />
       </div>
-      <div className="bg-white p-6 lg:p-14 text-easywork-main flex flex-col lg:items-end justify-center w-full lg:w-1/2">
+      <div className="bg-white px-6 pb-6 lg:p-14 text-easywork-main flex flex-col lg:items-end justify-center w-full lg:w-1/2">
         <h1 className="font-bold text-3xl lg:text-6xl mb-5 text-center lg:text-right">
           El tiempo corre no te quedes atrás
         </h1>
@@ -28,7 +28,7 @@ export default function GetDemo() {
           Regístrate para tu prueba gratuita ahora y descubre por qué{" "}
           <b>EASYWORK</b> está cambiando el juego para agentes como tú.
         </p>
-        <div className="flex justify-center lg:justify-end">
+        <div className="flex justify-center lg:justify-end mt-5">
           <ModalForm
             buttonOpen={
               <button

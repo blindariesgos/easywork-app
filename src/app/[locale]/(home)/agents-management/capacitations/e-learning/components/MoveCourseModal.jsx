@@ -12,7 +12,7 @@ import ModulePhoto from './ModulePhoto';
 
 import { createCourse, updateCourse } from '../courses/services/create-course';
 
-export default function NewCourseModal({ course, isOpen, setIsOpen }) {
+export default function MoveCourseModal({ course, isOpen, setIsOpen }) {
   const [loading, setLoading] = useState(false);
   const isEdit = !!course;
 

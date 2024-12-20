@@ -2,15 +2,15 @@ import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import Button from '@/src/components/form/Button';
 
-function ModulePhoto({ onChange, loading }) {
-  const [preview, setPreview] = useState(null);
+function ModulePhoto({ onChange, loading, coverPhoto }) {
+  const [preview, setPreview] = useState(coverPhoto);
   const fileRef = useRef(null);
 
   return (
     <div className="flex items-start justify-start gap-2 p-4">
       <label htmlFor="modulePhoto" type="button" className="cursor-pointer text-sm text-black">
         <div className="h-48 w-80 flex rounded text-gray-400 fill-white bg-zinc-200 object-cover items-center justify-center">
-          {preview ? <Image width={96} height={96} src={preview} alt="Module photo" className="h-full w-full" loading="eager" /> : <p>Subir</p>}
+          {preview ? <Image width={96} height={96} src={typeof preview === 'string' ? preview : preview} alt="Module photo" className="h-full w-full" loading="eager" /> : <p>Subir</p>}
         </div>
       </label>
 

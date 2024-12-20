@@ -1,13 +1,13 @@
 export default function Features() {
   return (
-    <div className="w-screen bg-white flex flex-col items-center justify-center text-blue-700 text-center bg-cover bg-center mb-5 px-4">
+    <div className="w-screen bg-white flex flex-col items-center justify-center text-blue-700 text-center bg-cover bg-center mb-5 px-10">
       <div className="flex flex-col items-center justify-center mb-5 mt-1">
         <h1 className="font-bold text-3xl md:text-5xl mb-5 md:mb-7">
           ¡Dale más facilidad a tu equipo con EASYWORK!
         </h1>
         <h2
           className="text-lg md:text-xl leading-tight mb-2"
-          style={{ width: "100%", maxWidth: "70%" }}
+          style={{ width: "100%", textAlign: "justify" }}
         >
           Imagina una herramienta que no sólo almacena los datos de tu cartera
           de clientes, sino que impulsa el crecimiento de la gestión de tu
@@ -15,7 +15,7 @@ export default function Features() {
         </h2>
         <h2
           className="text-lg md:text-xl leading-tight mb-2"
-          style={{ width: "100%", maxWidth: "60%" }}
+          style={{ width: "100%", textAlign: "justify"  }}
         >
           EASYWORK no es sólo un sistema inteligente, es tu aliado ideal, tu
           asistente virtual que va más allá.{" "}
@@ -26,7 +26,7 @@ export default function Features() {
         </h2>
         <h2
           className="text-lg md:text-xl leading-tight mb-2"
-          style={{ width: "100%", maxWidth: "70%" }}
+          style={{ width: "100%", textAlign: "justify"  }}
         >
           Estas son las razones irresistibles para enamorarte de easywork
         </h2>
@@ -61,7 +61,7 @@ export default function Features() {
           ))}
         </div>
 
-        <div className="flex flex-col md:flex-row justify-center mt-5">
+        <div className="flex flex-col md:flex-row justify-center max-md:mt-0 mt-5">
           {[
             {
               title: "Gestiona mejor tu operación",

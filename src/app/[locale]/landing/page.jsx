@@ -12,6 +12,7 @@ import GetDemo from "./sections/GetDemo";
 import Prices from "./sections/Prices";
 import Graphics from "./sections/Graphics";
 import CookieModal from "./components/Cookies";
+import HelpChat from "./components/chat/HelpChat"
 
 // Hook para aplicar la animación cuando el elemento entra en el viewport
 const ScrollAnimationWrapper = ({ children }) => {
@@ -108,6 +109,7 @@ export default function Page() {
         <Footer />
         <CookieModal />
       </div>
+      <HelpChat />
     </>
   );
 }

@@ -54,7 +54,7 @@ export default function Page() {
         <div className="from-sky-500 to-blue-300 bg-gradient-to-t min-h-screen w-screen">
           <div id="inicio" className="h-24"></div> {/* Sección de Inicio */}
           <ScrollAnimationWrapper>
-            <Header />
+            <Header redirect={false} />
           </ScrollAnimationWrapper>
           <ScrollAnimationWrapper>
             <MainContent />

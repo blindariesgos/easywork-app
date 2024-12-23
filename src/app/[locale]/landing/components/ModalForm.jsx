@@ -3,22 +3,25 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import React, { useState, Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Transition } from "@headlessui/react";
-import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import TextInput from "@/src/components/form/TextInput";
 import InputPhone from "@/src/components/form/InputPhone";
 import Image from "next/image";
 import { createSimpleLeadLanding } from "@/src/lib/apis";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 
 export default function ModalForm({ buttonOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
+    reset, // Added reset
   } = useForm();
 
   // Función para el submit
@@ -35,14 +38,12 @@ export default function ModalForm({ buttonOpen }) {
         if (response.errors) {
           message = response.errors.join(", ");
         }
-        toast.error(message);
         setLoading(false);
         setIsOpen(false);
         return;
       }
-      toast.success("Enviado con exito");
       setLoading(false);
-      setIsOpen(false);
+      setSubmitted(true);
     } catch (error) {
       console.log(error);
     }
@@ -52,16 +53,23 @@ export default function ModalForm({ buttonOpen }) {
     onClick: () => setIsOpen(true),
   });
 
+  // Reset the form and close the modal
+  const closeModal = () => {
+    setIsOpen(false);
+    reset(); // This resets all input fields to their default values
+    setSubmitted(false); // Reset submission state
+  };
+
   return (
     <div className="flex items-center justify-center">
       {loading && <LoaderSpinner />}
       {ButtonOpen}
 
       <Transition show={isOpen} as={Fragment}>
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 overflow-y-auto">
           <div
             className="fixed inset-0 bg-black opacity-50 -z-1"
-            onClick={() => setIsOpen(false)}
+            onClick={closeModal} // Close modal and reset form
           ></div>
 
           <Transition.Child
@@ -73,7 +81,7 @@ export default function ModalForm({ buttonOpen }) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="relative w-2/4 max-md:w-3/4 flex flex-col items-center bg-white p-6 rounded-lg shadow-lg">
+            <div className="relative w-2/4 max-md:w-4/5 flex flex-col items-center bg-white p-6 rounded-lg shadow-lg">
               <Image
                 className="w-28"
                 width={1000}
@@ -166,13 +174,19 @@ export default function ModalForm({ buttonOpen }) {
                 </div>
               </form>
 
-              {/* <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="absolute -left-1 -top-3 p-1 mt-4 text-white bg-red-600 rounded"
-              >
-                <XMarkIcon className="h-5 w-5 text-slate-50" />
-              </button> */}
+              {/* Animación de confirmación */}
+              {submitted && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 1 }}
+                  className="mt-6 flex items-center justify-center text-green-500"
+                >
+                  <AiOutlineCheckCircle className="text-6xl" />
+                  <p className="text-xl ml-4">Formulario enviado con éxito</p>
+                </motion.div>
+              )}
             </div>
           </Transition.Child>
         </div>

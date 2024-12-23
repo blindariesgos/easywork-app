@@ -1,7 +1,7 @@
 import React from 'react';
 import AccordionItemMoreMenu from './LessonMoreMenu';
 
-export const LessonPage = () => {
+export const LessonPage = ({ page }) => {
   const editPage = () => {};
   const duplicatePage = () => {};
   const changeLesson = () => {};
@@ -11,7 +11,7 @@ export const LessonPage = () => {
     <div className="relative">
       <AccordionItemMoreMenu itemType="page" actions={{ editPage, duplicatePage, changeLesson, deletePage }} />
 
-      <p className="bg-gray-600 text-black p-2 w-full rounded-md">Capitulo I</p>
+      <p className="bg-gray-600 text-black p-2 w-full rounded-md">{page.name}</p>
     </div>
   );
 };

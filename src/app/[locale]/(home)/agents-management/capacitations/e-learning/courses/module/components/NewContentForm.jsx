@@ -6,8 +6,8 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import { createLesson, updateLesson } from '../services/create-lesson';
-import { createPage, updatePage } from '../services/create-page';
+import { createLesson, updateLesson } from '../services/lessons';
+import { createPage, updatePage } from '../services/lesson-pages';
 
 export const NewContentForm = ({ content, isOpen, setIsOpen, contentType = '', parent, onSuccess }) => {
   const isEdit = !!content;

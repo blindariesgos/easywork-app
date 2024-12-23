@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import NewCourseModal from '../components/NewCourseModal';
+import CourseCreateEditModal from '../components/CourseCreateEditModal';
 
 export default function ConfigView() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +12,7 @@ export default function ConfigView() {
         <p className="font-bold text-gray-400">+ Nuevo curso</p>
       </button>
 
-      <NewCourseModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <CourseCreateEditModal isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   );
 }

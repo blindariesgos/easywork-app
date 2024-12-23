@@ -5,6 +5,11 @@ export const createPage = async data => {
   return response.data;
 };
 
+export const getLessonPage = async id => {
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lesson-pages/${id}`);
+  return response.data;
+};
+
 export const updatePage = async (id, data) => {
   const response = await axios.patch(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lesson-pages/${id}`, data);
   return response.data;

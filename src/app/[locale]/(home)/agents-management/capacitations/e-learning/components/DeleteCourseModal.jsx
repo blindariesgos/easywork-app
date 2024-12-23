@@ -8,7 +8,7 @@ import Button from '@/src/components/form/Button';
 
 import { deleteCourse } from '../courses/services/create-course';
 
-export default function DeleteCourseModal({ course, isOpen, setIsOpen }) {
+export default function DeleteCourseModal({ course, isOpen, setIsOpen, onSuccess }) {
   const [loading, setLoading] = useState(false);
 
   const onCloseModal = () => {
@@ -21,6 +21,9 @@ export default function DeleteCourseModal({ course, isOpen, setIsOpen }) {
     try {
       await deleteCourse(course.id);
       setIsOpen(false);
+
+      if (onSuccess) onSuccess();
+
       toast.info('Curso eliminado');
     } catch (error) {
       toast.error('Algo no ha salido muy bien. Por favor intente más tarde');

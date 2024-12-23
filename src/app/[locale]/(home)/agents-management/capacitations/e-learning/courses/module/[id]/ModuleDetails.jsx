@@ -12,44 +12,102 @@ import { NewContentForm } from '../components/NewContentForm';
 import { ContentView } from '../components/ContentView';
 
 import { getCourseById } from '../../services/get-courses';
+import { getLesson } from '../services/lessons';
+import { getLessonPage } from '../services/lesson-pages';
+import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
+import CourseCreateEditModal from '../../../components/CourseCreateEditModal';
+import DeleteCourseModal from '../../../components/DeleteCourseModal';
+import { useRouter } from 'next/navigation';
 
 export const ModuleDetails = ({ courseId }) => {
+  const router = useRouter();
+
   const [openSections, setOpenSections] = useState(['']);
   const [course, setCourse] = useState(null);
   const [selectedContent, setSelectedContent] = useState(null);
   const hasLessons = course?.lessons?.length > 0;
   const [showNewLessonForm, setShowNewLessonForm] = useState(!hasLessons);
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fetchingModuleDetails, setFetchingModuleDetails] = useState(true);
+  const [isEditCourseModalOpen, setIsEditModalCourseOpen] = useState(false);
+  const [isDeleteCourseModalOpen, setIsDeleteModalCourseOpen] = useState(false);
+  const [contentDetails, setContentDetails] = useState(null);
 
   const toggleSection = section => {
     setOpenSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
   };
 
   const fetchModuleDetails = useCallback(async () => {
+    setFetchingModuleDetails(true);
+
     try {
       const courseFetched = await getCourseById(courseId);
       setCourse(courseFetched);
-      if (courseFetched.lessons?.length > 0) setSelectedContent(courseFetched.lessons[0]);
+      if (courseFetched.lessons?.length > 0) setSelectedContent({ item: courseFetched.lessons[0], type: 'lesson' });
     } catch (error) {
       console.log(error);
       toast.error('Algo ha salido mal. Por favor intenta más tarde');
+    } finally {
+      setFetchingModuleDetails(false);
     }
   }, [courseId]);
 
-  const editCourse = () => {};
+  const editCourse = () => {
+    setIsEditModalCourseOpen(true);
+  };
   const addNewLesson = () => {
     setIsNewContentFormOpen(true);
   };
   const addNewPage = () => {};
-  const deleteCourse = () => {};
+  const deleteCourse = () => {
+    setIsDeleteModalCourseOpen(true);
+  };
+
+  const redirectToCourses = () => {
+    router.push('/agents-management/capacitations/e-learning/courses');
+  };
+
+  const fetchContentDetails = useCallback(async () => {
+    if (!selectedContent) return;
+    setLoading(true);
+
+    try {
+      const content = { ...selectedContent };
+      let result = null;
+
+      if (content.type === 'lesson') {
+        result = await getLesson(content.item.id);
+      } else if (content.type === 'page') {
+        result = await getLessonPage(content.item.id);
+      }
+
+      if (result) setContentDetails(result);
+    } catch (error) {
+      toast.error('Tenemos problemas para cargar el contenido. Por favor intente más tarde');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedContent]);
 
   useEffect(() => {
     fetchModuleDetails();
   }, [fetchModuleDetails]);
 
-  if (!course) {
-    return <div>Module not found</div>;
+  useEffect(() => {
+    fetchContentDetails();
+  }, [fetchContentDetails]);
+
+  if (!course && !fetchingModuleDetails) {
+    return <div>Module not found</div>; // TODO: Mejorar este componente
   }
+
+  if (fetchingModuleDetails)
+    return (
+      <div className="h-48 w-full bg-white rounded-xl">
+        <LoadingSpinnerSmall />
+      </div>
+    );
 
   return (
     <div className="py-4">
@@ -73,7 +131,7 @@ export const ModuleDetails = ({ courseId }) => {
                   isOpen={openSections.includes(lesson.name)}
                   onToggle={() => {
                     toggleSection(lesson.name);
-                    if (selectedContent.name !== lesson.name) setSelectedContent(lesson);
+                    if (selectedContent.name !== lesson.name) setSelectedContent({ item: lesson, type: 'lesson' });
                   }}
                 />
               ))
@@ -127,7 +185,13 @@ export const ModuleDetails = ({ courseId }) => {
         </div>
 
         <div>
-          <ContentView course={course} content={selectedContent} onSuccess={fetchModuleDetails} />
+          {loading ? (
+            <div className="h-48 w-full bg-white rounded-xl">
+              <LoadingSpinnerSmall />
+            </div>
+          ) : (
+            <ContentView course={course} content={contentDetails} onSuccess={fetchModuleDetails} />
+          )}
         </div>
 
         {/* <div className="bg-white rounded-xl" style={{ borderWidth: '1px', borderStyle: 'solid' }}> */}
@@ -154,6 +218,8 @@ export const ModuleDetails = ({ courseId }) => {
           )} */}
       </div>
 
+      <CourseCreateEditModal isOpen={isEditCourseModalOpen} setIsOpen={setIsEditModalCourseOpen} course={course} onSuccess={() => fetchModuleDetails()} />
+      <DeleteCourseModal isOpen={isDeleteCourseModalOpen} setIsOpen={setIsDeleteModalCourseOpen} course={course} onSuccess={() => redirectToCourses()} />
       <NewContentForm isOpen={isNewContentFormOpen} setIsOpen={setIsNewContentFormOpen} contentType="lesson" parent={course} onSuccess={fetchModuleDetails} />
     </div>
   );

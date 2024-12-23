@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 
 import ModuleCard from '../components/ModuleCard';
-import NewCourseModal from './NewCourseModal';
+import CourseCreateEditModal from './CourseCreateEditModal';
 import DeleteCourseModal from './DeleteCourseModal';
 
 export default function CoursesGridView({ courses }) {
@@ -31,7 +31,7 @@ export default function CoursesGridView({ courses }) {
         <ModuleCard key={course.id} course={course} onEditCourse={onEditCourse} onMoveCourse={onMoveCourse} onDeleteCourse={onDeleteCourse} />
       ))}
 
-      <NewCourseModal isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen} course={courseRef.current} />
+      <CourseCreateEditModal isOpen={isEditModalOpen} setIsOpen={setIsEditModalOpen} course={courseRef.current} />
       <DeleteCourseModal isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} course={courseRef.current} />
     </div>
   );

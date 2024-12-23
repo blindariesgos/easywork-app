@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
@@ -11,14 +11,17 @@ import LessonTextEditorMoreMenu from './LessonTextEditorMoreMenu';
 import NewLessonCoverPhoto from './NewLessonCoverPhoto';
 import ContentViewCoverPhoto from './ContentViewCoverPhoto';
 
-import { createLesson, updateLesson } from '../services/create-lesson';
+import { createLesson, updateLesson, getLesson } from '../services/lessons';
+import { createPage, updatePage, getLessonPage } from '../services/lesson-pages';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 
 export const ContentView = ({ course, content, onSuccess }) => {
-  const isEdit = !!content;
+  const isEdit = !!content?.item;
+
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
   const [markAsDone, setMarkAsDone] = useState(false);
+  // const [contentDetails, setContentDetails] = useState(null);
 
   const {
     register,
@@ -47,7 +50,7 @@ export const ContentView = ({ course, content, onSuccess }) => {
       // Object.entries(values).forEach(([key, value]) => newLesson.append(key, value));
 
       if (isEdit) {
-        await updateLesson(content.id, values);
+        await updateLesson(content.item.id, values);
       } else {
         await createLesson(values);
       }
@@ -72,7 +75,7 @@ export const ContentView = ({ course, content, onSuccess }) => {
         content: content ? content.content : false,
         coverPhoto: content ? content.coverPhoto : null,
       });
-  }, [reset, content]);
+  }, [content, reset]);
 
   useEffect(() => {
     const toolbar = document.querySelector('.ql-toolbar');
@@ -135,30 +138,9 @@ export const ContentView = ({ course, content, onSuccess }) => {
           </div>
         )}
 
-        <LessonTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} />
+        {!loading && <LessonTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} />}
 
-        {/* <div className="mb-4">
-          <p className="text-gray-50 text-sm mb-1">Nombre</p>
-          <input
-            {...register('name', { required: 'El nombre es obligatorio.' })}
-            type="text"
-            placeholder="Módulo"
-            className={`w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border  focus:ring-gray-200 focus:outline-0 ${errors.name ? 'focus:border-red-300 border-red-300' : 'border-gray-200'}`}
-            disabled={loading}
-          />
-          {errors.name && <p className="text-red-400 text-sm mt-1 pl-2">{errors.name.message}</p>}
-        </div>
-        <div className="mb-4">
-          <p className="text-gray-50 text-sm mb-1">Descripción</p>
-          <TextEditor className="border rounded" onChange={value => setValue('description', value)} value={values.description} />
-        </div>
-        <div>
-          <p className="text-gray-50 text-sm mb-1">Portada</p>
-          <NewLessonCoverPhoto onChange={file => setValue('coverPhoto', file)} loading={loading} coverPhoto={values.coverPhoto} />
-          {errors.coverPhoto && <p className="text-red-400 text-sm mt-1 pl-2">{errors.coverPhoto.message}</p>}
-        </div> */}
-
-        {!isEditorDisabled && (
+        {!isEditorDisabled && !loading && (
           <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
             <div>
               <LessonTextEditorMoreMenu />

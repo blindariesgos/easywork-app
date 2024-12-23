@@ -10,7 +10,7 @@ import LessonTextEditorMoreMenu from './LessonTextEditorMoreMenu';
 
 import NewLessonCoverPhoto from './NewLessonCoverPhoto';
 
-import { createLesson, updateLesson } from '../services/create-lesson';
+import { createLesson, updateLesson } from '../services/lessons';
 
 export const NewLessonForm = ({ course, lesson, onSuccess }) => {
   const isEdit = !!lesson;

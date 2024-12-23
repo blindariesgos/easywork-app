@@ -12,7 +12,7 @@ import ModulePhoto from './ModulePhoto';
 
 import { createCourse, updateCourse } from '../courses/services/create-course';
 
-export default function NewCourseModal({ course, isOpen, setIsOpen }) {
+export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const isEdit = !!course;
 
@@ -68,6 +68,7 @@ export default function NewCourseModal({ course, isOpen, setIsOpen }) {
       reset();
       setIsOpen(false);
       toast.success(isEdit ? 'Cambios guardados exitosamente!' : 'Curso creado exitosamente!');
+      if (onSuccess) onSuccess();
     } catch (error) {
       toast.error('Algo no ha salido muy bien. Por favor intente más tarde');
     } finally {

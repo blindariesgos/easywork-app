@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import AgentDetails from "./AgentDetails";
+import AgentAccompaniment from "../../../agent/AgentAccompaniment";
 
 export default function PageContactId({ params: { id } }) {
-  return <AgentDetails id={id} />;
+  return <AgentAccompaniment id={id} />;
 }

@@ -1,9 +1,9 @@
 "use client";
 import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
-import AgentEditor from "../../components/AgentEditor";
 import { useAgent } from "@/src/lib/api/hooks/agents";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import AgentRecruitment from "../../../agent/AgentRecruitment";
 
 export default function AgentDetails({ id }) {
   const { data, isLoading, isError } = useAgent(id);
@@ -21,7 +21,7 @@ export default function AgentDetails({ id }) {
   return (
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">
       <Suspense fallback={<LoaderSpinner />}>
-        <AgentEditor agent={data} id={id} />
+        <AgentRecruitment agent={data} id={id} />
       </Suspense>
     </SlideOver>
   );

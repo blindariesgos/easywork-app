@@ -443,7 +443,7 @@ export const useSidebar = () => {
         {
           id: "agent-management",
           name: t("common:menu:agent-management:conections"),
-          href: "",
+          href: "/agents-management/conections",
           iconShortBar: ArrowPathIcon,
           image: "/img/agentsManagement/conections.svg",
         },
@@ -2137,6 +2137,62 @@ export const useRecruitmentTable = () => {
     {
       id: 8,
       name: t("agentsmanagement:recruitment:table:activity"),
+      row: "activities",
+      order: "activities",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
+export const useConectionsTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 4,
+      name: t("agentsmanagement:conections:table:agent"),
+      row: "name",
+      order: "name",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("agentsmanagement:conections:table:state"),
+      row: "stage",
+      order: "stage",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:conections:table:initdate"),
+      row: "date",
+      order: "date",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:conections:table:indate"),
+      row: "date",
+      order: "date",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:conections:table:proccess"),
+      row: "proccess",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:conections:table:responsible"),
+      row: "manager",
+      order: "manager",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:conections:table:activity"),
       row: "activities",
       order: "activities",
       check: true,

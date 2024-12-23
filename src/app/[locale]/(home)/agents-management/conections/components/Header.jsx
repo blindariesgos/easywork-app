@@ -10,44 +10,19 @@ import useCrmContext from "@/src/context/crm";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useAccompanimentsContext from "@/src/context/accompaniments";
 
-import { useRouter } from "next/navigation";
-import Button from "@/src/components/form/Button";
-
 export default function AccompanimentsHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
   const { displayFilters, removeFilter } = useAccompanimentsContext();
-  const router = useRouter();
-
-  // const options = [
-  //   {
-  //     name: "Agente",
-  //     onclick: () =>
-  //       router.push("/agents-management/accompaniment/agent?show=true"),
-  //   },
-  //   { name: "Actividades", disabled: true },
-  //   { name: "Cita con Prospectos o Clientes", disabled: true },
-  //   { name: "Reuniones de Coaching", disabled: true },
-  //   { name: "Asingnar GDD", disabled: true },
-  //   { name: "Reasignar GDD", disabled: true },
-  // ];
 
   return (
     <header className="flex flex-col">
       <div className="px-4 flex flex-col gap-2  bg-white py-4 rounded-md shadow-sm w-full">
         <div className="flex gap-3 flex-wrap w-full items-center">
           <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">
-            {t("agentsmanagement:recruitment:title")}
+            {t("agentsmanagement:conections:title")}
           </h1>
-          <Button
-            className="py-2 px-4"
-            buttonStyle="primary"
-            onclick={() =>
-              router.push("/agents-management/recruitment/agent?show=true")
-            }
-            label="Añadir"
-          />
           {/* <Menu>
             <MenuButton className="py-2 px-4 bg-primary hover:bg-easy-500 text-white disabled:opacity-50 shadow-sm text-sm flex items-center gap-x-2 rounded-md  font-medium outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 justify-center">
               Agregar

@@ -11,7 +11,7 @@ import General from "./tabs/General";
 
 import { TabGroup, TabPanel, TabPanels } from "@headlessui/react";
 
-export default function AgentEditor({ agent, id }) {
+export default function AgentEditor({ agent, id, children }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -81,62 +81,7 @@ export default function AgentEditor({ agent, id }) {
         )}
         {agent && (
           <Fragment>
-            <div className="pt-6 px-2 md:px-4 lg:px-8 pb-2 md:pb-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
-                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {agent?.name}
-                </p>
-
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">CUA:</p>
-                  <p className="text-sm">{agent?.cua ?? "111111111"}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    ETAPA DE AVANCE DE RECLUTAMENTO:
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="px-1 py-2  text-sm rounded-md bg-[#a9ea44]">
-                    Ingreso aprobado
-                  </button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    Fecha de inicio del proceso:
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">01/01/0001</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    ETAPA DE AVANCE Capacitacion:
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="px-1 py-2  text-sm rounded-md bg-[#ffeb04]">
-                    50%
-                  </button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    Fecha de ingreso o aprobacion:
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">01/01/0001</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">ETAPA DE AVANCE conexion:</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="px-1 py-2 text-sm rounded-md bg-[#64d1ef]">
-                    En Avance
-                  </button>
-                </div>
-              </div>
-            </div>
+            {children}
             <div className="pb-6 px-4 lg:px-8 sticky bg-inherit z-10 top-0">
               <AddAgentTabs tabs={tabs} refPrint={refPrint} contact={agent} />
             </div>

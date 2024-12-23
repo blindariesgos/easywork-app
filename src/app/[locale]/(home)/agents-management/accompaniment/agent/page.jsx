@@ -1,6 +1,6 @@
 import React from "react";
 import SlideOver from "@/src/components/SlideOver";
-import AgentEditor from "../components/AgentEditor";
+import AgentEditor from "../../agent/components/AgentEditor";
 
 export default async function page() {
   return (

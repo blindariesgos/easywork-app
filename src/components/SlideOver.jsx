@@ -19,6 +19,7 @@ export default function SlideOver({
   subLabelTag,
   className,
   remove,
+  maxWidthClass,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -162,7 +163,7 @@ export default function SlideOver({
                 leaveTo="translate-x-full"
               >
                 <DialogPanel
-                  className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
+                  className={`pointer-events-auto w-screem drop-shadow-lg ${previousModalPadding}`}
                 >
                   <div className="flex justify-end h-screen relative">
                     <div className={`absolute right-full top-0`}>

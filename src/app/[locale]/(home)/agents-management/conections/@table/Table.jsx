@@ -22,7 +22,7 @@ import Link from "next/link";
 import { deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { useRecruitmentTable } from "../../../../../../hooks/useCommon";
+import { useConectionsTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { useAlertContext } from "@/src/context/common/AlertContext";
@@ -63,7 +63,7 @@ export default function Table() {
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
   const { selectedContacts, setSelectedContacts } = useCrmContext();
-  const { columnTable } = useRecruitmentTable();
+  const { columnTable } = useConectionsTable();
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
@@ -90,13 +90,6 @@ export default function Table() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
 
   const deletePolicy = async (id) => {
     try {
@@ -204,11 +197,11 @@ export default function Table() {
   };
 
   const masiveActions = [
-    {
-      id: 1,
-      name: "Asignar agente relacionado - subagente",
-      disabled: true,
-    },
+    // {
+    //   id: 1,
+    //   name: "Asignar agente relacionado - subagente",
+    //   disabled: true,
+    // },
     {
       id: 1,
       name: "Asignar observador",
@@ -219,29 +212,7 @@ export default function Table() {
       name: "Cambiar Responsable",
       onclick: changeResponsible,
       selectUser: true,
-    },
-    {
-      id: 2,
-      name: t("common:table:checkbox:change-status"),
-      onclick: changeStatusPolicies,
-      selectOptions: [
-        {
-          id: "activa",
-          name: "Activa",
-        },
-        {
-          id: "expirada",
-          name: "Expirada",
-        },
-        {
-          id: "cancelada",
-          name: "Cancelada",
-        },
-        {
-          id: "en_proceso",
-          name: "En proceso",
-        },
-      ],
+      disabled: true,
     },
     {
       id: 1,
@@ -260,26 +231,26 @@ export default function Table() {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/agents-management/recruitment/agent/${id}?show=true`),
+        router.push(`/agents-management/conections/agent/${id}?show=true`),
     },
     {
       name: "Editar",
       disabled: true,
     },
+    // {
+    //   name: "Actividades",
+    //   disabled: true,
+    // },
+    // {
+    //   name: "Asignar GDD",
+    //   disabled: true,
+    // },
+    // {
+    //   name: "Reasignar GDD",
+    //   disabled: true,
+    // },
     {
-      name: "Actividades",
-      disabled: true,
-    },
-    {
-      name: "Asignar GDD",
-      disabled: true,
-    },
-    {
-      name: "Reasignar GDD",
-      disabled: true,
-    },
-    {
-      name: "Inactivar",
+      name: "Eliminar",
       disabled: true,
     },
   ];
@@ -356,7 +327,7 @@ export default function Table() {
             />
           ))}
         </div>
-        <p className="text-sm">Contacto Inicial</p>
+        <p className="text-sm">Documentacion Inicial</p>
       </div>
     );
   };
@@ -569,7 +540,7 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/agents-management/recruitment/agent/${agent.id}?show=true`}
+                                    href={`/agents-management/conections/agent/${agent.id}?show=true`}
                                     className="flex gap-3 items-center"
                                   >
                                     <Image
@@ -663,6 +634,8 @@ export default function Table() {
                                     {agent?.recruitmentManager?.name ??
                                       agent?.recruitmentManager?.username}
                                   </p>
+                                ) : column.row === "proccess" ? (
+                                  <p className="text-center">No</p>
                                 ) : (
                                   <p className="text-center">
                                     {agent[column.row] || "-"}

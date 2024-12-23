@@ -3,7 +3,7 @@ import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
 import { useAgent } from "@/src/lib/api/hooks/agents";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import AgentAccompaniment from "../../../agent/AgentAccompaniment";
+import AgentConection from "../../../agent/AgentConection";
 
 export default function AgentDetails({ id }) {
   const { data, isLoading, isError } = useAgent(id);
@@ -21,7 +21,7 @@ export default function AgentDetails({ id }) {
   return (
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">
       <Suspense fallback={<LoaderSpinner />}>
-        <AgentAccompaniment agent={data} id={id} />
+        <AgentConection agent={data} id={id} />
       </Suspense>
     </SlideOver>
   );

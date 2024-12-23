@@ -1,12 +1,14 @@
 "use client";
-import React from "react";
-import AccompanimentsHeader from "./agent/components/Header";
+import React, { Suspense } from "react";
+import AccompanimentsHeader from "./components/Header";
 import { useTranslation } from "react-i18next";
 import Header from "@/src/components/header/Header";
+import TabPages from "@/src/components/TabPages";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function LayoutPage({ children }) {
+export default function LayoutPage({ table, children }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -24,6 +26,7 @@ export default function LayoutPage({ children }) {
     <div className="bg-gray-100 h-full p-2 rounded-xl relative flex flex-col gap-4">
       <Header />
       <AccompanimentsHeader />
+      <Suspense fallback={<LoaderSpinner />}>{table}</Suspense>
       {children}
     </div>
   );

@@ -93,5 +93,17 @@
             "origin": "Origen",
             "activity": "Actividades"
         }
+    },
+    "conections": {
+        "title": "Conexiones",
+        "table": {
+            "agent": "Agente",
+            "state": "Etapa",
+            "initdate": "Periodo de ingreso",
+            "indate": "Fecha de cita CNSF",
+            "responsible": "Responsable",
+            "proccess": "Proceso cerrado",
+            "activity": "Actividades"
+        }
     }
 }

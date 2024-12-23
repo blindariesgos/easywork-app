@@ -48,9 +48,7 @@ export default function TabComment({ info }) {
       };
 
       if (taggedUsers.length > 0) {
-        body.metadata = {
-          taggedUsers,
-        };
+        body.taggedUsers = taggedUsers;
       }
       console.log({ body });
       try {

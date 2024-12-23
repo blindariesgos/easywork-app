@@ -26,6 +26,7 @@ import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
+import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -236,13 +237,14 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    let body = { ...data };
+    const { contact, ...info } = data;
+    const body = {
+      ...info,
+      contactId: contact?.id ?? null,
+    };
 
     if (selectedProfileImage?.file) {
-      body = {
-        ...body,
-        photo: selectedProfileImage?.file || "",
-      };
+      body.photo = selectedProfileImage?.file || "";
     }
 
     const formData = new FormData();
@@ -596,6 +598,16 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   disabled={!isEdit}
                   setValue={setValue}
                   error={!watch("activitySector") && errors.activitySector}
+                />
+              )}
+
+              {type == "moral" && isEdit && (
+                <ContactSelectAsync
+                  label={"Cliente contacto"}
+                  name={"contact"}
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors?.contact}
                 />
               )}
               <TextInput

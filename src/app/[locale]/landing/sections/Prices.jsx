@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import ModalForm from "../components/ModalForm";
+import { useRouter } from 'next/navigation';
 
 export default function Price() {
   const [showFreePlan, setShowFreePlan] = useState(false);
   const planRef = useRef(null); // Ref para el contenedor del plan
   const [planWidth, setPlanWidth] = useState(0); // Para almacenar el ancho del plan
+  const router = useRouter();
 
   // Función para cambiar el tamaño dinámicamente
   useEffect(() => {
@@ -159,7 +161,7 @@ export default function Price() {
       title: "EASYTOTAL",
       price: 99998,
       content: [
-        "MÁS de 1000 Usuarios.",
+        "Más de 1000 Usuarios.",
         "Más de 500,000 Pólizas Vigentes.",
         "Contratantes y prospectos.",
         "Calendario de pendientes.",
@@ -187,55 +189,58 @@ export default function Price() {
 
   return (
     <div
-      className="min-h-screen w-screen bg-white flex flex-col items-center justify-center text-blue-700 text-center bg-cover bg-center p-4"
+      className="min-h-screen w-screen bg-white relative text-blue-700 text-center bg-cover bg-center px-10 py-5 overflow-x-auto"
       style={{ backgroundImage: "url('/img/landing/bg-stars.png')" }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+      {/* Botón absoluto para mostrar/ocultar plan free dentro de la sección */}
+      <div
+        onClick={toggleFreePlan}
+        className="cursor-pointer p-2 md:p-4 bg-lime-400 hover:bg-lime-500 text-white rounded-md absolute max-md:top-[9%] top-[50%] z-50"
+        style={{
+          left: 15,
+          transform: "translateY(-50%) rotate(-90deg)",
+          transformOrigin: "left center",
+        }}
+      >
+        {showFreePlan ? "Ocultar Plan Free" : "Mostrar Plan Free"}
+      </div>
+
+      <div className="flex gap-4 w-full max-md:flex-col">
         {plans
-          .filter((item, index) => (index === 0 ? showFreePlan : true)) // Ocultar el plan Free si no está activado
+          .filter((item, index) => (index === 0 ? showFreePlan : true))
           .map((item, index) => (
             <div
               key={index}
-              ref={index === 1 ? planRef : null} // Asignamos la ref solo al plan EASYBASIC
-              className="relative flex items-center justify-center w-full"
+              ref={index === 1 ? planRef : null}
+              className="relative flex justify-center w-full"
             >
-              {index === 1 && ( // Mostrar el botón solo al lado del plan EASYBASIC
-                <div
-                  onClick={toggleFreePlan}
-                  className="cursor-pointer p-2 md:p-4 bg-lime-400 hover:bg-lime-500 text-white rounded-md absolute"
-                  style={{
-                    left: `calc(-${planWidth + 20}px)`, // Ajusta el valor a la izquierda dinámicamente
-                    top: "50%",
-                    transform: "translateY(-50%) rotate(-90deg)",
-                    transformOrigin: "left center",
-                  }}
-                >
-                  {showFreePlan ? "Ocultar Plan Free" : "Mostrar Plan Free"}
-                </div>
-              )}
-
               <div
                 className="bg-white m-2 rounded-md p-4 w-full md:w-72 flex flex-col justify-between"
                 style={{ height: "auto", minHeight: "450px" }}
               >
-                <h1 className="font-bold text-2xl md:text-3xl">{item.title}</h1>
-                <h2 className="font-bold text-2xl md:text-3xl">
-                  ${item.price}
-                  <span className="text-lg md:text-2xl font-medium">/Mes</span>
-                </h2>
-                <div className="mt-3 mb-6">
-                  {item.content.map(
-                    (
-                      des,
-                      idx // Mostrar todas las características con puntos al final
-                    ) => (
-                      <ul key={idx} className="list-none pl-5">
-                        <li className="text-sm md:text-base">{des}</li>
-                      </ul>
-                    )
-                  )}
+                <div>
+                  <h1 className="font-bold text-2xl md:text-3xl">
+                    {item.title}
+                  </h1>
+                  <h2 className="font-bold text-2xl md:text-3xl">
+                    ${item.price}
+                    <span className="text-lg md:text-2xl font-medium">
+                      /Mes
+                    </span>
+                  </h2>
+                  <div className="mt-3 mb-6">
+                    {item.content.map(
+                      (
+                        des,
+                        idx // Mostrar todas las características con puntos al final
+                      ) => (
+                        <ul key={idx} className="list-none pl-5">
+                          <li className="text-sm md:text-base">{des}</li>
+                        </ul>
+                      )
+                    )}
+                  </div>
                 </div>
-
                 <div className="flex items-center justify-center">
                   <ModalForm
                     buttonOpen={
@@ -249,6 +254,9 @@ export default function Price() {
             </div>
           ))}
       </div>
+      <h2 className="underline font-semibold text-white cursor-pointer text-xl mt-5" onClick={() => router.push(`/landing/prices`)}>
+        Comparación de planes
+      </h2>
     </div>
   );
 }

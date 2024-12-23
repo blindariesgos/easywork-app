@@ -41,12 +41,6 @@ export default function General({ agent, id, refPrint }) {
     }
   }, [params.get("edit")]);
 
-  useEffect(() => {
-    if (agent) {
-      setSelectedProfileImage({ base64: agent?.avatar || null, file: null });
-    }
-  }, [agent]);
-
   const schema = Yup.object().shape({
     firstName: Yup.string(),
     lastName: Yup.string(),
@@ -109,39 +103,39 @@ export default function General({ agent, id, refPrint }) {
     setLoading(false);
   }, [agent, id]);
 
-  const handleProfileImageChange = useCallback((event) => {
-    const file = event.target.files[0];
+  // const handleProfileImageChange = useCallback((event) => {
+  //   const file = event.target.files[0];
 
-    if (file) {
-      const reader = new FileReader();
+  //   if (file) {
+  //     const reader = new FileReader();
 
-      reader.onload = (e) => {
-        setSelectedProfileImage({ base64: e.target.result, file: file });
-      };
+  //     reader.onload = (e) => {
+  //       setSelectedProfileImage({ base64: e.target.result, file: file });
+  //     };
 
-      reader.readAsDataURL(file);
-    }
-  }, []);
+  //     reader.readAsDataURL(file);
+  //   }
+  // }, []);
 
-  const getFormData = (body) => {
-    const formData = new FormData();
-    for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]);
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key]));
-      } else {
-        formData.append(key, body[key]?.toString() || "");
-      }
-    }
-    return formData;
-  };
+  // const getFormData = (body) => {
+  //   const formData = new FormData();
+  //   for (const key in body) {
+  //     if (body[key] === null || body[key] === undefined || body[key] === "") {
+  //       continue;
+  //     }
+  //     if (body[key] instanceof File || body[key] instanceof Blob) {
+  //       formData.append(key, body[key]);
+  //     } else if (Array.isArray(body[key])) {
+  //       formData.append(key, JSON.stringify(body[key]));
+  //     } else {
+  //       formData.append(key, body[key]?.toString() || "");
+  //     }
+  //   }
+  //   return formData;
+  // };
 
   const handleFormSubmit = async (data) => {
-    const { childrens, birthdate, ...other } = data;
+    const { childrens, birthdate, phone, email, ...other } = data;
     let body = {
       ...other,
       children: childrens,
@@ -150,15 +144,20 @@ export default function General({ agent, id, refPrint }) {
     try {
       setLoading(true);
       if (!agent) {
-        if (selectedProfileImage?.file) {
-          body = {
-            ...body,
-            avatar: selectedProfileImage?.file || "",
-          };
-        }
-        const formData = getFormData(body);
+        // if (selectedProfileImage?.file) {
+        //   body = {
+        //     ...body,
+        //     avatar: selectedProfileImage?.file || "",
+        //   };
+        // }
+        // const formData = getFormData(body);
 
-        const response = await createAgent(formData);
+        body = {
+          ...body,
+          phone,
+          email,
+        };
+        const response = await createAgent(body);
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {
@@ -169,14 +168,14 @@ export default function General({ agent, id, refPrint }) {
         // await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success("Agente creado exitosamente");
       } else {
-        if (selectedProfileImage?.file) {
-          body = {
-            ...body,
-            image: selectedProfileImage?.file || "",
-          };
-        }
-        const formData = getFormData(body);
-        const response = await updateAgent(formData, id);
+        // if (selectedProfileImage?.file) {
+        //   body = {
+        //     ...body,
+        //     image: selectedProfileImage?.file || "",
+        //   };
+        // }
+        // const formData = getFormData(body);
+        const response = await updateAgent(body, id);
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {
@@ -230,7 +229,7 @@ export default function General({ agent, id, refPrint }) {
                 </button>
               )}
             </div>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               {isEdit ? (
                 <ProfileImageInput
                   selectedProfileImage={selectedProfileImage}
@@ -249,7 +248,7 @@ export default function General({ agent, id, refPrint }) {
                   />
                 </div>
               )}
-            </div>
+            </div> */}
             <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-20 pt-4">
               <TextInput
                 type="text"
@@ -367,7 +366,7 @@ export default function General({ agent, id, refPrint }) {
               />
 
               <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:manager")}
+                label={t("agentsmanagement:accompaniments:agent:responsible")}
                 name="developmentManagerId"
                 options={lists?.users ?? []}
                 disabled={!isEdit}
@@ -376,7 +375,7 @@ export default function General({ agent, id, refPrint }) {
                 watch={watch}
               />
               <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:responsible")}
+                label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="recruitmentManagerId"
                 options={lists?.users ?? []}
                 disabled={!isEdit}

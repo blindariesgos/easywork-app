@@ -4,10 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 import { AccordionItem } from '../components/AccordionItem';
-import { ModuleContent } from '../components/ModuleContent';
 import { Lesson } from '../components/Lesson';
 import { NewLessonButton } from '../components/NewLessonButton';
-import { NewLessonForm } from '../components/NewLessonForm';
 import { NewContentForm } from '../components/NewContentForm';
 import { ContentView } from '../components/ContentView';
 
@@ -24,7 +22,7 @@ export const ModuleDetails = ({ courseId }) => {
 
   const [openSections, setOpenSections] = useState([]);
   const [course, setCourse] = useState(null);
-  const [selectedContent, setSelectedContent] = useState(null);
+  const [selectedContent, setSelectedContent] = useState({ item: null, type: '' });
   const hasLessons = course?.lessons?.length > 0;
   const [showNewLessonForm, setShowNewLessonForm] = useState(!hasLessons);
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
@@ -136,57 +134,16 @@ export const ModuleDetails = ({ courseId }) => {
                   isOpen={openSections.includes(lesson.name)}
                   onToggle={() => {
                     toggleSection(lesson.name);
-                    if (selectedContent.name !== lesson.name) setSelectedContent({ item: lesson, type: 'lesson' });
+                    // if (selectedContent.name !== lesson.name) setSelectedContent({ item: lesson, type: 'lesson' });
                   }}
+                  onSelectLesson={() => setSelectedContent({ item: lesson, type: 'lesson' })}
+                  onSelectPage={page => setSelectedContent({ item: page, type: 'page' })}
                 />
               ))
             ) : (
               <NewLessonButton onClick={() => setIsNewContentFormOpen(true)} />
             )}
           </AccordionItem>
-
-          {/* {hasLessons ? (
-            course.lessons.map(lesson => <Lesson key={lesson.id} lesson={lesson} />)
-          ) : (
-            <NewLessonButton
-              onClick={() => {
-                // toast.info('🙅🏻‍♂️ Su desarrollador de confianza está trabajando en ello 👷🏻⚙️');
-                setShowNewLessonForm(true);
-              }}
-            />
-          )} */}
-
-          {/* <AccordionItem title="Module 1" isPrimaryItem isOpen={openSections.includes('overview')} onToggle={() => toggleSection('overview')} progress={25} childrenClassName="p-0">
-            <AccordionItem
-              title="Ciclo de ventas"
-              isOpen={openSections.includes('sales-cicle')}
-              onToggle={() => toggleSection('sales-cicle')}
-              childrenClassName="p-0"
-              titleBordered={false}
-              borderColor="border-gray-300"
-            >
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md">Capitulo III</p>
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md my-1">Capitulo III</p>
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md">Capitulo III</p>
-            </AccordionItem>
-            <AccordionItem title="Intro GNP" isOpen={openSections.includes('gnp')} onToggle={() => toggleSection('gnp')} childrenClassName="p-0" titleBordered={false} borderColor="border-gray-300">
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md">Capitulo III</p>
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md my-1">Capitulo III</p>
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md">Capitulo III</p>
-            </AccordionItem>
-            <AccordionItem
-              title="Productos y comisiones"
-              isOpen={openSections.includes('products')}
-              onToggle={() => toggleSection('products')}
-              childrenClassName="p-0"
-              titleBordered={false}
-              borderColor="border-gray-300"
-            >
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md">Capitulo III</p>
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md my-1">Capitulo III</p>
-              <p className="bg-gray-600 text-black p-4 w-full rounded-md">Capitulo III</p>
-            </AccordionItem>
-          </AccordionItem> */}
         </div>
 
         <div>
@@ -195,32 +152,9 @@ export const ModuleDetails = ({ courseId }) => {
               <LoadingSpinnerSmall />
             </div>
           ) : (
-            <ContentView course={course} content={contentDetails} onSuccess={fetchModuleDetails} />
+            <ContentView course={course} content={contentDetails} contentType={selectedContent.type} />
           )}
         </div>
-
-        {/* <div className="bg-white rounded-xl" style={{ borderWidth: '1px', borderStyle: 'solid' }}> */}
-        {/* <ModuleContent content={course} /> */}
-
-        {/* <NewLessonForm course={course} /> */}
-        {/* <ContentView course={course} content={selectedContent} /> */}
-
-        {/* {!hasLessons ? (
-            <NewLessonForm
-              course={course}
-              // onSuccess={() => {
-              //   setShowNewLessonForm(false);
-              // }}
-            />
-          ) : (
-            <ModuleContent
-              course={course}
-              onNavigate={id => {
-                setOpenSections(['overview']);
-                projectId = id;
-              }}
-            />
-          )} */}
       </div>
 
       <CourseCreateEditModal isOpen={isEditCourseModalOpen} setIsOpen={setIsEditModalCourseOpen} course={course} onSuccess={() => fetchModuleDetails()} />

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
@@ -15,13 +15,15 @@ import { createLesson, updateLesson, getLesson } from '../services/lessons';
 import { createPage, updatePage, getLessonPage } from '../services/lesson-pages';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 
-export const ContentView = ({ course, content, onSuccess }) => {
-  const isEdit = !!content?.item;
+import '../styles/index.css';
+import { FileUpload } from './FileUpload';
 
+export const ContentView = ({ course, content, onSuccess, contentType, onCloseEditor }) => {
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
   const [markAsDone, setMarkAsDone] = useState(false);
   // const [contentDetails, setContentDetails] = useState(null);
+  const inputFileRef = useRef(null);
 
   const {
     register,
@@ -46,17 +48,14 @@ export const ContentView = ({ course, content, onSuccess }) => {
     setLoading(true);
 
     try {
-      // const newLesson = new FormData();
-      // Object.entries(values).forEach(([key, value]) => newLesson.append(key, value));
-
-      if (isEdit) {
-        await updateLesson(content.item.id, values);
-      } else {
-        await createLesson(values);
+      if (contentType === 'lesson') {
+        await updateLesson(content?.id, values);
+      } else if (contentType === 'page') {
+        await updatePage(content?.id, values);
       }
 
       // reset();
-      toast.success(isEdit ? 'Cambios guardados exitosamente!' : 'Lección creado exitosamente!');
+      toast.success('Cambios guardados exitosamente!');
 
       if (onSuccess) onSuccess();
     } catch (error) {
@@ -79,19 +78,7 @@ export const ContentView = ({ course, content, onSuccess }) => {
 
   useEffect(() => {
     const toolbar = document.querySelector('.ql-toolbar');
-    if (toolbar) toolbar.style.backgroundColor = '#f5f5f5';
-  }, []);
-
-  useEffect(() => {
-    const toolbar = document.querySelector('.ql-toolbar');
-
-    if (toolbar) {
-      if (isEditorDisabled) {
-        toolbar.style.display = 'none';
-      } else {
-        toolbar.style.display = 'block';
-      }
-    }
+    if (toolbar) toolbar.style.display = isEditorDisabled ? 'none' : 'block';
   }, [isEditorDisabled]);
 
   return (
@@ -131,7 +118,7 @@ export const ContentView = ({ course, content, onSuccess }) => {
         </div>
       )}
 
-      <div className={`${isEditorDisabled ? 'flex items-center justify-center p-5' : ''} bg-white rounded-xl`}>
+      <div className={`${isEditorDisabled ? 'flex items-center justify-center p-5' : ''} bg-white rounded-xl mb-2`}>
         {loading && (
           <div className="h-48 w-full">
             <LoadingSpinnerSmall />
@@ -143,7 +130,11 @@ export const ContentView = ({ course, content, onSuccess }) => {
         {!isEditorDisabled && !loading && (
           <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
             <div>
-              <LessonTextEditorMoreMenu />
+              <LessonTextEditorMoreMenu
+                onAttachFile={() => {
+                  inputFileRef.current?.click();
+                }}
+              />
             </div>
             <div className="flex items-center sm:justify-center md:justify-end gap-4">
               <div className="flex items-center justify-center gap-2">
@@ -166,6 +157,10 @@ export const ContentView = ({ course, content, onSuccess }) => {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="bg-white rounded-xl flex gap-1">
+        <FileUpload inputRef={inputFileRef} />
       </div>
     </form>
   );

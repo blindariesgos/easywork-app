@@ -1,9 +1,9 @@
 import Image from "next/image";
 export default function Graphics() {
   return (
-    <div className="min-h-screen w-screen bg-lime-400 flex flex-col items-center justify-center relative overflow-hidden skew-bottom-div px-4">
+    <div className="w-screen bg-lime-400 flex flex-col justify-center relative pb-20 pt-20 max-md:pt-10 overflow-hidden skew-bottom-div px-4">
       <div className="flex flex-col items-center justify-center text-easywork-main">
-        <h1 className="font-bold text-4xl md:text-6xl mb-5 md:mb-7 text-center max-w-full md:max-w-md">
+        <h1 className="font-bold text-4xl md:text-6xl mb-3 md:mb-7 text-center max-w-full md:max-w-md">
           EASYWORK
         </h1>
         <p className="text-md md:text-lg leading-tight text-center">
@@ -11,7 +11,7 @@ export default function Graphics() {
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center mt-10 md:mt-20 text-center md:text-left">
+      <div className="flex flex-col md:flex-row items-center justify-center mt-10 text-center md:text-left">
         <Image
           className="w-64 md:w-96"
           width={400}

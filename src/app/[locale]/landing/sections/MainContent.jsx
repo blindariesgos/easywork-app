@@ -14,25 +14,31 @@ export default function MainContent() {
           alt="cellphone"
         />
         <div
-          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left z-50 mx-2"
+          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left z-50 mx-10"
           style={{ maxWidth: 590 }}
         >
-          <h2 className="font-semibold text-lg md:text-xl">
+          <h2
+            className="font-semibold text-lg md:text-xl"
+            style={{ textAlign: "justify" }}
+          >
             ¡Descubre la Revolución en Gestión de Pólizas!
           </h2>
-          <h1 className="font-bold text-4xl md:text-6xl mb-5 md:mb-7">
+          <h1
+            className="font-bold text-4xl md:text-6xl mb-5 md:mb-7"
+            style={{ textAlign: "justify" }}
+          >
             CON EASYWORK
           </h1>
           <h2
             className="font-semibold text-lg md:text-xl leading-tight mb-2 mx-auto md:mx-0"
-            style={{ maxWidth: 400 }}
+            style={{ maxWidth: 510, textAlign: "justify" }}
           >
             ¿Por qué conformarse con lo convencional cuando puedes contar con lo
             excepcional?
           </h2>
           <p
             className="text-md md:text-lg leading-tight mx-auto md:mx-0"
-            style={{ maxWidth: 400 }}
+            style={{ maxWidth: 510, textAlign: "justify" }}
           >
             Visualiza una herramienta que no solo organiza pólizas, sino que
             impulsa tus ventas, fortalece relaciones y transforma clientes

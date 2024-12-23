@@ -3,7 +3,7 @@ export default function Plans() {
   return (
     <div className="w-screen bg-white bg-cover max-md:pt-1 bg-center flex flex-col md:flex-row items-center justify-center pt-20 md:pt-48 px-6 md:px-0">
       <div
-        className="bg-white px-6 md:px-14 pt-14 text-easywork-main flex items-center justify-center flex-col text-center md:text-left"
+        className="bg-white px-6 md:px-14 pt-5 text-easywork-main flex items-center justify-center flex-col text-center md:text-left"
         style={{ maxWidth: 540 }}
       >
         <h1
@@ -14,7 +14,7 @@ export default function Plans() {
         </h1>
         <p
           className="text-md md:text-lg leading-tight"
-          style={{ maxWidth: 500 }}
+          style={{ maxWidth: 540 }}
         >
           Que agrupe varias de tus herramientas de trabajo, que combine
           comunicación con clientes, gestión de cartera para la cobranza

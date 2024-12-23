@@ -44,7 +44,7 @@ export default function Page() {
     >
       <div>
         <Image
-          className={`w-24 max-lg:w-16`}
+          className={`w-20 max-lg:w-12`}
           width={400}
           height={400}
           src="/img/landing/logo.svg"
@@ -102,7 +102,7 @@ export default function Page() {
         {isMenuOpen ? (
           <XMarkIcon className="h-6 w-6" />
         ) : (
-          <Bars3Icon className="h-6 w-6" />
+          <Bars3Icon className="h-8 w-8" />
         )}
       </button>
 

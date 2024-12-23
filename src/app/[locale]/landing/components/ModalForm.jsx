@@ -53,11 +53,10 @@ export default function ModalForm({ buttonOpen }) {
     onClick: () => setIsOpen(true),
   });
 
-  // Reset the form and close the modal
   const closeModal = () => {
     setIsOpen(false);
-    reset(); // This resets all input fields to their default values
-    setSubmitted(false); // Reset submission state
+    reset();
+    setSubmitted(false);
   };
 
   return (
@@ -69,7 +68,7 @@ export default function ModalForm({ buttonOpen }) {
         <div className="fixed inset-0 flex items-center justify-center z-50 overflow-y-auto">
           <div
             className="fixed inset-0 bg-black opacity-50 -z-1"
-            onClick={closeModal} // Close modal and reset form
+            onClick={closeModal}
           ></div>
 
           <Transition.Child

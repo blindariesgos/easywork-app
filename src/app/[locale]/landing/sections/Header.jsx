@@ -3,7 +3,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function Page() {
+export default function Page({ redirect }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { push } = useRouter();
@@ -54,17 +54,26 @@ export default function Page() {
       <nav className="hidden md:block">
         <ul className="flex gap-7 text-white font-semibold text-lg items-center">
           <li>
-            <a href="#inicio" onClick={toggleMenu}>
+            <a
+              href={`${redirect ? "/landing#inicio" : "#inicio"}`}
+              onClick={toggleMenu}
+            >
               Inicio
             </a>
           </li>
           <li>
-            <a href="#modulos" onClick={toggleMenu}>
+            <a
+              href={`${redirect ? "/landing#modulos" : "#modulos"}`}
+              onClick={toggleMenu}
+            >
               Módulos
             </a>
           </li>
           <li>
-            <a href="#planes" onClick={toggleMenu}>
+            <a
+              href={`${redirect ? "/landing#planes" : "#planes"}`}
+              onClick={toggleMenu}
+            >
               Planes
             </a>
           </li>

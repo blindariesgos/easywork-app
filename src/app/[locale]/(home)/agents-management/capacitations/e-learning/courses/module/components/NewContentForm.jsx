@@ -57,7 +57,7 @@ export const NewContentForm = ({ content, isOpen, setIsOpen, contentType = '', p
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-2 ">
         <DialogPanel className="min-w-96 space-y-8  p-6 rounded-xl bg-gray-100">
-          <DialogTitle className="font-bold">Agregar carpeta</DialogTitle>
+          <DialogTitle className="font-bold">{isEdit ? 'Editar' : 'Agregar'} contenido</DialogTitle>
 
           <input
             ref={contentNameInputRef}

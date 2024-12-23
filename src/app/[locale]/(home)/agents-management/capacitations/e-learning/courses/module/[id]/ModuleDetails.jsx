@@ -16,13 +16,13 @@ import { getLesson } from '../services/lessons';
 import { getLessonPage } from '../services/lesson-pages';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import CourseCreateEditModal from '../../../components/CourseCreateEditModal';
-import DeleteCourseModal from '../../../components/DeleteCourseModal';
+import DeleteContentModal from '../../../components/DeleteContentModal';
 import { useRouter } from 'next/navigation';
 
 export const ModuleDetails = ({ courseId }) => {
   const router = useRouter();
 
-  const [openSections, setOpenSections] = useState(['']);
+  const [openSections, setOpenSections] = useState([]);
   const [course, setCourse] = useState(null);
   const [selectedContent, setSelectedContent] = useState(null);
   const hasLessons = course?.lessons?.length > 0;
@@ -31,7 +31,7 @@ export const ModuleDetails = ({ courseId }) => {
   const [loading, setLoading] = useState(false);
   const [fetchingModuleDetails, setFetchingModuleDetails] = useState(true);
   const [isEditCourseModalOpen, setIsEditModalCourseOpen] = useState(false);
-  const [isDeleteCourseModalOpen, setIsDeleteModalCourseOpen] = useState(false);
+  const [isDeleteContentModalOpen, setIsDeleteModalCourseOpen] = useState(false);
   const [contentDetails, setContentDetails] = useState(null);
 
   const toggleSection = section => {
@@ -44,6 +44,7 @@ export const ModuleDetails = ({ courseId }) => {
     try {
       const courseFetched = await getCourseById(courseId);
       setCourse(courseFetched);
+
       if (courseFetched.lessons?.length > 0) setSelectedContent({ item: courseFetched.lessons[0], type: 'lesson' });
     } catch (error) {
       console.log(error);
@@ -59,7 +60,11 @@ export const ModuleDetails = ({ courseId }) => {
   const addNewLesson = () => {
     setIsNewContentFormOpen(true);
   };
-  const addNewPage = () => {};
+
+  const addNewPage = () => {
+    toast.info('En construcción 🚧');
+  };
+
   const deleteCourse = () => {
     setIsDeleteModalCourseOpen(true);
   };
@@ -219,7 +224,7 @@ export const ModuleDetails = ({ courseId }) => {
       </div>
 
       <CourseCreateEditModal isOpen={isEditCourseModalOpen} setIsOpen={setIsEditModalCourseOpen} course={course} onSuccess={() => fetchModuleDetails()} />
-      <DeleteCourseModal isOpen={isDeleteCourseModalOpen} setIsOpen={setIsDeleteModalCourseOpen} course={course} onSuccess={() => redirectToCourses()} />
+      <DeleteContentModal isOpen={isDeleteContentModalOpen} setIsOpen={setIsDeleteModalCourseOpen} content={course} onSuccess={() => redirectToCourses()} contentType="course" />
       <NewContentForm isOpen={isNewContentFormOpen} setIsOpen={setIsNewContentFormOpen} contentType="lesson" parent={course} onSuccess={fetchModuleDetails} />
     </div>
   );

@@ -15,6 +15,11 @@ export const updatePage = async (id, data) => {
   return response.data;
 };
 
+export const duplicatePage = async id => {
+  const response = await axios.put(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lesson-pages/duplicate/${id}`);
+  return response.data;
+};
+
 export const deletePage = async id => {
   const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lesson-pages/${id}`);
   return response.data;

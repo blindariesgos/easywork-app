@@ -7,26 +7,47 @@ import { toast } from 'react-toastify';
 import Button from '@/src/components/form/Button';
 
 import { deleteCourse } from '../courses/services/create-course';
+import { deleteLesson } from '../courses/module/services/lessons';
+import { deletePage } from '../courses/module/services/lesson-pages';
 
-export default function DeleteCourseModal({ course, isOpen, setIsOpen, onSuccess }) {
+export default function DeleteContentModal({ content, isOpen, setIsOpen, onSuccess, contentType }) {
   const [loading, setLoading] = useState(false);
+
+  const contentTypeLegend = {
+    course: {
+      name: 'Curso',
+      method: deleteCourse,
+    },
+    lesson: {
+      name: 'Carpeta',
+      method: deleteLesson,
+    },
+    page: {
+      name: 'Página',
+      method: deletePage,
+    },
+  };
 
   const onCloseModal = () => {
     setIsOpen(false);
   };
 
   const onDelete = async () => {
+    const contentHandler = contentTypeLegend[contentType];
+    if (!contentHandler) return;
+
     setLoading(true);
 
     try {
-      await deleteCourse(course.id);
+      await contentHandler.method(content.id);
+      // await deleteCourse(content.id);
       setIsOpen(false);
 
       if (onSuccess) onSuccess();
 
-      toast.info('Curso eliminado');
+      toast.info(`Contenido eliminado`);
     } catch (error) {
-      toast.error('Algo no ha salido muy bien. Por favor intente más tarde');
+      toast.error('Algo no ha salido bien. Por favor intente más tarde');
     } finally {
       setLoading(false);
     }
@@ -38,7 +59,7 @@ export default function DeleteCourseModal({ course, isOpen, setIsOpen, onSuccess
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-2 ">
         <DialogPanel className="min-w-96 space-y-8  p-6 rounded-xl bg-gray-100">
-          <DialogTitle className="font-bold">¿Está seguro de que desea eliminar el curso{course ? ` ${course.name}` : ''}?</DialogTitle>
+          <DialogTitle className="font-bold">¿Está seguro de que desea eliminar el contenido{content ? ` ${content.name}` : ''}?</DialogTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <Button label="Cancelar" type="button" buttonStyle="secondary" className="px-2 py-1 text-lg" onclick={onCloseModal} disabled={loading} />
             <Button label={loading ? 'Eliminando...' : 'Eliminar'} type="button" buttonStyle="error" className="px-2 py-1 text-lg" onclick={onDelete} disabled={loading} />

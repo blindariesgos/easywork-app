@@ -1,5 +1,9 @@
 {
+  "yes": "Si",
+  "no": "No",
   "loading": "Cargando...",
+  "saving": "Guardando...",
+  "with": "Con",
   "save": "¡Salvado con éxito!",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",
@@ -14,7 +18,8 @@
     "file": "Debe cargar los documentos",
     "size": "El archivo es mayor de {{size}} MB",
     "min-array": "Al menos debe seleccionar {{min}} opción(es)",
-    "number": "Debe ser un número"
+    "number": "Debe ser un número",
+    "alphanumeric": "Solo se permiten letras y números."
   },
   "months": {
     "january": "Enero",
@@ -31,6 +36,7 @@
     "december": "Diciembre"
   },
   "date": {
+    "title": "Fecha",
     "yesterday": "Ayer",
     "today": "Hoy",
     "tomorrow": "Mañana",
@@ -65,21 +71,28 @@
     "apply": "Aplicar",
     "continue": "Continuar",
     "add": "Agregar",
-    "change": "Cambiar"
+    "add-2": "Añadir",
+    "change": "Cambiar",
+    "next": "Siguiente",
+    "back": "Volver",
+    "done": "Listo"
   },
   "menu": {
+    "home": {
+      "name": "Home"
+    },
     "tools": {
       "name": "Herramientas",
-      "drive": "Drive -  Documentos",
+      "drive": "Documentos",
       "tasks": "Tareas",
-      "email": "Correo",
+      "email": "Buzón de correo",
       "calendar": "Calendario"
     },
     "sales": {
       "name": "Ventas",
       "crm": {
         "name": "CRM",
-        "contacts": "Contactos",
+        "contacts": "Cliente contratante",
         "prospects": "Prospectos"
       },
       "reports": {
@@ -90,10 +103,18 @@
         "agent": "Rendimiento de agente"
       },
       "marketing": {
-        "name": "Marketing"
-      },
-      "control": {
-        "name": "Cobranza"
+        "name": "MARKETING"
+      }
+    },
+    "control": {
+      "name": "Cobranza",
+      "portfolio": {
+        "name": "Control de Cartera",
+        "control": "Reporte de Cobranza",
+        "receipts": "Recibos",
+        "commissions": "Comisiones",
+        "commission-simulator": "Simulador de Comisiones",
+        "commissions-generated": "Comisiones Generadas"
       }
     },
     "services": {
@@ -107,32 +128,54 @@
     },
     "agent-management": {
       "name": "Gestión de agentes",
-      "recruitement": "Reclutamiento y selección",
-      "capacitations": "Capacitaciones",
+      "learning": "E-Learning (Próximamente)",
+      "accompaniment": "Seguimiento",
+      "commissions": "Comisiones",
+      "recruitement": "Embudo de reclutamiento y selección",
+      "capacitations": {
+        "name": "Capacitaciones",
+        "e-learning": "E-Learning",
+        "academy": "Academia"
+      },
       "conections": "Conexiones",
-      "development-agents": "Desarrollo de agentes",
-      "learning": "E-Learning (Próximamente)"
+      "development-agents": "Embudo de desarrollo de agentes",
+      "team-meetings": "Juntas de equipo",
+      "individual-meetings": "Juntas individuales"
     },
     "companies": {
       "name": "Compañías",
       "gnp": "GNP (Próximamente)",
-      "axxa": "AXXA (Próximamente)",
+      "axa": "AXA (Próximamente)",
       "banorte": "Banorte (Próximamente)",
       "atlas": "Atlas (Próximamente)",
       "zurich": "Zurich (Próximamente)",
       "qualitas": "Qualitas (Próximamente)",
       "afirme": "Afirme (Próximamente)",
-      "others": "Otras (Próximamente)"
+      "others": "Otras (Próximamente)",
+      "insurance": "Aseguradoras",
+      "agency-addresses": "Direcciones de Agencia"
     },
     "settings": {
       "name": "Ajustes y Configuraciones",
       "permissions": "Permisos y accesos a usuarios",
       "others": "Otros",
-      "password": "Cambio de contraseña"
+      "password": "Cambio de contraseña",
+      "invite": "Invitar usuario",
+      "user-list": "Lista de usuarios",
+      "other-notifications": "Otras notificaciones",
+      "suscripciones": "Suscripciones",
+      "other-settings": "Ajustes",
+      "change-password": "Cambio de contraseña"
     }
   },
   "header": {
-    "working": "Trabajando",
+    "status": {
+      "working": "Trabajando",
+      "offline": "Desconectado",
+      "do_not_disturb": "No molestar",
+      "on_vacation": "De vacaciones",
+      "out_of_office": "Fuera de la oficina"
+    },
     "profile": "Tu perfil",
     "signout": "Cerrar sesión",
     "placeholder-search": "Buscar personas, documentos y más"
@@ -151,7 +194,35 @@
       "add-observer": "Agregar observador",
       "add-participant": "Agregar participante",
       "change-observer": "Cambiar observador",
-      "change-participant": "Cambiar participante"
+      "change-creator": "Cambiar creador",
+      "change-participant": "Cambiar participante",
+      "change-deadline": "Cambiar fecha límite",
+      "change-responsible": "Cambiar responsable",
+      "change-status": "Cambiar estatus"
+    },
+    "footer": {
+      "elements": "Se muestran los elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> | Total elementos <strong>{{total}}</strong>",
+      "show": "Mostrar:"
     }
+  },
+  "alert": {
+    "delete-success": "Elemento(s) eliminado(s) exitosamente!",
+    "update-items-succes": "Se Actualizo con exito {{count}} elemento(s) de {{total}} seleccionado(s)",
+    "update-items-error": "Ocurrio un error al tratar de eliminar {{count}} elemento(s)"
+  },
+  "add-document": "Añadir Documento ({{document}})",
+  "slide": {
+    "renovations": "Renovaciones"
+  },
+  "activities": {
+    "event": "Reunión"
+  },
+  "crmTypes": {
+    "contact": "Clientes",
+    "poliza": "Pólizas",
+    "lead": "Prospectos",
+    "receipt": "Recibos",
+    "renewal": "Renovaciones",
+    "agent": "Agentes"
   }
 }

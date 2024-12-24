@@ -4,7 +4,7 @@ import SliderOverShort from "../../../../../../components/SliderOverShort";
 export default function ModalImap() {
   return (
     <SliderOverShort openModal={modalG}>
-      <Tag onclick={() => setModalG(false)} className="bg-green-500" />
+      <Tag onclick={() => setModalG(false)} className="bg-easywork-main" />
       <div className="bg-gray-300 rounded-l-2xl max-md:w-screen w-96 overflow-y-auto h-screen">
         <div className="m-3 font-medium text-lg">
           <h1>Gestionar buzón</h1>

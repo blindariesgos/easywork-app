@@ -25,7 +25,6 @@ const MultipleSelectWithFilters = ({
 
   const dropdownRef = useRef(null);
 
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,9 +32,11 @@ const MultipleSelectWithFilters = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (!dropdownRef) return;
+
+    document?.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document?.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -50,20 +51,21 @@ const MultipleSelectWithFilters = ({
     // Determine the type based on filterSelect
     const type = filterSelect === 1 ? "contact" : "poliza";
 
-    const newOption = { 
+    const newOption = {
       id: option.id,
       name: option.name,
       username: option.username,
       title: option.title,
-      type
+      type,
     };
 
-    const index = currentValues.findIndex(res => res.id === option.id);
+    const index = currentValues.findIndex((res) => res.id === option.id);
+    console.log(currentValues, type, newOption, index);
 
     if (index === -1) {
       setValue(name, [...currentValues, newOption], { shouldValidate: true });
     } else {
-      const updatedValue = currentValues.filter(res => res.id !== option.id);
+      const updatedValue = currentValues.filter((res) => res.id !== option.id);
       setValue(name, updatedValue, { shouldValidate: true });
     }
   };
@@ -93,7 +95,7 @@ const MultipleSelectWithFilters = ({
         <button
           type="button"
           onClick={handleToggle}
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-sm placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
+          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
@@ -103,13 +105,13 @@ const MultipleSelectWithFilters = ({
                   className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
                 >
                   {res.name || res.username || res.title || res.id}
-                  <button
+                  <div
                     type="button"
                     onClick={() => handleRemove(res.id)}
                     className="text-white"
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
-                  </button>
+                  </div>
                 </div>
               ))}
             <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
@@ -122,7 +124,10 @@ const MultipleSelectWithFilters = ({
           </span>
         </button>
         {isOpen && (
-          <div ref={dropdownRef} className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2">
+          <div
+            ref={dropdownRef}
+            className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-50 py-2"
+          >
             <div className="flex divide-x-2 divide-gray-200/70">
               <div
                 className="py-1 flex flex-col gap-2 px-2 flex-1"
@@ -136,7 +141,6 @@ const MultipleSelectWithFilters = ({
                 </div>
                 {filterData?.length === 0 && query !== "" ? (
                   <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                    caracas
                     {t("common:not-found")}
                   </div>
                 ) : (
@@ -187,7 +191,7 @@ const MultipleSelectWithFilters = ({
                     )}
                     onClick={() => setFilterSelect(1)}
                   >
-                    Contactos
+                    Clientes
                   </li>
                   <li
                     className={clsx(

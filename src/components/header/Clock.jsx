@@ -2,10 +2,6 @@
 import React, { useEffect, useState } from "react";
 
 export default function Clock() {
-  const [ampmState, setAMPMState] = useState(
-    new Date().toLocaleTimeString([], { hour12: true }).slice(-5).replace(/\./g, "").replace(/\s/g, "").toUpperCase()
-  );
-
   const getConvertHour = (date) => {
     let hora12 = parseInt(date.split(":")[0]);
     hora12 = hora12 >= 12 ? hora12 - 12 : hora12;
@@ -27,7 +23,7 @@ export default function Clock() {
         getConvertHour(date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit"}))
       );
       // Obtener AM/PM
-      setAMPMState(date.toLocaleTimeString([], { hour12: true }).slice(-5).replace(/\./g, "").replace(/\s/g, "").toUpperCase());
+      // setAMPMState(date.toLocaleTimeString([], { hour12: true }).slice(-5).replace(/\./g, "").replace(/\s/g, "").toUpperCase());
     }, 1000);
 
     // Limpiar el intervalo cuando el componente se desmonte
@@ -42,9 +38,8 @@ export default function Clock() {
   }
 
   return (
-    <div className="text-lg md:text-2xl text-black flex gap-2">
-      <div>{timeState}</div>
-      <p className="text-xs">{ampmState}</p>
+    <div className="text-base font-medium text-black">
+      <div className="whitespace-nowrap">{timeState}</div>
     </div>
   )
 }

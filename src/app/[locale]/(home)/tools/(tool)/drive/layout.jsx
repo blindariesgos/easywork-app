@@ -1,16 +1,11 @@
-"use client";
-import useAppContext from "../../../../../../context/app";
-import DriveHeader from "./components/DriveHeader";
+import DriveContexProvider from "../../../../../../context/drive/provider"
 
-export default function DriveLayout({ children, table, icons, thumbs }) {
-  const { driveView } = useAppContext();
+
+export default function DriveLayout({ children }) {
+
   return (
-    <div className="flex flex-col flex-grow">
-      <DriveHeader />
+    <DriveContexProvider>
       {children}
-      {driveView === "table" && table}
-      {driveView === "icon" && icons}
-      {driveView === "thumb" && thumbs}
-    </div>
+    </DriveContexProvider>
   );
 }

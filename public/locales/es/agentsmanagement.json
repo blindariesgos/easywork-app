@@ -1,0 +1,109 @@
+{
+    "accompaniments": {
+        "title": "Lista de Agentes",
+        "table": {
+            "agent": "Agente",
+            "email": "Correo Electrónico",
+            "mobile": "Móvil",
+            "lastUpdate": "Fecha de la última actividad",
+            "manager": "Gerente de desarrollo",
+            "state": "Estado del agente",
+            "created-in": "Fecha de creación",
+            "not-data": "No hay agentes"
+        },
+        "agent": {
+            "create": "Nuevo Agente",
+            "data": "Datos de Agente",
+            "age": "Edad",
+            "children": "Hijos",
+            "responsible": "Responsable del reclutamiento",
+            "manager": "Gerente de desarrollo",
+            "observer": "Observador",
+            "comments": "Comentarios",
+            "recruitment": "Reclutamiento y selección",
+            "training": "Capacitación",
+            "conexions": "Conexiones",
+            "mettings": "Juntas individuales"
+        }
+    },
+    "capacitations": {
+        "title": "Capacitaciones",
+        "table": {
+            "agent": "Agente",
+            "stage": "Etapa",
+            "startDate": "Fecha de inicio del proceso",
+            "endDate": "Fecha final del proceso",
+            "processClosed": "Proceso cerrado",
+            "responsible": "Responsable",
+            "activity": "Actividad",
+            "email": "Correo Electrónico",
+            "mobile": "Móvil",
+            "lastUpdate": "Fecha de la última actividad",
+            "manager": "Gerente de desarrollo",
+            "state": "Estado del agente",
+            "created-in": "Fecha de creación",
+            "not-data": "No hay agentes"
+        }
+    },
+    "meetings-and-sessions": {
+        "title": "Mis Juntas",
+        "table": {
+            "name": "Nombre de la reunión",
+            "gdd": "GDD",
+            "conexions": "Conexiones CRM",
+            "time": "Duración",
+            "date": "Fecha de Reunión",
+            "revision": "Revisión del GDD"
+        },
+        "new": {
+            "title": "Nueva reunión",
+            "description": "Introduzca el nombre de la reunión",
+            "responsible": "Responsable",
+            "date": "Fecha de Reunión",
+            "add": "Agregar junta de equipo",
+            "create-msg": "Reunión creada exitosamente"
+        },
+        "state": {
+            "title": "Estado",
+            "cancelled": "Cancelada",
+            "active": "Activa",
+            "completed": "Completada",
+            "pending": "Pendiente"
+        },
+        "date": "Fecha de Inicio",
+        "time": "Duración",
+        "group": {
+            "title": "Junta de equipo",
+            "agent": "Agentes"
+        },
+        "individual": {
+            "title": "Junta individual",
+            "agent": "Agente"
+        },
+        "gdd": "Gerente de Desarrollo"
+    },
+    "recruitment": {
+        "title": "Reclutamiento y selección",
+        "table": {
+            "agent": "Agente",
+            "state": "Etapa de avance",
+            "initdate": "Fecha de inicio del proceso",
+            "indate": "Fecha de ingreso",
+            "responsible": "Responsable",
+            "origin": "Origen",
+            "activity": "Actividades"
+        }
+    },
+    "conections": {
+        "title": "Conexiones",
+        "table": {
+            "agent": "Agente",
+            "state": "Etapa",
+            "initdate": "Periodo de ingreso",
+            "indate": "Fecha de cita CNSF",
+            "responsible": "Responsable",
+            "proccess": "Proceso cerrado",
+            "activity": "Actividades"
+        }
+    }
+}

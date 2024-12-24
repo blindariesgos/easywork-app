@@ -1,119 +1,299 @@
 "use client";
+
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import Link from "next/link";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import {
-  useTasksConfigs,
-  useTasksDetete,
-} from "@/src/hooks/useCommon";
-import { Pagination } from "@/src/components/pagination/Pagination";
+import React, { useLayoutEffect, useRef, useState, Fragment } from "react";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import moment from "moment";
-import Image from "next/image";
-import { useOrderByColumn } from "@/src/hooks/useOrderByColumn";
+import FooterTable from "@/src/components/FooterTable";
+import {
+  deleteTask as apiDeleteTask,
+  putTaskCompleted,
+  putTaskId,
+  putTaskIdRelations,
+} from "@/src/lib/apis";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import { useAlertContext } from "@/src/context/common/AlertContext";
+import useTasksContext from "@/src/context/tasks";
+import { getFormatDate } from "@/src/utils/getFormatDate";
+import Task from "./Task";
 
-export default function TableTask({ data }) {
+export default function TableTask() {
   const checkbox = useRef();
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedTasks, setSelectedTasks] = useState([]);
-  const [dataTask, setDataTask] = useState();
-  const { fieldClicked, handleSorting, orderItems } = useOrderByColumn(
-    [],
-    data?.items
-  );
-  const { columnTable } = useTasksConfigs();
-  const [loading, setLoading] = useState(false);
-  const { optionsCheckBox } = useTasksDetete(
+  const { onCloseAlertDialog } = useAlertContext();
+  const {
+    tasks: data,
+    mutate: mutateTasks,
     selectedTasks,
     setSelectedTasks,
-    setLoading
-  );
+    limit,
+    setLimit,
+    page,
+    setPage,
+    order,
+    orderBy,
+    setOrderBy,
+  } = useTasksContext();
+
+  const [checked, setChecked] = useState(false);
+  const [indeterminate, setIndeterminate] = useState(false);
+
+  const { columnTable } = useTasksConfigs();
+  const [loading, setLoading] = useState(false);
+
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
 
-  useEffect(() => {
-    if (data) setDataTask(data);
-  }, [data]);
-
-  useEffect(
-    () => {
-      if (orderItems.length > 0)
-        setDataTask({ items: orderItems, meta: data?.meta });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [orderItems]
-  );
+  const { t } = useTranslation();
 
   useLayoutEffect(() => {
     if (selectedTasks.length > 0) {
       const isIndeterminate =
-        selectedTasks.length > 0 &&
-        selectedTasks.length < dataTask?.items.length;
-      setChecked(selectedTasks.length === dataTask?.items.length);
+        selectedTasks.length > 0 && selectedTasks.length < data?.items.length;
+      setChecked(selectedTasks.length === data?.items.length);
       setIndeterminate(isIndeterminate);
       checkbox.current.indeterminate = isIndeterminate;
     }
-  }, [selectedTasks, dataTask]);
+  }, [selectedTasks, data]);
 
-  function toggleAll() {
-    setSelectedTasks(checked || indeterminate ? [] : dataTask?.items);
+  const toggleAll = () => {
+    const items = checked || indeterminate ? [] : data?.items?.map((x) => x.id);
+    setSelectedTasks(items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
-  }
+  };
+
+  //#region MASIVE ACTIONS
+
+  const deleteTasks = async () => {
+    try {
+      setLoading(true);
+      if (selectedTasks.length === 1) {
+        await apiDeleteTask(selectedTasks[0]);
+      } else if (selectedTasks.length > 1) {
+        await Promise.all(selectedTasks.map((task) => apiDeleteTask(task)));
+      }
+      toast.success(t("tools:tasks:table:delete-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:delete-error"));
+    } finally {
+      setLoading(false);
+      onCloseAlertDialog();
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const completedTasks = async () => {
+    try {
+      setLoading(true);
+      await Promise.all(
+        selectedTasks.map((taskId) => putTaskCompleted(taskId))
+      );
+      toast.success(t("tools:tasks:table:completed-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:completed-error"));
+    } finally {
+      setLoading(false);
+      onCloseAlertDialog();
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const addRelationTasks = async (user, relation) => {
+    try {
+      setLoading(true);
+      const body = {
+        usersIds: [user.id],
+        relation,
+      };
+
+      await Promise.all(
+        selectedTasks.map((taskId) => putTaskIdRelations(taskId, body))
+      );
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const changeResponsibleTasks = async (responsible) => {
+    try {
+      setLoading(true);
+      const body = {
+        responsibleIds: [responsible.id],
+      };
+
+      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const changeCreatorTasks = async (creator) => {
+    try {
+      setLoading(true);
+      const body = {
+        createdById: creator.id,
+      };
+
+      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const changeDeadlineTasks = async (deadline) => {
+    try {
+      setLoading(true);
+
+      const body = {
+        deadline: getFormatDate(deadline),
+      };
+
+      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
+      toast.success(t("tools:tasks:table:responsible-msg"));
+      setSelectedTasks([]);
+    } catch (error) {
+      toast.error(t("tools:tasks:table:responsible-error"));
+    } finally {
+      setLoading(false);
+      mutateTasks && mutateTasks();
+    }
+  };
+
+  const optionsCheckBox = [
+    {
+      id: 1,
+      name: t("common:table:checkbox:complete"),
+      onclick: () => completedTasks(),
+    },
+    {
+      id: 2,
+      name: t("common:table:checkbox:add-observer"),
+      selectUser: true,
+      onclick: (e) => addRelationTasks(e, "observadores"),
+    },
+    {
+      id: 3,
+      name: t("common:table:checkbox:add-participant"),
+      selectUser: true,
+      onclick: (e) => addRelationTasks(e, "participantes"),
+    },
+    {
+      id: 4,
+      name: t("common:table:checkbox:change-creator"),
+      selectUser: true,
+      onclick: (e) => changeCreatorTasks(e),
+    },
+    {
+      id: 5,
+      name: t("common:table:checkbox:change-deadline"),
+      selectDate: true,
+      onclick: (e) => changeDeadlineTasks(e),
+    },
+    {
+      id: 2,
+      name: t("common:table:checkbox:change-responsible"),
+      selectUser: true,
+      onclick: (e) => changeResponsibleTasks(e),
+    },
+    {
+      id: 6,
+      name: t("common:table:checkbox:delete"),
+      onclick: () => deleteTasks(),
+    },
+  ];
+
+  //#endregion
 
   return (
-    <>
+    <Fragment>
       {selectedColumns && selectedColumns.length > 0 && (
         <div className="flow-root">
           {loading && <LoaderSpinner />}
-          <div className="overflow-x-auto">
-            <div className="inline-block min-w-full py-2 align-middle">
-              <div className="relative sm:rounded-lg h-[60vh]">
-                <table className="min-w-full rounded-md bg-gray-100 table-auto ">
-                  <thead className="text-sm bg-white drop-shadow-sm">
-                    <tr className="">
+          <div className="min-w-full">
+            {selectedTasks.length > 0 && (
+              <div className="p-2 flex">
+                <SelectedOptionsTable options={optionsCheckBox} />
+              </div>
+            )}
+            <div className="overflow-x-auto">
+              <div className=" min-h-[60vh] h-full">
+                <table className="min-w-full rounded-md bg-gray-100 table-auto relative ">
+                  <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
+                    <tr>
                       <th
                         scope="col"
-                        className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl py-5"
+                        className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
                       >
-                        <input
-                          type="checkbox"
-                          className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                          ref={checkbox}
-                          checked={checked}
-                          onChange={toggleAll}
-                        />
-                        <AddColumnsTable
-                          columns={columnTable}
-                          setSelectedColumns={setSelectedColumns}
-                        />
+                        <div className="flex gap-2 items-center">
+                          <input
+                            type="checkbox"
+                            className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            ref={checkbox}
+                            checked={checked}
+                            onChange={toggleAll}
+                          />
+                          <AddColumnsTable
+                            columns={columnTable.map((x) => ({
+                              ...x,
+                              check: selectedColumns
+                                .map((s) => s.id)
+                                .includes(x.id),
+                            }))}
+                            setSelectedColumns={setSelectedColumns}
+                          />
+                        </div>
                       </th>
                       {selectedColumns.length > 0 &&
                         selectedColumns.map((column, index) => (
                           <th
                             key={index}
                             scope="col"
-                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${index === selectedColumns.length - 1 &&
+                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${
+                              index === selectedColumns.length - 1 &&
                               "rounded-e-xl"
-                              }`}
+                            }`}
                             onClick={() => {
-                              handleSorting(column.row);
+                              setOrderBy(column.row);
                             }}
                           >
-                            <div className="flex justify-left items-center gap-2">
+                            <div
+                              className={clsx(
+                                "flex justify-left items-center gap-2",
+                                {
+                                  "font-bold": orderBy === column.row,
+                                }
+                              )}
+                            >
                               {column.name}
                               <div>
                                 <ChevronDownIcon
-                                  className={`h-6 w-6 text-primary ${fieldClicked.field === column.row &&
-                                    fieldClicked.sortDirection === "desc"
-                                    ? "transform rotate-180"
-                                    : ""
-                                    }`}
+                                  className={`h-6 w-6 text-primary ${
+                                    orderBy === column.row && order !== "DESC"
+                                      ? "transform rotate-180"
+                                      : ""
+                                  }`}
                                 />
                               </div>
                             </div>
@@ -123,100 +303,17 @@ export default function TableTask({ data }) {
                   </thead>
                   <tbody className="bg-gray-100">
                     {selectedColumns.length > 0 &&
-                      dataTask?.items?.length > 0 &&
-                      dataTask?.items?.map((task, index) => (
-                        <tr
-                          key={index}
-                          className={clsx(
-                            selectedTasks.includes(task)
-                              ? "bg-gray-200"
-                              : undefined,
-                            "hover:bg-indigo-100/40 cursor-default"
-                          )}
-                        >
-                          <td className=" px-7 sm:w-12 sm:px-6">
-                            {selectedTasks.includes(task) && (
-                              <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                            )}
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={task.id}
-                              checked={selectedTasks.includes(task)}
-                              onChange={(e) =>
-                                setSelectedTasks(
-                                  e.target.checked
-                                    ? [...selectedTasks, task]
-                                    : selectedTasks.filter((p) => p !== task)
-                                )
-                              }
-                            />
-                          </td>
-                          {selectedColumns.length > 0 &&
-                            selectedColumns.map((column, index) => (
-                              <td className="ml-4 text-left py-5" key={index}>
-                                <div className="font-medium text-sm text-black hover:text-primary capitalize">
-                                  {column.link ? (
-                                    <Link
-                                      href={`/tools/tasks/task/${task.id}?show=true`}
-                                      className={clsx(task.status === "pending_review" ? "text-gray-800/45" : "text-black")}
-                                    >
-                                      {task[column.row]}
-                                    </Link>
-                                  ) : column.row === "responsible" ? (
-                                    <div className="flex items-center justify-center">
-                                      <div className="font-medium text-black ">
-                                        {task[column.row].length > 0
-                                          ? task[column.row]
-                                            .map((item) => `${item.username}`)
-                                            .join(",")
-                                          : ""}
-                                      </div>
-                                    </div>
-                                  ) : column.row === "createdBy" ? (
-                                    <div className="flex gap-x-2 items-center justify-left">
-                                      <Image
-                                        className="h-6 w-6 rounded-full bg-zinc-200"
-                                        width={30}
-                                        height={30}
-                                        src={
-                                          task[column.row]?.avatar ||
-                                          "/img/avatar.svg"
-                                        }
-                                        alt="avatar"
-                                      />
-                                      <div className="font-medium text-black ">
-                                        {task[column.row]?.name}
-                                      </div>
-                                    </div>
-                                  ) : column.row === "deadline" ? (
-                                    task[column.row] ? (
-                                      <div className="p-1 px-2 bg-blue-100 rounded-full text-sm">
-                                        {moment(task[column.row]).format(
-                                          "DD/MM/YYYY hh:mm:ss A"
-                                        )}
-                                      </div>
-                                    ) : (
-                                      ""
-                                    )
-                                  ) : column.row === "startTime" ? (
-                                    task[column.row] ? (
-                                      moment(task[column.row]).format(
-                                        "DD/MM/YYYY hh:mm:ss A"
-                                      )
-                                    ) : (
-                                      ""
-                                    )
-                                  ) : column.row === "contact" ||
-                                    column.row === "policy" ? (
-                                    task[column.row] || "No especificado"
-                                  ) : (
-                                    task[column.row]
-                                  )}
-                                </div>
-                              </td>
-                            ))}
-                        </tr>
+                      data?.items?.length > 0 &&
+                      data?.items?.map((task, index) => (
+                        <Task
+                          key={task.id}
+                          task={task}
+                          setLoading={setLoading}
+                          selectedColumns={selectedColumns}
+                          mutateTasks={mutateTasks}
+                          selectedTasks={selectedTasks}
+                          setSelectedTasks={setSelectedTasks}
+                        />
                       ))}
                   </tbody>
                 </table>
@@ -224,15 +321,17 @@ export default function TableTask({ data }) {
             </div>
           </div>
           <div className="w-full mt-2">
-            <div className="flex justify-between items-center flex-wrap">
-              {selectedTasks.length > 0 && (
-                <SelectedOptionsTable options={optionsCheckBox} />
-              )}
-              <Pagination totalPages={dataTask?.meta?.totalPages || 0} />
-            </div>
+            <FooterTable
+              limit={limit}
+              setLimit={setLimit}
+              page={page}
+              setPage={setPage}
+              totalPages={data?.meta?.totalPages}
+              total={data?.meta?.totalItems ?? 0}
+            />
           </div>
         </div>
       )}
-    </>
+    </Fragment>
   );
 }

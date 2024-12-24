@@ -1,18 +1,33 @@
-import React from "react";
+"use client";
+import React, { Fragment, useEffect, useState } from "react";
 import LeadDetails from "./LeadDetails";
-import { getLeadById } from "../../../../../../../../lib/apis";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { useLead } from "@/src/lib/api/hooks/leads";
+import { getLeadById } from "@/src/lib/apis";
+import SlideOver from "@/src/components/SlideOver";
 
-async function getLeadId(id) {
-	try {
-		const lead = await getLeadById(id);
-		return lead;
-	} catch (error) {		
-		throw new Error(error);
-	}
-}
+export default function PageLeadId({ params: { id } }) {
+  const { lead, isLoading, isError } = useLead(id);
 
-export default async function PageContactId({ params: { id } }) {
-  const data = await getLeadId(id);
+  if (isError) {
+    <SlideOver
+      openModal={true}
+      colorTag="bg-easywork-main"
+      labelTag="lead"
+      samePage={`/sales/crm/leads?page=1`}
+    >
+      <div>
+        <p>Error</p>
+      </div>
+    </SlideOver>;
+  }
 
-  return <LeadDetails leadInfo={data} id={id}/>
+  if (isLoading) return <LoaderSpinner />;
+
+  return (
+    <Fragment>
+      {isLoading && <LoaderSpinner />}
+      {lead && <LeadDetails leadInfo={lead} id={id} />}
+    </Fragment>
+  );
 }

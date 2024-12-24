@@ -5,6 +5,8 @@
     "filter": "Filtrar y Buscar",
     "home": "Hogar",
     "my-unit": "Mi unidad",
+    "file": "Archivo",
+    "folder": "Carpeta",
     "add": {
       "name": "Agregar",
       "document": "Archivo",
@@ -29,12 +31,15 @@
       "name": "Nombre",
       "modified": "Modificado",
       "modified-by": "Modificado por",
-      "size": "Tamaño"
+      "size": "Tamaño",
+      "paste": "Pegar",
+      "link-to": "Vincular a",
+      "created-by": "Creado por"
     }
   },
   "tasks": {
     "panel": {
-      "date": "Fecha limite",
+      "date": "Fecha límite",
       "title": "Título",
       "responsible": "Responsable",
       "todo": "Cosas por hacer"
@@ -43,8 +48,18 @@
     "create": "Crear",
     "task": "Tarea",
     "status": {
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "pending_review": "Pendiente por revisión",
+      "overdue": "Atrasada"
     },
+    "gdd-status": {
+      "pending": "Pendiente",
+      "completed": "Hecho",
+      "not-completed": "No realizado"
+    },
+    "delegate-to": "Delegar a:",
+    "delegate": "Delegar",
+    "delegating": "Delegando...",
     "template": "Tare usando una plantilla",
     "span": "Abrir opciones",
     "list": "Lista",
@@ -53,7 +68,7 @@
     "expires": "Vencidas",
     "comments": "Comentarios",
     "others": "Otros",
-    "mark-all": "Marca todos como leídos",
+    "mark-all": "Marcar todos como leídos",
     "search": "Buscar",
     "add-tags": "Crear una nueva etiqueta",
     "description": "La descripción de la tarea es un campo requerido",
@@ -62,14 +77,24 @@
     "success-msg": "Tarea creado exitosamente!",
     "update-msg": "Tarea actualizada exitosamente!",
     "completed-success": "Tarea completada, debe esperar aprobación del supervisor",
+    "restart-success": "Tarea reanudada con exito!",
     "table": {
       "name": "Nombre",
       "activity": "Actividad",
-      "contact": "Contacto",
+      "contact": "Cliente",
       "policy": "Póliza",
       "limit-date": "Fecha límite",
       "created-by": "Creado por",
-      "responsible": "Persona responsable"
+      "responsible": "Persona responsable",
+      "no-deadline": "Sin fecha límite",
+      "delete-error": "Error al eliminar la(s) tarea(s)",
+      "delete-msg": "Tarea(s) eliminada(s) exitosamente!",
+      "completed-error": "Error al completar la(s) tarea(s)",
+      "completed-msg": "Tarea(s) completada(s) exitosamente!",
+      "responsible-error": "Error al actualizar la(s) tarea(s)",
+      "responsible-msg": "Tarea(s) actualizada(s) exitosamente!",
+      "lead": "Prospecto",
+      "important": "Alta prioridad"
     },
     "filters": {
       "title": "Filtros",
@@ -90,10 +115,11 @@
         "tag": "Etiquetas",
         "createdThe": "Creado el",
         "createdBy": "Creado por",
-        "closed": "Cerrado el",
+        "closed": "Terminado el",
         "name": "Nombre",
         "participant": "Participante",
-        "observer": "Observador"
+        "observer": "Observador",
+        "show-closed": "Mostrar Cerrados"
       }
     },
     "new": {
@@ -110,6 +136,7 @@
       "add-list": "Agregar lista de verificación",
       "responsible": "Persona Responsable:",
       "created-by": "Creado por ",
+      "subtask": "Subtarea de ",
       "participants": "Participantes",
       "observers": "Observadores",
       "limit-date": "Fecha límite",
@@ -121,7 +148,7 @@
       "days": "días",
       "hours": "horas",
       "minutes": "minutos",
-      "person-responsible": "Persona responsable puede cambiar la fecha limite",
+      "person-responsible": "Persona responsable puede cambiar la fecha límite",
       "review-task": "Revisar la tarea después de completarla",
       "add-favorites": "Agregar favoritos",
       "add-plan": "Agregar al plan de día de trabajo",
@@ -134,6 +161,7 @@
       "time-task": "Tiempo planificado de la tarea",
       "select": "Seleccionar",
       "add-task": "Agregar tarea",
+      "update-task": "Guardar Cambios",
       "add-create": "Agregar y crear otra nueva tarea",
       "high": "Alta prioridad",
       "upload": "Cargar",
@@ -161,26 +189,35 @@
       "duration": "Duración",
       "responsible": "Responsable",
       "participant": "Participante",
+      "participants": "Participantes",
       "observers": "Observadores",
       "tags": "Etiquetas",
       "task-overdue": "Esta tarea se encuentra atrasada",
       "task-pending": "Pendiente",
       "change": "Cambiar",
       "addTag": "Agregar",
-      "contact": "Contacto",
+      "editTag": "Cambiar",
+      "see": "Observar",
+      "dontsee": "No ver",
+      "add": "Agregar",
+      "contact": "Cliente",
       "policy": "Póliza",
+      "lead": "Prospecto",
       "init": "Iniciar",
       "end": "Terminar",
       "more": "Más",
       "copy": "Copia",
       "subtask": "Crear subtarea",
+      "to-subtask": "Convertir en subtarea",
       "delegate": "Delegar",
       "comments": "Comentarios",
       "history": "Historial",
       "time": "Tiempo transcurrido",
       "objections": "Objeciones",
-      "pings": "Mostrar pings ({{qty}})",
+      "pings": "Mostrar comentarios ({{qty}})",
+      "pings-hide": "Ocultar comentarios ({{qty}})",
       "edit": "Editar",
+      "restart": "Reanudar",
       "comment": {
         "send": "Enviar"
       },
@@ -202,12 +239,22 @@
       "excel": {
         "alone": "Solo las tareas seleccionadas",
         "export": "Exportar a microsoft Excel",
-        "all": "Todos los campos de las tareas"
+        "all": "Todas las tareas"
       }
+    },
+    "kanban": {
+      "deadline": "Vencidas",
+      "today": "Hoy",
+      "thisweek": "Para esta semana",
+      "nextweek": "Para la próxima semana",
+      "nextsecondweek": "Para dentro de 2 semanas",
+      "notdate": "Sin fecha límite"
     }
   },
   "calendar": {
     "name": "Calendario",
+    "description": "Descripción",
+    "reminder": "Recordatorio",
     "create": "Crear",
     "event": "Evento",
     "task": "Tarea",
@@ -228,6 +275,19 @@
     "go-to-today": "Ir a hoy",
     "previous-month": "Mes anterior",
     "next-month": "Mes siguiente",
+    "reminder-options": {
+      "now": "Cuando el evento comienza",
+      "5m": "5 minutos antes",
+      "10m": "10 minutos antes",
+      "20m": "20 minutos antes",
+      "30m": "30 minutos antes",
+      "1h": "1 hora antes",
+      "2h": "2 horas antes",
+      "1d": "El día del evento",
+      "-1d": "Un día antes del evento",
+      "-2d": "Dos días antes del evento",
+      "custom": "Personalizado"
+    },
     "new-event": {
       "new": "Nuevo evento",
       "close": "Cerrar",
@@ -247,6 +307,8 @@
       "event-color": "Color del evento",
       "availability": "Disponibilidad",
       "private": "Privado",
+      "private-label": "Evento privado",
+      "private-label-2": "Los detalles del evento están disponibles solo para usted",
       "end": "Final",
       "never": "Nunca",
       "after-of": "Después de",
@@ -277,6 +339,18 @@
       "iernes": "iernes",
       "abado": "ábado",
       "omingo": "omingo"
+    },
+    "events": {
+      "event": "Evento",
+      "panel": {
+        "date": "Fecha",
+        "start-date": "Fecha de Inicio",
+        "title": "Título",
+        "responsible": "Responsable",
+        "participants": "Participantes",
+        "start": "Inicio",
+        "end": "Fin"
+      }
     }
   }
 }

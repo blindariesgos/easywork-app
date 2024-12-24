@@ -1,20 +1,38 @@
-import SlideOver from '../../../../../../../../components/SlideOver'
-import React, { Suspense } from 'react'
-import CreateContact from '../../components/create_contact/CreateContact'
+"use client";
+import SlideOver from "@/src/components/SlideOver";
+import React, { Suspense } from "react";
+import ContactEditor from "../../components/create_contact/ContactEditor";
+import { useContact } from "@/src/lib/api/hooks/contacts";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
-export default function ContactDetails({ contactInfo, id }) {
+export default function ContactDetails({ id }) {
+  const { contact, isLoading, isError } = useContact(id);
+
+  if (isError) {
+    <SlideOver
+      openModal={true}
+      colorTag="bg-easywork-main"
+      labelTag="contact"
+      samePage={`/sales/crm/contacts?page=1`}
+    >
+      <div>
+        <p>Error</p>
+      </div>
+    </SlideOver>;
+  }
+
+  if (isLoading) return <LoaderSpinner />;
+
   return (
-    <SlideOver openModal={true} colorTag="bg-green-primary" labelTag="contact">
-      <Suspense
-        fallback={
-          <div className="flex flex-col h-screen">
-            <div className="flex flex-col flex-1 bg-zinc-200 opacity-100 shadow-xl text-zinc-800 overflow-hidden rounded-tl-3xl">
-              </div>{" "}
-          </div>
-        }
-      >
-        <CreateContact edit={contactInfo} id={id} />
+    <SlideOver
+      openModal={true}
+      colorTag="bg-easywork-main"
+      labelTag="contact"
+      samePage={`/sales/crm/contacts?page=1`}
+    >
+      <Suspense fallback={<LoaderSpinner />}>
+        <ContactEditor contact={contact} id={id} />
       </Suspense>
     </SlideOver>
-  )
+  );
 }

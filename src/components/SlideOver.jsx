@@ -1,27 +1,35 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import {
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+  DialogBackdrop,
+} from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function SlideOver({
-  openModal,
-  setOpenModal,
   children,
   colorTag,
   labelTag,
-  samePage,
   previousModalPadding,
   subLabelTag,
+  className,
+  remove,
+  maxWidthClass,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [subLabel, setSubLabel] = useState("");
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-
+  const pathname = usePathname();
+  const params = useMemo(() => {
+    return new URLSearchParams(searchParams);
+  }, [searchParams]);
   // Nuevo estado para controlar la transición
   const [show, setShow] = useState(false);
 
@@ -33,7 +41,7 @@ export default function SlideOver({
   useEffect(() => {
     switch (labelTag) {
       case "contact":
-        setLabel(t("contacts:header:contact"));
+        setLabel(t("contacts:header:tab"));
         break;
       case "policy":
         setLabel(t("contacts:create:tabs:policies"));
@@ -80,13 +88,18 @@ export default function SlideOver({
       case "schedules":
         setLabel(t("contacts:edit:policies:consult:schedules"));
         break;
+      case "renovations":
+        setLabel(t("common:slide:renovations"));
+        break;
       case "lead":
         setLabel(t("leads:header:lead"));
         break;
       case "task":
         setLabel(t("tools:tasks:name"));
         break;
-
+      case "agent":
+        setLabel(t("agentsmanagement:accompaniments:table:agent"));
+        break;
       default:
         break;
     }
@@ -104,19 +117,43 @@ export default function SlideOver({
 
   const closeModal = () => {
     setShow(false);
-    params.set("show", "false");
+    if (remove) {
+      setTimeout(() => {
+        params.delete("show");
+        params.delete(remove);
+        router.replace(`${pathname}?${params.toString()}`);
+      }, 301);
+    }
   };
 
   return (
-    <Transition.Root show={show} as={Fragment} afterLeave={() => {
-      router.replace(`${samePage}`, undefined, { shallow: true });
-    }}>
-      <Dialog as="div" className="relative z-50" onClose={() => { }}>
-        <div className="fixed inset-0" />
+    <Transition
+      show={show}
+      as={Fragment}
+      afterLeave={() => {
+        if (!remove) router.back();
+        // if (taskId) {
+        //   router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });
+        //   return;
+        // } else if (contactId) {
+        //   router.replace(`/sales/crm/contacts/contact/${contactId}?show=true`, undefined, { shallow: true });
+        //   return;
+        // }
+
+        // if (previousPage === "tasks") {
+        //   router.replace(`/tools/tasks`, undefined, { shallow: true });
+        //   return;
+        // }
+
+        // router.replace(`${samePage}`, undefined, { shallow: true });
+      }}
+    >
+      <Dialog as="div" className="relative z-[10000]" onClose={closeModal}>
+        <DialogBackdrop className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
-              <Transition.Child
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-6 md:pl-52">
+              <TransitionChild
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
                 enterFrom="translate-x-full"
@@ -125,33 +162,33 @@ export default function SlideOver({
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel
-                  className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
+                <DialogPanel
+                  className={`pointer-events-auto w-screem drop-shadow-lg ${previousModalPadding}`}
                 >
-                  <div className="flex justify-end h-screen">
-                    <div className={`flex flex-col`}>
+                  <div className="flex justify-end h-screen relative">
+                    <div className={`absolute right-full top-0`}>
                       <Tag
                         title={label}
                         onclick={closeModal}
                         className={colorTag}
                       />
-                      {subLabelTag && (
+                      {/* {subLabelTag && (
                         <Tag
                           title={subLabel}
                           className="bg-green-primary pl-2"
                           closeIcon
                           second
                         />
-                      )}
+                      )} */}
                     </div>
                     {children}
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                </DialogPanel>
+              </TransitionChild>
             </div>
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition>
   );
 }

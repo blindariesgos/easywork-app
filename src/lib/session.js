@@ -14,8 +14,8 @@ export const updateSession = async (newAccessToken) => {
   const updatedSession = {
     ...currentSession,
     user: {
-      ...currentSession.user,
-      accessToken: newAccessToken,
+      ...newAccessToken.user,
+      accessToken: newAccessToken.token,
     },
   };
 
@@ -28,7 +28,7 @@ export const updateSession = async (newAccessToken) => {
 export async function clearSession() {
   try {
     logger.info("Clearing session...");
-    const response = await signOut({ redirect: false });
+    const response = await signOut({ redirect: true });
     logger.info("Session cleared:", response);
   } catch (error) {
     logger.error("Error clearing session:", error);

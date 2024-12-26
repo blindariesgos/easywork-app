@@ -48,7 +48,8 @@ export default function Page() {
         </h1>
       </div>
 
-      <div className="container mx-auto px-4">
+      {/* Agregamos overflow para que la tabla sea desplazable en pantallas pequeñas */}
+      <div className="container mx-auto px-4 overflow-x-auto">
         <table className="min-w-full bg-white border-separate border-spacing-x-3">
           {" "}
           {/* Added border-separate and border-spacing-4 */}

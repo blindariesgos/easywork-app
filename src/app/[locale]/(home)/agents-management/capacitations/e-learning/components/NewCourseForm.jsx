@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function NewCourseForm({ register, setValue, loading, errors }) {
+export default function NewCourseForm({ register, setValue, loading, errors, values, openAfterNDays, openToAll }) {
   return (
     <div className="w-full">
       <div>
@@ -24,15 +24,33 @@ export default function NewCourseForm({ register, setValue, loading, errors }) {
       </div>
       <div className="w-full mt-4 bg-white rounded flex justify-between items-center gap-10 p-4">
         <div>
-          <input type="checkbox" className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary" onChange={e => setValue('openToAll', e.target.checked)} disabled={loading} />
+          <input
+            type="checkbox"
+            className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+            onChange={e => setValue('openToAll', e.target.checked)}
+            disabled={loading}
+            defaultChecked={values.openToAll}
+          />
           Abierto para todos
         </div>
         <div>
-          <input type="checkbox" className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary" onChange={e => setValue('private', e.target.checked)} disabled={loading} />
+          <input
+            type="checkbox"
+            className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+            onChange={e => setValue('private', e.target.checked)}
+            disabled={loading}
+            defaultChecked={values.private}
+          />
           Privado
         </div>
         <div>
-          <input type="checkbox" className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary" onChange={e => setValue('openAfterNDays', e.target.checked)} disabled={loading} />
+          <input
+            type="checkbox"
+            className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+            onChange={e => setValue('openAfterNDays', e.target.checked)}
+            disabled={loading}
+            defaultChecked={values.openAfterNDays}
+          />
           Desbloquear después de x días
         </div>
       </div>

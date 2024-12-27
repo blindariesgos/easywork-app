@@ -1,15 +1,26 @@
 "use client";
-import React from "react";
+import React, { Fragment } from "react";
 import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import FilterAccompaniments from "./FilterAccompaniments";
 import { useCommon } from "@/src/hooks/useCommon";
 import IconDropdown from "@/src/components/SettingsButton";
 import useCrmContext from "@/src/context/crm";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useAccompanimentsContext from "@/src/context/accompaniments";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import clsx from "clsx";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
@@ -26,11 +37,34 @@ export default function AccompanimentsHeader() {
       onclick: () =>
         router.push("/agents-management/accompaniment/agent?show=true"),
     },
-    { name: "Actividades", disabled: true },
-    { name: "Cita con Prospectos o Clientes", disabled: true },
-    { name: "Reuniones de Coaching", disabled: true },
-    { name: "Asingnar GDD", disabled: true },
-    { name: "Reasignar GDD", disabled: true },
+    {
+      name: "Tarea",
+      onclick: () => router.push("/tools/tasks/task?show=true"),
+    },
+    {
+      name: "Cita con Prospectos o Clientes",
+      onclick: () => router.push("/tools/calendar/addEvent?show=true"),
+    },
+    {
+      name: "Junta",
+      options: [
+        {
+          name: "Individual",
+          onclick: () =>
+            router.push(
+              "/agents-management/meetings-and-sessions/individuals/meet?show=true"
+            ),
+        },
+        {
+          name: "De Equipo",
+          onclick: () =>
+            router.push(
+              "/agents-management/meetings-and-sessions/teams/meet?show=true"
+            ),
+        },
+      ],
+    },
+    { name: "Asignar GDD", disabled: true },
   ];
 
   return (
@@ -50,17 +84,61 @@ export default function AccompanimentsHeader() {
               anchor="bottom start"
               className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
             >
-              {options.map((option, index) => (
-                <MenuItem
-                  key={index}
-                  as="div"
-                  onClick={option.onclick && option.onclick}
-                  disabled={option.disabled}
-                  className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
-                >
-                  {option.name}
-                </MenuItem>
-              ))}
+              {options.map((option, index) =>
+                !option.options ? (
+                  <MenuItem
+                    key={index}
+                    as="div"
+                    onClick={option.onclick && option.onclick}
+                    disabled={option.disabled}
+                    className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                  >
+                    {option.name}
+                  </MenuItem>
+                ) : (
+                  <Menu key={option.name}>
+                    <MenuButton className="px-2 py-1 flex items-center justify-between hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50">
+                      {option.name}
+                      <ChevronRightIcon className="h-6 w-6 ml-2" />
+                    </MenuButton>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <MenuItems
+                        anchor={{
+                          to: "right start",
+                          gap: "4px",
+                        }}
+                        className="rounded-md bg-white py-2 shadow-lg focus:outline-none z-50"
+                      >
+                        {option.options.map((option2) => (
+                          <MenuItem
+                            key={option2.name}
+                            disabled={option2.disabled}
+                            onClick={() => {
+                              option2.onclick && option2.onclick();
+                            }}
+                          >
+                            <div
+                              className={clsx(
+                                "px-2 py-1 flex items-center justify-between hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                              )}
+                            >
+                              {option2.name}
+                            </div>
+                          </MenuItem>
+                        ))}
+                      </MenuItems>
+                    </Transition>
+                  </Menu>
+                )
+              )}
             </MenuItems>
           </Menu>
           <div className="flex-grow">

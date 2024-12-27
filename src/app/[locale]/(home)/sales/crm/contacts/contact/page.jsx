@@ -8,6 +8,7 @@ export default async function page() {
       colorTag="bg-easywork-main"
       labelTag="contact"
       samePage={`/sales/crm/contacts?page=1`}
+      maxWidthClass={"max-w-[46rem]"}
     >
       <ContactEditor />
     </SlideOver>

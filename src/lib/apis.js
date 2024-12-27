@@ -730,6 +730,21 @@ export const addPolicyByPdf = async (body, category = "nueva") => {
     .catch((error) => ({ error, hasError: true }));
   return response;
 };
+
+export const addRefund = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/reimbursement`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addSchedule = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/scheduling`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const addRenovationByPdf = async (body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/operations/management/renewal/pdf`, body)
@@ -754,6 +769,13 @@ export const addContactDocument = async (contactId, category, body) => {
 export const postPositiveStagePolicy = async (leadId) => {
   const response = await axios()
     .post(`/sales/crm/leads/${leadId}/generate_poliza`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getPolizaLeadData = async (leadId) => {
+  const response = await axios()
+    .get(`/v1/sales/crm/leads/${leadId}/get_poliza_data`)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

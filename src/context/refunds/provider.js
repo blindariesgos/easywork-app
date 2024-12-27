@@ -4,26 +4,24 @@ import React, { useEffect, useMemo, useState } from "react";
 import { RefundsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "../../lib/api/hooks/policies";
+import { useRefunds } from "../../lib/api/hooks/refunds";
 export default function RefundsContextProvider({ children }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
     orderBy: "name",
-    order: "DESC"
-  })
-  const { lists } = useAppContext()
-  const [filters, setFilters] = useState({})
-  const { data, isLoading, isError, mutate } = usePolicies({
-    config, filters: {
-      ...filters,
-      renewal: "true",
-    }
-  })
-  const [filterFields, setFilterFields] = useState()
+    order: "DESC",
+  });
+  const { lists } = useAppContext();
+  const [filters, setFilters] = useState({});
+  const { data, isLoading, isError, mutate } = useRefunds({
+    config,
+    filters,
+  });
+  const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const [displayFilters, setDisplayFilters] = useState({})
+  const [displayFilters, setDisplayFilters] = useState({});
   const defaultFilterFields = [
     {
       id: 0,
@@ -47,25 +45,26 @@ export default function RefundsContextProvider({ children }) {
       check: false,
       code: "poliza",
     },
-  ]
+  ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
-      [key]: value
-    }
+      [key]: value,
+    };
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy
-          ? "DESC"
-          : config.order === "ASC"
+        order:
+          value != config.orderBy
             ? "DESC"
-            : "ASC"
-      }
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
+      };
     }
 
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   useEffect(() => {
     setFilterFields([
@@ -156,12 +155,12 @@ export default function RefundsContextProvider({ children }) {
         code: "formaCobroId",
         options: lists?.policies?.polizaFormasCobro,
       },
-    ])
-  }, [lists?.listContact, lists?.policies])
+    ]);
+  }, [lists?.listContact, lists?.policies]);
 
   useEffect(() => {
-    handleChangeConfig("page", 1)
-  }, [config.limit])
+    handleChangeConfig("page", 1);
+  }, [config.limit]);
 
   // useEffect(() => {
   //   if (Object.keys(filters).length == 0 && filterFields) {
@@ -175,17 +174,17 @@ export default function RefundsContextProvider({ children }) {
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
@@ -209,7 +208,7 @@ export default function RefundsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
-      defaultFilterFields
+      defaultFilterFields,
     }),
     [
       data,
@@ -221,9 +220,11 @@ export default function RefundsContextProvider({ children }) {
       filterFields,
       filters,
       defaultFilterFields,
-      lists
+      lists,
     ]
   );
 
-  return <RefundsContext.Provider value={values}>{children}</RefundsContext.Provider>;
+  return (
+    <RefundsContext.Provider value={values}>{children}</RefundsContext.Provider>
+  );
 }

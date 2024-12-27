@@ -237,7 +237,7 @@ export const useSidebar = () => {
           id: "operations:management",
           name: "Gestión",
           href: "/operations/managements",
-          image: "/img/operations/policies.svg",
+          image: "/img/operations/management.svg",
           iconShortBar: GlobeAltIcon,
         },
         {

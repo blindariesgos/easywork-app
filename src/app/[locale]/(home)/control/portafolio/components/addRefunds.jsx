@@ -16,6 +16,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
+import { addPolicyByPdf, addRefund } from "@/src/lib/apis";
 
 const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
-    policyId: yup.object().shape({}).required(t("common:validations:required")),
+    poliza: yup.object().shape({}).required(t("common:validations:required")),
     ot: yup
       .string()
       .matches(
@@ -34,6 +35,8 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
       .required(t("common:validations:required")),
     sigre: yup.string().required(t("common:validations:required")),
     type: yup.string().required(t("common:validations:required")),
+    polizaTypeId: yup.string().required(t("common:validations:required")),
+    insuranceId: yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -68,9 +71,10 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
 
     reader.onloadend = () => {
       const result = {
-        file: reader.result,
+        result: reader.result,
         size: file.size,
         name: file.name,
+        file: file,
       };
 
       setFile(result);
@@ -78,26 +82,52 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleChangePolicy = (policy) => {
-    policy?.company?.id && setValue("company", policy?.company?.id);
-    policy?.type?.id && setValue("branch", policy?.type?.id);
+  const getFormData = (body) => {
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+    return formData;
   };
 
-  const onSubmit = (data) => {
-    console.log({ data });
+  const handleChangePolicy = (policy) => {
+    console.log({ policy });
+    policy?.company?.id && setValue("insuranceId", policy?.company?.id);
+    policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
+  };
+
+  const onSubmit = async (data) => {
+    const { poliza, ...body } = data;
+    body.polizaId = poliza.id;
+    body.file = file.file;
+    console.log({ body });
+    const formData = getFormData(body);
+    const response = await addRefund(formData);
+    console.log({ response });
+    if (response.hasError) {
+      let message = response.message;
+      if (response.errors) {
+        message = response.errors.join(", ");
+      }
+      toast.error(message);
+      return;
+    }
+
+    toast.success("Reembolso agregado con éxito");
     setIsOpen(false);
   };
 
   const handleReset = () => {
-    reset({
-      ot: "",
-      policyId: "",
-      sigre: "",
-      type: "",
-      affeccion: "",
-      company: "",
-      branch: "",
-    });
+    reset();
   };
 
   return (
@@ -121,11 +151,11 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
             <div className="px-8 pt-4 grid grid-cols-1 gap-4">
               <PolicySelectAsync
                 label={t("operations:managements:add:refund:poliza")}
-                name={"policyId"}
+                name={"poliza"}
                 setValue={setValue}
                 watch={watch}
                 setSelectedOption={handleChangePolicy}
-                error={errors?.policyId}
+                error={errors?.poliza}
                 register={register}
               />
               <SelectInput
@@ -141,8 +171,9 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                   },
                 ]}
                 name="type"
-                error={errors?.procedure}
+                error={errors?.type}
                 register={register}
+                setValue={setValue}
               />
               <TextInput
                 label={t("operations:managements:add:refund:ot")}
@@ -158,8 +189,8 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
               />
               <TextInput
                 label={t("operations:managements:add:refund:affeccion")}
-                name="affeccion"
-                error={errors?.affeccion}
+                name="medicalCondition"
+                error={errors?.medicalCondition}
                 register={register}
                 multiple
                 rows={3}
@@ -168,25 +199,27 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
               <SelectInput
                 label={t("operations:managements:add:refund:company")}
                 options={lists?.policies?.polizaCompanies}
-                name="company"
+                name="insuranceId"
                 setValue={setValue}
                 watch={watch}
                 register={register}
+                error={errors?.insuranceId}
               />
               <SelectInput
                 label={t("operations:managements:add:refund:branch")}
                 options={lists?.policies?.polizaTypes}
-                name="branch"
+                name="polizaTypeId"
                 setValue={setValue}
                 watch={watch}
                 register={register}
+                error={errors?.polizaTypeId}
               />
               <div className="w-full">
                 <label
                   htmlFor="policy-file"
                   className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                 >
-                  <p>{t("operations:managements:add:refund:button")}</p>
+                  <p>{t("operations:managements:add:schedule:button")}</p>
                   {file && (
                     <div className="flex flex-col gap-2 justify-center items-center pt-2">
                       <div className="p-10 bg-easy-500 rounded-md">

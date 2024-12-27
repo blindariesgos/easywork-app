@@ -1,17 +1,17 @@
-import ModuleCard from '../components/ModuleCard';
-import { projects } from './mocks';
 import { getCourses } from './services/get-courses';
+import CoursesGridView from '../components/CoursesGridView';
 
 export default async function MainView() {
   const courses = await getCourses();
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-5 px-10">
-        {courses.data.map(course => (
-          <ModuleCard key={course.id} course={course} />
-        ))}
+    <div>
+      <div className="mb-2 flex items-center justify-end px-10 text-sm text-gray-60">
+        <p>
+          {courses.count || 0} curso{courses.count && courses.count > 1 ? 's' : ''}
+        </p>
       </div>
-    </>
+      <CoursesGridView courses={courses.data} />
+    </div>
   );
 }

@@ -104,8 +104,11 @@ export default function General({ agent, id, refPrint }) {
       setValue("lastName", agent?.user?.profile?.lastName);
     if (agent?.user?.email) setValue("email", agent?.user?.email);
     if (agent?.user?.phone) setValue("phone", agent?.user?.phone);
-    if (agent?.user?.profile?.birthday)
+    if (agent?.user?.profile?.birthday) {
       setValue("birthdate", agent?.user?.profile?.birthday);
+      var a = moment(agent?.user?.profile?.birthday);
+      setValue("age", moment().diff(a, "years"));
+    }
     if (agent?.children) setValue("childrens", agent?.children);
     if (agent?.cua) setValue("cua", agent?.cua);
     if (agent?.user?.profile?.idcard)
@@ -297,6 +300,7 @@ export default function General({ agent, id, refPrint }) {
                 name="phone"
                 control={control}
                 defaultValue=""
+                disabled={!isEdit}
               />
               <TextInput
                 label={t("contacts:create:email")}
@@ -304,16 +308,18 @@ export default function General({ agent, id, refPrint }) {
                 error={errors.email}
                 register={register}
                 name="email"
-              />
-
-              <TextInput
-                label={t("agentsmanagement:accompaniments:agent:age")}
-                error={errors.age}
-                register={register}
-                name="age"
                 disabled={!isEdit}
-                type="number"
               />
+              {!isEdit && (
+                <TextInput
+                  label={t("agentsmanagement:accompaniments:agent:age")}
+                  error={errors.age}
+                  register={register}
+                  name="age"
+                  disabled={true}
+                  type="number"
+                />
+              )}
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -402,6 +408,16 @@ export default function General({ agent, id, refPrint }) {
                 disabled={!isEdit}
                 error={errors?.observerId}
                 setValue={setValue}
+                watch={watch}
+              />
+              <SelectInput
+                label={t("contacts:create:origen")}
+                name="sourceId"
+                options={lists?.listContact?.contactSources}
+                error={errors.sourceId}
+                register={register}
+                setValue={setValue}
+                disabled={!isEdit}
                 watch={watch}
               />
               <TextInput

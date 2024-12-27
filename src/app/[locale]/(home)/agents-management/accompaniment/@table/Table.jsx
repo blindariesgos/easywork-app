@@ -92,7 +92,9 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
@@ -208,7 +210,7 @@ export default function Table() {
 
   const masiveActions = [
     {
-      id: 3,
+      id: 1,
       name: "Asignar Responsable",
       onclick: changeResponsibleMasive,
       selectUser: true,
@@ -220,17 +222,17 @@ export default function Table() {
       selectUser: true,
     },
     {
-      id: 1,
+      id: 3,
       name: "Crear tarea",
       disabled: true,
     },
     {
-      id: 1,
+      id: 4,
       name: "Cambiar estado",
       disabled: true,
     },
     {
-      id: 1,
+      id: 5,
       name: t("common:buttons:delete"),
       onclick: () => setIsOpenDeleteMasive(true),
       disabled: true,

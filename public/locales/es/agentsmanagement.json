@@ -60,7 +60,6 @@
             "description": "Introduzca el nombre de la reunión",
             "responsible": "Responsable",
             "date": "Fecha de Reunión",
-            "add": "Agregar junta de equipo",
             "create-msg": "Reunión creada exitosamente"
         },
         "state": {
@@ -74,11 +73,13 @@
         "time": "Duración",
         "group": {
             "title": "Junta de equipo",
-            "agent": "Agentes"
+            "agent": "Agentes",
+            "add": "Agregar junta de equipo"
         },
         "individual": {
             "title": "Junta individual",
-            "agent": "Agente"
+            "agent": "Agente",
+            "add": "Agregar junta individual"
         },
         "gdd": "Gerente de Desarrollo"
     },

@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import Tag from "./Tag";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import clsx from "clsx";
 
 export default function SlideOver({
   children,
@@ -152,7 +153,12 @@ export default function SlideOver({
         <DialogBackdrop className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-6 md:pl-52">
+            <div
+              className={clsx(
+                "pointer-events-none fixed inset-y-0 right-0 flex w-full pl-6 md:pl-52",
+                maxWidthClass
+              )}
+            >
               <TransitionChild
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -163,7 +169,7 @@ export default function SlideOver({
                 leaveTo="translate-x-full"
               >
                 <DialogPanel
-                  className={`pointer-events-auto w-screem drop-shadow-lg ${previousModalPadding}`}
+                  className={`pointer-events-auto w-full drop-shadow-lg ${previousModalPadding}`}
                 >
                   <div className="flex justify-end h-screen relative">
                     <div className={`absolute right-full top-0`}>

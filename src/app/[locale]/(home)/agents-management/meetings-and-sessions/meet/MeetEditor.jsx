@@ -436,7 +436,7 @@ export default function MeetEditor({ edit, copy, type }) {
                   ? t("common:saving")
                   : edit
                     ? t("tools:tasks:new:update-task")
-                    : t("agentsmanagement:meetings-and-sessions:new:add")
+                    : t(`agentsmanagement:meetings-and-sessions:${type}:add`)
               }
               buttonStyle="primary"
               disabled={loading}

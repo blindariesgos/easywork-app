@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ModalForm from "../components/ModalForm";
 
 export default function Page({ redirect }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -78,9 +79,9 @@ export default function Page({ redirect }) {
             </a>
           </li>
           <li>
-            <a href="#clientes" onClick={toggleMenu}>
-              Clientes
-            </a>
+            <ModalForm
+              buttonOpen={<p className="cursor-pointer">Contacto</p>}
+            />
           </li>
           <li>
             <a href="#blog" onClick={toggleMenu}>
@@ -144,9 +145,9 @@ export default function Page({ redirect }) {
               </a>
             </li>
             <li>
-              <a href="#clientes" onClick={toggleMenu}>
-                Clientes
-              </a>
+              <ModalForm
+                buttonOpen={<p className="cursor-pointer">Contacto</p>}
+              />
             </li>
             <li>
               <a href="#blog" onClick={toggleMenu}>

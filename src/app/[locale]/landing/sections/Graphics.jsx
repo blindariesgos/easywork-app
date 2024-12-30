@@ -11,7 +11,7 @@ export default function Graphics() {
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center mt-10 text-center md:text-left">
+      <div className="flex flex-col md:flex-row items-center justify-evenly mt-10 text-center md:text-left">
         <Image
           className="w-64 md:w-96"
           width={400}

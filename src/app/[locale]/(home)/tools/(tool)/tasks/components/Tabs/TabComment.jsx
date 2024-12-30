@@ -51,6 +51,7 @@ export default function TabComment({ info }) {
     },
   ];
   const [taggedUsers, setTaggedUsers] = useState([]);
+
   const handleComment = async (_, id) => {
     if (quillRef.current) {
       const body = {
@@ -78,6 +79,7 @@ export default function TabComment({ info }) {
           fileIds: [],
           files: [],
         });
+        setOpenFiles(false);
         setTaggedUsers([]);
       } catch (error) {
         handleApiError(error.message);
@@ -210,13 +212,16 @@ export default function TabComment({ info }) {
                   onclick={() => {
                     setIsAddComment(false);
                     // setValueText("");
-                    setUpload({});
+                    setUpload({
+                      fileIds: [],
+                      files: [],
+                    });
                   }}
                 />
                 <Button
                   type="button"
                   onclick={handleComment}
-                  disabled={disabled}
+                  disabled={disabled || value.length == 0}
                   label={t("tools:tasks:edit:comment:send")}
                   buttonStyle="primary"
                   className="px-3 py-2"
@@ -313,8 +318,22 @@ export default function TabComment({ info }) {
                     <div className="flex justify-start items-center gap-2">
                       <button
                         type="button"
+                        onClick={() => {
+                          setEditComment({});
+                          setValueText("");
+                          setUpload({
+                            fileIds: [],
+                            files: [],
+                          });
+                        }}
+                        className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => handleComment(null, dat.id)}
-                        disabled={disabled}
+                        disabled={disabled || value.length == 0}
                         className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
                         {disabled ? (
@@ -322,17 +341,6 @@ export default function TabComment({ info }) {
                         ) : (
                           t("tools:tasks:edit:comment:send")
                         )}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditComment({});
-                          setValueText("");
-                          setUpload({});
-                        }}
-                        className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
-                      >
-                        Cancelar
                       </button>
                     </div>
                   </div>

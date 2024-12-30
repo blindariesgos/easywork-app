@@ -11,7 +11,7 @@ import General from "./tabs/General";
 
 import { TabGroup, TabPanel, TabPanels } from "@headlessui/react";
 
-export default function AgentEditor({ agent, id, children }) {
+export default function AgentEditor({ agent, id, children, type }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -83,14 +83,19 @@ export default function AgentEditor({ agent, id, children }) {
           <Fragment>
             {children}
             <div className="pb-6 px-4 lg:px-8 sticky bg-inherit z-10 top-0">
-              <AddAgentTabs tabs={tabs} refPrint={refPrint} contact={agent} />
+              <AddAgentTabs
+                tabs={tabs}
+                refPrint={refPrint}
+                contact={agent}
+                type={type}
+              />
             </div>
           </Fragment>
         )}
 
         <TabPanels className="pb-[150px] lg:h-full">
           <TabPanel className="h-full">
-            <General id={id} agent={agent} refPrint={refPrint} />
+            <General id={id} agent={agent} refPrint={refPrint} type={type} />
           </TabPanel>
           <TabPanel></TabPanel>
           <TabPanel></TabPanel>

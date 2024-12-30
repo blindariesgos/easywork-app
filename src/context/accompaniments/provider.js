@@ -6,7 +6,10 @@ import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useAgents } from "../../lib/api/hooks/agents";
 
-export default function AccompanimentsContextProvider({ children }) {
+export default function AccompanimentsContextProvider({
+  children,
+  customFilters = [],
+}) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
@@ -44,6 +47,7 @@ export default function AccompanimentsContextProvider({ children }) {
       check: true,
       code: "createdAt",
     },
+    ...customFilters,
   ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -104,6 +108,7 @@ export default function AccompanimentsContextProvider({ children }) {
         code: "observerId",
         options: lists?.users,
       },
+      ...customFilters,
     ]);
   }, [lists]);
 

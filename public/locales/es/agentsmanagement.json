@@ -13,7 +13,7 @@
         },
         "agent": {
             "create": "Nuevo Agente",
-            "data": "Datos de Agente",
+            "data": "Datos del Agente",
             "age": "Edad",
             "children": "Hijos",
             "responsible": "Responsable del reclutamiento",
@@ -93,7 +93,9 @@
             "responsible": "Responsable",
             "origin": "Origen",
             "activity": "Actividades"
-        }
+        },
+        "init-date": "Fecha de inicio del proceso",
+        "entry-date": "Fecha de ingreso o aprobación"
     },
     "conections": {
         "title": "Conexiones",
@@ -105,6 +107,9 @@
             "responsible": "Responsable",
             "proccess": "Proceso cerrado",
             "activity": "Actividades"
-        }
+        },
+        "dni-number": "Número de Cédula Provisional/Definitivo",
+        "date-cvp": "Fecha de Vigencia CUA Provisional",
+        "date-vc": "Fecha de Vigencia Cédula"
     }
 }

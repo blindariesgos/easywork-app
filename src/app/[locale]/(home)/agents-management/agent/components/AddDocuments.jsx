@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import AddDocumentDialog from "@/src/components/modals/AddDocument";
 import { useSWRConfig } from "swr";
 
-const AddDocuments = ({ contactId }) => {
+const AddDocuments = ({ contactId, type }) => {
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
   const [addFileProps, setAddFileProps] = useState({
@@ -14,18 +14,28 @@ const AddDocuments = ({ contactId }) => {
     cmrType: "contact",
     id: contactId,
   });
+
   const options = [
     {
       name: "CV",
       type: "documentos",
       accept: null,
       disabled: true,
+      hidden: type == "conection",
     },
     {
       name: t("leads:add:rfc"),
       type: "documentos",
       accept: null,
       disabled: true,
+      hidden: type == "conection",
+    },
+    {
+      name: "Cédula",
+      type: "documentos",
+      accept: null,
+      disabled: true,
+      hidden: type !== "conection",
     },
   ];
 
@@ -62,17 +72,19 @@ const AddDocuments = ({ contactId }) => {
           anchor="bottom start"
           className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
         >
-          {options.map((option, index) => (
-            <MenuItem
-              key={index}
-              as="div"
-              onClick={() => handleAddDocument(option)}
-              disabled={option.disabled}
-              className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
-            >
-              {option.name}
-            </MenuItem>
-          ))}
+          {options
+            .filter((x) => !x.hidden)
+            .map((option, index) => (
+              <MenuItem
+                key={index}
+                as="div"
+                onClick={() => handleAddDocument(option)}
+                disabled={option.disabled}
+                className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+              >
+                {option.name}
+              </MenuItem>
+            ))}
         </MenuItems>
       </Menu>
     </Fragment>

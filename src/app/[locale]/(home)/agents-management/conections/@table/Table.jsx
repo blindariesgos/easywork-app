@@ -86,7 +86,9 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
@@ -204,7 +206,7 @@ export default function Table() {
     // },
     {
       id: 1,
-      name: "Asignar observador",
+      name: "Cambiar Etapa",
       disabled: true,
     },
     {
@@ -237,10 +239,10 @@ export default function Table() {
       name: "Editar",
       disabled: true,
     },
-    // {
-    //   name: "Actividades",
-    //   disabled: true,
-    // },
+    {
+      name: "Actividades",
+      disabled: true,
+    },
     // {
     //   name: "Asignar GDD",
     //   disabled: true,
@@ -619,6 +621,10 @@ export default function Table() {
                                 ) : column.row === "date" ? (
                                   <p className="text-center">
                                     {moment().format("DD-MM-YYYY")}
+                                  </p>
+                                ) : column.row === "initdate" ? (
+                                  <p className="text-center">
+                                    {`TRIMESTRE ${moment(agent.createdAt).format("Q")}`}
                                   </p>
                                 ) : column.row === "updatedAt" ? (
                                   <p className="text-center">

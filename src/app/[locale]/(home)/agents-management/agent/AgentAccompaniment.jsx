@@ -8,7 +8,7 @@ export default function AgentAccompaniment({ agent, id }) {
   const { t } = useTranslation();
 
   return (
-    <AgentEditor agent={agent} id={id}>
+    <AgentEditor agent={agent} id={id} type="accompaniment">
       {agent && (
         <div className="pt-6 px-2 md:px-4 lg:px-8 pb-2 md:pb-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
@@ -46,14 +46,14 @@ export default function AgentAccompaniment({ agent, id }) {
             </div>
             <div className="flex items-center gap-2">
               <p className="uppercase text-sm">
-                Fecha de ingreso o aprobacion:
+                Fecha de ingreso o APROBACIÓN:
               </p>
             </div>
             <div className="flex items-center gap-2">
               <p className="uppercase text-sm">01/01/0001</p>
             </div>
             <div className="flex items-center gap-2">
-              <p className="uppercase text-sm">ETAPA DE AVANCE conexion:</p>
+              <p className="uppercase text-sm">ETAPA DE AVANCE conexiÓn:</p>
             </div>
             <div className="flex items-center gap-2">
               <button className="px-1 py-2 text-sm rounded-md bg-[#64d1ef]">

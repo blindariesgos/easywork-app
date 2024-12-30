@@ -43,7 +43,7 @@ const CRMMultipleSelectV2 = ({
     "agent",
   ]);
   const { contacts, isLoading: isLoadingContacts } = useContacts({
-    filters: { searchVector: query },
+    filters: { fullName: query },
     page: 1,
     limit: 5,
   });
@@ -62,7 +62,7 @@ const CRMMultipleSelectV2 = ({
     },
   });
   const { leads, isLoading: isLoadingLeads } = useLeads({
-    filters: { searchVector: query },
+    filters: { fullName: query },
     config: {
       page: 1,
       limit: 5,

@@ -1,6 +1,5 @@
 "use client";
-import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useAppContext from "@/src/context/app";
@@ -10,19 +9,14 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
-import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
-import CheckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
-import InputCheckBox from "@/src/components/form/InputCheckBox";
 import Button from "@/src/components/form/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "./components/OptionsTask";
 import { useSession } from "next-auth/react";
 import {
   getContactId,
-  postTask,
-  putTaskId,
   getLeadById,
   getPolicyById,
   getReceiptById,

@@ -5,7 +5,7 @@ export default function MainContent() {
   const { push } = useRouter();
   return (
     <div className="w-full relative mt-10">
-      <div className="flex flex-col md:flex-row w-full h-full items-center justify-center">
+      <div className="flex flex-col md:flex-row w-full h-full items-center justify-evenly">
         <Image
           className="w-64 md:w-80"
           width={600}
@@ -14,7 +14,7 @@ export default function MainContent() {
           alt="cellphone"
         />
         <div
-          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left z-50 mx-10"
+          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left"
           style={{ maxWidth: 590 }}
         >
           <h2

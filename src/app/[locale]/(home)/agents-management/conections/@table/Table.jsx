@@ -343,7 +343,7 @@ export default function Table() {
         </div>
       )}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full pb-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
             <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
               <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">

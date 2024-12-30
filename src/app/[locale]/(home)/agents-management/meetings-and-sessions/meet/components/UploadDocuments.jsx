@@ -1,12 +1,12 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CardFile from "./CardFile";
 import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { FaDropbox, FaGoogle } from "react-icons/fa6";
 import { uploadTemporalFile } from "../../../../../../../lib/api/drive";
-import { putMeetById, putMeetComment, putTaskId } from "@/src/lib/apis";
+import { putMeetById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
@@ -16,6 +16,7 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
   const inputFileRef = useRef();
   const [loading, setLoading] = useState(false);
   const { mutate } = useSWRConfig();
+  const [localFiles, setLocalFiles] = useState([]);
 
   const handleLocalUpload = async (uploadfiles) => {
     setLoading(true);
@@ -110,9 +111,23 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
       handleRemoteUpload(event.target.files);
     }
   };
+
+  useEffect(() => {
+    setLocalFiles(localFiles.filter((file) => files.includes(file.id)));
+  }, [files]);
+
   return (
     <div className="pt-2">
       {loading && <LoaderSpinner />}
+      {localFiles && localFiles?.length > 0 && (
+        <div className="flex flex-wrap gap-3 py-2">
+          {localFiles?.map((file, i) => (
+            <div key={i}>
+              <CardFile data={file} onClick={() => deleteFile(file.id)} />
+            </div>
+          ))}
+        </div>
+      )}
       <hr className="text-gray-200 border border-dashed" />
       <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
         <div className="">

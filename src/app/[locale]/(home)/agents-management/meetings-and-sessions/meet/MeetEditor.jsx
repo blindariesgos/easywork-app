@@ -74,10 +74,10 @@ export default function MeetEditor({ edit, copy, type }) {
       title: edit?.title ?? "",
       startTime: edit?.startTime ?? "",
       participants: edit?.agents ?? [],
-      responsible: edit?.developmentManager.id ?? "",
+      responsible: edit?.developmentManager?.id ?? "",
       observers: edit?.observers ?? [],
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
-      createdBy: edit ? [edit.createdBy] : [],
+      createdBy: edit ? [edit?.createdBy] : [],
       type: type,
     },
     resolver: yupResolver(schemaInputs),
@@ -425,34 +425,24 @@ export default function MeetEditor({ edit, copy, type }) {
           </div>
           <div className={`flex gap-4 flex-wrap mt-4 ${edit && "mb-4"}`}>
             <Button
-              label={
-                loading
-                  ? t("common:saving")
-                  : edit
-                    ? t("tools:tasks:new:update-task")
-                    : t(`agentsmanagement:meetings-and-sessions:${type}:add`)
-              }
-              buttonStyle="primary"
-              disabled={loading}
-              className="px-3 py-2 drop-shadow-lg"
-              onclick={handleSubmit((data) => createMeet(data, false))}
-            />
-            {/* {!edit && (
-              <Button
-                label={t("tools:tasks:new:add-create")}
-                buttonStyle="secondary"
-                disabled={loading}
-                className="px-3 py-2 drop-shadow-lg"
-                onclick={handleSubmit((data) => createTask(data, true))}
-              />
-            )} */}
-
-            <Button
               label={t("common:buttons:cancel")}
               buttonStyle="secondary"
               disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleCancel}
+            />
+            <Button
+              label={
+                loading
+                  ? t("common:saving")
+                  : edit
+                    ? t("tools:tasks:new:update-task")
+                    : "Agregar junta"
+              }
+              buttonStyle="primary"
+              disabled={loading}
+              className="px-3 py-2 drop-shadow-lg"
+              onclick={handleSubmit((data) => createMeet(data, false))}
             />
           </div>
         </div>

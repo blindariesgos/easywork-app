@@ -115,6 +115,7 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
   useEffect(() => {
     setLocalFiles(localFiles.filter((file) => files.includes(file.id)));
   }, [files]);
+
   return (
     <div className="pt-2">
       {loading && <LoaderSpinner />}

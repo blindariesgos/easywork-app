@@ -1,6 +1,5 @@
 "use client";
-import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useAppContext from "@/src/context/app";
@@ -10,19 +9,14 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
-import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
-import CheckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
-import InputCheckBox from "@/src/components/form/InputCheckBox";
 import Button from "@/src/components/form/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "./components/OptionsTask";
 import { useSession } from "next-auth/react";
 import {
   getContactId,
-  postTask,
-  putTaskId,
   getLeadById,
   getPolicyById,
   getReceiptById,
@@ -80,10 +74,10 @@ export default function MeetEditor({ edit, copy, type }) {
       title: edit?.title ?? "",
       startTime: edit?.startTime ?? "",
       participants: edit?.agents ?? [],
-      responsible: edit?.developmentManager.id ?? "",
+      responsible: edit?.developmentManager?.id ?? "",
       observers: edit?.observers ?? [],
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
-      createdBy: edit ? [edit.createdBy] : [],
+      createdBy: edit ? [edit?.createdBy] : [],
       type: type,
     },
     resolver: yupResolver(schemaInputs),
@@ -431,34 +425,24 @@ export default function MeetEditor({ edit, copy, type }) {
           </div>
           <div className={`flex gap-4 flex-wrap mt-4 ${edit && "mb-4"}`}>
             <Button
-              label={
-                loading
-                  ? t("common:saving")
-                  : edit
-                    ? t("tools:tasks:new:update-task")
-                    : t(`agentsmanagement:meetings-and-sessions:${type}:add`)
-              }
-              buttonStyle="primary"
-              disabled={loading}
-              className="px-3 py-2 drop-shadow-lg"
-              onclick={handleSubmit((data) => createMeet(data, false))}
-            />
-            {/* {!edit && (
-              <Button
-                label={t("tools:tasks:new:add-create")}
-                buttonStyle="secondary"
-                disabled={loading}
-                className="px-3 py-2 drop-shadow-lg"
-                onclick={handleSubmit((data) => createTask(data, true))}
-              />
-            )} */}
-
-            <Button
               label={t("common:buttons:cancel")}
               buttonStyle="secondary"
               disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
               onclick={handleCancel}
+            />
+            <Button
+              label={
+                loading
+                  ? t("common:saving")
+                  : edit
+                    ? t("tools:tasks:new:update-task")
+                    : "Agregar junta"
+              }
+              buttonStyle="primary"
+              disabled={loading}
+              className="px-3 py-2 drop-shadow-lg"
+              onclick={handleSubmit((data) => createMeet(data, false))}
             />
           </div>
         </div>

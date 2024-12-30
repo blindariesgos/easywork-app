@@ -13,18 +13,17 @@ import { AiOutlineCheckCircle } from "react-icons/ai";
 export default function ModalForm({ buttonOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-    reset, // Added reset
+    reset,
   } = useForm();
 
-  // Función para el submit
   const onSubmit = async (body) => {
     body.phones_dto = [{ number: body.phone, relation: "Personal" }];
     body.emails_dto = [{ email: body.email, relation: "Personal" }];
@@ -43,7 +42,15 @@ export default function ModalForm({ buttonOpen }) {
         return;
       }
       setLoading(false);
+      setIsOpen(false);
       setSubmitted(true);
+      setConfirmModalOpen(true);
+
+      reset();
+
+      setTimeout(() => {
+        setConfirmModalOpen(false);
+      }, 3000);
     } catch (error) {
       console.log(error);
     }
@@ -60,7 +67,7 @@ export default function ModalForm({ buttonOpen }) {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center">
       {loading && <LoaderSpinner />}
       {ButtonOpen}
 
@@ -172,22 +179,25 @@ export default function ModalForm({ buttonOpen }) {
                   </button>
                 </div>
               </form>
-
-              {/* Animación de confirmación */}
-              {submitted && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 1 }}
-                  className="mt-6 flex items-center justify-center text-green-500"
-                >
-                  <AiOutlineCheckCircle className="text-6xl" />
-                  <p className="text-xl ml-4">Formulario enviado con éxito</p>
-                </motion.div>
-              )}
             </div>
           </Transition.Child>
+        </div>
+      </Transition>
+
+      {/* Modal de confirmación */}
+      <Transition show={confirmModalOpen} as={Fragment}>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* <div className="fixed inset-0 bg-black opacity-50 z-40"></div> */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 1 }}
+            className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center"
+          >
+            <AiOutlineCheckCircle className="text-6xl text-green-500" />
+            <p className="text-xl mt-4">Formulario enviado con éxito</p>
+          </motion.div>
         </div>
       </Transition>
     </div>

@@ -9,13 +9,13 @@ import { duplicatePage as duplicateLessonPage } from '../services/lesson-pages';
 import DeleteContentModal from '../../../components/DeleteContentModal';
 import { toast } from 'react-toastify';
 
-export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage }) => {
+export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage, refetchContentDetails }) => {
   const [lessonDetails, setLessonDetail] = useState(lesson);
-  const [lessonPages, setLessonPages] = useState(lesson.pages || []);
+  const [lessonPages, setLessonPages] = useState(lesson?.pages || []);
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
   const [isDeleteContentModalOpen, setIsDeleteModalContentOpen] = useState(false);
   const contentToHandle = useRef({ content: null, type: '' });
-  const countLessonPages = lessonPages.length;
+  const countLessonPages = lessonPages?.length || 0;
 
   // Lessons
   const editLesson = () => {
@@ -25,6 +25,8 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage 
   };
 
   const deleteLesson = () => {
+    contentToHandle.current.type = 'lesson';
+    contentToHandle.current.content = lesson;
     setIsDeleteModalContentOpen(true);
   };
 
@@ -62,8 +64,17 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage 
     setIsDeleteModalContentOpen(true);
   };
 
+  const refetch = () => {
+    console.log(contentToHandle.current);
+    if (contentToHandle.current.type === 'page') {
+      fetchLessonDetails();
+    } else {
+      refetchContentDetails();
+    }
+  };
+
   return (
-    <div>
+    <div className="mt-1.5">
       <AccordionItem
         title={lessonDetails.name}
         isOpen={isOpen}
@@ -74,7 +85,7 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage 
         itemType="lesson"
         actions={{ editLesson, addNewPage, deleteLesson }}
       >
-        {lessonPages.length > 0 ? (
+        {lessonPages?.length > 0 ? (
           lessonPages.map((page, i) => {
             const isFirstElement = i === 0;
             const isLastElement = i === countLessonPages - 1;
@@ -102,7 +113,7 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage 
         setIsOpen={setIsDeleteModalContentOpen}
         content={contentToHandle.current.content}
         contentType={contentToHandle.current.type}
-        onSuccess={fetchLessonDetails}
+        onSuccess={refetch}
       />
       <NewContentForm
         isOpen={isNewContentFormOpen}

@@ -132,12 +132,10 @@ export const ModuleDetails = ({ courseId }) => {
                   key={lesson.id}
                   lesson={lesson}
                   isOpen={openSections.includes(lesson.name)}
-                  onToggle={() => {
-                    toggleSection(lesson.name);
-                    // if (selectedContent.name !== lesson.name) setSelectedContent({ item: lesson, type: 'lesson' });
-                  }}
+                  onToggle={() => toggleSection(lesson.name)}
                   onSelectLesson={() => setSelectedContent({ item: lesson, type: 'lesson' })}
                   onSelectPage={page => setSelectedContent({ item: page, type: 'page' })}
+                  refetchContentDetails={fetchContentDetails}
                 />
               ))
             ) : (

@@ -413,6 +413,16 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
+export const deleteTaskCommentAttach = async (taskCommentId, data) => {
+  const response = await axios()
+    .delete(`/tools/tasks/comment/${taskCommentId}/attachments`, {
+      data,
+    })
+    .catch((error) => ({ ...error, hasError: true }));
+  console.log(response);
+  return response;
+};
+
 export const deleteMeetComment = async (commentId) => {
   const response = await axios().delete(
     `/agent-management/meetings/comments/${commentId}`
@@ -741,6 +751,13 @@ export const addPolicyByPdf = async (body, category = "nueva") => {
   return response;
 };
 
+export const addPolicyVersionByContact = async (contactId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/contacts/poliza/upload/contact/${contactId}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
 export const addRefund = async (body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/operations/management/reimbursement`, body)
@@ -773,6 +790,7 @@ export const getMetadataOfPdfVersion = async (body, contactId) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/sales/crm/contacts/poliza/metadata/contact/${contactId}`, body)
     .catch((error) => ({ error, hasError: true }));
+  console.log("aaaaaaaaaaaaaaaaaa", response);
   return response;
 };
 

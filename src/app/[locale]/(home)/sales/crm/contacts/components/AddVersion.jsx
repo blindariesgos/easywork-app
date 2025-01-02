@@ -15,7 +15,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { FaTrash } from "react-icons/fa";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addPolicyByPdf, getMetadataOfPdfVersion } from "@/src/lib/apis";
+import {
+  addPolicyVersionByContact,
+  getMetadataOfPdfVersion,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -33,28 +36,7 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
   const [helpers, setHelpers] = useState({});
 
   const schema = yup.object().shape({
-    contact: yup
-      .object()
-      .shape({})
-      .when("isNewContact", {
-        is: (value) => !value,
-        then: (schema) => schema.required(t("common:formValidator:required")),
-        otherwise: (schema) => schema,
-      }),
-    newContact: yup
-      .object()
-      .shape({})
-      .when("isNewContact", {
-        is: (value) => value,
-        then: (schema) => schema.required(t("common:formValidator:required")),
-        otherwise: (schema) => schema,
-      }),
-
-    contactId: yup.string(),
     typeId: yup.string().required(t("common:validations:required")),
-    responsibleId: yup.string().required(t("common:validations:required")),
-    observerId: yup.string().required(t("common:validations:required")),
-    isNewContact: yup.bool().default(false),
     poliza: yup.string().required(t("common:validations:required")),
     typePerson: yup.string().required(t("common:validations:required")),
     vigenciaDesde: yup.string().required(t("common:validations:required")),
@@ -62,7 +44,7 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
     companyId: yup.string().required(t("common:validations:required")),
     currencyId: yup.string().required(t("common:validations:required")),
     primaNeta: yup.string().required(t("common:validations:required")),
-    version: yup.string().required(t("common:validations:required")),
+    version: yup.string(),
     derechoPoliza: yup.string().default("0"),
     iva: yup.string().default("0"),
     importePagar: yup.string().required(t("common:validations:required")),
@@ -142,16 +124,6 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
       return;
     }
 
-    if (response?.contact?.id) {
-      setValue("contact", response?.contact?.id);
-      setValue("contactId", response?.contact?.id);
-    } else {
-      setValue("isNewContact", true);
-      setValue("newContact", {
-        ...response?.contact,
-        name: response?.contact?.fullName,
-      });
-    }
     if (response?.poliza) setValue("poliza", response?.poliza);
     if (response?.contact?.typePerson)
       setValue("typePerson", response?.contact?.typePerson);
@@ -160,42 +132,27 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
       setValue("vigenciaDesde", response?.vigenciaDesde ?? "");
     if (response?.vigenciaHasta)
       setValue("vigenciaHasta", response?.vigenciaHasta ?? "");
-    // if (response?.cobertura) setValue("cobertura", response?.cobertura);
-    // if (response?.paymentMethod)
-    //   setValue("paymentMethod", response?.paymentMethod);
-    // if (response?.paymentFrequency)
-    //   setValue("paymentFrequency", response?.paymentFrequency);
-    // if (response?.paymentTerm) setValue("paymentTerm", response?.paymentTerm);
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)
       setValue("frecuenciaCobroId", response?.frecuenciaCobro?.id);
     if (response?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", response?.agenteIntermediario?.id);
-    // if (response?.observations) setValue("observations", response?.observations);
     if (response?.currency?.name)
       setValue("currencyId", response?.currency?.id);
     if (response?.plazoPago) setValue("plazoPago", response?.plazoPago);
-    // if (response?.assignedBy) setValue("assignedById", response?.assignedBy?.id);
-    // if (response?.contact?.address) setValue("address", response?.contact?.address);
-    // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
     if (response?.version) setValue("version", response?.version);
-    // if (response?.importePagar)
     setValue(
       "importePagar",
       response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
     );
-    // if (response?.primaNeta)
     setValue("primaNeta", response?.primaNeta?.toFixed(2) ?? (0).toFixed(2));
-    // if (response?.primaNeta)
     setValue(
       "derechoPoliza",
       response?.derechoPoliza?.toFixed(2) ?? (0).toFixed(2)
     );
-    // if (response?.iva)
     setValue("iva", response?.iva?.toFixed(2) ?? (0).toFixed(2));
-    // if (response?.recargoFraccionado)
     setValue(
       "recargoFraccionado",
       response?.recargoFraccionado?.toFixed(2) ?? (0).toFixed(2)
@@ -214,6 +171,7 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue("relatedContacts", response?.relatedContacts);
     }
+    setValue("regenerateReceipts", "NO");
 
     reader.readAsDataURL(file);
     setLoading(false);
@@ -232,11 +190,13 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
       version,
       contact,
       relatedContacts,
+      regenerateReceipts,
       ...otherData
     } = data;
     let body = {
       ...otherData,
-      operacion: "cambio_version",
+      operacion: "produccion_nueva",
+      version: 0,
       renewal: false,
       iva: iva ? +iva : 0,
       primaNeta: primaNeta ? +primaNeta : 0,
@@ -245,14 +205,16 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
-      version: version ? +version : 0,
-      name: `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData.typeId).name}`,
+      regenerateReceipts: regenerateReceipts == "YES",
+      name: lists
+        ? `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData.typeId).name}`
+        : "",
     };
 
     console.log({ body });
 
     try {
-      const response = await addPolicyByPdf(body, "renovacion");
+      const response = await addPolicyVersionByContact(contactId, body);
       console.log({ response });
       if (response?.hasError) {
         if (Array.isArray(response?.error?.message)) {
@@ -403,146 +365,12 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectDropdown
-                    label={t("operations:policies:general:responsible")}
-                    name="responsibleId"
-                    options={lists?.users}
-                    register={register}
-                    error={!watch("responsibleId") && errors.responsibleId}
-                    setValue={setValue}
-                    watch={watch}
-                  />
-                  <SelectInput
-                    label={"Observador"}
-                    options={lists?.users ?? []}
-                    name="observerId"
-                    error={errors?.observerId}
-                    setValue={setValue}
-                  />
-                  <div>
-                    <label
-                      className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
-                    >
-                      {t("control:portafolio:control:form:contact")}
-                    </label>
-                    <p
-                      className={clsx("text-xs py-2 px-3", {
-                        hidden: !watch("isNewContact"),
-                      })}
-                    >
-                      No encontramos el cliente de la póliza en nuestros
-                      registros. ¿Ya está registrado? Si es así, selecciónalo.
-                      Si no, crearemos uno nuevo con la información de la
-                      póliza.
-                    </p>
-                    <TabGroup
-                      className={clsx(" rounded-md", {
-                        "px-3 border": watch("isNewContact"),
-                      })}
-                    >
-                      <TabList
-                        className={clsx("flex gap-2 pt-2", {
-                          hidden: !watch("isNewContact"),
-                        })}
-                      >
-                        <Tab className="text-xs bg-white rounded-full px-2 py-1 data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold">
-                          Todos
-                        </Tab>
-                        <Tab
-                          className={clsx(
-                            "text-xs bg-white rounded-full  data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold",
-                            {
-                              hidden:
-                                !watch("relatedContacts") ||
-                                watch("relatedContacts").length == 0,
-                              "px-2 py-1": watch("isNewContact"),
-                            }
-                          )}
-                        >
-                          Coincidencias
-                        </Tab>
-                        <Tab className="text-xs bg-white rounded-full px-2 py-1  data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold">
-                          Por defecto
-                        </Tab>
-                      </TabList>
-                      <TabPanels>
-                        <TabPanel className="py-2">
-                          <ContactSelectAsync
-                            name={"contact"}
-                            setValue={setValue}
-                            watch={watch}
-                            error={errors?.contact}
-                            helperText={helpers?.contact}
-                          />
-                        </TabPanel>
-                        <TabPanel
-                          className={clsx("py-2", {
-                            hidden:
-                              !watch("relatedContacts") ||
-                              watch("relatedContacts").length == 0,
-                          })}
-                        >
-                          <SelectInput
-                            options={watch("relatedContacts") ?? []}
-                            name="observerId"
-                            error={errors?.observerId}
-                            setValue={setValue}
-                          />
-                        </TabPanel>
-                        <TabPanel className="py-2">
-                          <TextInput
-                            type="text"
-                            label={"Nombre completo"}
-                            name="newContact.fullName"
-                            register={register}
-                            disabled
-                          />
-                          <TextInput
-                            type="text"
-                            label={"Código"}
-                            name="newContact.codigo"
-                            register={register}
-                            disabled
-                          />
-                          <TextInput
-                            type="text"
-                            label={t("operations:policies:general:rfc")}
-                            name="newContact.rfc"
-                            register={register}
-                            disabled
-                          />
-                          <TextInput
-                            type="text"
-                            label={t("operations:policies:general:address")}
-                            name="newContact.address"
-                            register={register}
-                            disabled
-                            multiple
-                            rows={2}
-                          />
-                          {/* <InputDate
-                              label={t("contacts:create:born-date")}
-                              name="newContact.birthdate"
-                              error={errors.birthdate}
-                              register={register}
-                              disabled
-                            /> */}
-                        </TabPanel>
-                      </TabPanels>
-                    </TabGroup>
-                  </div>
-
                   <TextInput
                     type="text"
                     label={"Número de póliza"}
                     name="poliza"
                     register={register}
-                  />
-                  <TextInput
-                    type="text"
-                    label={"Versión"}
-                    name="version"
-                    register={register}
+                    disabled={true}
                   />
                   <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -775,6 +603,29 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
                       ))}
                     </div>
                   )}
+
+                  <SelectInput
+                    label={"Generar Recibos"}
+                    name="regenerateReceipts"
+                    options={[
+                      {
+                        name: "No",
+                        id: "NO",
+                      },
+                      {
+                        name: "Si",
+                        id: "YES",
+                      },
+                    ]}
+                    register={register}
+                    setValue={setValue}
+                    watch={watch}
+                    helperText={
+                      watch("regenerateReceipts") == "NO"
+                        ? "El sistema realizará los cálculos para generar nuevos recibos en base a los montos expresados en la póliza (Se sobreescribirá los recibos existentes)"
+                        : "El sistema trabajará con los recibos previamentes cargados/generados de la póliza que ya está guardada"
+                    }
+                  />
                 </Fragment>
 
                 {/* <SelectSubAgent

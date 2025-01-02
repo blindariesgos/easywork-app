@@ -3,7 +3,12 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextEditor from "../TextEditor";
-import { deleteComment, postComment, putComment } from "@/src/lib/apis";
+import {
+  deleteComment,
+  postComment,
+  putComment,
+  deleteTaskCommentAttach,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
 import {
@@ -12,7 +17,9 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useTaskComments } from "@/src/lib/api/hooks/tasks";
-import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
+import LoaderSpinner, {
+  LoadingSpinnerSmall,
+} from "@/src/components/LoaderSpinner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale"; // Importa el locale español
 import { useSWRConfig } from "swr";
@@ -28,6 +35,7 @@ import { toast } from "react-toastify";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const quillRef = useRef(null);
   const { data: session } = useSession();
@@ -154,15 +162,26 @@ export default function TabComment({ info }) {
     }
   };
 
-  const handleDeleteFile = (index) => {
-    setUpload({
-      fileIds: upload.fileIds.filter((_, i) => i != index) ?? [],
-      files: upload.files.filter((_, i) => i != index) ?? [],
-    });
+  const handleDeleteFile = async (fileId, taskCommentId) => {
+    setLoading(true);
+    const body = {
+      attachmentIds: [fileId],
+    };
+    const response = await deleteTaskCommentAttach(taskCommentId, body);
+    if (response.hasError) {
+      toast.error("Ocurrio un error al eliminar el archivo adjunto");
+      setLoading(false);
+      return;
+    }
+
+    await mutate(`/tools/tasks/comments/task/${info.id}`);
+    setLoading(false);
+    toast.success("Adjunto eliminado con exito");
   };
 
   return (
     <div className="w-full p-3">
+      {loading && <LoaderSpinner />}
       {Object.keys(editComment).length === 0 && (
         <div className="flex gap-2 mb-4 items-center w-full">
           <Image
@@ -262,7 +281,7 @@ export default function TabComment({ info }) {
 
       {showComments?.length > 0 && (
         <div className="gap-4 flex flex-col-reverse w-full md:overflow-y-auto md:max-h-[300px]">
-          {showComments?.map((dat, index) => (
+          {showComments?.map((comment, index) => (
             <div
               className="flex gap-2 items-center w-full group"
               key={index}
@@ -298,7 +317,9 @@ export default function TabComment({ info }) {
                             <FilePreview
                               info={file}
                               key={index}
-                              handleDeleteFile={() => handleDeleteFile(index)}
+                              handleDeleteFile={() =>
+                                handleDeleteFile(file.id, comment.id)
+                              }
                             />
                           ))}
                         </div>
@@ -351,7 +372,7 @@ export default function TabComment({ info }) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleComment(dat.id)}
+                        onClick={() => handleComment(comment.id)}
                         disabled={disabled || value.length == 0}
                         className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
@@ -370,26 +391,26 @@ export default function TabComment({ info }) {
                     className="h-7 w-7 rounded-full object-cover"
                     width={36}
                     height={36}
-                    src={dat?.createdBy?.avatar ?? "/img/avatar.svg"}
+                    src={comment?.createdBy?.avatar ?? "/img/avatar.svg"}
                     alt=""
                   />
                   <div className="bg-gray-200 rounded-md p-2 px-4 text-xs">
                     <div className="flex justify-between flex-col">
                       <div className="flex gap-2">
                         <span className="font-semibold">
-                          {getUserName(dat?.createdBy)}
+                          {getUserName(comment?.createdBy)}
                         </span>
                         <span className="text-xs text-gray-800/50">
-                          {formattedDate(dat)}
+                          {formattedDate(comment)}
                         </span>
                       </div>
-                      <div data-type="comment">{parse(dat.comment)}</div>
+                      <div data-type="comment">{parse(comment.comment)}</div>
                     </div>
-                    {dat?.attachedObjects && (
+                    {comment?.attachedObjects && (
                       <div className="flex gap-1 flex-wrap p-1">
-                        {dat?.attachedObjects?.map((file, index) => (
+                        {comment?.attachedObjects?.map((file, index) => (
                           <div
-                            className="p-2 bg-white shadow-lg text-xs rounded-full cursor-pointer flex gap-1 items-center"
+                            className="p-2 bg-white shadow-lg text-xs rounded-full cursor-pointer flex gap-1 items-center group/delete"
                             title={file?.name}
                             key={index}
                           >
@@ -406,6 +427,14 @@ export default function TabComment({ info }) {
                                 ? `${file?.name?.slice(0, 7)}...${file?.name?.slice(-6)}`
                                 : file?.name}
                             </p>
+                            <p
+                              className="text-xs hidden group-hover/delete:block"
+                              onClick={() =>
+                                handleDeleteFile(file.id, comment.id)
+                              }
+                            >
+                              x
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -415,22 +444,17 @@ export default function TabComment({ info }) {
                   <div
                     className={clsx(" justify-end items-center gap-1 hidden", {
                       "group-hover:flex":
-                        dat.createdBy.id === session?.user?.sub,
+                        comment.createdBy.id === session?.user?.sub,
                     })}
                   >
                     <div
                       onClick={() => {
                         setEditComment({ [index]: !editComment[index] });
-                        setValueText(dat.comment);
-                        if (dat.attachedObjects) {
+                        setValueText(comment.comment);
+                        if (comment.attachedObjects) {
                           setUpload({
-                            fileIds: dat.attachedObjects.map((x) => x.id),
-                            files: dat.attachedObjects.map((x) => ({
-                              attached: {
-                                name: x.name,
-                                url: x.url,
-                              },
-                            })),
+                            fileIds: [],
+                            files: [],
                           });
                         }
                       }}
@@ -440,7 +464,7 @@ export default function TabComment({ info }) {
                     </div>
                     <div
                       onClick={() => {
-                        getDeleteComment(dat.id);
+                        getDeleteComment(comment.id);
                       }}
                       className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
                     >

@@ -11,7 +11,7 @@ export const FileUpload = ({ onChange, onDelete, loading, inputRef, files = [], 
   };
 
   return (
-    <div className={`${showFiles && 'px-4 mt-4'}`}>
+    <div className={`${showFiles && 'px-4 mt-4'} ${showFiles && loading && 'hidden'}`}>
       <div className={`flex items-start justify-start gap-2 flex-wrap`}>
         {filesToPreview.map((file, i) => (
           <FilePreview key={`file-${i}`} file={file} onClick={() => onDeleteFile(i)} disabled={disabled} />

@@ -45,6 +45,25 @@
             "not-data": "No hay agentes"
         }
     },
+    "e-learning": {
+        "title": "E-Learning",
+        "table": {
+            "agent": "Agente",
+            "stage": "Etapa",
+            "startDate": "Fecha de inicio del proceso",
+            "endDate": "Fecha final del proceso",
+            "processClosed": "Proceso cerrado",
+            "responsible": "Responsable",
+            "activity": "Actividad",
+            "email": "Correo Electrónico",
+            "mobile": "Móvil",
+            "lastUpdate": "Fecha de la última actividad",
+            "manager": "Gerente de desarrollo",
+            "state": "Estado del agente",
+            "created-in": "Fecha de creación",
+            "not-data": "No hay agentes"
+        }
+    },
     "meetings-and-sessions": {
         "title": "Mis Juntas",
         "table": {

@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
+import { FaSave } from 'react-icons/fa';
 
 import Button from '@/src/components/form/Button';
 import LessonTextEditor from './LessonTextEditor Beta';
@@ -24,6 +25,7 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
   const inputFileRef = useRef(null);
 
   const {
+    register,
     handleSubmit,
     reset,
     setValue,
@@ -103,16 +105,37 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
   return (
     <form action={handleSubmit(onSubmit)}>
       <div className="p-5 flex items-center justify-between bg-white rounded-xl mb-2" style={{ borderBottomWidth: '1px', borderBottomStyle: 'solid' }}>
-        <p className="text-lg font-bold">{values.name}</p>
+        {isEditorDisabled ? (
+          <p className="text-lg font-bold">{values.name}</p>
+        ) : (
+          <div className="w-full">
+            <input
+              {...register('name', { required: 'El nombre es obligatorio.' })}
+              type="text"
+              autoComplete={false}
+              className={`w-full block text-lg border-0 rounded-md focus:ring-0 ${errors.name ? 'focus:border-red-300 border-red-300' : ''}`}
+              disabled={loading}
+            />
+            {errors.name && <p className="text-red-400 text-sm mt-1 pl-2">{errors.name.message}</p>}
+          </div>
+        )}
 
         <div className="flex items-center justify-center pr-2 gap-4">
-          <button type="button" className="block cursor-pointer" onClick={() => setMarkAsDone(prev => !prev)}>
-            <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
-          </button>
+          {isEditorDisabled ? (
+            <>
+              <button type="button" className="block cursor-pointer" onClick={() => setMarkAsDone(prev => !prev)}>
+                <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
+              </button>
 
-          <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
-            <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-          </button>
+              <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
+                <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+              </button>
+            </>
+          ) : (
+            <button type="submit" className="block cursor-pointer" disabled={loading}>
+              {loading ? <LoadingSpinnerSmall /> : <FaSave className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />}
+            </button>
+          )}
         </div>
       </div>
 

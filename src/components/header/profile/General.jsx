@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   ClockIcon,
@@ -8,7 +7,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { useNotifyContext } from "@/src/context/notify";
 import { BellIcon } from "@heroicons/react/24/solid";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import SliderOverShord from "@/src/components/SliderOverShort";
 import Tag from "@/src/components/Tag";

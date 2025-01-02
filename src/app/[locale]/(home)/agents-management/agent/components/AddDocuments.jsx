@@ -39,13 +39,13 @@ const AddDocuments = ({ contactId, type }) => {
     },
   ];
 
-  const handleAddDocument = (document) => {
+  const handleAddDocument = (documentToAdd) => {
     setAddFileProps({
       ...addFileProps,
       isOpen: true,
-      documentType: document.type,
-      title: t("common:add-document", { document: document.name }),
-      accept: document.accept,
+      documentType: documentToAdd?.type,
+      title: t("common:add-document", { document: documentToAdd?.name }),
+      accept: documentToAdd?.accept,
     });
   };
 

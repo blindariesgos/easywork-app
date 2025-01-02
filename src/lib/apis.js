@@ -247,6 +247,11 @@ export const getUsersContacts = async () => {
   return response;
 };
 
+export const getRelatedUsers = async () => {
+  const response = await axios().get("/users/related_users");
+  return response;
+};
+
 export const createImap = async (data) => {
   const response = await axios().post(`/imap-config`, data);
   return response;

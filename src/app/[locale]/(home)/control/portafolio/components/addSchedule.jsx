@@ -16,6 +16,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
+import { addRefund, addSchedule } from "@/src/lib/apis";
 
 const AddSchedule = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
-    policyId: yup.string().required(t("common:validations:required")),
+    poliza: yup.object().shape({}).required(t("common:validations:required")),
     ot: yup
       .string()
       .matches(
@@ -33,7 +34,9 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
       )
       .required(t("common:validations:required")),
     sigre: yup.string().required(t("common:validations:required")),
-    procedure: yup.string().required(t("common:validations:required")),
+    type: yup.string().required(t("common:validations:required")),
+    polizaTypeId: yup.string().required(t("common:validations:required")),
+    insuranceId: yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -49,6 +52,23 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  const getFormData = (body) => {
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+    return formData;
+  };
 
   const handleChangeFile = async (e) => {
     const files = e.target.files;
@@ -68,9 +88,10 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
 
     reader.onloadend = () => {
       const result = {
-        file: reader.result,
+        result: reader.result,
         size: file.size,
         name: file.name,
+        file: file,
       };
 
       setFile(result);
@@ -79,24 +100,33 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
   };
 
   const handleChangePolicy = (policy) => {
-    policy?.company?.id && setValue("company", policy?.company?.id);
-    policy?.type?.id && setValue("branch", policy?.type?.id);
+    policy?.company?.id && setValue("insuranceId", policy?.company?.id);
+    policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
   };
 
-  const onSubmit = (data) => {
-    console.log({ data });
+  const onSubmit = async (data) => {
+    const { poliza, ...body } = data;
+    body.polizaId = poliza.id;
+    body.file = file.file;
+    const formData = getFormData(body);
+    const response = await addSchedule(formData);
+    console.log({ response });
+    if (response.hasError) {
+      let message = response.message;
+      if (response.errors) {
+        message = response.errors.join(", ");
+      }
+      toast.error(message);
+      return;
+    }
+
+    toast.success("Programación agregada con éxito");
     setIsOpen(false);
   };
 
   const handleReset = () => {
-    reset({
-      ot: "",
-      policyId: "",
-      sigre: "",
-      procedure: "",
-      company: "",
-      branch: "",
-    });
+    reset();
+    setFile();
   };
 
   return (
@@ -120,11 +150,11 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
             <div className="px-8 pt-4 grid grid-cols-1 gap-4">
               <PolicySelectAsync
                 label={t("operations:managements:add:schedule:poliza")}
-                name={"policyId"}
+                name={"poliza"}
                 setValue={setValue}
                 watch={watch}
                 setSelectedOption={handleChangePolicy}
-                error={errors?.policyId}
+                error={errors?.poliza}
                 register={register}
               />
               <TextInput
@@ -147,19 +177,20 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
                     name: "Nuevo",
                   },
                   {
-                    id: "pre existente",
+                    id: "pre-existente",
                     name: "Pre existente",
                   },
                 ]}
-                name="procedure"
-                error={errors?.procedure}
+                name="type"
+                setValue={setValue}
+                error={errors?.type}
                 register={register}
               />
 
               <SelectInput
                 label={t("operations:managements:add:schedule:company")}
                 options={lists?.policies?.polizaCompanies}
-                name="company"
+                name="insuranceId"
                 setValue={setValue}
                 watch={watch}
                 register={register}
@@ -167,7 +198,7 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
               <SelectInput
                 label={t("operations:managements:add:schedule:branch")}
                 options={lists?.policies?.polizaTypes}
-                name="branch"
+                name="polizaTypeId"
                 setValue={setValue}
                 watch={watch}
                 register={register}

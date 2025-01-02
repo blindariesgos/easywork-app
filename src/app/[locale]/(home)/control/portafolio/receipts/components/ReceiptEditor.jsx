@@ -185,13 +185,13 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
     },
   ];
 
-  const handleAddDocument = (document) => {
+  const handleAddDocument = (documentToAdd) => {
     setAddFileProps({
       ...addFileProps,
       isOpen: true,
-      documentType: document.type,
-      title: t("common:add-document", { document: document.name }),
-      onFinished: document.onFinished,
+      documentType: documentToAdd?.type,
+      title: t("common:add-document", { document: documentToAdd?.name }),
+      onFinished: documentToAdd?.onFinished,
     });
   };
 

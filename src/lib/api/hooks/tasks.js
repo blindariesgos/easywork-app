@@ -39,8 +39,8 @@ export const useTasks = ({
   const url = `/tools/tasks/user?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
     ...srcConfig,
-    refreshInterval: 1000,
   });
+
   return {
     tasks: data,
     isLoading,

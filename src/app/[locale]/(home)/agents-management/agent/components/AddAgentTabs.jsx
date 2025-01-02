@@ -16,7 +16,7 @@ import { useReactToPrint } from "react-to-print";
 import moment from "moment";
 import AddDocuments from "./AddDocuments";
 
-export default function AddContactTabs({ tabs, refPrint, contact }) {
+export default function AddContactTabs({ tabs, refPrint, contact, type }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -94,7 +94,7 @@ export default function AddContactTabs({ tabs, refPrint, contact }) {
             icon={<PlusIcon className="h-4 w-4 text-white" />}
             className="py-2 px-3"
           /> */}
-          <AddDocuments contactId={contact.id} />
+          <AddDocuments contactId={contact.id} type={type} />
         </TabList>
         <IconDropdown
           icon={

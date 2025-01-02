@@ -13,7 +13,7 @@
         },
         "agent": {
             "create": "Nuevo Agente",
-            "data": "Datos de Agente",
+            "data": "Datos del Agente",
             "age": "Edad",
             "children": "Hijos",
             "responsible": "Responsable del reclutamiento",
@@ -60,7 +60,6 @@
             "description": "Introduzca el nombre de la reunión",
             "responsible": "Responsable",
             "date": "Fecha de Reunión",
-            "add": "Agregar junta de equipo",
             "create-msg": "Reunión creada exitosamente"
         },
         "state": {
@@ -74,11 +73,13 @@
         "time": "Duración",
         "group": {
             "title": "Junta de equipo",
-            "agent": "Agentes"
+            "agent": "Agentes",
+            "add": "Agregar junta de equipo"
         },
         "individual": {
             "title": "Junta individual",
-            "agent": "Agente"
+            "agent": "Agente",
+            "add": "Agregar junta individual"
         },
         "gdd": "Gerente de Desarrollo"
     },
@@ -92,7 +93,9 @@
             "responsible": "Responsable",
             "origin": "Origen",
             "activity": "Actividades"
-        }
+        },
+        "init-date": "Fecha de inicio del proceso",
+        "entry-date": "Fecha de ingreso o aprobación"
     },
     "conections": {
         "title": "Conexiones",
@@ -104,6 +107,9 @@
             "responsible": "Responsable",
             "proccess": "Proceso cerrado",
             "activity": "Actividades"
-        }
+        },
+        "dni-number": "Número de Cédula Provisional/Definitivo",
+        "date-cvp": "Fecha de Vigencia CUA Provisional",
+        "date-vc": "Fecha de Vigencia Cédula"
     }
 }

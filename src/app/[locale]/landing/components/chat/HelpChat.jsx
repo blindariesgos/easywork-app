@@ -16,7 +16,7 @@ const HelpChat = () => {
   const [window, setWindow] = useState(1);
 
   return (
-    <div className="fixed bottom-3 right-3 flex flex-row items-end space-y-2 z-50">
+    <div className="fixed bottom-3 right-3 flex flex-row items-end space-y-2 z-40">
       <div className="w-full flex justify-end mr-1 mb-12">
         <Transition
           show={open}

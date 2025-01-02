@@ -1,27 +1,14 @@
+"use client";
 import clsx from "clsx";
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
-import { getPoliciesNeedAttention } from "@/src/lib/apis";
+import { Fragment } from "react";
 import moment from "moment";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import Image from "next/image";
+import { usePoliciesNeedAttention } from "@/src/lib/api/hooks/home";
 
 const PolicyList = () => {
-  const [policies, setPolicies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const getPolicies = async () => {
-      try {
-        const response = await getPoliciesNeedAttention();
-        setPolicies(response);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    };
-    getPolicies();
-  }, []);
+  const { policies, isLoading } = usePoliciesNeedAttention();
 
   return (
     <div
@@ -59,7 +46,9 @@ const PolicyList = () => {
                     </p>
                   )}
                   <p className="text-xs text-gray-50">
-                    {`$${policy?.importeTotal?.toFixed(2) ?? "0.00"} ${moment(policy.vigenciDesde).format("MMM. DD, YYYY")}`}
+                    {`$${policy?.importeTotal?.toFixed(2) ?? "0.00"} ${moment(
+                      policy.vigenciDesde
+                    ).format("MMM. DD, YYYY")}`}
                   </p>
                 </div>
               </div>

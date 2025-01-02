@@ -11,6 +11,7 @@ import CardComment from "./CardComment";
 import { useEntityActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
 import Image from "next/image";
+import { LoadingSpinnerSmall } from "../LoaderSpinner";
 
 export default function ActivityPanel({
   entityId,
@@ -40,7 +41,7 @@ export default function ActivityPanel({
   }
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return <LoadingSpinnerSmall />;
   }
 
   const getActivityIcon = (type) => {

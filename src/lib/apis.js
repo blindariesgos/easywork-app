@@ -704,6 +704,7 @@ export const getContactsNeedAttention = async () => {
 
 export const getPoliciesNeedAttention = async () => {
   const response = await axios().get(`/tools/tasks/home/lists/polizas`);
+  console.log(response);
   return response;
 };
 

@@ -13,35 +13,23 @@ import Image from "next/image";
 import SliderOverShord from "@/src/components/SliderOverShort";
 import Tag from "@/src/components/Tag";
 import { logout } from "../../../lib/apis";
+import UserInfo from "./components/UserInfo";
 
 const General = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const url = new URL(window.location.href);
-  const session = useSession();
   const params = new URLSearchParams(searchParams);
   const { setIsOpen } = useNotifyContext();
 
   params.set("infoP", true);
-  
+
   return (
     <SliderOverShord openModal={params.get("profile")}>
       <Tag onclick={() => router.back()} className="bg-easywork-main" />
       <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
         <div className="bg-white rounded-md p-2 flex justify-between items-center">
-          <div className="flex items-center">
-            <Image
-              className="h-12 w-12 rounded-full object-cover"
-              width={200}
-              height={200}
-              src={session?.data?.user?.avatar || "/img/avatar.svg"}
-              alt=""
-            />
-            <div className="ml-2 flex flex-col justify-center">
-              <p className="text-sm">{`${session?.data?.user?.profile?.firstName} ${session?.data?.user?.profile?.lastName}`}</p>
-              <p className="text-xs">{session?.data?.user?.bio}</p>
-            </div>
-          </div>
+          <UserInfo />
           <button
             onClick={() =>
               router.push(`${url.origin}${url.pathname}?${params.toString()}`)

@@ -2,7 +2,6 @@ import clsx from "clsx";
 import Link from "next/link";
 import {
   formatDate,
-  isDateOverdue,
   isDateTomorrowOverdue,
   isDateTodayOverdue,
   isDateMoreFiveDayOverdue,
@@ -10,8 +9,6 @@ import {
 } from "@/src/utils/getFormatDate";
 import InputCheckBox from "@/src/components/form/InputCheckBox";
 import { useEffect, useState } from "react";
-import { putTaskCompleted } from "@/src/lib/apis";
-import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import CompleteModalTask from "./CompleteModalTask";
 

@@ -29,7 +29,7 @@ export const useRefunds = ({ filters = {}, config = {} }) => {
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/operations/reimbursements/scheduling?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const url = `/operations/reimbursements?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log(url);
   const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
     refreshInterval: 1000,
@@ -43,57 +43,12 @@ export const useRefunds = ({ filters = {}, config = {} }) => {
   };
 };
 
-export const usePortfolioControl = ({
-  filters = {},
-  config = {},
-  groupKey,
-}) => {
-  const queries = getQueries(filters);
-  const configParams = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/sales/crm/polizas/receipts/collection_report/${groupKey}?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-  console.log({ data, error, isLoading });
-  if (!groupKey) {
-    return {
-      data: {
-        items: [],
-      },
-      isLoading: false,
-      isError: false,
-    };
-  }
+export const useReimbursement = (reimbursementId) => {
+  const url = `/operations/reimbursements/${reimbursementId}`;
 
-  return {
-    data,
-    isLoading,
-    isError: error,
-    mutate,
-  };
-};
-
-export const usePoliciesByContactId = ({ contactId, config = {} }) => {
-  const configParams = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/sales/crm/polizas/contact/${contactId}?${configParams}`;
-
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-
-  return {
-    data,
-    isLoading,
-    isError: error,
-    mutate,
-  };
-};
-
-export const usePolicy = (policyId) => {
-  const url = `/sales/crm/polizas/${policyId}`;
-
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
+    refreshInterval: 1000,
+  });
 
   return {
     data,

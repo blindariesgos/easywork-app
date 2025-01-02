@@ -380,7 +380,9 @@ export const convertToSubtaskOf = async (taskId, parentId) => {
 };
 
 export const postComment = async (body, id) => {
-  const response = await axios().post(`/tools/tasks/comments`, body);
+  const response = await axios()
+    .post(`/tools/tasks/comments`, body)
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };
 export const postMeetComment = async (body) => {
@@ -424,7 +426,9 @@ export const putComment = async (commentId, body, taskId) => {
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
+  console.log("paso por acaaaaa 2", response);
+
+  // revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 
@@ -434,7 +438,7 @@ export const putMeetComment = async (commentId, body, meetId) => {
     `/agent-management/meetings/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${meetId}`, "page");
+  // revalidatePath(`/tools/tasks/task/${meetId}`, "page");
   return response;
 };
 
@@ -761,6 +765,13 @@ export const addRenovationByPdf = async (body) => {
 export const getMetadataOfPdf = async (category, body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/operations/management/metadata/pdf?category=${category}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
+export const getMetadataOfPdfVersion = async (body, contactId) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/contacts/poliza/metadata/contact/${contactId}`, body)
     .catch((error) => ({ error, hasError: true }));
   return response;
 };

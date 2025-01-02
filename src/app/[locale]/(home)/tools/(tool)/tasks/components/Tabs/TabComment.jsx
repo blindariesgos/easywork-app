@@ -23,6 +23,8 @@ import { GoKebabHorizontal } from "react-icons/go";
 import UploadDocumentsInComment from "../UploadDocumentsInComment";
 import FilePreview from "../FilePreview";
 import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
+import clsx from "clsx";
+import { toast } from "react-toastify";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
@@ -52,7 +54,7 @@ export default function TabComment({ info }) {
   ];
   const [taggedUsers, setTaggedUsers] = useState([]);
 
-  const handleComment = async (_, id) => {
+  const handleComment = async (id) => {
     if (quillRef.current) {
       const body = {
         comment: value,
@@ -67,9 +69,27 @@ export default function TabComment({ info }) {
       console.log({ body });
       try {
         setDisabled(true);
-        id
-          ? await putComment(id, body, info.id)
-          : await postComment(body, info.id);
+        if (id) {
+          const response1 = await putComment(id, body, info.id).catch(
+            (error) => ({ hasError: true, ...error })
+          );
+          if (response1?.hasError) {
+            toast.error(
+              "Se ha producido un error al actualizar el comentario, inténtelo de nuevo más tarde."
+            );
+            setDisabled(false);
+            return;
+          }
+        } else {
+          const response = await postComment(body, info.id);
+          if (response.hasError) {
+            toast.error(
+              "Se ha producido un error al crear el comentario, inténtelo de nuevo más tarde."
+            );
+            setDisabled(false);
+            return;
+          }
+        }
 
         await mutate(`/tools/tasks/comments/task/${info.id}`);
         setDisabled(false);
@@ -82,6 +102,7 @@ export default function TabComment({ info }) {
         setOpenFiles(false);
         setTaggedUsers([]);
       } catch (error) {
+        console.log({ error });
         handleApiError(error.message);
         setDisabled(false);
       }
@@ -220,7 +241,7 @@ export default function TabComment({ info }) {
                 />
                 <Button
                   type="button"
-                  onclick={handleComment}
+                  onclick={() => handleComment()}
                   disabled={disabled || value.length == 0}
                   label={t("tools:tasks:edit:comment:send")}
                   buttonStyle="primary"
@@ -243,7 +264,7 @@ export default function TabComment({ info }) {
         <div className="gap-4 flex flex-col-reverse w-full md:overflow-y-auto md:max-h-[300px]">
           {showComments?.map((dat, index) => (
             <div
-              className="flex gap-2 items-center w-full"
+              className="flex gap-2 items-center w-full group"
               key={index}
               onMouseEnter={() =>
                 setOpenActions({ ...openActions, [index]: true })
@@ -258,7 +279,7 @@ export default function TabComment({ info }) {
                     className="h-7 w-7 rounded-full object-cover"
                     width={36}
                     height={36}
-                    src={"/img/avatar.svg"}
+                    src={session?.user?.picture || "/img/avatar.svg"}
                     alt=""
                   />
                   <div className="flex flex-col gap-2">
@@ -268,7 +289,6 @@ export default function TabComment({ info }) {
                         value={value}
                         className="w-full max-h-[100px]"
                         setValue={setValueText}
-                        disabled={disabled}
                         taggedUsers={taggedUsers}
                         setTaggedUsers={setTaggedUsers}
                       />
@@ -290,7 +310,6 @@ export default function TabComment({ info }) {
                           key={opt.id}
                           className="flex gap-1 items-center cursor-pointer"
                           onClick={opt.onclick}
-                          ref={opt.id === 3 ? mentionButtonRef : null}
                         >
                           <button
                             className="flex gap-2 items-center focus:ring-0"
@@ -332,7 +351,7 @@ export default function TabComment({ info }) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleComment(null, dat.id)}
+                        onClick={() => handleComment(dat.id)}
                         disabled={disabled || value.length == 0}
                         className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
@@ -392,40 +411,43 @@ export default function TabComment({ info }) {
                       </div>
                     )}
                   </div>
-                  {openActions[index] && (
-                    <div className="flex justify-end items-center gap-1">
-                      <div
-                        onClick={() => {
-                          if (dat.createdBy.id !== session?.user?.id) return;
-                          setEditComment({ [index]: !editComment[index] });
-                          setValueText(dat.comment);
-                          if (dat.attachedObjects) {
-                            setUpload({
-                              fileIds: dat.attachedObjects.map((x) => x.id),
-                              files: dat.attachedObjects.map((x) => ({
-                                attached: {
-                                  name: x.name,
-                                  url: x.url,
-                                },
-                              })),
-                            });
-                          }
-                        }}
-                        className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                      >
-                        <PencilIcon className="h-3 w-3 text-blue-400" />
-                      </div>
-                      <div
-                        onClick={() => {
-                          if (dat.createdBy.id !== session?.user?.id) return;
-                          getDeleteComment(dat.id);
-                        }}
-                        className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                      >
-                        <TrashIcon className="h-3 w-3 text-red-500" />
-                      </div>
+                  {/* {openActions[index] && ( */}
+                  <div
+                    className={clsx(" justify-end items-center gap-1 hidden", {
+                      "group-hover:flex":
+                        dat.createdBy.id === session?.user?.sub,
+                    })}
+                  >
+                    <div
+                      onClick={() => {
+                        setEditComment({ [index]: !editComment[index] });
+                        setValueText(dat.comment);
+                        if (dat.attachedObjects) {
+                          setUpload({
+                            fileIds: dat.attachedObjects.map((x) => x.id),
+                            files: dat.attachedObjects.map((x) => ({
+                              attached: {
+                                name: x.name,
+                                url: x.url,
+                              },
+                            })),
+                          });
+                        }
+                      }}
+                      className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
+                    >
+                      <PencilIcon className="h-3 w-3 text-blue-400" />
                     </div>
-                  )}
+                    <div
+                      onClick={() => {
+                        getDeleteComment(dat.id);
+                      }}
+                      className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
+                    >
+                      <TrashIcon className="h-3 w-3 text-red-500" />
+                    </div>
+                  </div>
+                  {/* )} */}
                 </div>
               )}
             </div>

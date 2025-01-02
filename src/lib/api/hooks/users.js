@@ -38,6 +38,17 @@ export const useUsers = ({ config = {}, filters = {} }) => {
   };
 };
 
+export const useCurrentUserInfo = () => {
+  const { data, error, isLoading, mutate } = useSWR("/users/info", fetcher);
+
+  return {
+    user: data,
+    isLoading,
+    isError: !!error,
+    mutate,
+  };
+};
+
 export const useUser = (id) => {
   const { data, error, isLoading } = useSWR(`/users/${id}`, fetcher);
 

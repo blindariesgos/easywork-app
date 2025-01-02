@@ -3,7 +3,6 @@
 import React, {
   useEffect,
   useState,
-  useCallback,
   useRef,
   forwardRef,
   useImperativeHandle,
@@ -12,8 +11,8 @@ import dynamic from "next/dynamic";
 import DropdownVisibleUsers from "./DropdownVisibleUsers";
 import useAppContext from "@/src/context/app";
 import "react-quill/dist/quill.snow.css";
-import ReactQuill from "react-quill";
-// const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+// import ReactQuill from "react-quill"; // <--- Arroja error SSR.
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const toolbar = [
   ["bold", "italic", "underline", "strike"], // toggled buttons

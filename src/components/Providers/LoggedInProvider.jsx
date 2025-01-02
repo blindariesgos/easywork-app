@@ -2,9 +2,17 @@
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import LoaderSpinner from "../LoaderSpinner";
+import { useEffect } from "react";
+import { logout } from "@/src/lib/apis";
 
 export default function LoggedInProvider({ children }) {
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (session?.error === "RefreshTokenError") {
+      logout();
+    }
+  }, [session]);
 
   if (status === "loading") {
     return <LoaderSpinner />; // Mostrar un componente de carga mientras se verifica la sesión

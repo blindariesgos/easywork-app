@@ -2,10 +2,9 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { useSWRConfig } from "swr";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { uploadTemporalFile } from "../../../../../../../lib/api/drive";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
 
 export default function UploadDocumentInComment({ handleChangeFiles }) {
   const { t } = useTranslation();

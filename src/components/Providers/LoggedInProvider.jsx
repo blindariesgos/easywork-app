@@ -12,7 +12,7 @@ export default function LoggedInProvider({ children }) {
     if (session?.error === "RefreshTokenError") {
       logout();
     }
-  }, []);
+  }, [session]);
 
   if (status === "loading") {
     return <LoaderSpinner />; // Mostrar un componente de carga mientras se verifica la sesión

@@ -23,9 +23,9 @@ export default function LessonMoreMenu({ itemType, actions }) {
   };
 
   return (
-    <Menu as="div" className="w-10 md:w-auto absolute right-1 top-1 z-50 ">
-      <MenuButton className="flex items-center p-1.5">
-        <EllipsisHorizontalIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+    <Menu as="div" className="w-auto">
+      <MenuButton className="align-middle" onClick={e => e.stopPropagation()}>
+        <EllipsisHorizontalIcon className="w-8 text-gray-400" aria-hidden="true" />
       </MenuButton>
 
       <MenuItems transition anchor="bottom end" className="z-50 mt-2.5 w-42 rounded-md bg-white py-2 shadow-lg focus:outline-none">

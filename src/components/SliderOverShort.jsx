@@ -14,7 +14,7 @@ export default function SliderOverShort({ openModal, children }) {
 
   return (
     <Transition show={openModal} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => {}}>
+      <Dialog as="div" className="relative z-[10000]" onClose={() => {}}>
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">

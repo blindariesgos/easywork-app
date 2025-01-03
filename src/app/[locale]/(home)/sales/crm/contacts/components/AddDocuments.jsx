@@ -5,10 +5,12 @@ import { forwardRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddDocumentDialog from "@/src/components/modals/AddDocument";
 import { useSWRConfig } from "swr";
+import AddVersion from "./AddVersion";
 
 const AddDocuments = ({ contactId }) => {
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
+  const [isOpen, setIsOpen] = useState(false);
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
     cmrType: "contact",
@@ -30,10 +32,15 @@ const AddDocuments = ({ contactId }) => {
       name: "Endoso o versión de póliza",
       type: "poliza",
       accept: null,
+      customOpen: () => setIsOpen(true),
     },
   ];
 
   const handleAddDocument = (documentToAdd) => {
+    if (documentToAdd?.customOpen) {
+      documentToAdd?.customOpen();
+      return;
+    }
     setAddFileProps({
       ...addFileProps,
       isOpen: true,
@@ -52,6 +59,7 @@ const AddDocuments = ({ contactId }) => {
           mutate(`/sales/crm/contacts/${contactId}/activities`);
         }}
       />
+      <AddVersion isOpen={isOpen} setIsOpen={setIsOpen} contactId={contactId} />
       <Menu>
         <MenuButton>
           <Button

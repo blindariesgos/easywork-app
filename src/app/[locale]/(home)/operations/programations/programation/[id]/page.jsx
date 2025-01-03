@@ -1,20 +1,20 @@
 "use client";
 import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
-import ClaimDetails from "../../components/ClaimDetails";
+import ScheduleDetails from "../../components/ScheduleDetails";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { usePolicy } from "@/src/lib/api/hooks/policies";
+import { useScheduling } from "@/src/lib/api/hooks/schedules";
 
 export default function Page({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
-  const { data, isLoading, isError, mutate } = usePolicy(id);
+  const { data, isLoading, isError, mutate } = useScheduling(id);
   console.log({ data });
 
   if (isError) {
     <SlideOver
       openModal={true}
       colorTag="bg-easywork-main"
-      labelTag="renovations"
+      labelTag="schedules"
     >
       <div>
         <p>Error</p>
@@ -28,10 +28,10 @@ export default function Page({ params: { id } }) {
     <SlideOver
       openModal={true}
       colorTag="bg-easywork-main"
-      labelTag="renovations"
+      labelTag="schedules"
     >
       <Suspense fallback={<LoaderSpinner />}>
-        <ClaimDetails data={data} id={id} mutate={mutate} />
+        <ScheduleDetails data={data} id={id} mutate={mutate} />
       </Suspense>
     </SlideOver>
   );

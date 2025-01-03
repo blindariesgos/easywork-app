@@ -39,6 +39,7 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import moment from "moment";
 
 export default function Table() {
   const {
@@ -86,13 +87,6 @@ export default function Table() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
 
   const deletePolicy = async (id) => {
     try {
@@ -256,13 +250,13 @@ export default function Table() {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/operations/renovations/renovation/${id}?show=true`),
+        router.push(`/operations/programations/programation/${id}?show=true`),
     },
     {
       name: "Editar",
       handleClick: (id) =>
         router.push(
-          `/operations/renovations/renovation/${id}?show=true&edit=true`
+          `/operations/programations/programation/${id}?show=true&edit=true`
         ),
     },
     {
@@ -390,33 +384,35 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((policy, index) => {
+                  data?.items.map((programation, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(policy.id)
+                          selectedContacts.includes(programation.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(policy.id) && (
+                          {selectedContacts.includes(programation.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={policy.id}
-                              checked={selectedContacts.includes(policy.id)}
+                              value={programation.id}
+                              checked={selectedContacts.includes(
+                                programation.id
+                              )}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, policy.id]
+                                    ? [...selectedContacts, programation.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== policy.id
+                                        (p) => p !== programation.id
                                       )
                                 )
                               }
@@ -451,10 +447,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(policy.id);
+                                            item.handleClick(programation.id);
                                           item.handleClickContact &&
                                             item.handleClickContact(
-                                              policy?.contact?.id
+                                              programation?.contact?.id
                                             );
                                         }}
                                       >
@@ -498,11 +494,11 @@ export default function Table() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      policy.id
+                                                      programation.id
                                                     );
                                                   option.handleClickContact &&
                                                     option.handleClickContact(
-                                                      policy?.contact?.id
+                                                      programation?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -530,25 +526,16 @@ export default function Table() {
                             <td className="ml-4 py-4" key={index}>
                               <div
                                 className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary",
-                                  {
-                                    "text-center": [
-                                      "vigenciaDesde",
-                                      "poliza",
-                                      "source",
-                                      "status",
-                                    ].includes(column.row),
-                                    "text-right": ["importePagar"].includes(
-                                      column.row
-                                    ),
-                                  }
+                                  "font-medium text-sm  text-black hover:text-primary"
                                 )}
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                    href={`/operations/programations/programation/${programation.id}?show=true`}
                                   >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                                    <p>{`${
+                                      programation?.insurance?.name ?? ""
+                                    } ${programation?.poliza?.poliza} ${programation?.polizaType?.name}`}</p>
                                   </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
@@ -589,17 +576,22 @@ export default function Table() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "vigenciaDesde" ? (
-                                  (formatDate(
-                                    policy[column.row],
-                                    "dd/MM/yyyy"
-                                  ) ?? null)
-                                ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
-                                ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                ) : column.row === "poliza" ? (
+                                  <Link
+                                    href={`/operations/policies/policy/${programation?.poliza?.id}?show=true`}
+                                  >
+                                    <p className="text-center">
+                                      {programation?.poliza?.poliza}
+                                    </p>
+                                  </Link>
+                                ) : column.row === "createdAt" ? (
+                                  <p className="text-center">
+                                    {moment(programation?.createdAt).format(
+                                      "DD/MM/YYYY"
+                                    )}
+                                  </p>
                                 ) : (
-                                  policy[column.row] || "-"
+                                  programation[column.row] || "-"
                                 )}
                               </div>
                             </td>

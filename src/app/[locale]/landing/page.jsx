@@ -12,7 +12,8 @@ import GetDemo from "./sections/GetDemo";
 import Prices from "./sections/Prices";
 import Graphics from "./sections/Graphics";
 import CookieModal from "./components/Cookies";
-import HelpChat from "./components/chat/HelpChat"
+import HelpChat from "./components/chat/HelpChat";
+import ModalForm from "./components/ModalForm";
 
 // Hook para aplicar la animación cuando el elemento entra en el viewport
 const ScrollAnimationWrapper = ({ children }) => {
@@ -110,6 +111,7 @@ export default function Page() {
         <CookieModal />
       </div>
       <HelpChat />
+      <ModalForm />
     </>
   );
 }

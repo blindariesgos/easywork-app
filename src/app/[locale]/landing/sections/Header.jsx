@@ -78,10 +78,8 @@ export default function Page({ redirect }) {
               Planes
             </a>
           </li>
-          <li>
-            <ModalForm
-              buttonOpen={<p className="cursor-pointer">Contacto</p>}
-            />
+          <li className="cursor-pointer" onClick={() => push(`${window.location.pathname}?show=true`)}>
+            Contacto
           </li>
           <li>
             <a href="#blog" onClick={toggleMenu}>
@@ -144,10 +142,9 @@ export default function Page({ redirect }) {
                 Planes
               </a>
             </li>
-            <li>
-              <ModalForm
-                buttonOpen={<p className="cursor-pointer">Contacto</p>}
-              />
+            <li onClick={() => push(`${window.location.pathname}?show=true`)}>
+              Contacto
+              <li />
             </li>
             <li>
               <a href="#blog" onClick={toggleMenu}>

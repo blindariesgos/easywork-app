@@ -1,6 +1,7 @@
 import Image from "next/image";
-import ModalForm from "../components/ModalForm";
+import { useRouter } from "next/navigation";
 export default function GetDemo() {
+  const router = useRouter();
   return (
     <div className="w-screen bg-white bg-cover bg-center flex flex-col lg:flex-row items-center justify-center max-md:pt-5 pt-10 p-5">
       <div className="w-full lg:w-auto mb-8 lg:mb-0">
@@ -29,16 +30,13 @@ export default function GetDemo() {
           <b>EASYWORK</b> está cambiando el juego para agentes como tú.
         </p>
         <div className="flex justify-center lg:justify-end mt-5">
-          <ModalForm
-            buttonOpen={
-              <button
-                type="button"
-                className="rounded-md bg-primary p-2 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                QUIERO UNA DEMO
-              </button>
-            }
-          />
+          <button
+            type="button"
+            className="rounded-md bg-primary p-2 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            onClick={() => router.push(`${window.location.pathname}?show=true`)}
+          >
+            Contacto
+          </button>
         </div>
       </div>
     </div>

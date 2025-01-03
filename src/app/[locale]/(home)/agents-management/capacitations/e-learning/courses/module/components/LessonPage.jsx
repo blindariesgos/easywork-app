@@ -5,10 +5,9 @@ import { NewContentForm } from './NewContentForm';
 
 export const LessonPage = ({ page, onSelectPage, editPage, duplicatePage, changeLesson, deletePage }) => {
   return (
-    <button className="relative block w-full text-left" type="button" onClick={onSelectPage}>
+    <div className="flex items-center justify-between cursor-pointer bg-[#eaeaea] px-2 py-1 rounded-xl mt-1.5" onClick={onSelectPage}>
+      <p className="text-black">{page.name}</p>
       <AccordionItemMoreMenu itemType="page" actions={{ editPage, duplicatePage, changeLesson, deletePage }} />
-
-      <p className="bg-gray-600 text-black p-2 w-full rounded-md">{page.name}</p>
-    </button>
+    </div>
   );
 };

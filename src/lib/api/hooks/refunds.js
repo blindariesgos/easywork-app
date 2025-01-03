@@ -35,6 +35,7 @@ export const useRefunds = ({ filters = {}, config = {} }) => {
     refreshInterval: 1000,
   });
 
+  console.log({ data, isLoading, isError: error });
   return {
     data,
     isLoading,

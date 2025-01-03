@@ -1,6 +1,7 @@
 "use server";
+
 import axios from "./axios";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 import { auth, signIn, signOut } from "../../auth";
 import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
@@ -51,25 +52,6 @@ export const isLoggedIn = async () => {
   return !!session?.user?.accessToken;
 };
 
-export const getLogin = async (email, password) => {
-  const response = await axios().post(`/auth/login`, {
-    email,
-    password,
-  });
-
-  if (response && response.refreshToken) {
-    const encryptedSessionData = await encrypt(response.refreshToken);
-
-    cookies().set("refreshToken", encryptedSessionData, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-    });
-  }
-
-  return response;
-};
 export const getDataPassword = async (email) => {
   const response = await axios().put(`/auth/forgot-password`, {
     email,

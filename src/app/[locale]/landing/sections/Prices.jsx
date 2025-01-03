@@ -1,15 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import ModalForm from "../components/ModalForm";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion"; // Importa framer-motion
+import { motion } from "framer-motion";
 
 export default function Price() {
   const [showFreePlan, setShowFreePlan] = useState(false);
   const planRef = useRef(null); // Ref para el contenedor del plan
-  const [planWidth, setPlanWidth] = useState(0); // Para almacenar el ancho del plan
+  const [planWidth, setPlanWidth] = useState(0);
   const router = useRouter();
 
-  // Función para cambiar el tamaño dinámicamente
   useEffect(() => {
     if (planRef.current) {
       setPlanWidth(planRef.current.offsetWidth); // Establece el ancho del plan
@@ -190,7 +189,7 @@ export default function Price() {
 
   return (
     <div
-      className="min-h-screen w-screen bg-white relative text-blue-700 text-center bg-cover bg-center py-5 overflow-x-hidden"
+      className="w-screen py-12 bg-white relative text-blue-700 text-center bg-cover bg-center"
       style={{ backgroundImage: "url('/img/landing/bg-stars.png')" }}
     >
       {/* Botón absoluto para mostrar/ocultar plan free dentro de la sección */}
@@ -219,19 +218,20 @@ export default function Price() {
           {showFreePlan ? "Ocultar Plan Free" : "Mostrar Plan Free"}
         </div>
       )}
-
-      <div className="flex gap-3 w-full max-md:flex-col">
+      {/* Para desktop */}
+      <div className="gap-3 w-full max-md:flex-col hidden md:flex">
         {plans.map((item, index) => (
           <motion.div
             key={index}
-            className={`flex justify-center w-full ${index === 4 ? "border-2 border-blue-700 rounded-lg" : ""}`}
-            initial={{ opacity: 0, x: -500 }} // Todos los planes empiezan desplazados a la izquierda
+            className={`flex justify-center w-full ${index === 4 ? "border-2 border-blue-700 rounded-lg relative" : ""}`}
+            initial={{ opacity: 0, x: -500 }}
             animate={{
-              opacity: showFreePlan ? 1 : 1, // Todos los planes deben tener opacidad 1
-              x: showFreePlan ? 0 : -307, // Todos los planes se mueven a la derecha cuando se muestra el primer plan
+              opacity: showFreePlan ? 1 : 1,
+              x: showFreePlan ? 0 : -307,
             }}
-            transition={{ duration: 0.5 }} // Duración de la animación
+            transition={{ duration: 0.5 }}
           >
+            {index === 4 && <div className="popular-badge">Más Popular</div>}
             <div
               className="bg-white my-2 mx-1 rounded-md py-4 px-0.5 w-full md:w-72 flex flex-col justify-between"
               style={{ height: "auto", minHeight: "450px" }}
@@ -251,16 +251,57 @@ export default function Price() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <ModalForm
-                  buttonOpen={
-                    <button className="border-2 rounded-md px-4 py-2 font-semibold text-blue-900 hover:bg-blue-600 transition duration-300">
-                      QUIERO UNA DEMO
-                    </button>
+                <button
+                  className="border-2 rounded-md px-4 py-2 font-semibold text-blue-900 hover:bg-blue-600 transition duration-300"
+                  onClick={() =>
+                    router.replace(`${window.location.pathname}?show=true`)
                   }
-                />
+                >
+                  QUIERO UNA DEMO
+                </button>
               </div>
             </div>
           </motion.div>
+        ))}
+      </div>
+
+      {/* Para responsive */}
+      <div className="flex gap-3 w-full max-md:flex-col overflow-x-auto md:hidden">
+        {plans.map((item, index) => (
+          <div
+            className={` w-full ${index === 4 ? "border-2 border-blue-700 rounded-lg relative" : ""}`}
+          >
+            {index === 4 && <div className="popular-badge">Más Popular</div>}
+            <div
+              className="bg-white my-2 mx-1 rounded-md py-4 px-0.5 w-full md:w-72 flex flex-col justify-between"
+              style={{ height: "auto", minHeight: "450px" }}
+            >
+              <div>
+                <h1 className="font-bold text-2xl md:text-3xl">{item.title}</h1>
+                <h2 className="font-bold text-2xl md:text-3xl">
+                  ${item.price}
+                  <span className="text-lg md:text-2xl font-medium">/Mes</span>
+                </h2>
+                <div className="mt-3 mb-6">
+                  {item.content.map((des, idx) => (
+                    <ul key={idx} className="list-none px-1">
+                      <li className="text-sm md:text-base">{des}</li>
+                    </ul>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <button
+                  className="border-2 rounded-md px-4 py-2 font-semibold text-blue-900 hover:bg-blue-600 transition duration-300"
+                  onClick={() =>
+                    router.replace(`${window.location.pathname}?show=true`)
+                  }
+                >
+                  QUIERO UNA DEMO
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -270,6 +311,36 @@ export default function Price() {
       >
         Comparación de planes
       </h2>
+
+      <style jsx>{`
+        @keyframes shine {
+          0% {
+            background-position: -200%;
+          }
+          100% {
+            background-position: 200%;
+          }
+        }
+
+        .popular-badge {
+          position: absolute;
+          top: -2rem;
+          left: 1rem;
+          background-color: #1e40af;
+          color: white;
+          font-weight: bold;
+          padding: 0.25rem 1rem;
+          border-radius: 0.5rem 0.5rem 0 0;
+          background-image: linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.5) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.5) 100%
+          );
+          background-size: 200%;
+          animation: shine 5s infinite linear;
+        }
+      `}</style>
     </div>
   );
 }

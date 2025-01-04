@@ -172,6 +172,7 @@
             "payment-frequency": "Frecuencia de pago",
             "claim-number": "Número de siniestro",
             "sheet-number": "Número de folio",
+            "sheet-number-subsecuent": "Número de folio - Subsecuente",
             "diagnosis": "Diagnostico / Padecimiento",
             "payment-term": "Plazo de pago",
             "primaNeta": "Prima neta",

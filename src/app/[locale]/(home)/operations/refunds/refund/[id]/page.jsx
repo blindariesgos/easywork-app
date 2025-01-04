@@ -1,21 +1,17 @@
 "use client";
 import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
-import ClaimDetails from "../../components/ClaimDetails";
+import RefundDetails from "../../components/RefundDetails";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { usePolicy } from "@/src/lib/api/hooks/policies";
+import { useReimbursement } from "@/src/lib/api/hooks/refunds";
 
 export default function Page({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
-  const { data, isLoading, isError, mutate } = usePolicy(id);
+  const { data, isLoading, isError, mutate } = useReimbursement(id);
   console.log({ data });
 
   if (isError) {
-    <SlideOver
-      openModal={true}
-      colorTag="bg-easywork-main"
-      labelTag="renovations"
-    >
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="refunds">
       <div>
         <p>Error</p>
       </div>
@@ -25,13 +21,9 @@ export default function Page({ params: { id } }) {
   if (isLoading) <LoaderSpinner />;
 
   return (
-    <SlideOver
-      openModal={true}
-      colorTag="bg-easywork-main"
-      labelTag="renovations"
-    >
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="refunds">
       <Suspense fallback={<LoaderSpinner />}>
-        <ClaimDetails data={data} id={id} mutate={mutate} />
+        <RefundDetails data={data} id={id} mutate={mutate} />
       </Suspense>
     </SlideOver>
   );

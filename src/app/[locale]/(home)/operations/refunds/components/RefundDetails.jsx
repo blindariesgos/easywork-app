@@ -15,7 +15,7 @@ import { putSchedule } from "@/src/lib/apis";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 
-export default function ScheduleDetails({ data, id, mutate }) {
+export default function RefundDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -35,18 +35,38 @@ export default function ScheduleDetails({ data, id, mutate }) {
 
   const options = [
     {
-      name: "Informe Médico",
+      name: "Formato Reembolso de Accidente y/o Enfermedad",
       type: "pago",
       disabled: true,
     },
     {
-      name: "Documento de Aclaración - Programaciones",
+      name: "Recetas Médicas",
       type: "factura",
       disabled: true,
     },
     {
-      name: "Carta programación de Médicamentos, cirugias, servicios auxiliares",
+      name: "Informe Médico",
       type: "factura",
+      disabled: true,
+    },
+    {
+      name: "Facturas",
+      type: "pago",
+      disabled: true,
+    },
+    {
+      name: "Estudios de Laboratorio",
+      type: "pago",
+      disabled: true,
+    },
+    {
+      name: "Documento Aclaración - Subsecuente",
+      type: "pago",
+      disabled: true,
+    },
+    {
+      name: "Carta de Finiquito",
+      type: "pago",
       disabled: true,
     },
   ];

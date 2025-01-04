@@ -6,9 +6,11 @@ import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
-import { formatDate } from "@/src/utils/getFormatDate";
 import Link from "next/link";
 import moment from "moment";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import Button from "@/src/components/form/Button";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export default function ScheduleDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -28,9 +30,23 @@ export default function ScheduleDetails({ data, id, mutate }) {
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };
 
-  useEffect(() => {
-    console.log({ headerRef });
-  }, [headerRef]);
+  const options = [
+    {
+      name: "Informe Médico",
+      type: "pago",
+      disabled: true,
+    },
+    {
+      name: "Documento de Aclaración - Programaciones",
+      type: "factura",
+      disabled: true,
+    },
+    {
+      name: "Carta programación de Médicamentos, cirugias, servicios auxiliares",
+      type: "factura",
+      disabled: true,
+    },
+  ];
 
   return (
     <div className="flex flex-col h-screen relative w-full">
@@ -101,8 +117,39 @@ export default function ScheduleDetails({ data, id, mutate }) {
                 width="w-[140px]"
               />
             </div>
-            <div className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
-              <p>CONSULTA</p>
+            <div className="flex items-center gap-4  bg-gray-100 rounded-lg p-2 w-full">
+              <div className="px-4">
+                <p className="px-3 text-gray-400 text-sm">
+                  {t("control:portafolio:receipt:details:consult")}
+                </p>
+              </div>
+              <Menu>
+                <MenuButton>
+                  <Button
+                    label={t("common:buttons:add-2")}
+                    buttonStyle="primary"
+                    icon={<PlusIcon className="h-4 w-4 text-white" />}
+                    className="py-2 px-3"
+                  />
+                </MenuButton>
+                <MenuItems
+                  transition
+                  anchor="bottom start"
+                  className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
+                >
+                  {options.map((option, index) => (
+                    <MenuItem
+                      key={index}
+                      as="div"
+                      onClick={() => handleAddDocument(option)}
+                      disabled={option.disabled}
+                      className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                    >
+                      {option.name}
+                    </MenuItem>
+                  ))}
+                </MenuItems>
+              </Menu>
             </div>
           </div>
           <div className="px-4">

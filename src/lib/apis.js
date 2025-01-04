@@ -488,6 +488,14 @@ export const putPoliza = async (policyId, body) => {
   return response;
 };
 
+export const putSchedule = async (scheduleId, body) => {
+  const response = await axios()
+    .put(`/operations/schedulings/${scheduleId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+
+  return response;
+};
+
 export const putReceipt = async (receiptId, body) => {
   const response = await axios()
     .put(`/sales/crm/polizas/receipts/${receiptId}`, body)

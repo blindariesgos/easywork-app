@@ -11,6 +11,7 @@ import * as yup from "yup";
 import { putTaskId } from "@/src/lib/apis";
 import { useTranslation } from "react-i18next";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
+import useTasksContext from "@/src/context/tasks";
 
 const schema = yup.object().shape({
   entities: yup.array(),
@@ -32,7 +33,7 @@ export default function TaskEntiy({
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
-  const { mutate: mutateTasks } = useTasks({});
+  const { mutate: mutateTasks } = useTasksContext();
 
   const {
     register,
@@ -81,14 +82,14 @@ export default function TaskEntiy({
         }
         console.log({ response });
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${task.id}`);
+        mutate(`/tools/tasks/${task.id}`);
+        mutateTasks();
       } catch (error) {
         console.log(error);
       } finally {
         reset();
         setIsLoading(false);
         setIsEditing(false);
-        mutateTasks();
       }
     })({ preventDefault: () => {} });
   };

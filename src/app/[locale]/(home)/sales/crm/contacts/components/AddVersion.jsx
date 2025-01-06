@@ -268,7 +268,6 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
   });
 
   return (
-    <Fragment>
       <SliderOverShord openModal={isOpen}>
         {loading && <LoaderSpinner />}
         <Tag
@@ -700,7 +699,6 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
           </div>
         </form>
       </SliderOverShord>
-    </Fragment>
   );
 };
 

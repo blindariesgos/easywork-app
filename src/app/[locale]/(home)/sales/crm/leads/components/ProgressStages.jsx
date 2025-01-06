@@ -2,6 +2,7 @@
 import { useLeads } from "../../../../../../../hooks/useCommon";
 import React, { Fragment, useEffect, useState } from "react";
 import DialogPositiveStage from "./DialogPositiveStage";
+import ValidatePolizaData from "./ValidatePolizaData";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";

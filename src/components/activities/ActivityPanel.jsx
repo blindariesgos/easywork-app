@@ -18,6 +18,7 @@ export default function ActivityPanel({
   crmType = "contact",
   className,
   contactType,
+  disabled,
 }) {
   const [bulkActivity, setBulkActivity] = useState([]);
   const { activities, isError, isLoading, mutate } = useEntityActivities(
@@ -118,6 +119,7 @@ export default function ActivityPanel({
                       update={mutate}
                       className="w-full"
                       contactType={contactType}
+                      disabled={disabled}
                     />
                   </div>
                 </div>

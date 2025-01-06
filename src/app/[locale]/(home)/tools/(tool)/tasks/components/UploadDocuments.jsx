@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
@@ -22,7 +22,7 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
     setLoading(true);
     const fileList = Array.from(uploadfiles);
 
-    fileList.forEach(async (file) => {
+    for (const file of fileList) {
       const formData = new FormData();
       formData.append("files", file, file.name);
 
@@ -55,7 +55,7 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
       };
 
       reader.readAsDataURL(file);
-    });
+    }
 
     setLoading(false);
   };
@@ -117,84 +117,86 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
   }, [files]);
 
   return (
-    <div className="pt-2">
+    <Fragment>
       {loading && <LoaderSpinner />}
-      {localFiles && localFiles?.length > 0 && (
-        <div className="flex flex-wrap gap-3 py-2">
-          {localFiles?.map((file, i) => (
-            <div key={i}>
-              <CardFile data={file} onClick={() => deleteFile(file.id)} />
+      <div className="pt-2">
+        {localFiles && localFiles?.length > 0 && (
+          <div className="flex flex-wrap gap-3 py-2">
+            {localFiles?.map((file, i) => (
+              <div key={i}>
+                <CardFile data={file} onClick={() => deleteFile(file.id)} />
+              </div>
+            ))}
+          </div>
+        )}
+        <hr className="text-gray-200 border border-dashed" />
+        <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
+          <div className="">
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md"
+            >
+              <ArrowUpTrayIcon className="text-blue-100 w-8 h-8 " />
+              <input
+                type="file"
+                accept=""
+                onChange={handleFilesUpload}
+                id="file-upload"
+                className="sr-only outline-none focus:ring-0"
+                multiple
+                ref={inputFileRef}
+              />
+              <p className="text-xs text-black mt-4">
+                {t("tools:tasks:new:upload")}
+              </p>
+            </label>
+          </div>
+          <div className="">
+            <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
+              <Image
+                width={200}
+                height={200}
+                className="h-8 w-auto"
+                src="/img/Layer_1.png"
+                alt="Your Company"
+              />
+              <p className="text-xs text-black mt-4">
+                {t("tools:tasks:new:drive")}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
-      <hr className="text-gray-200 border border-dashed" />
-      <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
-        <div className="">
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md"
-          >
-            <ArrowUpTrayIcon className="text-blue-100 w-8 h-8 " />
-            <input
-              type="file"
-              accept=""
-              onChange={handleFilesUpload}
-              id="file-upload"
-              className="sr-only outline-none focus:ring-0"
-              multiple
-              ref={inputFileRef}
-            />
-            <p className="text-xs text-black mt-4">
-              {t("tools:tasks:new:upload")}
-            </p>
-          </label>
-        </div>
-        <div className="">
-          <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
-            <Image
-              width={200}
-              height={200}
-              className="h-8 w-auto"
-              src="/img/Layer_1.png"
-              alt="Your Company"
-            />
-            <p className="text-xs text-black mt-4">
-              {t("tools:tasks:new:drive")}
-            </p>
           </div>
-        </div>
-        <div className="">
-          <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
-            <FaGoogle className="text-gray-200 w-8 h-8 " />
-            <p className="text-xs text-black mt-4">
-              {t("tools:tasks:new:google")}
-            </p>
+          <div className="">
+            <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
+              <FaGoogle className="text-gray-200 w-8 h-8 " />
+              <p className="text-xs text-black mt-4">
+                {t("tools:tasks:new:google")}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="">
-          <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
-            <Image
-              width={200}
-              height={200}
-              className="h-8 w-auto"
-              src="/img/office365.svg"
-              alt="Your Company"
-            />
-            <p className="text-xs text-black mt-4">
-              {t("tools:tasks:new:office")}
-            </p>
+          <div className="">
+            <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
+              <Image
+                width={200}
+                height={200}
+                className="h-8 w-auto"
+                src="/img/office365.svg"
+                alt="Your Company"
+              />
+              <p className="text-xs text-black mt-4">
+                {t("tools:tasks:new:office")}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="">
-          <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
-            <FaDropbox className="text-gray-200 w-8 h-8 " />
-            <p className="text-xs text-black mt-4">
-              {t("tools:tasks:new:dropbox")}
-            </p>
+          <div className="">
+            <div className="flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md">
+              <FaDropbox className="text-gray-200 w-8 h-8 " />
+              <p className="text-xs text-black mt-4">
+                {t("tools:tasks:new:dropbox")}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Fragment>
   );
 }

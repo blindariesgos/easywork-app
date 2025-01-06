@@ -83,17 +83,12 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
 
   const deletePolicy = async (id) => {
     try {
@@ -216,11 +211,13 @@ export default function Table() {
       name: "Cambiar Responsable",
       onclick: changeResponsible,
       selectUser: true,
+      disabled: true,
     },
     {
       id: 2,
       name: t("common:table:checkbox:change-status"),
       onclick: changeStatusPolicies,
+      disabled: true,
       selectOptions: [
         {
           id: "activa",
@@ -257,14 +254,12 @@ export default function Table() {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/operations/renovations/renovation/${id}?show=true`),
+        router.push(`/operations/refunds/refund/${id}?show=true`),
     },
     {
       name: "Editar",
       handleClick: (id) =>
-        router.push(
-          `/operations/renovations/renovation/${id}?show=true&edit=true`
-        ),
+        router.push(`/operations/refunds/refund/${id}?show=true&edit=true`),
     },
     {
       name: "Eliminar",
@@ -281,7 +276,7 @@ export default function Table() {
           name: "Tarea",
           handleClickContact: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=refund&prev_id=${id}`
             ),
           disabled: true,
         },
@@ -509,11 +504,11 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${refund.id}?show=true`}
+                                    href={`/operations/refunds/refund/${refund.id}?show=true`}
                                   >
                                     <p>{`${
                                       refund?.insurance?.name ?? ""
-                                    } ${refund?.poliza?.poliza} ${refund?.polizaType?.name}`}</p>
+                                    } ${refund?.poliza?.poliza ?? ""} ${refund?.polizaType?.name ?? ""}`}</p>
                                   </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
@@ -560,6 +555,14 @@ export default function Table() {
                                   >
                                     <p className="text-center">
                                       {refund?.poliza?.poliza}
+                                    </p>
+                                  </Link>
+                                ) : column.row === "contact" ? (
+                                  <Link
+                                    href={`/sales/crm/contacts/contact/${refund?.poliza?.contact?.id}?show=true`}
+                                  >
+                                    <p className="text-center">
+                                      {refund?.poliza?.contact?.fullName}
                                     </p>
                                   </Link>
                                 ) : column.row === "createdAt" ? (

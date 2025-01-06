@@ -2286,8 +2286,8 @@ export const useRefundTable = () => {
     {
       id: 7,
       name: t("operations:refunds:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
+      order: "contact",
       check: true,
     },
     {

@@ -16,7 +16,7 @@ import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputDate from "@/src/components/form/InputDate";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
-import { postComment, putPoliza } from "@/src/lib/apis";
+import { postComment, putPoliza, putSchedule } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
@@ -72,66 +72,35 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
   }, [params.get("edit")]);
 
   useEffect(() => {
-    if (data?.vigenciaDesde)
-      setValue("vigenciaDesde", data?.vigenciaDesde ?? "");
-    if (data?.vigenciaHasta)
-      setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
     if (data?.status) setValue("status", data?.status);
     if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
-    if (data?.cobertura) setValue("cobertura", data?.cobertura);
-    if (data?.paymentMethod) setValue("paymentMethod", data?.paymentMethod);
-    if (data?.paymentFrequency)
-      setValue("paymentFrequency", data?.paymentFrequency);
-    if (data?.paymentTerm) setValue("paymentTerm", data?.paymentTerm);
-    if (data?.formaCobro?.name) setValue("formaCobroId", data?.formaCobro?.id);
-    if (data?.frecuenciaCobro?.name)
-      setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
     if (data?.observations) setValue("observations", data?.observations);
-    if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
-    if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
-    if (data?.contact?.address) setValue("address", data?.contact?.address);
-    if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
+    if (data?.ot) setValue("ot", data?.ot);
+    if (data?.sigre) setValue("sigre", data?.sigre);
+    if (data?.type) setValue("type", data?.type);
     if (data?.polizaType?.id) setValue("polizaTypeId", data?.polizaType?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
-    const {
-      primaNeta,
-      recargoFraccionado,
-      derechoPoliza,
-      iva,
-      importePagar,
-      ...otherData
-    } = data;
-
-    const body = {
-      ...otherData,
-      primaNeta: +primaNeta,
-      recargoFraccionado: +recargoFraccionado,
-      derechoPoliza: +derechoPoliza,
-      iva: +iva,
-      importePagar: +importePagar,
-    };
     try {
-      const response = await putPoliza(id, body);
+      const response = await putSchedule(id, data);
       if (response.hasError) {
         console.log(response);
         toast.error(
-          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
+          "Se ha producido un error al actualizar la programacion, inténtelo de nuevo."
         );
         return;
       }
       setIsEdit(false);
       router.back();
       updateSchedule();
-      toast.success("Poliza actualizada correctamente.");
-      mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
+      toast.success("Programacion actualizada correctamente.");
     } catch (error) {
       toast.error(
-        "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
+        "Se ha producido un error al actualizar la programacion, inténtelo de nuevo."
       );
     }
   };
@@ -203,6 +172,39 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             name="claim-number"
             disabled={!isEdit}
           />
+          <TextInput
+            type="text"
+            label={"SIGRE"}
+            name="sigre"
+            register={register}
+            disabled={!isEdit}
+          />
+          <TextInput
+            type="text"
+            label={"OT"}
+            name="ot"
+            register={register}
+            disabled={!isEdit}
+          />
+          <SelectInput
+            label={t("operations:managements:add:schedule:procedure")}
+            options={[
+              {
+                id: "nuevo",
+                name: "Nuevo",
+              },
+              {
+                id: "pre-existente",
+                name: "Pre existente",
+              },
+            ]}
+            name="type"
+            disabled={!isEdit}
+            setValue={setValue}
+            watch={watch}
+            error={errors?.type}
+            register={register}
+          />
           <SelectInput
             label={t("operations:policies:general:type")}
             name="polizaTypeId"
@@ -266,61 +268,14 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             multiple
           />
         </div>
-        {/* {data?.type?.name === "AUTOS" &&
-          data?.vehicles.map((vehicle) => (
-            <Fragment key={vehicle.id}>
-              <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-                {"Datos del vehiculo asegurado"}
-              </div>
-              <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-                <TextInput
-                  type="text"
-                  label={"Descripción"}
-                  value={vehicle?.description ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Serie"}
-                  value={vehicle?.serial ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Placa"}
-                  value={vehicle?.plates ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Modelo"}
-                  value={vehicle?.model ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Motor"}
-                  value={vehicle?.motor ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Uso"}
-                  value={vehicle?.usage ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Circula en"}
-                  value={vehicle?.circulatesIn ?? "S/N"}
-                  disabled
-                />
-              </div>
-            </Fragment>
-          ))} */}
       </div>
       {/* Menu Izquierda */}
-      <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />
+      <ActivityPanel
+        entityId={id}
+        crmType="policy"
+        className="lg:col-span-7"
+        disabled
+      />
       {isEdit && (
         <div
           className={clsx(

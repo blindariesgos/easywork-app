@@ -48,7 +48,7 @@ export const useReimbursement = (reimbursementId) => {
   const url = `/operations/reimbursements/${reimbursementId}`;
 
   const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
-    refreshInterval: 1000,
+    revalidateOnMount: true,
   });
 
   return {

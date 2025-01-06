@@ -54,7 +54,7 @@ export default function ActivityHeader({
     },
     {
       name: t("contacts:create:activities:meet"),
-      href: `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=${crmType}&prev_id=${entityId}`,
+      href: `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=agent-meet&prev_id=${entityId}`,
       hidden: !["agent"].includes(crmType),
     },
   ];

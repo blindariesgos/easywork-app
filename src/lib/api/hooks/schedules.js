@@ -44,9 +44,7 @@ export const useSchedules = ({ filters = {}, config = {} }) => {
 export const useScheduling = (schedulingId) => {
   const url = `/operations/schedulings/${schedulingId}`;
 
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
-    refreshInterval: 1000,
-  });
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {
     data,

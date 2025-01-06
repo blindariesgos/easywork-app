@@ -2,10 +2,12 @@
 import { useLeads } from "../../../../../../../hooks/useCommon";
 import React, { useEffect, useState } from "react";
 import DialogPositiveStage from "./DialogPositiveStage";
+import ValidatePolizaData from "./ValidatePolizaData";
 import useAppContext from "@/src/context/app";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import clsx from "clsx";
 import {
+  getPolizaLeadData,
   postPositiveStagePolicy,
   putLeadCancelled,
   putLeadStage,
@@ -16,6 +18,8 @@ import { useSWRConfig } from "swr";
 
 export default function ProgressStages({ stage, leadId, disabled }) {
   const { isOpen, setIsOpen } = useLeads();
+  const [isOpenValidation, setIsOpenValidation] = useState(false);
+  const [policyInfo, setPolicyInfo] = useState();
   const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
   const [stageIndex, setStageIndex] = useState(0);
@@ -45,7 +49,7 @@ export default function ProgressStages({ stage, leadId, disabled }) {
   };
 
   const handleAddPolicy = async () => {
-    const response = await postPositiveStagePolicy(leadId);
+    const response = await getPolizaLeadData(leadId);
     if (response.hasError) {
       console.log({ response });
       toast.error(
@@ -54,12 +58,18 @@ export default function ProgressStages({ stage, leadId, disabled }) {
       );
       return;
     }
-    mutateContext(`/sales/crm/leads/${leadId}/activities`);
-    mutateContext(
-      "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
-    );
-    toast.success("Prospecto actualizado con exito");
-    router.back();
+
+    console.log({ response });
+
+    // setPolicyInfo(response);
+    // setIsOpen(false);
+    // setIsOpenValidation(true);
+    // mutateContext(`/sales/crm/leads/${leadId}/activities`);
+    // mutateContext(
+    //   "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
+    // );
+    // toast.success("Prospecto actualizado con exito");
+    // router.back();
   };
 
   const handleSubmitNegativeStage = async () => {
@@ -166,6 +176,11 @@ export default function ProgressStages({ stage, leadId, disabled }) {
         selectedReason={selectedReason}
         handleSubmitCancel={handleSubmitNegativeStage}
         handleAddPolicy={handleAddPolicy}
+      />
+      <ValidatePolizaData
+        isOpen={isOpenValidation}
+        setIsOpen={setIsOpenValidation}
+        policy={policyInfo}
       />
     </div>
   );

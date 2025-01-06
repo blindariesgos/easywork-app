@@ -25,9 +25,6 @@ export default function TasksContextProvider({ children }) {
       ...filters,
     },
     userId: session?.data?.user?.id,
-    srcConfig: {
-      refreshInterval: 1000,
-    },
   });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();

@@ -34,7 +34,7 @@ export const useMeetings = ({ filters = {}, config = {}, userId = "" }) => {
   const url = `/agent-management/meetings?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log(url);
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-
+  console.log({ data, error, isLoading });
   return {
     data,
     isLoading,
@@ -106,10 +106,7 @@ export const usePolicy = (policyId) => {
 export const useMeetComments = (id) => {
   const { data, error, isLoading } = useSWR(
     `/agent-management/agents/comments/${id}`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
 
   return {
@@ -122,10 +119,7 @@ export const useMeetComments = (id) => {
 export const useMeet = (meetId) => {
   const { data, error, isLoading } = useSWR(
     `/agent-management/meetings/${meetId}`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
 
   return {

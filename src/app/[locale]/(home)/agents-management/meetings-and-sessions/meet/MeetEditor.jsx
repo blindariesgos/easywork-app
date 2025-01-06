@@ -30,7 +30,6 @@ import { useTasksConfigs } from "@/src/hooks/useCommon";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
-import useTasksContext from "@/src/context/tasks";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 
 const schemaInputs = yup.object().shape({
@@ -135,6 +134,14 @@ export default function MeetEditor({ edit, copy, type }) {
     setValue("title", "CRM - Agente: ");
     setLoading(false);
   };
+  const setCrmAgentMeet = async (agentIds) => {
+    const ids = agentIds.split("^");
+    const response = await Promise.all(ids.map((x) => getAgentById(agentIds)));
+    console.log({ response });
+    setValue("participants", response);
+    // console.log("Agente", response);
+    setLoading(false);
+  };
   const setCrmPolicy = async (policyId, type) => {
     const response = await getPolicyById(policyId);
     setValue("crm", [
@@ -177,6 +184,12 @@ export default function MeetEditor({ edit, copy, type }) {
     if (params.get("prev") === "agent") {
       setLoading(true);
       setCrmAgent(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "agent-meet") {
+      setLoading(true);
+      setCrmAgentMeet(prevId);
       return;
     }
   }, [params.get("prev")]);

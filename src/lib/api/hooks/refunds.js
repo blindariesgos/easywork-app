@@ -31,9 +31,7 @@ export const useRefunds = ({ filters = {}, config = {} }) => {
     .join("&");
   const url = `/operations/reimbursements?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log(url);
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
-    refreshInterval: 1000,
-  });
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   console.log({ data, isLoading, isError: error });
   return {

@@ -52,10 +52,7 @@ export const useTasks = ({
 export const useTask = (id) => {
   const { data, error, isLoading, mutate } = useSWR(
     `/tools/tasks/${id}`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
 
   return {
@@ -69,10 +66,7 @@ export const useTask = (id) => {
 export const useTaskComments = (id) => {
   const { data, error, isLoading } = useSWR(
     `/tools/tasks/comments/task/${id}`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
 
   return {
@@ -85,10 +79,7 @@ export const useTaskComments = (id) => {
 export const useTaskContactsPolizas = () => {
   const { data, error, isLoading } = useSWR(
     `/tools/tasks/helpers/contacts_polizas`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
   return {
     data,
@@ -100,10 +91,7 @@ export const useTaskContactsPolizas = () => {
 export const useTasksList = () => {
   const { data, error, isLoading, mutate } = useSWR(
     `/tools/tasks/helpers/tasks_list`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
 
   return {

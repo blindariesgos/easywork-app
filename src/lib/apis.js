@@ -799,6 +799,14 @@ export const addContactDocument = async (contactId, category, body) => {
   return response;
 };
 
+export const addLeadPolicy = async (leadId, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/poliza/metadata/lead/${leadId}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  console.log("aaaaaaaaaa", response);
+  return response;
+};
+
 export const postPositiveStagePolicy = async (leadId) => {
   const response = await axios()
     .post(`/sales/crm/leads/${leadId}/generate_poliza`)

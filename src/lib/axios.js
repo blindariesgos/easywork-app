@@ -34,7 +34,17 @@ const createAxiosInstance = (props) => {
     }
   );
 
-  axiosInstance.interceptors.response.use((response) => response.data);
+  axiosInstance.interceptors.response.use(
+    (response) => response.data,
+    async (error) => {
+      return Promise.reject(
+        error?.response?.data || {
+          statusCode: 500,
+          message: "¡Error desconocido, intente de nuevo mas tarde!",
+        }
+      );
+    }
+  );
 
   return axiosInstance;
 };

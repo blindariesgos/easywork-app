@@ -293,8 +293,6 @@ export const putTaskId = async (id, body) => {
   const response = await axios()
     .put(`/tools/tasks/${id}`, body)
     .catch((error) => ({ hasError: true, error }));
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
-  revalidatePath(`/tools/tasks`, "layout");
 
   return response;
 };
@@ -749,6 +747,12 @@ export const addPolicyByPdf = async (body, category = "nueva") => {
   return response;
 };
 
+export const convertLeadToClient = async (leadId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/poliza/generate/lead/${leadId}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
 export const addPolicyVersionByContact = async (contactId, body) => {
   const response = await axios()
     .post(`/sales/crm/contacts/poliza/upload/contact/${contactId}`, body)
@@ -816,7 +820,7 @@ export const postPositiveStagePolicy = async (leadId) => {
 
 export const getPolizaLeadData = async (leadId) => {
   const response = await axios()
-    .get(`/v1/sales/crm/leads/${leadId}/get_poliza_data`)
+    .get(`/sales/crm/leads/poliza/metadata/lead/${leadId}`)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

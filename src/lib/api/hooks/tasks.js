@@ -1,6 +1,7 @@
 "use client";
 import useSWR from "swr";
-import fetcher from "../fetcher";
+import fetcher, { fetcherV2 } from "../fetcher";
+import axios from "../../axios";
 
 const getQueries = (filters, userId) => {
   const getRepitKeys = (key, arr) =>
@@ -36,10 +37,9 @@ export const useTasks = ({
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/tools/tasks/user?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
-    ...srcConfig,
-  });
+  const url = `/tools/tasks/user`;
+  const params = `${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const { data, error, isLoading, mutate } = useSWR([url, params], fetcherV2);
 
   return {
     tasks: data,

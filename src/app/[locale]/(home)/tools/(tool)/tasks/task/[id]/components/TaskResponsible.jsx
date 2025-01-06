@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DropdownSelect from "../../../components/DropdownSelect";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
+import useTasksContext from "@/src/context/tasks";
 
 const TaskResponsible = ({ task, lists, field }) => {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ const TaskResponsible = ({ task, lists, field }) => {
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
-  const { mutate: mutateTasks } = useTasks({});
+  const { mutate: mutateTasks } = useTasksContext();
 
   const schema = yup.object().shape({
     responsible: yup.array(),
@@ -74,7 +75,7 @@ const TaskResponsible = ({ task, lists, field }) => {
           return;
         }
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${task.id}`);
+        mutate(`/tools/tasks/${task.id}`);
         mutateTasks();
       } catch (error) {
         console.log(error);

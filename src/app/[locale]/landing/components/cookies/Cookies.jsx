@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import ModalManage from "./ModalManage"
 
 const CookieModal = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { push } = useRouter();
 
   useEffect(() => {
     const acceptedCookies = localStorage.getItem("cookiesAccepted");
@@ -42,10 +45,11 @@ const CookieModal = () => {
         >
           Rechazar
         </button>
-        <p className="text-easywork-main hover:text-easywork-mainhover underline whitespace-nowrap cursor-pointer">
+        <p className="text-easywork-main hover:text-easywork-mainhover underline whitespace-nowrap cursor-pointer" onClick={() => push(`${window.location.pathname}?manage-cookies=true`)}>
           Administrar cookies
         </p>
       </div>
+      <ModalManage />
     </div>
   );
 };

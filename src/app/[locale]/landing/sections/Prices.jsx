@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 
 export default function Price() {
   const [showFreePlan, setShowFreePlan] = useState(false);
-  const planRef = useRef(null); // Ref para el contenedor del plan
+  const [stateTime, setStateTime] = useState(1);
+  const planRef = useRef(null);
   const [planWidth, setPlanWidth] = useState(0);
   const router = useRouter();
 
@@ -79,7 +80,7 @@ export default function Price() {
     },
     {
       title: "EASYPRO",
-      price: "2,799",
+      price: "2799",
       content: [
         "10 Usuarios.",
         "5,000 Pólizas Vigentes.",
@@ -104,7 +105,7 @@ export default function Price() {
     },
     {
       title: "EASYPREMIUM",
-      price: "15,999",
+      price: "15999",
       content: [
         "Dirección de agencia y despachos.",
         "80 Usuarios.",
@@ -132,7 +133,7 @@ export default function Price() {
     },
     {
       title: "EASY PLUS",
-      price: "27,999",
+      price: "27999",
       content: [
         "250 Usuarios.",
         "80,000 Pólizas Vigentes.",
@@ -159,7 +160,7 @@ export default function Price() {
     },
     {
       title: "EASYTOTAL",
-      price: "99,998",
+      price: "99998",
       content: [
         "Más de 1000 Usuarios.",
         "Más de 500,000 Pólizas Vigentes.",
@@ -192,11 +193,29 @@ export default function Price() {
       className="w-screen py-12 bg-white relative text-blue-700 text-center bg-cover bg-center"
       style={{ backgroundImage: "url('/img/landing/bg-stars.png')" }}
     >
+      {/* Boton para cambio de anio y mes */}
+      <div className="flex justify-center">
+        <div className="border-2 rounded-lg flex justify-center border-blue-700 mb-10">
+          <div
+            className={`px-4 py-1 cursor-pointer text-white rounded-md m-2 font-medium ${stateTime === 1 ? "bg-blue-700" : ""}`}
+            onClick={() => setStateTime(1)}
+          >
+            Al mes
+          </div>
+          <div
+            className={`px-4 py-1 cursor-pointer text-white rounded-md m-2 font-medium ${stateTime === 2 ? "bg-blue-700" : ""}`}
+            onClick={() => setStateTime(2)}
+          >
+            Al año
+          </div>
+        </div>
+      </div>
+
       {/* Botón absoluto para mostrar/ocultar plan free dentro de la sección */}
       {showFreePlan ? (
         <div
           onClick={toggleFreePlan}
-          className="cursor-pointer p-2 md:p-4 bg-easywork-main hover:bg-easywork-mainhover text-white rounded-md absolute max-md:top-[2%] top-[10%] z-40"
+          className="cursor-pointer p-2 md:p-4 bg-easywork-main hover:bg-easywork-mainhover text-white rounded-md absolute max-md:top-[2%] top-[10%] z-40 hidden md:block"
           style={{
             right: -135,
             transform: "translateY(-50%) rotate(-270deg)",
@@ -208,7 +227,7 @@ export default function Price() {
       ) : (
         <div
           onClick={toggleFreePlan}
-          className="cursor-pointer p-2 md:p-4 bg-lime-400 hover:bg-lime-500 text-white rounded-md absolute max-md:top-[9%] top-[30%] z-40"
+          className="cursor-pointer p-2 md:p-4 bg-lime-400 hover:bg-lime-500 text-white rounded-md absolute max-md:top-[9%] top-[30%] z-40 hidden md:block"
           style={{
             left: 15,
             transform: "translateY(-50%) rotate(-90deg)",
@@ -239,8 +258,10 @@ export default function Price() {
               <div>
                 <h1 className="font-bold text-2xl md:text-3xl">{item.title}</h1>
                 <h2 className="font-bold text-2xl md:text-3xl">
-                  ${item.price}
-                  <span className="text-lg md:text-2xl font-medium">/Mes</span>
+                  $
+                  {stateTime === 1
+                    ? (item.price * 1).toLocaleString("en-US")
+                    : (item.price * 12).toLocaleString("en-US")}
                 </h2>
                 <div className="mt-3 mb-6">
                   {item.content.map((des, idx) => (
@@ -266,10 +287,11 @@ export default function Price() {
       </div>
 
       {/* Para responsive */}
-      <div className="flex gap-3 w-full max-md:flex-col overflow-x-auto md:hidden">
+      <div className="flex gap-3 w-full max-md:flex-col overflow-x-hidden md:hidden">
         {plans.map((item, index) => (
           <div
-            className={` w-full ${index === 4 ? "border-2 border-blue-700 rounded-lg relative" : ""}`}
+            key={index}
+            className={`w-full ${index === 4 ? "border-2 border-blue-700 rounded-lg relative" : ""}`}
           >
             {index === 4 && <div className="popular-badge">Más Popular</div>}
             <div
@@ -279,8 +301,10 @@ export default function Price() {
               <div>
                 <h1 className="font-bold text-2xl md:text-3xl">{item.title}</h1>
                 <h2 className="font-bold text-2xl md:text-3xl">
-                  ${item.price}
-                  <span className="text-lg md:text-2xl font-medium">/Mes</span>
+                  $
+                  {stateTime === 1
+                    ? (item.price * 1).toLocaleString("en-US")
+                    : (item.price * 12).toLocaleString("en-US")}
                 </h2>
                 <div className="mt-3 mb-6">
                   {item.content.map((des, idx) => (

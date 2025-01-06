@@ -11,7 +11,7 @@ import Footer from "./sections/Footer";
 import GetDemo from "./sections/GetDemo";
 import Prices from "./sections/Prices";
 import Graphics from "./sections/Graphics";
-import CookieModal from "./components/Cookies";
+import CookieModal from "./components/cookies/Cookies";
 import HelpChat from "./components/chat/HelpChat";
 import ModalForm from "./components/ModalForm";
 

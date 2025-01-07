@@ -24,7 +24,7 @@ const PolicyList = () => {
         <LoadingSpinnerSmall color="primary" />
       ) : policies && policies.length > 0 ? (
         <div className="flex flex-col gap-2 overflow-y-auto w-full pr-1 h-full">
-          {policies.map((policy) => (
+          {policies?.map((policy) => (
             <Link
               className="flex flex-col gap-1 cursor-pointer hover:bg-easy-300 rounded-md p-1"
               href={`/sales/crm/contacts/contact/${policy.id}?show=true`}

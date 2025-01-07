@@ -39,8 +39,9 @@ const TaskDeadLine = ({ task }) => {
   const handleSaveDate = async (close) => {
     setIsLoading(true);
     const body = {
-      deadline: getFormatDate(selectedDate),
+      deadline: moment(selectedDate).utc().format(),
     };
+    console.log("body", body);
     try {
       close();
       const response = await putTaskId(task?.id, body);
@@ -57,6 +58,7 @@ const TaskDeadLine = ({ task }) => {
     } catch (error) {
       handleApiError(error.message);
     }
+    setIsLoading(false);
   };
 
   const handleDateRemove = async () => {

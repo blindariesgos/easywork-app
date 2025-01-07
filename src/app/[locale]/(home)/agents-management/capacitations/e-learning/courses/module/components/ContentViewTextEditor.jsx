@@ -8,6 +8,8 @@ import DropdownVisibleUsers from '@/src/components/DropdownVisibleUsers';
 // const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 import ImageResize from 'quill-resize-image';
+import { uploadCourseImage } from '../../services/create-course';
+import { toast } from 'react-toastify';
 
 Quill.register('modules/resize', ImageResize);
 
@@ -33,7 +35,7 @@ const formats = [
   'direction',
 ];
 
-const TextEditor = forwardRef(({ value, onChange, className, onChangeSelection, setValue, disabled = false, handleKeyDown }, ref) => {
+const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChangeSelection, setValue, disabled = false, handleKeyDown, onDeleteImage }, ref) => {
   const container = [
     ['bold', 'italic', 'underline', 'strike'], // toggled buttons
     ['blockquote'],
@@ -53,6 +55,7 @@ const TextEditor = forwardRef(({ value, onChange, className, onChangeSelection, 
   const [dataUsers, setDataUsers] = useState([]);
   const [userSelected, setUserSelected] = useState(null);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const [internalImages, setInternalImages] = useState([]);
 
   useImperativeHandle(ref, () => ({
     getEditor: () => localQuillRef.current?.getEditor(),
@@ -74,21 +77,67 @@ const TextEditor = forwardRef(({ value, onChange, className, onChangeSelection, 
     setValue(newValue);
   };
 
+  const extractImageUrls = html => {
+    // Extrae URLs de imágenes del contenido HTML usando una expresión regular
+    const imageUrls = [];
+    const imgTags = html.match(/<img [^>]*src="[^"]*"[^>]*>/g) || [];
+    imgTags.forEach(tag => {
+      const srcMatch = tag.match(/src="([^"]*)"/);
+      if (srcMatch && srcMatch[1]) {
+        imageUrls.push(srcMatch[1]);
+      }
+    });
+    return imageUrls.filter(imageUrl => !imageUrl.startsWith('data:image/'));
+  };
+
+  const embedImage = imageUrl => {
+    const quill = localQuillRef.current;
+    if (quill) {
+      const range = quill.getEditorSelection();
+      range && quill.getEditor().insertEmbed(range.index, 'image', imageUrl);
+    }
+  };
+
+  const uploadImage = async image => {
+    try {
+      const formData = new FormData();
+      formData.append('image', image);
+      return await uploadCourseImage(formData);
+    } catch (error) {
+      toast.error('Tenemos problemas para guardar la imagen insertada');
+    }
+  };
+
   const imageHandler = useCallback(() => {
     const input = document.createElement('input');
+
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
     input.click();
+
     input.onchange = async () => {
       if (input !== null && input.files !== null) {
         const file = input.files[0];
-        console.log(file);
-        const url = URL.createObjectURL(file);
-        console.log(url);
-        const quill = localQuillRef.current;
-        if (quill) {
-          const range = quill.getEditorSelection();
-          range && quill.getEditor().insertEmbed(range.index, 'image', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR__zJOFi3ef7eGRIlVWo2DKdUXKrCq8dBwtQ&s');
+
+        if (file) {
+          // Insert base64 at text editor
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            embedImage(reader.result);
+          };
+          reader.readAsDataURL(file);
+
+          // Add image to content view state
+          const quill = localQuillRef.current.getEditor();
+
+          if (quill) {
+            const fileUrl = await uploadImage(file);
+            const images = quill.container.querySelectorAll('img');
+            images.forEach(img => {
+              const src = img.getAttribute('src');
+              if (src.startsWith('data:image/')) img.setAttribute('src', fileUrl);
+            });
+          }
         }
       }
     };
@@ -133,24 +182,62 @@ const TextEditor = forwardRef(({ value, onChange, className, onChangeSelection, 
     }
   };
 
+  const handleInternalChange = (newContent, delta, source, editor) => {
+    // Actualizar el estado de imágenes
+
+    const currentImages = extractImageUrls(newContent);
+
+    // console.log('🚀 ~ handleInternalChange ~ currentImages:', currentImages);
+    // console.log('🚀 ~ handleInternalChange ~ internalImages:', internalImages);
+
+    const removedImages = internalImages.filter(img => !currentImages.includes(img));
+    if (removedImages.length > 0) {
+      console.log('🚀 ~ handleInternalChange ~ removedImages:', removedImages);
+      onDeleteImage(removedImages);
+    }
+
+    setInternalImages(currentImages);
+
+    if (onChange) {
+      onChange(newContent, delta, source, editor);
+    } else if (handleChange) {
+      handleChange(newContent, delta, source, editor);
+    }
+  };
+
   useEffect(() => {
     if (userSelected) {
       addUserSelected(userSelected.username);
     }
   }, [userSelected]);
 
+  // useEffect(() => {
+  //   if (localQuillRef.current?.lastDeltaChangeSet?.ops[1]?.delete === 1) {
+  //     const currentImages = extractImageUrls(value);
+
+  //     // Detectar imágenes eliminadas
+  //     const removedImages = internalImages.filter(img => !currentImages.includes(img));
+  //     if (removedImages.length > 0) {
+  //       console.log(removedImages);
+  //       onDeleteImage(removedImages);
+  //     }
+  //   }
+  // }, [localQuillRef.current?.lastDeltaChangeSet?.ops[1]?.delete]);
+
+  // console.log(internalImages);
+
   return (
     <div className="w-full relative">
       <ReactQuill
         ref={localQuillRef}
         value={value}
-        onChange={onChange || handleChange}
+        onChange={handleInternalChange}
         modules={{
           toolbar: {
             container,
-            // handlers: {
-            //   image: imageHandler,
-            // },
+            handlers: {
+              image: imageHandler,
+            },
           },
           resize: {
             locale: {},
@@ -179,6 +266,6 @@ const TextEditor = forwardRef(({ value, onChange, className, onChangeSelection, 
   );
 });
 
-TextEditor.displayName = 'TextEditor';
+ContentViewTextEditor.displayName = 'ContentViewTextEditor';
 
-export default TextEditor;
+export default ContentViewTextEditor;

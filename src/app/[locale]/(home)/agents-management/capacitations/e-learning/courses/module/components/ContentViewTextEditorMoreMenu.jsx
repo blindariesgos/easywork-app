@@ -1,7 +1,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { ArrowDownCircleIcon } from '@heroicons/react/20/solid';
 
-export default function LessonTextEditorMoreMenu({ onTranscript, onAttachFile }) {
+export default function ContentViewTextEditorMoreMenu({ onTranscript, onAttachFile }) {
   return (
     <Menu as="div" className="w-10 md:w-auto">
       <MenuButton className="flex items-center justify-center py-2 px-4 bg-[#f5f5f5] hover:bg-[#e4e4e4] shadow-xs text-sm gap-2 rounded-md">

@@ -5,15 +5,20 @@ import Link from 'next/link';
 
 import ModuleProgressBar from '../components/ModuleProgressBar';
 import ModuleCardMoreMenu from '../components/ModuleCardMoreMenu';
+import { usePathname } from 'next/navigation';
 
 export default function ModuleCard({ course, onEditCourse, onMoveCourse, onDeleteCourse }) {
+  const pathname = usePathname();
+
   if (!course.progress) course.progress = Math.ceil(Math.random() * 100);
 
   return (
     <div className="relative">
-      <ModuleCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
+      {pathname === '/agents-management/capacitations/e-learning/config' && (
+        <ModuleCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
+      )}
 
-      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer ">
+      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer h-96">
         <div className="h-48 relative rounded-t-xl overflow-hidden">
           {course.coverPhotoSrc ? (
             <>

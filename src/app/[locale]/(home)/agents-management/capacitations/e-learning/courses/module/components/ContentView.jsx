@@ -6,8 +6,8 @@ import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
 
 import Button from '@/src/components/form/Button';
-import LessonTextEditor from './LessonTextEditor Beta';
-import LessonTextEditorMoreMenu from './LessonTextEditorMoreMenu';
+import ContentViewTextEditor from './ContentViewTextEditor';
+import ContentViewTextEditorMoreMenu from './ContentViewTextEditorMoreMenu';
 import ContentViewCoverPhoto from './ContentViewCoverPhoto';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { FileUpload } from './FileUpload';
@@ -16,6 +16,7 @@ import { createLesson, updateLesson } from '../services/lessons';
 import { updatePage } from '../services/lesson-pages';
 
 import '../styles/index.css';
+import { uploadCourseImage } from '../../services/create-course';
 
 export const ContentView = ({ course, content, onSuccess, contentType }) => {
   const isEdit = !!content;
@@ -40,18 +41,24 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
       courseId: course.id,
       files: [],
       filesToDelete: [],
+      imagesToDelete: [],
     },
   });
 
   const values = watch();
 
+  const onDeleteImage = async images => {
+    setValue('imagesToDelete', [...values.imagesToDelete, ...images]);
+  };
+
   const onSubmit = async values => {
     setLoading(true);
 
     try {
-      const { files, filesToDelete, ...rest } = values;
+      const { files, filesToDelete, imagesToDelete, ...rest } = values;
 
       const newValues = new FormData();
+
       Object.entries(rest).forEach(([key, value]) => {
         newValues.append(key, value);
       });
@@ -61,7 +68,13 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
           newValues.append('files', file);
         });
 
+      // if (images.length > 0)
+      //   images.forEach(image => {
+      //     newValues.append('images', image);
+      //   });
+
       if (filesToDelete.length > 0) newValues.append('filesToDelete', JSON.stringify(filesToDelete));
+      if (imagesToDelete.length > 0) newValues.append('imagesToDelete', JSON.stringify(imagesToDelete));
 
       if (isEdit) {
         if (contentType === 'lesson') {
@@ -75,7 +88,10 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
 
       // reset();
       toast.success('Cambios guardados exitosamente!');
+
       setValue('files', []);
+      setValue('filesToDelete', []);
+      setValue('imagesToDelete', []);
       if (onSuccess) onSuccess();
     } catch (error) {
       console.log(error);
@@ -94,6 +110,7 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
         coverPhoto: content ? content.coverPhoto : null,
         files: [],
         filesToDelete: [],
+        imagesToDelete: [],
       });
   }, [content, reset]);
 
@@ -112,7 +129,6 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
             <input
               {...register('name', { required: 'El nombre es obligatorio.' })}
               type="text"
-              autoComplete={false}
               className={`w-full block text-lg border-0 rounded-md focus:ring-0 ${errors.name ? 'focus:border-red-300 border-red-300' : ''}`}
               disabled={loading}
             />
@@ -152,7 +168,7 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
           </div>
         )}
 
-        {!loading && <LessonTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} />}
+        {!loading && <ContentViewTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} onDeleteImage={onDeleteImage} />}
 
         <div className="mt-4">
           <FileUpload
@@ -170,7 +186,7 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
         {!isEditorDisabled && !loading && (
           <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
             <div>
-              <LessonTextEditorMoreMenu
+              <ContentViewTextEditorMoreMenu
                 onAttachFile={() => {
                   inputFileRef.current?.click();
                 }}
@@ -200,4 +216,11 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
       </div>
     </form>
   );
+  console.log('🚀 ~ ContentView ~ value:', value);
+  console.log('🚀 ~ ContentView ~ value:', value);
+  console.log('🚀 ~ ContentView ~ value:', value);
+  console.log('🚀 ~ ContentView ~ value:', value);
+  console.log('🚀 ~ ContentView ~ value:', value);
+  console.log('🚀 ~ ContentView ~ value:', value);
+  console.log('🚀 ~ ContentView ~ value:', value);
 };

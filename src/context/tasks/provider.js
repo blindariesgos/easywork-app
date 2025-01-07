@@ -15,7 +15,7 @@ export default function TasksContextProvider({ children }) {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [config, setConfig] = useState({
     page: 1,
-    limit: 5,
+    limit: 10,
     orderBy: "deadline",
     order: "ASC",
   });

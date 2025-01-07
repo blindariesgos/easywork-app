@@ -19,7 +19,7 @@ import Button from "@/src/components/form/Button";
 import moment from "moment";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 
-const TaskDeadLine = ({ task }) => {
+const TaskDeadLine = ({ task, disabled }) => {
   const { t } = useTranslation();
   const { mutate: mutateTasks } = useTasksContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -105,12 +105,13 @@ const TaskDeadLine = ({ task }) => {
                       "underline decoration-dotted cursor-pointer font-semibold",
                     "text-sm text-black"
                   )}
+                  disabled={disabled}
                 >
                   {task?.deadline
                     ? moment(task?.deadline).format("DD/MM/YYYY hh:mm a")
                     : "Ninguna"}
                 </MenuButton>
-                {task?.deadline && (
+                {task?.deadline && !disabled && (
                   <FaTimes
                     className={`ml-2 text-indigo-500 hover:text-indigo-700 cursor-pointer group-hover:visible invisible`}
                     onClick={handleDateRemove}

@@ -30,6 +30,7 @@ const OptionsTask = ({
   files,
   taggedUsers,
   setTaggedUsers,
+  canEdit,
 }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
@@ -267,27 +268,30 @@ const OptionsTask = ({
           ))}
         </div>
       )}
-      <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
-        {options
-          .filter((opt) => !opt.disabled)
-          .map((opt) => (
-            <div
-              key={opt.id}
-              className="flex gap-1 items-center cursor-pointer"
-              onClick={opt.onclick}
-              ref={opt.id === 3 ? mentionButtonRef : null}
-            >
-              <button
-                className="flex gap-2 items-center focus:ring-0"
-                disabled={opt.disabled}
+
+      {canEdit && (
+        <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
+          {options
+            .filter((opt) => !opt.disabled)
+            .map((opt) => (
+              <div
+                key={opt.id}
+                className="flex gap-1 items-center cursor-pointer"
+                onClick={opt.onclick}
+                ref={opt.id === 3 ? mentionButtonRef : null}
               >
-                {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
-                <p className="text-sm">{opt.name}</p>
-              </button>
-            </div>
-          ))}
-        {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
-      </div>
+                <button
+                  className="flex gap-2 items-center focus:ring-0"
+                  disabled={opt.disabled}
+                >
+                  {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
+                  <p className="text-sm">{opt.name}</p>
+                </button>
+              </div>
+            ))}
+          {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
+        </div>
+      )}
       {openFiles && (
         <UploadDocuments
           files={files}

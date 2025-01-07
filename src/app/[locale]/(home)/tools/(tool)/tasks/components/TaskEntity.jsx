@@ -25,6 +25,7 @@ export default function TaskEntiy({
   field,
   getFilteredUsers,
   updateTaskBody,
+  disabled,
 }) {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
@@ -131,12 +132,14 @@ export default function TaskEntiy({
     <div className="relative mb-4" ref={containerRef}>
       <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
         <p className="text-sm text-black">{t(label)}</p>
-        <p
-          className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
-          onClick={isLoading ? () => {} : handleEditClick}
-        >
-          {isLoading ? t("common:loading") : t("tools:tasks:edit:add")}
-        </p>
+        {!disabled && (
+          <p
+            className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
+            onClick={isLoading ? () => {} : handleEditClick}
+          >
+            {isLoading ? t("common:loading") : t("tools:tasks:edit:add")}
+          </p>
+        )}
       </div>
       {task[entityKey]?.length > 0 &&
         task[entityKey].map((entity, index) => (

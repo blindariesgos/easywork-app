@@ -37,6 +37,8 @@ import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import Image from "next/image";
 import moment from "moment";
+import { toast } from "react-toastify";
+import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 
 export default function Table() {
   const {
@@ -80,70 +82,72 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  // if (data?.items && data?.items.length === 0) {
-  //   return (
-  //     <div className="flex items-center justify-center h-96">
-  //       <div className="flex flex-col items-center space-y-3">
-  //         <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-  //           <svg
-  //             className="w-10 h-10 text-gray-400"
-  //             fill="none"
-  //             stroke="currentColor"
-  //             viewBox="0 0 24 24"
-  //           >
-  //             <path
-  //               strokeLinecap="round"
-  //               strokeLinejoin="round"
-  //               strokeWidth="2"
-  //               d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-  //             ></path>
-  //           </svg>
-  //         </div>
-  //         <p className="text-lg font-medium text-gray-400">No hay juntas</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   const itemActions = [
     {
       name: "Ver",
+      handleClick: (meet) =>
+        router.push(
+          `/agents-management/meetings-and-sessions/individuals/meet/${meet.id}?show=true`
+        ),
+    },
+    {
+      name: "Crear",
+      handleClick: (meet) => {
+        if (meet?.agents?.length > 0) {
+          router.push(
+            `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=agent-meet&prev_id=${meet?.agents[0]?.id}`
+          );
+        } else {
+          toast.warning("La junta no tiene agente asignado");
+        }
+      },
+    },
+    {
+      name: "Editar",
+      handleClick: (meet) =>
+        router.push(
+          `/agents-management/meetings-and-sessions/individuals/meet/${meet.id}/edit?show=true`
+        ),
+    },
+    {
+      name: "Eliminar",
+      disabled: true,
+    },
+  ];
+
+  const masiveActions = [
+    {
+      id: 1,
+      name: "Asignar responsable",
       disabled: true,
     },
     {
-      name: "Planificar",
-      options: [
-        {
-          name: "Tarea",
-          disabled: true,
-        },
-        {
-          name: "Envío masivo SMS",
-          disabled: true,
-        },
-        {
-          name: "Correo electrónico",
-          disabled: true,
-        },
-      ],
+      id: 1,
+      name: "Crear tarea",
+      disabled: true,
     },
-    // { name: "Editar" },
-    // { name: "Copiar" },
+    {
+      id: 1,
+      name: t("common:buttons:delete"),
+      disabled: true,
+    },
   ];
 
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      {/* {selectedContacts.length > 0 && (
+      {selectedContacts.length > 0 && (
         <div className="flex py-2">
           <SelectedOptionsTable options={masiveActions} />
         </div>
-      )} */}
+      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -260,11 +264,7 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(meet.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              meet?.contact?.id
-                                            );
+                                            item.handleClick(meet);
                                         }}
                                       >
                                         <div
@@ -412,16 +412,20 @@ export default function Table() {
                                   </div>
                                 ) : column.row === "startTime" ? (
                                   meet[column.row] ? (
-                                    moment(meet[column.row]).format(
-                                      "DD/MM/YYYY hh:mm a"
-                                    )
+                                    <div className="bg-[#86BEDF] rounded-full py-1 px-2 text-sm">
+                                      {moment(meet[column.row]).format(
+                                        "DD/MM/YYYY hh:mm a"
+                                      )}
+                                    </div>
                                   ) : null
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == meet?.currency?.id)?.symbol ?? ""} ${formatToCurrency(meet[column.row])}`
                                 ) : column.row === "status" ? (
                                   meet[column.row]
                                 ) : (
-                                  meet[column.row] || "-"
+                                  meet[column.row] || (
+                                    <div className="text-center">-</div>
+                                  )
                                 )}
                               </div>
                             </td>

@@ -13,3 +13,10 @@ const fetcher = async (endpoint, options = {}) => {
 };
 
 export default fetcher;
+
+export const fetcherV2 = async ([baseKey, params]) => {
+  const endpoint = `${baseKey}?${params}`;
+  return await axios()
+    .get(endpoint)
+    .catch((error) => error);
+};

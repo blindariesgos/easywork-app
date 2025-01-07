@@ -1,12 +1,6 @@
 "use server";
 import axios from "axios";
 import { auth } from "../../auth";
-import { updateSession, clearSession } from "./session";
-import { refreshAuthToken } from "./helpers/refresh_auth_token";
-import { getLogger } from "@/src/utils/logger";
-import { logout } from "./api/hooks/auths";
-
-const logger = getLogger("axios");
 
 const createAxiosInstance = (props) => {
   const axiosInstance = axios.create({
@@ -40,24 +34,19 @@ const createAxiosInstance = (props) => {
     }
   );
 
-  axiosInstance.interceptors.response.use((response) => response.data);
+  axiosInstance.interceptors.response.use(
+    (response) => response.data,
+    async (error) => {
+      return Promise.reject(
+        error?.response?.data || {
+          statusCode: 500,
+          message: "¡Error desconocido, intente de nuevo mas tarde!",
+        }
+      );
+    }
+  );
 
   return axiosInstance;
-};
-
-export const reloadSession = async (originalRequest = null) => {
-  logger.info("Actualizando Token");
-  const updatedAuthToken = await refreshAuthToken();
-
-  if (!updatedAuthToken) {
-    await clearSession();
-    await logout();
-    window.location.href = "/auth";
-    throw new Error("Failed to refresh auth token");
-  }
-  if (originalRequest)
-    originalRequest.headers.Authorization = `Bearer ${updatedAuthToken.token}`;
-  await updateSession(updatedAuthToken);
 };
 
 export default createAxiosInstance;

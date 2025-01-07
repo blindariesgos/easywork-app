@@ -1,6 +1,7 @@
 "use server";
+
 import axios from "./axios";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 import { auth, signIn, signOut } from "../../auth";
 import { revalidatePath } from "next/cache";
 import { encrypt } from "./helpers/encrypt";
@@ -51,25 +52,6 @@ export const isLoggedIn = async () => {
   return !!session?.user?.accessToken;
 };
 
-export const getLogin = async (email, password) => {
-  const response = await axios().post(`/auth/login`, {
-    email,
-    password,
-  });
-
-  if (response && response.refreshToken) {
-    const encryptedSessionData = await encrypt(response.refreshToken);
-
-    cookies().set("refreshToken", encryptedSessionData, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-    });
-  }
-
-  return response;
-};
 export const getDataPassword = async (email) => {
   const response = await axios().put(`/auth/forgot-password`, {
     email,
@@ -311,8 +293,6 @@ export const putTaskId = async (id, body) => {
   const response = await axios()
     .put(`/tools/tasks/${id}`, body)
     .catch((error) => ({ hasError: true, error }));
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
-  revalidatePath(`/tools/tasks`, "layout");
 
   return response;
 };
@@ -380,7 +360,9 @@ export const convertToSubtaskOf = async (taskId, parentId) => {
 };
 
 export const postComment = async (body, id) => {
-  const response = await axios().post(`/tools/tasks/comments`, body);
+  const response = await axios()
+    .post(`/tools/tasks/comments`, body)
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };
 export const postMeetComment = async (body) => {
@@ -411,6 +393,16 @@ export const deleteComment = async (commentId, id) => {
   return response;
 };
 
+export const deleteTaskCommentAttach = async (taskCommentId, data) => {
+  const response = await axios()
+    .delete(`/tools/tasks/comment/${taskCommentId}/attachments`, {
+      data,
+    })
+    .catch((error) => ({ ...error, hasError: true }));
+  console.log(response);
+  return response;
+};
+
 export const deleteMeetComment = async (commentId) => {
   const response = await axios().delete(
     `/agent-management/meetings/comments/${commentId}`
@@ -424,7 +416,9 @@ export const putComment = async (commentId, body, taskId) => {
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${taskId}`, "page");
+  console.log("paso por acaaaaa 2", response);
+
+  // revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 
@@ -434,7 +428,7 @@ export const putMeetComment = async (commentId, body, meetId) => {
     `/agent-management/meetings/comments/${commentId}`,
     body
   );
-  revalidatePath(`/tools/tasks/task/${meetId}`, "page");
+  // revalidatePath(`/tools/tasks/task/${meetId}`, "page");
   return response;
 };
 
@@ -488,6 +482,22 @@ export const putPoliza = async (policyId, body) => {
     .catch((error) => ({ hasError: true, ...error }));
 
   revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
+
+  return response;
+};
+
+export const putSchedule = async (scheduleId, body) => {
+  const response = await axios()
+    .put(`/operations/schedulings/${scheduleId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+
+  return response;
+};
+
+export const putRefund = async (refundId, body) => {
+  const response = await axios()
+    .put(`/operations/reimbursements/${refundId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
 
   return response;
 };
@@ -737,6 +747,19 @@ export const addPolicyByPdf = async (body, category = "nueva") => {
   return response;
 };
 
+export const convertLeadToClient = async (leadId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/poliza/generate/lead/${leadId}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+export const addPolicyVersionByContact = async (contactId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/contacts/poliza/upload/contact/${contactId}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
 export const addRefund = async (body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/operations/management/reimbursement`, body)
@@ -765,10 +788,26 @@ export const getMetadataOfPdf = async (category, body) => {
   return response;
 };
 
+export const getMetadataOfPdfVersion = async (body, contactId) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/contacts/poliza/metadata/contact/${contactId}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  console.log("aaaaaaaaaaaaaaaaaa", response);
+  return response;
+};
+
 export const addContactDocument = async (contactId, category, body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/sales/crm/contacts/upload/${contactId}?category=${category}`, body)
     .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addLeadPolicy = async (leadId, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/poliza/metadata/lead/${leadId}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  console.log("aaaaaaaaaa", response);
   return response;
 };
 
@@ -781,7 +820,7 @@ export const postPositiveStagePolicy = async (leadId) => {
 
 export const getPolizaLeadData = async (leadId) => {
   const response = await axios()
-    .get(`/v1/sales/crm/leads/${leadId}/get_poliza_data`)
+    .get(`/sales/crm/leads/poliza/metadata/lead/${leadId}`)
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

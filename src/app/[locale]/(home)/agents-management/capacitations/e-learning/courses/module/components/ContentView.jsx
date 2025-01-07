@@ -183,6 +183,19 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
           />
         </div>
 
+        <div className="mt-4">
+          <FileUpload
+            inputRef={inputFileRef}
+            onChange={files => setValue('files', files)}
+            onDelete={file => {
+              setValue('filesToDelete', [...values.filesToDelete, file.url]);
+            }}
+            files={content?.files || []}
+            disabled={isEditorDisabled}
+            loading={loading}
+          />
+        </div>
+
         {!isEditorDisabled && !loading && (
           <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
             <div>
@@ -216,11 +229,4 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
       </div>
     </form>
   );
-  console.log('🚀 ~ ContentView ~ value:', value);
-  console.log('🚀 ~ ContentView ~ value:', value);
-  console.log('🚀 ~ ContentView ~ value:', value);
-  console.log('🚀 ~ ContentView ~ value:', value);
-  console.log('🚀 ~ ContentView ~ value:', value);
-  console.log('🚀 ~ ContentView ~ value:', value);
-  console.log('🚀 ~ ContentView ~ value:', value);
 };

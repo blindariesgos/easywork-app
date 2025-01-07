@@ -10,6 +10,8 @@ import { useCommon } from "@/src/hooks/useCommon";
 export default function LeadsContextProvider({ children }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
+  const [isOpenValidation, setIsOpenValidation] = useState(false);
+  const [policyInfo, setPolicyInfo] = useState();
   const [filters, setFilters] = useState({});
   const { stagesLead, statusLead } = useCommon();
   const [config, setConfig] = useState({
@@ -206,9 +208,15 @@ export default function LeadsContextProvider({ children }) {
       filters,
       setFilters,
       defaultFilterFields,
+      isOpenValidation,
+      setIsOpenValidation,
+      policyInfo,
+      setPolicyInfo,
     }),
     [
       leads,
+      policyInfo,
+      isOpenValidation,
       isLoading,
       isError,
       config,

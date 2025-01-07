@@ -2286,15 +2286,15 @@ export const useRefundTable = () => {
     {
       id: 7,
       name: t("operations:refunds:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
+      order: "contact",
       check: true,
     },
     {
       id: 7,
       name: t("operations:refunds:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "createdAt",
+      order: "createdAt",
       check: true,
     },
     {
@@ -2342,8 +2342,8 @@ export const useProgramationTable = () => {
     {
       id: 7,
       name: t("operations:programations:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "createdAt",
+      order: "createdAt",
       check: true,
     },
     {

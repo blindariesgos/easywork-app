@@ -106,7 +106,10 @@
             },
             "details": {
                 "date": "Fecha de vencimiento",
+                "fechaEmision": "Fecha Emisión de Póliza",
                 "product": "Producto",
+                "claim-number": "Número de reclamación",
+                "sheet": "Número de folio",
                 "policy": "Póliza",
                 "company": "Compañía",
                 "client-code": "Código de cliente",

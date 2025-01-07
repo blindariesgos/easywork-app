@@ -39,6 +39,7 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import moment from "moment";
 
 export default function Table() {
   const {
@@ -82,17 +83,12 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
 
   const deletePolicy = async (id) => {
     try {
@@ -215,11 +211,13 @@ export default function Table() {
       name: "Cambiar Responsable",
       onclick: changeResponsible,
       selectUser: true,
+      disabled: true,
     },
     {
       id: 2,
       name: t("common:table:checkbox:change-status"),
       onclick: changeStatusPolicies,
+      disabled: true,
       selectOptions: [
         {
           id: "activa",
@@ -256,14 +254,12 @@ export default function Table() {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/operations/renovations/renovation/${id}?show=true`),
+        router.push(`/operations/refunds/refund/${id}?show=true`),
     },
     {
       name: "Editar",
       handleClick: (id) =>
-        router.push(
-          `/operations/renovations/renovation/${id}?show=true&edit=true`
-        ),
+        router.push(`/operations/refunds/refund/${id}?show=true&edit=true`),
     },
     {
       name: "Eliminar",
@@ -280,7 +276,7 @@ export default function Table() {
           name: "Tarea",
           handleClickContact: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=refund&prev_id=${id}`
             ),
           disabled: true,
         },
@@ -299,33 +295,6 @@ export default function Table() {
       ],
     },
   ];
-
-  if (data?.items && data?.items.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("operations:policies:table:not-data")}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Fragment>
@@ -390,33 +359,33 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((policy, index) => {
+                  data?.items.map((refund, index) => {
                     return (
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(policy.id)
+                          selectedContacts.includes(refund.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(policy.id) && (
+                          {selectedContacts.includes(refund.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={policy.id}
-                              checked={selectedContacts.includes(policy.id)}
+                              value={refund.id}
+                              checked={selectedContacts.includes(refund.id)}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, policy.id]
+                                    ? [...selectedContacts, refund.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== policy.id
+                                        (p) => p !== refund.id
                                       )
                                 )
                               }
@@ -451,10 +420,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(policy.id);
+                                            item.handleClick(refund.id);
                                           item.handleClickContact &&
                                             item.handleClickContact(
-                                              policy?.contact?.id
+                                              refund?.contact?.id
                                             );
                                         }}
                                       >
@@ -498,11 +467,11 @@ export default function Table() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      policy.id
+                                                      refund.id
                                                     );
                                                   option.handleClickContact &&
                                                     option.handleClickContact(
-                                                      policy?.contact?.id
+                                                      refund?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -530,25 +499,16 @@ export default function Table() {
                             <td className="ml-4 py-4" key={index}>
                               <div
                                 className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary",
-                                  {
-                                    "text-center": [
-                                      "vigenciaDesde",
-                                      "poliza",
-                                      "source",
-                                      "status",
-                                    ].includes(column.row),
-                                    "text-right": ["importePagar"].includes(
-                                      column.row
-                                    ),
-                                  }
+                                  "font-medium text-sm  text-black hover:text-primary"
                                 )}
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/operations/policies/policy/${policy.id}?show=true`}
+                                    href={`/operations/refunds/refund/${refund.id}?show=true`}
                                   >
-                                    <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                                    <p>{`${
+                                      refund?.insurance?.name ?? ""
+                                    } ${refund?.poliza?.poliza ?? ""} ${refund?.polizaType?.name ?? ""}`}</p>
                                   </Link>
                                 ) : column.row == "activities" ? (
                                   <div className="flex justify-center gap-2">
@@ -589,17 +549,30 @@ export default function Table() {
                                       />
                                     </button>
                                   </div>
-                                ) : column.row === "vigenciaDesde" ? (
-                                  (formatDate(
-                                    policy[column.row],
-                                    "dd/MM/yyyy"
-                                  ) ?? null)
-                                ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
-                                ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                ) : column.row === "poliza" ? (
+                                  <Link
+                                    href={`/operations/policies/policy/${refund?.poliza?.id}?show=true`}
+                                  >
+                                    <p className="text-center">
+                                      {refund?.poliza?.poliza}
+                                    </p>
+                                  </Link>
+                                ) : column.row === "contact" ? (
+                                  <Link
+                                    href={`/sales/crm/contacts/contact/${refund?.poliza?.contact?.id}?show=true`}
+                                  >
+                                    <p className="text-center">
+                                      {refund?.poliza?.contact?.fullName}
+                                    </p>
+                                  </Link>
+                                ) : column.row === "createdAt" ? (
+                                  <p className="text-center">
+                                    {moment(refund?.createdAt).format(
+                                      "DD/MM/YYYY"
+                                    )}
+                                  </p>
                                 ) : (
-                                  policy[column.row] || "-"
+                                  refund[column.row] || "-"
                                 )}
                               </div>
                             </td>

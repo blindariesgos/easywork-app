@@ -1,5 +1,4 @@
 "use client";
-
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import SliderOverShord from "@/src/components/SliderOverShort";
@@ -14,8 +13,12 @@ import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { FaTrash } from "react-icons/fa";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addPolicyByPdf, getMetadataOfPdf } from "@/src/lib/apis";
+import {
+  addPolicyVersionByContact,
+  getMetadataOfPdfVersion,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -24,7 +27,7 @@ import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
 import clsx from "clsx";
 
-const AddPolicy = ({ isOpen, setIsOpen }) => {
+const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -33,28 +36,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [helpers, setHelpers] = useState({});
 
   const schema = yup.object().shape({
-    contact: yup
-      .object()
-      .shape({})
-      .when("isNewContact", {
-        is: (value) => !value,
-        then: (schema) => schema.required(t("common:formValidator:required")),
-        otherwise: (schema) => schema,
-      }),
-    newContact: yup
-      .object()
-      .shape({})
-      .when("isNewContact", {
-        is: (value) => value,
-        then: (schema) => schema.required(t("common:formValidator:required")),
-        otherwise: (schema) => schema,
-      }),
     typeId: yup.string().required(t("common:validations:required")),
-    responsibleId: yup.string().required(t("common:validations:required")),
-    observerId: yup.string().required(t("common:validations:required")),
-    subAgente: yup.object().shape({}),
-    isNewContact: yup.bool().default(false),
-    polizaFileId: yup.string().required(t("common:validations:required")),
     poliza: yup.string().required(t("common:validations:required")),
     typePerson: yup.string().required(t("common:validations:required")),
     vigenciaDesde: yup.string().required(t("common:validations:required")),
@@ -62,6 +44,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     companyId: yup.string().required(t("common:validations:required")),
     currencyId: yup.string().required(t("common:validations:required")),
     primaNeta: yup.string().required(t("common:validations:required")),
+    version: yup.string(),
     derechoPoliza: yup.string().default("0"),
     iva: yup.string().default("0"),
     importePagar: yup.string().required(t("common:validations:required")),
@@ -90,6 +73,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     const files = e.target.files;
 
     if (!files) {
+      setLoading(false);
       setLoading(false);
       return;
     }
@@ -122,9 +106,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
 
     const formData = new FormData();
     formData.append("poliza", file);
-    const response = await getMetadataOfPdf("nueva", formData).catch((error) =>
-      console.log({ error })
-    );
+    const response = await getMetadataOfPdfVersion(formData, contactId);
     console.log(response);
 
     if (response?.hasError) {
@@ -142,16 +124,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    if (response?.contact?.id) {
-      setValue("contact", response?.contact?.id);
-      setValue("contactId", response?.contact?.id);
-    } else {
-      setValue("isNewContact", true);
-      setValue("newContact", {
-        ...response?.contact,
-        name: response?.contact?.fullName,
-      });
-    }
     if (response?.poliza) setValue("poliza", response?.poliza);
     if (response?.contact?.typePerson)
       setValue("typePerson", response?.contact?.typePerson);
@@ -160,35 +132,31 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       setValue("vigenciaDesde", response?.vigenciaDesde ?? "");
     if (response?.vigenciaHasta)
       setValue("vigenciaHasta", response?.vigenciaHasta ?? "");
-    // if (response?.cobertura) setValue("cobertura", response?.cobertura);
-    // if (response?.paymentMethod)
-    //   setValue("paymentMethod", response?.paymentMethod);
-    // if (response?.paymentFrequency)
-    //   setValue("paymentFrequency", response?.paymentFrequency);
-    // if (response?.paymentTerm) setValue("paymentTerm", response?.paymentTerm);
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)
       setValue("frecuenciaCobroId", response?.frecuenciaCobro?.id);
     if (response?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", response?.agenteIntermediario?.id);
-    // if (response?.observations) setValue("observations", response?.observations);
     if (response?.currency?.name)
       setValue("currencyId", response?.currency?.id);
     if (response?.plazoPago) setValue("plazoPago", response?.plazoPago);
-    // if (response?.assignedBy) setValue("assignedById", response?.assignedBy?.id);
-    // if (response?.contact?.address) setValue("address", response?.contact?.address);
-    // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
-    if (response?.importePagar)
-      setValue("importePagar", response?.importePagar?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("primaNeta", response?.primaNeta?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("derechoPoliza", response?.derechoPoliza?.toFixed(2));
-    if (response?.iva) setValue("iva", response?.iva?.toFixed(2));
-    if (response?.recargoFraccionado)
-      setValue("recargoFraccionado", response?.recargoFraccionado?.toFixed(2));
+    if (response?.version) setValue("version", response?.version);
+    setValue(
+      "importePagar",
+      response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
+    );
+    setValue("primaNeta", response?.primaNeta?.toFixed(2) ?? (0).toFixed(2));
+    setValue(
+      "derechoPoliza",
+      response?.derechoPoliza?.toFixed(2) ?? (0).toFixed(2)
+    );
+    setValue("iva", response?.iva?.toFixed(2) ?? (0).toFixed(2));
+    setValue(
+      "recargoFraccionado",
+      response?.recargoFraccionado?.toFixed(2) ?? (0).toFixed(2)
+    );
     if (response?.company?.id) setValue("companyId", response?.company?.id);
     if (response?.beneficiaries)
       setValue("beneficiaries", response?.beneficiaries);
@@ -203,6 +171,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue("relatedContacts", response?.relatedContacts);
     }
+    setValue("regenerateReceipts", "NO");
 
     reader.readAsDataURL(file);
     setLoading(false);
@@ -218,11 +187,13 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       vigenciaDesde,
       vigenciaHasta,
       recargoFraccionado,
-      relatedContacts,
+      version,
       contact,
+      relatedContacts,
+      regenerateReceipts,
       ...otherData
     } = data;
-    const body = {
+    let body = {
       ...otherData,
       operacion: "produccion_nueva",
       version: 0,
@@ -234,12 +205,16 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
-      name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
+      regenerateReceipts: regenerateReceipts == "YES",
+      name: lists
+        ? `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData.typeId).name}`
+        : "",
     };
+
     console.log({ body });
 
     try {
-      const response = await addPolicyByPdf(body);
+      const response = await addPolicyVersionByContact(contactId, body);
       console.log({ response });
       if (response?.hasError) {
         if (Array.isArray(response?.error?.message)) {
@@ -293,7 +268,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   });
 
   return (
-    <Fragment>
       <SliderOverShord openModal={isOpen}>
         {loading && <LoaderSpinner />}
         <Tag
@@ -307,7 +281,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
           <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d] overflow-y-auto">
             <div className="bg-gray-100 rounded-md p-2">
               <div className="bg-white rounded-md p-4 flex justify-between items-center">
-                <p>Información general de la póliza</p>
+                <p>Endoso o Versión de póliza</p>
                 {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
@@ -315,13 +289,13 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                   <label
                     className={`block text-sm font-medium leading-6 text-gray-900`}
                   >
-                    Cargar póliza pagada
+                    Cargar Endoso o Versión de póliza
                   </label>
                   <label
                     htmlFor="policy-file"
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
-                    <p>Leer datos de la póliza</p>
+                    <p>Leer datos de la Versión</p>
                   </label>
                   <input
                     type="file"
@@ -336,8 +310,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                       {errors?.polizaFileId?.message}
                     </p>
                   )}
-
-                  <p className="text-xs italic pt-2 text-gray-700">
+                  <p className="text-xs italic text-center pt-2 text-gray-700">
                     <span className="font-bold">Selecciona un PDF: </span>
                     (Versión Beta para Chubb/Quálitas/GNP/AXA - en el Ramo
                     Autos)
@@ -391,139 +364,12 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectDropdown
-                    label={t("operations:policies:general:responsible")}
-                    name="responsibleId"
-                    options={lists?.users}
-                    register={register}
-                    error={!watch("responsibleId") && errors.responsibleId}
-                    setValue={setValue}
-                    watch={watch}
-                  />
-                  <SelectInput
-                    label={"Observador"}
-                    options={lists?.users ?? []}
-                    name="observerId"
-                    error={errors?.observerId}
-                    setValue={setValue}
-                  />
-                  <div>
-                    <label
-                      className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
-                    >
-                      {t("control:portafolio:control:form:contact")}
-                    </label>
-                    <p
-                      className={clsx("text-xs py-2 px-3", {
-                        hidden: !watch("isNewContact"),
-                      })}
-                    >
-                      No encontramos el cliente de la póliza en nuestros
-                      registros. ¿Ya está registrado? Si es así, selecciónalo.
-                      Si no, crearemos uno nuevo con la información de la
-                      póliza.
-                    </p>
-                    <TabGroup
-                      className={clsx(" rounded-md", {
-                        "px-3 border": watch("isNewContact"),
-                      })}
-                    >
-                      <TabList
-                        className={clsx("flex gap-2 pt-2", {
-                          hidden: !watch("isNewContact"),
-                        })}
-                      >
-                        <Tab className="text-xs bg-white rounded-full px-2 py-1 data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold">
-                          Todos
-                        </Tab>
-                        <Tab
-                          className={clsx(
-                            "text-xs bg-white rounded-full  data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold",
-                            {
-                              hidden:
-                                !watch("relatedContacts") ||
-                                watch("relatedContacts").length == 0,
-                              "px-2 py-1": watch("isNewContact"),
-                            }
-                          )}
-                        >
-                          Coincidencias
-                        </Tab>
-                        <Tab className="text-xs bg-white rounded-full px-2 py-1  data-[selected]:bg-primary data-[selected]:text-white data-[selected]:font-semibold">
-                          Por defecto
-                        </Tab>
-                      </TabList>
-                      <TabPanels>
-                        <TabPanel className="py-2">
-                          <ContactSelectAsync
-                            name={"contact"}
-                            setValue={setValue}
-                            watch={watch}
-                            error={errors?.contact}
-                            helperText={helpers?.contact}
-                          />
-                        </TabPanel>
-                        <TabPanel
-                          className={clsx("py-2", {
-                            hidden:
-                              !watch("relatedContacts") ||
-                              watch("relatedContacts").length == 0,
-                          })}
-                        >
-                          <SelectInput
-                            options={watch("relatedContacts") ?? []}
-                            name="observerId"
-                            error={errors?.observerId}
-                            setValue={setValue}
-                          />
-                        </TabPanel>
-                        <TabPanel className="py-2">
-                          <TextInput
-                            type="text"
-                            label={"Nombre completo"}
-                            name="newContact.fullName"
-                            register={register}
-                            disabled
-                          />
-                          <TextInput
-                            type="text"
-                            label={"Código"}
-                            name="newContact.codigo"
-                            register={register}
-                            disabled
-                          />
-                          <TextInput
-                            type="text"
-                            label={t("operations:policies:general:rfc")}
-                            name="newContact.rfc"
-                            register={register}
-                            disabled
-                          />
-                          <TextInput
-                            type="text"
-                            label={t("operations:policies:general:address")}
-                            name="newContact.address"
-                            register={register}
-                            disabled
-                            multiple
-                            rows={2}
-                          />
-                          {/* <InputDate
-                              label={t("contacts:create:born-date")}
-                              name="newContact.birthdate"
-                              error={errors.birthdate}
-                              register={register}
-                              disabled
-                            /> */}
-                        </TabPanel>
-                      </TabPanels>
-                    </TabGroup>
-                  </div>
                   <TextInput
                     type="text"
                     label={"Número de póliza"}
                     name="poliza"
                     register={register}
+                    disabled={true}
                   />
                   <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -650,45 +496,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                       )?.symbol ?? ""
                     }
                   />
-
-                  {beneficiaries && beneficiaries.length > 0 && (
-                    <div className="grid gap-y-1">
-                      <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-                        Beneficiarios
-                      </label>
-                      {beneficiaries.map((beneficiary, index) => (
-                        <div
-                          key={index}
-                          className={clsx(
-                            "grid gap-1 border rounded-md py-2 pl-2",
-                            {
-                              "pr-6": beneficiaries.length > 1,
-                              "pr-2": beneficiaries.length == 1,
-                            }
-                          )}
-                        >
-                          <p className="text-xs">Nombre completo</p>
-                          <p className="text-xs bg-white py-1 px-2 rounded-md">
-                            {beneficiary.nombre}
-                          </p>
-                          <div className="grid grid-cols-2 gap-1">
-                            <div className="grid gap-1">
-                              <p className="text-xs">Parentesco</p>
-                              <p className="text-xs bg-white py-1 px-2 rounded-md">
-                                {beneficiary.parentesco}
-                              </p>
-                            </div>
-                            <div className="grid gap-1">
-                              <p className="text-xs">Porcentaje</p>
-                              <p className="text-xs bg-white py-1 px-2 rounded-md">
-                                {beneficiary.porcentaje}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                   {insureds && insureds.length > 0 && (
                     <div className="grid gap-y-1">
                       <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
@@ -698,13 +505,22 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                         <div
                           key={index}
                           className={clsx(
-                            "grid gap-1 border rounded-md py-2 pl-2",
+                            "grid gap-1 border rounded-md py-2 pl-2 relative",
                             {
-                              "pr-6": insureds.length > 1,
+                              "pr-8": insureds.length > 1,
                               "pr-2": insureds.length == 1,
                             }
                           )}
                         >
+                          <FaTrash
+                            className={clsx(
+                              "text-red-800 w-4 h-4 absolute right-2 cursor-pointer top-2",
+                              {
+                                hidden: insureds.length == 1,
+                              }
+                            )}
+                            onClick={() => removeInsureds(index)}
+                          />
                           <p className="text-xs">Nombre completo</p>
                           <p className="text-xs bg-white py-1 px-2 rounded-md">
                             {beneficiary?.insured?.fullName ?? "No disponible"}
@@ -739,6 +555,76 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                       ))}
                     </div>
                   )}
+                  {beneficiaries && beneficiaries.length > 0 && (
+                    <div className="grid gap-y-1">
+                      <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
+                        Beneficiarios
+                      </label>
+                      {beneficiaries.map((beneficiary, index) => (
+                        <div
+                          key={index}
+                          className={clsx(
+                            "grid gap-1 border rounded-md py-2 pl-2 relative",
+                            {
+                              "pr-8": beneficiaries.length > 1,
+                              "pr-2": beneficiaries.length == 1,
+                            }
+                          )}
+                        >
+                          <FaTrash
+                            className={clsx(
+                              "text-red-800 w-4 h-4 absolute right-2 cursor-pointer top-2",
+                              {
+                                hidden: beneficiaries.length == 1,
+                              }
+                            )}
+                            onClick={() => removeBeneficiaries(index)}
+                          />
+                          <p className="text-xs">Nombre completo</p>
+                          <p className="text-xs bg-white py-1 px-2 rounded-md">
+                            {beneficiary.nombre}
+                          </p>
+                          <div className="grid grid-cols-2 gap-1">
+                            <div className="grid gap-1">
+                              <p className="text-xs">Parentesco</p>
+                              <p className="text-xs bg-white py-1 px-2 rounded-md">
+                                {beneficiary.parentesco}
+                              </p>
+                            </div>
+                            <div className="grid gap-1">
+                              <p className="text-xs">Porcentaje</p>
+                              <p className="text-xs bg-white py-1 px-2 rounded-md">
+                                {beneficiary.porcentaje}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <SelectInput
+                    label={"Generar Recibos"}
+                    name="regenerateReceipts"
+                    options={[
+                      {
+                        name: "No",
+                        id: "NO",
+                      },
+                      {
+                        name: "Si",
+                        id: "YES",
+                      },
+                    ]}
+                    register={register}
+                    setValue={setValue}
+                    watch={watch}
+                    helperText={
+                      watch("regenerateReceipts") == "NO"
+                        ? "El sistema realizará los cálculos para generar nuevos recibos en base a los montos expresados en la póliza (Se sobreescribirá los recibos existentes)"
+                        : "El sistema trabajará con los recibos previamentes cargados/generados de la póliza que ya está guardada"
+                    }
+                  />
                 </Fragment>
 
                 {/* <SelectSubAgent
@@ -813,8 +699,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
           </div>
         </form>
       </SliderOverShord>
-    </Fragment>
   );
 };
 
-export default AddPolicy;
+export default AddVersion;

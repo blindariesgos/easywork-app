@@ -7,21 +7,43 @@ import clsx from "clsx";
 import TaskList from "./components/taskList";
 import ContactList from "./components/ContactList";
 import PolicyList from "./components/PolicyList";
-import { format, addDays, startOfDay, endOfDay } from "date-fns";
 import Header from "@/src/components/header/Header";
+import moment from "moment";
 
 const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
 
-const formatToISOString = (date) => format(date, "yyyy-MM-dd'T'HH:mm:ss");
-
 export default function Page() {
+  const utcOffset = moment().utcOffset();
   const taskFilters = {
     overdue: { status: "overdue", isCompleted: false },
-    deadlineToday: { deadline: formatToISOString(new Date()) },
+    deadlineToday: {
+      deadline: [
+        moment()
+          .utc()
+          .startOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+    },
     next: {
       deadline: [
-        formatToISOString(startOfDay(addDays(new Date(), 1))),
-        formatToISOString(endOfDay(addDays(new Date(), 16))),
+        moment()
+          .utc()
+          .add(1, "days")
+          .startOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .add(16, "days")
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
     },
   };

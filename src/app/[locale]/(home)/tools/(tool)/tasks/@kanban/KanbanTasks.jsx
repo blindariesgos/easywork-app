@@ -91,20 +91,8 @@ const KanbanTasks = () => {
       // primary: "#241F61",
       // secondary: "#EDECFF",
       filter: {
-        deadline: [
-          moment()
-            .utc()
-            .subtract(1, "year")
-            .startOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          moment()
-            .utc()
-            .subtract(1, "day")
-            .endOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-        ],
+        status: "overdue",
+        isCompleted: false,
       },
     },
     {

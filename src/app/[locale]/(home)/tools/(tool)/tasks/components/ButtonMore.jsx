@@ -22,19 +22,20 @@ import { toast } from "react-toastify";
 import { useTask, useTasks } from "@/src/lib/api/hooks/tasks";
 import { TbExchange } from "react-icons/tb";
 import SelectTasks from "@/src/components/modals/SelectTask";
+import useTasksContext from "@/src/context/tasks";
+import { useSWRConfig } from "swr";
 
 export default function ButtonMore({
   setOpenEdit,
-  openEdit,
   data,
   setIsDelegating,
-  mutateTask,
+  canEdit,
 }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const { mutate: mutateTasks } = useTasks({});
+  const { mutate: mutateTasks } = useTasksContext();
   const [isOpenParentTaskModal, setIsOpenParentTaskModal] = useState(false);
-
+  const { mutate } = useSWRConfig();
   const [options, setOptions] = useState([
     {
       id: 1,
@@ -61,6 +62,7 @@ export default function ButtonMore({
       name: t("tools:tasks:edit:delegate"),
       icon: UserPlusIcon,
       onclick: () => setIsDelegating(true),
+      hidden: !canEdit,
     },
   ]);
 
@@ -69,7 +71,7 @@ export default function ButtonMore({
       setLoading(true);
       await putTaskRestart(data.id);
       toast.success(t("tools:tasks:restart-success"));
-      mutateTask();
+      mutate(`/tools/tasks/${data?.id}`);
       mutateTasks();
       setLoading(false);
     } catch (error) {
@@ -92,7 +94,7 @@ export default function ButtonMore({
       return;
     }
     toast.success("La tarea fue convertida con éxito.");
-    mutateTask();
+    mutate(`/tools/tasks/${data?.id}`);
     mutateTasks();
     setLoading(false);
   };
@@ -101,7 +103,8 @@ export default function ButtonMore({
     if (
       data &&
       !data.isCompleted &&
-      !options.find((option) => option.name === t("tools:tasks:edit:edit"))
+      !options.find((option) => option.name === t("tools:tasks:edit:edit")) &&
+      canEdit
     ) {
       setOptions([
         ...options,

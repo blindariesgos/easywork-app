@@ -11,12 +11,17 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useSWRConfig } from "swr";
 import CardFile from "./CardFile";
 
-export default function UploadDocuments({ files, addFile, id, deleteFile }) {
+export default function UploadDocuments({
+  files,
+  addFile,
+  id,
+  localFiles,
+  setLocalFiles,
+}) {
   const { t } = useTranslation();
   const inputFileRef = useRef();
   const [loading, setLoading] = useState(false);
   const { mutate } = useSWRConfig();
-  const [localFiles, setLocalFiles] = useState([]);
 
   const handleLocalUpload = async (uploadfiles) => {
     setLoading(true);
@@ -48,8 +53,11 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
           size: file.size,
           name: file.name,
           result: reader.result,
+          url: URL.createObjectURL(file),
           id: response.ids[0],
+          type: file.type,
         };
+        console.log({ result });
 
         setLocalFiles([...localFiles, result]);
       };
@@ -120,15 +128,6 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
     <Fragment>
       {loading && <LoaderSpinner />}
       <div className="pt-2">
-        {localFiles && localFiles?.length > 0 && (
-          <div className="flex flex-wrap gap-3 py-2">
-            {localFiles?.map((file, i) => (
-              <div key={i}>
-                <CardFile data={file} onClick={() => deleteFile(file.id)} />
-              </div>
-            ))}
-          </div>
-        )}
         <hr className="text-gray-200 border border-dashed" />
         <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
           <div className="">

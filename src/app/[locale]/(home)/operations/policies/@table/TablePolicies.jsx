@@ -332,7 +332,7 @@ export default function TablePolicies() {
       options: [
         {
           name: "Tarea",
-          handleClickContact: (id) =>
+          handleClick: (id) =>
             router.push(
               `/tools/tasks/task?show=true&prev=policy&prev_id=${id}`
             ),
@@ -507,14 +507,9 @@ export default function TablePolicies() {
                                         onClick={() => {
                                           item.handleClick &&
                                             item.handleClick(policy.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              policy?.contact?.id
-                                            );
                                         }}
                                       >
                                         <div
-                                          // onClick={item.onClick}
                                           className={classNames(
                                             "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           )}

@@ -192,6 +192,11 @@ export default function TaskEditor({ edit, copy, subtask }) {
   };
   const setCrmPolicy = async (policyId, type) => {
     const response = await getPolicyById(policyId);
+    console.log({ response });
+    if (!response?.id) {
+      setLoading(false);
+      return;
+    }
     setValue("crm", [
       {
         id: response?.id,

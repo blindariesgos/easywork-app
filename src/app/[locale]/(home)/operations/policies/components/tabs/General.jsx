@@ -19,12 +19,14 @@ import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
+import usePolicyContext from "@/src/context/policies";
+import MultipleSelect from "@/src/components/form/MultipleSelect";
 
 export default function PolicyDetails({
   data,
   id,
-  mutate: updatePolicy,
   edit,
+  mutate: updatePolicy,
 }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(!!edit);
@@ -56,6 +58,7 @@ export default function PolicyDetails({
     plazoPago: Yup.string(),
     formaCobroId: Yup.string(),
     currencyId: Yup.string(),
+    observers: Yup.array(),
   });
 
   const {
@@ -63,6 +66,7 @@ export default function PolicyDetails({
     handleSubmit,
     control,
     setValue,
+    getValues,
     watch,
     formState: { isValid, errors },
   } = useForm({
@@ -101,6 +105,8 @@ export default function PolicyDetails({
     if (data?.contact?.rfc) setValue("rfc", data?.contact?.rfc);
     if (data?.type?.id) setValue("typeId", data?.type?.id);
     if (data?.category) setValue("categoryId", data?.category?.id);
+    if (data?.observers && data?.observers?.length > 0)
+      setValue("observers", data?.observers);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -110,6 +116,7 @@ export default function PolicyDetails({
       derechoPoliza,
       iva,
       importePagar,
+      observers,
       ...otherData
     } = data;
 
@@ -120,9 +127,11 @@ export default function PolicyDetails({
       derechoPoliza: +derechoPoliza,
       iva: +iva,
       importePagar: +importePagar,
+      observersIds: observers?.map((x) => x.id) ?? [],
     };
     try {
       const response = await putPoliza(id, body);
+      console.log({ response });
       if (response.hasError) {
         console.log(response);
         toast.error(
@@ -131,16 +140,15 @@ export default function PolicyDetails({
         return;
       }
       setIsEdit(false);
-      setIsEdit(false);
       updatePolicy();
       toast.success("Poliza actualizada correctamente.");
-      mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
 
       if (params.get("editPolicy")) {
         params.delete("editPolicy");
         router.replace(`${pathname}?${params.toString()}`);
       }
     } catch (error) {
+      console.log({ error });
       toast.error(
         "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
       );
@@ -219,7 +227,7 @@ export default function PolicyDetails({
               name="cobertura"
               register={register}
               setValue={setValue}
-              disabled
+              disabled={!isEdit}
               watch={watch}
             />
           )}
@@ -437,6 +445,15 @@ export default function PolicyDetails({
             error={!watch("assignedById") && errors.assignedById}
             setValue={setValue}
             watch={watch}
+          />
+          <MultipleSelect
+            label={t("operations:policies:general:observers")}
+            options={lists?.users || []}
+            getValues={getValues}
+            setValue={setValue}
+            name="observers"
+            error={errors.observers}
+            disabled={!isEdit}
           />
           <TextInput
             type="text"

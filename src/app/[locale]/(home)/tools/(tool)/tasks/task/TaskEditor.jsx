@@ -29,7 +29,6 @@ import {
   getPolicyById,
   getReceiptById,
   getAgentById,
-  getUserById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -59,6 +58,7 @@ const schemaInputs = yup.object().shape({
 
 export default function TaskEditor({ edit, copy, subtask }) {
   const { data: session } = useSession();
+  const { mutate: updateTask } = useTasksContext();
   const { t } = useTranslation();
   const router = useRouter();
   const { mutate } = useSWRConfig();
@@ -75,7 +75,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [listField, setListField] = useState([]);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { mutate: mutateTasks } = useTasksContext({});
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
@@ -320,10 +319,12 @@ export default function TaskEditor({ edit, copy, subtask }) {
         await putTaskId(edit.id, body);
         toast.success(t("tools:tasks:update-msg"));
         mutate(`/tools/tasks/task/${edit.id}`);
+        updateTask();
         router.back();
       } else {
         await postTask(body);
         toast.success(t("tools:tasks:success-msg"));
+        updateTask();
 
         if (isNewTask) {
           reset();
@@ -336,7 +337,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     } catch (error) {
       handleApiError(error.message);
     } finally {
-      mutateTasks();
       setLoading(false);
     }
   };

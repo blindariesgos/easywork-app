@@ -3,26 +3,26 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
+import { FaSave } from 'react-icons/fa';
 
 import Button from '@/src/components/form/Button';
-import LessonTextEditor from './LessonTextEditor Beta';
-import LessonTextEditorMoreMenu from './LessonTextEditorMoreMenu';
-
-import NewLessonCoverPhoto from './NewLessonCoverPhoto';
+import ContentViewTextEditor from './ContentViewTextEditor';
+import ContentViewTextEditorMoreMenu from './ContentViewTextEditorMoreMenu';
 import ContentViewCoverPhoto from './ContentViewCoverPhoto';
-
-import { createLesson, updateLesson, getLesson } from '../services/lessons';
-import { createPage, updatePage, getLessonPage } from '../services/lesson-pages';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
-
-import '../styles/index.css';
 import { FileUpload } from './FileUpload';
 
-export const ContentView = ({ course, content, onSuccess, contentType, onCloseEditor }) => {
+import { createLesson, updateLesson } from '../services/lessons';
+import { updatePage } from '../services/lesson-pages';
+
+import '../styles/index.css';
+import { uploadCourseImage } from '../../services/create-course';
+
+export const ContentView = ({ course, content, onSuccess, contentType }) => {
+  const isEdit = !!content;
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
   const [markAsDone, setMarkAsDone] = useState(false);
-  // const [contentDetails, setContentDetails] = useState(null);
   const inputFileRef = useRef(null);
 
   const {
@@ -39,24 +39,59 @@ export const ContentView = ({ course, content, onSuccess, contentType, onCloseEd
       content: false,
       coverPhoto: null,
       courseId: course.id,
+      files: [],
+      filesToDelete: [],
+      imagesToDelete: [],
     },
   });
 
   const values = watch();
 
+  const onDeleteImage = async images => {
+    setValue('imagesToDelete', [...values.imagesToDelete, ...images]);
+  };
+
   const onSubmit = async values => {
     setLoading(true);
 
     try {
-      if (contentType === 'lesson') {
-        await updateLesson(content?.id, values);
-      } else if (contentType === 'page') {
-        await updatePage(content?.id, values);
+      const { files, filesToDelete, imagesToDelete, ...rest } = values;
+
+      const newValues = new FormData();
+
+      Object.entries(rest).forEach(([key, value]) => {
+        newValues.append(key, value);
+      });
+
+      if (files.length > 0)
+        files.forEach(file => {
+          newValues.append('files', file);
+        });
+
+      // if (images.length > 0)
+      //   images.forEach(image => {
+      //     newValues.append('images', image);
+      //   });
+
+      if (filesToDelete.length > 0) newValues.append('filesToDelete', JSON.stringify(filesToDelete));
+      if (imagesToDelete.length > 0) newValues.append('imagesToDelete', JSON.stringify(imagesToDelete));
+
+      if (isEdit) {
+        if (contentType === 'lesson') {
+          await updateLesson(content?.id, newValues);
+        } else if (contentType === 'page') {
+          await updatePage(content?.id, newValues);
+        }
+      } else {
+        await createLesson(newValues);
       }
 
       // reset();
       toast.success('Cambios guardados exitosamente!');
 
+      setValue('files', []);
+      setValue('filesToDelete', []);
+      setValue('imagesToDelete', []);
       if (onSuccess) onSuccess();
     } catch (error) {
       console.log(error);
@@ -73,6 +108,9 @@ export const ContentView = ({ course, content, onSuccess, contentType, onCloseEd
         description: content ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
         content: content ? content.content : false,
         coverPhoto: content ? content.coverPhoto : null,
+        files: [],
+        filesToDelete: [],
+        imagesToDelete: [],
       });
   }, [content, reset]);
 
@@ -84,31 +122,36 @@ export const ContentView = ({ course, content, onSuccess, contentType, onCloseEd
   return (
     <form action={handleSubmit(onSubmit)}>
       <div className="p-5 flex items-center justify-between bg-white rounded-xl mb-2" style={{ borderBottomWidth: '1px', borderBottomStyle: 'solid' }}>
-        <p className="text-lg font-bold">{values.name}</p>
-
-        {/* {isEditorDisabled ? (
+        {isEditorDisabled ? (
           <p className="text-lg font-bold">{values.name}</p>
         ) : (
           <div className="w-full">
             <input
               {...register('name', { required: 'El nombre es obligatorio.' })}
               type="text"
-              autoComplete={false}
               className={`w-full block text-lg border-0 rounded-md focus:ring-0 ${errors.name ? 'focus:border-red-300 border-red-300' : ''}`}
               disabled={loading}
             />
             {errors.name && <p className="text-red-400 text-sm mt-1 pl-2">{errors.name.message}</p>}
           </div>
-        )} */}
+        )}
 
         <div className="flex items-center justify-center pr-2 gap-4">
-          <button type="button" className="block cursor-pointer" onClick={() => setMarkAsDone(prev => !prev)}>
-            <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
-          </button>
+          {isEditorDisabled ? (
+            <>
+              <button type="button" className="block cursor-pointer" onClick={() => setMarkAsDone(prev => !prev)}>
+                <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
+              </button>
 
-          <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
-            <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-          </button>
+              <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
+                <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+              </button>
+            </>
+          ) : (
+            <button type="submit" className="block cursor-pointer" disabled={loading}>
+              {loading ? <LoadingSpinnerSmall /> : <FaSave className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />}
+            </button>
+          )}
         </div>
       </div>
 
@@ -118,19 +161,45 @@ export const ContentView = ({ course, content, onSuccess, contentType, onCloseEd
         </div>
       )}
 
-      <div className={`${isEditorDisabled ? 'flex items-center justify-center p-5' : ''} bg-white rounded-xl mb-2`}>
+      <div className={`${isEditorDisabled ? 'px-2 pt-2 pb-5' : ''} bg-white rounded-xl mb-2`}>
         {loading && (
           <div className="h-48 w-full">
             <LoadingSpinnerSmall />
           </div>
         )}
 
-        {!loading && <LessonTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} />}
+        {!loading && <ContentViewTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} onDeleteImage={onDeleteImage} />}
+
+        <div className="mt-4">
+          <FileUpload
+            inputRef={inputFileRef}
+            onChange={files => setValue('files', files)}
+            onDelete={file => {
+              setValue('filesToDelete', [...values.filesToDelete, file.url]);
+            }}
+            files={content?.files || []}
+            disabled={isEditorDisabled}
+            loading={loading}
+          />
+        </div>
+
+        <div className="mt-4">
+          <FileUpload
+            inputRef={inputFileRef}
+            onChange={files => setValue('files', files)}
+            onDelete={file => {
+              setValue('filesToDelete', [...values.filesToDelete, file.url]);
+            }}
+            files={content?.files || []}
+            disabled={isEditorDisabled}
+            loading={loading}
+          />
+        </div>
 
         {!isEditorDisabled && !loading && (
           <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
             <div>
-              <LessonTextEditorMoreMenu
+              <ContentViewTextEditorMoreMenu
                 onAttachFile={() => {
                   inputFileRef.current?.click();
                 }}
@@ -157,10 +226,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, onCloseEd
             </div>
           </div>
         )}
-      </div>
-
-      <div className="bg-white rounded-xl flex gap-1">
-        <FileUpload inputRef={inputFileRef} />
       </div>
     </form>
   );

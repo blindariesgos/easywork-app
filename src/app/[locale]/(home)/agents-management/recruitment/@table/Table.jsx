@@ -42,7 +42,6 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-import { P } from "pino";
 
 export default function Table() {
   const {
@@ -86,17 +85,12 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
 
   const deletePolicy = async (id) => {
     try {
@@ -205,25 +199,23 @@ export default function Table() {
 
   const masiveActions = [
     {
-      id: 1,
-      name: "Asignar agente relacionado - subagente",
-      disabled: true,
-    },
-    {
-      id: 1,
-      name: "Asignar observador",
-      disabled: true,
-    },
-    {
       id: 3,
       name: "Cambiar Responsable",
       onclick: changeResponsible,
       selectUser: true,
+      disabled: true,
+    },
+
+    {
+      id: 1,
+      name: "Crear tarea",
+      disabled: true,
     },
     {
       id: 2,
-      name: t("common:table:checkbox:change-status"),
+      name: t("common:table:checkbox:change-stage"),
       onclick: changeStatusPolicies,
+      disabled: true,
       selectOptions: [
         {
           id: "activa",
@@ -242,11 +234,6 @@ export default function Table() {
           name: "En proceso",
         },
       ],
-    },
-    {
-      id: 1,
-      name: "Crear tarea",
-      disabled: true,
     },
     {
       id: 1,
@@ -276,10 +263,6 @@ export default function Table() {
     },
     {
       name: "Reasignar GDD",
-      disabled: true,
-    },
-    {
-      name: "Inactivar",
       disabled: true,
     },
   ];

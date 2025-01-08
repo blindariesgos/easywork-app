@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { jwtDecode } from "jwt-decode";
 import { isValidToken } from "/src/lib/helpers";
 import { getLogin } from "@/src/lib/api/hooks/auths";
 
@@ -29,12 +28,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { email, password } = credentials;
         try {
           const response = await getLogin(email, password);
+
           if (response) {
-            return {
+            const payload = {
               ...response?.user,
-              accessToken: response?.accessToken,
-              refreshToken: response?.refreshToken,
+              access_token: response?.access_token,
+              refresh_token: response?.refresh_token,
+              expires_at: response?.expires_at,
             };
+
+            return payload;
           } else {
             throw new Error("Credenciales inválidas");
           }
@@ -52,7 +55,59 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     jwt: async ({ token, user, account, trigger, session }) => {
-      if (trigger === "update" && session.newToken) {
+      if (user) {
+        token.roles = user.roles;
+      }
+
+      if (account) {
+        const response = {
+          ...token,
+          access_token: user.access_token,
+          expires_at: user.expires_at,
+          refresh_token: user.refresh_token,
+        };
+
+        return response;
+      } else if (Date.now() < token.expires_at * 1000) {
+        return token;
+      } else {
+        if (!token.refresh_token) throw new TypeError("Missing refresh_token");
+
+        try {
+          const response = await fetch(
+            `${process.env.API_HOST}/auth/token/refresh`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                refreshToken: token.refresh_token,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const tokensOrError = await response.json();
+
+          if (!response.ok) throw tokensOrError;
+
+          const newTokens = {
+            ...token,
+            access_token: tokensOrError.token,
+            expires_at: tokensOrError.expires_at,
+            refresh_token: tokensOrError.refresh_token
+              ? tokensOrError.refresh_token
+              : token.refresh_token,
+          };
+          return newTokens;
+        } catch (error) {
+          console.error("Error refreshing access_token", error);
+          // If we fail to refresh the token, return an error so we can handle it on the page
+          token.error = "RefreshTokenError";
+          return token;
+        }
+      }
+      /* if (trigger === "update" && session.newToken) {
         token.accessToken = session.newToken;
         return token;
       }
@@ -65,10 +120,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const decoded = jwtDecode(user.accessToken);
         token = { ...token, ...decoded, ...user };
       }
-      return token;
+      return token; */
     },
-    session({ session, token }) {
-      delete token?.refreshToken; // Considera cómo almacenar el refreshToken si lo necesitas
+    async session({ session, token }) {
+      session.error = token.error;
       return { ...session, user: { ...token } };
     },
   },

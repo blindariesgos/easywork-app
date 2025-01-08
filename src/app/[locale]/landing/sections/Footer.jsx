@@ -1,6 +1,8 @@
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Footer() {
+  const router = useRouter();
   return (
     <div className="relative max-md:h-72">
       <Image
@@ -23,7 +25,7 @@ export default function Footer() {
         <ul className="text-white font-light text-sm max-md:text-center max-md:gap-1 grid grid-cols-1 md:grid-cols-2 gap-4 lg:text-lg text-left mb-4 lg:mb-0">
           <li className="cursor-pointer mb-2">Comenzar</li>
           <li className="cursor-pointer mb-2">Preguntas frecuentes</li>
-          <li className="cursor-pointer mb-2">Contacto</li>
+          <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?show=true`)}>Contacto</li>
           <li className="cursor-pointer mb-2">Términos y condiciones de uso</li>
           <li className="cursor-pointer mb-2">Políticas de privacidad</li>
           <li className="cursor-pointer">Políticas de cookies</li>

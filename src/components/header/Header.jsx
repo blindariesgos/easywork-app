@@ -1,18 +1,7 @@
 "use client";
 import useAppContext from "../../context/app";
-import {
-  Menu,
-  Transition,
-  MenuButton,
-  MenuItems,
-  MenuItem,
-} from "@headlessui/react";
-import {
-  Bars3Icon,
-  BellIcon,
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import { Bars3Icon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { Fragment } from "react";
@@ -38,7 +27,7 @@ export default function Header() {
   const params = new URLSearchParams(url.search);
   const pathname = usePathname();
 
-  params.set("profile", session.user.id);
+  params.set("profile", session.user.jti);
 
   function ifWebmailPath() {
     if (pathname === "/tools/webmail") return true;
@@ -161,7 +150,7 @@ export default function Header() {
                 width={32}
                 height={32}
                 className="h-8 w-8 rounded-full bg-gray-50"
-                src={session?.user?.avatar}
+                src={session?.user?.picture}
                 alt=""
               />
               <span className="hidden lg:flex lg:items-center">
@@ -169,7 +158,7 @@ export default function Header() {
                   className="ml-2 text-sm whitespace-nowrap font-semibold leading-6 text-black"
                   aria-hidden="true"
                 >
-                  {`${session?.user?.profile?.firstName} ${session?.user?.profile?.lastName}`}
+                  {`${session?.user?.name}`}
                 </span>
                 <ChevronDownIcon
                   className="ml-1 h-5 w-5 text-gray-400"

@@ -198,7 +198,8 @@
       "change-participant": "Cambiar participante",
       "change-deadline": "Cambiar fecha límite",
       "change-responsible": "Cambiar responsable",
-      "change-status": "Cambiar estatus"
+      "change-status": "Cambiar estatus",
+      "change-stage": "Cambiar etapa"
     },
     "footer": {
       "elements": "Se muestran los elementos del <strong>{{down}}</strong> al <strong>{{up}}</strong> | Total elementos <strong>{{total}}</strong>",

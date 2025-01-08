@@ -48,15 +48,7 @@ const KanbanLeads = () => {
       name: "Aplicando Evaluaciones",
       color: "#E96200",
     },
-    {
-      id: "eb58ffde-8fa6-4ac1-ac1b-3728b46cdc3b",
-      type: "stage",
-      filter: {
-        stageId: "eb58ffde-8fa6-4ac1-ac1b-3728b46cdc3b",
-      },
-      name: "Ingreso Aprobado",
-      color: "#00A130",
-    },
+
     {
       id: "38134146-c9a5-48a5-8175-aa2857bfd1a8",
       type: "stage",
@@ -102,6 +94,15 @@ const KanbanLeads = () => {
       },
       name: "Observaciones por CNSF",
       color: "#C30000",
+    },
+    {
+      id: "eb58ffde-8fa6-4ac1-ac1b-3728b46cdc3b",
+      type: "stage",
+      filter: {
+        stageId: "eb58ffde-8fa6-4ac1-ac1b-3728b46cdc3b",
+      },
+      name: "Ingreso Aprobado",
+      color: "#00A130",
     },
   ];
 

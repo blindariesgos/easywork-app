@@ -1,27 +1,14 @@
+"use client";
 import clsx from "clsx";
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
-import { getPoliciesNeedAttention } from "@/src/lib/apis";
+import { Fragment } from "react";
 import moment from "moment";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import Image from "next/image";
+import { usePoliciesNeedAttention } from "@/src/lib/api/hooks/home";
 
 const PolicyList = () => {
-  const [policies, setPolicies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const getPolicies = async () => {
-      try {
-        const response = await getPoliciesNeedAttention();
-        setPolicies(response);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    };
-    getPolicies();
-  }, []);
+  const { policies, isLoading } = usePoliciesNeedAttention();
 
   return (
     <div
@@ -37,7 +24,7 @@ const PolicyList = () => {
         <LoadingSpinnerSmall color="primary" />
       ) : policies && policies.length > 0 ? (
         <div className="flex flex-col gap-2 overflow-y-auto w-full pr-1 h-full">
-          {policies.map((policy) => (
+          {policies?.map((policy) => (
             <Link
               className="flex flex-col gap-1 cursor-pointer hover:bg-easy-300 rounded-md p-1"
               href={`/sales/crm/contacts/contact/${policy.id}?show=true`}
@@ -59,7 +46,9 @@ const PolicyList = () => {
                     </p>
                   )}
                   <p className="text-xs text-gray-50">
-                    {`$${policy?.importeTotal?.toFixed(2) ?? "0.00"} ${moment(policy.vigenciDesde).format("MMM. DD, YYYY")}`}
+                    {`$${policy?.importeTotal?.toFixed(2) ?? "0.00"} ${moment(
+                      policy.vigenciDesde
+                    ).format("MMM. DD, YYYY")}`}
                   </p>
                 </div>
               </div>

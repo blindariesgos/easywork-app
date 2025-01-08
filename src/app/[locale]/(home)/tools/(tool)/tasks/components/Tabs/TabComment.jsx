@@ -3,7 +3,12 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextEditor from "../TextEditor";
-import { deleteComment, postComment, putComment } from "@/src/lib/apis";
+import {
+  deleteComment,
+  postComment,
+  putComment,
+  deleteTaskCommentAttach,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
 import {
@@ -12,7 +17,9 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useTaskComments } from "@/src/lib/api/hooks/tasks";
-import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
+import LoaderSpinner, {
+  LoadingSpinnerSmall,
+} from "@/src/components/LoaderSpinner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale"; // Importa el locale español
 import { useSWRConfig } from "swr";
@@ -22,9 +29,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { GoKebabHorizontal } from "react-icons/go";
 import UploadDocumentsInComment from "../UploadDocumentsInComment";
 import FilePreview from "../FilePreview";
+import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
+import clsx from "clsx";
+import { toast } from "react-toastify";
 
 export default function TabComment({ info }) {
   const { comments, isLoading, isError } = useTaskComments(info.id);
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const quillRef = useRef(null);
   const { data: session } = useSession();
@@ -36,9 +47,22 @@ export default function TabComment({ info }) {
   const [isAddComment, setIsAddComment] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [showComments, setShowComments] = useState([]);
-  const [upload, setUpload] = useState({});
+  const [upload, setUpload] = useState({
+    fileIds: [],
+    files: [],
+  });
+  const [openFiles, setOpenFiles] = useState(false);
+  const options = [
+    {
+      id: 1,
+      name: t("tools:tasks:new:file"),
+      icon: PaperClipIcon,
+      onclick: () => setOpenFiles(!openFiles),
+    },
+  ];
   const [taggedUsers, setTaggedUsers] = useState([]);
-  const handleComment = async (_, id) => {
+
+  const handleComment = async (id) => {
     if (quillRef.current) {
       const body = {
         comment: value,
@@ -53,17 +77,40 @@ export default function TabComment({ info }) {
       console.log({ body });
       try {
         setDisabled(true);
-        id
-          ? await putComment(id, body, info.id)
-          : await postComment(body, info.id);
+        if (id) {
+          const response1 = await putComment(id, body, info.id).catch(
+            (error) => ({ hasError: true, ...error })
+          );
+          if (response1?.hasError) {
+            toast.error(
+              "Se ha producido un error al actualizar el comentario, inténtelo de nuevo más tarde."
+            );
+            setDisabled(false);
+            return;
+          }
+        } else {
+          const response = await postComment(body, info.id);
+          if (response.hasError) {
+            toast.error(
+              "Se ha producido un error al crear el comentario, inténtelo de nuevo más tarde."
+            );
+            setDisabled(false);
+            return;
+          }
+        }
 
         await mutate(`/tools/tasks/comments/task/${info.id}`);
         setDisabled(false);
         setEditComment({});
         setValueText("");
-        setUpload({});
+        setUpload({
+          fileIds: [],
+          files: [],
+        });
+        setOpenFiles(false);
         setTaggedUsers([]);
       } catch (error) {
+        console.log({ error });
         handleApiError(error.message);
         setDisabled(false);
       }
@@ -115,15 +162,26 @@ export default function TabComment({ info }) {
     }
   };
 
-  const handleDeleteFile = (index) => {
-    setUpload({
-      fileIds: upload.fileIds.filter((_, i) => i != index),
-      files: upload.files.filter((_, i) => i != index),
-    });
+  const handleDeleteFile = async (fileId, taskCommentId) => {
+    setLoading(true);
+    const body = {
+      attachmentIds: [fileId],
+    };
+    const response = await deleteTaskCommentAttach(taskCommentId, body);
+    if (response.hasError) {
+      toast.error("Ocurrio un error al eliminar el archivo adjunto");
+      setLoading(false);
+      return;
+    }
+
+    await mutate(`/tools/tasks/comments/task/${info.id}`);
+    setLoading(false);
+    toast.success("Adjunto eliminado con exito");
   };
 
   return (
     <div className="w-full p-3">
+      {loading && <LoaderSpinner />}
       {Object.keys(editComment).length === 0 && (
         <div className="flex gap-2 mb-4 items-center w-full">
           <Image
@@ -156,6 +214,35 @@ export default function TabComment({ info }) {
                   </div>
                 )}
               </div>
+              <div className="flex justify-start gap-3 relative flex-wrap">
+                {options.map((opt) => (
+                  <div
+                    key={opt.id}
+                    className="flex gap-1 items-center cursor-pointer"
+                    onClick={opt.onclick}
+                    ref={opt.id === 3 ? mentionButtonRef : null}
+                  >
+                    <button
+                      className="flex gap-2 items-center focus:ring-0"
+                      disabled={opt.disabled}
+                    >
+                      {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
+                      <p className="text-sm">{opt.name}</p>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {openFiles && (
+                <UploadDocumentsInComment
+                  handleChangeFiles={(data) => {
+                    console.log({ upload });
+                    setUpload({
+                      fileIds: [...upload.fileIds, ...data.fileIds],
+                      files: [...upload.files, ...data.files],
+                    });
+                  }}
+                />
+              )}
               <div className="flex justify-start items-center gap-2">
                 <Button
                   disabled={disabled}
@@ -165,40 +252,20 @@ export default function TabComment({ info }) {
                   onclick={() => {
                     setIsAddComment(false);
                     // setValueText("");
-                    setUpload({});
+                    setUpload({
+                      fileIds: [],
+                      files: [],
+                    });
                   }}
                 />
                 <Button
                   type="button"
-                  onclick={handleComment}
-                  disabled={disabled}
+                  onclick={() => handleComment()}
+                  disabled={disabled || value.length == 0}
                   label={t("tools:tasks:edit:comment:send")}
                   buttonStyle="primary"
                   className="px-3 py-2"
                 />
-                <Menu>
-                  <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">
-                    <GoKebabHorizontal className="text-gray-60" />
-                  </MenuButton>
-                  <MenuItems
-                    anchor={{
-                      to: "right end",
-                      gap: "4px",
-                    }}
-                    className={
-                      "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
-                    }
-                  >
-                    <UploadDocumentsInComment
-                      handleChangeFiles={(data) =>
-                        setUpload({
-                          fileIds: [...upload.fileIds, ...data.fileIds],
-                          files: [...upload.files, ...data.files],
-                        })
-                      }
-                    />
-                  </MenuItems>
-                </Menu>
               </div>
             </div>
           ) : (
@@ -214,9 +281,9 @@ export default function TabComment({ info }) {
 
       {showComments?.length > 0 && (
         <div className="gap-4 flex flex-col-reverse w-full md:overflow-y-auto md:max-h-[300px]">
-          {showComments?.map((dat, index) => (
+          {showComments?.map((comment, index) => (
             <div
-              className="flex gap-2 items-center w-full"
+              className="flex gap-2 items-center w-full group"
               key={index}
               onMouseEnter={() =>
                 setOpenActions({ ...openActions, [index]: true })
@@ -231,7 +298,7 @@ export default function TabComment({ info }) {
                     className="h-7 w-7 rounded-full object-cover"
                     width={36}
                     height={36}
-                    src={"/img/avatar.svg"}
+                    src={session?.user?.picture || "/img/avatar.svg"}
                     alt=""
                   />
                   <div className="flex flex-col gap-2">
@@ -241,7 +308,6 @@ export default function TabComment({ info }) {
                         value={value}
                         className="w-full max-h-[100px]"
                         setValue={setValueText}
-                        disabled={disabled}
                         taggedUsers={taggedUsers}
                         setTaggedUsers={setTaggedUsers}
                       />
@@ -251,17 +317,63 @@ export default function TabComment({ info }) {
                             <FilePreview
                               info={file}
                               key={index}
-                              handleDeleteFile={() => handleDeleteFile(index)}
+                              handleDeleteFile={() =>
+                                handleDeleteFile(file.id, comment.id)
+                              }
                             />
                           ))}
                         </div>
                       )}
                     </div>
+                    <div className="flex justify-start gap-3 relative flex-wrap">
+                      {options.map((opt) => (
+                        <div
+                          key={opt.id}
+                          className="flex gap-1 items-center cursor-pointer"
+                          onClick={opt.onclick}
+                        >
+                          <button
+                            className="flex gap-2 items-center focus:ring-0"
+                            disabled={opt.disabled}
+                          >
+                            {opt.icon && (
+                              <opt.icon className="h-4 w-4 text-black" />
+                            )}
+                            <p className="text-sm">{opt.name}</p>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {openFiles && (
+                      <UploadDocumentsInComment
+                        handleChangeFiles={(data) => {
+                          console.log({ upload });
+                          setUpload({
+                            fileIds: [...upload.fileIds, ...data.fileIds],
+                            files: [...upload.files, ...data.files],
+                          });
+                        }}
+                      />
+                    )}
                     <div className="flex justify-start items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleComment(null, dat.id)}
-                        disabled={disabled}
+                        onClick={() => {
+                          setEditComment({});
+                          setValueText("");
+                          setUpload({
+                            fileIds: [],
+                            files: [],
+                          });
+                        }}
+                        className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleComment(comment.id)}
+                        disabled={disabled || value.length == 0}
                         className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
                         {disabled ? (
@@ -270,40 +382,6 @@ export default function TabComment({ info }) {
                           t("tools:tasks:edit:comment:send")
                         )}
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditComment({});
-                          setValueText("");
-                          setUpload({});
-                        }}
-                        className="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-indigo-100"
-                      >
-                        Cancelar
-                      </button>
-                      <Menu>
-                        <MenuButton className="px-3 h-[36px] font-bold hover:bg-zinc-200 flex items-center rounded-md">
-                          <GoKebabHorizontal className="text-gray-60" />
-                        </MenuButton>
-                        <MenuItems
-                          anchor={{
-                            to: "right end",
-                            gap: "4px",
-                          }}
-                          className={
-                            "rounded-md bg-white  border py-2 shadow-lg focus:outline-none"
-                          }
-                        >
-                          <UploadDocumentsInComment
-                            handleChangeFiles={(data) =>
-                              setUpload({
-                                fileIds: [...upload.fileIds, ...data.fileIds],
-                                files: [...upload.files, ...data.files],
-                              })
-                            }
-                          />
-                        </MenuItems>
-                      </Menu>
                     </div>
                   </div>
                 </div>
@@ -313,26 +391,26 @@ export default function TabComment({ info }) {
                     className="h-7 w-7 rounded-full object-cover"
                     width={36}
                     height={36}
-                    src={dat?.createdBy?.avatar ?? "/img/avatar.svg"}
+                    src={comment?.createdBy?.avatar ?? "/img/avatar.svg"}
                     alt=""
                   />
                   <div className="bg-gray-200 rounded-md p-2 px-4 text-xs">
                     <div className="flex justify-between flex-col">
                       <div className="flex gap-2">
                         <span className="font-semibold">
-                          {getUserName(dat?.createdBy)}
+                          {getUserName(comment?.createdBy)}
                         </span>
                         <span className="text-xs text-gray-800/50">
-                          {formattedDate(dat)}
+                          {formattedDate(comment)}
                         </span>
                       </div>
-                      <div data-type="comment">{parse(dat.comment)}</div>
+                      <div data-type="comment">{parse(comment.comment)}</div>
                     </div>
-                    {dat?.attachedObjects && (
+                    {comment?.attachedObjects && (
                       <div className="flex gap-1 flex-wrap p-1">
-                        {dat?.attachedObjects?.map((file, index) => (
+                        {comment?.attachedObjects?.map((file, index) => (
                           <div
-                            className="p-2 bg-white shadow-lg text-xs rounded-full cursor-pointer flex gap-1 items-center"
+                            className="p-2 bg-white shadow-lg text-xs rounded-full cursor-pointer flex gap-1 items-center group/delete"
                             title={file?.name}
                             key={index}
                           >
@@ -349,45 +427,51 @@ export default function TabComment({ info }) {
                                 ? `${file?.name?.slice(0, 7)}...${file?.name?.slice(-6)}`
                                 : file?.name}
                             </p>
+                            <p
+                              className="text-xs hidden group-hover/delete:block"
+                              onClick={() =>
+                                handleDeleteFile(file.id, comment.id)
+                              }
+                            >
+                              x
+                            </p>
                           </div>
                         ))}
                       </div>
                     )}
                   </div>
-                  {openActions[index] && (
-                    <div className="flex justify-end items-center gap-1">
-                      <div
-                        onClick={() => {
-                          if (dat.createdBy.id !== session?.user?.id) return;
-                          setEditComment({ [index]: !editComment[index] });
-                          setValueText(dat.comment);
-                          if (dat.attachedObjects) {
-                            setUpload({
-                              fileIds: dat.attachedObjects.map((x) => x.id),
-                              files: dat.attachedObjects.map((x) => ({
-                                attached: {
-                                  name: x.name,
-                                  url: x.url,
-                                },
-                              })),
-                            });
-                          }
-                        }}
-                        className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                      >
-                        <PencilIcon className="h-3 w-3 text-blue-400" />
-                      </div>
-                      <div
-                        onClick={() => {
-                          if (dat.createdBy.id !== session?.user?.id) return;
-                          getDeleteComment(dat.id);
-                        }}
-                        className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
-                      >
-                        <TrashIcon className="h-3 w-3 text-red-500" />
-                      </div>
+                  {/* {openActions[index] && ( */}
+                  <div
+                    className={clsx(" justify-end items-center gap-1 hidden", {
+                      "group-hover:flex":
+                        comment.createdBy.id === session?.user?.sub,
+                    })}
+                  >
+                    <div
+                      onClick={() => {
+                        setEditComment({ [index]: !editComment[index] });
+                        setValueText(comment.comment);
+                        if (comment.attachedObjects) {
+                          setUpload({
+                            fileIds: [],
+                            files: [],
+                          });
+                        }
+                      }}
+                      className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
+                    >
+                      <PencilIcon className="h-3 w-3 text-blue-400" />
                     </div>
-                  )}
+                    <div
+                      onClick={() => {
+                        getDeleteComment(comment.id);
+                      }}
+                      className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"
+                    >
+                      <TrashIcon className="h-3 w-3 text-red-500" />
+                    </div>
+                  </div>
+                  {/* )} */}
                 </div>
               )}
             </div>

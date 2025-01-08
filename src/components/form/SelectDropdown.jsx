@@ -90,10 +90,7 @@ function SelectDropdown({
           />
           {!disabled && (
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
+              <ChevronDownIcon className="h-5 w-5 text-gray-400" />
             </ComboboxButton>
           )}
 

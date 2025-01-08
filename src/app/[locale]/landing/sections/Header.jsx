@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ModalForm from "../components/ModalForm";
 
 export default function Page({ redirect }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -77,10 +78,8 @@ export default function Page({ redirect }) {
               Planes
             </a>
           </li>
-          <li>
-            <a href="#clientes" onClick={toggleMenu}>
-              Clientes
-            </a>
+          <li className="cursor-pointer" onClick={() => push(`${window.location.pathname}?show=true`)}>
+            Contacto
           </li>
           <li>
             <a href="#blog" onClick={toggleMenu}>
@@ -120,24 +119,32 @@ export default function Page({ redirect }) {
         <div className="absolute top-0 left-0 w-full bg-[rgba(14,164,233,0.64)] p-8 md:hidden">
           <ul className="flex flex-col gap-7 text-white font-semibold text-lg items-center">
             <li>
-              <a href="#inicio" onClick={toggleMenu}>
+              <a
+                href={`${redirect ? "/landing#inicio" : "#inicio"}`}
+                onClick={toggleMenu}
+              >
                 Inicio
               </a>
             </li>
             <li>
-              <a href="#modulos" onClick={toggleMenu}>
+              <a
+                href={`${redirect ? "/landing#modulos" : "#modulos"}`}
+                onClick={toggleMenu}
+              >
                 Módulos
               </a>
             </li>
             <li>
-              <a href="#planes" onClick={toggleMenu}>
+              <a
+                href={`${redirect ? "/landing#planes" : "#planes"}`}
+                onClick={toggleMenu}
+              >
                 Planes
               </a>
             </li>
-            <li>
-              <a href="#clientes" onClick={toggleMenu}>
-                Clientes
-              </a>
+            <li onClick={() => push(`${window.location.pathname}?show=true`)}>
+              Contacto
+              <li />
             </li>
             <li>
               <a href="#blog" onClick={toggleMenu}>

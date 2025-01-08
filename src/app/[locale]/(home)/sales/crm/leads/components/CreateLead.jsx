@@ -27,6 +27,8 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { handleApiError } from "@/src/utils/api/errors";
+import ValidatePolizaData from "./ValidatePolizaData";
+import useLeadContext from "@/src/context/leads";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -34,6 +36,8 @@ export default function CreateLead({ lead, id }) {
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
+  const { isOpenValidation, setIsOpenValidation, policyInfo } =
+    useLeadContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
@@ -649,6 +653,12 @@ export default function CreateLead({ lead, id }) {
           </div>
         )}
       </form>
+      <ValidatePolizaData
+        isOpen={isOpenValidation}
+        setIsOpen={setIsOpenValidation}
+        policy={policyInfo}
+        leadId={id}
+      />
     </div>
   );
 }

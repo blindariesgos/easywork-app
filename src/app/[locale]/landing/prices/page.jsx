@@ -1,12 +1,12 @@
 "use client";
 import Header from "../sections/Header";
 import plansData from "../plans.json";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline"; // Importamos los íconos de Heroicons
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import HelpChat from "../components/chat/HelpChat";
 
 export default function Page() {
   const plans = plansData.plans;
 
-  // List of features for display (keys from content object)
   const features = [
     "Usuarios",
     "Pólizas Vigentes",
@@ -39,7 +39,7 @@ export default function Page() {
   return (
     <div className="min-h-screen w-full bg-white">
       <div className="from-sky-500 to-blue-300 bg-gradient-to-t">
-        <div id="inicio" className="h-20"></div> {/* Sección de Inicio */}
+        <div id="inicio" className="h-20"></div>
         <Header redirect={true} />
       </div>
       <div className="w-screen pt-10 pl-10 mb-10 flex items-center">
@@ -49,39 +49,67 @@ export default function Page() {
       </div>
 
       <div className="container mx-auto px-4">
-        <table className="min-w-full bg-white border-separate border-spacing-x-3">
-          {" "}
-          {/* Added border-separate and border-spacing-4 */}
-          <thead>
-            <tr>
-              <th className="py-4 px-8 text-left">
-                {/* Left-align title column */}
-              </th>
-              {plans.map((plan, index) => (
-                <th
-                  key={index}
-                  className="py-4 px-8 bg-easywork-main text-white font-bold rounded-t-lg text-center"
-                >
-                  {plan.title}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="py-4 px-8 text-left">Precio</td>
-              {plans.map((plan, index) => (
-                <td key={index} className="py-4 px-8 text-center">
-                  ${plan.price}/Mes
-                </td>
-              ))}
-            </tr>
-            {/* Loop over the features */}
-            {features.map((feature, featureIndex) => (
-              <tr key={featureIndex}>
-                <td className="py-4 px-8 text-left">{feature}</td>
+        {/* Pantalla grande: tabla */}
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="min-w-full bg-white border-separate border-spacing-x-3">
+            <thead>
+              <tr>
+                <th className="py-4 px-8 text-left"></th>
+                {plans.map((plan, index) => (
+                  <th
+                    key={index}
+                    className="py-4 px-8 bg-easywork-main text-white font-bold rounded-t-lg text-center"
+                  >
+                    {plan.title}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="py-4 px-8 text-left">Precio</td>
                 {plans.map((plan, index) => (
                   <td key={index} className="py-4 px-8 text-center">
+                    ${plan.price}/Mes
+                  </td>
+                ))}
+              </tr>
+              {features.map((feature, featureIndex) => (
+                <tr key={featureIndex}>
+                  <td className="py-4 px-8 text-left">{feature}</td>
+                  {plans.map((plan, index) => (
+                    <td key={index} className="py-4 px-8 text-center">
+                      {plan.content[feature] !== undefined ? (
+                        plan.content[feature] === true ? (
+                          <CheckCircleIcon className="w-6 h-6 text-green-500 mx-auto" />
+                        ) : plan.content[feature] === false ? (
+                          <XCircleIcon className="w-6 h-6 text-gray-400 bg-gray-100 rounded-full mx-auto" />
+                        ) : (
+                          plan.content[feature].toString()
+                        )
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pantallas móviles: comparación vertical */}
+        <div className="lg:hidden">
+          {features.map((feature, featureIndex) => (
+            <div
+              key={featureIndex}
+              className="border border-gray-300 rounded-lg shadow-sm mb-6 p-4"
+            >
+              <h3 className="text-xl font-bold text-center mb-4">{feature}</h3>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 text-center">
+                {plans.map((plan, planIndex) => (
+                  <div key={planIndex}>
+                    <h4 className="font-semibold mb-2">{plan.title}</h4>
                     {plan.content[feature] !== undefined ? (
                       plan.content[feature] === true ? (
                         <CheckCircleIcon className="w-6 h-6 text-green-500 mx-auto" />
@@ -93,13 +121,14 @@ export default function Page() {
                     ) : (
                       "N/A"
                     )}
-                  </td>
+                  </div>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+      <HelpChat />
     </div>
   );
 }

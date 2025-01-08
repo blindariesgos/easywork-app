@@ -8,7 +8,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function LayoutPage({ table, children }) {
+export default function LayoutPage({ table, children, kanban }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -22,11 +22,24 @@ export default function LayoutPage({ table, children }) {
     }
   }, [pathname, replace, searchParams]);
 
+  const tabs = [
+    {
+      name: "Kanban",
+      component: kanban,
+      // disabled: true,
+    },
+    {
+      name: "Lista",
+      component: table,
+    },
+  ];
   return (
     <div className="bg-gray-100 h-full p-2 rounded-xl relative flex flex-col gap-4">
       <Header />
       <AccompanimentsHeader />
-      <Suspense fallback={<LoaderSpinner />}>{table}</Suspense>
+      <Suspense fallback={<LoaderSpinner />}>
+        <TabPages tabs={tabs} />
+      </Suspense>
       {children}
     </div>
   );

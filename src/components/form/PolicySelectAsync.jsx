@@ -117,10 +117,7 @@ function PolicySelectAsync({
           />
           {!disabled && (
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon
-                className="h-5 w-5 text-primary"
-                aria-hidden="true"
-              />
+              <ChevronDownIcon className="h-5 w-5 text-primary" />
             </ComboboxButton>
           )}
 

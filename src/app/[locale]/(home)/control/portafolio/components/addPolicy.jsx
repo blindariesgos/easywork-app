@@ -122,7 +122,9 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
 
     const formData = new FormData();
     formData.append("poliza", file);
-    const response = await getMetadataOfPdf("nueva", formData);
+    const response = await getMetadataOfPdf("nueva", formData).catch((error) =>
+      console.log({ error })
+    );
     console.log(response);
 
     if (response?.hasError) {

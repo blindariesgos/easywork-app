@@ -237,7 +237,7 @@ export const useSidebar = () => {
           id: "operations:management",
           name: "Gestión",
           href: "/operations/managements",
-          image: "/img/operations/policies.svg",
+          image: "/img/operations/management.svg",
           iconShortBar: GlobeAltIcon,
         },
         {
@@ -2044,6 +2044,26 @@ export const useAccompanimentsTable = () => {
       check: true,
     },
     {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:created-in"),
+      row: "createdAt",
+      order: "createdAt",
+      check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:accompaniments:table:manager"),
+      row: "manager",
+      order: "manager",
+      check: true,
+    },
+    {
+      id: 8,
+      name: t("agentsmanagement:accompaniments:table:state"),
+      row: "isActive",
+      check: true,
+    },
+    {
       id: 2,
       name: t("agentsmanagement:accompaniments:table:email"),
       row: "email",
@@ -2063,26 +2083,6 @@ export const useAccompanimentsTable = () => {
       name: t("agentsmanagement:accompaniments:table:lastUpdate"),
       row: "updatedAt",
       order: "updatedAt",
-      check: true,
-    },
-    {
-      id: 7,
-      name: t("agentsmanagement:accompaniments:table:manager"),
-      row: "manager",
-      order: "manager",
-      check: true,
-    },
-    {
-      id: 8,
-      name: t("agentsmanagement:accompaniments:table:state"),
-      row: "isActive",
-      check: true,
-    },
-    {
-      id: 8,
-      name: t("agentsmanagement:accompaniments:table:created-in"),
-      row: "createdAt",
-      order: "createdAt",
       check: true,
     },
   ];
@@ -2106,21 +2106,7 @@ export const useRecruitmentTable = () => {
       order: "stage",
       check: true,
     },
-    {
-      id: 3,
-      name: t("agentsmanagement:recruitment:table:initdate"),
-      row: "date",
-      order: "date",
-      check: true,
-      photo: true,
-    },
-    {
-      id: 7,
-      name: t("agentsmanagement:recruitment:table:indate"),
-      row: "date",
-      order: "date",
-      check: true,
-    },
+
     {
       id: 7,
       name: t("agentsmanagement:recruitment:table:responsible"),
@@ -2133,6 +2119,21 @@ export const useRecruitmentTable = () => {
       name: t("agentsmanagement:recruitment:table:origin"),
       row: "origin",
       check: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:recruitment:table:indate"),
+      row: "date",
+      order: "date",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:recruitment:table:initdate"),
+      row: "date",
+      order: "date",
+      check: true,
+      photo: true,
     },
     {
       id: 8,
@@ -2162,21 +2163,7 @@ export const useConectionsTable = () => {
       order: "stage",
       check: true,
     },
-    {
-      id: 3,
-      name: t("agentsmanagement:conections:table:initdate"),
-      row: "date",
-      order: "date",
-      check: true,
-      photo: true,
-    },
-    {
-      id: 7,
-      name: t("agentsmanagement:conections:table:indate"),
-      row: "date",
-      order: "date",
-      check: true,
-    },
+
     {
       id: 8,
       name: t("agentsmanagement:conections:table:proccess"),
@@ -2188,6 +2175,21 @@ export const useConectionsTable = () => {
       name: t("agentsmanagement:conections:table:responsible"),
       row: "manager",
       order: "manager",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("agentsmanagement:conections:table:initdate"),
+      row: "initdate",
+      order: "date",
+      check: true,
+      photo: true,
+    },
+    {
+      id: 7,
+      name: t("agentsmanagement:conections:table:indate"),
+      row: "date",
+      order: "date",
       check: true,
     },
     {
@@ -2284,15 +2286,15 @@ export const useRefundTable = () => {
     {
       id: 7,
       name: t("operations:refunds:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
+      order: "contact",
       check: true,
     },
     {
       id: 7,
       name: t("operations:refunds:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "createdAt",
+      order: "createdAt",
       check: true,
     },
     {
@@ -2340,8 +2342,8 @@ export const useProgramationTable = () => {
     {
       id: 7,
       name: t("operations:programations:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "createdAt",
+      order: "createdAt",
       check: true,
     },
     {

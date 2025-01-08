@@ -1,208 +1,141 @@
 "use client";
-import React, { Fragment, useEffect, useState } from "react";
-import Header from "../../../../components/header/Header";
+import React from "react";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { toast } from "react-toastify";
-import { getCookie } from "cookies-next";
-import { useTasks } from "../../../../lib/api/hooks/tasks";
-import LoaderSpinner, {
-  LoadingSpinnerSmall,
-} from "@/src/components/LoaderSpinner";
-import { formatDate } from "@/src/utils/getFormatDate";
+import { useTasks } from "@/src/lib/api/hooks/tasks";
+import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import clsx from "clsx";
-const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
 import TaskList from "./components/taskList";
-import { addDays } from "date-fns";
 import ContactList from "./components/ContactList";
 import PolicyList from "./components/PolicyList";
+import Header from "@/src/components/header/Header";
 import moment from "moment";
 
+const BACKGROUND_IMAGE_URL = "/img/fondo-home.png";
+
 export default function Page() {
-  const {
-    tasks: overdueTasks,
-    isLoading: isLoadingOverdueTasks,
-    mutate: mutateOverdueTasks,
-  } = useTasks({
-    filters: { status: "overdue", isCompleted: false },
-  });
-
-  const {
-    tasks: deadlineTodayTasks,
-    isLoading: isLoadingDeadlineTodayTasks,
-    mutate: mutateDeadlineTodayTasks,
-  } = useTasks({
-    filters: { deadline: moment().utc().format("YYYY-MM-DDTHH:mm:ss") },
-  });
-
-  const {
-    tasks: nextTasks,
-    isLoading: isLoadingNextTasks,
-    mutate: mutateNextTasks,
-  } = useTasks({
-    filters: {
+  const utcOffset = moment().utcOffset();
+  const taskFilters = {
+    overdue: { status: "overdue", isCompleted: false },
+    deadlineToday: {
+      deadline: [
+        moment()
+          .utc()
+          .startOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+    },
+    next: {
       deadline: [
         moment()
           .utc()
           .add(1, "days")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .add(16, "days")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
     },
-  });
+  };
 
-  useEffect(() => {
-    const fromUrl = document?.referrer ? new URL(document?.referrer) : null; // Validador para document.referrer
-    const urlParams = window.location.search
-      ? new URLSearchParams(window.location.search)
-      : null; // Validador para window.location.search
+  const {
+    tasks: overdueTasks,
+    isLoading: isLoadingOverdueTasks,
+    mutate: mutateOverdueTasks,
+  } = useTasks({ filters: taskFilters.overdue });
 
-    // Verificar si los parámetros son válidos antes de continuar
-    if (fromUrl && urlParams) {
-      const rememberSessionParam = urlParams.get("rememberSession");
-      if (
-        fromUrl.pathname === "/auth" &&
-        getCookie("rememberSession") === "true" &&
-        rememberSessionParam === "true"
-      ) {
-        toast.success("Datos guardados");
-      }
-    } else {
-      // Manejar el caso en que los parámetros sean nulos o indefinidos (opcional)
-      console.warn(
-        "No se pudo obtener la URL de referencia o los parámetros de búsqueda."
-      );
-      // Puedes mostrar un mensaje al usuario, registrar el error, etc.
-    }
-  }, []);
+  const {
+    tasks: deadlineTodayTasks,
+    isLoading: isLoadingDeadlineTodayTasks,
+    mutate: mutateDeadlineTodayTasks,
+  } = useTasks({ filters: taskFilters.deadlineToday });
 
-  let texto =
-    "Nathaly Gomez M . Se ha vencido la tarea Seguimiento oportunidad “Naty Polin P-1” “Naty Polin P-2” “Naty Polin P-3” “Naty Polin P-4”";
-  let textoRecortado = texto.substring(0, 81);
+  const {
+    tasks: nextTasks,
+    isLoading: isLoadingNextTasks,
+    mutate: mutateNextTasks,
+  } = useTasks({ filters: taskFilters.next });
 
-  const [isHovered, setIsHovered] = useState(false);
+  const renderTaskSection = ({
+    tasks,
+    isLoading,
+    mutate,
+    title,
+    icon: Icon,
+    emptyMessage,
+  }) => (
+    <div
+      className={clsx(
+        "h-64 bg-white rounded-lg p-2 flex flex-col items-center gap-2",
+        { "justify-between": !tasks?.items?.length }
+      )}
+    >
+      <h1 className="font-medium w-full">{title}</h1>
+      {isLoading ? (
+        <LoadingSpinnerSmall color="primary" />
+      ) : tasks?.items?.length ? (
+        <TaskList tasks={tasks.items} mutate={mutate} />
+      ) : (
+        <div className="flex flex-col items-center w-full">
+          <Icon className="h-16 w-16 text-slate-400" />
+          <div className="flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+            <h1 className="text-sm p-2">{emptyMessage}</h1>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div
       className="bg-center bg-cover rounded-2xl"
       style={{ backgroundImage: `url(${BACKGROUND_IMAGE_URL})` }}
     >
-      {/* Flexbox para controlar el footer */}
-      <div className="w-full p-4  h-full grid grid-cols-1 gap-4">
+      <div className="w-full p-4 h-full grid grid-cols-1 gap-4">
         <Header />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4  gap-4">
-          <div
-            className={clsx(
-              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
-              {
-                "justify-between": !overdueTasks?.items?.length,
-              }
-            )}
-          >
-            <h1 className="font-medium w-full">Actividades vencidas</h1>
-
-            {isLoadingOverdueTasks ? (
-              <LoadingSpinnerSmall color="primary" />
-            ) : (
-              <Fragment>
-                {overdueTasks?.items && overdueTasks?.items?.length ? (
-                  <TaskList
-                    tasks={overdueTasks?.items}
-                    mutate={mutateOverdueTasks}
-                  />
-                ) : (
-                  <Fragment>
-                    <div className=" flex justify-center">
-                      <ClockIcon className="h-16 w-16 text-slate-400" />
-                    </div>
-                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
-                      <h1 className="text-sm p-2">
-                        ¡Buen trabajo! No tienes actividades vencidas
-                      </h1>
-                    </div>
-                  </Fragment>
-                )}
-              </Fragment>
-            )}
-          </div>
-          <div
-            className={clsx(
-              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
-              {
-                "justify-between": !deadlineTodayTasks?.items?.length,
-              }
-            )}
-          >
-            <h1 className="font-medium w-full">Actividades de hoy</h1>
-            {isLoadingDeadlineTodayTasks ? (
-              <LoadingSpinnerSmall color="primary" />
-            ) : (
-              <Fragment>
-                {deadlineTodayTasks?.items &&
-                deadlineTodayTasks?.items?.length ? (
-                  <TaskList
-                    tasks={deadlineTodayTasks?.items}
-                    mutate={mutateDeadlineTodayTasks}
-                  />
-                ) : (
-                  <Fragment>
-                    <div className=" flex justify-center">
-                      <CalendarIcon className="h-16 w-16 text-slate-400" />
-                    </div>
-                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
-                      <h1 className="text-sm p-2 ">
-                        No tienes actividades para hoy
-                      </h1>
-                    </div>
-                  </Fragment>
-                )}
-              </Fragment>
-            )}
-          </div>
-          <div
-            className={clsx(
-              "h-64 bg-white rounded-lg p-2 flex flex-col  items-center gap-2",
-              {
-                "justify-between": !nextTasks?.items?.length,
-              }
-            )}
-          >
-            <h1 className="font-medium w-full">Actividades próximas</h1>
-            {isLoadingNextTasks ? (
-              <LoadingSpinnerSmall color="primary" />
-            ) : (
-              <Fragment>
-                {nextTasks?.items && nextTasks?.items?.length ? (
-                  <TaskList tasks={nextTasks?.items} mutate={mutateNextTasks} />
-                ) : (
-                  <Fragment>
-                    <div className=" flex justify-center">
-                      <CalendarIcon className="h-16 w-16 text-slate-400" />
-                    </div>
-                    <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
-                      <h1 className="text-sm p-2 ">
-                        No tienes próximas actividades
-                      </h1>
-                    </div>
-                  </Fragment>
-                )}
-              </Fragment>
-            )}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {renderTaskSection({
+            tasks: overdueTasks,
+            isLoading: isLoadingOverdueTasks,
+            mutate: mutateOverdueTasks,
+            title: "Actividades vencidas",
+            icon: ClockIcon,
+            emptyMessage: "¡Buen trabajo! No tienes actividades vencidas",
+          })}
+          {renderTaskSection({
+            tasks: deadlineTodayTasks,
+            isLoading: isLoadingDeadlineTodayTasks,
+            mutate: mutateDeadlineTodayTasks,
+            title: "Actividades de hoy",
+            icon: CalendarIcon,
+            emptyMessage: "No tienes actividades para hoy",
+          })}
+          {renderTaskSection({
+            tasks: nextTasks,
+            isLoading: isLoadingNextTasks,
+            mutate: mutateNextTasks,
+            title: "Actividades próximas",
+            icon: CalendarIcon,
+            emptyMessage: "No tienes próximas actividades",
+          })}
           <PolicyList />
-          <div className="col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72 justify-between flex flex-col">
+          <div className="col-span-1 md:col-span-2 bg-white rounded-lg p-2 h-72 justify-between flex flex-col">
             <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
-            <Fragment>
-              <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
-                <h1 className="text-sm p-2 ">
-                  En este momento no tienes recordatorios
-                </h1>
-              </div>
-            </Fragment>
+            <div className="flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+              <h1 className="text-sm p-2">
+                En este momento no tienes recordatorios
+              </h1>
+            </div>
           </div>
           <ContactList />
         </div>

@@ -86,7 +86,9 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
@@ -204,7 +206,7 @@ export default function Table() {
     // },
     {
       id: 1,
-      name: "Asignar observador",
+      name: "Cambiar Etapa",
       disabled: true,
     },
     {
@@ -237,10 +239,10 @@ export default function Table() {
       name: "Editar",
       disabled: true,
     },
-    // {
-    //   name: "Actividades",
-    //   disabled: true,
-    // },
+    {
+      name: "Actividades",
+      disabled: true,
+    },
     // {
     //   name: "Asignar GDD",
     //   disabled: true,
@@ -341,7 +343,7 @@ export default function Table() {
         </div>
       )}
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block min-w-full pb-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
             <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
               <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
@@ -619,6 +621,10 @@ export default function Table() {
                                 ) : column.row === "date" ? (
                                   <p className="text-center">
                                     {moment().format("DD-MM-YYYY")}
+                                  </p>
+                                ) : column.row === "initdate" ? (
+                                  <p className="text-center">
+                                    {`TRIMESTRE ${moment(agent.createdAt).format("Q")}`}
                                   </p>
                                 ) : column.row === "updatedAt" ? (
                                   <p className="text-center">

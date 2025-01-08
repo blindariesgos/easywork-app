@@ -15,7 +15,7 @@ export default function TasksContextProvider({ children }) {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [config, setConfig] = useState({
     page: 1,
-    limit: 5,
+    limit: 10,
     orderBy: "deadline",
     order: "ASC",
   });
@@ -25,9 +25,6 @@ export default function TasksContextProvider({ children }) {
       ...filters,
     },
     userId: session?.data?.user?.id,
-    srcConfig: {
-      refreshInterval: 1000,
-    },
   });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();

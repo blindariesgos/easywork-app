@@ -9,12 +9,14 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import MultiSelectTags from "../../../components/MultiSelectTags";
 import Button from "@/src/components/form/Button";
+import useTasksContext from "@/src/context/tasks";
 
 const TaskTags = ({ task }) => {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const containerRef = useRef(null);
   const { mutate } = useSWRConfig();
+  const { mutate: mutateTasks } = useTasksContext();
 
   const schema = yup.object().shape({
     tags: yup.array(),
@@ -59,7 +61,8 @@ const TaskTags = ({ task }) => {
           return;
         }
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${task.id}`);
+        mutate(`/tools/tasks/${task.id}`);
+        mutateTasks();
       } catch (error) {
         toast.error(error.message);
       } finally {

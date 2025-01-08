@@ -1,133 +1,70 @@
 "use client";
-import useAppContext from "@/src/context/app";
 import { PencilIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import React, { useCallback, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
 import InputPhone from "@/src/components/form/InputPhone";
 import { handleApiError } from "@/src/utils/api/errors";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition,
-} from "@headlessui/react";
+import { Menu } from "@headlessui/react";
 import { updateUser, getUsersGroup, updateStatus } from "@/src/lib/apis";
-import { reloadSession } from "@/src/lib/axios";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useSWRConfig } from "swr";
 import Image from "next/image";
+import { useCurrentUserInfo } from "@/src/lib/api/hooks/users";
+import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 
 export function Profile({ status, statusList }) {
-  const { lists } = useAppContext();
+  const { user, isLoading, mutate } = useCurrentUserInfo();
   const { t } = useTranslation();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
   const [isEdit, setIsEdit] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [contactType, setContactType] = useState(null);
-  const [contactSource, setContactSource] = useState(null);
-  const [contactResponsible] = useState(null);
-  const [files, setFiles] = useState([]);
-  const router = useRouter();
-  const { mutate } = useSWRConfig();
-  const { data, update } = useSession();
   const [groups, setGroups] = useState([]);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (data?.user) {
-      lists?.listContact?.contactTypes.length > 0 &&
-        setContactType(
-          lists?.listContact?.contactTypes.filter(
-            (option) => option.id === data?.user?.type?.id
-          )[0]
-        );
-      lists?.listContact?.contactSources.length > 0 &&
-        setContactSource(
-          lists?.listContact?.contactSources.filter(
-            (option) => option.id === data?.user?.source?.id
-          )[0]
-        );
-      setSelectedProfileImage({
-        base64: data?.user?.photo || null,
-        file: null,
-      });
-    }
-  }, [data?.user, lists]);
-
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-  }
-
-  const schema = Yup.object().shape({
-    email: Yup.string()
-      .required(t("common:validations:required"))
-      .email(t("common:validations:email"))
-      .min(5, t("common:validations:min", { min: 5 })),
-    name: Yup.string()
-      .required(t("common:validations:required"))
-      .min(2, t("common:validations:min", { min: 2 })),
-    position: Yup.string(),
-    phone: Yup.string().required(t("common:validations:required")),
-    rfc: Yup.string(),
-    cua: Yup.string(),
-    typeContact: Yup.string(),
-    origin: Yup.string(),
-    address: Yup.string(),
-    responsible: Yup.string(),
-    birthday: Yup.string(),
-    bio: Yup.string(),
-    lastName: Yup.string(),
-    firstName: Yup.string(),
-  });
-
-  useEffect(() => {
-    getUsersGroup(data?.user?.id).then((res) => {
-      setGroups(res.groups);
-    });
-  }, []);
 
   const {
     register,
     handleSubmit,
     control,
     reset,
-    setValue,
-    watch,
     formState: { isValid, errors },
   } = useForm({
     mode: "onChange",
-    // resolver: yupResolver(schema),
   });
 
   useEffect(() => {
-    if (data?.user?.fullName) setValue("name", data?.user?.fullName);
-    if (data?.user?.cargo) setValue("position", data?.user?.cargo);
-    if (data?.user?.phone) setValue("phone", data?.user?.phone);
-    if (data?.user?.email) setValue("email", data?.user?.email);
-    if (data?.user?.curp) setValue("rfc", data?.user?.curp);
-    if (data?.user?.cua) setValue("cua", data?.user?.cua);
-    if (data?.user?.type?.id) setValue("typeContact", data?.user?.type?.id);
-    if (data?.user?.source?.id) setValue("origin", data?.user?.source?.id);
-    if (data?.user?.birthdate) setValue("birthday", data?.user?.birthdate);
-    if (data?.user?.address) setValue("address", data?.user?.address);
-    if (data?.user?.bio) setValue("bio", data?.user?.bio);
-    if (data?.user?.profile?.firstName)
-      setValue("firstName", data?.user?.profile?.firstName);
-    if (data?.user?.profile?.lastName)
-      setValue("lastName", data?.user?.profile?.lastName);
-    if (data?.user?.avatar)
-      setSelectedProfileImage({ base64: data?.user?.avatar });
-  }, [data?.user, params.get("profile")]);
+    if (user) {
+      reset({
+        name: user.name,
+        position: user.cargo,
+        phone: user.phone,
+        email: user.email,
+        rfc: user.curp,
+        cua: user.cua,
+        typeContact: user.type?.id,
+        origin: user.source?.id,
+        birthday: user.birthdate,
+        address: user.address,
+        bio: user.bio,
+        firstName: user.profile?.firstName,
+        lastName: user.profile?.lastName,
+      });
+      setSelectedProfileImage({
+        base64: user.avatar || null,
+        file: null,
+      });
+    }
+  }, [user, reset]);
+
+  useEffect(() => {
+    if (user?.id) {
+      getUsersGroup(user.id).then((res) => {
+        setGroups(res.groups);
+      });
+    }
+  }, [user]);
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -145,8 +82,8 @@ export function Profile({ status, statusList }) {
 
   const handleFormSubmit = async (dataUser) => {
     const previousData = {
-      email: data.user.email,
-      phone: data.user.phone,
+      email: user.email,
+      phone: user.phone,
     };
 
     const body = {
@@ -165,23 +102,15 @@ export function Profile({ status, statusList }) {
     const formData = new FormData();
 
     for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]); // Agrega archivos o blobs directamente
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key])); // Convierte arrays a JSON
-      } else {
-        formData.append(key, body[key]?.toString() || ""); // Convierte los demás valores a string
+      if (body[key]) {
+        formData.append(key, body[key]);
       }
     }
+
     try {
       setLoading(true);
-      await updateUser(data?.user?.id, formData);
-      await reloadSession();
-      update();
+      await updateUser(user?.id, formData);
+      mutate(); // Refresca la información del usuario
       setLoading(false);
       setIsEdit(false);
     } catch (error) {
@@ -193,16 +122,20 @@ export function Profile({ status, statusList }) {
   const changeStatus = async (item) => {
     try {
       await updateStatus(item);
-      await reloadSession();
-      update();
+      mutate();
     } catch (error) {
       toast.error("Error al cambiar status");
     }
   };
 
-  // Calculate the user 18th birthday
-  const eighteenYearsAgo = new Date();
-  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinnerSmall color="primary" />
+      </div>
+    );
+  }
+
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
@@ -213,7 +146,7 @@ export function Profile({ status, statusList }) {
         <div className="rounded-lg bg-white">
           <div className="flex w-full justify-between pt-4">
             <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
-              {data?.user.roles[0].name}
+              {user?.roles[0].name}
             </div>
             <Menu
               as="div"
@@ -268,7 +201,7 @@ export function Profile({ status, statusList }) {
               <Image
                 width={1080}
                 height={1080}
-                src={data?.user?.avatar || "/img/avatar.svg"}
+                src={user?.avatar || "/img/avatar.svg"}
                 alt="Profile picture"
                 className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
                 objectFit="fill"
@@ -284,7 +217,7 @@ export function Profile({ status, statusList }) {
             <h1 className="text-primary font-bold text-xl">
               Información del usuario
             </h1>
-            {data?.user && (
+            {user && (
               <button
                 type="button"
                 onClick={() => setIsEdit(!isEdit)}

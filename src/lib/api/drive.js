@@ -179,6 +179,6 @@ export const uploadTemporalFile = async (data) => {
     contentType: "multipart/form-data",
   })
     .post(`/files/temp`, data)
-    .catch((error) => error);
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };

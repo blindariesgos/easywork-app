@@ -129,7 +129,7 @@ export default function ContactsContextProvider({ children }) {
 
     setFilters(newFilters);
     setDisplayFilters(
-      displayFilters.filter((filter) => filter.code !== filterName),
+      displayFilters.filter((filter) => filter.code !== filterName)
     );
     const newFilterFields = filterFields.map((field) => {
       return filterName !== field.code ? field : { ...field, check: false };
@@ -169,7 +169,7 @@ export default function ContactsContextProvider({ children }) {
       filterFields,
       filters,
       lists,
-    ],
+    ]
   );
 
   return (

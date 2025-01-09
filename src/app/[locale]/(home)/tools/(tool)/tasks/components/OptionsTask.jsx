@@ -231,25 +231,23 @@ const OptionsTask = ({
   return (
     <div>
       {loading && <LoaderSpinner />}
-      {((disabled && value && value.length > 0) || !disabled) && (
-        <div
-          className={clsx(
-            "bg-white w-full rounded-lg mt-2 sm:h-48 h-60 relative ",
-            { "drop-shadow-md": !disabled }
-          )}
-        >
-          <TextEditor
-            ref={quillRef}
-            value={value}
-            className="sm:h-36 h-52 w-full"
-            onChangeSelection={handleTextSelection}
-            setValue={setValueText}
-            disabled={disabled}
-            taggedUsers={taggedUsers}
-            setTaggedUsers={setTaggedUsers}
-          />
-        </div>
-      )}
+      <div
+        className={clsx("bg-white w-full rounded-lg mt-2  relative", {
+          "drop-shadow-md": !disabled,
+          "h-60 sm:h-48": value.length > 0,
+        })}
+      >
+        <TextEditor
+          ref={quillRef}
+          value={value}
+          className="sm:h-36 h-52 w-full"
+          onChangeSelection={handleTextSelection}
+          setValue={setValueText}
+          disabled={disabled}
+          taggedUsers={taggedUsers}
+          setTaggedUsers={setTaggedUsers}
+        />
+      </div>
       {edit?.attachedObjects && edit?.attachedObjects?.length > 0 && (
         <div className="flex flex-wrap gap-3 py-2">
           {edit?.attachedObjects?.map((file, i) => (

@@ -43,11 +43,12 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
   };
 
   const handleShowPolicy = (poliza) => {
-    if (poliza.operacion == "produccion_nueva") {
-      const params = new URLSearchParams(searchParams);
-      params.set("show", true);
-      params.set("policy", poliza.id);
-      router.replace(`${pathname}?${params.toString()}`);
+    if (!poliza.operacion || poliza.operacion == "produccion_nueva") {
+      // const params = new URLSearchParams(searchParams);
+      // params.set("show", true);
+      // params.set("policy", poliza.id);
+      // router.replace(`${pathname}?${params.toString()}`);
+      router.push(`/operations/policies/policy/${poliza.id}?show=true`);
       return;
     }
     if (poliza.operacion == "renovacion") {
@@ -295,24 +296,6 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
               data?.items?.length &&
               data?.items?.map((poliza, index) => (
                 <tr key={index}>
-                  {/* <td className="relative px-7 sm:w-12 sm:px-6">
-                    {selectedPolizas.includes(poliza) && (
-                      <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                    )}
-                    <input
-                      type="checkbox"
-                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:text-primary"
-                      value={poliza.id}
-                      checked={selectedPolizas.includes(poliza)}
-                      onChange={(e) =>
-                        setSelectedPolizas(
-                          e.target.checked
-                            ? [...selectedPolizas, poliza]
-                            : selectedPolizas.filter((p) => p !== poliza)
-                        )
-                      }
-                    />
-                  </td> */}
                   <td className="whitespace-nowrap py-4 pr-3 text-sm font-semibold text-black sm:pl-0 text-center cursor-pointer">
                     <div
                       className="flex gap-2 hover:text-primary pl-4 cursor-pointer"

@@ -139,18 +139,6 @@ export default function TabComment({ info }) {
     setShowComments(comments);
   }, [comments, showMore]);
 
-  if (isLoading)
-    return (
-      <div className="flex flex-col h-screen relative w-full overflow-y-auto">
-        <div
-          className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
-        >
-          <LoadingSpinnerSmall color={"primary"} />
-        </div>
-      </div>
-    );
-  if (isError) return <>Error al cargar la tarea</>;
-
   const getDeleteComment = async (id) => {
     try {
       setDisabled(true);
@@ -174,10 +162,22 @@ export default function TabComment({ info }) {
       return;
     }
 
-    await mutate(`/tools/tasks/comments/task/${info.id}`);
+    mutate(`/tools/tasks/comments/task/${info.id}`);
     setLoading(false);
     toast.success("Adjunto eliminado con exito");
   };
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col h-screen relative w-full overflow-y-auto">
+        <div
+          className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
+        >
+          <LoadingSpinnerSmall color={"primary"} />
+        </div>
+      </div>
+    );
+  if (isError) return <>Error al cargar la tarea</>;
 
   return (
     <div className="w-full p-3">

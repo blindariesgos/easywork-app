@@ -26,26 +26,24 @@ export default function UploadDocumentInComment({ handleChangeFiles }) {
       return { blob: url, file };
     });
 
-    const response = await uploadTemporalFile(formData)
-      .then((ids) => ({ ids }))
-      .catch((error) => ({ hasError: true, error }));
+    const response = await uploadTemporalFile(formData);
     console.log({ response });
-    if (response.hasError) {
+    if (response?.hasError) {
       toast.error(
-        "Ocurrio un error al cargar archivo(s), intente de nuevo mas tarde."
+        response?.error?.message ||
+          "Ocurrio un error al cargar archivo(s), intente de nuevo mas tarde."
       );
       setLoading(false);
-
       return;
     }
 
     const body = {
-      fileIds: response.ids,
+      fileIds: response,
       files,
     };
 
-    setLoading(false);
     handleChangeFiles(body);
+    setLoading(false);
   };
 
   return (

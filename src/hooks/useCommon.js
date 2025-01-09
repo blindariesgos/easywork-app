@@ -1870,14 +1870,6 @@ export const useRenovationTable = () => {
       check: true,
     },
     {
-      id: 1,
-      name: t("operations:renovations:table:origin"),
-      row: "source",
-      order: "source",
-      check: true,
-      permanent: true,
-    },
-    {
       id: 6,
       name: t("operations:renovations:table:amount"),
       row: "importePagar",

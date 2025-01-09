@@ -5,14 +5,10 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
-  CheckIcon,
-  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
-import Image from "next/image";
 import React, {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -22,16 +18,12 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deleteContactId, deletePolicyById, putPoliza } from "@/src/lib/apis";
+import { deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import {
-  usePoliciesTable,
-  useRenovationTable,
-} from "../../../../../../hooks/useCommon";
+import { useRenovationTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -90,7 +82,9 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
@@ -210,7 +204,7 @@ export default function Table() {
   const masiveActions = [
     {
       id: 1,
-      name: "Asignar agente relacionado - subagente",
+      name: "Asignar Sub Agente",
       disabled: true,
     },
     {
@@ -228,6 +222,7 @@ export default function Table() {
       id: 2,
       name: t("common:table:checkbox:change-status"),
       onclick: changeStatusPolicies,
+      disabled: true,
       selectOptions: [
         {
           id: "activa",
@@ -286,11 +281,10 @@ export default function Table() {
       options: [
         {
           name: "Tarea",
-          handleClickContact: (id) =>
+          handleClick: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=renewal&prev_id=${id}`
             ),
-          disabled: true,
         },
         {
           name: "Cita",
@@ -460,10 +454,6 @@ export default function Table() {
                                         onClick={() => {
                                           item.handleClick &&
                                             item.handleClick(policy.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              policy?.contact?.id
-                                            );
                                         }}
                                       >
                                         <div

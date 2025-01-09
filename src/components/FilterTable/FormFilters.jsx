@@ -29,6 +29,8 @@ const FormFilters = () => {
     filterFields,
     defaultFilterFields,
     setDisplayFilters,
+    customFilterSelected,
+    setCustomFilterSelected,
   } = useFilterTableContext();
   const schema = yup.object().shape({
     fields: yup.array().of(yup.object().shape({})),
@@ -291,7 +293,7 @@ const FormFilters = () => {
     name: "fields",
   });
 
-  useEffect(() => {
+  const validateFilters = () => {
     let newItems = [];
     const getDate = (date) => {
       return moment(date.replace(/-/g, "")).format();
@@ -320,7 +322,15 @@ const FormFilters = () => {
     if (newItems.length > 0) {
       append(newItems);
     }
+  };
+
+  useEffect(() => {
+    validateFilters();
   }, []);
+
+  useEffect(() => {
+    validateFilters();
+  }, [customFilterSelected]);
 
   return (
     <form
@@ -500,6 +510,7 @@ const FormFilters = () => {
             reset();
             setFilters({});
             setDisplayFilters({});
+            setCustomFilterSelected();
           }}
         />
       </div>

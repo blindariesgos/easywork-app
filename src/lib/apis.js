@@ -158,12 +158,9 @@ export const getReceiptKanbanByStateId = async (params) => {
 };
 
 export const getPolicyById = async (id) => {
-  try {
-    const response = await axios().get(`/sales/crm/polizas/${id}`);
-    return response;
-  } catch (error) {
-    // throw new Error(error);
-  }
+  const url = `/sales/crm/polizas/${id}`;
+  const response = await axios().get(url);
+  return response;
 };
 
 export const deleteContactId = async (id) => {

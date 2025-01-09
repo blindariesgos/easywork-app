@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ModalTermsConditions from "../components/info/ModalTermsConditions"
 import { useRouter } from "next/navigation";
 
 export default function Footer() {
@@ -26,7 +27,7 @@ export default function Footer() {
           <li className="cursor-pointer mb-2">Comenzar</li>
           <li className="cursor-pointer mb-2">Preguntas frecuentes</li>
           <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?show=true`)}>Contacto</li>
-          <li className="cursor-pointer mb-2">Términos y condiciones de uso</li>
+          <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?termsConditions=true`)}>Términos y condiciones de uso</li>
           <li className="cursor-pointer mb-2">Políticas de privacidad</li>
           <li className="cursor-pointer">Políticas de cookies</li>
         </ul>
@@ -80,6 +81,7 @@ export default function Footer() {
           </a>
         </div>
       </div>
+      <ModalTermsConditions />
     </div>
   );
 }

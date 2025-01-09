@@ -14,7 +14,7 @@ export default function MainContent() {
           alt="cellphone"
         />
         <div
-          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left"
+          className="text-white mt-6 md:mt-0 md:ml-8 text-center md:text-left z-20"
           style={{ maxWidth: 590 }}
         >
           <h2

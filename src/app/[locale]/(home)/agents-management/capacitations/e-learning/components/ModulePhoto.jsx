@@ -15,8 +15,8 @@ function ModulePhoto({ onChange, loading, coverPhoto }) {
       </label>
 
       <div className="flex flex-col items-start ">
-        <p>Portada</p>
-        <p className="mb-4">1440 x 980</p>
+        <p className="text-xs">Portada</p>
+        <p className="mb-4 text-xs">1440 x 980</p>
         <Button
           type="button"
           label="Cambiar"
@@ -26,6 +26,19 @@ function ModulePhoto({ onChange, loading, coverPhoto }) {
             fileRef.current?.click();
           }}
         />
+        {preview && (
+          <Button
+            type="button"
+            label="Borrar"
+            buttonStyle="error"
+            className="px-4 py-1 text-lg mt-1"
+            onclick={() => {
+              fileRef.current.value = '';
+              setPreview(null);
+              onChange(null);
+            }}
+          />
+        )}
       </div>
 
       <input
@@ -38,7 +51,7 @@ function ModulePhoto({ onChange, loading, coverPhoto }) {
           const files = e.target.files;
 
           if (files[0]) setPreview(URL.createObjectURL(files[0]));
-          onChange(files);
+          onChange(files[0]);
         }}
         accept="image/jpg,image/jpeg,image/png,image/gif,image/svg"
         disabled={loading}

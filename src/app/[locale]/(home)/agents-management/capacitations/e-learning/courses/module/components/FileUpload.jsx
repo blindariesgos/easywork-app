@@ -2,7 +2,9 @@ import { useState } from 'react';
 
 import FilePreview from './FilePreview';
 export const FileUpload = ({ onChange, onDelete, loading, inputRef, files = [], disabled }) => {
-  const [filesToPreview, setFilesToPreview] = useState(files);
+  if (!Array.isArray(files)) files = [];
+
+  const [filesToPreview, setFilesToPreview] = useState(files || []);
   const showFiles = filesToPreview.length > 0;
 
   const onDeleteFile = index => {

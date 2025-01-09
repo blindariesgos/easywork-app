@@ -5,13 +5,14 @@ import { useRef, useState } from 'react';
 import ModuleCard from '../components/ModuleCard';
 import CourseCreateEditModal from './CourseCreateEditModal';
 import DeleteContentModal from './DeleteContentModal';
+import { revalidateTag } from 'next/cache';
 
-export default function CoursesGridView({ courses, showCreateButton = false }) {
+export default function CoursesGridView({ courses, fetchCourses, showCreateButton = false }) {
   const [isEditCreateModalOpen, setIsEditCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const courseRef = useRef(null);
 
-  const onCreateCourse = course => {
+  const onCreateCourse = () => {
     courseRef.current = null;
     setIsEditCreateModalOpen(true);
   };
@@ -30,6 +31,10 @@ export default function CoursesGridView({ courses, showCreateButton = false }) {
     setIsDeleteModalOpen(true);
   };
 
+  const onSuccess = () => {
+    revalidateTag('courses-list');
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-5 px-10">
       {showCreateButton && (
@@ -44,7 +49,7 @@ export default function CoursesGridView({ courses, showCreateButton = false }) {
         <ModuleCard key={course.id} course={course} onEditCourse={onEditCourse} onMoveCourse={onMoveCourse} onDeleteCourse={onDeleteCourse} />
       ))}
 
-      <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} />
+      <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} onSuccess={fetchCourses} />
       <DeleteContentModal isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} content={courseRef.current} contentType="course" />
     </div>
   );

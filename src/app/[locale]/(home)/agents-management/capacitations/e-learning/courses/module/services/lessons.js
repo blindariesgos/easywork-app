@@ -15,6 +15,11 @@ export const updateLesson = async (id, data) => {
   return response.data;
 };
 
+export const toggleLessonAsCompleted = async (id, completed) => {
+  const response = await axios.put(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lessons/toggle-completed/${id}`, { completed });
+  return response.data;
+};
+
 export const deleteLesson = async id => {
   const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lessons/${id}`);
   return response.data;

@@ -30,7 +30,7 @@ const HelpChat = () => {
             className={`bg-gradient-to-r bg-white w-72 h-96 rounded-lg flex flex-col items-center justify-between`}
             onMouseEnter={toggleOpenChat}
             onMouseLeave={toggleOpenChat}
-            onClick={toggleOpenChat} // Para dispositivos táctiles
+            onClick={toggleOpenChat}
           >
             <HistoryChat />
           </div>
@@ -40,7 +40,7 @@ const HelpChat = () => {
         className="w-full flex flex-col items-center"
         onHoverStart={() => setOpen(true)}
         onHoverEnd={() => setOpen(false)}
-        onClick={toggleOpen} // Para alternar en pantallas táctiles
+        onClick={toggleOpen}
       >
         {/* Botón 1 */}
         <a
@@ -81,7 +81,7 @@ const HelpChat = () => {
           transition={{ duration: 0.5 }}
           onMouseEnter={toggleOpenChat}
           onMouseLeave={toggleOpenChat}
-          onClick={toggleOpenChat} // Para alternar en pantallas táctiles
+          onClick={toggleOpenChat}
           whileHover={{
             scale: 1.1,
           }}

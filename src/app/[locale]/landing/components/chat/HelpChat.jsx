@@ -1,25 +1,23 @@
 "use client";
 import Image from "next/image";
-import {
-  HomeIcon,
-  ChatBubbleLeftRightIcon,
-  QuestionMarkCircleIcon,
-  MegaphoneIcon,
-} from "@heroicons/react/24/outline";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
 import { Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import HistoryChat from "./HistoryChat";
-import Whatsapp from "./Whatsapp";
+import { motion } from "framer-motion";
 
 const HelpChat = () => {
   const [open, setOpen] = useState(false);
-  const [window, setWindow] = useState(1);
+  const [openChat, setOpenChat] = useState(false);
+
+  const toggleOpen = () => setOpen(!open);
+  const toggleOpenChat = () => setOpenChat(!openChat);
 
   return (
     <div className="fixed bottom-3 right-3 flex flex-row items-end space-y-2 z-40">
       <div className="w-full flex justify-end mr-1 mb-12">
         <Transition
-          show={open}
+          show={openChat}
           as={Fragment}
           enter="transition-opacity duration-300"
           enterFrom="opacity-0"
@@ -30,46 +28,85 @@ const HelpChat = () => {
         >
           <div
             className={`bg-gradient-to-r bg-white w-72 h-96 rounded-lg flex flex-col items-center justify-between`}
+            onMouseEnter={toggleOpenChat}
+            onMouseLeave={toggleOpenChat}
+            onClick={toggleOpenChat} // Para dispositivos táctiles
           >
-            {window === 1 && <HistoryChat />}
-            {window === 2 && <Whatsapp />}
-            <div className="w-full bg-white flex justify-around rounded-lg py-1 px-2">
-              <div
-                className="text-easywork-main flex flex-col justify-center cursor-pointer items-center p-2"
-                onClick={() => setWindow(1)}
-              >
-                <ChatBubbleLeftRightIcon className="h-5 w-5" />
-              </div>
-              <div
-                className="text-easywork-main flex flex-col justify-center cursor-pointer items-center p-2"
-                onClick={() => setWindow(2)}
-              >
-                <Image
-                  src="/img/landing/whatsapp.png"
-                  alt="whatsapp"
-                  width={20}
-                  height={20}
-                />
-              </div>
-            </div>
+            <HistoryChat />
           </div>
         </Transition>
       </div>
-      <div className="w-full flex justify-end">
-        <div
-          className="size-20 rounded-full bg-cyan-500 flex justify-center items-center cursor-pointer opacity-80"
-          onClick={() => {
-            setOpen(!open);
+      <motion.div
+        className="w-full flex flex-col items-center"
+        onHoverStart={() => setOpen(true)}
+        onHoverEnd={() => setOpen(false)}
+        onClick={toggleOpen} // Para alternar en pantallas táctiles
+      >
+        {/* Botón 1 */}
+        <a
+          href="https://www.whatsapp.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <motion.div
+            className="size-16 rounded-full bg-lime-400 flex justify-center items-center cursor-pointer opacity-80 mb-2"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{
+              opacity: open ? 1 : 0,
+              y: open ? 0 : 30,
+            }}
+            transition={{ duration: 0.5 }}
+            whileHover={{
+              scale: 1.1,
+            }}
+            whileTap={{ scale: 1.1 }}
+          >
+            <Image
+              src="/img/landing/whatsappWhite.png"
+              alt="support"
+              width={32}
+              height={32}
+            />
+          </motion.div>
+        </a>
+
+        {/* Botón 2 */}
+        <motion.div
+          className="size-16 rounded-full bg-easywork-main flex justify-center items-center cursor-pointer opacity-80 mb-2"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{
+            opacity: open ? 1 : 0,
+            y: open ? 0 : 30,
           }}
+          transition={{ duration: 0.5 }}
+          onMouseEnter={toggleOpenChat}
+          onMouseLeave={toggleOpenChat}
+          onClick={toggleOpenChat} // Para alternar en pantallas táctiles
+          whileHover={{
+            scale: 1.1,
+          }}
+          whileTap={{ scale: 1.1 }}
+        >
+          <ChatBubbleLeftRightIcon className="w-10 h-10 text-white" />
+        </motion.div>
+
+        {/* Botón que desencadena la animación */}
+        <motion.div
+          className="size-16 rounded-full bg-cyan-500 flex justify-center items-center cursor-pointer opacity-80"
+          whileHover={{
+            scale: 1.1,
+          }}
+          whileTap={{ scale: 1.1 }}
+          onClick={toggleOpen} // Para alternar en pantallas táctiles
         >
           <Image
             src="/img/landing/sms.svg"
             alt="support"
-            width={40}
-            height={40}
+            width={32}
+            height={32}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

@@ -18,13 +18,11 @@ export default function Page() {
     overdue: { status: "overdue", isCompleted: false },
     deadlineToday: {
       deadline: [
-        moment()
-          .utc()
+        moment() // No colocar UTC ya que no coincide con la zona horaria del usuario9ib
           .startOf("day")
           .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
-          .utc()
           .endOf("day")
           .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
@@ -33,13 +31,11 @@ export default function Page() {
     next: {
       deadline: [
         moment()
-          .utc()
           .add(1, "days")
           .startOf("day")
           .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
-          .utc()
           .add(16, "days")
           .endOf("day")
           .subtract(utcOffset, "minutes")

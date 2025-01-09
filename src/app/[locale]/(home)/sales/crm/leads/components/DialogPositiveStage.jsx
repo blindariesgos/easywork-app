@@ -8,11 +8,7 @@ import {
 } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
-import ButtonGeneratePolicy from "./ButtonGeneratePolicy";
 import ButtonDiscardedPolicy from "./ButtonDiscardedPolicy";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { postPositiveStagePolicy, putComment } from "@/src/lib/apis";
-import { toast } from "react-toastify";
 
 export default function DialogPositiveStage({
   isOpen,

@@ -120,6 +120,11 @@
         "participant": "Participante",
         "observer": "Observador",
         "show-closed": "Mostrar Cerrados"
+      },
+      "custom": {
+        "completed": "Terminadas",
+        "in_progress": "En progreso",
+        "expirated": "Vencidas"
       }
     },
     "new": {

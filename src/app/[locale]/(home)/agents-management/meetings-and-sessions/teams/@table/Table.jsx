@@ -37,6 +37,8 @@ import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import Image from "next/image";
 import moment from "moment";
+import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import { toast } from "react-toastify";
 
 export default function Table() {
   const {
@@ -80,70 +82,72 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  // if (data?.items && data?.items.length === 0) {
-  //   return (
-  //     <div className="flex items-center justify-center h-96">
-  //       <div className="flex flex-col items-center space-y-3">
-  //         <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-  //           <svg
-  //             className="w-10 h-10 text-gray-400"
-  //             fill="none"
-  //             stroke="currentColor"
-  //             viewBox="0 0 24 24"
-  //           >
-  //             <path
-  //               strokeLinecap="round"
-  //               strokeLinejoin="round"
-  //               strokeWidth="2"
-  //               d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-  //             ></path>
-  //           </svg>
-  //         </div>
-  //         <p className="text-lg font-medium text-gray-400">No hay juntas</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   const itemActions = [
     {
       name: "Ver",
+      handleClick: (meet) =>
+        router.push(
+          `/agents-management/meetings-and-sessions/teams/meet/${meet.id}?show=true`
+        ),
+    },
+    {
+      name: "Crear",
+      handleClick: (meet) => {
+        if (meet?.agents?.length > 0) {
+          router.push(
+            `/agents-management/meetings-and-sessions/teams/meet?show=true&prev=agent-meet&prev_id=${meet?.agents?.map((x) => x.id).join("^")}`
+          );
+        } else {
+          toast.warning("La junta no tiene agentes asignados");
+        }
+      },
+    },
+    {
+      name: "Editar",
+      handleClick: (meet) =>
+        router.push(
+          `/agents-management/meetings-and-sessions/teams/meet/${meet.id}/edit?show=true`
+        ),
+    },
+    {
+      name: "Eliminar",
+      disabled: true,
+    },
+  ];
+
+  const masiveActions = [
+    {
+      id: 1,
+      name: "Asignar responsable",
       disabled: true,
     },
     {
-      name: "Planificar",
-      options: [
-        {
-          name: "Tarea",
-          disabled: true,
-        },
-        {
-          name: "Envío masivo SMS",
-          disabled: true,
-        },
-        {
-          name: "Correo electrónico",
-          disabled: true,
-        },
-      ],
+      id: 1,
+      name: "Crear tarea",
+      disabled: true,
     },
-    // { name: "Editar" },
-    // { name: "Copiar" },
+    {
+      id: 1,
+      name: t("common:buttons:delete"),
+      disabled: true,
+    },
   ];
 
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      {/* {selectedContacts.length > 0 && (
+      {selectedContacts.length > 0 && (
         <div className="flex py-2">
           <SelectedOptionsTable options={masiveActions} />
         </div>
-      )} */}
+      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full py-2 align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">
@@ -260,15 +264,10 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(meet.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              meet?.contact?.id
-                                            );
+                                            item.handleClick(meet);
                                         }}
                                       >
                                         <div
-                                          // onClick={item.onClick}
                                           className={
                                             "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           }

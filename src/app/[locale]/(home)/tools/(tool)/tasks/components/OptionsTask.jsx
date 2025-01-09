@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import useAppContext from "@/src/context/app";
 import CardFile from "./CardFile";
+import CardLocalFile from "./CardLocalFile";
 import { deleteFileTaskById } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
@@ -29,6 +30,7 @@ const OptionsTask = ({
   files,
   taggedUsers,
   setTaggedUsers,
+  canEdit,
 }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
@@ -43,6 +45,7 @@ const OptionsTask = ({
   const [openList, setOpenList] = useState((edit ?? copy) ? true : false);
   const [openFiles, setOpenFiles] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const [localFiles, setLocalFiles] = useState([]);
   const { mutate } = useSWRConfig();
 
   const options = [
@@ -256,33 +259,46 @@ const OptionsTask = ({
           ))}
         </div>
       )}
-      <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
-        {options
-          .filter((opt) => !opt.disabled)
-          .map((opt) => (
-            <div
-              key={opt.id}
-              className="flex gap-1 items-center cursor-pointer"
-              onClick={opt.onclick}
-              ref={opt.id === 3 ? mentionButtonRef : null}
-            >
-              <button
-                className="flex gap-2 items-center focus:ring-0"
-                disabled={opt.disabled}
-              >
-                {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
-                <p className="text-sm">{opt.name}</p>
-              </button>
+      {localFiles && localFiles?.length > 0 && (
+        <div className="flex flex-wrap gap-3 py-2">
+          {localFiles?.map((file, i) => (
+            <div key={i}>
+              <CardLocalFile data={file} onClick={() => deleteFile(file.id)} />
             </div>
           ))}
-        {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
-      </div>
+        </div>
+      )}
+
+      {canEdit && (
+        <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
+          {options
+            .filter((opt) => !opt.disabled)
+            .map((opt) => (
+              <div
+                key={opt.id}
+                className="flex gap-1 items-center cursor-pointer"
+                onClick={opt.onclick}
+                ref={opt.id === 3 ? mentionButtonRef : null}
+              >
+                <button
+                  className="flex gap-2 items-center focus:ring-0"
+                  disabled={opt.disabled}
+                >
+                  {opt.icon && <opt.icon className="h-4 w-4 text-black" />}
+                  <p className="text-sm">{opt.name}</p>
+                </button>
+              </div>
+            ))}
+          {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
+        </div>
+      )}
       {openFiles && (
         <UploadDocuments
           files={files}
           addFile={addFile}
           id={edit?.id ?? copy?.id}
-          deleteFile={deleteFile}
+          localFiles={localFiles}
+          setLocalFiles={setLocalFiles}
         />
       )}
       {openList && (

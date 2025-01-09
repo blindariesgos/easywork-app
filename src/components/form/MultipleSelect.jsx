@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import TextInput from "./TextInput";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
+import clsx from "clsx";
 
 const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
   if (tagLabel)
@@ -34,6 +35,7 @@ const MultipleSelect = ({
   error,
   tagLabel,
   onlyOne,
+  border,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -86,7 +88,16 @@ const MultipleSelect = ({
       <Menu>
         <MenuButton
           disabled={disabled}
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
+          className={clsx(
+            "z-50 w-full outline-none min-h-[36px] bg-white focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ",
+            {
+              "border border-gray-200 focus:ring-gray-200 focus:outline-0":
+                border,
+              "border-none focus:ring-0 ": !border,
+              // "bg-gray-100": disabled,
+              "drop-shadow-md": !disabled,
+            }
+          )}
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
@@ -104,12 +115,14 @@ const MultipleSelect = ({
                   </div>
                 </div>
               ))}
-            <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
-              <PlusIcon className="h-3 w-3" />
-              <p className="text-xs hover:text-primary/80">
-                {getTextLabel(tagLabel, onlyOne, getValues(name)?.length, t)}
-              </p>
-            </div>
+            {!disabled && (
+              <div className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold">
+                <PlusIcon className="h-3 w-3" />
+                <p className="text-xs hover:text-primary/80">
+                  {getTextLabel(tagLabel, onlyOne, getValues(name)?.length, t)}
+                </p>
+              </div>
+            )}
           </span>
           <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
             <ChevronDownIcon className="h-4 w-4" />

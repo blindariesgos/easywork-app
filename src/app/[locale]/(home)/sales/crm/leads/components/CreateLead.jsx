@@ -27,6 +27,8 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import Image from "next/image";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { handleApiError } from "@/src/utils/api/errors";
+import ValidatePolizaData from "./ValidatePolizaData";
+import useLeadContext from "@/src/context/leads";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -34,6 +36,12 @@ export default function CreateLead({ lead, id }) {
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
+  const {
+    isOpenValidation,
+    setIsOpenValidation,
+    policyInfo,
+    mutate: mutateLeads,
+  } = useLeadContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
@@ -234,6 +242,9 @@ export default function CreateLead({ lead, id }) {
           return;
         }
         toast.success("Prospecto creado con exito");
+        mutateLeads();
+        setLoading(false);
+        router.back();
       } else {
         const response = await updateLead(formData, id);
         if (response.hasError) {
@@ -246,13 +257,12 @@ export default function CreateLead({ lead, id }) {
           return;
         }
         toast.success("¡Prospecto actualizado!");
-        mutate(`/sales/crm/leads/${id} `);
-        mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
+        mutate(`/sales/crm/leads/${id}`);
+        mutateLeads();
         setLoading(false);
         router.back();
       }
     } catch (error) {
-      console.log(error);
       handleApiError(error.message);
     }
   };
@@ -649,6 +659,12 @@ export default function CreateLead({ lead, id }) {
           </div>
         )}
       </form>
+      <ValidatePolizaData
+        isOpen={isOpenValidation}
+        setIsOpen={setIsOpenValidation}
+        policy={policyInfo}
+        leadId={id}
+      />
     </div>
   );
 }

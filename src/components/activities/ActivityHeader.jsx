@@ -13,6 +13,7 @@ export default function ActivityHeader({
   update,
   crmType = "contact",
   contactType = "fisica",
+  disabled,
 }) {
   const [isShowAddComment, setIsShowAddComment] = useState(false);
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ export default function ActivityHeader({
     {
       name: t("contacts:create:activities:email"),
       href: "/tools/mails",
+      hidden: ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:appointments"),
@@ -38,17 +40,22 @@ export default function ActivityHeader({
     {
       name: t("contacts:create:activities:whatsapp"),
       href: "#",
-      hidden: contactType == "moral",
+      hidden: contactType == "moral" || ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:call"),
       href: "#",
-      hidden: contactType == "moral" || ["receipt"].includes(crmType),
+      hidden: contactType == "moral" || ["receipt", "agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:zoom"),
       href: "#",
-      hidden: contactType == "moral" || ["receipt"].includes(crmType),
+      hidden: contactType == "moral" || ["receipt", "agent"].includes(crmType),
+    },
+    {
+      name: t("contacts:create:activities:meet"),
+      href: `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=agent-meet&prev_id=${entityId}`,
+      hidden: !["agent"].includes(crmType),
     },
   ];
   return (
@@ -72,13 +79,14 @@ export default function ActivityHeader({
                       ) : (
                         <Link
                           key={tab.name}
-                          href={tab.href}
+                          href={!disabled ? tab.href : ""}
                           className={clsx(
                             "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
                             "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
                           )}
                           aria-current={tab.current ? "page" : undefined}
-                          onClick={tab.onClick}
+                          onClick={!disabled && tab.onClick}
+                          disabled={disabled}
                         >
                           {tab.name}
                         </Link>
@@ -102,9 +110,10 @@ export default function ActivityHeader({
               type="text"
               name="todo"
               id="todo"
+              disabled={disabled}
               className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm bg-gray-200 placeholder:text-gray-400 outline-none focus:outline-none focus:border focus:border-primary sm:text-sm sm:leading-6"
               placeholder={"Escribe un comentario"}
-              onClick={() => setIsShowAddComment(true)}
+              onClick={() => !disabled && setIsShowAddComment(true)}
             />
           )}
         </div>

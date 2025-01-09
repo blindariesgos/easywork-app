@@ -4,7 +4,11 @@ import AgentEditor from "../../agent/components/AgentEditor";
 
 export default async function page() {
   return (
-    <SlideOver colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver
+      colorTag="bg-easywork-main"
+      labelTag="agent"
+      maxWidthClass={"max-w-[46rem]"}
+    >
       <AgentEditor />
     </SlideOver>
   );

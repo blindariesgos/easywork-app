@@ -12,8 +12,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DropdownSelect from "../../../components/DropdownSelect";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
+import useTasksContext from "@/src/context/tasks";
 
-const TaskResponsible = ({ task, lists, field }) => {
+const TaskResponsible = ({ task, lists, field, disabled }) => {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -21,7 +22,7 @@ const TaskResponsible = ({ task, lists, field }) => {
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
-  const { mutate: mutateTasks } = useTasks({});
+  const { mutate: mutateTasks } = useTasksContext();
 
   const schema = yup.object().shape({
     responsible: yup.array(),
@@ -74,7 +75,7 @@ const TaskResponsible = ({ task, lists, field }) => {
           return;
         }
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${task.id}`);
+        mutate(`/tools/tasks/${task.id}`);
         mutateTasks();
       } catch (error) {
         console.log(error);
@@ -104,14 +105,16 @@ const TaskResponsible = ({ task, lists, field }) => {
         <p className="text-sm text-black">
           {t("tools:tasks:edit:responsible")}
         </p>
-        <p
-          className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
-          onClick={isLoading ? () => {} : handleEditClick}
-        >
-          {isLoading
-            ? t("tools:tasks:delegating")
-            : t("tools:tasks:edit:change")}
-        </p>
+        {!disabled && (
+          <p
+            className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
+            onClick={isLoading ? () => {} : handleEditClick}
+          >
+            {isLoading
+              ? t("tools:tasks:delegating")
+              : t("tools:tasks:edit:change")}
+          </p>
+        )}
       </div>
       {task?.responsible?.length > 0 &&
         task.responsible.map((resp, index) => (

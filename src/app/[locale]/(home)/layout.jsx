@@ -16,8 +16,8 @@ import CrmDetailsModals from "./details/CrmDetailsModals";
 export default function HomeLayout({ children }) {
   return (
     <SessionProvider>
-      <AppContextProvider>
-        <LoggedInProvider>
+      <LoggedInProvider>
+        <AppContextProvider>
           <SocketProvider>
             <NotifyContextProvider>
               <FirebaseMessaging />
@@ -34,8 +34,8 @@ export default function HomeLayout({ children }) {
               </div>
             </NotifyContextProvider>
           </SocketProvider>
-        </LoggedInProvider>
-      </AppContextProvider>
+        </AppContextProvider>
+      </LoggedInProvider>
     </SessionProvider>
   );
 }

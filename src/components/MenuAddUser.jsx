@@ -45,11 +45,9 @@ const MenuAddUser = ({ selectedOption, setSelection }) => {
 
   return (
     <Menu as="div" className="relative inline-block">
-      <div>
-        <MenuButton className="border border-gray-200 text-black rounded-md w-48 h-[38px] flex justify-center items-center text-sm">
-          {userSelected?.name}
-        </MenuButton>
-      </div>
+      <MenuButton className="border border-gray-200 text-black rounded-md w-48 h-[38px] flex justify-center items-center text-sm">
+        {userSelected?.name}
+      </MenuButton>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -89,12 +87,10 @@ const MenuAddUser = ({ selectedOption, setSelection }) => {
                       onClick={() => handleSelected(user)}
                     >
                       <Image
-                        src={user.avatar}
+                        src={user?.avatar || "/img/avatar.svg"}
                         alt=""
                         height={500}
                         width={500}
-                        layout="fixed"
-                        objectFit="cover"
                         className="h-9 w-9 rounded-full"
                       />
                       <div className={`flex flex-col`}>

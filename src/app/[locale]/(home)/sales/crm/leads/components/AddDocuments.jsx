@@ -1,3 +1,4 @@
+"use client";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { forwardRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,22 +15,29 @@ const AddDocuments = ({ leadId }) => {
   });
 
   const options = [
-    { name: t("leads:add:quote"), type: "cotizacion", accept: null },
-    { name: t("leads:add:rfc"), type: "documentos", accept: null },
-    { name: t("leads:add:profile"), type: "perfil", accept: null },
-    { name: t("leads:add:medica"), type: "medica", accept: null },
-    { name: t("leads:add:solicitud"), type: "solicitud", accept: null },
-    { name: t("leads:add:address"), type: "documentos", accept: null },
-    { name: t("leads:add:policy"), type: "poliza", accept: ".pdf" },
+    { name: t("leads:add:quote"), type: "cotizacion" },
+    { name: t("leads:add:rfc"), type: "documentos" },
+    { name: t("leads:add:profile"), type: "perfil" },
+    { name: t("leads:add:medica"), type: "medica" },
+    { name: t("leads:add:solicitud"), type: "solicitud" },
+    { name: t("leads:add:address"), type: "documentos" },
+    {
+      name: t("leads:add:policy"),
+      type: "poliza",
+      accept: ".pdf",
+      fileName: "poliza",
+      cmrType: "poliza-lead",
+    },
   ];
 
-  const handleAddDocument = (document) => {
+  const handleAddDocument = (documentToAdd) => {
+    const { name, type, ...props } = documentToAdd;
     setAddFileProps({
       ...addFileProps,
       isOpen: true,
-      documentType: document.type,
-      title: t("common:add-document", { document: document.name }),
-      accept: document.accept,
+      documentType: type,
+      title: t("common:add-document", { document: name }),
+      ...props,
     });
   };
 

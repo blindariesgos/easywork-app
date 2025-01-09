@@ -1,30 +1,18 @@
+"use client";
 import clsx from "clsx";
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
-import { getContactsNeedAttention } from "../../../../../lib/apis";
+import { Fragment } from "react";
 import Image from "next/image";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
+import { useContactsNeedAttention } from "@/src/lib/api/hooks/home";
 
 const ContactList = () => {
-  const [contacts, setContacts] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const getContacts = async () => {
-      try {
-        const response = await getContactsNeedAttention();
-        setContacts(response);
-      } catch (error) {
-        console.log(error);
-      }
-      setIsLoading(false);
-    };
-    getContacts();
-  }, []);
+  const { contacts, isLoading } = useContactsNeedAttention();
 
   return (
     <div
       className={clsx(
-        "col-span-1 md:col-span-2  bg-white rounded-lg p-2 h-72 flex items-center flex-col",
+        "col-span-1 md:col-span-2 bg-white rounded-lg p-2 h-72 flex items-center flex-col",
         {
           "justify-between": !contacts?.length,
         }
@@ -53,12 +41,12 @@ const ContactList = () => {
                 />
                 <div>
                   <p className="text-sm">{contact.fullName}</p>
-                  {contact?.emails?.length && (
+                  {contact?.emails?.length > 0 && (
                     <p className="text-xs text-gray-50">
                       {contact?.emails[0]?.email?.email}
                     </p>
                   )}
-                  {contact?.phones?.length && (
+                  {contact?.phones?.length > 0 && (
                     <p className="text-xs text-gray-50">
                       {contact?.phones[0]?.phone?.number}
                     </p>
@@ -70,8 +58,8 @@ const ContactList = () => {
         </div>
       ) : (
         <Fragment>
-          <div className=" flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
-            <h1 className="text-sm p-2 ">
+          <div className="flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+            <h1 className="text-sm p-2">
               ¡Buen trabajo! tus clientes están al día
             </h1>
           </div>

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const CrmItems = ({ conections }) => {
   const { t } = useTranslation();
 
-  const getCMRTag = (data) => {
+  const getCMRTag = (data, key) => {
     if (!data || !data.type || !data.crmEntity) return null;
 
     const typeConfig = {
@@ -58,6 +58,7 @@ const CrmItems = ({ conections }) => {
       <Link
         href={config.href}
         className={`${config.bgClass} p-2 rounded-lg flex gap-2 justify-between w-full hover:shadow-[-2px_2px_5px_1px_#00000082]`}
+        key={key}
       >
         <p className="text-sm ">{t(`${config.labelKey}`)}:</p>
         <p className="text-sm text-right">{config.name}</p>
@@ -65,7 +66,11 @@ const CrmItems = ({ conections }) => {
     );
   };
   return (
-    <Fragment>{conections.map((connection) => getCMRTag(connection))}</Fragment>
+    <Fragment>
+      {conections.map((connection, index) =>
+        getCMRTag(connection, `crm-tag-${index}`)
+      )}
+    </Fragment>
   );
 };
 

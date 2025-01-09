@@ -28,7 +28,6 @@ export const useContacts = ({ page = 1, limit = 15, filters = {} }) => {
   const queries = getQueries(filters);
 
   const url = `/sales/crm/contacts?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     contacts: data,
@@ -69,8 +68,7 @@ const getActivityPath = (cmrtype) => {
 export const useEntityActivities = (id, cmrtype) => {
   const { data, error, isLoading, mutate } = useSWR(
     `${getActivityPath(cmrtype)}/${id}/activities`,
-    fetcher,
-    { refreshInterval: 1000 }
+    fetcher
   );
 
   console.log("activities data", data);

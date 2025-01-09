@@ -11,12 +11,14 @@ import CardComment from "./CardComment";
 import { useEntityActivities } from "../../lib/api/hooks/contacts";
 import { MdModeComment } from "react-icons/md";
 import Image from "next/image";
+import { LoadingSpinnerSmall } from "../LoaderSpinner";
 
 export default function ActivityPanel({
   entityId,
   crmType = "contact",
   className,
   contactType,
+  disabled,
 }) {
   const [bulkActivity, setBulkActivity] = useState([]);
   const { activities, isError, isLoading, mutate } = useEntityActivities(
@@ -40,7 +42,7 @@ export default function ActivityPanel({
   }
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return <LoadingSpinnerSmall />;
   }
 
   const getActivityIcon = (type) => {
@@ -117,6 +119,7 @@ export default function ActivityPanel({
                       update={mutate}
                       className="w-full"
                       contactType={contactType}
+                      disabled={disabled}
                     />
                   </div>
                 </div>

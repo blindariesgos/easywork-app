@@ -3,7 +3,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon, FireIcon, LinkIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
 import ButtonMore from "../../components/ButtonMore";
@@ -32,9 +32,11 @@ import SubTaskTable from "./components/SubTaskTable";
 import CrmItems from "../../../../../../../../components/CrmItems";
 import { useSession } from "next-auth/react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import useTasksContext from "@/src/context/tasks";
 
-export default function TaskView({ id, mutateTask, task }) {
+export default function TaskView({ id, task }) {
   const { lists } = useAppContext();
+  const { mutate: mutateTask } = useTasksContext();
   const { t } = useTranslation();
   const session = useSession();
   const { settings } = useTasksConfigs();
@@ -50,6 +52,22 @@ export default function TaskView({ id, mutateTask, task }) {
     console.log("Nueva fecha:", date);
   };
 
+  const canEdit = useMemo(() => {
+    if (!task) {
+      return true;
+    }
+    console.log({ task });
+
+    const isCreator = task.createdBy.id == session.data.user.sub;
+    const isResponsible = !!task.responsible.find(
+      (responsible) => responsible.id == session.data.user.sub
+    );
+
+    if (isCreator || isResponsible) return true;
+
+    return false;
+  }, [task, session.data.user.sub]);
+
   const field = {}; // Pasar props adicionales del campo si es necesario
 
   const getCompletedTask = async () => {
@@ -59,7 +77,7 @@ export default function TaskView({ id, mutateTask, task }) {
       toast.success(t("tools:tasks:completed-success"));
       setLoading(false);
       mutateTask();
-      mutate("/tools/tasks/user?limit=15&page=1");
+      mutate(`/tools/tasks/${task?.id}`);
     } catch (error) {
       setLoading(false);
       handleApiError(error.message);
@@ -95,7 +113,7 @@ export default function TaskView({ id, mutateTask, task }) {
       await putTaskId(task.id, body);
       toast.success(t("tools:tasks:update-msg"));
       mutateTask();
-      mutate("/tools/tasks/user?limit=15&page=1");
+      mutate(`/tools/tasks/${task?.id}`);
     } catch (error) {
       handleApiError(error.message);
     } finally {
@@ -137,7 +155,8 @@ export default function TaskView({ id, mutateTask, task }) {
             </div>
             {!openEdit?.mode &&
               task?.metadata?.meet &&
-              task?.metadata?.developmentManagerId === session.data.user.id && (
+              task?.metadata?.developmentManagerId ===
+                session.data.user.sub && (
                 <div className="flex gap-2 items-center">
                   <p className="text-xl font-medium">Revisión de GDD</p>
                   <Menu>
@@ -226,6 +245,7 @@ export default function TaskView({ id, mutateTask, task }) {
                     setValueText={setTaskDescription}
                     value={taskDescription}
                     disabled={task ? true : false}
+                    canEdit={canEdit}
                   />
                 </div>
                 {/* CRM */}
@@ -275,7 +295,7 @@ export default function TaskView({ id, mutateTask, task }) {
                       openEdit={openEdit}
                       data={task}
                       setIsDelegating={setIsDelegating}
-                      mutateTask={mutateTask}
+                      canEdit={canEdit}
                     />
                     {isDelegating && (
                       <TaskDelegate
@@ -309,7 +329,11 @@ export default function TaskView({ id, mutateTask, task }) {
                 <TaskHeaderStatus task={task} />
               </div>
               <div className="p-2 sm:p-4">
-                <TaskDeadLine task={task} onDateChange={handleDateChange} />
+                <TaskDeadLine
+                  task={task}
+                  onDateChange={handleDateChange}
+                  disabled={!canEdit}
+                />
                 <BannerStatus task={task} />
                 <div className="flex justify-between mb-2 border-b-[1px] border-slate-300/40 py-2">
                   <p className="text-sm text-black">
@@ -345,9 +369,24 @@ export default function TaskView({ id, mutateTask, task }) {
                     </p>
                   </div>
                 </div>
-                <TaskResponsible task={task} lists={lists} field={field} />
-                <TaskParticipants task={task} lists={lists} field={field} />
-                <TaskObservers task={task} lists={lists} field={field} />
+                <TaskResponsible
+                  task={task}
+                  lists={lists}
+                  field={field}
+                  disabled={!canEdit}
+                />
+                <TaskParticipants
+                  task={task}
+                  lists={lists}
+                  field={field}
+                  disabled={!canEdit}
+                />
+                <TaskObservers
+                  task={task}
+                  lists={lists}
+                  field={field}
+                  disabled={!canEdit}
+                />
                 <TaskTags task={task} />
               </div>
             </div>

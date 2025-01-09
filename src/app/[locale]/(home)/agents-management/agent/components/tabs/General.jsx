@@ -24,8 +24,9 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import moment from "moment";
 import { useSession } from "next-auth/react";
+import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
 
-export default function General({ agent, id, refPrint }) {
+export default function General({ agent, id, refPrint, type }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
@@ -61,6 +62,10 @@ export default function General({ agent, id, refPrint }) {
     bio: Yup.string(),
     password: Yup.string(),
     address: Yup.string(),
+    dni: Yup.string().matches(
+      VALIDATE_ALPHANUMERIC_REGEX,
+      t("common:validations:alphanumeric")
+    ),
     recruitmentManagerId: Yup.string(),
     developmentManagerId: Yup.string(),
     observerId: Yup.string(),
@@ -104,8 +109,11 @@ export default function General({ agent, id, refPrint }) {
       setValue("lastName", agent?.user?.profile?.lastName);
     if (agent?.user?.email) setValue("email", agent?.user?.email);
     if (agent?.user?.phone) setValue("phone", agent?.user?.phone);
-    if (agent?.user?.profile?.birthday)
+    if (agent?.user?.profile?.birthday) {
       setValue("birthdate", agent?.user?.profile?.birthday);
+      var a = moment(agent?.user?.profile?.birthday);
+      setValue("age", moment().diff(a, "years"));
+    }
     if (agent?.children) setValue("childrens", agent?.children);
     if (agent?.cua) setValue("cua", agent?.cua);
     if (agent?.user?.profile?.idcard)
@@ -118,6 +126,7 @@ export default function General({ agent, id, refPrint }) {
       setValue("developmentManagerId", agent?.developmentManager?.id);
     if (agent?.observer) setValue("observerId", agent?.observer?.id);
     if (agent?.observations) setValue("observations", agent?.observations);
+    if (agent?.createdAt) setValue("createdAt", agent?.createdAt);
 
     setLoading(false);
   }, [agent, id]);
@@ -263,7 +272,7 @@ export default function General({ agent, id, refPrint }) {
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-20 pt-4">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-[7rem] pt-4">
               <TextInput
                 type="text"
                 label={t("users:form:firstname")}
@@ -282,6 +291,50 @@ export default function General({ agent, id, refPrint }) {
                 name="lastName"
                 disabled={!isEdit}
               />
+              {isEdit && type === "recruitment" && (
+                <Fragment>
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:init-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.createdAt}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="createdAt"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:entry-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.entryDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="entryDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                </Fragment>
+              )}
               <Controller
                 render={({ field: { ref, ...field } }) => {
                   return (
@@ -291,6 +344,7 @@ export default function General({ agent, id, refPrint }) {
                       error={errors.phone}
                       label={t("contacts:create:phone")}
                       defaultValue={field.value}
+                      disabled={!isEdit}
                     />
                   );
                 }}
@@ -304,16 +358,18 @@ export default function General({ agent, id, refPrint }) {
                 error={errors.email}
                 register={register}
                 name="email"
-              />
-
-              <TextInput
-                label={t("agentsmanagement:accompaniments:agent:age")}
-                error={errors.age}
-                register={register}
-                name="age"
                 disabled={!isEdit}
-                type="number"
               />
+              {!isEdit && (
+                <TextInput
+                  label={t("agentsmanagement:accompaniments:agent:age")}
+                  error={errors.age}
+                  register={register}
+                  name="age"
+                  disabled={true}
+                  type="number"
+                />
+              )}
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -404,6 +460,116 @@ export default function General({ agent, id, refPrint }) {
                 setValue={setValue}
                 watch={watch}
               />
+              <SelectInput
+                label={t("contacts:create:origen")}
+                name="sourceId"
+                options={lists?.listContact?.contactSources}
+                error={errors.sourceId}
+                register={register}
+                setValue={setValue}
+                disabled={!isEdit}
+                watch={watch}
+              />
+
+              {type === "conection" && (
+                <Fragment>
+                  <TextInput
+                    label={t("agentsmanagement:conections:dni-number")}
+                    error={errors?.dni}
+                    register={register}
+                    name="dni"
+                    disabled={!isEdit}
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:conections:date-cvp")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.datecvp}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="datecvp"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:conections:date-vc")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.datevc}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="datevc"
+                    control={control}
+                    defaultValue=""
+                  />
+                  {isEdit && (
+                    <Fragment>
+                      <Controller
+                        render={({
+                          field: { value, onChange, ref, onBlur },
+                        }) => {
+                          return (
+                            <InputDate
+                              label={"Fecha de inicio de proceso"}
+                              value={value}
+                              onChange={onChange}
+                              onBlur={onBlur}
+                              icon={
+                                <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                              }
+                              error={errors.createdAt}
+                              disabled={!isEdit}
+                            />
+                          );
+                        }}
+                        name="createdAt1"
+                        control={control}
+                        defaultValue=""
+                      />
+                      <Controller
+                        render={({
+                          field: { value, onChange, ref, onBlur },
+                        }) => {
+                          return (
+                            <InputDate
+                              label={"Fecha de conexión"}
+                              value={value}
+                              onChange={onChange}
+                              onBlur={onBlur}
+                              icon={
+                                <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                              }
+                              error={errors.entryDate}
+                              disabled={!isEdit}
+                            />
+                          );
+                        }}
+                        name="entryDate1"
+                        control={control}
+                        defaultValue=""
+                      />
+                    </Fragment>
+                  )}
+                </Fragment>
+              )}
               <TextInput
                 label={t("agentsmanagement:accompaniments:agent:comments")}
                 error={errors.address}

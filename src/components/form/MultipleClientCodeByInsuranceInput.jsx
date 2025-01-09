@@ -51,7 +51,7 @@ const MultipleClientCodeByInsuranceInput = ({
               />
             </div>
             <SelectInput
-              options={lists.policies.polizaCompanies}
+              options={lists?.policies?.polizaCompanies ?? []}
               watch={watch}
               name={`${name}[${index}].insuranceId`}
               disabled={disabled}

@@ -44,6 +44,7 @@ export default function PolicyDetails({
     vigenciaDesde: Yup.string(),
     vigenciaHasta: Yup.string(),
     address: Yup.string(),
+    observations: Yup.string(),
     status: Yup.string(),
     subramoId: Yup.string(),
     cobertura: Yup.string(),
@@ -58,6 +59,7 @@ export default function PolicyDetails({
     formaCobroId: Yup.string(),
     currencyId: Yup.string(),
     version: Yup.string(),
+    subAgentId: Yup.string(),
   });
 
   const {
@@ -99,6 +101,7 @@ export default function PolicyDetails({
       setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
     if (data?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
+    if (data?.subAgent?.name) setValue("subAgentId", data?.subAgent?.id);
     if (data?.observations) setValue("observations", data?.observations);
     if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
     if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
@@ -116,6 +119,7 @@ export default function PolicyDetails({
       derechoPoliza,
       iva,
       importePagar,
+      version,
       ...otherData
     } = data;
 
@@ -126,9 +130,11 @@ export default function PolicyDetails({
       derechoPoliza: +derechoPoliza,
       iva: +iva,
       importePagar: +importePagar,
+      version: +version,
     };
     try {
       const response = await putPoliza(id, body);
+      console.log({ response });
       if (response.hasError) {
         console.log(response);
         toast.error(
@@ -401,6 +407,16 @@ export default function PolicyDetails({
           <SelectInput
             label={t("operations:policies:general:intermediary")}
             name="agenteIntermediarioId"
+            options={lists?.policies?.agentesIntermediarios ?? []}
+            disabled={!isEdit}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+          />
+
+          <SelectInput
+            label={t("operations:policies:general:sub-agent")}
+            name="subAgentId"
             options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
             register={register}

@@ -40,8 +40,8 @@ export default function Price() {
 
   const plans = [
     {
-      title: "EASY ONLY",
-      price: "299",
+      title: "EASYONLY",
+      price: "",
       content: [
         "1 Usuario.",
         "500 Pólizas Vigentes.",
@@ -132,7 +132,7 @@ export default function Price() {
       ],
     },
     {
-      title: "EASY PLUS",
+      title: "EASYPLUS",
       price: "27999",
       content: [
         "250 Usuarios.",
@@ -258,10 +258,11 @@ export default function Price() {
               <div>
                 <h1 className="font-bold text-2xl md:text-3xl">{item.title}</h1>
                 <h2 className="font-bold text-2xl md:text-3xl">
-                  $
-                  {stateTime === 1
-                    ? (item.price * 1).toLocaleString("en-US")
-                    : (item.price * 12).toLocaleString("en-US")}
+                  {item.price == ""
+                    ? "Gratis"
+                    : stateTime === 1
+                      ? "$" + (item.price * 1).toLocaleString("en-US")
+                      : "$" + (item.price * 12).toLocaleString("en-US")}
                 </h2>
                 <div className="mt-3 mb-6">
                   {item.content.map((des, idx) => (
@@ -287,7 +288,7 @@ export default function Price() {
       </div>
 
       {/* Para responsive */}
-      <div className="flex gap-3 w-full max-md:flex-col overflow-x-hidden md:hidden">
+      <div className="flex gap-3 w-full max-md:flex-col overflow-x-auto md:hidden px-4">
         {plans.map((item, index) => (
           <div
             key={index}
@@ -295,16 +296,17 @@ export default function Price() {
           >
             {index === 4 && <div className="popular-badge">Más Popular</div>}
             <div
-              className="bg-white my-2 mx-1 rounded-md py-4 px-0.5 w-full md:w-72 flex flex-col justify-between"
+              className="bg-white my-2 mx-1 rounded-md py-4 px-0.5 flex flex-col justify-between"
               style={{ height: "auto", minHeight: "450px" }}
             >
               <div>
                 <h1 className="font-bold text-2xl md:text-3xl">{item.title}</h1>
                 <h2 className="font-bold text-2xl md:text-3xl">
-                  $
-                  {stateTime === 1
-                    ? (item.price * 1).toLocaleString("en-US")
-                    : (item.price * 12).toLocaleString("en-US")}
+                  {item.price == ""
+                    ? "Gratis"
+                    : stateTime === 1
+                      ? "$" + (item.price * 1).toLocaleString("en-US")
+                      : "$" + (item.price * 12).toLocaleString("en-US")}
                 </h2>
                 <div className="mt-3 mb-6">
                   {item.content.map((des, idx) => (

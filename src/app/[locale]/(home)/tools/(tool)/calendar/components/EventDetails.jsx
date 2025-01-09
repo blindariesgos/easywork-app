@@ -224,7 +224,7 @@ export default function EventDetails({ data, id }) {
     };
     console.log(body);
     if (params.get("oauth")) body.oauth = params.get("oauth");
-    body.user = session?.data?.user?.id;
+    body.user = session?.data?.user?.sub;
     try {
       if (id) {
         const response = await updateCalendarEvent(body, id);
@@ -421,7 +421,7 @@ export default function EventDetails({ data, id }) {
     try {
       const response = await deleteCalendarEvent(
         id,
-        session?.data?.user?.id,
+        session?.data?.user?.sub,
         params.get("oauth")
       );
       if (response.hasError) {

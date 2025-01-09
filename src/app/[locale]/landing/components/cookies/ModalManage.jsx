@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Transition, Switch } from "@headlessui/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -9,10 +9,43 @@ export default function ModalManage() {
   const router = useRouter();
   const params = new URLSearchParams(searchParams);
 
-  const [activeCategory, setActiveCategory] = useState(null); // Define which category is active
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
+  const [isAdvertisingEnabled, setIsAdvertisingEnabled] = useState(false);
+  const [isFunctionalEnabled, setIsFunctionalEnabled] = useState(false);
+
+  // Función para cargar los valores de localStorage
+  useEffect(() => {
+    const savedAnalytics = localStorage.getItem("isAnalyticsEnabled");
+    const savedAdvertising = localStorage.getItem("isAdvertisingEnabled");
+    const savedFunctional = localStorage.getItem("isFunctionalEnabled");
+
+    if (savedAnalytics !== null) {
+      setIsAnalyticsEnabled(JSON.parse(savedAnalytics));
+    }
+    if (savedAdvertising !== null) {
+      setIsAdvertisingEnabled(JSON.parse(savedAdvertising));
+    }
+    if (savedFunctional !== null) {
+      setIsFunctionalEnabled(JSON.parse(savedFunctional));
+    }
+  }, []);
+
+  // Función para guardar los valores en localStorage cada vez que cambien
+  useEffect(() => {
+    localStorage.setItem("isAnalyticsEnabled", JSON.stringify(isAnalyticsEnabled));
+  }, [isAnalyticsEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem("isAdvertisingEnabled", JSON.stringify(isAdvertisingEnabled));
+  }, [isAdvertisingEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem("isFunctionalEnabled", JSON.stringify(isFunctionalEnabled));
+  }, [isFunctionalEnabled]);
 
   const handleCategoryToggle = (category) => {
-    setActiveCategory(activeCategory === category ? null : category); // Toggle category
+    setActiveCategory(activeCategory === category ? null : category);
   };
 
   return (
@@ -34,7 +67,7 @@ export default function ModalManage() {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="relative w-2/4 max-md:w-4/5 flex flex-col items-center bg-white p-6 rounded-lg shadow-lg">
+            <div className="relative w-2/4 max-md:w-4/5 flex flex-col items-center bg-white p-6 rounded-lg shadow-lg text-justify">
               <h1 className="text-easywork-main text-left text-xl font-bold w-full mb-2">
                 Administrar cookies
               </h1>
@@ -101,22 +134,23 @@ export default function ModalManage() {
                         <h1 className="ml-1">Cookies para analíticas web</h1>
                       </div>
                       <Switch
-                        checked={activeCategory === "analytics"}
-                        onChange={() =>
-                          setActiveCategory(
-                            activeCategory === "analytics" ? null : "analytics"
-                          )
-                        }
-                        className="group relative flex h-6 w-12 cursor-pointer rounded-full bg-zinc-300 p-1 transition-colors duration-200 ease-in-out"
+                        checked={isAnalyticsEnabled}
+                        onChange={setIsAnalyticsEnabled}
+                        onClick={(e) => e.stopPropagation()} // Evitar que el clic en Switch dispare handleCategoryToggle
+                        className={`group relative flex h-6 w-12 cursor-pointer rounded-full p-1 transition-colors duration-200 ease-in-out ${
+                          isAnalyticsEnabled ? "bg-indigo-300" : "bg-zinc-300"
+                        }`}
                       >
                         <span
                           aria-hidden="true"
-                          className="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-indigo-600 transition duration-200 ease-in-out translate-x-0"
+                          className="pointer-events-none inline-block h-4 w-4 transform rounded-full transition duration-200 ease-in-out"
                           style={{
-                            transform:
-                              activeCategory === "analytics"
-                                ? "translateX(1.50rem)"
-                                : "translateX(0)",
+                            backgroundColor: isAnalyticsEnabled
+                              ? "#4f46e5"
+                              : "#a3a3a3",
+                            transform: isAnalyticsEnabled
+                              ? "translateX(1.50rem)"
+                              : "translateX(0)",
                           }}
                         />
                       </Switch>
@@ -154,24 +188,25 @@ export default function ModalManage() {
                         <h1 className="ml-1">Cookies para publicidad</h1>
                       </div>
                       <Switch
-                        checked={activeCategory === "advertising"}
-                        onChange={() =>
-                          setActiveCategory(
-                            activeCategory === "advertising"
-                              ? null
-                              : "advertising"
-                          )
-                        }
-                        className="group relative flex h-6 w-12 cursor-pointer rounded-full bg-zinc-300 p-1 transition-colors duration-200 ease-in-out"
+                        checked={isAdvertisingEnabled}
+                        onChange={setIsAdvertisingEnabled}
+                        onClick={(e) => e.stopPropagation()} // Evitar que el clic en Switch dispare handleCategoryToggle
+                        className={`group relative flex h-6 w-12 cursor-pointer rounded-full p-1 transition-colors duration-200 ease-in-out ${
+                          isAdvertisingEnabled
+                            ? "bg-indigo-300"
+                            : "bg-zinc-300"
+                        }`}
                       >
                         <span
                           aria-hidden="true"
-                          className="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-indigo-600 transition duration-200 ease-in-out translate-x-0"
+                          className="pointer-events-none inline-block h-4 w-4 transform rounded-full transition duration-200 ease-in-out"
                           style={{
-                            transform:
-                              activeCategory === "advertising"
-                                ? "translateX(1.50rem)"
-                                : "translateX(0)",
+                            backgroundColor: isAdvertisingEnabled
+                              ? "#4f46e5"
+                              : "#a3a3a3",
+                            transform: isAdvertisingEnabled
+                              ? "translateX(1.50rem)"
+                              : "translateX(0)",
                           }}
                         />
                       </Switch>
@@ -179,14 +214,12 @@ export default function ModalManage() {
                   </div>
                   {activeCategory === "advertising" && (
                     <p className="text-sm">
-                      Usamos cookies para que los anuncios que mostramos sean de
-                      interés y utilidad para los visitantes de nuestro sitio
-                      web. Con el fin de mejorar las estadísticas de rendimiento
-                      de las campañas publicitarias y evitar mostrar anuncios
-                      que un usuario determinado ya ha visto antes, algunas
-                      aplicaciones para cookies comunes seleccionan los anuncios
-                      con base en lo que es más pertinente para cada visitante.
-                      Más información sobre las cookies para publicidad.
+                      Estas cookies nos permiten mostrar anuncios publicitarios
+                      que sean más relevantes para ti. Para ello, se basa en tu
+                      historial de navegación. Además de analizar y personalizar
+                      los anuncios, podemos compartir información sobre el uso
+                      de nuestro sitio con nuestros socios de publicidad. Más
+                      información sobre las cookies de publicidad.
                     </p>
                   )}
                 </div>
@@ -208,24 +241,23 @@ export default function ModalManage() {
                         <h1 className="ml-1">Cookies de funcionalidad</h1>
                       </div>
                       <Switch
-                        checked={activeCategory === "functional"}
-                        onChange={() =>
-                          setActiveCategory(
-                            activeCategory === "functional"
-                              ? null
-                              : "functional"
-                          )
-                        }
-                        className="group relative flex h-6 w-12 cursor-pointer rounded-full bg-zinc-300 p-1 transition-colors duration-200 ease-in-out"
+                        checked={isFunctionalEnabled}
+                        onChange={setIsFunctionalEnabled}
+                        onClick={(e) => e.stopPropagation()} // Evitar que el clic en Switch dispare handleCategoryToggle
+                        className={`group relative flex h-6 w-12 cursor-pointer rounded-full p-1 transition-colors duration-200 ease-in-out ${
+                          isFunctionalEnabled ? "bg-indigo-300" : "bg-zinc-300"
+                        }`}
                       >
                         <span
                           aria-hidden="true"
-                          className="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-indigo-600 transition duration-200 ease-in-out translate-x-0"
+                          className="pointer-events-none inline-block h-4 w-4 transform rounded-full transition duration-200 ease-in-out"
                           style={{
-                            transform:
-                              activeCategory === "functional"
-                                ? "translateX(1.50rem)"
-                                : "translateX(0)",
+                            backgroundColor: isFunctionalEnabled
+                              ? "#4f46e5"
+                              : "#a3a3a3",
+                            transform: isFunctionalEnabled
+                              ? "translateX(1.50rem)"
+                              : "translateX(0)",
                           }}
                         />
                       </Switch>

@@ -36,8 +36,12 @@ export default function CreateLead({ lead, id }) {
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
-  const { isOpenValidation, setIsOpenValidation, policyInfo } =
-    useLeadContext();
+  const {
+    isOpenValidation,
+    setIsOpenValidation,
+    policyInfo,
+    mutate: mutateLeads,
+  } = useLeadContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
@@ -238,6 +242,9 @@ export default function CreateLead({ lead, id }) {
           return;
         }
         toast.success("Prospecto creado con exito");
+        mutateLeads();
+        setLoading(false);
+        router.back();
       } else {
         const response = await updateLead(formData, id);
         if (response.hasError) {
@@ -250,13 +257,12 @@ export default function CreateLead({ lead, id }) {
           return;
         }
         toast.success("¡Prospecto actualizado!");
-        mutate(`/sales/crm/leads/${id} `);
-        mutate("/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC");
+        mutate(`/sales/crm/leads/${id}`);
+        mutateLeads();
         setLoading(false);
         router.back();
       }
     } catch (error) {
-      console.log(error);
       handleApiError(error.message);
     }
   };
@@ -638,7 +644,7 @@ export default function CreateLead({ lead, id }) {
               label={t("common:buttons:cancel")}
               disabled={loading}
               buttonStyle="secondary"
-              onclick={() => router.push(`/sales/crm/leads?page=1`)}
+              onclick={() => router.back()}
               className="px-3 py-2"
             />
             <Button

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const getCourses = async () => {
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/courses`).catch(error => error);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/courses`, { next: { tags: ['courses-list'] } }).catch(error => error);
     return response.data;
   } catch (error) {
     console.log(error);

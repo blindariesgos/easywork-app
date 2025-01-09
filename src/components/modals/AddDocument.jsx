@@ -1,3 +1,4 @@
+"use client";
 import {
   Description,
   Dialog,
@@ -9,7 +10,11 @@ import { useCallback, useState } from "react";
 import Button from "../form/Button";
 import { useTranslation } from "react-i18next";
 import { MdUpload } from "react-icons/md";
-import { addContactDocument, addReceiptDocument } from "@/src/lib/apis";
+import {
+  addContactDocument,
+  addLeadPolicy,
+  addReceiptDocument,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { addLeadDocument } from "../../lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
@@ -24,6 +29,7 @@ const AddDocumentDialog = ({
   update,
   accept,
   onFinished,
+  fileName,
 }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState(null);
@@ -51,15 +57,17 @@ const AddDocumentDialog = ({
     receipt: (data) => addReceiptDocument(id, documentType, data),
     lead: (data) => addLeadDocument(id, documentType, data),
     contact: (data) => addContactDocument(id, documentType, data),
+    "poliza-lead": (data) => addLeadPolicy(id, data),
   };
 
   const handleFormSubmit = async () => {
     const formData = new FormData();
-    formData.append("files", file.file);
+    formData.append(fileName ?? "files", file.file);
 
     try {
       setLoading(true);
       const response = await endpoints[cmrType](formData);
+      console.log({ response });
       if (response?.hasError) {
         let message = response.message;
         if (response.errors) {
@@ -124,13 +132,10 @@ const AddDocumentDialog = ({
                   />
                   <div className="flex gap-1">
                     <MdUpload className="w-6 h-6 text-pimary" />
-                    <p className="">{"Seleccionar Documento"}</p>
+                    <p>Seleccionar Documento</p>
                   </div>
                   {file && <p className="text-gray-50">{file.name}</p>}
                 </div>
-                {/* <p className="mt-1 text-xs leading-5 text-black">
-                  {label || t("contacts:create:jpg")}
-                </p> */}
               </label>
             </div>
           </Description>

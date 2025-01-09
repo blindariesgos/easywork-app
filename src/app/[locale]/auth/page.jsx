@@ -12,10 +12,9 @@ export default function Page() {
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
   useEffect(() => {
-	console.log(params.get("loginState"));
-	if (!params.get("loginState") || params.get("loginState") === null)
-		console.log("Test");
-		router.push(`${window.location.pathname}?loginState=${0}`);
+    console.log(params.get("loginState"));
+    if (!params.get("loginState") || params.get("loginState") === null)
+      router.push(`${window.location.pathname}?loginState=${0}`);
   }, []);
   return (
     <div

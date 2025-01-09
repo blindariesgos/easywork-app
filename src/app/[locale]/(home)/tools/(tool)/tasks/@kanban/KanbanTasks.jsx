@@ -28,7 +28,7 @@ const KanbanTasks = () => {
   const [itemDrag, setItemDrag] = useState();
   const [updateStages, setUpdateStages] = useState([]);
   const { selectedContacts: selectedReceipts } = useCrmContext();
-
+  const utcOffset = moment().utcOffset();
   const newDeadlineTask = {
     deadline: moment().subtract(1, "day").format(),
     today: moment().hour(17).second(0).format(),
@@ -91,18 +91,8 @@ const KanbanTasks = () => {
       // primary: "#241F61",
       // secondary: "#EDECFF",
       filter: {
-        deadline: [
-          moment()
-            .utc()
-            .subtract(1, "year")
-            .startOf("day")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          moment()
-            .utc()
-            .subtract(1, "day")
-            .endOf("day")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-        ],
+        status: "overdue",
+        isCompleted: false,
       },
     },
     {
@@ -110,7 +100,18 @@ const KanbanTasks = () => {
       primary: "#70B900",
       secondary: "#F7FFEB",
       filter: {
-        deadline: moment().utc().format("YYYY-MM-DDTHH:mm:ss"),
+        deadline: [
+          moment()
+            .utc()
+            .startOf("day")
+            .subtract(utcOffset, "minutes")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment()
+            .utc()
+            .endOf("day")
+            .subtract(utcOffset, "minutes")
+            .format("YYYY-MM-DDTHH:mm:ss"),
+        ],
       },
     },
     {
@@ -123,11 +124,13 @@ const KanbanTasks = () => {
             .utc()
             .add(1, "days")
             .startOf("day")
+            .subtract(utcOffset, "minutes")
             .format("YYYY-MM-DDTHH:mm:ss"),
           moment()
             .utc()
             .endOf("week")
             .endOf("day")
+            .subtract(utcOffset, "minutes")
             .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
@@ -142,11 +145,13 @@ const KanbanTasks = () => {
             .endOf("week")
             .add(1, "days")
             .startOf("day")
+            .subtract(utcOffset, "minutes")
             .format("YYYY-MM-DDTHH:mm:ss"),
           moment()
             .endOf("week")
             .add(7, "days")
             .endOf("day")
+            .subtract(utcOffset, "minutes")
             .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },
@@ -170,12 +175,14 @@ const KanbanTasks = () => {
             .endOf("week")
             .add(8, "days")
             .startOf("day")
+            .subtract(utcOffset, "minutes")
             .format("YYYY-MM-DDTHH:mm:ss"),
           moment()
             .utc()
             .endOf("week")
             .add(70, "days")
             .endOf("day")
+            .subtract(utcOffset, "minutes")
             .format("YYYY-MM-DDTHH:mm:ss"),
         ],
       },

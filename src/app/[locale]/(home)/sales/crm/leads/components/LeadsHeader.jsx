@@ -71,23 +71,13 @@ export default function LeadsHeader() {
           </div>
           {selectedLeads.length > 0 && (
             <IconDropdown
-              icon={
-                <TrashIcon
-                  className="h-8 w-8 text-primary"
-                  aria-hidden="true"
-                />
-              }
+              icon={<TrashIcon className="h-8 w-8 text-primary" />}
               options={trashLead}
               width="w-72"
             />
           )}
           <IconDropdown
-            icon={
-              <Cog8ToothIcon
-                className="h-8 w-8 text-primary"
-                aria-hidden="true"
-              />
-            }
+            icon={<Cog8ToothIcon className="h-8 w-8 text-primary" />}
             options={settingsLead}
             width="w-[220px]"
             colorIcon="text-green-100"

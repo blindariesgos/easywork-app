@@ -14,10 +14,7 @@ const ButtonGeneratePolicy = ({ options, label }) => {
       <div>
         <MenuButton className="inline-flex w-full justify-center rounded-md text-sm font-medium text-white bg-green-500 py-2 px-3 focus:outline-none focus:ring-0">
           {label}
-          <ChevronDownIcon
-            className="ml-2 h-5 w-5 text-white"
-            aria-hidden="true"
-          />
+          <ChevronDownIcon className="ml-2 h-5 w-5 text-white" />
         </MenuButton>
       </div>
       <Transition

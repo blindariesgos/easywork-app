@@ -1,18 +1,8 @@
-'use client';
+import { getCourses } from '../courses/services/get-courses';
+import CoursesGridView from '../components/CoursesGridView';
 
-import { useState } from 'react';
-import CourseCreateEditModal from '../components/CourseCreateEditModal';
+export default async function ConfigView() {
+  const courses = await getCourses();
 
-export default function ConfigView() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      <button onClick={() => setIsOpen(true)} className="bg-gray-200 rounded-xl hover:shadow-lg transition-shadow cursor-pointer w-80 h-96 flex items-center justify-center">
-        <p className="font-bold text-gray-400">+ Nuevo curso</p>
-      </button>
-
-      <CourseCreateEditModal isOpen={isOpen} setIsOpen={setIsOpen} />
-    </>
-  );
+  return <CoursesGridView courses={courses.data} showCreateButton />;
 }

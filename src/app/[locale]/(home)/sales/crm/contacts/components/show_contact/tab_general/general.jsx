@@ -237,10 +237,10 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    const { contact, ...info } = data;
+    const { contact: client, ...info } = data;
     const body = {
       ...info,
-      contactId: contact?.id ?? null,
+      contactId: client?.id ?? null,
     };
 
     if (selectedProfileImage?.file) {

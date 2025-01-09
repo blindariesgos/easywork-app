@@ -9,7 +9,7 @@ import {
   getAddListPolicies,
   getAddListReceipts,
   getAllRoles,
-  getUsersContacts,
+  getRelatedUsers,
 } from "../../lib/apis";
 import { handleApiError } from "../../utils/api/errors";
 import { useSession } from "next-auth/react";
@@ -53,13 +53,13 @@ export default function AppContextProvider({ children }) {
       setLists(appList);
       setLoading(false);
     };
-    if (session?.user?.accessToken && !lists) getLists();
+    if (session?.user?.access_token && !lists) getLists();
   }, [session, lists]);
 
   const getUsers = async () => {
     try {
-      const response = await getUsersContacts();
-      return response;
+      const response = await getRelatedUsers();
+      return response?.items ?? [];
     } catch (error) {
       handleApiError(error.message);
     }

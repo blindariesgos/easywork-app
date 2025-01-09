@@ -13,16 +13,14 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import Tag from "@/src/components/Tag";
-import { Profile, Tasks, Calendar, Drive } from "./components"
+import { Profile, Tasks, Calendar, Drive } from "./components";
 
 export default function Info({ status, statusList }) {
-  const { lists } = useAppContext();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
-  const { data, update } = useSession();
-  
+
   // Calculate the user 18th birthday
   const eighteenYearsAgo = new Date();
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
@@ -87,7 +85,10 @@ export default function Info({ status, statusList }) {
                             </TabList>
                             <TabPanels className="w-full overflow-auto">
                               <TabPanel className="w-full">
-                                <Profile status={status} statusList={statusList} />
+                                <Profile
+                                  status={status}
+                                  statusList={statusList}
+                                />
                               </TabPanel>
                               <TabPanel className="w-full">
                                 <Tasks />

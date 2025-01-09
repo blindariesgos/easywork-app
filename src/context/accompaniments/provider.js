@@ -6,7 +6,10 @@ import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useAgents } from "../../lib/api/hooks/agents";
 
-export default function AccompanimentsContextProvider({ children }) {
+export default function AccompanimentsContextProvider({
+  children,
+  customFilters = [],
+}) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
@@ -24,32 +27,27 @@ export default function AccompanimentsContextProvider({ children }) {
   const defaultFilterFields = [
     {
       id: 1,
-      name: t("users:form:firstname"),
+      name: "Agente",
       type: "input",
       check: true,
-      code: "firstName",
-    },
-    {
-      id: 2,
-      name: t("users:form:lastname"),
-      type: "input",
-      check: true,
-      code: "lastName",
+      code: "name",
     },
     {
       id: 3,
-      name: t("users:form:phone"),
-      type: "input",
+      name: "Gerente de Desarrollo",
+      type: "dropdown",
       check: false,
-      code: "phone",
+      code: "developmentManagerId",
+      options: lists?.users,
     },
     {
-      id: 4,
-      name: t("users:form:email"),
-      type: "input",
-      check: false,
-      code: "email",
+      id: 3,
+      name: t("leads:filters:created"),
+      type: "date",
+      check: true,
+      code: "createdAt",
     },
+    ...customFilters,
   ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -75,32 +73,42 @@ export default function AccompanimentsContextProvider({ children }) {
     setFilterFields([
       {
         id: 1,
-        name: t("users:form:firstname"),
+        name: "Agente",
         type: "input",
         check: true,
-        code: "firstName",
-      },
-      {
-        id: 2,
-        name: t("users:form:lastname"),
-        type: "input",
-        check: true,
-        code: "lastName",
+        code: "name",
       },
       {
         id: 3,
-        name: t("users:form:phone"),
-        type: "input",
+        name: t("agentsmanagement:accompaniments:agent:manager"),
+        type: "dropdown",
         check: false,
-        code: "phone",
+        code: "developmentManagerId",
+        options: lists?.users,
       },
       {
-        id: 4,
-        name: t("users:form:email"),
-        type: "input",
-        check: false,
-        code: "email",
+        id: 3,
+        name: t("leads:filters:created"),
+        type: "date",
+        check: true,
+        code: "createdAt",
       },
+      {
+        id: 1,
+        name: t("contacts:create:cua"),
+        type: "input",
+        check: true,
+        code: "cua",
+      },
+      {
+        id: 3,
+        name: t("agentsmanagement:accompaniments:agent:observer"),
+        type: "dropdown",
+        check: false,
+        code: "observerId",
+        options: lists?.users,
+      },
+      ...customFilters,
     ]);
   }, [lists]);
 

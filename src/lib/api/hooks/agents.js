@@ -30,9 +30,7 @@ export const useAgents = ({ config = {}, filters = {} }) => {
     .join("&");
   const url = `/agent-management/agents?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
-    refreshInterval: 1000,
-  });
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     data,
     isLoading,
@@ -44,10 +42,7 @@ export const useAgents = ({ config = {}, filters = {} }) => {
 export const useAgent = (agentId) => {
   const { data, error, isLoading } = useSWR(
     `/agent-management/agents/${agentId}`,
-    fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    fetcher
   );
 
   return {

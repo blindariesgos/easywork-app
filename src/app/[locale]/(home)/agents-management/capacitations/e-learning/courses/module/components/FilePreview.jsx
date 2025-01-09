@@ -1,53 +1,11 @@
-// import { useEffect, useState } from 'react';
-// import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
-
-// const FilePreview = ({ info, handleDeleteFile }) => {
-//   const [data, setData] = useState();
-
-//   useEffect(() => {
-//     if (info.attached) {
-//       setData(info.attached);
-//       return;
-//     }
-
-//     const reader = new FileReader();
-//     const file = info.file;
-
-//     reader.onloadend = () => {
-//       const result = {
-//         name: file.name,
-//         url: URL.createObjectURL(file),
-//       };
-
-//       setData(result);
-//     };
-//     reader.readAsDataURL(file);
-//   }, [info]);
-
-//   return !data ? (
-//     <LoadingSpinnerSmall />
-//   ) : (
-//     <div className="p-2 bg-gray-200 text-xs rounded-full cursor-pointer flex gap-1 items-center" title={data?.name}>
-//       <p onClick={() => window.open(data.url, 'self', 'status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500')}>
-//         {data?.name?.length > 16 ? `${data?.name?.slice(0, 7)}...${data?.name?.slice(-6)}` : data?.name}
-//       </p>
-//       <p className="text-xs" onClick={handleDeleteFile}>
-//         x
-//       </p>
-//     </div>
-//   );
-// };
-
-// export default FilePreview;
-
-// import { correctSpecialCharacters } from '@/src/utils/formatters';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { BsFiletypeDoc, BsFiletypePdf, BsFiletypeXls } from 'react-icons/bs';
 import { FaRegFileLines, FaRegFilePdf } from 'react-icons/fa6';
-export default function CardFile({ data, onClick }) {
+
+export default function CardFile({ file, onClick, disabled }) {
   const [reading, setReading] = useState(true);
   const [fileRead, setFileRead] = useState(true);
 
@@ -55,20 +13,20 @@ export default function CardFile({ data, onClick }) {
     setReading(true);
 
     const reader = new FileReader();
-    const file = data.file;
 
     reader.onloadend = () => {
       const result = {
         name: file.name,
-        url: URL.createObjectURL(file),
+        type: file.type,
+        url: file.url || URL.createObjectURL(file),
       };
 
       setFileRead(result);
       setReading(false);
     };
 
-    reader.readAsDataURL(file);
-  }, [data]);
+    reader.readAsDataURL(new Blob([file], { type: 'text/plain' }));
+  }, [file]);
 
   const getShowFile = type => {
     switch (type) {
@@ -94,17 +52,20 @@ export default function CardFile({ data, onClick }) {
         return <FaRegFileLines className="h-14 w-10 text-gray-200" />;
     }
   };
+
   const handleOpen = () => window.open(fileRead.url, 'self', 'status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500');
 
   if (reading) return <LoadingSpinnerSmall />;
 
   return (
     <div className="cursor-pointer flex flex-col w-[100px] relative bg-white rounded-md pb-1 px-1 pt-4 hover:drop-shadow-md hover:bg-[#f5f5f5] " style={{ borderWidth: '1px', borderStyle: 'solid' }}>
-      <div className="absolute top-1 right-1 z-10" onClick={onClick}>
-        <XMarkIcon className="w-4 h-4 text-gray-200 hover:text-red-500 transition ease-in duration-75" />
-      </div>
+      {!disabled && (
+        <div className="absolute top-1 right-1 z-10" onClick={onClick}>
+          <XMarkIcon className="w-4 h-4 text-gray-200 hover:text-red-500 transition ease-in duration-75" />
+        </div>
+      )}
       <p className="flex justify-center" onClick={handleOpen}>
-        {getShowFile(data.file.type)}
+        {getShowFile(fileRead.type)}
       </p>
       <p className="text-center text-[10px] pt-2 text-gray-400 overflow-hidden whitespace-nowrap text-ellipsis">{fileRead.name}</p>
     </div>

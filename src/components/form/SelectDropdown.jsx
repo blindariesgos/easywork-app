@@ -66,9 +66,11 @@ function SelectDropdown({
         className="relative"
         name={name}
       >
-        <Label className="block text-sm font-medium leading-6 text-gray-900  px-3">
-          {label}
-        </Label>
+        {label && (
+          <Label className="block text-sm font-medium leading-6 text-gray-900  px-3">
+            {label}
+          </Label>
+        )}
         <div className="relative mt-1">
           <ComboboxInput
             className={clsx(
@@ -90,10 +92,7 @@ function SelectDropdown({
           />
           {!disabled && (
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
+              <ChevronDownIcon className="h-5 w-5 text-gray-400" />
             </ComboboxButton>
           )}
 

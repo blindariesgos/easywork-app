@@ -271,7 +271,14 @@ const OptionsTask = ({
           ))}
         {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
       </div>
-      {openFiles && <UploadDocuments id={edit?.id ?? copy?.id} />}
+      {openFiles && (
+        <UploadDocuments
+          files={files}
+          addFile={addFile}
+          id={edit?.id ?? copy?.id}
+          deleteFile={deleteFile}
+        />
+      )}
       {/* {openList && (
         <div className="mt-2">
           <CheckList

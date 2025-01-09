@@ -11,6 +11,7 @@ import * as yup from "yup";
 import { putTaskId } from "@/src/lib/apis";
 import { useTranslation } from "react-i18next";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
+import useTasksContext from "@/src/context/tasks";
 
 const schema = yup.object().shape({
   entities: yup.array(),
@@ -24,6 +25,7 @@ export default function TaskEntiy({
   field,
   getFilteredUsers,
   updateTaskBody,
+  disabled,
 }) {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +34,7 @@ export default function TaskEntiy({
   const containerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const { mutate } = useSWRConfig();
-  const { mutate: mutateTasks } = useTasks({});
+  const { mutate: mutateTasks } = useTasksContext();
 
   const {
     register,
@@ -81,14 +83,14 @@ export default function TaskEntiy({
         }
         console.log({ response });
         toast.success(t("tools:tasks:update-msg"));
-        await mutate(`/tools/tasks/${task.id}`);
+        mutate(`/tools/tasks/${task.id}`);
+        mutateTasks();
       } catch (error) {
         console.log(error);
       } finally {
         reset();
         setIsLoading(false);
         setIsEditing(false);
-        mutateTasks();
       }
     })({ preventDefault: () => {} });
   };
@@ -130,12 +132,14 @@ export default function TaskEntiy({
     <div className="relative mb-4" ref={containerRef}>
       <div className="flex justify-between border-b-[1px] border-slate-300/40 pt-2 pb-1">
         <p className="text-sm text-black">{t(label)}</p>
-        <p
-          className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
-          onClick={isLoading ? () => {} : handleEditClick}
-        >
-          {isLoading ? t("common:loading") : t("tools:tasks:edit:add")}
-        </p>
+        {!disabled && (
+          <p
+            className="text-xs text-slate-400 cursor-pointer hover:text-slate-500"
+            onClick={isLoading ? () => {} : handleEditClick}
+          >
+            {isLoading ? t("common:loading") : t("tools:tasks:edit:add")}
+          </p>
+        )}
       </div>
       {task[entityKey]?.length > 0 &&
         task[entityKey].map((entity, index) => (

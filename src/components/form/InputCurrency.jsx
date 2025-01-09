@@ -21,6 +21,8 @@ const InputCurrency = ({
   const registerProps = register && register(name);
 
   const handleChange = (e) => {
+    console.log({ e });
+    if (!e?.target?.value || typeof e?.target?.value != "string") return;
     const inputValue = e.target.value.replace(/[^0-9]/g, ""); // Eliminar caracteres no numéricos
     setValue && setValue(name, inputValue / 100);
     const formattedValue = formatCurrency(inputValue);

@@ -2,9 +2,9 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { useSWRConfig } from "swr";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { uploadTemporalFile } from "../../../../../../../lib/api/drive";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
 
 export default function UploadDocumentInComment({ handleChangeFiles }) {
   const { t } = useTranslation();
@@ -51,37 +51,26 @@ export default function UploadDocumentInComment({ handleChangeFiles }) {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      <Menu>
-        <MenuButton className="flex items-center hover:bg-gray-200">
-          <div className="w-full flex items-center justify-between px-2 py-1 text-sm">
-            Añadir un archivo
-            {/* <ChevronRightIcon className="h-4 w-4 ml-1" /> */}
-          </div>
-        </MenuButton>
-        <MenuItems
-          anchor={{
-            to: "right end",
-            gap: "4px",
-          }}
-          className="rounded-md bg-white py-2 shadow-lg border focus:outline-none"
+      <div className="text flex text-xs leading-6 text-gray-600 justify-start mt-4 gap-4 flex-wrap">
+        <label
+          htmlFor="file-upload"
+          className="cursor-pointer flex flex-col items-center justify-center h-28 w-24 bg-white rounded-md shadow hover:drop-shadow-md"
         >
-          <label
-            htmlFor="file-upload"
-            className="block px-2 py-1 text-sm cursor-pointer leading-6 text-black hover:bg-gray-200"
-          >
-            <input
-              type="file"
-              accept=""
-              onChange={handleFilesUpload}
-              id="file-upload"
-              className="sr-only outline-none focus:ring-0"
-              multiple
-              ref={inputFileRef}
-            />
-            <p>Subir Archivo</p>
-          </label>
-        </MenuItems>
-      </Menu>
+          <ArrowUpTrayIcon className="text-blue-100 w-8 h-8 " />
+          <input
+            type="file"
+            accept=""
+            onChange={handleFilesUpload}
+            id="file-upload"
+            className="sr-only outline-none focus:ring-0"
+            multiple
+            ref={inputFileRef}
+          />
+          <p className="text-xs text-black mt-4">
+            {t("tools:tasks:new:upload")}
+          </p>
+        </label>
+      </div>
     </Fragment>
   );
 }

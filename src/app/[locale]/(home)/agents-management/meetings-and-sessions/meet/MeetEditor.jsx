@@ -32,6 +32,7 @@ import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import SubTaskSelect from "@/src/components/form/SubTaskSelect";
+import useMeetingsContext from "@/src/context/meetings";
 
 const schemaInputs = yup.object().shape({
   title: yup.string().required(),
@@ -59,7 +60,7 @@ export default function MeetEditor({ edit, copy, type }) {
   const [listField, setListField] = useState([]);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-
+  const { mutate: mutateMeets } = useMeetingsContext();
   const {
     register,
     handleSubmit,
@@ -224,13 +225,31 @@ export default function MeetEditor({ edit, copy, type }) {
     try {
       setLoading(true);
       if (edit) {
-        await putMeetById(edit.id, body);
+        const response = await putMeetById(edit.id, body);
+        if (response.hasError) {
+          toast.error(
+            response?.error?.message ?? "Ocurrio un error al editar la junta"
+          );
+          setLoading(false);
+
+          return;
+        }
         mutate(`/agent-management/meetings/${edit.id}`);
         toast.success("Junta actualizada exitosamente!");
+        mutateMeets();
         router.back();
       } else {
-        await postMeet(body);
+        const response = await postMeet(body);
+        if (response.hasError) {
+          toast.error(
+            response?.error?.message ?? "Ocurrio un error al crear la junta"
+          );
+          setLoading(false);
+
+          return;
+        }
         toast.success("Junta creada exitosamente!");
+        mutateMeets();
 
         if (isNewTask) {
           reset();

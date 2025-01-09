@@ -20,6 +20,11 @@ export const duplicatePage = async id => {
   return response.data;
 };
 
+export const toggleLessonPageAsCompleted = async (id, completed) => {
+  const response = await axios.put(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lesson-pages/toggle-completed/${id}`, { completed });
+  return response.data;
+};
+
 export const deletePage = async id => {
   const response = await axios.delete(`${process.env.NEXT_PUBLIC_API_CAPACITATIONS_HOST}/lesson-pages/${id}`);
   return response.data;

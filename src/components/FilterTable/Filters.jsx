@@ -75,33 +75,7 @@ const Filters = () => {
         value: custom.filter[field.code],
       };
     });
-    console.log({ keys, fields, displayAux });
     setDisplayFilters(displayAux);
-
-    // const newFilters = fields.reduce((acc, field) => {
-    //   let value = custom.filter[field.code];
-
-    //   if (field.type == "date") {
-    //     value = moment(custom.filter[field.code])
-    //       .utc()
-    //       .format("YYYY-MM-DDTHH:mm:ss");
-    //   }
-
-    //   if (field.type == "multipleSelect") {
-    //     value = field.options.filter((option) =>
-    //       custom.filter[field.code].includes(option.value)
-    //     );
-    //   }
-
-    //   // if (field.type == "daterange") {
-    //   //   value = getRangeValue(field);
-    //   // }
-
-    //   return {
-    //     ...acc,
-    //     [field.code]: value,
-    //   };
-    // }, {});
     setFilters(custom.filter);
     setCustomFilterSelected(custom.id);
   };

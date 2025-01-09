@@ -92,18 +92,35 @@ const HelpChat = () => {
 
         {/* Botón que desencadena la animación */}
         <motion.div
-          className="size-16 rounded-full bg-cyan-500 flex justify-center items-center cursor-pointer opacity-80"
+          className="size-16 rounded-full bg-cyan-500 flex justify-center items-center cursor-pointer opacity-80 relative"
           whileHover={{
             scale: 1.1,
           }}
           whileTap={{ scale: 1.1 }}
-          onClick={toggleOpen} // Para alternar en pantallas táctiles
+          onClick={toggleOpen}
         >
           <Image
             src="/img/landing/sms.svg"
             alt="support"
             width={32}
             height={32}
+          />
+          <motion.div
+            className="absolute inset-0 rounded-full bg-cyan-400"
+            style={{
+              opacity: 0.6,
+            }}
+            initial={{ scale: 1, opacity: 0.6 }}
+            animate={{
+              scale: [1, 1.3, 1.6, 1.9],
+              opacity: [0.6, 0.4, 0.2, 0],
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "easeOut",
+            }}
           />
         </motion.div>
       </motion.div>

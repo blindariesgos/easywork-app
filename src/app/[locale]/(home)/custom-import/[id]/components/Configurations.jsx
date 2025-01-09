@@ -45,9 +45,9 @@ const Configurations = ({ handleNext, type }) => {
   });
 
   useEffect(() => {
-    if (!session.data.user.id) return;
-    setValue("responsibleId", session.data.user.id);
-  }, [session?.data?.user?.id]);
+    if (!session?.data?.user?.sub) return;
+    setValue("responsibleId", session.data.user.sub);
+  }, [session?.data?.user?.sub]);
 
   const handleSubmitNext = (data) => {
     const { excel, ...otherData } = data;

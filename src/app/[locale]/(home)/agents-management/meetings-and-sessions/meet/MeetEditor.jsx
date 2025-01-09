@@ -31,6 +31,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
+import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 
 const schemaInputs = yup.object().shape({
   title: yup.string().required(),
@@ -199,7 +200,7 @@ export default function MeetEditor({ edit, copy, type }) {
     if (session) {
       setValue(
         "createdBy",
-        lists?.users.filter((user) => user.id === session.user?.id)
+        lists?.users.filter((user) => user.id === session.user?.sub)
       );
     }
   }, [session, lists?.users, setValue]);
@@ -207,6 +208,7 @@ export default function MeetEditor({ edit, copy, type }) {
   const createMeet = async (data, isNewTask) => {
     // if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
+    console.log({ data });
     const crm =
       data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
     const body = buildMeetBody(
@@ -407,31 +409,44 @@ export default function MeetEditor({ edit, copy, type }) {
                   />
                 </div>
               </div> */}
-              <div className="">
-                <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">
-                    {t("agentsmanagement:meetings-and-sessions:new:date")}
-                  </p>
-                  <div className="w-full md:w-[40%]">
-                    <Controller
-                      render={({ field: { value, onChange, ref, onBlur } }) => {
-                        return (
-                          <InputDateV2
-                            value={value}
-                            onChange={onChange}
-                            icon={
-                              <FaCalendarDays className="h-4 w-4 text-primary" />
-                            }
-                            time
-                            watch={watch}
-                          />
-                        );
-                      }}
-                      name="startTime"
-                      control={control}
-                      defaultValue=""
-                    />
-                  </div>
+              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("agentsmanagement:meetings-and-sessions:new:date")}
+                </p>
+                <div className="w-full md:w-[40%]">
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDateV2
+                          value={value}
+                          onChange={onChange}
+                          icon={
+                            <FaCalendarDays className="h-4 w-4 text-primary" />
+                          }
+                          time
+                          watch={watch}
+                        />
+                      );
+                    }}
+                    name="startTime"
+                    control={control}
+                    defaultValue=""
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                <p className="text-sm text-left w-full md:w-36">
+                  {"Tarea Relacionada"}
+                </p>
+                <div className="w-full md:w-[40%]">
+                  <SubTaskSelect
+                    name="subTasks"
+                    getValues={getValues}
+                    setValue={setValue}
+                    error={errors.subTask}
+                    subtitle="Seleccionar tarea"
+                    taskId={""}
+                  />
                 </div>
               </div>
             </div>
@@ -505,7 +520,7 @@ const buildMeetBody = (
   const body = {
     title: data.title,
     description,
-    createdById: session.user?.id,
+    createdById: session.user?.sub,
     crm,
     type: data?.type,
   };
@@ -522,12 +537,10 @@ const buildMeetBody = (
   if (data.responsible?.length) {
     body.developmentManagerId = data.responsible;
   }
-  if (data.subTask?.length) {
-    body.parentId = data.subTask[0].id;
+  if (data.subTasks?.length) {
+    body.subtasksIds = data.subTasks.map((x) => x.id);
   }
-  if (data.tags?.length) {
-    body.tagsIds = data.tags.map((tag) => tag.id);
-  }
+
   if (listField?.length) {
     body.listField = listField.map((item) => ({
       text: item.name,

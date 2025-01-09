@@ -18,7 +18,7 @@ export default function Page() {
     overdue: { status: "overdue", isCompleted: false },
     deadlineToday: {
       deadline: [
-        moment()
+        moment() // No colocar UTC ya que no coincide con la zona horaria del usuario9ib
           .startOf("day")
           .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),

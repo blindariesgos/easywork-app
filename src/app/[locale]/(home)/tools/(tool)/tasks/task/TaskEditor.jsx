@@ -212,7 +212,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     console.log(response, agentId);
 
     if (!response) {
-      console.log("no hay meet 1");
       setLoading(false);
       return;
     }
@@ -220,7 +219,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     const data = JSON.parse(response);
 
     if (!data) {
-      console.log("no hay meet 2");
       setLoading(false);
       return;
     }

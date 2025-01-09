@@ -20,15 +20,17 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
     if (params.get("disconnect") === "true") {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${session?.data?.user?.id}/${selectOauth?.id}`
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${session?.data?.user?.sub}/${selectOauth?.id}`
         )
         .then((res) => {
           setListCalendars(res.data);
         })
         .catch((err) => {
           console.log(err);
-          toast.error("El token de actualización no es válido o ha expirado. Vuelva a autenticarse.")
-        })
+          toast.error(
+            "El token de actualización no es válido o ha expirado. Vuelva a autenticarse."
+          );
+        });
     }
   }, [params.get("disconnect")]);
 
@@ -40,7 +42,12 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
 
   async function deleteOauth() {
     try {
-      await deleteTokenGoogle(session?.data?.user?.id, selectOauth?.id, null, true);
+      await deleteTokenGoogle(
+        session?.data?.user?.sub,
+        selectOauth?.id,
+        null,
+        true
+      );
       setSelectOauth(null);
       router.push("/tools/calendar");
       toast.success("Calendario de Google desconectado");
@@ -93,14 +100,15 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
               disponibles para los otros empleados.
             </p>
             <div className="text-sm">
-              {listCalendars && listCalendars?.map((item, index) => (
-                <div className="flex ml-2 justify-between mb-2" key={index}>
-                  <div className="flex">
-                    <input type="checkbox" />
-                    <p className="ml-1 text-xs">{item?.summary}</p>
+              {listCalendars &&
+                listCalendars?.map((item, index) => (
+                  <div className="flex ml-2 justify-between mb-2" key={index}>
+                    <div className="flex">
+                      <input type="checkbox" />
+                      <p className="ml-1 text-xs">{item?.summary}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>

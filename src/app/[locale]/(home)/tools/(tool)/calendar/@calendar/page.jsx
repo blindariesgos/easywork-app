@@ -29,9 +29,7 @@ import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import { add, addHours, format, formatISO, parseISO } from "date-fns";
 import * as yup from "yup";
 import { toast } from "react-toastify";
-import {
-  addCalendarEvent,
-} from "@/src/lib/apis";
+import { addCalendarEvent } from "@/src/lib/apis";
 import {
   Dialog,
   DialogPanel,
@@ -195,7 +193,7 @@ export default function CalendarHome({ children }) {
     };
 
     if (selectOauth) body.oauth = selectOauth?.id;
-    body.user = session?.data?.user?.id;
+    body.user = session?.data?.user?.sub;
 
     console.log(body);
     try {

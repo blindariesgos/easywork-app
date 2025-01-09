@@ -59,42 +59,44 @@ const SelectTaskDialog = ({
                     border
                   />
                 </div>
-                {tasks &&
-                tasks?.items?.length === 0 &&
-                query !== "" &&
-                !isLoading ? (
-                  <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                    {t("common:not-found")}
-                  </div>
-                ) : (
-                  tasks &&
-                  tasks?.items?.length &&
-                  tasks?.items
-                    ?.filter((task) => task.id !== taskId)
-                    ?.map((option) => (
-                      <div
-                        key={option.id}
-                        className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                          dafaultValues &&
-                          dafaultValues.some((res) => res.id === option.id)
-                            ? "bg-primary"
-                            : "hover:bg-primary/5"
-                        }`}
-                        onClick={() => handleSelect(option)}
-                      >
-                        <span
-                          className={`text-xs ${
+                <div className="overflow-y-auto h-52 grid grid-cols-1 gap-1 pr-1">
+                  {tasks &&
+                  tasks?.items?.length === 0 &&
+                  query !== "" &&
+                  !isLoading ? (
+                    <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                      {t("common:not-found")}
+                    </div>
+                  ) : (
+                    tasks &&
+                    tasks?.items?.length &&
+                    tasks?.items
+                      ?.filter((task) => task.id !== taskId)
+                      ?.map((option) => (
+                        <div
+                          key={option.id}
+                          className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
                             dafaultValues &&
                             dafaultValues.some((res) => res.id === option.id)
-                              ? "text-white"
-                              : "text-black"
+                              ? "bg-primary"
+                              : "hover:bg-primary/5"
                           }`}
+                          onClick={() => handleSelect(option)}
                         >
-                          {option.name}
-                        </span>
-                      </div>
-                    ))
-                )}
+                          <span
+                            className={`text-xs ${
+                              dafaultValues &&
+                              dafaultValues.some((res) => res.id === option.id)
+                                ? "text-white"
+                                : "text-black"
+                            }`}
+                          >
+                            {option.name}
+                          </span>
+                        </div>
+                      ))
+                  )}
+                </div>
                 {isLoading && <LoadingSpinnerSmall />}
               </div>
             </Description>

@@ -11,8 +11,8 @@ import dynamic from "next/dynamic";
 import DropdownVisibleUsers from "./DropdownVisibleUsers";
 import useAppContext from "@/src/context/app";
 import "react-quill/dist/quill.snow.css";
-// import ReactQuill from "react-quill"; // <--- Arroja error SSR.
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import ReactQuill from "react-quill"; // <--- Arroja error SSR.
+// const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const toolbar = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -124,10 +124,11 @@ const TextEditor = forwardRef(
             attributes: {
               color: "#86BEDF",
               underline: true,
+              cursor: "pointer",
               // link: `/sales/crm/contacts/contact/${user.id}?show=true&page=1`,
             },
           },
-          { insert: " " },
+          { insert: "  " },
         ]);
         setUserSelected(null);
       }

@@ -23,7 +23,7 @@ export default function NotifyDrawer() {
 
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+          <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full">
             <DialogPanel
               transition
               className="pointer-events-auto relative w-screen max-w-2xl transform transition duration-500 ease-in-out data-[closed]:translate-x-full sm:duration-700"
@@ -67,7 +67,7 @@ export default function NotifyDrawer() {
                     <div className="text-lg">Notificaciones</div>
                   </DialogTitle>
                 </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                <div className="relative mt-6 flex-1 px-2 sm:px-4">
                   <NotifyList />
                 </div>
               </div>

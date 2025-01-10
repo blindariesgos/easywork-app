@@ -56,16 +56,16 @@ const HelpChat = () => {
               y: open ? 0 : 30,
             }}
             transition={{ duration: 0.5 }}
-            whileHover={{
-              scale: 1.1,
-            }}
-            whileTap={{ scale: 1.1 }}
+            // whileHover={{
+            //   scale: 1.1,
+            // }}
+            // whileTap={{ scale: 1.1 }}
           >
             <Image
               src="/img/landing/whatsappWhite.png"
               alt="support"
-              width={32}
-              height={32}
+              width={40}
+              height={40}
             />
           </motion.div>
         </a>
@@ -82,10 +82,10 @@ const HelpChat = () => {
           onMouseEnter={toggleOpenChat}
           onMouseLeave={toggleOpenChat}
           onClick={toggleOpenChat}
-          whileHover={{
-            scale: 1.1,
-          }}
-          whileTap={{ scale: 1.1 }}
+          // whileHover={{
+          //   scale: 1.1,
+          // }}
+          // whileTap={{ scale: 1.1 }}
         >
           <ChatBubbleLeftRightIcon className="w-10 h-10 text-white" />
         </motion.div>
@@ -93,10 +93,10 @@ const HelpChat = () => {
         {/* Botón que desencadena la animación */}
         <motion.div
           className="size-16 rounded-full bg-cyan-500 flex justify-center items-center cursor-pointer opacity-80 relative"
-          whileHover={{
-            scale: 1.1,
-          }}
-          whileTap={{ scale: 1.1 }}
+          // whileHover={{
+          //   scale: 1.1,
+          // }}
+          // whileTap={{ scale: 1.1 }}
           onClick={toggleOpen}
         >
           <Image

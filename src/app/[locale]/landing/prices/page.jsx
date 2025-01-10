@@ -3,6 +3,7 @@ import Header from "../sections/Header";
 import plansData from "../plans.json";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import HelpChat from "../components/chat/HelpChat";
+import Footer from "../sections/Footer";
 
 export default function Page() {
   const plans = plansData.plans;
@@ -66,7 +67,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-white">
       <div className="from-sky-500 to-blue-300 bg-gradient-to-t">
         <div id="inicio" className="h-20"></div>
         <Header redirect={true} />
@@ -96,7 +97,7 @@ export default function Page() {
             </thead>
             <tbody>
               <tr>
-                <td className="py-4 px-8 text-left">Precio</td>
+                <td className="py-4 px-8 text-left">PRECIO</td>
                 {plans.map((plan, index) => (
                   <td key={index} className="py-4 px-8 text-center">
                     {plan.price === 0 ? "Gratis" : `${plan.price}/Mes`}
@@ -157,6 +158,7 @@ export default function Page() {
           ))}
         </div>
       </div>
+      <Footer />
       <HelpChat />
     </div>
   );

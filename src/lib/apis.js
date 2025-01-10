@@ -221,6 +221,13 @@ export const getAddListPolicies = async () => {
   return response;
 };
 
+export const getAddListRecruitments = async () => {
+  const response = await axios().get(
+    `/agent-management/agent-recruitments/get_add_lists`
+  );
+  return response;
+};
+
 export const getUsersContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/users`);
   return response;

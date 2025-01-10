@@ -29,20 +29,22 @@ export default function MeetView({ meet, id }) {
   }, [meet]);
 
   const handleCreateMeetTask = () => {
-    if (!meet.agents[0]?.user?.sub) {
+    if (!meet.agents[0]?.user?.id && meet?.type == "individual") {
       toast.error("El agente no posee usuario en el sistema");
       return;
     }
-    const agentId = meet.agents[0].id;
+    const agentId = meet?.agents[0]?.id ?? "group";
     localStorage.setItem(
       agentId,
       JSON.stringify({
         meet: id,
         developmentManagerId: meet?.developmentManager?.id,
-        userId: meet.agents[0]?.user?.sub,
+        userId: meet?.agents[0]?.user?.id,
       })
     );
-    router.push(`/tools/tasks/task?prev=meet&prev_id=${agentId}&show=true`);
+    router.push(
+      `/tools/tasks/task?prev=meet-${meet?.type}&prev_id=${agentId}&show=true`
+    );
   };
 
   return (
@@ -94,18 +96,16 @@ export default function MeetView({ meet, id }) {
                   </div>
                 )}
               </div>
-              {meet.type == "individual" &&
-                meet?.developmentManager &&
-                meet?.agents?.length > 0 && (
-                  <div className="p-2 sm:p-4">
-                    <Button
-                      buttonStyle="primary"
-                      label="Agregar tarea"
-                      className="px-3 py-2"
-                      onclick={handleCreateMeetTask}
-                    />
-                  </div>
-                )}
+              {meet?.developmentManager && meet?.agents?.length > 0 && (
+                <div className="p-2 sm:p-4">
+                  <Button
+                    buttonStyle="primary"
+                    label="Agregar tarea"
+                    className="px-3 py-2"
+                    onclick={handleCreateMeetTask}
+                  />
+                </div>
+              )}
             </div>
             <div className="w-full relative">
               <TabsMeet data={meet} />

@@ -3,12 +3,12 @@ import React from "react";
 import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import FilterAccompaniments from "./FilterAccompaniments";
+import Filters from "./filters/Filter";
 import { useCommon } from "@/src/hooks/useCommon";
 import IconDropdown from "@/src/components/SettingsButton";
 import useCrmContext from "@/src/context/crm";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useRecruitmentsContext from "@/src/context/recruitments";
 
 import { useRouter } from "next/navigation";
 import Button from "@/src/components/form/Button";
@@ -17,7 +17,7 @@ export default function AccompanimentsHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
-  const { displayFilters, removeFilter } = useAccompanimentsContext();
+  const { displayFilters, removeFilter } = useRecruitmentsContext();
   const router = useRouter();
 
   // const options = [
@@ -73,7 +73,7 @@ export default function AccompanimentsHeader() {
           </Menu> */}
           <div className="flex-grow">
             <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
-              <FilterAccompaniments />
+              <Filters />
             </div>
           </div>
           {selectedContacts[0]?.id && (

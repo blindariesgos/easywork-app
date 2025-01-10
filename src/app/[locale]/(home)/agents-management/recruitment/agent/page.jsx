@@ -4,7 +4,11 @@ import AgentRecruitment from "../../agent/AgentRecruitment";
 
 export default async function page() {
   return (
-    <SlideOver colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver
+      colorTag="bg-easywork-main"
+      labelTag="agent"
+      maxWidthClass={"max-w-[46rem]"}
+    >
       <AgentRecruitment />
     </SlideOver>
   );

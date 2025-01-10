@@ -35,7 +35,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useRecruitmentsContext from "@/src/context/recruitments";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
@@ -54,7 +54,7 @@ export default function Table() {
     page,
     setPage,
     mutate,
-  } = useAccompanimentsContext();
+  } = useRecruitmentsContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -288,33 +288,6 @@ export default function Table() {
       </div>
     );
   };
-
-  if (data?.items && data?.items.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("operations:policies:table:not-data")}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   const renderStage = (data) => {
     const stageIndex = -1;

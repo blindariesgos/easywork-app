@@ -43,45 +43,45 @@ const CRMMultipleSelectV2 = ({
     "agent",
   ]);
   const { contacts, isLoading: isLoadingContacts } = useContacts({
-    filters: { fullName: query },
+    filters: { search: query },
     page: 1,
-    limit: 5,
+    limit: 10,
   });
   const { data: policies, isLoading: isLoadingPolicies } = usePolicies({
-    filters: { poliza: query },
+    filters: { search: query },
     config: {
       page: 1,
-      limit: 5,
+      limit: 10,
     },
   });
   const { data: renovations, isLoading: isLoadingRenovations } = usePolicies({
-    filters: { renewal: "true", poliza: query },
+    filters: { renewal: "true", search: query },
     config: {
       page: 1,
-      limit: 5,
+      limit: 10,
     },
   });
   const { leads, isLoading: isLoadingLeads } = useLeads({
-    filters: { fullName: query },
+    filters: { search: query },
     config: {
       page: 1,
-      limit: 5,
+      limit: 10,
     },
   });
 
   const { data: receipts, isLoading: isLoadingReceipts } = useReceipts({
-    filters: { name: query },
+    filters: { search: query },
     config: {
       page: 1,
-      limit: 5,
+      limit: 10,
     },
   });
 
   const { data: agents, isLoading: isLoadingAgents } = useAgents({
-    filters: { name: query },
+    filters: { search: query },
     config: {
       page: 1,
-      limit: 5,
+      limit: 10,
     },
   });
 
@@ -231,67 +231,72 @@ const CRMMultipleSelectV2 = ({
                       <TextInput
                         onChangeCustom={(e) => setQuery(e.target.value)}
                         border
+                        placeholder={"Buscar"}
                       />
                     </div>
-                    {filterData?.length === 0 &&
-                    query !== "" &&
-                    !isLoadingContacts &&
-                    !isLoadingPolicies &&
-                    !isLoadingRenovations &&
-                    !isLoadingAgents &&
-                    !isLoadingLeads ? (
-                      <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                        {t("common:not-found")}
-                      </div>
-                    ) : (
-                      filterData &&
-                      filterData.map((option) => (
-                        <div
-                          key={option.id}
-                          className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                            getValues(name) &&
-                            getValues(name).some((res) => res.id === option.id)
-                              ? "bg-primary"
-                              : "hover:bg-primary/5"
-                          }`}
-                          onClick={() => handleSelect(option)}
-                        >
-                          {option.avatar && (
-                            <Image
-                              src={option.avatar}
-                              width={100}
-                              height={100}
-                              alt={`${option.name} avatar`}
-                              className="w-6 h-6 rounded-full mr-2"
-                            />
-                          )}
-                          <span
-                            className={`text-xs ${
+                    <div className="grid grid-cols-1 gap-1 overflow-y-auto max-h-[200px] h-full">
+                      {filterData?.length === 0 &&
+                      query !== "" &&
+                      !isLoadingContacts &&
+                      !isLoadingPolicies &&
+                      !isLoadingRenovations &&
+                      !isLoadingAgents &&
+                      !isLoadingLeads ? (
+                        <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                          {t("common:not-found")}
+                        </div>
+                      ) : (
+                        filterData &&
+                        filterData.map((option) => (
+                          <div
+                            key={option.id}
+                            className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
                               getValues(name) &&
                               getValues(name).some(
                                 (res) => res.id === option.id
                               )
-                                ? "text-white"
-                                : "text-black"
+                                ? "bg-primary"
+                                : "hover:bg-primary/5"
                             }`}
+                            onClick={() => handleSelect(option)}
                           >
-                            {["poliza"].includes(crmTypes[filterSelect])
-                              ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
-                              : option.fullName ||
-                                option.name ||
-                                option.username ||
-                                option.title ||
-                                option.id}
-                          </span>
-                        </div>
-                      ))
-                    )}
-                    {(isLoadingContacts ||
-                      isLoadingPolicies ||
-                      isLoadingReceipts ||
-                      isLoadingAgents ||
-                      isLoadingRenovations ||
-                      isLoadingLeads) && <LoadingSpinnerSmall />}
+                            {option.avatar && (
+                              <Image
+                                src={option.avatar}
+                                width={100}
+                                height={100}
+                                alt={`${option.name} avatar`}
+                                className="w-6 h-6 rounded-full mr-2"
+                              />
+                            )}
+                            <span
+                              className={`text-xs ${
+                                getValues(name) &&
+                                getValues(name).some(
+                                  (res) => res.id === option.id
+                                )
+                                  ? "text-white"
+                                  : "text-black"
+                              }`}
+                            >
+                              {["poliza"].includes(crmTypes[filterSelect])
+                                ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
+                                : option.fullName ||
+                                  option.name ||
+                                  option.username ||
+                                  option.title ||
+                                  option.id}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                      {(isLoadingContacts ||
+                        isLoadingPolicies ||
+                        isLoadingReceipts ||
+                        isLoadingAgents ||
+                        isLoadingRenovations ||
+                        isLoadingLeads) && <LoadingSpinnerSmall />}
+                    </div>
                   </div>
                 </Description>
               </div>

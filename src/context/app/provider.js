@@ -8,6 +8,7 @@ import {
   getAddListLeads,
   getAddListPolicies,
   getAddListReceipts,
+  getAddListRecruitments,
   getAllRoles,
   getRelatedUsers,
 } from "../../lib/apis";
@@ -43,6 +44,7 @@ export default function AppContextProvider({ children }) {
       const policies = await getListsPolicies();
       const listLead = await getListsLead();
       const receipts = await getListsReceipts();
+      const recruitments = await getListsRecruitment();
 
       appList.listContact = listContact;
       appList.users = users;
@@ -50,6 +52,7 @@ export default function AppContextProvider({ children }) {
       appList.policies = policies;
       appList.listLead = listLead;
       appList.receipts = receipts;
+      appList.recruitments = recruitments;
       setLists(appList);
       setLoading(false);
     };
@@ -104,6 +107,15 @@ export default function AppContextProvider({ children }) {
   const getListsPolicies = async () => {
     try {
       const response = await getAddListPolicies();
+      return response;
+    } catch (error) {
+      handleApiError(error.message);
+    }
+  };
+
+  const getListsRecruitment = async () => {
+    try {
+      const response = await getAddListRecruitments();
       return response;
     } catch (error) {
       handleApiError(error.message);

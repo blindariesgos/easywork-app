@@ -2021,6 +2021,13 @@ export const useTeamMeetTable = () => {
       order: "startTime",
       check: true,
     },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:revision"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
   ];
   return { columnTable };
 };

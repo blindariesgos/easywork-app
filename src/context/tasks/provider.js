@@ -27,7 +27,7 @@ export default function TasksContextProvider({ children }) {
     filters: {
       ...filters,
     },
-    userId: session?.data?.user?.id,
+    userId: session?.data?.user?.sub,
   });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();

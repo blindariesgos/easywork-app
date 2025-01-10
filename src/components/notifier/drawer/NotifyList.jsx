@@ -1,12 +1,17 @@
 "use client";
+import useAppContext from "@/src/context/app";
 import { useNotifyContext } from "@/src/context/notify";
 import { formatDate } from "@/src/utils/getFormatDate";
+import clsx from "clsx";
 import parse from "html-react-parser";
+import moment from "moment";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 export default function NotifyList() {
   const { notifications, markAsRead, loadMore, hasMore, isLoading } =
     useNotifyContext();
+  const { lists } = useAppContext();
   const observerRef = useRef(null);
   const loadMoreRef = useRef(null);
 
@@ -53,30 +58,72 @@ export default function NotifyList() {
   }, [hasMore, isLoading, loadMore]);
 
   return (
-    <ul className="w-full divide-y divide-slate-400/70">
+    <ul className="w-full grid grid-cols-1 gap-1 pt-2">
       {notifications?.map((notification) => (
         <li
           key={notification.id}
-          className="py-2 flex flex-col notification-item"
+          className={clsx(
+            "py-2 px-4 flex flex-col notification-item bg-gray-100 rounded-xl relative"
+          )}
           data-id={notification.id}
           data-read-at={notification.readAt}
         >
-          <div className="self-end text-sm text-slate-500 italic data-[read-at]:bg-slate-600">
-            {formatDate(notification.createdAt, "d MMM yyyy h:mm a")}
-          </div>
+          {!notification.readAt && (
+            <div className="w-3 h-3 rounded-full bg-red-600 absolute -top-[3px] -right-[3px]" />
+          )}
 
           <p className="flex items-center gap-2">
-            <span className="inline-block h-8 w-8 overflow-hidden rounded-full bg-slate-700">
-              <svg
-                className="h-full w-full text-slate-200"
-                fill="currentColor"
-                viewBox="0 0 24 24"
+            {notification?.metadata?.commentOwnerId ? (
+              <Image
+                src={
+                  lists?.users?.find(
+                    (x) => x.id == notification.metadata.commentOwnerId
+                  )?.avatar ?? "/img/activities/easy-icon.svg"
+                }
+                className="h-10 w-10 rounded-full object-cover"
+                width={10}
+                height={10}
+                alt="easy icon"
+              />
+            ) : (
+              <div
+                className={clsx(
+                  "bg-gray-200 h-10 w-10 rounded-full flex items-center justify-center"
+                )}
               >
-                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </span>
-            <span>{parse(notification.content)}</span>
+                <Image
+                  src="/img/activities/easy-icon.svg"
+                  className="h-5 w-5"
+                  width={10}
+                  height={10}
+                  alt="easy icon"
+                />
+              </div>
+            )}
+            <div className="text-sm w-10/12">{parse(notification.content)}</div>
           </p>
+          <div className="self-end text-sm text-slate-500 italic data-[read-at]:bg-slate-600">
+            {moment(notification.createdAt).calendar({
+              sameDay: function () {
+                return (
+                  "[hoy a la" + (this.hours() !== 1 ? "s" : "") + "] hh:mm A"
+                );
+              },
+              lastDay: function () {
+                return (
+                  "[ayer a la" + (this.hours() !== 1 ? "s" : "") + "] hh:mm A"
+                );
+              },
+              lastWeek: function () {
+                return (
+                  "[el] dddd [pasado a la" +
+                  (this.hours() !== 1 ? "s" : "") +
+                  "] hh:mm A"
+                );
+              },
+              sameElse: "d MMM YYYY hh:mm A",
+            })}
+          </div>
         </li>
       ))}
       <li ref={loadMoreRef} className="py-2 flex justify-center">

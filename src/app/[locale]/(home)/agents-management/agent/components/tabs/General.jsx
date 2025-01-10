@@ -91,7 +91,7 @@ export default function General({ agent, id, refPrint, type }) {
       console.log("pase por aqui perrito");
       setValue(
         "recruitmentManagerId",
-        lists?.users?.find((user) => user.id === session?.user?.id)?.id
+        lists?.users?.find((user) => user.id === session?.user?.sub)?.id
       );
     }
   }, [session, lists?.users, setValue]);

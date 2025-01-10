@@ -65,7 +65,6 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage,
   };
 
   const refetch = () => {
-    console.log(contentToHandle.current);
     if (contentToHandle.current.type === 'page') {
       fetchLessonDetails();
     } else {
@@ -84,6 +83,7 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage,
         }}
         itemType="lesson"
         actions={{ editLesson, addNewPage, deleteLesson }}
+        isCompleted={lesson.isCompleted}
       >
         {lessonPages?.length > 0 ? (
           lessonPages.map((page, i) => {
@@ -94,11 +94,12 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage,
               <div key={page.id} className={`${isFirstElement || isLastElement ? '' : 'my-1'}`}>
                 <LessonPage
                   page={page}
-                  onSelectPage={() => onSelectPage(page)}
+                  onSelectPage={() => onSelectPage(page, i)}
                   editPage={() => editPage(page)}
                   duplicatePage={() => duplicatePage(page)}
                   changeLesson={changeLesson}
                   deletePage={() => deletePage(page)}
+                  isCompleted={page.isCompleted}
                 />
               </div>
             );

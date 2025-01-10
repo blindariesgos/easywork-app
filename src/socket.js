@@ -11,7 +11,7 @@ export function useSocketConnection() {
     if (session.status === "authenticated") {
       const newSocket = io(process.env.NEXT_PUBLIC_NOTIFICATION_SERVICE_URL, {
         query: {
-          recipientId: session.data.user.id,
+          recipientId: session.data.user.sub,
         },
       });
 
@@ -21,7 +21,7 @@ export function useSocketConnection() {
         newSocket.disconnect();
       };
     }
-  }, [session.status, session.data?.user?.id]);
+  }, [session.status, session.data?.user?.sub]);
 
   return socket;
 }

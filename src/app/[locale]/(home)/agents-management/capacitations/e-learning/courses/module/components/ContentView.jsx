@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
@@ -12,17 +12,16 @@ import ContentViewCoverPhoto from './ContentViewCoverPhoto';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { FileUpload } from './FileUpload';
 
-import { createLesson, updateLesson } from '../services/lessons';
-import { updatePage } from '../services/lesson-pages';
+import { createLesson, toggleLessonAsCompleted, updateLesson } from '../services/lessons';
+import { toggleLessonPageAsCompleted, updatePage } from '../services/lesson-pages';
 
 import '../styles/index.css';
-import { uploadCourseImage } from '../../services/create-course';
 
-export const ContentView = ({ course, content, onSuccess, contentType }) => {
+export const ContentView = ({ course, content, onSuccess, contentType, refetchAccordionItems }) => {
   const isEdit = !!content;
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
-  const [markAsDone, setMarkAsDone] = useState(false);
+  const [markAsDone, setMarkAsDone] = useState(content?.isCompleted || false);
   const inputFileRef = useRef(null);
 
   const {
@@ -68,11 +67,6 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
           newValues.append('files', file);
         });
 
-      // if (images.length > 0)
-      //   images.forEach(image => {
-      //     newValues.append('images', image);
-      //   });
-
       if (filesToDelete.length > 0) newValues.append('filesToDelete', JSON.stringify(filesToDelete));
       if (imagesToDelete.length > 0) newValues.append('imagesToDelete', JSON.stringify(imagesToDelete));
 
@@ -86,7 +80,6 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
         await createLesson(newValues);
       }
 
-      // reset();
       toast.success('Cambios guardados exitosamente!');
 
       setValue('files', []);
@@ -101,17 +94,38 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
     }
   };
 
+  const toggleIsCompleted = async () => {
+    const toggled = !markAsDone;
+
+    setMarkAsDone(prev => !prev);
+
+    try {
+      if (contentType === 'lesson') {
+        await toggleLessonAsCompleted(content.id, toggled);
+      } else {
+        await toggleLessonPageAsCompleted(content.id, toggled);
+      }
+
+      if (refetchAccordionItems) refetchAccordionItems();
+
+      toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+    } catch (error) {
+      toast.info(`Estamos teniendo problemas para guardar los cambios. Intenta más tarde`);
+    }
+  };
+
   useEffect(() => {
-    if (content)
+    if (content) {
       reset({
         name: content ? content.name : 'Título del contenido',
-        description: content ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
+        description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
         content: content ? content.content : false,
         coverPhoto: content ? content.coverPhoto : null,
         files: [],
         filesToDelete: [],
         imagesToDelete: [],
       });
+    }
   }, [content, reset]);
 
   useEffect(() => {
@@ -139,7 +153,7 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
         <div className="flex items-center justify-center pr-2 gap-4">
           {isEditorDisabled ? (
             <>
-              <button type="button" className="block cursor-pointer" onClick={() => setMarkAsDone(prev => !prev)}>
+              <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
                 <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
               </button>
 
@@ -169,19 +183,6 @@ export const ContentView = ({ course, content, onSuccess, contentType }) => {
         )}
 
         {!loading && <ContentViewTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} onDeleteImage={onDeleteImage} />}
-
-        <div className="mt-4">
-          <FileUpload
-            inputRef={inputFileRef}
-            onChange={files => setValue('files', files)}
-            onDelete={file => {
-              setValue('filesToDelete', [...values.filesToDelete, file.url]);
-            }}
-            files={content?.files || []}
-            disabled={isEditorDisabled}
-            loading={loading}
-          />
-        </div>
 
         <div className="mt-4">
           <FileUpload

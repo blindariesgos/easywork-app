@@ -13,10 +13,6 @@ export default function Notification() {
     0
   );
 
-  useEffect(() => {
-    console.log(unreadNotifications, notifications);
-  }, [notifications]);
-
   return (
     <div className="md:flex flex-col gap-1 items-start hidden">
       <div className="flex gap-x-1">

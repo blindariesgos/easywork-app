@@ -1,14 +1,17 @@
 "use client";
+import useAppContext from "@/src/context/app";
 import { useNotifyContext } from "@/src/context/notify";
 import { formatDate } from "@/src/utils/getFormatDate";
 import clsx from "clsx";
 import parse from "html-react-parser";
 import moment from "moment";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 export default function NotifyList() {
   const { notifications, markAsRead, loadMore, hasMore, isLoading } =
     useNotifyContext();
+  const { lists } = useAppContext();
   const observerRef = useRef(null);
   const loadMoreRef = useRef(null);
 
@@ -68,6 +71,37 @@ export default function NotifyList() {
           {!notification.readAt && (
             <div className="w-3 h-3 rounded-full bg-red-600 absolute -top-[3px] -right-[3px]" />
           )}
+
+          <p className="flex items-center gap-2">
+            {notification?.metadata?.commentOwnerId ? (
+              <Image
+                src={
+                  lists?.users?.find(
+                    (x) => x.id == notification.metadata.commentOwnerId
+                  )?.avatar ?? "/img/activities/easy-icon.svg"
+                }
+                className="h-10 w-10 rounded-full object-cover"
+                width={10}
+                height={10}
+                alt="easy icon"
+              />
+            ) : (
+              <div
+                className={clsx(
+                  "bg-gray-200 h-10 w-10 rounded-full flex items-center justify-center"
+                )}
+              >
+                <Image
+                  src="/img/activities/easy-icon.svg"
+                  className="h-5 w-5"
+                  width={10}
+                  height={10}
+                  alt="easy icon"
+                />
+              </div>
+            )}
+            <div className="text-sm w-10/12">{parse(notification.content)}</div>
+          </p>
           <div className="self-end text-sm text-slate-500 italic data-[read-at]:bg-slate-600">
             {moment(notification.createdAt).calendar({
               sameDay: function () {
@@ -82,7 +116,7 @@ export default function NotifyList() {
               },
               lastWeek: function () {
                 return (
-                  "[el] dddd [a la" +
+                  "[el] dddd [pasado a la" +
                   (this.hours() !== 1 ? "s" : "") +
                   "] hh:mm A"
                 );
@@ -90,19 +124,6 @@ export default function NotifyList() {
               sameElse: "d MMM YYYY hh:mm A",
             })}
           </div>
-
-          <p className="flex items-center gap-2">
-            <span className="inline-block h-8 w-8 overflow-hidden rounded-full bg-slate-700">
-              <svg
-                className="h-full w-full text-slate-200"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </span>
-            <span className="text-sm">{parse(notification.content)}</span>
-          </p>
         </li>
       ))}
       <li ref={loadMoreRef} className="py-2 flex justify-center">

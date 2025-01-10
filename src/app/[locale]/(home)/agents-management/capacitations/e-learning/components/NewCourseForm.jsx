@@ -19,7 +19,7 @@ export default function NewCourseForm({ register, setValue, loading, errors, val
           placeholder="Descripción"
           rows={5}
           className="w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border border-gray-200 focus:ring-gray-200 focus:outline-0"
-          loading={loading}
+          disabled={loading}
         />
       </div>
       <div className="w-full mt-4 bg-white rounded flex justify-between items-center gap-10 p-4">

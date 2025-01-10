@@ -29,7 +29,7 @@ export default function MeetView({ meet, id }) {
   }, [meet]);
 
   const handleCreateMeetTask = () => {
-    if (!meet.agents[0]?.user?.id) {
+    if (!meet.agents[0]?.user?.sub) {
       toast.error("El agente no posee usuario en el sistema");
       return;
     }
@@ -39,7 +39,7 @@ export default function MeetView({ meet, id }) {
       JSON.stringify({
         meet: id,
         developmentManagerId: meet?.developmentManager?.id,
-        userId: meet.agents[0]?.user?.id,
+        userId: meet.agents[0]?.user?.sub,
       })
     );
     router.push(`/tools/tasks/task?prev=meet&prev_id=${agentId}&show=true`);

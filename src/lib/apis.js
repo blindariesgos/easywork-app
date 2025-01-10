@@ -281,7 +281,9 @@ export const postTask = async (body) => {
   return response;
 };
 export const postMeet = async (body) => {
-  const response = await axios().post(`/agent-management/meetings`, body);
+  const response = await axios()
+    .post(`/agent-management/meetings`, body)
+    .catch((error) => ({ hasError: true, error }));
   // revalidatePath("/tools/tasks", "page");
   return response;
 };
@@ -299,9 +301,6 @@ export const putMeetById = async (meetingId, body) => {
   const response = await axios()
     .put(`/agent-management/meetings/${meetingId}`, body)
     .catch((error) => ({ hasError: true, error }));
-  // revalidatePath(`/tools/tasks/task/${id}`, "page");
-  // revalidatePath(`/tools/tasks`, "layout");
-
   return response;
 };
 

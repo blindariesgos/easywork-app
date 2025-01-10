@@ -644,7 +644,7 @@ export default function CreateLead({ lead, id }) {
               label={t("common:buttons:cancel")}
               disabled={loading}
               buttonStyle="secondary"
-              onclick={() => router.push(`/sales/crm/leads?page=1`)}
+              onclick={() => router.back()}
               className="px-3 py-2"
             />
             <Button

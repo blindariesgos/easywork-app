@@ -14,30 +14,28 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "@/src/lib/api/hooks/contacts";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
-import { getContactId } from "@/src/lib/apis";
+import { getAgentById, getContactId } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
+import { useAgents } from "@/src/lib/api/hooks/agents";
 
-function ContactSelectAsync({
+function AgentSelectAsync({
   label,
   selectedOption,
   disabled,
-  register,
   name,
   error,
   setValue,
   border,
-  value,
   watch,
   setSelectedOption,
   placeholder,
   helperText,
-  notFoundHelperText,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({});
-  const { contacts: options, isLoading } = useContacts({
+  const { data: options, isLoading } = useAgents({
     page: 1,
     limit: 10,
     filters,
@@ -64,19 +62,19 @@ function ContactSelectAsync({
 
   useEffect(() => {
     if (selected) {
-      setValue && setValue(name, selected);
-      setSelectedOption && setSelectedOption(selected);
+      setValue && setValue(name, selected.id);
+      setSelectedOption && setSelectedOption(selected.id);
     }
   }, [selected, setValue, name, setSelectedOption]);
 
   useEffect(() => {
     if (!watch || !watch(name) || selected) return;
-    const getContact = async (contactId) => {
-      const response = await getContactId(contactId);
+    const getAgent = async (agentId) => {
+      const response = await getAgentById(agentId);
       if (response.hasError) return;
       setSelected(response);
     };
-    getContact(watch(name));
+    getAgent(watch(name));
   }, [watch && watch(name)]);
 
   return (
@@ -108,7 +106,7 @@ function ContactSelectAsync({
                 "drop-shadow-md": !disabled,
               }
             )}
-            displayValue={(person) => person?.fullName}
+            displayValue={(person) => person?.name}
             onChange={(event) => {
               setQuery && setQuery(event.target.value);
             }}
@@ -124,10 +122,7 @@ function ContactSelectAsync({
 
           <ComboboxOptions
             transition
-            anchor={{
-              to: "bottom end",
-              gap: 5,
-            }}
+            anchor="bottom end"
             className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             {isLoading && (
@@ -136,13 +131,9 @@ function ContactSelectAsync({
               </div>
             )}
             {options?.items?.length === 0 && query !== "" && !isLoading ? (
-              notFoundHelperText ? (
-                notFoundHelperText()
-              ) : (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                  {t("common:not-found")}
-                </div>
-              )
+              <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                {t("common:not-found")}
+              </div>
             ) : (
               options?.items &&
               options?.items?.map((option) => (
@@ -163,7 +154,7 @@ function ContactSelectAsync({
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {option.fullName}
+                        {option.name}
                       </span>
                       {selected ? (
                         <span
@@ -190,4 +181,4 @@ function ContactSelectAsync({
   );
 }
 
-export default ContactSelectAsync;
+export default AgentSelectAsync;

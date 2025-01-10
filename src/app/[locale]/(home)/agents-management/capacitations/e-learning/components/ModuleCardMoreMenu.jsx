@@ -6,7 +6,12 @@ import Link from 'next/link';
 export default function ModuleCardMoreMenu({ onEditCourse, onMoveCourse, onDeleteCourse }) {
   return (
     <Menu as="div" className="w-10 md:w-auto rounded-full bg-white shadow-lg absolute right-1 top-1 z-50 ">
-      <MenuButton className="flex items-center p-1.5">
+      <MenuButton
+        className="flex items-center p-1.5"
+        onClick={e => {
+          e.stopPropagation();
+        }}
+      >
         <EllipsisHorizontalIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
       </MenuButton>
 

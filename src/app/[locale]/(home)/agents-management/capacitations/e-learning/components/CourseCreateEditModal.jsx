@@ -105,7 +105,7 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
 
             {/* Module Image */}
             <div className="px-4 w-full mb-4">
-              <ModulePhoto onChange={files => setValue('coverPhoto', files[0])} loading={loading} coverPhoto={coverPhoto} />
+              <ModulePhoto onChange={file => setValue('coverPhoto', file)} loading={loading} coverPhoto={coverPhoto} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

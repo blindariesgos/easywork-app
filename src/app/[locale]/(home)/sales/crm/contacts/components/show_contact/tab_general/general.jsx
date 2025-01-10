@@ -9,24 +9,24 @@ import TextInput from "@/src/components/form/TextInput";
 import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
 import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
 import MultipleClientCodeByInsuranceInput from "@/src/components/form/MultipleClientCodeByInsuranceInput";
+import SelectInput from "@/src/components/form/SelectInput";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
+import SelectDropdown from "@/src/components/form/SelectDropdown";
+import InputDate from "@/src/components/form/InputDate";
+import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import SelectInput from "@/src/components/form/SelectInput";
-import InputDateRange from "@/src/components/form/InputDateRange";
-import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import { handleApiError } from "@/src/utils/api/errors";
 import { createContact, getContactId, updateContact } from "@/src/lib/apis";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
-import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -237,7 +237,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    const { contact: client, ...info } = data;
+    const { contact: client, subAgent, ...info } = data;
     const body = {
       ...info,
       contactId: client?.id ?? null,
@@ -533,53 +533,49 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                     disabled={!isEdit}
                     //value={watch('address')}
                   />
-
-                  <SelectDropdown
-                    label={t("contacts:create:responsible")}
-                    name="assignedById"
-                    options={lists?.users}
-                    register={register}
-                    disabled={!isEdit}
-                    error={errors.assignedById}
-                    setValue={setValue}
-                    watch={watch}
-                    placeholder="- Seleccionar -"
-                  />
-                  <SelectDropdown
-                    label={t("contacts:create:observer")}
-                    name="observerId"
-                    options={lists?.users}
-                    register={register}
-                    disabled={!isEdit}
-                    error={errors.observerId}
-                    setValue={setValue}
-                    watch={watch}
-                    placeholder="- Seleccionar -"
-                  />
-                  <SelectDropdown
-                    label={t("contacts:create:sub-agent")}
-                    name="subAgentId"
-                    options={lists?.users}
-                    register={register}
-                    disabled={!isEdit}
-                    error={errors.subAgentId}
-                    setValue={setValue}
-                    watch={watch}
-                    placeholder="- Seleccionar -"
-                  />
-                  <SelectDropdown
-                    label={t("contacts:create:intermediario")}
-                    name="intermediarioId"
-                    options={lists?.users}
-                    register={register}
-                    disabled={!isEdit}
-                    error={errors.intermediarioId}
-                    setValue={setValue}
-                    watch={watch}
-                    placeholder="- Seleccionar -"
-                  />
                 </Fragment>
               )}
+              <SelectDropdown
+                label={t("contacts:create:responsible")}
+                name="assignedById"
+                options={lists?.users}
+                register={register}
+                disabled={!isEdit}
+                error={errors.assignedById}
+                setValue={setValue}
+                watch={watch}
+              />
+              <SelectDropdown
+                label={t("contacts:create:observer")}
+                name="observerId"
+                options={lists?.users}
+                register={register}
+                disabled={!isEdit}
+                error={errors.observerId}
+                setValue={setValue}
+                watch={watch}
+              />
+              <AgentSelectAsync
+                label={t("contacts:create:sub-agent")}
+                name="subAgent"
+                // setSelectedOption={(agent) => setValue("subAgentId", agent.id)}
+                register={register}
+                disabled={!isEdit}
+                error={errors.subAgentId}
+                setValue={setValue}
+                watch={watch}
+              />
+
+              <SelectInput
+                label={t("contacts:create:intermediario")}
+                name="intermediarioId"
+                options={lists?.policies?.agentesIntermediarios || []}
+                register={register}
+                disabled={!isEdit}
+                error={errors.intermediarioId}
+                setValue={setValue}
+                watch={watch}
+              />
               {type == "moral" && (
                 <SelectInput
                   label={t("contacts:create:company-activity")}
@@ -608,6 +604,24 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   setValue={setValue}
                   watch={watch}
                   error={errors?.contact}
+                  notFoundHelperText={() => (
+                    <div>
+                      <p className="px-4 py-2 text-gray-700 text-xs">
+                        {t("common:not-found")}
+                        {". "}
+                        <span
+                          className="text-primary underline cursor-pointer"
+                          onClick={() =>
+                            router.push(
+                              "/sales/crm/contacts/contact?show=true&type=fisica"
+                            )
+                          }
+                        >
+                          {"Crear el cliente contacto"}
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 />
               )}
               <TextInput

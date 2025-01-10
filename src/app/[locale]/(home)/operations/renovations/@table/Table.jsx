@@ -203,24 +203,19 @@ export default function Table() {
 
   const masiveActions = [
     {
-      id: 1,
-      name: "Asignar Sub Agente",
-      disabled: true,
-    },
-    {
-      id: 1,
-      name: "Asignar observador",
-      disabled: true,
-    },
-    {
       id: 3,
-      name: "Cambiar Responsable",
+      name: "Asignar Responsable",
       onclick: changeResponsible,
       selectUser: true,
     },
     {
+      id: 1,
+      name: "Crear tarea",
+      disabled: true,
+    },
+    {
       id: 2,
-      name: t("common:table:checkbox:change-status"),
+      name: t("common:table:checkbox:change-stage"),
       onclick: changeStatusPolicies,
       disabled: true,
       selectOptions: [
@@ -241,17 +236,6 @@ export default function Table() {
           name: "En proceso",
         },
       ],
-    },
-    {
-      id: 1,
-      name: "Crear tarea",
-      disabled: true,
-    },
-    {
-      id: 1,
-      name: t("common:buttons:delete"),
-      onclick: () => setIsOpenDeleteMasive(true),
-      disabled: true,
     },
   ];
 
@@ -285,10 +269,6 @@ export default function Table() {
             router.push(
               `/tools/tasks/task?show=true&prev=renewal&prev_id=${id}`
             ),
-        },
-        {
-          name: "Cita",
-          disabled: true,
         },
         {
           name: "Comentario",

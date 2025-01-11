@@ -1,39 +1,50 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
-import { EvaluationMenuDropdown } from '../components/EvaluationMenuDropdown';
-import { E_LEARNING_BASE_ROUTE } from '../constants';
+import FilterTable from '@/src/components/FilterTable';
+import { ELearningNavMenu } from './ELearningNavMenu';
 
 export const ELearningHeader = () => {
-  const pathname = usePathname();
-
-  const NAV_LINKS = [
-    { id: 1, name: 'Courses', href: `${E_LEARNING_BASE_ROUTE}/courses`, component: null },
-    { id: 2, name: 'Configuración', href: `${E_LEARNING_BASE_ROUTE}/config`, component: null },
-    { id: 3, name: 'Evaluaciones', href: ``, component: <EvaluationMenuDropdown /> },
-    { id: 4, name: 'Mis cursos', href: `${E_LEARNING_BASE_ROUTE}/my-courses`, component: null },
-  ];
+  const contextValues = {};
 
   return (
-    <div className="rounded-md bg-white shadow-sm">
-      {/* Header */}
+    <header>
+      <div className="bg-white p-4 rounded-md shadow-sm w-full">
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="flex gap-3 flex-wrap w-full items-center">
+            <h1 className="text-2xl font-semibold leading-6 text-gray-900 hidden md:block">E-Learning</h1>
 
-      {/* Navegación */}
-      <div className="flex p-4 items-center gap-4">
-        {NAV_LINKS.map(navLink => {
-          const isLinkActive = navLink.href === pathname;
-
-          return navLink.component ? (
-            <div key={navLink.id}>{navLink.component}</div>
-          ) : (
-            <div key={navLink.id} className={`text-gray-${isLinkActive ? '100' : '700'} bg-gray-${isLinkActive ? '400' : '100'} rounded py-1 px-2 cursor-pointer`}>
-              <Link href={navLink.href}>{navLink.name}</Link>
+            <div className="flex-grow">
+              <div className="flex border px-1 py-1 bg-gray-300 items-center gap-x-2 rounded-md">
+                <FilterTable contextValues={contextValues} />
+              </div>
             </div>
-          );
-        })}
+
+            {/* <div className="flex-grow">
+            <div className="flex border px-1 py-1 bg-gray-300 items-center rounded-md gap-x-2">
+              <div className="w-full flex justify-between items-center gap-2 h-[34px]">
+                <div className="flex items-center w-full">
+                  <FaMagnifyingGlass className="h-4 w-4 text-primary" />
+                  <input
+                    type="search"
+                    name="search"
+                    id="search-cal"
+                    className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
+                    placeholder={t('contacts:header:search')}
+                    onChange={e => console.log(e.target.value)}
+                    // value={searchInput}
+                  />
+                </div>
+                <button className="pr-2" onClick={() => null}>
+                  <IoIosArrowDown className="h-4 w-4 text-primary" />
+                </button>
+              </div>
+            </div>
+          </div> */}
+          </div>
+        </div>
+
+        <ELearningNavMenu />
       </div>
-    </div>
+    </header>
   );
 };

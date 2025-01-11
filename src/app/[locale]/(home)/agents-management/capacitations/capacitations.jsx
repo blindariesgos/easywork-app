@@ -1,11 +1,11 @@
 'use client';
 
-import { ModuleHeader } from './components/ModuleHeader';
+import { CapacitationsHeader } from './components/CapacitationsHeader';
 
 export default function CapacitationsPage() {
   return (
     <div>
-      <ModuleHeader />
+      <CapacitationsHeader />
     </div>
   );
 }

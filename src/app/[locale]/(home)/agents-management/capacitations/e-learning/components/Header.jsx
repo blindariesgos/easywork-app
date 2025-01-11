@@ -8,7 +8,7 @@ import { useCommon } from '@/src/hooks/useCommon';
 import IconDropdown from '@/src/components/SettingsButton';
 import useCrmContext from '@/src/context/crm';
 import ActiveFiltersDrawer from '@/src/components/ActiveFiltersDrawer';
-import useCapacitationContext from '@/src/context/capacitations';
+// import useCapacitationContext from '@/src/context/capacitations';
 import { Menu, MenuItem, MenuItems } from '@headlessui/react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -17,7 +17,10 @@ export default function ELearningHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
-  const { displayFilters, removeFilter } = useCapacitationContext();
+  // const { displayFilters, removeFilter } = useCapacitationContext();
+
+  const displayFilters = () => {};
+  const removeFilter = () => {};
 
   const options = [
     { name: 'Agente', disabled: true },

@@ -6,11 +6,11 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import { deleteCourse } from '../courses/services/create-course';
-import { deleteLesson } from '../courses/module/services/lessons';
-import { deletePage } from '../courses/module/services/lesson-pages';
+import { deleteCourse } from '../../api/pages/e-learning/courses/courses';
+import { deleteLesson } from '../../api/pages/e-learning/courses/lessons';
+import { deletePage } from '../../api/pages/e-learning/courses/lesson-pages';
 
-export default function DeleteContentModal({ content, isOpen, setIsOpen, onSuccess, contentType }) {
+export const DeleteContentModal = ({ content, isOpen, setIsOpen, onSuccess, contentType }) => {
   const [loading, setLoading] = useState(false);
 
   const contentTypeLegend = {
@@ -68,4 +68,4 @@ export default function DeleteContentModal({ content, isOpen, setIsOpen, onSucce
       </div>
     </Dialog>
   );
-}
+};

@@ -594,7 +594,7 @@ export default function Table() {
                                   </p>
                                 ) : column.row === "stage" ? (
                                   <p className="flex justify-center">
-                                    {renderStage(agent.stage)}
+                                    {renderStage(agent?.agentRecruitmentStage)}
                                   </p>
                                 ) : column.row === "phone" ? (
                                   agent?.user?.phone?.length > 0 ? (

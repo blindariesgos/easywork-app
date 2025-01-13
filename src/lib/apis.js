@@ -74,6 +74,20 @@ export const createAgent = async (data) => {
   return response;
 };
 
+export const createAgentRecruitment = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agent-recruitments/agent", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const createAgentConnection = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agent-connections/agent", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const assignToDevelopmentManagerMasive = async (data) => {
   const response = await axios()
     .put("/agent-management/agents/assign-development-manager", data)
@@ -87,6 +101,18 @@ export const updateAgent = async (data, agentId) => {
     .put(`/agent-management/agents/${agentId}`, data)
     .catch((error) => ({ ...error, hasError: true }));
   revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+export const updateAgentRecruitment = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agent-recruitments/agent/${agentId}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const updateAgentConnection = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agent-connections/agent/${agentId}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 

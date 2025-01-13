@@ -213,7 +213,9 @@
   },
   "add-document": "Añadir Documento ({{document}})",
   "slide": {
-    "renovations": "Renovaciones"
+    "renovations": "Renovaciones",
+    "recruitment": "Reclutamiento",
+    "conexion": "Conexión"
   },
   "activities": {
     "event": "Reunión"

@@ -35,7 +35,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useConnectionsContext from "@/src/context/connections";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
@@ -55,7 +55,7 @@ export default function Table() {
     page,
     setPage,
     mutate,
-  } = useAccompanimentsContext();
+  } = useConnectionsContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();

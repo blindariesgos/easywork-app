@@ -114,6 +114,7 @@
             "activity": "Actividades"
         },
         "init-date": "Fecha de inicio del proceso",
+        "end-date": "Fecha de finalización del proceso",
         "entry-date": "Fecha de ingreso o aprobación"
     },
     "conections": {

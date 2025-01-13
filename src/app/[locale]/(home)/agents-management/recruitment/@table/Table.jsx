@@ -525,7 +525,7 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/agents-management/recruitment/agent/${agent.id}?show=true`}
+                                    href={`/agents-management/recruitment/agent/${agent?.agent?.id}?show=true`}
                                     className="flex gap-3 items-center"
                                   >
                                     <Image
@@ -533,17 +533,18 @@ export default function Table() {
                                       width={30}
                                       height={30}
                                       src={
-                                        agent?.user?.avatar || "/img/avatar.svg"
+                                        agent?.agent?.user?.avatar ||
+                                        "/img/avatar.svg"
                                       }
                                       alt=""
                                     />
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {agent?.name}
+                                        {agent?.agent?.name}
                                       </p>
                                       {agent.bio && (
                                         <p className="text-start text-xs">
-                                          {agent?.bio}
+                                          {agent?.agent?.bio}
                                         </p>
                                       )}
                                     </div>

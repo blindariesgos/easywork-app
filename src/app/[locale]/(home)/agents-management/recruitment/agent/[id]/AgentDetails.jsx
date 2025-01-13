@@ -19,7 +19,11 @@ export default function AgentDetails({ id }) {
   if (isLoading) return <LoaderSpinner />;
 
   return (
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver
+      openModal={true}
+      colorTag="bg-easywork-main"
+      labelTag="recruitment"
+    >
       <Suspense fallback={<LoaderSpinner />}>
         <AgentRecruitment agent={data} id={id} />
       </Suspense>

@@ -6,7 +6,7 @@ export default async function page() {
   return (
     <SlideOver
       colorTag="bg-easywork-main"
-      labelTag="agent"
+      labelTag="recruitment"
       maxWidthClass={"max-w-[46rem]"}
     >
       <AgentRecruitment />

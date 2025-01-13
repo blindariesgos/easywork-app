@@ -12,13 +12,15 @@ import { E_LEARNING_BASE_ROUTE } from '../constants';
 export const ModuleCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse }) => {
   const pathname = usePathname();
 
+  if (!course.progress) course.progress = 0;
+
   return (
     <div className="relative">
       {pathname === `${E_LEARNING_BASE_ROUTE}/config` && (
         <ModuleCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
       )}
 
-      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer h-96">
+      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer h-[430px]">
         <Link href={`${E_LEARNING_BASE_ROUTE}/courses/${course.id}`}>
           <div className="h-48 relative rounded-t-xl overflow-hidden">
             {course.coverPhotoSrc ? (
@@ -32,10 +34,13 @@ export const ModuleCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse 
               </div>
             )}
           </div>
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{course.name}</h3>
-            <p className="text-sm text-gray-500 mb-4">{course.description}</p>
-            <div className="space-y-3">
+
+          <div className="p-5 h-[238px] flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{course.name}</h3>
+              <p className="text-sm text-gray-500 mb-4 max-h-96 overflow-hidden line-clamp-4">{course.description}</p>
+            </div>
+            <div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Progreso</span>
                 <span className="font-medium text-gray-900">{course.progress}%</span>

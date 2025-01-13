@@ -18,8 +18,10 @@ import { DeleteContentModal } from '../../components/DeleteContentModal';
 import { getCourseById } from '../../../api/pages/e-learning/courses/courses';
 import { getLesson } from '../../../api/pages/e-learning/courses/lessons';
 import { getLessonPage } from '../../../api/pages/e-learning/courses/lesson-pages';
+import { AccordionItemMoreMenu } from '../components/AccordionItemMoreMenu';
+import { ModuleProgressBar } from '../../components/ModuleProgressBar';
 
-export const ModuleDetails = ({ courseId }) => {
+export const CourseDetails = ({ courseId }) => {
   const router = useRouter();
 
   const [openSections, setOpenSections] = useState([]);
@@ -138,7 +140,33 @@ export const ModuleDetails = ({ courseId }) => {
     <div className="py-4">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 pb-10">
         <div className="bg-gray-100 rounded-xl border border-gray-100">
-          <AccordionItem
+          <div className="rounded-xl border-easy-400 bg-easy-50 p-4" style={{ borderWidth: '1px', borderStyle: 'solid' }}>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-900 font-bold text-lg">{course.name}</span>
+              <div className="flex items-center justify-center gap-2">
+                <AccordionItemMoreMenu itemType="course" actions={{ editCourse, addNewLesson, addNewPage, deleteCourse }} />
+              </div>
+            </div>
+            <ModuleProgressBar progress={course.progress} />
+          </div>
+
+          {hasLessons &&
+            course.lessons.map((lesson, index) => (
+              <Lesson
+                key={lesson.id}
+                lesson={lesson}
+                isOpen={openSections.includes(lesson.name)}
+                onToggle={() => toggleSection(lesson.name)}
+                onSelectLesson={() => setSelectedContent({ item: lesson, type: 'lesson', lessonIndex: index, pageIndex: 0 })}
+                onSelectPage={(page, i) => setSelectedContent({ item: page, type: 'page', lessonIndex: index, pageIndex: i })}
+                refetchContentDetails={fetchContentDetails}
+                refetchAccordionItems={fetchModuleDetails}
+              />
+            ))}
+
+          <NewLessonButton onClick={() => setIsNewContentFormOpen(true)} />
+
+          {/* <AccordionItem
             title={course.name}
             isPrimaryItem
             isOpen={openSections.includes(course.name)}
@@ -164,7 +192,7 @@ export const ModuleDetails = ({ courseId }) => {
             ) : (
               <NewLessonButton onClick={() => setIsNewContentFormOpen(true)} />
             )}
-          </AccordionItem>
+          </AccordionItem> */}
         </div>
 
         <div>

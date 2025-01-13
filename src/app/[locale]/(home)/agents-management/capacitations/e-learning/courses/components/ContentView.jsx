@@ -86,7 +86,10 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
       setValue('files', []);
       setValue('filesToDelete', []);
       setValue('imagesToDelete', []);
+
       if (onSuccess) onSuccess();
+
+      setIsEditorDisabled(true);
     } catch (error) {
       console.log(error);
       toast.error('Algo no ha salido muy bien. Por favor intente más tarde');

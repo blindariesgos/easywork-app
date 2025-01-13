@@ -80,14 +80,14 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage,
         title={lessonDetails.name}
         isOpen={isOpen}
         onToggle={() => {
-          onSelectLesson(lesson);
           onToggle();
         }}
+        onSelect={() => onSelectLesson(lesson)}
         itemType="lesson"
         actions={{ editLesson, addNewPage, deleteLesson }}
         isCompleted={lesson.isCompleted}
       >
-        {lessonPages?.length > 0 ? (
+        {lessonPages?.length > 0 &&
           lessonPages.map((page, i) => {
             const isFirstElement = i === 0;
             const isLastElement = i === countLessonPages - 1;
@@ -105,10 +105,9 @@ export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage,
                 />
               </div>
             );
-          })
-        ) : (
-          <NewPageButton onClick={addNewPage} />
-        )}
+          })}
+
+        <NewPageButton onClick={addNewPage} />
       </AccordionItem>
 
       <DeleteContentModal

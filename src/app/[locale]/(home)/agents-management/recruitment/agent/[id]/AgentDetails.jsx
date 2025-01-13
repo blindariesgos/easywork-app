@@ -9,7 +9,12 @@ export default function AgentDetails({ id }) {
   const { data, isLoading, isError } = useAgent(id);
 
   if (isError) {
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver
+      openModal={true}
+      colorTag="bg-easywork-main"
+      labelTag="recruitment"
+      maxWidthClass={"max-w-[46rem]"}
+    >
       <div>
         <p>Error</p>
       </div>

@@ -42,7 +42,7 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-
+import { recruitmentStages } from "../common";
 export default function Table() {
   const {
     data,
@@ -267,52 +267,27 @@ export default function Table() {
     },
   ];
 
-  const getStatus = (isActive) => {
-    return (
-      <div className="flex flex-col justify-center items-center">
-        <div className="flex border opacity-40 w-[100px]">
-          <div
-            className={clsx("w-[50px] h-[10px] border border-black", {
-              "bg-[#00CD26] ": isActive,
-            })}
-          />
-          <div
-            className={clsx("w-[50px] h-[10px] border border-black", {
-              "bg-[#CD0700]": !isActive,
-            })}
-          />
-        </div>
-        <p className="text-gray-50 text-sm">
-          {isActive ? "Activo" : "Inactivo"}
-        </p>
-      </div>
-    );
-  };
-
   const renderStage = (data) => {
-    const stageIndex = -1;
-
-    const getColorClass = (item, currentIndex, stageInd) => {
-      if (currentIndex <= stageInd && stageInd != -1) return "bg-yellow-500";
-      // if (item && stageInd == -1 )
-      //   return "bg-green-primary";
-      // if (item && stageInd == -1)
-      //   return "bg-red-500";
-
-      return "";
-    };
+    const stageIndex =
+      recruitmentStages
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => data?.id == value) ?? -1;
+    const color = stageIndex != -1 ? recruitmentStages[stageIndex]?.color : "";
 
     return (
       <div className="flex flex-col gap-1 items-center">
         <div className={`flex justify-center  ${"bg-gray-200"}`}>
-          {new Array(5).fill(1).map((_, index) => (
+          {recruitmentStages.map((_, index) => (
             <div
               key={index}
-              className={`w-4 h-4 ${getColorClass(data, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+              className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
+              style={{ background: index <= stageIndex ? color : "" }}
             />
           ))}
         </div>
-        <p className="text-sm">Contacto Inicial</p>
+        <p className="text-sm">
+          {recruitmentStages?.[stageIndex]?.name ?? recruitmentStages[0].name}
+        </p>
       </div>
     );
   };
@@ -385,14 +360,14 @@ export default function Table() {
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(agent.id)
+                          selectedContacts.includes(agent?.agent?.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(agent.id) && (
+                          {selectedContacts.includes(agent?.agent?.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
@@ -400,13 +375,15 @@ export default function Table() {
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                               value={agent.id}
-                              checked={selectedContacts.includes(agent.id)}
+                              checked={selectedContacts.includes(
+                                agent?.agent?.id
+                              )}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, agent.id]
+                                    ? [...selectedContacts, agent?.agent?.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== agent.id
+                                        (p) => p !== agent?.agent?.id
                                       )
                                 )
                               }
@@ -441,11 +418,7 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(agent.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              agent?.contact?.id
-                                            );
+                                            item.handleClick(agent?.agent?.id);
                                         }}
                                       >
                                         <div
@@ -488,11 +461,7 @@ export default function Table() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      agent.id
-                                                    );
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      agent?.contact?.id
+                                                      agent?.agent?.id
                                                     );
                                                 }}
                                               >
@@ -613,8 +582,6 @@ export default function Table() {
                                       "dd/MM/yyyy, hh:mm a"
                                     )}
                                   </p>
-                                ) : column.row === "isActive" ? (
-                                  getStatus(agent?.user?.isActive)
                                 ) : column.row === "manager" ? (
                                   <p className="text-center">
                                     {agent?.recruitmentManager?.name ??

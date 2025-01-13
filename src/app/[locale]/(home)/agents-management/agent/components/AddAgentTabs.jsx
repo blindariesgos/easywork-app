@@ -42,6 +42,10 @@ export default function AddContactTabs({ tabs, refPrint, agent, type }) {
         },
         {
           name: "Iniciar Conexion",
+          onClick: () =>
+            push(
+              `/agents-management/conections/agent/${agent.id}?show=true&edit=true`
+            ),
         },
       ],
     },

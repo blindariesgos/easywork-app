@@ -4,6 +4,7 @@ import { AppContext } from "..";
 import { contactTypes, driveViews } from "../../lib/common";
 import { useCommon } from "../../hooks/useCommon";
 import {
+  getAddListConnections,
   getAddListContacts,
   getAddListLeads,
   getAddListPolicies,
@@ -45,6 +46,7 @@ export default function AppContextProvider({ children }) {
       const listLead = await getListsLead();
       const receipts = await getListsReceipts();
       const recruitments = await getListsRecruitment();
+      const connections = await getListsConnection();
 
       appList.listContact = listContact;
       appList.users = users;
@@ -53,6 +55,7 @@ export default function AppContextProvider({ children }) {
       appList.listLead = listLead;
       appList.receipts = receipts;
       appList.recruitments = recruitments;
+      appList.connections = connections;
       setLists(appList);
       setLoading(false);
     };
@@ -116,6 +119,15 @@ export default function AppContextProvider({ children }) {
   const getListsRecruitment = async () => {
     try {
       const response = await getAddListRecruitments();
+      return response;
+    } catch (error) {
+      handleApiError(error.message);
+    }
+  };
+
+  const getListsConnection = async () => {
+    try {
+      const response = await getAddListConnections();
       return response;
     } catch (error) {
       handleApiError(error.message);

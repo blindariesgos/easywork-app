@@ -6,9 +6,14 @@ import AgentEditor from "./components/AgentEditor";
 import { useRouter } from "next/navigation";
 import useConnectionsContext from "@/src/context/connections";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { createAgentRecruitment, updateAgentConnection } from "@/src/lib/apis";
+import {
+  createAgentConnection,
+  createAgentRecruitment,
+  updateAgentConnection,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useSWRConfig } from "swr";
+import moment from "moment";
 
 export default function AgentRecruitment({ agent, id }) {
   const { t } = useTranslation();
@@ -24,43 +29,39 @@ export default function AgentRecruitment({ agent, id }) {
       connectionStartDate,
       connectionEndDate,
       connectionCNSFDate,
-      agentConnectionStageId,
       ...other
     } = data;
-    let body = {
+    const body = {
       ...other,
       children: childrens,
     };
-    const connectionData = { agentConnectionStageId };
 
     if (birthdate) {
-      body = {
-        ...body,
-        birthdate: moment(birthdate).format("YYYY-MM-DD"),
-      };
+      body.birthdate = moment(birthdate).format("YYYY-MM-DD");
     }
     if (connectionStartDate) {
-      connectionData.connectionStartDate =
+      body.connectionStartDate =
         moment(connectionStartDate).format("YYYY-MM-DD");
     }
     if (connectionEndDate) {
-      connectionData.connectionEndDate =
-        moment(connectionEndDate).format("YYYY-MM-DD");
+      body.connectionEndDate = moment(connectionEndDate).format("YYYY-MM-DD");
     }
     if (connectionCNSFDate) {
-      connectionData.connectionCNSFDate =
-        moment(connectionCNSFDate).format("YYYY-MM-DD");
+      body.connectionCNSFDate = moment(connectionCNSFDate).format("YYYY-MM-DD");
     }
     try {
       setLoading(true);
-
+      const info = Object.keys(body).reduce((acc, key) => {
+        return body[key] && body[key].length > 0
+          ? {
+              ...acc,
+              [key]: body[key],
+            }
+          : acc;
+      }, {});
       if (!agent) {
-        body = {
-          ...body,
-          ...connectionData,
-        };
-        console.log({ body });
-        const response = await createAgentRecruitment(body);
+        console.log({ info });
+        const response = await createAgentConnection(info);
         console.log({ response });
         if (response.hasError) {
           let message = response.message;
@@ -74,7 +75,9 @@ export default function AgentRecruitment({ agent, id }) {
         mutateAgents();
         toast.success("Agente creado exitosamente");
       } else {
-        const response = await updateAgentConnection(connectionData, id);
+        console.log({ info });
+
+        const response = await updateAgentConnection(info, id);
         console.log({ response });
         if (response.hasError) {
           let message = response.message;

@@ -561,6 +561,10 @@ export default function Table() {
                                   <p className="text-center">
                                     {agent?.user?.email ?? "-"}
                                   </p>
+                                ) : column.row === "origin" ? (
+                                  <p className="text-center">
+                                    {agent?.agent?.source?.name ?? "-"}
+                                  </p>
                                 ) : column.row === "stage" ? (
                                   <p className="flex justify-center">
                                     {renderStage(agent?.agentRecruitmentStage)}
@@ -571,9 +575,21 @@ export default function Table() {
                                   ) : (
                                     "-"
                                   )
-                                ) : column.row === "date" ? (
+                                ) : column.row === "startDate" ? (
                                   <p className="text-center">
-                                    {moment().format("DD-MM-YYYY")}
+                                    {agent?.startDate
+                                      ? moment(agent?.startDate).format(
+                                          "DD-MM-YYYY"
+                                        )
+                                      : "-"}
+                                  </p>
+                                ) : column.row === "entryDate" ? (
+                                  <p className="text-center">
+                                    {agent?.entryDate
+                                      ? moment(agent?.entryDate).format(
+                                          "DD-MM-YYYY"
+                                        )
+                                      : "-"}
                                   </p>
                                 ) : column.row === "updatedAt" ? (
                                   <p className="text-center">
@@ -584,8 +600,12 @@ export default function Table() {
                                   </p>
                                 ) : column.row === "manager" ? (
                                   <p className="text-center">
-                                    {agent?.recruitmentManager?.name ??
-                                      agent?.recruitmentManager?.username}
+                                    {(agent?.agent?.recruitmentManager?.name ??
+                                    agent?.agent?.recruitmentManager?.profile
+                                      ?.firstName)
+                                      ? `${agent?.agent?.recruitmentManager?.profile?.firstName} ${agent?.agent?.recruitmentManager?.profile?.lastName}`
+                                      : agent?.agent?.recruitmentManager
+                                          ?.username}
                                   </p>
                                 ) : (
                                   <p className="text-center">

@@ -254,6 +254,13 @@ export const getAddListRecruitments = async () => {
   return response;
 };
 
+export const getAddListConnections = async () => {
+  const response = await axios().get(
+    `/agent-management/agent-connections/get_add_lists`
+  );
+  return response;
+};
+
 export const getUsersContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/users`);
   return response;

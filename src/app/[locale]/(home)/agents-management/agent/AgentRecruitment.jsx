@@ -48,50 +48,39 @@ export default function AgentRecruitment({ agent, id }) {
       recruitmentStartDate,
       recruitmentEndDate,
       recruitmentEntryDate,
-      agentRecruitmentStageId,
       ...other
     } = data;
-    let body = {
+    const body = {
       ...other,
       children: childrens,
     };
-    const recruitmentData = { agentRecruitmentStageId };
 
     if (birthdate) {
-      body = {
-        ...body,
-        birthdate: moment(birthdate).format("YYYY-MM-DD"),
-      };
+      body.birthdate = moment(birthdate).format("YYYY-MM-DD");
     }
     if (recruitmentStartDate) {
-      recruitmentData.recruitmentStartDate =
+      body.recruitmentStartDate =
         moment(recruitmentStartDate).format("YYYY-MM-DD");
     }
     if (recruitmentEndDate) {
-      recruitmentData.recruitmentEndDate =
-        moment(recruitmentEndDate).format("YYYY-MM-DD");
+      body.recruitmentEndDate = moment(recruitmentEndDate).format("YYYY-MM-DD");
     }
     if (recruitmentEntryDate) {
-      recruitmentData.recruitmentEntryDate =
+      body.recruitmentEntryDate =
         moment(recruitmentEntryDate).format("YYYY-MM-DD");
     }
     try {
       setLoading(true);
+      const info = Object.keys(body).reduce((acc, key) => {
+        return body[key] && body[key].length > 0
+          ? {
+              ...acc,
+              [key]: body[key],
+            }
+          : acc;
+      }, {});
 
       if (!agent) {
-        body = {
-          ...body,
-          ...recruitmentData,
-        };
-        const formData = getFormData(body);
-        const info = Object.keys(body).reduce((acc, key) => {
-          return body[key] && body[key].length > 0
-            ? {
-                ...acc,
-                [key]: body[key],
-              }
-            : acc;
-        }, {});
         console.log({ info });
 
         const response = await createAgentRecruitment(info);
@@ -108,8 +97,7 @@ export default function AgentRecruitment({ agent, id }) {
         mutateAgents();
         toast.success("Agente creado exitosamente");
       } else {
-        const formData = getFormData(recruitmentData);
-        const response = await updateAgentRecruitment(recruitmentData, id);
+        const response = await updateAgentRecruitment(info, id);
         console.log({ response });
         if (response.hasError) {
           let message = response.message;
@@ -150,7 +138,7 @@ export default function AgentRecruitment({ agent, id }) {
                 </p>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">CUA:</p>
-                  <p className="text-sm">{agent?.cua ?? "111111111"}</p>
+                  <p className="text-sm">{agent?.cua ?? "N/D"}</p>
                 </div>
                 <div className="flex gap-2">
                   <div className="flex items-center gap-2">
@@ -160,7 +148,9 @@ export default function AgentRecruitment({ agent, id }) {
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="uppercase text-sm">
-                      {moment(agent?.createdAt).format("DD/MM/YYYY")}
+                      {agent?.startDate
+                        ? moment(agent?.startDate).format("DD/MM/YYYY")
+                        : "N/D"}
                     </p>
                   </div>
                 </div>
@@ -171,7 +161,9 @@ export default function AgentRecruitment({ agent, id }) {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="uppercase text-sm">01/01/0001</p>
+                    {agent?.entryDate
+                      ? moment(agent?.entryDate).format("DD/MM/YYYY")
+                      : "N/D"}
                   </div>
                 </div>
               </div>

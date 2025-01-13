@@ -126,6 +126,16 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
       if (agent?.agentRecruitmentStage)
         setValue("agentRecruitmentStageId", agent?.agentRecruitmentStage?.id);
     }
+    if (type === "conection") {
+      if (agent?.connectionEndDate)
+        setValue("connectionEndDate", agent?.connectionEndDate);
+      if (agent?.connectionStartDate)
+        setValue("connectionStartDate", agent?.connectionStartDate);
+      if (agent?.connectionCNSFDate)
+        setValue("connectionCNSFDate", agent?.connectionCNSFDate);
+      if (agent?.agentConnectionStage)
+        setValue("agentConnectionStageId", agent?.agentConnectionStage?.id);
+    }
     setLoading(false);
   }, [agent, id]);
 
@@ -218,80 +228,6 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 name="lastName"
                 disabled={!isEdit}
               />
-              {type === "recruitment" && (
-                <Fragment>
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:recruitment:init-date")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.recruitmentStartDate}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="recruitmentStartDate"
-                    control={control}
-                    defaultValue=""
-                  />
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:recruitment:end-date")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.recruitmentEndDate}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="recruitmentEndDate"
-                    control={control}
-                    defaultValue=""
-                  />
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:recruitment:entry-date")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.recruitmentEntryDate}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="recruitmentEntryDate"
-                    control={control}
-                    defaultValue=""
-                  />
-                  <SelectInput
-                    label={t("agentsmanagement:recruitment:table:state")}
-                    name="agentRecruitmentStageId"
-                    options={lists?.recruitments?.agentRecruitmentStages ?? []}
-                    error={errors.agentRecruitmentStageId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
-                  />
-                </Fragment>
-              )}
               <Controller
                 render={({ field: { ref, ...field } }) => {
                   return (
@@ -417,16 +353,90 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
-                label={t("contacts:create:origen")}
-                name="sourceId"
-                options={lists?.listContact?.contactSources}
-                error={errors.sourceId}
-                register={register}
-                setValue={setValue}
-                disabled={!isEdit}
-                watch={watch}
-              />
+              {type === "recruitment" && (
+                <Fragment>
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:init-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.recruitmentStartDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="recruitmentStartDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:end-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.recruitmentEndDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="recruitmentEndDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:entry-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.recruitmentEntryDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="recruitmentEntryDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <SelectInput
+                    label={t("agentsmanagement:recruitment:table:state")}
+                    name="agentRecruitmentStageId"
+                    options={lists?.recruitments?.agentRecruitmentStages ?? []}
+                    error={errors.agentRecruitmentStageId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                  <SelectInput
+                    label={t("contacts:create:origen")}
+                    name="sourceId"
+                    options={lists?.recruitments?.agentSources ?? []}
+                    error={errors.sourceId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                </Fragment>
+              )}
 
               {type === "conection" && (
                 <Fragment>
@@ -448,12 +458,12 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                           icon={
                             <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                           }
-                          error={errors.datecvp}
+                          error={errors.connectionCNSFDate}
                           disabled={!isEdit}
                         />
                       );
                     }}
-                    name="datecvp"
+                    name="connectionCNSFDate"
                     control={control}
                     defaultValue=""
                   />
@@ -477,54 +487,66 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  {isEdit && (
-                    <Fragment>
-                      <Controller
-                        render={({
-                          field: { value, onChange, ref, onBlur },
-                        }) => {
-                          return (
-                            <InputDate
-                              label={"Fecha de inicio de proceso"}
-                              value={value}
-                              onChange={onChange}
-                              onBlur={onBlur}
-                              icon={
-                                <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                              }
-                              error={errors.createdAt}
-                              disabled={!isEdit}
-                            />
-                          );
-                        }}
-                        name="createdAt1"
-                        control={control}
-                        defaultValue=""
-                      />
-                      <Controller
-                        render={({
-                          field: { value, onChange, ref, onBlur },
-                        }) => {
-                          return (
-                            <InputDate
-                              label={"Fecha de conexión"}
-                              value={value}
-                              onChange={onChange}
-                              onBlur={onBlur}
-                              icon={
-                                <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                              }
-                              error={errors.entryDate}
-                              disabled={!isEdit}
-                            />
-                          );
-                        }}
-                        name="entryDate1"
-                        control={control}
-                        defaultValue=""
-                      />
-                    </Fragment>
-                  )}
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:init-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionStartDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionStartDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:end-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionEndDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionEndDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <SelectInput
+                    label={t("agentsmanagement:recruitment:table:state")}
+                    name="agentConnectionStagesId"
+                    options={lists?.connections?.agentConnectionStages ?? []}
+                    error={errors.agentConnectionStagesId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                  <SelectInput
+                    label={t("contacts:create:origen")}
+                    name="sourceId"
+                    options={lists?.connections?.agentSources ?? []}
+                    error={errors.sourceId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
                 </Fragment>
               )}
               <TextInput

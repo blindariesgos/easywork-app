@@ -1,11 +1,9 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
 
-import Link from 'next/link';
-
-export default function ModuleCardMoreMenu({ onEditCourse, onMoveCourse, onDeleteCourse }) {
+export const ModuleCardMoreMenu = ({ onEditCourse, onMoveCourse, onDeleteCourse }) => {
   return (
-    <Menu as="div" className="w-10 md:w-auto rounded-full bg-white shadow-lg absolute right-1 top-1 z-50 ">
+    <Menu as="div" className="w-auto rounded-full bg-white opacity-70 absolute right-1 top-1 z-50 hover:opacity-100 transition">
       <MenuButton
         className="flex items-center p-1.5"
         onClick={e => {
@@ -28,4 +26,4 @@ export default function ModuleCardMoreMenu({ onEditCourse, onMoveCourse, onDelet
       </MenuItems>
     </Menu>
   );
-}
+};

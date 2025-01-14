@@ -1,9 +1,5 @@
-// import CapacitationsHeader from './components/Header';
-// import CapacitationsTable from './components/CapacitationsTable';
-export default function Page() {
-  return (
-    <>
+import CapacitationsPage from './capacitations';
 
-    </>
-  );
+export default function Page() {
+  return <CapacitationsPage />;
 }

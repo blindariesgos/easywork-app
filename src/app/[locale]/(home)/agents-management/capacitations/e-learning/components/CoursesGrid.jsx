@@ -36,9 +36,9 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-5 px-10">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-y-5 py-5">
       {showCreateButton && (
-        <div className="h-[430px] flex items-center justify-center bg-gray-300 rounded-xl hover:shadow-lg transition-shadow">
+        <div className="h-[360px] xs:w-full md:w-[300px] flex items-center justify-center bg-gray-300 rounded-xl hover:shadow-lg transition-shadow">
           <button onClick={onCreateCourse} className="w-full h-full flex items-center justify-center">
             <p className="font-bold text-gray-400">+ Nuevo curso</p>
           </button>

@@ -33,7 +33,15 @@ export default function ConnectionsContextProvider({
       name: "Agente",
       type: "input",
       check: true,
-      code: "name",
+      code: "search",
+    },
+    {
+      id: 2,
+      name: "Etapa de avance",
+      type: "select",
+      check: true,
+      code: "agentConnectionStageId",
+      options: lists?.connections?.agentConnectionStages ?? [],
     },
     {
       id: 3,
@@ -41,16 +49,15 @@ export default function ConnectionsContextProvider({
       type: "dropdown",
       check: false,
       code: "developmentManagerId",
-      options: lists?.users,
+      options: lists?.users ?? [],
     },
     {
-      id: 3,
+      id: 4,
       name: t("leads:filters:created"),
       type: "date",
       check: true,
       code: "createdAt",
     },
-    ...customFilters,
   ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -79,7 +86,15 @@ export default function ConnectionsContextProvider({
         name: "Agente",
         type: "input",
         check: true,
-        code: "name",
+        code: "search",
+      },
+      {
+        id: 2,
+        name: "Etapa de avance",
+        type: "select",
+        check: true,
+        code: "agentConnectionStageId",
+        options: lists?.connections?.agentConnectionStages ?? [],
       },
       {
         id: 3,
@@ -90,28 +105,37 @@ export default function ConnectionsContextProvider({
         options: lists?.users,
       },
       {
-        id: 3,
+        id: 4,
         name: t("leads:filters:created"),
         type: "date",
         check: true,
         code: "createdAt",
       },
       {
-        id: 1,
-        name: t("contacts:create:cua"),
-        type: "input",
-        check: true,
-        code: "cua",
-      },
-      {
-        id: 3,
+        id: 5,
         name: t("agentsmanagement:accompaniments:agent:observer"),
         type: "dropdown",
         check: false,
         code: "observerId",
         options: lists?.users,
       },
-      ...customFilters,
+      {
+        id: 6,
+        name: "Proceso cerrado",
+        type: "select",
+        check: true,
+        code: "closed",
+        options: [
+          {
+            name: "Si",
+            id: "true",
+          },
+          {
+            name: "No",
+            id: "false",
+          },
+        ],
+      },
     ]);
   }, [lists]);
 

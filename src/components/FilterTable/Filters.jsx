@@ -77,7 +77,7 @@ const Filters = () => {
     });
     setDisplayFilters(displayAux);
     setFilters(custom.filter);
-    setCustomFilterSelected(custom.id);
+    setCustomFilterSelected && setCustomFilterSelected(custom.id);
   };
 
   return (

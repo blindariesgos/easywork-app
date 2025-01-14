@@ -6,16 +6,17 @@ import AgentEditor from "./components/AgentEditor";
 import moment from "moment";
 import useRecruitmentsContext from "@/src/context/recruitments";
 import { useSWRConfig } from "swr";
+import { SlArrowDown } from "react-icons/sl";
+import { SlArrowUp } from "react-icons/sl";
 import {
-  createAgent,
   createAgentRecruitment,
-  updateAgent,
   updateAgentRecruitment,
 } from "@/src/lib/apis";
 import { useRouter } from "next/navigation";
 import { handleApiError } from "@/src/utils/api/errors";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { toast } from "react-toastify";
+import RecruitmentStages from "./components/RecruitmentStages";
 
 export default function AgentRecruitment({ agent, id }) {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ export default function AgentRecruitment({ agent, id }) {
   const router = useRouter();
   const { mutate: mutateAgents } = useRecruitmentsContext();
   const { mutate } = useSWRConfig();
+  const [showMore, setShowMore] = useState(false);
 
   const getFormData = (body) => {
     const formData = new FormData();
@@ -97,6 +99,8 @@ export default function AgentRecruitment({ agent, id }) {
         mutateAgents();
         toast.success("Agente creado exitosamente");
       } else {
+        console.log({ info });
+
         const response = await updateAgentRecruitment(info, id);
         console.log({ response });
         if (response.hasError) {
@@ -131,51 +135,63 @@ export default function AgentRecruitment({ agent, id }) {
       >
         {agent && (
           <div className="pt-6 px-2 md:px-4 lg:px-8 pb-2 md:pb-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
-            <div className="grid md:grid-cols-2  gap-1">
-              <div className="grid md:grid-cols-1  gap-1">
-                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {agent?.name}
-                </p>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">CUA:</p>
-                  <p className="text-sm">{agent?.cua ?? "N/D"}</p>
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex items-center gap-2">
-                    <p className="uppercase text-sm">
-                      Fecha de inicio del proceso:
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="uppercase text-sm">
-                      {agent?.startDate
-                        ? moment(agent?.startDate).format("DD/MM/YYYY")
+            <div className="flex justify-between items-center gap-1">
+              <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
+                {agent?.name}
+              </p>
+              {showMore && (
+                <Fragment>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
+                      <p className="uppercase text-sm">
+                        Fecha de inicio del proceso:
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {agent?.recruitments?.[0]?.startDate
+                        ? moment(agent?.recruitments?.[0]?.startDate).format(
+                            "DD/MM/YYYY"
+                          )
                         : "N/D"}
-                    </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex items-center gap-2">
-                    <p className="uppercase text-sm">
-                      Fecha de ingreso o APROBACIÓN:
-                    </p>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
+                      <p className="uppercase text-sm">
+                        Fecha de ingreso o APROBACIÓN:
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {agent?.recruitments?.[0]?.entryDate
+                        ? moment(agent?.recruitments?.[0]?.entryDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : "N/D"}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {agent?.entryDate
-                      ? moment(agent?.entryDate).format("DD/MM/YYYY")
-                      : "N/D"}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 justify-end">
-                <p className="uppercase text-sm">
-                  ETAPA DE AVANCE DE RECLUTAMENTO:
+                </Fragment>
+              )}
+
+              <div
+                className="flex items-center justify-end gap-1 cursor-pointer"
+                onClick={() => setShowMore(!showMore)}
+              >
+                {showMore ? (
+                  <SlArrowUp className="w-3 h-3" />
+                ) : (
+                  <SlArrowDown className="w-3 h-3" />
+                )}
+                <p className="text-sm">
+                  {showMore ? t("common:show-less") : t("common:show-more")}
                 </p>
-                <button className="px-1 py-2  text-sm rounded-md bg-[#a9ea44]">
-                  Ingreso aprobado
-                </button>
               </div>
             </div>
+            <RecruitmentStages
+              stageId={
+                agent?.recruitments?.[0]?.agentRecruitmentStage?.id ?? ""
+              }
+              agentId={id}
+            />
           </div>
         )}
       </AgentEditor>

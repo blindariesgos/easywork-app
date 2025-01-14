@@ -28,27 +28,33 @@ export default function AddContactTabs({ tabs, refPrint, agent, type }) {
   });
 
   const settings = [
-    {
-      value: 0,
-      name: "Iniciar Proceso",
-      icon: MdPlayCircleFilled,
-      options: [
-        {
-          name: "Iniciar Reclutamiento",
-          onClick: () =>
-            push(
-              `/agents-management/recruitment/agent/${agent.id}?show=true&edit=true`
-            ),
-        },
-        {
-          name: "Iniciar Conexion",
-          onClick: () =>
-            push(
-              `/agents-management/conections/agent/${agent.id}?show=true&edit=true`
-            ),
-        },
-      ],
-    },
+    ...(() => {
+      return type == "accompaniment"
+        ? [
+            {
+              value: 0,
+              name: "Iniciar Proceso",
+              icon: MdPlayCircleFilled,
+              options: [
+                {
+                  name: "Iniciar Reclutamiento",
+                  onClick: () =>
+                    push(
+                      `/agents-management/recruitment/agent/${agent.id}?show=true&edit=true`
+                    ),
+                },
+                {
+                  name: "Iniciar Conexion",
+                  onClick: () =>
+                    push(
+                      `/agents-management/conections/agent/${agent.id}?show=true&edit=true`
+                    ),
+                },
+              ],
+            },
+          ]
+        : [];
+    })(),
     {
       value: 0,
       name: t("contacts:create:print"),
@@ -81,10 +87,7 @@ export default function AddContactTabs({ tabs, refPrint, agent, type }) {
   return (
     <div className="bg-white px-4 w-full rounded-lg">
       <div className="flex justify-between items-center">
-        <TabList
-          className=" flex gap-x-2 gap-y-2 py-2  flex-wrap justify-start"
-          aria-label="Tabs"
-        >
+        <TabList className="flex gap-x-2 gap-y-2 py-2 flex-wrap justify-start">
           {tabs
             .filter((tab) => !tab.hidden)
             .map((tab) => {
@@ -112,12 +115,7 @@ export default function AddContactTabs({ tabs, refPrint, agent, type }) {
           <AddDocuments contactId={agent.id} type={type} />
         </TabList>
         <IconDropdown
-          icon={
-            <Cog8ToothIcon
-              className="h-8 w-8 text-primary"
-              aria-hidden="true"
-            />
-          }
+          icon={<Cog8ToothIcon className="h-8 w-8 text-primary" />}
           options={settings}
           width="w-44"
         />

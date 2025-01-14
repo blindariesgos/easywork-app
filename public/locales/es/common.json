@@ -4,6 +4,8 @@
   "loading": "Cargando...",
   "saving": "Guardando...",
   "with": "Con",
+  "show-more": "Ver más",
+  "show-less": "Ver menos",
   "save": "¡Salvado con éxito!",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",
@@ -131,7 +133,7 @@
       "learning": "E-Learning (Próximamente)",
       "accompaniment": "Seguimiento",
       "commissions": "Comisiones",
-      "recruitement": "Embudo de reclutamiento y selección",
+      "recruitement": "Reclutamiento y selección",
       "capacitations": {
         "name": "Capacitaciones",
         "e-learning": "E-Learning",

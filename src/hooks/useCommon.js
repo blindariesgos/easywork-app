@@ -2171,7 +2171,7 @@ export const useConectionsTable = () => {
     },
     {
       id: 7,
-      name: t("agentsmanagement:conections:table:responsible"),
+      name: t("agentsmanagement:accompaniments:agent:manager"),
       row: "manager",
       order: "manager",
       check: true,
@@ -2187,8 +2187,8 @@ export const useConectionsTable = () => {
     {
       id: 7,
       name: t("agentsmanagement:conections:table:indate"),
-      row: "date",
-      order: "date",
+      row: "cnsfDate",
+      order: "cnsfDate",
       check: true,
     },
     {

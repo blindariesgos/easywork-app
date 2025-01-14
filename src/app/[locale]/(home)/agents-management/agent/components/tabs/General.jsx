@@ -117,24 +117,42 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
     if (agent?.source) setValue("sourceId", agent?.source?.id);
 
     if (type === "recruitment") {
-      if (agent?.recruitmentStartDate)
-        setValue("recruitmentStartDate", agent?.recruitmentStartDate);
-      if (agent?.recruitmentEndDate)
-        setValue("recruitmentEndDate", agent?.recruitmentEndDate);
-      if (agent?.recruitmentEntryDate)
-        setValue("recruitmentEntryDate", agent?.recruitmentEntryDate);
-      if (agent?.agentRecruitmentStage)
-        setValue("agentRecruitmentStageId", agent?.agentRecruitmentStage?.id);
+      const recruitment = agent?.recruitments[0] ?? {};
+      if (recruitment?.startDate)
+        setValue("recruitmentStartDate", recruitment?.startDate);
+      if (recruitment?.endDate)
+        setValue("recruitmentEndDate", recruitment?.endDate);
+      if (recruitment?.entryDate)
+        setValue("recruitmentEntryDate", recruitment?.entryDate);
+      if (recruitment?.agentRecruitmentStage)
+        setValue(
+          "agentRecruitmentStageId",
+          recruitment?.agentRecruitmentStage?.id
+        );
     }
     if (type === "conection") {
-      if (agent?.connectionEndDate)
-        setValue("connectionEndDate", agent?.connectionEndDate);
-      if (agent?.connectionStartDate)
-        setValue("connectionStartDate", agent?.connectionStartDate);
-      if (agent?.connectionCNSFDate)
-        setValue("connectionCNSFDate", agent?.connectionCNSFDate);
-      if (agent?.agentConnectionStage)
-        setValue("agentConnectionStageId", agent?.agentConnectionStage?.id);
+      const connection = agent?.connections[0] ?? {};
+
+      if (connection?.endDate)
+        setValue("connectionEndDate", connection?.endDate);
+      if (connection?.startDate)
+        setValue("connectionStartDate", connection?.startDate);
+      if (connection?.idcardNumber)
+        setValue("connectionIdcardNumber", connection?.idcardNumber);
+      if (connection?.cnsfDate)
+        setValue("connectionCNSFDate", connection?.cnsfDate);
+      if (connection?.effectiveDateCua)
+        setValue("connectionEffectiveDateCua", connection?.effectiveDateCua);
+      if (connection?.effectiveDateIdcard)
+        setValue(
+          "connectionEffectiveDateIdcard",
+          connection?.effectiveDateIdcard
+        );
+      if (connection?.agentConnectionStage)
+        setValue(
+          "agentConnectionStageId",
+          connection?.agentConnectionStage?.id
+        );
     }
     setLoading(false);
   }, [agent, id]);
@@ -325,36 +343,18 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 multiple
                 rows={3}
               />
-
-              <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:manager")}
-                name="developmentManagerId"
-                options={lists?.users ?? []}
-                disabled={!isEdit}
-                error={errors?.developmentManagerId}
-                setValue={setValue}
-                watch={watch}
-              />
-              <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:responsible")}
-                name="recruitmentManagerId"
-                options={lists?.users ?? []}
-                disabled={!isEdit}
-                error={errors?.recruitmentManagerId}
-                setValue={setValue}
-                watch={watch}
-              />
-              <SelectDropdown
-                label={t("agentsmanagement:accompaniments:agent:observer")}
-                name="observerId"
-                options={lists?.users ?? []}
-                disabled={!isEdit}
-                error={errors?.observerId}
-                setValue={setValue}
-                watch={watch}
-              />
               {type === "recruitment" && (
                 <Fragment>
+                  <SelectInput
+                    label={t("agentsmanagement:recruitment:table:state")}
+                    name="agentRecruitmentStageId"
+                    options={lists?.recruitments?.agentRecruitmentStages ?? []}
+                    error={errors.agentRecruitmentStageId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
                   <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
@@ -415,16 +415,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  <SelectInput
-                    label={t("agentsmanagement:recruitment:table:state")}
-                    name="agentRecruitmentStageId"
-                    options={lists?.recruitments?.agentRecruitmentStages ?? []}
-                    error={errors.agentRecruitmentStageId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
-                  />
+
                   <SelectInput
                     label={t("contacts:create:origen")}
                     name="sourceId"
@@ -440,30 +431,42 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
 
               {type === "conection" && (
                 <Fragment>
-                  <TextInput
-                    label={t("agentsmanagement:conections:dni-number")}
-                    error={errors?.dni}
+                  <SelectInput
+                    label={t("agentsmanagement:recruitment:table:state")}
+                    name="agentConnectionStageId"
+                    options={lists?.connections?.agentConnectionStages ?? []}
+                    error={errors.agentConnectionStageId}
                     register={register}
-                    name="dni"
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                  <TextInput
+                    label={t("agentsmanagement:conections:idcardNumber")}
+                    error={errors?.connectionIdcardNumber}
+                    register={register}
+                    name="connectionIdcardNumber"
                     disabled={!isEdit}
                   />
                   <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
-                          label={t("agentsmanagement:conections:date-cvp")}
+                          label={t(
+                            "agentsmanagement:conections:effectiveDateCua"
+                          )}
                           value={value}
                           onChange={onChange}
                           onBlur={onBlur}
                           icon={
                             <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                           }
-                          error={errors.connectionCNSFDate}
+                          error={errors.connectionEffectiveDateCua}
                           disabled={!isEdit}
                         />
                       );
                     }}
-                    name="connectionCNSFDate"
+                    name="connectionEffectiveDateCua"
                     control={control}
                     defaultValue=""
                   />
@@ -471,19 +474,21 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
-                          label={t("agentsmanagement:conections:date-vc")}
+                          label={t(
+                            "agentsmanagement:conections:effectiveDateIdcard"
+                          )}
                           value={value}
                           onChange={onChange}
                           onBlur={onBlur}
                           icon={
                             <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                           }
-                          error={errors.datevc}
+                          error={errors.connectionEffectiveDateIdcard}
                           disabled={!isEdit}
                         />
                       );
                     }}
-                    name="datevc"
+                    name="connectionEffectiveDateIdcard"
                     control={control}
                     defaultValue=""
                   />
@@ -527,15 +532,26 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  <SelectInput
-                    label={t("agentsmanagement:recruitment:table:state")}
-                    name="agentConnectionStagesId"
-                    options={lists?.connections?.agentConnectionStages ?? []}
-                    error={errors.agentConnectionStagesId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
+
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:table:indate")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionCNSFDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionCNSFDate"
+                    control={control}
+                    defaultValue=""
                   />
                   <SelectInput
                     label={t("contacts:create:origen")}
@@ -549,6 +565,34 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                   />
                 </Fragment>
               )}
+              <SelectDropdown
+                label={t("agentsmanagement:accompaniments:agent:manager")}
+                name="developmentManagerId"
+                options={lists?.users ?? []}
+                disabled={!isEdit}
+                error={errors?.developmentManagerId}
+                setValue={setValue}
+                watch={watch}
+              />
+              <SelectDropdown
+                label={t("agentsmanagement:accompaniments:agent:responsible")}
+                name="recruitmentManagerId"
+                options={lists?.users ?? []}
+                disabled={!isEdit}
+                error={errors?.recruitmentManagerId}
+                setValue={setValue}
+                watch={watch}
+              />
+              <SelectDropdown
+                label={t("agentsmanagement:accompaniments:agent:observer")}
+                name="observerId"
+                options={lists?.users ?? []}
+                disabled={!isEdit}
+                error={errors?.observerId}
+                setValue={setValue}
+                watch={watch}
+              />
+
               <TextInput
                 label={t("agentsmanagement:accompaniments:agent:comments")}
                 error={errors.address}

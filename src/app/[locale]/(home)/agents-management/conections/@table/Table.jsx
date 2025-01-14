@@ -42,7 +42,7 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-import { P } from "pino";
+import { connectionsStage } from "../common";
 
 export default function Table() {
   const {
@@ -257,79 +257,25 @@ export default function Table() {
     },
   ];
 
-  const getStatus = (isActive) => {
-    return (
-      <div className="flex flex-col justify-center items-center">
-        <div className="flex border opacity-40 w-[100px]">
-          <div
-            className={clsx("w-[50px] h-[10px] border border-black", {
-              "bg-[#00CD26] ": isActive,
-            })}
-          />
-          <div
-            className={clsx("w-[50px] h-[10px] border border-black", {
-              "bg-[#CD0700]": !isActive,
-            })}
-          />
-        </div>
-        <p className="text-gray-50 text-sm">
-          {isActive ? "Activo" : "Inactivo"}
-        </p>
-      </div>
-    );
-  };
-
-  if (data?.items && data?.items.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("operations:policies:table:not-data")}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const renderStage = (data) => {
-    const stageIndex = -1;
-
-    const getColorClass = (item, currentIndex, stageInd) => {
-      if (currentIndex <= stageInd && stageInd != -1) return "bg-yellow-500";
-      // if (item && stageInd == -1 )
-      //   return "bg-green-primary";
-      // if (item && stageInd == -1)
-      //   return "bg-red-500";
-
-      return "";
-    };
+    const stageIndex =
+      connectionsStage
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => data?.id == value) ?? -1;
+    const color = connectionsStage[stageIndex]?.color ?? "";
 
     return (
       <div className="flex flex-col gap-1 items-center">
         <div className={`flex justify-center  ${"bg-gray-200"}`}>
-          {new Array(5).fill(1).map((_, index) => (
+          {connectionsStage.map((_, index) => (
             <div
               key={index}
-              className={`w-4 h-4 ${getColorClass(data, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+              className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
+              style={{ background: index <= stageIndex ? color : "" }}
             />
           ))}
         </div>
-        <p className="text-sm">Documentacion Inicial</p>
+        <p className="text-sm">{data?.name ?? connectionsStage[0].name}</p>
       </div>
     );
   };
@@ -402,28 +348,30 @@ export default function Table() {
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(agent.id)
+                          selectedContacts.includes(agent?.agent?.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(agent.id) && (
+                          {selectedContacts.includes(agent?.agent?.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={agent.id}
-                              checked={selectedContacts.includes(agent.id)}
+                              value={agent?.agent?.id}
+                              checked={selectedContacts.includes(
+                                agent?.agent?.id
+                              )}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, agent.id]
+                                    ? [...selectedContacts, agent?.agent?.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== agent.id
+                                        (p) => p !== agent?.agent?.id
                                       )
                                 )
                               }
@@ -458,11 +406,7 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(agent.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              agent?.contact?.id
-                                            );
+                                            item.handleClick(agent?.agent?.id);
                                         }}
                                       >
                                         <div
@@ -505,11 +449,7 @@ export default function Table() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      agent.id
-                                                    );
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      agent?.contact?.id
+                                                      agent?.agent?.id
                                                     );
                                                 }}
                                               >
@@ -542,7 +482,7 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/agents-management/conections/agent/${agent.id}?show=true`}
+                                    href={`/agents-management/conections/agent/${agent?.agent?.id}?show=true`}
                                     className="flex gap-3 items-center"
                                   >
                                     <Image
@@ -550,17 +490,18 @@ export default function Table() {
                                       width={30}
                                       height={30}
                                       src={
-                                        agent?.user?.avatar || "/img/avatar.svg"
+                                        agent?.agent?.user?.avatar ||
+                                        "/img/avatar.svg"
                                       }
                                       alt=""
                                     />
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {agent?.name}
+                                        {agent?.agent?.name}
                                       </p>
-                                      {agent.bio && (
+                                      {agent?.agent?.bio && (
                                         <p className="text-start text-xs">
-                                          {agent?.bio}
+                                          {agent?.agent?.bio}
                                         </p>
                                       )}
                                     </div>
@@ -606,11 +547,11 @@ export default function Table() {
                                   </div>
                                 ) : column.row === "email" ? (
                                   <p className="text-center">
-                                    {agent?.user?.email ?? "-"}
+                                    {agent?.agent?.user?.email ?? "-"}
                                   </p>
                                 ) : column.row === "stage" ? (
                                   <p className="flex justify-center">
-                                    {renderStage(agent.stage)}
+                                    {renderStage(agent?.agentConnectionStage)}
                                   </p>
                                 ) : column.row === "phone" ? (
                                   agent?.user?.phone?.length > 0 ? (
@@ -624,24 +565,41 @@ export default function Table() {
                                   </p>
                                 ) : column.row === "initdate" ? (
                                   <p className="text-center">
-                                    {`TRIMESTRE ${moment(agent.createdAt).format("Q")}`}
+                                    {agent?.startDate
+                                      ? `TRIMESTRE ${moment(agent.startDate).format("Q")}`
+                                      : "-"}
                                   </p>
-                                ) : column.row === "updatedAt" ? (
+                                ) : column.row === "startDate" ? (
                                   <p className="text-center">
-                                    {formatDate(
-                                      agent.updatedAt,
-                                      "dd/MM/yyyy, hh:mm a"
-                                    )}
+                                    {agent?.startDate
+                                      ? moment(agent?.startDate).format(
+                                          "DD-MM-YYYY"
+                                        )
+                                      : "-"}
                                   </p>
-                                ) : column.row === "isActive" ? (
-                                  getStatus(agent?.user?.isActive)
+                                ) : column.row === "cnsfDate" ? (
+                                  <p className="text-center">
+                                    {agent?.cnsfDate
+                                      ? moment(agent?.cnsfDate).format(
+                                          "DD-MM-YYYY"
+                                        )
+                                      : "-"}
+                                  </p>
                                 ) : column.row === "manager" ? (
                                   <p className="text-center">
-                                    {agent?.recruitmentManager?.name ??
-                                      agent?.recruitmentManager?.username}
+                                    {(agent?.agent?.developmentManager?.name ??
+                                    agent?.agent?.developmentManager?.profile
+                                      ?.firstName)
+                                      ? `${agent?.agent?.developmentManager?.profile?.firstName} ${agent?.agent?.developmentManager?.profile?.lastName}`
+                                      : agent?.agent?.developmentManager
+                                          ?.username}
                                   </p>
                                 ) : column.row === "proccess" ? (
-                                  <p className="text-center">No</p>
+                                  <p className="text-center">
+                                    {agent?.closed
+                                      ? t("common:yes")
+                                      : t("common:no")}
+                                  </p>
                                 ) : (
                                   <p className="text-center">
                                     {agent[column.row] || "-"}

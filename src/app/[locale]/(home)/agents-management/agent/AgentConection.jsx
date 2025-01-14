@@ -6,14 +6,13 @@ import AgentEditor from "./components/AgentEditor";
 import { useRouter } from "next/navigation";
 import useConnectionsContext from "@/src/context/connections";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import {
-  createAgentConnection,
-  createAgentRecruitment,
-  updateAgentConnection,
-} from "@/src/lib/apis";
+import { SlArrowDown } from "react-icons/sl";
+import { SlArrowUp } from "react-icons/sl";
+import { createAgentConnection, updateAgentConnection } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useSWRConfig } from "swr";
 import moment from "moment";
+import ConnectionStages from "./components/ConnectionStages";
 
 export default function AgentRecruitment({ agent, id }) {
   const { t } = useTranslation();
@@ -21,6 +20,7 @@ export default function AgentRecruitment({ agent, id }) {
   const router = useRouter();
   const { mutate: mutateAgents } = useConnectionsContext();
   const { mutate } = useSWRConfig();
+  const [showMore, setShowMore] = useState(false);
 
   const handleFormSubmit = async (data) => {
     const {
@@ -111,37 +111,59 @@ export default function AgentRecruitment({ agent, id }) {
       >
         {agent && (
           <div className="pt-6 px-2 md:px-4 lg:px-8 pb-2 md:pb-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2">
-            <div className="grid md:grid-cols-2  gap-1">
-              <div className="grid md:grid-cols-2  gap-1">
-                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {agent?.name}
+            <div className="flex justify-between items-center gap-1">
+              <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
+                {agent?.name}
+              </p>
+              {showMore && (
+                <Fragment>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
+                      <p className="uppercase text-sm">
+                        Fecha de inicio del proceso:
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {agent?.connections?.[0]?.startDate
+                        ? moment(agent?.connections?.[0]?.startDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : "N/D"}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
+                      <p className="uppercase text-sm">Fecha de culminaciÓN:</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {agent?.connections?.[0]?.endDate
+                        ? moment(agent?.connections?.[0]?.endDate).format(
+                            "DD/MM/YYYY"
+                          )
+                        : "N/D"}
+                    </div>
+                  </div>
+                </Fragment>
+              )}
+
+              <div
+                className="flex items-center justify-end gap-1 cursor-pointer"
+                onClick={() => setShowMore(!showMore)}
+              >
+                {showMore ? (
+                  <SlArrowUp className="w-3 h-3" />
+                ) : (
+                  <SlArrowDown className="w-3 h-3" />
+                )}
+                <p className="text-sm">
+                  {showMore ? t("common:show-less") : t("common:show-more")}
                 </p>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">CUA:</p>
-                  <p className="text-sm">{agent?.cua ?? "111111111"}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    Fecha de inicio del proceso:
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">01/01/0001</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">Fecha de CONEXIÓN:</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">01/01/0001</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-end gap-2">
-                <p className="uppercase text-sm">ETAPA DE AVANCE CONEXIÓN:</p>
-                <button className="px-1 py-2 text-sm rounded-md bg-[#64d1ef]">
-                  En Avance
-                </button>
               </div>
             </div>
+            <ConnectionStages
+              stageId={agent?.connections?.[0]?.agentConnectionStage?.id ?? ""}
+              agentId={id}
+            />
           </div>
         )}
       </AgentEditor>

@@ -272,12 +272,19 @@ export default function Table() {
       recruitmentStages
         ?.map((stage) => stage.id)
         ?.findIndex((value) => data?.id == value) ?? -1;
-    const color = stageIndex != -1 ? recruitmentStages[stageIndex]?.color : "";
+    let color = "";
+    if (stageIndex >= 0 && stageIndex <= 3) {
+      color = recruitmentStages[stageIndex]?.color;
+    } else if (stageIndex >= 4 && stageIndex <= 7) {
+      color = recruitmentStages[7]?.color;
+    } else if (stageIndex == 8) {
+      color = recruitmentStages[8]?.color;
+    }
 
     return (
       <div className="flex flex-col gap-1 items-center">
         <div className={`flex justify-center  ${"bg-gray-200"}`}>
-          {recruitmentStages.map((_, index) => (
+          {new Array(6).fill(1).map((_, index) => (
             <div
               key={index}
               className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
@@ -374,7 +381,7 @@ export default function Table() {
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={agent.id}
+                              value={agent?.agent?.id}
                               checked={selectedContacts.includes(
                                 agent?.agent?.id
                               )}

@@ -30,11 +30,11 @@ const Filters = () => {
     if (searchInput.length > 0) {
       setFilters({
         ...filters,
-        [searchParam ?? "name"]: searchInput,
+        [searchParam ?? "search"]: searchInput,
       });
     } else {
       const otherFilters = Object.keys(filters)
-        .filter((key) => key != (searchParam ?? "name"))
+        .filter((key) => key != (searchParam ?? "search"))
         .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
       setFilters(otherFilters);
     }
@@ -77,7 +77,7 @@ const Filters = () => {
     });
     setDisplayFilters(displayAux);
     setFilters(custom.filter);
-    setCustomFilterSelected(custom.id);
+    setCustomFilterSelected && setCustomFilterSelected(custom.id);
   };
 
   return (

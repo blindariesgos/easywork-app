@@ -24,7 +24,8 @@
             "training": "Capacitación",
             "conexions": "Conexiones",
             "mettings": "Juntas individuales"
-        }
+        },
+        "status": "Estado del agente"
     },
     "capacitations": {
         "title": "Capacitaciones",

@@ -116,6 +116,10 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
     if (agent?.observations) setValue("observations", agent?.observations);
     if (agent?.source) setValue("sourceId", agent?.source?.id);
 
+    if (type === "accompaniment") {
+      if (agent?.status) setValue("status", agent?.status);
+    }
+
     if (type === "recruitment") {
       const recruitment = agent?.recruitments[0] ?? {};
       if (recruitment?.startDate)
@@ -343,6 +347,37 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 multiple
                 rows={3}
               />
+              {type === "accompaniment" && (
+                <SelectInput
+                  label={t("agentsmanagement:accompaniments:status")}
+                  name="status"
+                  options={[
+                    {
+                      name: "Seguimiento",
+                      id: "Seguimiento",
+                    },
+                    {
+                      name: "Aprobado",
+                      id: "Aprobado",
+                    },
+                    ,
+                    {
+                      name: "No aprobado-sin seguimiento",
+                      id: "No aprobado-sin seguimiento",
+                    },
+                    ,
+                    {
+                      name: "No volver a contactar",
+                      id: "No volver a contactar",
+                    },
+                  ]}
+                  error={errors.agentConnectionStageId}
+                  register={register}
+                  setValue={setValue}
+                  disabled={!isEdit}
+                  watch={watch}
+                />
+              )}
               {type === "recruitment" && (
                 <Fragment>
                   <SelectInput

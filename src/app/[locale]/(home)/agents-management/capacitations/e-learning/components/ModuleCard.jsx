@@ -15,12 +15,12 @@ export const ModuleCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse 
   if (!course.progress) course.progress = 0;
 
   return (
-    <div className="relative">
+    <div className="relative w-[300px] h-[360px]">
       {pathname === `${E_LEARNING_BASE_ROUTE}/config` && (
         <ModuleCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
       )}
 
-      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer h-[430px]">
+      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer w-full h-full">
         <Link href={`${E_LEARNING_BASE_ROUTE}/courses/${course.id}`}>
           <div className="h-48 relative rounded-t-xl overflow-hidden">
             {course.coverPhotoSrc ? (
@@ -35,10 +35,10 @@ export const ModuleCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse 
             )}
           </div>
 
-          <div className="p-5 h-[238px] flex flex-col justify-between">
+          <div className="p-3 h-[168px] flex flex-col justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{course.name}</h3>
-              <p className="text-sm text-gray-500 mb-4 max-h-96 overflow-hidden line-clamp-4">{course.description}</p>
+              <p className="text-sm text-gray-500 mb-4 max-h-96 overflow-hidden line-clamp-2">{course.description}</p>
             </div>
             <div>
               <div className="flex items-center justify-between text-sm">

@@ -8,6 +8,7 @@ import { E_LEARNING_BASE_ROUTE } from '../constants';
 
 export const ELearningNavMenu = () => {
   const pathname = usePathname();
+  const user = null;
 
   const NAV_LINKS = [
     { id: 1, name: 'Courses', href: `${E_LEARNING_BASE_ROUTE}/courses`, component: null },

@@ -8,8 +8,8 @@ import DropdownVisibleUsers from '@/src/components/DropdownVisibleUsers';
 // const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 import ImageResize from 'quill-resize-image';
-import { uploadCourseImage } from '../../../api/pages/e-learning/courses/courses';
 import { toast } from 'react-toastify';
+import { useCourses } from '../../hooks/useCourses';
 
 Quill.register('modules/resize', ImageResize);
 
@@ -57,6 +57,8 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [internalImages, setInternalImages] = useState([]);
 
+  const { uploadCourseImage } = useCourses();
+
   useImperativeHandle(ref, () => ({
     getEditor: () => localQuillRef.current?.getEditor(),
   }));
@@ -98,15 +100,18 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
     }
   };
 
-  const uploadImage = async image => {
-    try {
-      const formData = new FormData();
-      formData.append('image', image);
-      return await uploadCourseImage(formData);
-    } catch (error) {
-      toast.error('Tenemos problemas para guardar la imagen insertada');
-    }
-  };
+  const uploadImage = useCallback(
+    async image => {
+      try {
+        const formData = new FormData();
+        formData.append('image', image);
+        return await uploadCourseImage(formData);
+      } catch (error) {
+        toast.error('Tenemos problemas para guardar la imagen insertada');
+      }
+    },
+    [uploadCourseImage]
+  );
 
   const imageHandler = useCallback(() => {
     const input = document.createElement('input');
@@ -141,7 +146,7 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
         }
       }
     };
-  }, []);
+  }, [uploadImage]);
 
   const onChangeCustom = event => {
     const { value } = event.target;

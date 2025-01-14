@@ -5,6 +5,10 @@ import { Switch } from '@headlessui/react';
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
 
+import { useDebouncedCallback } from 'use-debounce';
+import { useLessonPages } from '../../hooks/useLessonPages';
+import { useLessons } from '../../hooks/useLessons';
+
 import Button from '@/src/components/form/Button';
 
 import ContentViewTextEditor from './ContentViewTextEditor';
@@ -12,9 +16,6 @@ import { ContentViewAttach } from './ContentViewAttach';
 import { ContentViewCoverPhoto } from './ContentViewCoverPhoto';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { FileUpload } from './FileUpload';
-
-import { createLesson, toggleLessonAsCompleted, updateLesson } from '../../../api/pages/e-learning/courses/lessons';
-import { toggleLessonPageAsCompleted, updatePage } from '../../../api/pages/e-learning/courses/lesson-pages';
 
 import '../styles/index.css';
 
@@ -24,6 +25,9 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
   const [markAsDone, setMarkAsDone] = useState(content?.isCompleted || false);
   const inputFileRef = useRef(null);
+
+  const { createLesson, toggleLessonAsCompleted, updateLesson } = useLessons();
+  const { toggleLessonPageAsCompleted, updatePage } = useLessonPages();
 
   const {
     register,
@@ -51,41 +55,59 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     setValue('imagesToDelete', [...values.imagesToDelete, ...images]);
   };
 
+  const prepareValues = values => {
+    const newValues = new FormData();
+    const { files, filesToDelete, imagesToDelete, ...rest } = values;
+
+    Object.entries(rest).forEach(([key, value]) => {
+      newValues.append(key, value);
+    });
+
+    if (files.length > 0)
+      files.forEach(file => {
+        newValues.append('files', file);
+      });
+
+    if (filesToDelete.length > 0) newValues.append('filesToDelete', JSON.stringify(filesToDelete));
+    if (imagesToDelete.length > 0) newValues.append('imagesToDelete', JSON.stringify(imagesToDelete));
+
+    return newValues;
+  };
+
+  const saveChanges = async values => {
+    const newValues = prepareValues(values);
+
+    if (isEdit) {
+      if (contentType === 'lesson') {
+        await updateLesson(content?.id, newValues);
+      } else if (contentType === 'page') {
+        await updatePage(content?.id, newValues);
+      }
+    } else {
+      await createLesson(newValues);
+    }
+
+    setValue('files', []);
+    setValue('filesToDelete', []);
+    setValue('imagesToDelete', []);
+  };
+
+  const saveContentOnChange = useDebouncedCallback(() => {
+    console.log('🚀 ~ saveContentOnChange ~ saveContentOnChange executed');
+    saveChanges(values);
+  }, 500);
+
   const onSubmit = async values => {
     setLoading(true);
 
     try {
-      const { files, filesToDelete, imagesToDelete, ...rest } = values;
+      await saveChanges(values);
 
-      const newValues = new FormData();
-
-      Object.entries(rest).forEach(([key, value]) => {
-        newValues.append(key, value);
-      });
-
-      if (files.length > 0)
-        files.forEach(file => {
-          newValues.append('files', file);
-        });
-
-      if (filesToDelete.length > 0) newValues.append('filesToDelete', JSON.stringify(filesToDelete));
-      if (imagesToDelete.length > 0) newValues.append('imagesToDelete', JSON.stringify(imagesToDelete));
-
-      if (isEdit) {
-        if (contentType === 'lesson') {
-          await updateLesson(content?.id, newValues);
-        } else if (contentType === 'page') {
-          await updatePage(content?.id, newValues);
-        }
-      } else {
-        await createLesson(newValues);
-      }
+      // setValue('files', []);
+      // setValue('filesToDelete', []);
+      // setValue('imagesToDelete', []);
 
       toast.success('Cambios guardados exitosamente!');
-
-      setValue('files', []);
-      setValue('filesToDelete', []);
-      setValue('imagesToDelete', []);
 
       if (onSuccess) onSuccess();
 
@@ -137,6 +159,10 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     if (toolbar) toolbar.style.display = isEditorDisabled ? 'none' : 'block';
   }, [isEditorDisabled]);
 
+  // useEffect(() => {
+  //   saveContentOnChange(values);
+  // }, [saveContentOnChange, values]);
+
   return (
     <form action={handleSubmit(onSubmit)}>
       <div className="p-5 flex items-center justify-between bg-white rounded-xl mb-2" style={{ borderBottomWidth: '1px', borderBottomStyle: 'solid' }}>
@@ -186,12 +212,25 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
           </div>
         )}
 
-        {!loading && <ContentViewTextEditor onChange={value => setValue('description', value)} value={values.description} disabled={isEditorDisabled} onDeleteImage={onDeleteImage} />}
+        {!loading && (
+          <ContentViewTextEditor
+            onChange={value => {
+              setValue('description', value);
+              saveContentOnChange();
+            }}
+            value={values.description}
+            disabled={isEditorDisabled}
+            onDeleteImage={onDeleteImage}
+          />
+        )}
 
         <div className="mt-4">
           <FileUpload
             inputRef={inputFileRef}
-            onChange={files => setValue('files', files)}
+            onChange={files => {
+              setValue('files', files);
+              saveContentOnChange();
+            }}
             onDelete={file => {
               setValue('filesToDelete', [...values.filesToDelete, file.url]);
             }}

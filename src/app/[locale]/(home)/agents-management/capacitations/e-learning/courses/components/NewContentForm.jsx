@@ -6,13 +6,16 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import { createLesson, updateLesson } from '../../../api/pages/e-learning/courses/lessons';
-import { createPage, updatePage } from '../../../api/pages/e-learning/courses/lesson-pages';
+import { useLessonPages } from '../../hooks/useLessonPages';
+import { useLessons } from '../../hooks/useLessons';
 
 export const NewContentForm = ({ content, isOpen, setIsOpen, contentType = '', parent, onSuccess }) => {
   const isEdit = !!content;
   const [loading, setLoading] = useState(false);
   const contentNameInputRef = useRef(null);
+
+  const { createLesson, updateLesson } = useLessons();
+  const { createPage, updatePage } = useLessonPages();
 
   const onCloseModal = () => {
     setIsOpen(false);

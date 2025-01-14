@@ -6,12 +6,16 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import { deleteCourse } from '../../api/pages/e-learning/courses/courses';
-import { deleteLesson } from '../../api/pages/e-learning/courses/lessons';
-import { deletePage } from '../../api/pages/e-learning/courses/lesson-pages';
+import { useCourses } from '../hooks/useCourses';
+import { useLessons } from '../hooks/useLessons';
+import { useLessonPages } from '../hooks/useLessonPages';
 
 export const DeleteContentModal = ({ content, isOpen, setIsOpen, onSuccess, contentType }) => {
   const [loading, setLoading] = useState(false);
+
+  const { deleteCourse } = useCourses();
+  const { deleteLesson } = useLessons();
+  const { deletePage } = useLessonPages();
 
   const contentTypeLegend = {
     course: {

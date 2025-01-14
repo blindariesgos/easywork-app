@@ -8,10 +8,13 @@ import { LessonPage } from './LessonPage';
 import { NewPageButton } from './NewPageButton';
 import { NewContentForm } from './NewContentForm';
 
-import { getLesson } from '../../../api/pages/e-learning/courses/lessons';
-import { duplicatePage as duplicateLessonPage } from '../../../api/pages/e-learning/courses/lesson-pages';
+import { useLessonPages } from '../../hooks/useLessonPages';
+import { useLessons } from '../../hooks/useLessons';
 
 export const Lesson = ({ lesson, isOpen, onToggle, onSelectLesson, onSelectPage, refetchContentDetails }) => {
+  const { getLesson } = useLessons();
+  const { duplicatePage: duplicateLessonPage } = useLessonPages();
+
   const [lessonDetails, setLessonDetail] = useState(lesson);
   const [lessonPages, setLessonPages] = useState(lesson?.pages || []);
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);

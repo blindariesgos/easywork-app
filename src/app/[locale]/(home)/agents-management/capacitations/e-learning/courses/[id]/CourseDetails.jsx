@@ -7,7 +7,6 @@ import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-i
 
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 
-import { AccordionItem } from '../components/AccordionItem';
 import { Lesson } from '../components/Lesson';
 import { NewLessonButton } from '../components/NewLessonButton';
 import { NewContentForm } from '../components/NewContentForm';
@@ -15,14 +14,19 @@ import { ContentView } from '../components/ContentView';
 import { CourseCreateEditModal } from '../../components/CourseCreateEditModal';
 import { DeleteContentModal } from '../../components/DeleteContentModal';
 
-import { getCourseById } from '../../../api/pages/e-learning/courses/courses';
-import { getLesson } from '../../../api/pages/e-learning/courses/lessons';
-import { getLessonPage } from '../../../api/pages/e-learning/courses/lesson-pages';
+import { useLessonPages } from '../../hooks/useLessonPages';
+import { useLessons } from '../../hooks/useLessons';
+import { useCourses } from '../../hooks/useCourses';
+
 import { AccordionItemMoreMenu } from '../components/AccordionItemMoreMenu';
 import { ModuleProgressBar } from '../../components/ModuleProgressBar';
 
 export const CourseDetails = ({ courseId }) => {
   const router = useRouter();
+
+  const { getCourseById } = useCourses();
+  const { getLesson } = useLessons();
+  const { getLessonPage } = useLessonPages();
 
   const [openSections, setOpenSections] = useState([]);
   const [course, setCourse] = useState(null);
@@ -56,7 +60,7 @@ export const CourseDetails = ({ courseId }) => {
     } finally {
       setFetchingModuleDetails(false);
     }
-  }, [courseId]);
+  }, [courseId, getCourseById]);
 
   const editCourse = () => {
     setIsEditModalCourseOpen(true);
@@ -115,7 +119,7 @@ export const CourseDetails = ({ courseId }) => {
     } finally {
       setLoading(false);
     }
-  }, [selectedContent]);
+  }, [getLesson, getLessonPage, selectedContent]);
 
   useEffect(() => {
     fetchModuleDetails();

@@ -208,6 +208,14 @@ export const deleteAgentById = async (agentId) => {
   return response;
 };
 
+export const deleteMeetById = async (meetId) => {
+  // try {
+  const response = await axios()
+    .delete(`/agent-management/meetings/${meetId}`)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
 export const deleteReceiptById = async (receiptId) => {
   // try {
   const response = await axios().delete(

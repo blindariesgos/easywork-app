@@ -9,10 +9,12 @@ import Button from '@/src/components/form/Button';
 
 import { CourseCover } from './CourseCover';
 
-import { createCourse, updateCourse } from '../../api/pages/e-learning/courses/courses';
+import { useCourses } from '../hooks/useCourses';
 
 export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
   const [loading, setLoading] = useState(false);
+  const { createCourse, updateCourse } = useCourses({ fetchOnMount: false });
+
   const isEdit = !!course;
 
   const {
@@ -55,8 +57,6 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
         await createCourse(newCourse);
       }
 
-      reset();
-
       setIsOpen(false);
       setValue('onlyDeleteImage', false);
 
@@ -79,9 +79,23 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
         openAfterNDays: course ? course.openAfterNDays : false,
         isPublished: course ? course.isPublished : false,
         onlyDeleteImage: false,
-        coverPhoto: course ? course.coverPhotoSrc : null,
+        coverPhoto: null,
       });
   }, [course, reset]);
+
+  useEffect(() => {
+    if (!isOpen)
+      reset({
+        name: '',
+        description: '',
+        openToAll: false,
+        private: false,
+        openAfterNDays: false,
+        isPublished: false,
+        onlyDeleteImage: false,
+        coverPhoto: null,
+      });
+  }, [isOpen, reset]);
 
   return (
     <Dialog open={isOpen} onClose={onCloseModal} className="relative z-50">
@@ -153,7 +167,7 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
                   setValue('onlyDeleteImage', true);
                 }}
                 loading={loading}
-                coverPhoto={values.coverPhoto}
+                coverPhoto={values.coverPhoto || course?.coverPhotoSrc}
               />
             </div>
 

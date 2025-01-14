@@ -3,7 +3,7 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { BsFiletypeDoc, BsFiletypePdf, BsFiletypeXls } from 'react-icons/bs';
-import { FaRegFileLines, FaRegFilePdf } from 'react-icons/fa6';
+import { FaRegFileLines } from 'react-icons/fa6';
 
 export const FilePreview = ({ file, onClick, disabled }) => {
   const [reading, setReading] = useState(true);

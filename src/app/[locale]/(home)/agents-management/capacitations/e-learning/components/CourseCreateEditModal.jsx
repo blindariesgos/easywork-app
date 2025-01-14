@@ -7,23 +7,13 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import NewCourseForm from './NewCourseForm';
-import ModulePhoto from './ModulePhoto';
+import { CourseCover } from './CourseCover';
 
-import { createCourse, updateCourse } from '../courses/services/create-course';
+import { createCourse, updateCourse } from '../../api/pages/e-learning/courses/courses';
 
-export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuccess }) {
+export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const isEdit = !!course;
-
-  // const schema = yup.object().shape({
-  //   name: yup.string().required(t('common:validations:required')),
-  //   description: yup.string(t('common:validations:required')),
-
-  //   ot: yup.string().matches(VALIDATE_ALPHANUMERIC_REGEX, t('common:validations:alphanumeric')).required(t('common:validations:required')),
-  //   sigre: yup.string().required(t('common:validations:required')),
-  //   procedure: yup.string().required(t('common:validations:required')),
-  // });
 
   const {
     register,
@@ -40,12 +30,12 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
       private: false,
       openAfterNDays: false,
       isPublished: false,
+      onlyDeleteImage: false,
       coverPhoto: null,
     },
-    // resolver: yupResolver(schema),
   });
 
-  const { isPublished, coverPhoto, ...rest } = watch();
+  const values = watch();
 
   const onCloseModal = () => {
     reset();
@@ -57,7 +47,6 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
 
     try {
       const newCourse = new FormData();
-
       Object.entries(values).forEach(([key, value]) => newCourse.append(key, value));
 
       if (isEdit) {
@@ -65,8 +54,12 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
       } else {
         await createCourse(newCourse);
       }
+
       reset();
+
       setIsOpen(false);
+      setValue('onlyDeleteImage', false);
+
       toast.success(isEdit ? 'Cambios guardados exitosamente!' : 'Curso creado exitosamente!');
       if (onSuccess) onSuccess();
     } catch (error) {
@@ -85,27 +78,83 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
         private: course ? course.private : false,
         openAfterNDays: course ? course.openAfterNDays : false,
         isPublished: course ? course.isPublished : false,
+        onlyDeleteImage: false,
         coverPhoto: course ? course.coverPhotoSrc : null,
       });
   }, [course, reset]);
 
   return (
     <Dialog open={isOpen} onClose={onCloseModal} className="relative z-50">
-      {/* The backdrop, rendered as a fixed sibling to the panel container */}
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
-      {/* Full-screen container to center the panel */}
       <div className="fixed inset-0 flex w-screen items-center justify-center p-2 ">
-        {/* The actual dialog panel  */}
         <DialogPanel className="min-w-96 space-y-8  p-6 rounded-xl bg-gray-100">
           <DialogTitle className="font-bold">Agregar curso</DialogTitle>
 
           <form action={handleSubmit(onSubmit)}>
-            <NewCourseForm register={register} setValue={setValue} loading={loading} errors={errors} values={rest} />
+            <div className="w-full">
+              <div>
+                <input
+                  {...register('name', { required: 'El nombre es obligatorio.' })}
+                  type="text"
+                  placeholder="Módulo"
+                  className={`w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border  focus:ring-gray-200 focus:outline-0 ${errors.name ? 'focus:border-red-300 border-red-300' : 'border-gray-200'}`}
+                  disabled={loading}
+                />
+                {errors.name && <p className="text-red-400 text-sm mt-1 pl-2">{errors.name.message}</p>}
+              </div>
+              <div className="w-full mt-4">
+                <textarea
+                  {...register('description')}
+                  placeholder="Descripción"
+                  rows={5}
+                  className="w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border border-gray-200 focus:ring-gray-200 focus:outline-0"
+                  disabled={loading}
+                />
+              </div>
+              <div className="w-full mt-4 bg-white rounded flex justify-between items-center gap-10 p-4">
+                <div>
+                  <input
+                    type="checkbox"
+                    className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                    onChange={e => setValue('openToAll', e.target.checked)}
+                    disabled={loading}
+                    defaultChecked={values.openToAll}
+                  />
+                  Abierto para todos
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                    onChange={e => setValue('private', e.target.checked)}
+                    disabled={loading}
+                    defaultChecked={values.private}
+                  />
+                  Privado
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                    onChange={e => setValue('openAfterNDays', e.target.checked)}
+                    disabled={loading}
+                    defaultChecked={values.openAfterNDays}
+                  />
+                  Desbloquear después de x días
+                </div>
+              </div>
+            </div>
 
-            {/* Module Image */}
             <div className="px-4 w-full mb-4">
-              <ModulePhoto onChange={file => setValue('coverPhoto', file)} loading={loading} coverPhoto={coverPhoto} />
+              <CourseCover
+                onChange={file => setValue('coverPhoto', file)}
+                onDeleteImage={() => {
+                  setValue('onlyDeleteImage', true);
+                }}
+                loading={loading}
+                coverPhoto={values.coverPhoto}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -114,8 +163,8 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
 
                 <Switch
                   disabled={loading}
-                  checked={isPublished}
-                  defaultChecked={isPublished}
+                  checked={values.isPublished}
+                  defaultChecked={values.isPublished}
                   onChange={checked => setValue('isPublished', checked)}
                   className="group relative flex h-5 w-12 cursor-pointer rounded-full bg-gray-300 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-easy-300"
                 >
@@ -135,4 +184,4 @@ export default function CourseCreateEditModal({ course, isOpen, setIsOpen, onSuc
       </div>
     </Dialog>
   );
-}
+};

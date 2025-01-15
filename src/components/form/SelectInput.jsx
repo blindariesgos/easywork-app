@@ -18,7 +18,6 @@ function SelectInput({
   selectedOption,
   options,
   disabled,
-  register,
   name,
   error,
   setValue,
@@ -31,7 +30,6 @@ function SelectInput({
   helperText,
 }) {
   const { t } = useTranslation();
-  const props = register && register(name);
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
 
@@ -62,6 +60,7 @@ function SelectInput({
       return;
     }
     if (selected) return;
+    console.log({ options });
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);

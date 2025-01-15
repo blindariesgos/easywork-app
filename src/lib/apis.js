@@ -935,3 +935,10 @@ export const getMeetById = async (id) => {
     .catch((error) => ({ hasError: true, error }));
   return response;
 };
+
+export const updateAgentState = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agents/${agentId}/set-status`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};

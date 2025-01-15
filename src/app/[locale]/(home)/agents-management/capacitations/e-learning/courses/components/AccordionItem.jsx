@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 
-import { ModuleProgressBar } from '../../components/ModuleProgressBar';
+import { ModuleProgressBar } from '../../components/CourseProgressBar';
 import { AccordionItemMoreMenu } from './AccordionItemMoreMenu';
 
 export const AccordionItem = ({ title, children, isOpen, onToggle, progress, itemType = '', isPrimaryItem = false, actions, isCompleted, onSelect }) => {

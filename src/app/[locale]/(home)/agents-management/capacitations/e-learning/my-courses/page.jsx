@@ -1,5 +1,5 @@
-import React from 'react';
+import MyCourses from './MyCourses';
 
 export default function Page() {
-  return <div>My courses</div>;
+  return <MyCourses />;
 }

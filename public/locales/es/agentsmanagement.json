@@ -25,7 +25,8 @@
             "conexions": "Conexiones",
             "mettings": "Juntas individuales"
         },
-        "status": "Estado del agente"
+        "status": "Estado del agente",
+        "select-state": "Seleccionar estado del agente"
     },
     "capacitations": {
         "title": "Capacitaciones",

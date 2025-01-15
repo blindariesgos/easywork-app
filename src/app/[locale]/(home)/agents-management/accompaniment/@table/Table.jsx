@@ -5,14 +5,11 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
-  CheckIcon,
-  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
 import React, {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -25,7 +22,6 @@ import Link from "next/link";
 import {
   assignToDevelopmentManagerMasive,
   deletePolicyById,
-  putPoliza,
   updateAgent,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
@@ -48,7 +44,7 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import SelectUserModal from "@/src/components/modals/SelectUser";
-
+import ChangeAgentState from "./ChangeAgentState";
 export default function Table() {
   const {
     data,
@@ -77,6 +73,7 @@ export default function Table() {
   const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [showAssignManager, setShowAssingManager] = useState();
+  const [showChangeState, setShowChangeState] = useState();
 
   useLayoutEffect(() => {
     if (checkbox.current) {
@@ -284,8 +281,8 @@ export default function Table() {
       handleClick: (id) => setShowAssingManager(id),
     },
     {
-      name: item.isActive ? "Inactivar" : "Activar",
-      disabled: true,
+      name: "Cambiar estado",
+      handleClick: (id) => setShowChangeState(id),
     },
   ];
 
@@ -313,6 +310,11 @@ export default function Table() {
 
   return (
     <Fragment>
+      <ChangeAgentState
+        isOpen={!!showChangeState}
+        setIsOpen={setShowChangeState}
+        id={showChangeState}
+      />
       {loading && <LoaderSpinner />}
       {selectedContacts.length > 0 && (
         <div className="flex py-2">
@@ -606,7 +608,7 @@ export default function Table() {
                                     )}
                                   </p>
                                 ) : column.row === "isActive" ? (
-                                  getStatus(agent?.user?.isActive)
+                                  getStatus(agent?.isActive)
                                 ) : column.row === "manager" ? (
                                   agent?.developmentManager?.profile ? (
                                     `${agent?.developmentManager?.profile?.firstName ?? ""} ${agent?.developmentManager?.profile?.lastName ?? ""}`

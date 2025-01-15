@@ -19,10 +19,13 @@ import { useLessons } from '../../hooks/useLessons';
 import { useCourses } from '../../hooks/useCourses';
 
 import { AccordionItemMoreMenu } from '../components/AccordionItemMoreMenu';
-import { ModuleProgressBar } from '../../components/ModuleProgressBar';
+import { CourseProgressBar } from '../../components/CourseProgressBar';
+import { useUserPermissions } from '../../../hooks/useUserPermissions';
+import { LMS_PERMISSIONS } from '../../../constants';
 
 export const CourseDetails = ({ courseId }) => {
   const router = useRouter();
+  const { hasPermission } = useUserPermissions();
 
   const { getCourseById } = useCourses();
   const { getLesson } = useLessons();
@@ -129,6 +132,10 @@ export const CourseDetails = ({ courseId }) => {
     fetchContentDetails();
   }, [fetchContentDetails]);
 
+  useEffect(() => {
+    if (!hasPermission(LMS_PERMISSIONS.courseDetails)) router.replace('/');
+  }, [hasPermission, router]);
+
   if (!course && !fetchingModuleDetails) {
     return <div>Module not found</div>; // TODO: Mejorar este componente
   }
@@ -151,7 +158,7 @@ export const CourseDetails = ({ courseId }) => {
                 <AccordionItemMoreMenu itemType="course" actions={{ editCourse, addNewLesson, addNewPage, deleteCourse }} />
               </div>
             </div>
-            <ModuleProgressBar progress={course.progress} />
+            <CourseProgressBar progress={course.progress} />
           </div>
 
           {hasLessons &&

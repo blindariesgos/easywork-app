@@ -8,6 +8,7 @@ import { FaSave } from 'react-icons/fa';
 import { useDebouncedCallback } from 'use-debounce';
 import { useLessonPages } from '../../hooks/useLessonPages';
 import { useLessons } from '../../hooks/useLessons';
+import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
 import Button from '@/src/components/form/Button';
 
@@ -18,14 +19,17 @@ import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { FileUpload } from './FileUpload';
 
 import '../styles/index.css';
+import { LMS_PERMISSIONS } from '../../../constants';
 
 export const ContentView = ({ course, content, onSuccess, contentType, refetchAccordionItems }) => {
   const isEdit = !!content;
+
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
   const [markAsDone, setMarkAsDone] = useState(content?.isCompleted || false);
   const inputFileRef = useRef(null);
 
+  const { hasPermission } = useUserPermissions();
   const { createLesson, toggleLessonAsCompleted, updateLesson } = useLessons();
   const { toggleLessonPageAsCompleted, updatePage } = useLessonPages();
 
@@ -93,7 +97,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const saveContentOnChange = useDebouncedCallback(() => {
-    console.log('🚀 ~ saveContentOnChange ~ saveContentOnChange executed');
     saveChanges(values);
   }, 500);
 
@@ -121,6 +124,8 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const toggleIsCompleted = async () => {
+    if (!hasPermission(LMS_PERMISSIONS.markAsCompleted)) return;
+
     const toggled = !markAsDone;
 
     setMarkAsDone(prev => !prev);
@@ -166,7 +171,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   return (
     <form action={handleSubmit(onSubmit)}>
       <div className="p-5 flex items-center justify-between bg-white rounded-xl mb-2" style={{ borderBottomWidth: '1px', borderBottomStyle: 'solid' }}>
-        {isEditorDisabled ? (
+        {isEditorDisabled && hasPermission(LMS_PERMISSIONS.editContentTitle) ? (
           <p className="text-lg font-bold">{values.name}</p>
         ) : (
           <div className="w-full">
@@ -183,9 +188,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
         <div className="flex items-center justify-center pr-2 gap-4">
           {isEditorDisabled ? (
             <>
-              <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
-                <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
-              </button>
+              {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
+                <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
+                  <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
+                </button>
+              )}
 
               <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
                 <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
@@ -219,7 +226,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
               saveContentOnChange();
             }}
             value={values.description}
-            disabled={isEditorDisabled}
+            disabled={isEditorDisabled || hasPermission(LMS_PERMISSIONS.editContentBody)}
             onDeleteImage={onDeleteImage}
           />
         )}

@@ -1,27 +1,28 @@
+import { useCallback } from 'react';
 import { useRequest } from '../../hooks/useRequest';
 
 export const useLessons = () => {
   const request = useRequest();
 
-  const createLesson = async data => {
+  const createLesson = useCallback(async data => {
     return await request(`/lessons`, { data, method: 'POST' });
-  };
+  }, []);
 
-  const getLesson = async id => {
+  const getLesson = useCallback(async id => {
     return await request(`/lessons/${id}`);
-  };
+  }, []);
 
-  const updateLesson = async (id, data) => {
+  const updateLesson = useCallback(async (id, data) => {
     return await request(`/lessons/${id}`, { data, method: 'PATCH' });
-  };
+  }, []);
 
-  const toggleLessonAsCompleted = async (id, completed) => {
+  const toggleLessonAsCompleted = useCallback(async (id, completed) => {
     return await request(`/lessons/toggle-completed/${id}`, { data: { completed }, method: 'PUT' });
-  };
+  }, []);
 
-  const deleteLesson = async id => {
+  const deleteLesson = useCallback(async id => {
     return await request(`/lessons/${id}`, { method: 'DELETE' });
-  };
+  }, []);
 
   return { createLesson, getLesson, updateLesson, toggleLessonAsCompleted, deleteLesson };
 };

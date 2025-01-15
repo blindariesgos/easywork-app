@@ -3,41 +3,71 @@ import Header from "../sections/Header";
 import plansData from "../plans.json";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import HelpChat from "../components/chat/HelpChat";
+import Footer from "../sections/Footer";
 
 export default function Page() {
   const plans = plansData.plans;
 
+  // const features = [
+  //   "Usuarios",
+  //   "Pólizas Vigentes",
+  //   "Contratantes y prospectos",
+  //   "Calendario de pendientes",
+  //   "Pendientes y tareas",
+  //   "Lector de Pólizas Pro",
+  //   "Generador de Reportes Pro",
+  //   "Envios vía Correos",
+  //   "Notificaciones de cobranza",
+  //   "Notificación de pendientes",
+  //   "Drive",
+  //   "Asesoría Gratuita",
+  //   "Envios vía WhatsApp",
+  //   "Vinculación Google Calendar/Office 365",
+  //   "Cobranza",
+  //   "Cobranza PLUS",
+  //   "Embudo de Ventas",
+  //   "Embudos de Ventas ilimitados",
+  //   "Reportes estratégicos",
+  //   "Reportes estratégicos / personalizados",
+  //   "Operaciones",
+  //   "Automatizaciones",
+  //   "Automatizaciones / personalizadas",
+  //   "Conexión con DA's",
+  //   "Gestión de Agentes",
+  //   "Soporte Personalizado",
+  // ];
+
   const features = [
-    "Usuarios",
-    "Pólizas Vigentes",
-    "Contratantes y prospectos",
-    "Calendario de pendientes",
-    "Pendientes y tareas",
-    "Lector de Pólizas Pro",
-    "Generador de Reportes Pro",
-    "Envios vía Correos",
-    "Notificaciones de cobranza",
-    "Notificación de pendientes",
-    "Drive",
-    "Asesoría Gratuita",
-    "Envios vía WhatsApp",
-    "Vinculación Google Calendar/Office 365",
-    "Cobranza",
-    "Cobranza PLUS",
-    "Embudo de Ventas",
-    "Embudos de Ventas ilimitados",
-    "Reportes estratégicos",
-    "Reportes estratégicos / personalizados",
-    "Operaciones",
-    "Automatizaciones",
-    "Automatizaciones / personalizadas",
-    "Conexión con DA's",
-    "Gestión de Agentes",
-    "Soporte Personalizado",
+    "USUARIOS",
+    "PÓLIZAS VIGENTES",
+    "CONTRATANTES Y PROSPECTOS",
+    "CALENDARIO DE PENDIENTES",
+    "PENDIENTES Y TAREAS",
+    "LECTOR DE PÓLIZAS PRO",
+    "GENERADOR DE REPORTES PRO",
+    "ENVIOS VÍA CORREOS",
+    "NOTIFICACIONES DE COBRANZA",
+    "NOTIFICACIÓN DE PENDIENTES",
+    "DRIVE",
+    "ASESORÍA GRATUITA",
+    "ENVIOS VÍA WHATSAPP",
+    "VINCULACIÓN GOOGLE CALENDAR/OFFICE 365",
+    "COBRANZA",
+    "COBRANZA PLUS",
+    "EMBUDO DE VENTAS",
+    "EMBUDOS DE VENTAS ILIMITADOS",
+    "REPORTES ESTRATÉGICOS",
+    "REPORTES ESTRATÉGICOS / PERSONALIZADOS",
+    "OPERACIONES",
+    "AUTOMATIZACIONES",
+    "AUTOMATIZACIONES / PERSONALIZADAS",
+    "CONEXIÓN CON DA'S",
+    "GESTIÓN DE AGENTES",
+    "SOPORTE PERSONALIZADO",
   ];
 
   return (
-    <div className="min-h-screen w-full bg-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-white">
       <div className="from-sky-500 to-blue-300 bg-gradient-to-t">
         <div id="inicio" className="h-20"></div>
         <Header redirect={true} />
@@ -67,10 +97,10 @@ export default function Page() {
             </thead>
             <tbody>
               <tr>
-                <td className="py-4 px-8 text-left">Precio</td>
+                <td className="py-4 px-8 text-left">PRECIO</td>
                 {plans.map((plan, index) => (
                   <td key={index} className="py-4 px-8 text-center">
-                    ${plan.price}/Mes
+                    {plan.price === 0 ? "Gratis" : `${plan.price}/Mes`}
                   </td>
                 ))}
               </tr>
@@ -128,6 +158,7 @@ export default function Page() {
           ))}
         </div>
       </div>
+      <Footer />
       <HelpChat />
     </div>
   );

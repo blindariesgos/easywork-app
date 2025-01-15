@@ -8,13 +8,13 @@ import { useCommon } from "@/src/hooks/useCommon";
 import IconDropdown from "@/src/components/SettingsButton";
 import useCrmContext from "@/src/context/crm";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useConnectionsContext from "@/src/context/connections";
 
 export default function AccompanimentsHeader() {
   const { t } = useTranslation();
   const { trash, settingsReceipts: settings } = useCommon();
   const { selectedContacts } = useCrmContext();
-  const { displayFilters, removeFilter } = useAccompanimentsContext();
+  const { displayFilters, removeFilter } = useConnectionsContext();
 
   return (
     <header className="flex flex-col">

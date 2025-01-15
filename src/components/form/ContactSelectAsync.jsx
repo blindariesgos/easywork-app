@@ -31,6 +31,7 @@ function ContactSelectAsync({
   setSelectedOption,
   placeholder,
   helperText,
+  notFoundHelperText,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -38,7 +39,7 @@ function ContactSelectAsync({
   const [filters, setFilters] = useState({});
   const { contacts: options, isLoading } = useContacts({
     page: 1,
-    limit: 5,
+    limit: 10,
     filters,
   });
   const handleSearch = useDebouncedCallback(() => {
@@ -123,7 +124,10 @@ function ContactSelectAsync({
 
           <ComboboxOptions
             transition
-            anchor="bottom end"
+            anchor={{
+              to: "bottom end",
+              gap: 5,
+            }}
             className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             {isLoading && (
@@ -132,9 +136,13 @@ function ContactSelectAsync({
               </div>
             )}
             {options?.items?.length === 0 && query !== "" && !isLoading ? (
-              <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                {t("common:not-found")}
-              </div>
+              notFoundHelperText ? (
+                notFoundHelperText()
+              ) : (
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                  {t("common:not-found")}
+                </div>
+              )
             ) : (
               options?.items &&
               options?.items?.map((option) => (

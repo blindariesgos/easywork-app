@@ -35,14 +35,14 @@ import {
   Transition,
 } from "@headlessui/react";
 import { formatDate } from "@/src/utils/getFormatDate";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useRecruitmentsContext from "@/src/context/recruitments";
 import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-
+import { recruitmentStages } from "../common";
 export default function Table() {
   const {
     data,
@@ -54,7 +54,7 @@ export default function Table() {
     page,
     setPage,
     mutate,
-  } = useAccompanimentsContext();
+  } = useRecruitmentsContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const checkbox = useRef();
@@ -267,79 +267,34 @@ export default function Table() {
     },
   ];
 
-  const getStatus = (isActive) => {
-    return (
-      <div className="flex flex-col justify-center items-center">
-        <div className="flex border opacity-40 w-[100px]">
-          <div
-            className={clsx("w-[50px] h-[10px] border border-black", {
-              "bg-[#00CD26] ": isActive,
-            })}
-          />
-          <div
-            className={clsx("w-[50px] h-[10px] border border-black", {
-              "bg-[#CD0700]": !isActive,
-            })}
-          />
-        </div>
-        <p className="text-gray-50 text-sm">
-          {isActive ? "Activo" : "Inactivo"}
-        </p>
-      </div>
-    );
-  };
-
-  if (data?.items && data?.items.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("operations:policies:table:not-data")}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const renderStage = (data) => {
-    const stageIndex = -1;
-
-    const getColorClass = (item, currentIndex, stageInd) => {
-      if (currentIndex <= stageInd && stageInd != -1) return "bg-yellow-500";
-      // if (item && stageInd == -1 )
-      //   return "bg-green-primary";
-      // if (item && stageInd == -1)
-      //   return "bg-red-500";
-
-      return "";
-    };
+    const stageIndex =
+      recruitmentStages
+        ?.map((stage) => stage.id)
+        ?.findIndex((value) => data?.id == value) ?? -1;
+    let color = "";
+    if (stageIndex >= 0 && stageIndex <= 3) {
+      color = recruitmentStages[stageIndex]?.color;
+    } else if (stageIndex >= 4 && stageIndex <= 7) {
+      color = recruitmentStages[7]?.color;
+    } else if (stageIndex == 8) {
+      color = recruitmentStages[8]?.color;
+    }
 
     return (
       <div className="flex flex-col gap-1 items-center">
         <div className={`flex justify-center  ${"bg-gray-200"}`}>
-          {new Array(5).fill(1).map((_, index) => (
+          {new Array(6).fill(1).map((_, index) => (
             <div
               key={index}
-              className={`w-4 h-4 ${getColorClass(data, index, stageIndex)} border-t border-b border-l last:border-r border-gray-400`}
+              className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
+              style={{ background: index <= stageIndex ? color : "" }}
             />
           ))}
         </div>
-        <p className="text-sm">Contacto Inicial</p>
+        <p className="text-sm">
+          {recruitmentStages?.[stageIndex]?.name ?? recruitmentStages[0].name}
+        </p>
       </div>
     );
   };
@@ -412,28 +367,30 @@ export default function Table() {
                       <tr
                         key={index}
                         className={clsx(
-                          selectedContacts.includes(agent.id)
+                          selectedContacts.includes(agent?.agent?.id)
                             ? "bg-gray-200"
                             : undefined,
                           "hover:bg-indigo-100/40 cursor-default"
                         )}
                       >
                         <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(agent.id) && (
+                          {selectedContacts.includes(agent?.agent?.id) && (
                             <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                           )}
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={agent.id}
-                              checked={selectedContacts.includes(agent.id)}
+                              value={agent?.agent?.id}
+                              checked={selectedContacts.includes(
+                                agent?.agent?.id
+                              )}
                               onChange={(e) =>
                                 setSelectedContacts(
                                   e.target.checked
-                                    ? [...selectedContacts, agent.id]
+                                    ? [...selectedContacts, agent?.agent?.id]
                                     : selectedContacts.filter(
-                                        (p) => p !== agent.id
+                                        (p) => p !== agent?.agent?.id
                                       )
                                 )
                               }
@@ -468,11 +425,7 @@ export default function Table() {
                                         disabled={item.disabled}
                                         onClick={() => {
                                           item.handleClick &&
-                                            item.handleClick(agent.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              agent?.contact?.id
-                                            );
+                                            item.handleClick(agent?.agent?.id);
                                         }}
                                       >
                                         <div
@@ -515,11 +468,7 @@ export default function Table() {
                                                 onClick={() => {
                                                   option.handleClick &&
                                                     option.handleClick(
-                                                      agent.id
-                                                    );
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      agent?.contact?.id
+                                                      agent?.agent?.id
                                                     );
                                                 }}
                                               >
@@ -552,7 +501,7 @@ export default function Table() {
                               >
                                 {column.row == "name" ? (
                                   <Link
-                                    href={`/agents-management/recruitment/agent/${agent.id}?show=true`}
+                                    href={`/agents-management/recruitment/agent/${agent?.agent?.id}?show=true`}
                                     className="flex gap-3 items-center"
                                   >
                                     <Image
@@ -560,17 +509,18 @@ export default function Table() {
                                       width={30}
                                       height={30}
                                       src={
-                                        agent?.user?.avatar || "/img/avatar.svg"
+                                        agent?.agent?.user?.avatar ||
+                                        "/img/avatar.svg"
                                       }
                                       alt=""
                                     />
                                     <div className="flex flex-col">
                                       <p className="text-start">
-                                        {agent?.name}
+                                        {agent?.agent?.name}
                                       </p>
                                       {agent.bio && (
                                         <p className="text-start text-xs">
-                                          {agent?.bio}
+                                          {agent?.agent?.bio}
                                         </p>
                                       )}
                                     </div>
@@ -618,9 +568,13 @@ export default function Table() {
                                   <p className="text-center">
                                     {agent?.user?.email ?? "-"}
                                   </p>
+                                ) : column.row === "origin" ? (
+                                  <p className="text-center">
+                                    {agent?.agent?.source?.name ?? "-"}
+                                  </p>
                                 ) : column.row === "stage" ? (
                                   <p className="flex justify-center">
-                                    {renderStage(agent.stage)}
+                                    {renderStage(agent?.agentRecruitmentStage)}
                                   </p>
                                 ) : column.row === "phone" ? (
                                   agent?.user?.phone?.length > 0 ? (
@@ -628,9 +582,21 @@ export default function Table() {
                                   ) : (
                                     "-"
                                   )
-                                ) : column.row === "date" ? (
+                                ) : column.row === "startDate" ? (
                                   <p className="text-center">
-                                    {moment().format("DD-MM-YYYY")}
+                                    {agent?.startDate
+                                      ? moment(agent?.startDate).format(
+                                          "DD-MM-YYYY"
+                                        )
+                                      : "-"}
+                                  </p>
+                                ) : column.row === "entryDate" ? (
+                                  <p className="text-center">
+                                    {agent?.entryDate
+                                      ? moment(agent?.entryDate).format(
+                                          "DD-MM-YYYY"
+                                        )
+                                      : "-"}
                                   </p>
                                 ) : column.row === "updatedAt" ? (
                                   <p className="text-center">
@@ -639,12 +605,14 @@ export default function Table() {
                                       "dd/MM/yyyy, hh:mm a"
                                     )}
                                   </p>
-                                ) : column.row === "isActive" ? (
-                                  getStatus(agent?.user?.isActive)
                                 ) : column.row === "manager" ? (
                                   <p className="text-center">
-                                    {agent?.recruitmentManager?.name ??
-                                      agent?.recruitmentManager?.username}
+                                    {(agent?.agent?.recruitmentManager?.name ??
+                                    agent?.agent?.recruitmentManager?.profile
+                                      ?.firstName)
+                                      ? `${agent?.agent?.recruitmentManager?.profile?.firstName} ${agent?.agent?.recruitmentManager?.profile?.lastName}`
+                                      : agent?.agent?.recruitmentManager
+                                          ?.username}
                                   </p>
                                 ) : (
                                   <p className="text-center">

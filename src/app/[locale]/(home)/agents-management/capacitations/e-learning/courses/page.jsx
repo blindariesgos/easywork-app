@@ -1,9 +1,5 @@
-import CoursesView from './CoursesView';
+import CoursesView from './Courses';
 
 export default function Page() {
-  return (
-    <>
-      <CoursesView />
-    </>
-  );
+  return <CoursesView />;
 }

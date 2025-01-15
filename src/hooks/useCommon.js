@@ -1870,14 +1870,6 @@ export const useRenovationTable = () => {
       check: true,
     },
     {
-      id: 1,
-      name: t("operations:renovations:table:origin"),
-      row: "source",
-      order: "source",
-      check: true,
-      permanent: true,
-    },
-    {
       id: 6,
       name: t("operations:renovations:table:amount"),
       row: "importePagar",
@@ -2029,6 +2021,13 @@ export const useTeamMeetTable = () => {
       order: "startTime",
       check: true,
     },
+    {
+      id: 8,
+      name: t("agentsmanagement:meetings-and-sessions:table:revision"),
+      row: "vigenciaDesde",
+      order: "vigenciaDesde",
+      check: true,
+    },
   ];
   return { columnTable };
 };
@@ -2123,15 +2122,15 @@ export const useRecruitmentTable = () => {
     {
       id: 7,
       name: t("agentsmanagement:recruitment:table:indate"),
-      row: "date",
-      order: "date",
+      row: "entryDate",
+      order: "entryDate",
       check: true,
     },
     {
       id: 3,
       name: t("agentsmanagement:recruitment:table:initdate"),
-      row: "date",
-      order: "date",
+      row: "startDate",
+      order: "startDate",
       check: true,
       photo: true,
     },
@@ -2172,7 +2171,7 @@ export const useConectionsTable = () => {
     },
     {
       id: 7,
-      name: t("agentsmanagement:conections:table:responsible"),
+      name: t("agentsmanagement:accompaniments:agent:manager"),
       row: "manager",
       order: "manager",
       check: true,
@@ -2188,8 +2187,8 @@ export const useConectionsTable = () => {
     {
       id: 7,
       name: t("agentsmanagement:conections:table:indate"),
-      row: "date",
-      order: "date",
+      row: "cnsfDate",
+      order: "cnsfDate",
       check: true,
     },
     {

@@ -45,9 +45,7 @@ export const useRefunds = ({ filters = {}, config = {} }) => {
 export const useReimbursement = (reimbursementId) => {
   const url = `/operations/reimbursements/${reimbursementId}`;
 
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher, {
-    revalidateOnMount: true,
-  });
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {
     data,

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ModalInfo from "../info/[param]/ModalInfo"
 import { useRouter } from "next/navigation";
 
 export default function Footer() {
@@ -15,7 +16,7 @@ export default function Footer() {
 
       <div className="absolute inset-0 pt-60 max-md:pt-6 pb-10 z-20 w-full flex flex-col md:flex-row items-center justify-between px-20 max-lg:px-2 bg-[url('/img/landing/bg-stars.png')] md:bg-none">
         <Image
-          className="w-36 max-md:hidden mb-4 lg:mb-0 pr-2"
+          className="w-24 max-md:hidden mb-4 lg:mb-0 pr-2"
           width={400}
           height={400}
           src="/img/landing/logo.svg"
@@ -24,11 +25,12 @@ export default function Footer() {
         {/* Ajustamos grid-cols para tener 1 columna en mobile y 2 en pantallas grandes */}
         <ul className="text-white font-light text-sm max-md:text-center max-md:gap-1 grid grid-cols-1 md:grid-cols-2 gap-4 lg:text-lg text-left mb-4 lg:mb-0">
           <li className="cursor-pointer mb-2">Comenzar</li>
-          <li className="cursor-pointer mb-2">Preguntas frecuentes</li>
+          <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?faq=true`)}>Preguntas frecuentes</li>
           <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?show=true`)}>Contacto</li>
-          <li className="cursor-pointer mb-2">Términos y condiciones de uso</li>
-          <li className="cursor-pointer mb-2">Políticas de privacidad</li>
-          <li className="cursor-pointer">Políticas de cookies</li>
+          <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?termsConditions=true`)}>Términos y condiciones de uso</li>
+          <li className="cursor-pointer mb-2" onClick={() => router.push(`${window.location.pathname}?privacyPolicy=true`)}>Políticas de privacidad</li>
+          <li className="cursor-pointer" onClick={() => router.push(`${window.location.pathname}?cookiesPolicy=true`)}>Políticas de cookies</li>
+          <li className="cursor-pointer" onClick={() => router.push(`${window.location.pathname}?returns=true`)}>Política de devolución y reembolso</li>
         </ul>
         <div className="flex justify-center items-center lg:justify-end space-x-4 lg:space-x-4 max-lg:space-x-2">
           <a
@@ -80,6 +82,7 @@ export default function Footer() {
           </a>
         </div>
       </div>
+      <ModalInfo />
     </div>
   );
 }

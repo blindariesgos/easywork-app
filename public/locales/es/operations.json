@@ -29,9 +29,10 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
+            "sub-agent": "Sub agente",
             "intermediary": "Intermediario",
-            "responsible": "Responsable"
+            "responsible": "Responsable",
+            "observers": "Observadores"
         }
     },
     "renovations": {

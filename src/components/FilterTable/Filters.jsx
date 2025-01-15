@@ -9,21 +9,32 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { useDebouncedCallback } from "use-debounce";
 import { IoIosArrowDown } from "react-icons/io";
 import useFilterTableContext from "../../context/filters-table";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 const Filters = () => {
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
-  const { filters, setFilters, searchParam } = useFilterTableContext();
+  const {
+    filters,
+    setFilters,
+    searchParam,
+    allowSaveCustomFilters,
+    customFilters,
+    filterFields,
+    setDisplayFilters,
+    setCustomFilterSelected,
+    customFilterSelected,
+  } = useFilterTableContext();
 
   const handleSearch = useDebouncedCallback(() => {
     if (searchInput.length > 0) {
       setFilters({
         ...filters,
-        [searchParam ?? "name"]: searchInput,
+        [searchParam ?? "search"]: searchInput,
       });
     } else {
       const otherFilters = Object.keys(filters)
-        .filter((key) => key != (searchParam ?? "name"))
+        .filter((key) => key != (searchParam ?? "search"))
         .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
       setFilters(otherFilters);
     }
@@ -55,6 +66,20 @@ const Filters = () => {
   //   });
   // };
 
+  const handleSelectCustomFilter = (custom) => {
+    const keys = Object.keys(custom.filter);
+    const fields = filterFields.filter((field) => keys.includes(field.code));
+    const displayAux = fields.map((field) => {
+      return {
+        ...field,
+        value: custom.filter[field.code],
+      };
+    });
+    setDisplayFilters(displayAux);
+    setFilters(custom.filter);
+    setCustomFilterSelected && setCustomFilterSelected(custom.id);
+  };
+
   return (
     <Menu as="div" className="relative inline-block w-full">
       <div className="w-full flex justify-between items-center gap-2 h-[34px]">
@@ -80,42 +105,45 @@ const Filters = () => {
       >
         <div className="p-4">
           <div className="flex gap-4 flex-col sm:flex-row">
-            {/* <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
-              <p className="text-xs text-gray-60 text-center">
-                {t("contacts:filters:name")}
-              </p>
-              <div className="mt-4 flex flex-col gap-2 mb-14">
-                {contacts &&
-                  contacts.map((cont, index) => (
+            {customFilters && customFilters.length > 0 && (
+              <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
+                <p className="text-xs text-gray-60 text-center">
+                  {t("contacts:filters:name")}
+                </p>
+                <div className="mt-4 flex flex-col gap-2 mb-14">
+                  {customFilters.map((filter, index) => (
                     <div
                       key={index}
-                      className="cursor-pointer"
-                      onClick={() => handleSelected(cont.id)}
+                      className="cursor-pointer group"
+                      onClick={() => handleSelectCustomFilter(filter)}
                     >
                       <p
-                        className={`text-sm uppercase  ${
-                          cont.selected
+                        className={`text-sm uppercase group-hover:font-semibold  ${
+                          customFilterSelected == filter.id
                             ? "text-primary font-medium"
                             : "text-gray-60"
                         }`}
                       >
-                        {cont.name}
+                        {filter.name}
                       </p>
                     </div>
                   ))}
-              </div>
-              <div className="absolute bottom-2">
-                <div
-                  className="flex gap-2 cursor-pointer items-center"
-                  onClick={() => saveFilter()}
-                >
-                  <PlusIcon className="h-3 w-3 text-gray-60" />
-                  <p className="text-xs uppercase text-gray-60">
-                    {t("contacts:filters:save")}
-                  </p>
                 </div>
+                {allowSaveCustomFilters && (
+                  <div className="absolute bottom-2">
+                    <div
+                      className="flex gap-2 cursor-pointer items-center"
+                      onClick={() => saveFilter()}
+                    >
+                      <PlusIcon className="h-3 w-3 text-gray-60" />
+                      <p className="text-xs uppercase text-gray-60">
+                        {t("contacts:filters:save")}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div> */}
+            )}
             <FormFilters />
           </div>
         </div>

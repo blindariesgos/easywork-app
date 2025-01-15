@@ -1,7 +1,7 @@
 "use client";
 import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useAppContext from "@/src/context/app";
 import { Controller, useForm } from "react-hook-form";
@@ -192,6 +192,11 @@ export default function TaskEditor({ edit, copy, subtask }) {
   };
   const setCrmPolicy = async (policyId, type) => {
     const response = await getPolicyById(policyId);
+    console.log({ response });
+    if (!response?.id) {
+      setLoading(false);
+      return;
+    }
     setValue("crm", [
       {
         id: response?.id,
@@ -207,7 +212,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     console.log(response, agentId);
 
     if (!response) {
-      console.log("no hay meet 1");
       setLoading(false);
       return;
     }
@@ -215,7 +219,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     const data = JSON.parse(response);
 
     if (!data) {
-      console.log("no hay meet 2");
       setLoading(false);
       return;
     }
@@ -227,6 +230,31 @@ export default function TaskEditor({ edit, copy, subtask }) {
       lists?.users.filter((user) => user.id === data.developmentManagerId)
     );
     setValue("responsible", [user]);
+    setValue("metadata", metadata);
+    setValue("name", "CRM - Junta: ");
+    setLoading(false);
+  };
+
+  const setCrmMeetGroup = async (agentId) => {
+    const response = localStorage.getItem(agentId);
+
+    if (!response) {
+      setLoading(false);
+      return;
+    }
+
+    const data = JSON.parse(response);
+
+    if (!data) {
+      setLoading(false);
+      return;
+    }
+    const { userId, ...metadata } = data;
+
+    setValue(
+      "createdBy",
+      lists?.users.filter((user) => user.id === data.developmentManagerId)
+    );
     setValue("metadata", metadata);
     setValue("name", "CRM - Junta: ");
     setLoading(false);
@@ -264,9 +292,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    if (params.get("prev") === "meet") {
+    if (params.get("prev") === "meet-individual") {
       setLoading(true);
       setCrmMeet(prevId);
+      return;
+    }
+    if (params.get("prev") === "meet-group") {
+      setLoading(true);
+      setCrmMeetGroup(prevId);
       return;
     }
   }, [params.get("prev")]);
@@ -280,7 +313,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (session && params.get("prev") != "meet") {
       setValue(
         "createdBy",
-        lists?.users.filter((user) => user.id === session.user?.id)
+        lists?.users.filter((user) => user.id === session.user?.sub)
       );
     }
   }, [session, lists?.users, setValue]);
@@ -348,6 +381,22 @@ export default function TaskEditor({ edit, copy, subtask }) {
       router.push(`/tools/tasks?page=1`);
     }
   };
+
+  const canEdit = useMemo(() => {
+    const task = edit || copy || subtask || null;
+    if (!task) {
+      return true;
+    }
+
+    const isCreator = task.createdBy.id == session.user.sub;
+    const isResponsible = !!task.responsible.find(
+      (responsible) => responsible.id == session.user.sub
+    );
+
+    if (isCreator || isResponsible) return true;
+
+    return false;
+  }, [edit, copy, subtask, session.user.sub]);
 
   return (
     <>
@@ -419,6 +468,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
               setTaggedUsers={setTaggedUsers}
               addFile={!edit && setValue}
               files={!edit && (watch("fileIds") ?? [])}
+              canEdit={canEdit}
             />
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
@@ -825,7 +875,7 @@ const buildTaskBody = (
     requireRevision: selectedOptions.some((sel) => sel.id === 2),
     requireSummary: data.requireSummary,
     responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
-    createdById: session.user?.id,
+    createdById: session.user?.sub,
     crm,
     important: !!data?.important,
     metadata: data.metadata,

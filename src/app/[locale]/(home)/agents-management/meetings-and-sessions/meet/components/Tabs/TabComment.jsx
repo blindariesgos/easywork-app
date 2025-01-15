@@ -357,7 +357,7 @@ export default function TabComment({ info }) {
                     <div className="flex justify-end items-center gap-1">
                       <div
                         onClick={() => {
-                          if (dat.createdBy.id !== session?.user?.id) return;
+                          if (dat.createdBy.id !== session?.user?.sub) return;
                           setEditComment({ [index]: !editComment[index] });
                           setValueText(dat.comment);
                           if (dat.attachedObjects) {
@@ -378,7 +378,7 @@ export default function TabComment({ info }) {
                       </div>
                       <div
                         onClick={() => {
-                          if (dat.createdBy.id !== session?.user?.id) return;
+                          if (dat.createdBy.id !== session?.user?.sub) return;
                           getDeleteComment(dat.id);
                         }}
                         className="cursor-pointer hover:bg-gray-200 p-1 rounded-full"

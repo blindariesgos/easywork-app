@@ -22,15 +22,17 @@ export default function CalendarConfig({ selectOauth }) {
     if (params.get("config") === "true") {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${session?.data?.user?.id}/${selectOauth?.id}`
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${session?.data?.user?.sub}/${selectOauth?.id}`
         )
         .then((res) => {
           setListCalendars(res.data);
         })
         .catch((err) => {
           console.log(err);
-          toast.error("El token de actualización no es válido o ha expirado. Vuelva a autenticarse.")
-        })
+          toast.error(
+            "El token de actualización no es válido o ha expirado. Vuelva a autenticarse."
+          );
+        });
     }
   }, [params.get("config")]);
 
@@ -76,15 +78,16 @@ export default function CalendarConfig({ selectOauth }) {
               <h1 className="font-medium">Google {selectOauth?.email}</h1>
             </div>
             <div className="text-sm">
-              {listCalendars && listCalendars?.map((item, index) => (
-                <div className="flex ml-2 mt-2 justify-between" key={index}>
-                  <div className="flex">
-                    <input type="checkbox" />
-                    <p className="ml-1">{item?.summary}</p>
+              {listCalendars &&
+                listCalendars?.map((item, index) => (
+                  <div className="flex ml-2 mt-2 justify-between" key={index}>
+                    <div className="flex">
+                      <input type="checkbox" />
+                      <p className="ml-1">{item?.summary}</p>
+                    </div>
+                    <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
                   </div>
-                  <EllipsisHorizontalIcon className="h-5 w-6 text-gray-50" />
-                </div>
-              ))}
+                ))}
             </div>
             <div className="mt-6 flex justify-center">
               <p className="text-xs underline text-gray-50">

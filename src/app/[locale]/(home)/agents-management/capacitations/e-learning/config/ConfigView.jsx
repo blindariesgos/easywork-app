@@ -1,8 +1,5 @@
-import { getCourses } from '../courses/services/get-courses';
-import CoursesGridView from '../components/CoursesGridView';
+import { CoursesGrid } from '../components/CoursesGrid';
 
-export default async function ConfigView() {
-  const courses = await getCourses();
-
-  return <CoursesGridView courses={courses.data} showCreateButton />;
+export default function ConfigView() {
+  return <CoursesGrid showCreateButton />;
 }

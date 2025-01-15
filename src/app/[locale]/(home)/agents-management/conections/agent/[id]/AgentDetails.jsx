@@ -9,7 +9,7 @@ export default function AgentDetails({ id }) {
   const { data, isLoading, isError } = useAgent(id);
 
   if (isError) {
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="conexion">
       <div>
         <p>Error</p>
       </div>
@@ -19,7 +19,7 @@ export default function AgentDetails({ id }) {
   if (isLoading) return <LoaderSpinner />;
 
   return (
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="conexion">
       <Suspense fallback={<LoaderSpinner />}>
         <AgentConection agent={data} id={id} />
       </Suspense>

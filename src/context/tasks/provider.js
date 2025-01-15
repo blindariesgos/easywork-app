@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { TasksContext } from "..";
 import { useTasks } from "../../lib/api/hooks/tasks";
+import useCustomTableFilters from "../../lib/api/hooks/customTableFilters";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../app";
@@ -11,6 +12,8 @@ import { useSession } from "next-auth/react";
 export default function TasksContextProvider({ children }) {
   const session = useSession();
   const { t } = useTranslation();
+  const { tasks: customTasksFilters } = useCustomTableFilters();
+  const [customFilterSelected, setCustomFilterSelected] = useState();
   const [filters, setFilters] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [config, setConfig] = useState({
@@ -24,7 +27,7 @@ export default function TasksContextProvider({ children }) {
     filters: {
       ...filters,
     },
-    userId: session?.data?.user?.id,
+    userId: session?.data?.user?.sub,
   });
   const { status } = useTasksConfigs();
   const { lists } = useAppContext();
@@ -83,6 +86,10 @@ export default function TasksContextProvider({ children }) {
       code: "status",
     },
   ];
+
+  const customFilters = useMemo(() => {
+    return customTasksFilters;
+  }, [customTasksFilters]);
 
   useEffect(() => {
     if (!lists?.users || lists?.users?.length == 0) return;
@@ -283,9 +290,15 @@ export default function TasksContextProvider({ children }) {
       setDisplayFilters,
       removeFilter,
       defaultFilterFields,
+      allowSaveCustomFilters: false,
+      customFilters,
+      customFilterSelected,
+      setCustomFilterSelected,
     }),
     [
+      customFilterSelected,
       selectedTasks,
+      customFilters,
       tasks,
       isLoading,
       isError,

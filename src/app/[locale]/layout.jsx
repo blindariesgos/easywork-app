@@ -7,6 +7,8 @@ import { ToastContainer } from "react-toastify";
 import initTranslations from "../i18n";
 import { AlertContextProvider } from "../../context/common/AlertContext";
 import TranslationsProvider from "../../components/Providers/TranslationsProvider";
+import "moment/locale/es";
+import moment from "moment";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +31,7 @@ const i18nNamespaces = [
 ];
 export default async function RootLayout({ children, params: { locale } }) {
   const { resources } = await initTranslations(locale, i18nNamespaces);
+  moment.locale(locale ?? "es");
   return (
     <html lang={locale} className="h-full">
       <body className={inter.className}>

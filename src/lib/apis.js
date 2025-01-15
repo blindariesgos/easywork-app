@@ -74,6 +74,20 @@ export const createAgent = async (data) => {
   return response;
 };
 
+export const createAgentRecruitment = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agent-recruitments/agent", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const createAgentConnection = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agent-connections/agent", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 export const assignToDevelopmentManagerMasive = async (data) => {
   const response = await axios()
     .put("/agent-management/agents/assign-development-manager", data)
@@ -87,6 +101,18 @@ export const updateAgent = async (data, agentId) => {
     .put(`/agent-management/agents/${agentId}`, data)
     .catch((error) => ({ ...error, hasError: true }));
   revalidatePath("/agents-management/accompaniment"); //invalida la cache de home para que se refresque y muestre los contactos recien creados
+  return response;
+};
+export const updateAgentRecruitment = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agent-recruitments/agent/${agentId}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const updateAgentConnection = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agent-connections/agent/${agentId}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 
@@ -158,12 +184,9 @@ export const getReceiptKanbanByStateId = async (params) => {
 };
 
 export const getPolicyById = async (id) => {
-  try {
-    const response = await axios().get(`/sales/crm/polizas/${id}`);
-    return response;
-  } catch (error) {
-    // throw new Error(error);
-  }
+  const url = `/sales/crm/polizas/${id}`;
+  const response = await axios().get(url);
+  return response;
 };
 
 export const deleteContactId = async (id) => {
@@ -182,6 +205,14 @@ export const deletePolicyById = async (id) => {
 export const deleteAgentById = async (agentId) => {
   // try {
   const response = await axios().delete(`/agent-management/agents/${agentId}`);
+  return response;
+};
+
+export const deleteMeetById = async (meetId) => {
+  // try {
+  const response = await axios()
+    .delete(`/agent-management/meetings/${meetId}`)
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };
 
@@ -221,6 +252,20 @@ export const getAddListReceipts = async () => {
 
 export const getAddListPolicies = async () => {
   const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
+  return response;
+};
+
+export const getAddListRecruitments = async () => {
+  const response = await axios().get(
+    `/agent-management/agent-recruitments/get_add_lists`
+  );
+  return response;
+};
+
+export const getAddListConnections = async () => {
+  const response = await axios().get(
+    `/agent-management/agent-connections/get_add_lists`
+  );
   return response;
 };
 
@@ -284,7 +329,9 @@ export const postTask = async (body) => {
   return response;
 };
 export const postMeet = async (body) => {
-  const response = await axios().post(`/agent-management/meetings`, body);
+  const response = await axios()
+    .post(`/agent-management/meetings`, body)
+    .catch((error) => ({ hasError: true, error }));
   // revalidatePath("/tools/tasks", "page");
   return response;
 };
@@ -302,9 +349,6 @@ export const putMeetById = async (meetingId, body) => {
   const response = await axios()
     .put(`/agent-management/meetings/${meetingId}`, body)
     .catch((error) => ({ hasError: true, error }));
-  // revalidatePath(`/tools/tasks/task/${id}`, "page");
-  // revalidatePath(`/tools/tasks`, "layout");
-
   return response;
 };
 

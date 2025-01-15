@@ -10,7 +10,7 @@ export const useUserPermissions = () => {
 
   const hasPermission = useCallback(
     permission => {
-      // return true;
+      return true;
 
       return userMenuPermissions.includes(permission);
     },

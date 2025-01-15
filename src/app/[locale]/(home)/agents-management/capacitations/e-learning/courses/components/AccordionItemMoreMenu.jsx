@@ -8,31 +8,31 @@ export const AccordionItemMoreMenu = ({ itemType, actions }) => {
   const menuItems = {
     course: [
       { id: 'editCourse', label: 'Editar curso', permission: 'e-learning:courses:course-details:edit-course' },
-      { id: 'addNewLesson', label: 'Agregar carpeta', permission: 'e-learning:courses:course-details:add-lesson' },
+      { id: 'addNewCourseFolder', label: 'Agregar carpeta', permission: 'e-learning:courses:course-details:add-lesson' },
       { id: 'addNewPage', label: 'Agregar página', permission: 'e-learning:courses:course-details:add-lesson-page' },
       { id: 'deleteCourse', label: 'Eliminar curso', permission: 'e-learning:courses:course-details:delete-course' },
     ],
-    lesson: [
+    folder: [
       { id: 'addNewPage', label: 'Agregar página a la carpeta', permission: 'e-learning:courses:course-details:add-lesson-page' },
-      { id: 'editLesson', label: 'Editar carpeta', permission: 'e-learning:courses:course-details:add-lesson' },
-      { id: 'deleteLesson', label: 'Eliminar carpeta', permission: 'e-learning:courses:course-details:delete-lesson' },
+      { id: 'editCourseFolder', label: 'Editar carpeta', permission: 'e-learning:courses:course-details:add-lesson' },
+      { id: 'deleteCourseFolder', label: 'Eliminar carpeta', permission: 'e-learning:courses:course-details:delete-lesson' },
     ],
     page: [
       { id: 'editPage', label: 'Editar página', permission: 'e-learning:courses:course-details:edit-lesson-page' },
       { id: 'duplicatePage', label: 'Duplicar página', permission: 'e-learning:courses:course-details:duplicate-lesson-page' },
-      { id: 'changeLesson', label: 'Cambiar carpeta', permission: 'e-learning:courses:course-details:change-lesson-page-folder' },
+      { id: 'changeCourseFolder', label: 'Cambiar carpeta', permission: 'e-learning:courses:course-details:change-lesson-page-folder' },
       { id: 'deletePage', label: 'Eliminar página', permission: 'e-learning:courses:course-details:delete-lesson-page' },
     ],
   };
 
   return (
     <Menu as="div" className="w-auto">
-      <MenuButton className="align-middle" onClick={e => e.stopPropagation()}>
+      <MenuButton className="align-middle">
         <EllipsisHorizontalIcon className="w-8 text-gray-400" aria-hidden="true" />
       </MenuButton>
 
       <MenuItems transition anchor="bottom end" className="z-50 mt-2.5 w-42 rounded-md bg-white py-2 shadow-lg focus:outline-none">
-        {menuItems[itemType].map(
+        {menuItems[itemType]?.map(
           item =>
             hasPermission(item.permission) && (
               <MenuItem key={item.id} onClick={actions[item.id]}>

@@ -6,8 +6,8 @@ import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
 
 import { useDebouncedCallback } from 'use-debounce';
-import { useLessonPages } from '../../hooks/useLessonPages';
-import { useLessons } from '../../hooks/useLessons';
+import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
+import { useCourseFolders } from '../../hooks/useCourseFolders';
 import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
 import Button from '@/src/components/form/Button';
@@ -30,8 +30,8 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   const inputFileRef = useRef(null);
 
   const { hasPermission } = useUserPermissions();
-  const { createLesson, toggleLessonAsCompleted, updateLesson } = useLessons();
-  const { toggleLessonPageAsCompleted, updatePage } = useLessonPages();
+  const { createCourseFolder } = useCourseFolders();
+  const { toggleCourseFolderPageAsCompleted, createCourseFolderPage, updateCourseFolderPage } = useCourseFolderPages();
 
   const {
     register,
@@ -44,7 +44,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     defaultValues: {
       name: 'Título del contenido',
       description: '<p><span class="ql-size-large">Nueva página</span></p>',
-      content: false,
       coverPhoto: null,
       courseId: course.id,
       files: [],
@@ -79,16 +78,23 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const saveChanges = async values => {
+    console.log('values.description.includes(data:image/png;base64,)', values.description.includes('data:image/png;base64,'));
+    if (values.description && values.description.includes('data:image/png;base64,')) {
+      return;
+    }
+
     const newValues = prepareValues(values);
 
     if (isEdit) {
-      if (contentType === 'lesson') {
-        await updateLesson(content?.id, newValues);
-      } else if (contentType === 'page') {
-        await updatePage(content?.id, newValues);
-      }
+      // if (contentType === 'folder') {
+      //   await updateCourseFolder(content?.id, newValues);
+      // } else if (contentType === 'page') {
+      // }
+      await updateCourseFolderPage(content?.id, newValues);
     } else {
-      await createLesson(newValues);
+      const folderCreated = await createCourseFolder({ name: values.name, courseId: values.courseId });
+      newValues.append('courseFolderId', folderCreated.id);
+      await createCourseFolderPage(newValues);
     }
 
     setValue('files', []);
@@ -131,10 +137,10 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     setMarkAsDone(prev => !prev);
 
     try {
-      if (contentType === 'lesson') {
-        await toggleLessonAsCompleted(content.id, toggled);
+      if (contentType === 'folder') {
+        // await toggleLessonAsCompleted(content.id, toggled);
       } else {
-        await toggleLessonPageAsCompleted(content.id, toggled);
+        await toggleCourseFolderPageAsCompleted(content.id, toggled);
       }
 
       if (refetchAccordionItems) refetchAccordionItems();
@@ -150,7 +156,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
       reset({
         name: content ? content.name : 'Título del contenido',
         description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
-        content: content ? content.content : false,
         coverPhoto: content ? content.coverPhoto : null,
         files: [],
         filesToDelete: [],
@@ -226,7 +231,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
               saveContentOnChange();
             }}
             value={values.description}
-            disabled={isEditorDisabled || hasPermission(LMS_PERMISSIONS.editContentBody)}
+            disabled={isEditorDisabled || !hasPermission(LMS_PERMISSIONS.editContentBody)}
             onDeleteImage={onDeleteImage}
           />
         )}

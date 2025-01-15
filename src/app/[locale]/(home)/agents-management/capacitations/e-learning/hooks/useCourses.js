@@ -1,49 +1,51 @@
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useCallback } from 'react';
 
 import { useRequest } from '../../hooks/useRequest';
 
-export const useCourses = ({ fetchOnMount = true } = {}) => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(false);
+export const useCourses = () => {
   const request = useRequest();
 
-  const fetchCourses = useCallback(async () => {
-    setLoading(true);
+  const getCourses = useCallback(
+    async (options = {}) => {
+      return await request(`/courses`, options);
+    },
+    [request]
+  );
 
-    try {
-      const courses = await request(`/courses`);
-      setCourses(courses?.data || []);
-    } catch (error) {
-      toast.error('Algo no ha salido bien obteniendo los cursos. Intente más tarde');
-    } finally {
-      setLoading(false);
-    }
-  }, [request]);
+  const createCourse = useCallback(
+    async (data, options = {}) => {
+      return await request(`/courses`, { data, method: 'POST', ...options });
+    },
+    [request]
+  );
 
-  const createCourse = useCallback(async data => {
-    return await request(`/courses`, { data, method: 'POST' });
-  }, []);
+  const updateCourse = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/courses/${id}`, { data, method: 'PATCH', ...options });
+    },
+    [request]
+  );
 
-  const updateCourse = useCallback(async (id, data) => {
-    return await request(`/courses/${id}`, { data, method: 'PATCH' });
-  }, []);
+  const deleteCourse = useCallback(
+    async (id, options = {}) => {
+      return await request(`/courses/${id}`, { method: 'DELETE', ...options });
+    },
+    [request]
+  );
 
-  const deleteCourse = useCallback(async id => {
-    return await request(`/courses/${id}`, { method: 'DELETE' });
-  }, []);
+  const uploadCourseImage = useCallback(
+    async (data, options = {}) => {
+      return await request(`/courses/upload-image`, { data, method: 'POST', ...options });
+    },
+    [request]
+  );
 
-  const uploadCourseImage = useCallback(async data => {
-    return await request(`/courses/upload-image`, { data, method: 'PUT' });
-  }, []);
+  const getCourseById = useCallback(
+    async (id, options = {}) => {
+      return await request(`/courses/${id}`, options);
+    },
+    [request]
+  );
 
-  const getCourseById = useCallback(async id => {
-    return await request(`/courses/${id}`);
-  }, []);
-
-  useEffect(() => {
-    if (fetchOnMount) fetchCourses();
-  }, [fetchCourses, fetchOnMount]);
-
-  return { courses, refetch: fetchCourses, createCourse, updateCourse, deleteCourse, uploadCourseImage, getCourseById, loading };
+  return { getCourses, createCourse, updateCourse, deleteCourse, uploadCourseImage, getCourseById };
 };

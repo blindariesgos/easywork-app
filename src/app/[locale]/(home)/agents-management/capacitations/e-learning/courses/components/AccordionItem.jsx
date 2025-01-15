@@ -1,13 +1,13 @@
 import React from 'react';
 import { CheckCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 
-import { ModuleProgressBar } from '../../components/CourseProgressBar';
+import { CourseProgressBar } from '../../components/CourseProgressBar';
 import { AccordionItemMoreMenu } from './AccordionItemMoreMenu';
 
 export const AccordionItem = ({ title, children, isOpen, onToggle, progress, itemType = '', isPrimaryItem = false, actions, isCompleted, onSelect }) => {
   return (
     <div>
-      <div onClick={onSelect} className={`cursor-pointer rounded-xl ${isPrimaryItem ? `border-easy-400 bg-easy-50 p-4` : 'bg-white px-2 py-1'}`} style={{ borderWidth: '1px', borderStyle: 'solid' }}>
+      <div className={`rounded-xl ${isPrimaryItem ? `border-easy-400 bg-easy-50 p-4` : 'bg-white px-2 py-1'}`} style={{ borderWidth: '1px', borderStyle: 'solid' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center gap-2">
             <button
@@ -26,7 +26,7 @@ export const AccordionItem = ({ title, children, isOpen, onToggle, progress, ite
             {itemType && <AccordionItemMoreMenu itemType={itemType} actions={actions} />}
           </div>
         </div>
-        {(progress > 0 || isPrimaryItem) && <ModuleProgressBar progress={progress} />}
+        {(progress > 0 || isPrimaryItem) && <CourseProgressBar progress={progress} />}
       </div>
 
       <div className={`overflow-hidden transition-all ${isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>

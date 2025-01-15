@@ -6,16 +6,16 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import { useLessonPages } from '../../hooks/useLessonPages';
-import { useLessons } from '../../hooks/useLessons';
+import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
+import { useCourseFolders } from '../../hooks/useCourseFolders';
 
 export const NewContentForm = ({ content, isOpen, setIsOpen, contentType = '', parent, onSuccess }) => {
   const isEdit = !!content;
   const [loading, setLoading] = useState(false);
   const contentNameInputRef = useRef(null);
 
-  const { createLesson, updateLesson } = useLessons();
-  const { createPage, updatePage } = useLessonPages();
+  const { createCourseFolder, updateCourseFolder } = useCourseFolders();
+  const { createCourseFolderPage, updateCourseFolderPage } = useCourseFolderPages();
 
   const onCloseModal = () => {
     setIsOpen(false);
@@ -28,17 +28,17 @@ export const NewContentForm = ({ content, isOpen, setIsOpen, contentType = '', p
       const newName = contentNameInputRef.current.value;
       if (!newName) return;
 
-      if (contentType === 'lesson') {
+      if (contentType === 'folder') {
         if (isEdit) {
-          await updateLesson(content.id, { name: newName });
+          await updateCourseFolder(content.id, { name: newName });
         } else {
-          await createLesson({ name: newName, courseId: parent.id });
+          await createCourseFolder({ name: newName, courseId: parent.id });
         }
       } else if (contentType === 'page') {
         if (isEdit) {
-          await updatePage(content.id, { name: newName });
+          await updateCourseFolderPage(content.id, { name: newName });
         } else {
-          await createPage({ name: newName, lessonId: parent.id });
+          await createCourseFolderPage({ name: newName, courseFolderId: parent.id });
         }
       }
 

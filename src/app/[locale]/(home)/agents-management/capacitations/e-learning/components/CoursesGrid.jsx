@@ -1,16 +1,17 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CourseCard } from './CourseCard';
 import { CourseCreateEditModal } from './CourseCreateEditModal';
 import { DeleteContentModal } from './DeleteContentModal';
 
 import { useCourses } from '../hooks/useCourses';
-import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 
 export const CoursesGrid = ({ showCreateButton = false }) => {
-  const { courses, refetch, loading } = useCourses();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { getCourses } = useCourses();
 
   const [isEditCreateModalOpen, setIsEditCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -36,6 +37,23 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
     setIsDeleteModalOpen(true);
   };
 
+  const fetchCourses = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const courses = await getCourses();
+      setCourses(courses?.data || []);
+    } catch (error) {
+      toast.error('Algo no ha salido bien obteniendo los cursos. Intente más tarde');
+    } finally {
+      setLoading(false);
+    }
+  }, [getCourses]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center flex-col gap-4 h-[500px] w-full">
@@ -59,7 +77,7 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
         <CourseCard key={course.id} course={course} onEditCourse={onEditCourse} onMoveCourse={onMoveCourse} onDeleteCourse={onDeleteCourse} />
       ))}
 
-      <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} onSuccess={refetch} />
+      <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} onSuccess={fetchCourses} />
       <DeleteContentModal isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} content={courseRef.current} contentType="course" />
     </div>
   );

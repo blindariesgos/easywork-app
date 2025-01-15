@@ -1,7 +1,13 @@
 "use client";
 import useAppContext from "@/src/context/app";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
@@ -24,14 +30,12 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import moment from "moment";
 import { useSession } from "next-auth/react";
-import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
 
-export default function General({ agent, id, refPrint, type }) {
+export default function General({ agent, id, refPrint, type, handleAdd }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
   const router = useRouter();
-  const { mutate } = useSWRConfig();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
@@ -51,25 +55,10 @@ export default function General({ agent, id, refPrint, type }) {
   }, [agent]);
 
   const schema = Yup.object().shape({
-    firstName: Yup.string(),
-    lastName: Yup.string(),
+    firstName: Yup.string().required(t("common:validations:required")),
+    lastName: Yup.string().required(t("common:validations:required")),
     email: Yup.string().email(t("common:validations:email")),
-    phone: Yup.string(),
-    birthdate: Yup.string(),
-    childrens: Yup.number(),
-    cua: Yup.string(),
-    rfc: Yup.string(),
-    bio: Yup.string(),
-    password: Yup.string(),
-    address: Yup.string(),
-    dni: Yup.string().matches(
-      VALIDATE_ALPHANUMERIC_REGEX,
-      t("common:validations:alphanumeric")
-    ),
-    recruitmentManagerId: Yup.string(),
-    developmentManagerId: Yup.string(),
-    observerId: Yup.string(),
-    observations: Yup.string(),
+    phone: Yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -88,7 +77,6 @@ export default function General({ agent, id, refPrint, type }) {
   useEffect(() => {
     console.log({ session, agent });
     if (session && typeof agent === "undefined") {
-      console.log("pase por aqui perrito");
       setValue(
         "recruitmentManagerId",
         lists?.users?.find((user) => user.id === session?.user?.sub)?.id
@@ -126,8 +114,50 @@ export default function General({ agent, id, refPrint, type }) {
       setValue("developmentManagerId", agent?.developmentManager?.id);
     if (agent?.observer) setValue("observerId", agent?.observer?.id);
     if (agent?.observations) setValue("observations", agent?.observations);
-    if (agent?.createdAt) setValue("createdAt", agent?.createdAt);
+    if (agent?.source) setValue("sourceId", agent?.source?.id);
 
+    if (type === "accompaniment") {
+      if (agent?.status) setValue("status", agent?.status);
+    }
+
+    if (type === "recruitment") {
+      const recruitment = agent?.recruitments[0] ?? {};
+      if (recruitment?.startDate)
+        setValue("recruitmentStartDate", recruitment?.startDate);
+      if (recruitment?.endDate)
+        setValue("recruitmentEndDate", recruitment?.endDate);
+      if (recruitment?.entryDate)
+        setValue("recruitmentEntryDate", recruitment?.entryDate);
+      if (recruitment?.agentRecruitmentStage)
+        setValue(
+          "agentRecruitmentStageId",
+          recruitment?.agentRecruitmentStage?.id
+        );
+    }
+    if (type === "conection") {
+      const connection = agent?.connections[0] ?? {};
+
+      if (connection?.endDate)
+        setValue("connectionEndDate", connection?.endDate);
+      if (connection?.startDate)
+        setValue("connectionStartDate", connection?.startDate);
+      if (connection?.idcardNumber)
+        setValue("connectionIdcardNumber", connection?.idcardNumber);
+      if (connection?.cnsfDate)
+        setValue("connectionCNSFDate", connection?.cnsfDate);
+      if (connection?.effectiveDateCua)
+        setValue("connectionEffectiveDateCua", connection?.effectiveDateCua);
+      if (connection?.effectiveDateIdcard)
+        setValue(
+          "connectionEffectiveDateIdcard",
+          connection?.effectiveDateIdcard
+        );
+      if (connection?.agentConnectionStage)
+        setValue(
+          "agentConnectionStageId",
+          connection?.agentConnectionStage?.id
+        );
+    }
     setLoading(false);
   }, [agent, id]);
 
@@ -145,86 +175,15 @@ export default function General({ agent, id, refPrint, type }) {
     }
   }, []);
 
-  const getFormData = (body) => {
-    const formData = new FormData();
-    for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]);
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key]));
-      } else {
-        formData.append(key, body[key]?.toString() || "");
-      }
-    }
-    return formData;
-  };
-
-  const handleFormSubmit = async (data) => {
-    const { childrens, birthdate, ...other } = data;
-    let body = {
-      ...other,
-      children: childrens,
-      birthdate: moment(birthdate).format("YYYY-MM-DD"),
-    };
-    try {
-      setLoading(true);
-      if (!agent) {
-        if (selectedProfileImage?.file) {
-          body = {
-            ...body,
-            avatar: selectedProfileImage?.file || "",
-          };
-        }
-        const formData = getFormData(body);
-
-        const response = await createAgent(formData);
-        if (response.hasError) {
-          let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
-          }
-          throw { message };
-        }
-        // await mutate(`/sales/crm/contacts?limit=5&page=1`);
-        toast.success("Agente creado exitosamente");
-      } else {
-        if (selectedProfileImage?.file) {
-          body = {
-            ...body,
-            image: selectedProfileImage?.file || "",
-          };
-        }
-        const formData = getFormData(body);
-        const response = await updateAgent(formData, id);
-        if (response.hasError) {
-          let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
-          }
-          throw { message };
-        }
-        toast.success("Agente actualizado correctamente");
-        // await mutate(`/sales/crm/contacts?limit=5&page=1`);
-        // await mutate(`/sales/crm/contacts/${id}`);
-      }
-      setLoading(false);
-      router.back();
-    } catch (error) {
-      console.log({ error });
-      console.error(error.message);
-      handleApiError(error.message);
-      setLoading(false);
-    }
+  const handleSubmitForm = (data) => {
+    handleAdd && handleAdd(data, selectedProfileImage);
   };
 
   return (
     <Fragment>
       <div className="px-4 lg:px-8 h-full w-full">
         <form
-          onSubmit={handleSubmit(handleFormSubmit)}
+          onSubmit={handleSubmit(handleSubmitForm)}
           className={clsx(
             "grid grid-cols-1 lg:h-full bg-gray-100 rounded-lg  w-full",
             {
@@ -291,50 +250,6 @@ export default function General({ agent, id, refPrint, type }) {
                 name="lastName"
                 disabled={!isEdit}
               />
-              {isEdit && type === "recruitment" && (
-                <Fragment>
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:recruitment:init-date")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.createdAt}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="createdAt"
-                    control={control}
-                    defaultValue=""
-                  />
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:recruitment:entry-date")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.entryDate}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="entryDate"
-                    control={control}
-                    defaultValue=""
-                  />
-                </Fragment>
-              )}
               <Controller
                 render={({ field: { ref, ...field } }) => {
                   return (
@@ -432,7 +347,259 @@ export default function General({ agent, id, refPrint, type }) {
                 multiple
                 rows={3}
               />
+              {type === "accompaniment" && (
+                <SelectInput
+                  label={t("agentsmanagement:accompaniments:status")}
+                  name="status"
+                  options={[
+                    {
+                      name: "Seguimiento",
+                      id: "Seguimiento",
+                    },
+                    {
+                      name: "Aprobado",
+                      id: "Aprobado",
+                    },
+                    ,
+                    {
+                      name: "No aprobado-sin seguimiento",
+                      id: "No aprobado-sin seguimiento",
+                    },
+                    ,
+                    {
+                      name: "No volver a contactar",
+                      id: "No volver a contactar",
+                    },
+                  ]}
+                  error={errors.agentConnectionStageId}
+                  register={register}
+                  setValue={setValue}
+                  disabled={!isEdit}
+                  watch={watch}
+                />
+              )}
+              {type === "recruitment" && (
+                <Fragment>
+                  <SelectInput
+                    label={t("agentsmanagement:recruitment:table:state")}
+                    name="agentRecruitmentStageId"
+                    options={lists?.recruitments?.agentRecruitmentStages ?? []}
+                    error={errors.agentRecruitmentStageId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:init-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.recruitmentStartDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="recruitmentStartDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:end-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.recruitmentEndDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="recruitmentEndDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:entry-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.recruitmentEntryDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="recruitmentEntryDate"
+                    control={control}
+                    defaultValue=""
+                  />
 
+                  <SelectInput
+                    label={t("contacts:create:origen")}
+                    name="sourceId"
+                    options={lists?.recruitments?.agentSources ?? []}
+                    error={errors.sourceId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                </Fragment>
+              )}
+
+              {type === "conection" && (
+                <Fragment>
+                  <SelectInput
+                    label={t("agentsmanagement:recruitment:table:state")}
+                    name="agentConnectionStageId"
+                    options={lists?.connections?.agentConnectionStages ?? []}
+                    error={errors.agentConnectionStageId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                  <TextInput
+                    label={t("agentsmanagement:conections:idcardNumber")}
+                    error={errors?.connectionIdcardNumber}
+                    register={register}
+                    name="connectionIdcardNumber"
+                    disabled={!isEdit}
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t(
+                            "agentsmanagement:conections:effectiveDateCua"
+                          )}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionEffectiveDateCua}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionEffectiveDateCua"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t(
+                            "agentsmanagement:conections:effectiveDateIdcard"
+                          )}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionEffectiveDateIdcard}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionEffectiveDateIdcard"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:init-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionStartDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionStartDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:end-date")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionEndDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionEndDate"
+                    control={control}
+                    defaultValue=""
+                  />
+
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
+                          label={t("agentsmanagement:recruitment:table:indate")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          icon={
+                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
+                          }
+                          error={errors.connectionCNSFDate}
+                          disabled={!isEdit}
+                        />
+                      );
+                    }}
+                    name="connectionCNSFDate"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <SelectInput
+                    label={t("contacts:create:origen")}
+                    name="sourceId"
+                    options={lists?.connections?.agentSources ?? []}
+                    error={errors.sourceId}
+                    register={register}
+                    setValue={setValue}
+                    disabled={!isEdit}
+                    watch={watch}
+                  />
+                </Fragment>
+              )}
               <SelectDropdown
                 label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="developmentManagerId"
@@ -460,116 +627,7 @@ export default function General({ agent, id, refPrint, type }) {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
-                label={t("contacts:create:origen")}
-                name="sourceId"
-                options={lists?.listContact?.contactSources}
-                error={errors.sourceId}
-                register={register}
-                setValue={setValue}
-                disabled={!isEdit}
-                watch={watch}
-              />
 
-              {type === "conection" && (
-                <Fragment>
-                  <TextInput
-                    label={t("agentsmanagement:conections:dni-number")}
-                    error={errors?.dni}
-                    register={register}
-                    name="dni"
-                    disabled={!isEdit}
-                  />
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:conections:date-cvp")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.datecvp}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="datecvp"
-                    control={control}
-                    defaultValue=""
-                  />
-                  <Controller
-                    render={({ field: { value, onChange, ref, onBlur } }) => {
-                      return (
-                        <InputDate
-                          label={t("agentsmanagement:conections:date-vc")}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          icon={
-                            <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                          }
-                          error={errors.datevc}
-                          disabled={!isEdit}
-                        />
-                      );
-                    }}
-                    name="datevc"
-                    control={control}
-                    defaultValue=""
-                  />
-                  {isEdit && (
-                    <Fragment>
-                      <Controller
-                        render={({
-                          field: { value, onChange, ref, onBlur },
-                        }) => {
-                          return (
-                            <InputDate
-                              label={"Fecha de inicio de proceso"}
-                              value={value}
-                              onChange={onChange}
-                              onBlur={onBlur}
-                              icon={
-                                <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                              }
-                              error={errors.createdAt}
-                              disabled={!isEdit}
-                            />
-                          );
-                        }}
-                        name="createdAt1"
-                        control={control}
-                        defaultValue=""
-                      />
-                      <Controller
-                        render={({
-                          field: { value, onChange, ref, onBlur },
-                        }) => {
-                          return (
-                            <InputDate
-                              label={"Fecha de conexión"}
-                              value={value}
-                              onChange={onChange}
-                              onBlur={onBlur}
-                              icon={
-                                <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                              }
-                              error={errors.entryDate}
-                              disabled={!isEdit}
-                            />
-                          );
-                        }}
-                        name="entryDate1"
-                        control={control}
-                        defaultValue=""
-                      />
-                    </Fragment>
-                  )}
-                </Fragment>
-              )}
               <TextInput
                 label={t("agentsmanagement:accompaniments:agent:comments")}
                 error={errors.address}

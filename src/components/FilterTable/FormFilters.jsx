@@ -510,7 +510,7 @@ const FormFilters = () => {
             reset();
             setFilters({});
             setDisplayFilters({});
-            setCustomFilterSelected();
+            setCustomFilterSelected && setCustomFilterSelected();
           }}
         />
       </div>

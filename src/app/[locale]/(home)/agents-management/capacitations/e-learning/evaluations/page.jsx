@@ -1,3 +1,5 @@
+import Evaluations from './Evaluations';
+
 export default function Page() {
-  return <div>Evaluations</div>;
+  return <Evaluations />;
 }

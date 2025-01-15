@@ -6,8 +6,9 @@ import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
 
 import { useDebouncedCallback } from 'use-debounce';
-import { useLessonPages } from '../../hooks/useLessonPages';
-import { useLessons } from '../../hooks/useLessons';
+import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
+import { useCourseFolders } from '../../hooks/useCourseFolders';
+import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
 import Button from '@/src/components/form/Button';
 
@@ -18,16 +19,19 @@ import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { FileUpload } from './FileUpload';
 
 import '../styles/index.css';
+import { LMS_PERMISSIONS } from '../../../constants';
 
 export const ContentView = ({ course, content, onSuccess, contentType, refetchAccordionItems }) => {
   const isEdit = !!content;
+
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
   const [markAsDone, setMarkAsDone] = useState(content?.isCompleted || false);
   const inputFileRef = useRef(null);
 
-  const { createLesson, toggleLessonAsCompleted, updateLesson } = useLessons();
-  const { toggleLessonPageAsCompleted, updatePage } = useLessonPages();
+  const { hasPermission } = useUserPermissions();
+  const { createCourseFolder } = useCourseFolders();
+  const { toggleCourseFolderPageAsCompleted, createCourseFolderPage, updateCourseFolderPage } = useCourseFolderPages();
 
   const {
     register,
@@ -40,7 +44,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     defaultValues: {
       name: 'Título del contenido',
       description: '<p><span class="ql-size-large">Nueva página</span></p>',
-      content: false,
       coverPhoto: null,
       courseId: course.id,
       files: [],
@@ -75,16 +78,23 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const saveChanges = async values => {
+    console.log('values.description.includes(data:image/png;base64,)', values.description.includes('data:image/png;base64,'));
+    if (values.description && values.description.includes('data:image/png;base64,')) {
+      return;
+    }
+
     const newValues = prepareValues(values);
 
     if (isEdit) {
-      if (contentType === 'lesson') {
-        await updateLesson(content?.id, newValues);
-      } else if (contentType === 'page') {
-        await updatePage(content?.id, newValues);
-      }
+      // if (contentType === 'folder') {
+      //   await updateCourseFolder(content?.id, newValues);
+      // } else if (contentType === 'page') {
+      // }
+      await updateCourseFolderPage(content?.id, newValues);
     } else {
-      await createLesson(newValues);
+      const folderCreated = await createCourseFolder({ name: values.name, courseId: values.courseId });
+      newValues.append('courseFolderId', folderCreated.id);
+      await createCourseFolderPage(newValues);
     }
 
     setValue('files', []);
@@ -93,7 +103,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const saveContentOnChange = useDebouncedCallback(() => {
-    console.log('🚀 ~ saveContentOnChange ~ saveContentOnChange executed');
     saveChanges(values);
   }, 500);
 
@@ -121,15 +130,17 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const toggleIsCompleted = async () => {
+    if (!hasPermission(LMS_PERMISSIONS.markAsCompleted)) return;
+
     const toggled = !markAsDone;
 
     setMarkAsDone(prev => !prev);
 
     try {
-      if (contentType === 'lesson') {
-        await toggleLessonAsCompleted(content.id, toggled);
+      if (contentType === 'folder') {
+        // await toggleLessonAsCompleted(content.id, toggled);
       } else {
-        await toggleLessonPageAsCompleted(content.id, toggled);
+        await toggleCourseFolderPageAsCompleted(content.id, toggled);
       }
 
       if (refetchAccordionItems) refetchAccordionItems();
@@ -145,7 +156,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
       reset({
         name: content ? content.name : 'Título del contenido',
         description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
-        content: content ? content.content : false,
         coverPhoto: content ? content.coverPhoto : null,
         files: [],
         filesToDelete: [],
@@ -166,7 +176,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   return (
     <form action={handleSubmit(onSubmit)}>
       <div className="p-5 flex items-center justify-between bg-white rounded-xl mb-2" style={{ borderBottomWidth: '1px', borderBottomStyle: 'solid' }}>
-        {isEditorDisabled ? (
+        {isEditorDisabled && hasPermission(LMS_PERMISSIONS.editContentTitle) ? (
           <p className="text-lg font-bold">{values.name}</p>
         ) : (
           <div className="w-full">
@@ -183,9 +193,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
         <div className="flex items-center justify-center pr-2 gap-4">
           {isEditorDisabled ? (
             <>
-              <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
-                <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
-              </button>
+              {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
+                <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
+                  <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
+                </button>
+              )}
 
               <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
                 <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
@@ -219,7 +231,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
               saveContentOnChange();
             }}
             value={values.description}
-            disabled={isEditorDisabled}
+            disabled={isEditorDisabled || !hasPermission(LMS_PERMISSIONS.editContentBody)}
             onDeleteImage={onDeleteImage}
           />
         )}

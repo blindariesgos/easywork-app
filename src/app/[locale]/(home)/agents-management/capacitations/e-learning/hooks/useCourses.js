@@ -1,44 +1,51 @@
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useCallback } from 'react';
 
 import { useRequest } from '../../hooks/useRequest';
 
-export const useCourses = ({ fetchOnMount = true } = {}) => {
-  const [courses, setCourses] = useState([]);
+export const useCourses = () => {
   const request = useRequest();
 
-  const fetchCourses = useCallback(async () => {
-    try {
-      const courses = await request(`/courses`);
-      setCourses(courses?.data || []);
-    } catch (error) {
-      toast.error('Algo no ha salido bien obteniendo los cursos. Intente más tarde');
-    }
-  }, [request]);
+  const getCourses = useCallback(
+    async (options = {}) => {
+      return await request(`/courses`, options);
+    },
+    [request]
+  );
 
-  const createCourse = async data => {
-    await request(`/courses`, { data, method: 'POST' });
-  };
+  const createCourse = useCallback(
+    async (data, options = {}) => {
+      return await request(`/courses`, { data, method: 'POST', ...options });
+    },
+    [request]
+  );
 
-  const updateCourse = async (id, data) => {
-    await request(`/courses/${id}`, { data, method: 'PATCH' });
-  };
+  const updateCourse = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/courses/${id}`, { data, method: 'PATCH', ...options });
+    },
+    [request]
+  );
 
-  const deleteCourse = async id => {
-    await request(`/courses/${id}`, { method: 'DELETE' });
-  };
+  const deleteCourse = useCallback(
+    async (id, options = {}) => {
+      return await request(`/courses/${id}`, { method: 'DELETE', ...options });
+    },
+    [request]
+  );
 
-  const uploadCourseImage = async data => {
-    await request(`/courses/upload-image`, { data, method: 'PUT' });
-  };
+  const uploadCourseImage = useCallback(
+    async (data, options = {}) => {
+      return await request(`/courses/upload-image`, { data, method: 'POST', ...options });
+    },
+    [request]
+  );
 
-  const getCourseById = async id => {
-    await request(`/courses/${id}`);
-  };
+  const getCourseById = useCallback(
+    async (id, options = {}) => {
+      return await request(`/courses/${id}`, options);
+    },
+    [request]
+  );
 
-  useEffect(() => {
-    if (fetchOnMount) fetchCourses();
-  }, [fetchCourses, fetchOnMount]);
-
-  return { courses, refetch: fetchCourses, createCourse, updateCourse, deleteCourse, uploadCourseImage, getCourseById };
+  return { getCourses, createCourse, updateCourse, deleteCourse, uploadCourseImage, getCourseById };
 };

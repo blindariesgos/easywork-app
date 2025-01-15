@@ -1,8 +1,6 @@
-// SelectInput.js
 "use client";
 import {
   Combobox,
-  Transition,
   ComboboxInput,
   ComboboxButton,
   ComboboxOption,
@@ -12,7 +10,6 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useContacts } from "@/src/lib/api/hooks/contacts";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
 import { getAgentById, getContactId } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";

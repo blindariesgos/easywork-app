@@ -28,6 +28,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
   const [loading, setLoading] = useState(false);
   const { mutate: mutateLeads } = useLeadContext();
   const { mutate } = useSWRConfig();
+  const utcOffset = moment().utcOffset();
 
   const schema = yup.object().shape({
     clientData: yup
@@ -88,10 +89,20 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     if (policy?.clientData?.typePerson)
       setValue("typePerson", policy?.clientData?.typePerson);
 
-    if (policy?.vigenciaDesde)
-      setValue("vigenciaDesde", policy?.vigenciaDesde ?? "");
-    if (policy?.vigenciaHasta)
-      setValue("vigenciaHasta", policy?.vigenciaHasta ?? "");
+    if (response?.vigenciaDesde)
+      setValue(
+        "vigenciaDesde",
+        data?.vigenciaDesde
+          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+          : ""
+      );
+    if (response?.vigenciaHasta)
+      setValue(
+        "vigenciaHasta",
+        data?.vigenciaHasta
+          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (policy?.formaCobro?.name)
       setValue("formaCobroId", policy?.formaCobro?.id);
     if (policy?.frecuenciaCobro?.name)
@@ -135,7 +146,6 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Paso por aqui");
     setLoading(true);
     const {
       iva,
@@ -182,9 +192,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
 
         return;
       }
-      toast.success(
-        "Póliza cargada, se realizo con exito el cierre positivo del prospecto"
-      );
+      toast.success("Prospecto convertido con éxito");
       setIsOpen(false);
       handleReset();
       mutateLeads();

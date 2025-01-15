@@ -558,9 +558,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 setValue={setValue}
                 watch={watch}
               />
-              {/* <AgentSelectAsync
+              <AgentSelectAsync
                 label={t("contacts:create:sub-agent")}
-                name="subAgent"
+                name="subAgentId"
                 register={register}
                 disabled={!isEdit}
                 error={errors.subAgentId}
@@ -577,7 +577,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 error={errors.intermediarioId}
                 setValue={setValue}
                 watch={watch}
-              /> */}
+              />
               {type == "moral" && (
                 <SelectInput
                   label={t("contacts:create:company-activity")}

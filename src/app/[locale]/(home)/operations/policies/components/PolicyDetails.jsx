@@ -19,6 +19,7 @@ import { putPoliza } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
 import ReceiptEmpty from "./ReceiptEmpty";
+import Versions from "./tabs/Versions";
 
 export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
@@ -78,7 +79,6 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
     },
     {
       name: "Versiones",
-      disabled: true,
     },
     {
       name: "Comisiones",
@@ -296,7 +296,9 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               <ReceiptEmpty type="Reembolsos registrados" />
             </TabPanel>
             <TabPanel className="w-full"></TabPanel>
-            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full">
+              <Versions poliza={data?.poliza} />
+            </TabPanel>
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full">

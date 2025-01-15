@@ -31,6 +31,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
+  const utcOffset = moment().utcOffset();
 
   const schema = yup.object().shape({
     contact: yup
@@ -157,15 +158,19 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       setValue("typePerson", response?.contact?.typePerson);
 
     if (response?.vigenciaDesde)
-      setValue("vigenciaDesde", response?.vigenciaDesde ?? "");
+      setValue(
+        "vigenciaDesde",
+        data?.vigenciaDesde
+          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (response?.vigenciaHasta)
-      setValue("vigenciaHasta", response?.vigenciaHasta ?? "");
-    // if (response?.cobertura) setValue("cobertura", response?.cobertura);
-    // if (response?.paymentMethod)
-    //   setValue("paymentMethod", response?.paymentMethod);
-    // if (response?.paymentFrequency)
-    //   setValue("paymentFrequency", response?.paymentFrequency);
-    // if (response?.paymentTerm) setValue("paymentTerm", response?.paymentTerm);
+      setValue(
+        "vigenciaHasta",
+        data?.vigenciaHasta
+          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)

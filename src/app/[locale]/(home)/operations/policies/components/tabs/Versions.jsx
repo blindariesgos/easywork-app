@@ -1,16 +1,17 @@
 "use client";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import PolizasEmpty from "./PolizasEmpty";
+import PolizasEmpty from "../ReceiptEmpty";
 import { useTranslation } from "react-i18next";
-import { useLayoutEffect, useRef, useState } from "react";
-import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
+import { useState } from "react";
+
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
+import { usePolicies } from "@/src/lib/api/hooks/policies";
 
-export default function ContactPolizaTable({ base = 0, contactId }) {
+export default function Versions({ poliza }) {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
@@ -18,8 +19,10 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     orderBy: "poliza",
     order: "DESC",
   });
-  const { data, isLoading } = usePoliciesByContactId({
-    contactId,
+  const { data, isLoading } = usePolicies({
+    filters: {
+      poliza,
+    },
     config: {
       ...fieldClicked,
       page,
@@ -27,13 +30,8 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     },
   });
   const { t } = useTranslation();
-  const checkbox = useRef();
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedPolizas, setSelectedPolizas] = useState([]);
+
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   const handleSorting = (fieldToSort) => {
     if (fieldClicked.order === "ASC") {
@@ -45,54 +43,26 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
 
   const handleShowPolicy = (poliza) => {
     if (!poliza.operacion || poliza.operacion == "produccion_nueva") {
-      // const params = new URLSearchParams(searchParams);
-      // params.set("show", true);
-      // params.set("policy", poliza.id);
-      // router.replace(`${pathname}?${params.toString()}`);
       router.push(`/operations/policies/policy/${poliza.id}?show=true`);
       return;
     }
     if (poliza.operacion == "renovacion") {
       router.push(`/operations/renovations/renovation/${poliza.id}?show=true`);
+      return;
     }
   };
-
-  useLayoutEffect(() => {
-    if (checkbox.current) {
-      const isIndeterminate =
-        selectedPolizas &&
-        selectedPolizas.length > 0 &&
-        selectedPolizas.length < data?.items?.length;
-      setChecked(selectedPolizas?.length === data?.items?.length);
-      setIndeterminate(isIndeterminate);
-      checkbox.current.indeterminate = isIndeterminate;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPolizas]);
 
   if ((!data || data?.items?.length === 0) && !isLoading) {
     return <PolizasEmpty />;
   }
 
   return (
-    <div className="h-full relative">
+    <div className="h-full relative px-4">
       {isLoading && <LoaderSpinner />}
       <div className="relative overflow-x-auto shadow-md rounded-xl">
         <table className="min-w-full rounded-md bg-gray-100 table-auto">
           <thead className="text-sm bg-white drop-shadow-sm">
             <tr className="">
-              {/* <th
-                scope="col"
-                className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl"
-              >
-                <input
-                  type="checkbox"
-                  className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  ref={checkbox}
-                  checked={checked}
-                  onChange={toggleAll}
-                />
-              </th> */}
               <th
                 scope="col"
                 className="py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer "
@@ -233,9 +203,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
               </th>
               <th
                 scope="col"
-                className={`py-3.5 text-sm font-medium text-gray-400 cursor-pointer ${
-                  base > 0 && "rounded-e-xl"
-                }`}
+                className={`py-3.5 text-sm font-medium text-gray-400 cursor-pointer`}
                 onClick={() => {
                   handleSorting("importePagar");
                 }}

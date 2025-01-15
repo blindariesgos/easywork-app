@@ -101,10 +101,7 @@ export default function TableReceipts() {
   };
 
   const handleShowReceipt = (id) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("show", true);
-    params.set("receipt", id);
-    router.replace(`${pathname}?${params.toString()}`);
+    router.push(`/control/portafolio/receipts/receipt/${id}?show=true`);
   };
 
   const masiveActions = [

@@ -28,6 +28,8 @@ const CRMMultipleSelectV2 = ({
   name,
   label,
   error,
+  border,
+  disabled,
   hidden = [],
 }) => {
   const { t } = useTranslation();
@@ -161,7 +163,15 @@ const CRMMultipleSelectV2 = ({
       <div className="relative mt-1">
         <button
           type="button"
-          className="text-left w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none border-none rounded-md drop-shadow-md placeholder:text-xs focus:ring-0 text-sm bg-white py-2"
+          className={clsx(
+            "w-full resize-none py-2 outline-none min-h-[36px] bg-white focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm",
+            {
+              "border border-gray-200 focus:ring-gray-200 focus:outline-0":
+                border,
+              "border-none focus:ring-0 ": !border,
+              "drop-shadow-md": !disabled,
+            }
+          )}
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&

@@ -1,27 +1,28 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
 import { EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
 import { useUserPermissions } from '../../../hooks/useUserPermissions';
+import { LMS_PERMISSIONS } from '../../../constants';
 
 export const AccordionItemMoreMenu = ({ itemType, actions }) => {
   const { hasPermission } = useUserPermissions();
 
   const menuItems = {
     course: [
-      { id: 'editCourse', label: 'Editar curso', permission: 'e-learning:courses:course-details:edit-course' },
-      { id: 'addNewCourseFolder', label: 'Agregar carpeta', permission: 'e-learning:courses:course-details:add-lesson' },
-      { id: 'addNewPage', label: 'Agregar página', permission: 'e-learning:courses:course-details:add-lesson-page' },
-      { id: 'deleteCourse', label: 'Eliminar curso', permission: 'e-learning:courses:course-details:delete-course' },
+      { id: 'editCourse', label: 'Editar curso', permission: LMS_PERMISSIONS.editCourse },
+      { id: 'addNewCourseFolder', label: 'Agregar carpeta', permission: LMS_PERMISSIONS.addFolder },
+      { id: 'addNewPage', label: 'Agregar página', permission: LMS_PERMISSIONS.addPage },
+      { id: 'deleteCourse', label: 'Eliminar curso', permission: LMS_PERMISSIONS.deleteCourse },
     ],
     folder: [
-      { id: 'addNewPage', label: 'Agregar página a la carpeta', permission: 'e-learning:courses:course-details:add-lesson-page' },
-      { id: 'editCourseFolder', label: 'Editar carpeta', permission: 'e-learning:courses:course-details:add-lesson' },
-      { id: 'deleteCourseFolder', label: 'Eliminar carpeta', permission: 'e-learning:courses:course-details:delete-lesson' },
+      { id: 'addNewPage', label: 'Agregar página a la carpeta', permission: LMS_PERMISSIONS.addPage },
+      { id: 'editCourseFolder', label: 'Editar carpeta', permission: LMS_PERMISSIONS.editFolder },
+      { id: 'deleteCourseFolder', label: 'Eliminar carpeta', permission: LMS_PERMISSIONS.deleteFolder },
     ],
     page: [
-      { id: 'editPage', label: 'Editar página', permission: 'e-learning:courses:course-details:edit-lesson-page' },
-      { id: 'duplicatePage', label: 'Duplicar página', permission: 'e-learning:courses:course-details:duplicate-lesson-page' },
-      { id: 'changeCourseFolder', label: 'Cambiar carpeta', permission: 'e-learning:courses:course-details:change-lesson-page-folder' },
-      { id: 'deletePage', label: 'Eliminar página', permission: 'e-learning:courses:course-details:delete-lesson-page' },
+      { id: 'editPage', label: 'Editar página', permission: LMS_PERMISSIONS.editPage },
+      { id: 'duplicatePage', label: 'Duplicar página', permission: LMS_PERMISSIONS.duplicatePage },
+      { id: 'changeCourseFolder', label: 'Cambiar carpeta', permission: LMS_PERMISSIONS.changeFolder },
+      { id: 'deletePage', label: 'Eliminar página', permission: LMS_PERMISSIONS.deletePage },
     ],
   };
 

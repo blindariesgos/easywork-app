@@ -241,7 +241,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     const { contact: client, subAgent, ...info } = data;
     const body = {
       ...info,
-      contactId: client?.id ?? null,
+      relatedContactId: client?.id ?? null,
     };
 
     if (selectedProfileImage?.file) {
@@ -626,6 +626,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 disabled={!isEdit}
                 multiple
               />
+              {type == "moral"}
             </div>
           </div>
 

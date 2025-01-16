@@ -51,14 +51,22 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
         ? [
             {
               name: "Asegurados",
+              disabled: !(data?.insured && data?.insured?.length > 0),
             },
             {
               name: "Beneficiarios",
+              disabled: !(
+                data?.beneficiaries && data?.beneficiaries?.length > 0
+              ),
             },
           ]
         : [
             {
               name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
+              disabled:
+                data?.type?.name === "GMM"
+                  ? !(data?.insured && data?.insured?.length > 0)
+                  : !(data?.vehicles && data?.vehicles?.length > 0),
             },
           ];
     })(),

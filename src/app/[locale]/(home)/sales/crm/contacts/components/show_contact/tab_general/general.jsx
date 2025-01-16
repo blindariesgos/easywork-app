@@ -159,19 +159,17 @@ export default function ContactGeneral({ contact, id, refPrint }) {
               relation: "",
             },
           ],
-      codigos_dto:
-        //  contact?.codigos_dto?.length
-        //   ? contact?.codigos_dto?.map((e) => ({
-        //       email: e?.email?.email,
-        //       relation: e?.relation ?? "",
-        //     }))
-        //   :
-        [
-          {
-            codigo: "",
-            insuranceId: "",
-          },
-        ],
+      codigos_dto: contact?.codigos?.length
+        ? contact?.codigos?.map((e) => ({
+            codigo: e?.codigo ?? "",
+            insuranceId: e?.insurance?.id ?? "",
+          }))
+        : [
+            {
+              codigo: "",
+              insuranceId: "",
+            },
+          ],
     },
   });
 

@@ -34,8 +34,10 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insurance?.id === companyId
+      (codigo) => codigo?.insuranceId === companyId
     );
+
+    console.log({ companyId, codigos, matchingCodigo });
 
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };

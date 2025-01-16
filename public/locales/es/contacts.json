@@ -63,7 +63,7 @@
     "update-contacts-error": "Error al actualizar Cliente(s)"
   },
   "create": {
-    "msg": "Cliente creado!",
+    "msg": "¡Cliente creado!",
     "error": "Error al crear el cliente!",
     "save": "Guardando...",
     "client": "Nuevo cliente",

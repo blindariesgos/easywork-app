@@ -13,14 +13,6 @@ export default function LayoutLeads({ table, children, kanban }) {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (Number(params.get("page")) === 0 || !params.get("page")) {
-      params.set("page", 1);
-      replace(`${pathname}?${params.toString()}`);
-    }
-  }, [searchParams, replace, pathname]);
-
   const tabs = [
     {
       name: "Kanban",

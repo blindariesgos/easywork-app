@@ -5,6 +5,7 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
+  ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
@@ -237,23 +238,27 @@ export default function Table() {
     },
     {
       name: "Editar",
-      disabled: true,
+      handleClick: (id) =>
+        router.push(
+          `/agents-management/recruitment/agent/${id}?show=true&edit=true`
+        ),
     },
     {
-      name: "Actividades",
-      disabled: true,
-    },
-    // {
-    //   name: "Asignar GDD",
-    //   disabled: true,
-    // },
-    // {
-    //   name: "Reasignar GDD",
-    //   disabled: true,
-    // },
-    {
-      name: "Eliminar",
-      disabled: true,
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClick: (id) =>
+            router.push(`/tools/tasks/task?show=true&prev=agent&prev_id=${id}`),
+        },
+        {
+          name: "Cita",
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=agent&prev_id=${id}`
+            ),
+        },
+      ],
     },
   ];
 
@@ -410,7 +415,6 @@ export default function Table() {
                                         }}
                                       >
                                         <div
-                                          // onClick={item.onClick}
                                           className={
                                             "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           }
@@ -423,7 +427,7 @@ export default function Table() {
                                         <MenuButton className="flex items-center hover:bg-gray-50">
                                           <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
                                             {item.name}
-                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
+                                            <ChevronRightIcon className="h-4 w-4" />
                                           </div>
                                         </MenuButton>
                                         <Transition

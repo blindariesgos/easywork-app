@@ -18,6 +18,7 @@ import AddDocumentDialog from "@/src/components/modals/AddDocument";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import InputDate from "@/src/components/form/InputDate";
 import clsx from "clsx";
 import { putReceipt } from "@/src/lib/apis";
@@ -25,11 +26,11 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
 import { formatISO } from "date-fns";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import useReceiptContext from "@/src/context/receipts";
 
-export default function ReceiptEditor({ data, id, updateReceipt }) {
+export default function ReceiptEditor({ data, id }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   const { lists } = useAppContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const { mutate: mutateReceipts } = useReceiptContext();
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
     cmrType: "receipt",
@@ -70,6 +72,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   });
 
   useEffect(() => {
+    console.log("cambio algo");
     if (data?.responsible?.id) setValue("responsibleId", data?.responsible?.id);
     if (data?.status) setValue("status", data?.status);
     if (data?.methodCollection?.name)
@@ -82,21 +85,19 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
     if (data?.currency?.id) setValue("currencyId", data?.currency?.id);
     if (data?.description) setValue("description", data?.description);
     if (data?.methodPayment) setValue("methodPayment", data?.methodPayment);
-    if (data?.subAgente) setValue("subAgenteId", data?.subAgente);
+    if (data?.subAgente) setValue("subAgenteId", data?.subAgente?.id);
     if (data?.observer) setValue("observerId", data?.observer?.id);
     if (data?.conductoPago) setValue("conductoPagoId", data?.conductoPago?.id);
   }, [data]);
 
   const onSubmit = async (data) => {
-    const { paymentAmount, dueDate, startDate, subAgenteId, ...otherData } =
-      data;
+    const { paymentAmount, dueDate, startDate, ...otherData } = data;
 
     const body = {
       ...otherData,
       paymentAmount: +paymentAmount,
       dueDate: dueDate ? formatISO(dueDate) : null,
       startDate: startDate ? formatISO(startDate) : null,
-      subAgenteId: subAgenteId ? subAgenteId.id : null,
     };
 
     try {
@@ -109,12 +110,10 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
         return;
       }
       setIsEdit(false);
-      router.back();
-      updateReceipt();
+      mutate(`/sales/crm/polizas/receipts/${id}`);
       toast.success("Recibo actualizado correctamente.");
-      mutate(
-        "/sales/crm/polizas/receipts?page=1&limit=5&orderBy=name&order=DESC"
-      );
+      mutateReceipts();
+      router.back();
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar el recibo, inténtelo de nuevo."
@@ -139,11 +138,11 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
 
         return;
       }
-      updateReceipt();
+      setValue("status", "");
+      setTimeout(() => setValue("status", status), 1000);
+      mutate(`/sales/crm/polizas/receipts/${id}`);
       toast.success("Recibo actualizado correctamente.");
-      mutate(
-        "/sales/crm/polizas/receipts?page=1&limit=5&orderBy=name&order=DESC"
-      );
+      mutateReceipts();
     } catch (error) {
       console.log({ error });
       toast.error(
@@ -343,7 +342,6 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   label={t("control:portafolio:receipt:details:form:status")}
                   options={receiptStatus}
                   name="status"
-                  register={register}
                   setValue={setValue}
                   disabled={!isEdit}
                   watch={watch}
@@ -499,11 +497,12 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectSubAgent
-                  label={"Sub-agente"}
+                <AgentSelectAsync
+                  label={t("contacts:create:sub-agent")}
                   name="subAgenteId"
-                  disabled={!isEdit}
                   register={register}
+                  disabled={!isEdit}
+                  error={errors.subAgenteId}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -560,7 +559,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
         {...addFileProps}
         setIsOpen={(open) => setAddFileProps({ ...addFileProps, isOpen: open })}
         update={() => {
-          updateReceipt();
+          mutate(`/sales/crm/polizas/receipts/${id}`);
           mutate(`/sales/crm/polizas/receipts/${id}/activities`);
         }}
       />

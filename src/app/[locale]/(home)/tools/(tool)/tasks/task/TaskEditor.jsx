@@ -138,7 +138,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
-  //#region Logica conexion crm desde actividades
+  //#region Logica conexion crm
   const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [

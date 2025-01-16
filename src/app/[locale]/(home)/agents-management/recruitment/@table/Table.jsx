@@ -43,6 +43,7 @@ import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
 import { recruitmentStages } from "../common";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 export default function Table() {
   const {
     data,
@@ -86,7 +87,7 @@ export default function Table() {
 
   const toggleAll = useCallback(() => {
     setSelectedContacts(
-      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+      checked || indeterminate ? [] : data?.items?.map((x) => x?.agent?.id)
     );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
@@ -251,19 +252,27 @@ export default function Table() {
     },
     {
       name: "Editar",
-      disabled: true,
+      handleClick: (id) =>
+        router.push(
+          `/agents-management/recruitment/agent/${id}?show=true&edit=true`
+        ),
     },
     {
-      name: "Actividades",
-      disabled: true,
-    },
-    {
-      name: "Asignar GDD",
-      disabled: true,
-    },
-    {
-      name: "Reasignar GDD",
-      disabled: true,
+      name: "Planificar",
+      options: [
+        {
+          name: "Tarea",
+          handleClick: (id) =>
+            router.push(`/tools/tasks/task?show=true&prev=agent&prev_id=${id}`),
+        },
+        {
+          name: "Cita",
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=agent&prev_id=${id}`
+            ),
+        },
+      ],
     },
   ];
 
@@ -442,7 +451,7 @@ export default function Table() {
                                         <MenuButton className="flex items-center hover:bg-gray-50">
                                           <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
                                             {item.name}
-                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
+                                            <ChevronRightIcon className="h-4 w-4" />
                                           </div>
                                         </MenuButton>
                                         <Transition

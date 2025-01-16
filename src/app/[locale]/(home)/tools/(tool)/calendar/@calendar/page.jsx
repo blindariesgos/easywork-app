@@ -88,7 +88,8 @@ export default function CalendarHome({ children }) {
   );
 
   useEffect(() => {
-    getAllOauth(session.data.user.id, "Google Calendar").then((res) => {
+    getAllOauth(session.data.user.sub, "Google Calendar").then((res) => {
+      console.log(res[0]);
       setSelectOauth(res[0]);
     });
   }, []);

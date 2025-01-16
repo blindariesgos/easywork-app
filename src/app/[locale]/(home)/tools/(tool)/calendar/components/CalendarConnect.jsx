@@ -35,7 +35,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   async function openWindowOauth() {
     localStorage.setItem("service", "Google Calendar");
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.id}&service=calendar`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.sub}&service=calendar`
     );
     const oauthWindow = window.open(
       response.data.url,
@@ -59,7 +59,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
 
   async function getDataNewGoogleUser() {
     try {
-      const res = await getAllOauth(session.data.user.id, "Google Calendar");
+      const res = await getAllOauth(session.data.user.sub, "Google Calendar");
       console.log(res);
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {
@@ -70,12 +70,12 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   return (
     <SliderOverShort openModal={params.get("connect")}>
       <Tag onclick={() => closeConfig()} className="bg-easywork-main" />
-      <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
+      <div className="bg-gray-300 max-md:w-screen w-auto rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 text-lg flex items-center">
           <CalendarDaysIcon className="h-14 w-14 text-easywork-main" />
           <div className="ml-3 pr-2">
             <h1 className="text-xl">Conectar calendarios</h1>
-            <p className="text-xs">
+            <p className="text-xs w-80">
               Haga un seguimiento de sus eventos y reuniones en el calendario de
               EasyWork
             </p>
@@ -96,7 +96,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
               <div className="flex items-center">
                 <div className="mb-3 p-1">
                   <h1 className="text-sm">Calendario de Google</h1>
-                  {/* <p className="text-xs">Hace 6 minutos atrás</p> */}
+                  <p className="text-xs">{selectOauth?.email}</p>
                 </div>
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
               <div className="flex ml-2 mt-2 justify-between">
                 <div className="flex">
                   <input type="checkbox" />
-                  <p className="ml-1 text-xs text-gray-50">
+                  <p className="ml-1 text-xs text-gray-50 w-80">
                     Optimice su trabajo conectando sus calendarios a EasyWork.
                     Administre la participación de su equipo desde cualquier
                     dispositivo.

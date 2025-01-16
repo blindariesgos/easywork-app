@@ -132,15 +132,19 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
     if (response?.vigenciaDesde)
       setValue(
         "vigenciaDesde",
-        data?.vigenciaDesde
-          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+        response?.vigenciaDesde
+          ? moment(response?.vigenciaDesde)
+              .subtract(utcOffset, "minutes")
+              .format()
           : ""
       );
     if (response?.vigenciaHasta)
       setValue(
         "vigenciaHasta",
-        data?.vigenciaHasta
-          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+        response?.vigenciaHasta
+          ? moment(response?.vigenciaHasta)
+              .subtract(utcOffset, "minutes")
+              .format()
           : ""
       );
     if (response?.formaCobro?.name)

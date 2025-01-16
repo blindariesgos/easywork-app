@@ -202,8 +202,8 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       setValue("activitySector", contact?.activitySector);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
-    if (contact?.intermediario)
-      setValue("intermediarioId", contact?.intermediario?.id);
+    if (contact?.agenteIntermediario)
+      setValue("agenteIntermediarioId", contact?.agenteIntermediario?.id);
     if (contact?.observer) setValue("observerId", contact?.observer?.id);
     if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
     if (contact?.observations) setValue("observations", contact?.observations);
@@ -570,11 +570,11 @@ export default function ContactGeneral({ contact, id, refPrint }) {
 
               <SelectInput
                 label={t("contacts:create:intermediario")}
-                name="intermediarioId"
+                name="agenteIntermediarioId"
                 options={lists?.policies?.agentesIntermediarios || []}
                 register={register}
                 disabled={!isEdit}
-                error={errors.intermediarioId}
+                error={errors.agenteIntermediarioId}
                 setValue={setValue}
                 watch={watch}
               />

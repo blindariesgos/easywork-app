@@ -4,20 +4,23 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { ModuleProgressBar } from '../components/ModuleProgressBar';
-import { ModuleCardMoreMenu } from '../components/ModuleCardMoreMenu';
+import { CourseProgressBar } from './CourseProgressBar';
+import { CourseCardMoreMenu } from './CourseCardMoreMenu';
 
 import { E_LEARNING_BASE_ROUTE } from '../constants';
+import { LMS_PERMISSIONS } from '../../constants';
+import { useUserPermissions } from '../../hooks/useUserPermissions';
 
-export const ModuleCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse }) => {
+export const CourseCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse }) => {
   const pathname = usePathname();
+  const { hasPermission } = useUserPermissions();
 
   if (!course.progress) course.progress = 0;
 
   return (
     <div className="relative w-[300px] h-[360px]">
-      {pathname === `${E_LEARNING_BASE_ROUTE}/config` && (
-        <ModuleCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
+      {pathname === `${E_LEARNING_BASE_ROUTE}/config` && hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && (
+        <CourseCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
       )}
 
       <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer w-full h-full">
@@ -41,11 +44,13 @@ export const ModuleCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse 
               <p className="text-sm text-gray-500 mb-4 max-h-96 overflow-hidden line-clamp-2">{course.description}</p>
             </div>
             <div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Progreso</span>
-                <span className="font-medium text-gray-900">{course.progress}%</span>
-              </div>
-              <ModuleProgressBar progress={course.progress} />
+              {hasPermission(LMS_PERMISSIONS.coursesProgressBar) && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Progreso</span>
+                  <span className="font-medium text-gray-900">{course.progress}%</span>
+                </div>
+              )}
+              <CourseProgressBar progress={course.progress} />
             </div>
           </div>
         </Link>

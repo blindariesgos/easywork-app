@@ -47,8 +47,14 @@ export default function AgentAccompaniment({ agent, id }) {
     let body = {
       ...other,
       children: childrens,
-      birthdate: moment(birthdate).format("YYYY-MM-DD"),
     };
+    if (birthdate) {
+      body = {
+        ...body,
+        birthdate: moment(birthdate).format("YYYY-MM-DD"),
+      };
+    }
+    console.log({ body });
     try {
       setLoading(true);
       if (!agent) {
@@ -63,10 +69,12 @@ export default function AgentAccompaniment({ agent, id }) {
         const response = await createAgent(formData);
         if (response.hasError) {
           let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
+          if (Array.isArray(response.message)) {
+            message = response.message.join(", ");
           }
-          throw { message };
+          toast.error(message);
+          setLoading(false);
+          return;
         }
         mutateAgents();
         toast.success("Agente creado exitosamente");
@@ -81,10 +89,12 @@ export default function AgentAccompaniment({ agent, id }) {
         const response = await updateAgent(formData, id);
         if (response.hasError) {
           let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
+          if (Array.isArray(response.message)) {
+            message = response.message.join(", ");
           }
-          throw { message };
+          toast.error(message);
+          setLoading(false);
+          return;
         }
         toast.success("Agente actualizado correctamente");
         mutate(`/agent-management/agents/${id}`);

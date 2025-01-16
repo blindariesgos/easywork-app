@@ -56,7 +56,7 @@ export function Calendar({ children }) {
   ];
 
   useEffect(() => {
-    getAllOauth(session.data.user.id, "Google Calendar").then((res) => {
+    getAllOauth(session.data.user.sub, "Google Calendar").then((res) => {
       setSelectOauth(res[0]);
     });
   }, []);

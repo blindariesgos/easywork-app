@@ -5,21 +5,25 @@ import { usePathname } from 'next/navigation';
 
 import { EvaluationMenuDropdown } from './EvaluationMenuDropdown';
 import { E_LEARNING_BASE_ROUTE } from '../constants';
+import { useUserPermissions } from '../../hooks/useUserPermissions';
+import { LMS_PERMISSIONS } from '../../constants';
 
 export const ELearningNavMenu = () => {
   const pathname = usePathname();
-  const user = null;
+  const { hasPermission } = useUserPermissions();
 
   const NAV_LINKS = [
-    { id: 1, name: 'Courses', href: `${E_LEARNING_BASE_ROUTE}/courses`, component: null },
-    { id: 2, name: 'Configuración', href: `${E_LEARNING_BASE_ROUTE}/config`, component: null },
-    { id: 3, name: 'Evaluaciones', href: ``, component: <EvaluationMenuDropdown /> },
-    { id: 4, name: 'Mis cursos', href: `${E_LEARNING_BASE_ROUTE}/my-courses`, component: null },
+    { id: LMS_PERMISSIONS.courses, name: 'Courses', href: `${E_LEARNING_BASE_ROUTE}/courses`, component: null },
+    { id: LMS_PERMISSIONS.config, name: 'Configuración', href: `${E_LEARNING_BASE_ROUTE}/config`, component: null },
+    { id: LMS_PERMISSIONS.evaluations, name: 'Evaluaciones', href: ``, component: <EvaluationMenuDropdown /> },
+    { id: LMS_PERMISSIONS.myCourses, name: 'Mis cursos', href: `${E_LEARNING_BASE_ROUTE}/my-courses`, component: null },
   ];
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
       {NAV_LINKS.map(navLink => {
+        if (!hasPermission(navLink.id)) return null;
+
         const isLinkActive = navLink.href === pathname;
 
         return navLink.component ? (

@@ -23,7 +23,7 @@ module.exports = {
         // light mode
         primary: "#241F61",
         primaryhover: "#141052",
-        "easy": {
+        easy: {
           50: "#EEEDF8",
           100: "#DCDAF1",
           200: "#BAB6E2",
@@ -36,9 +36,9 @@ module.exports = {
           900: "#0F0D21",
           950: "#080712",
           1000: "#6961C0",
-          1100: "#463EA7"
+          1100: "#463EA7",
         },
-        "gray": {
+        gray: {
           50: "#808080",
           60: "#6B6B6B",
           100: "#F2F6F7",
@@ -49,20 +49,20 @@ module.exports = {
           500: "#D2D2D2",
           600: "#D8D8D8",
         },
-        "yellow":{
-          100: "#FFEB04"
+        yellow: {
+          100: "#FFEB04",
         },
-        "blue":{
+        blue: {
           50: "#FCFDFF",
-          100: "#86BEDF"
+          100: "#86BEDF",
         },
-        "green": {
+        green: {
           primary: "#A9EA44",
           100: "#74BF00",
         },
         easywork: {
           main: "#262261",
-          mainhover: "#141052"
+          mainhover: "#141052",
         },
         tremor: {
           brand: {

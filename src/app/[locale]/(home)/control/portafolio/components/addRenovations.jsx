@@ -16,10 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { FaTrash } from "react-icons/fa";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import {
-  addPolicyByPdf,
-  getMetadataOfPdf,
-} from "@/src/lib/apis";
+import { addPolicyByPdf, getMetadataOfPdf } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -35,6 +32,7 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
+  const utcOffset = moment().utcOffset();
 
   const schema = yup.object().shape({
     contact: yup
@@ -160,15 +158,19 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       setValue("typePerson", response?.contact?.typePerson);
 
     if (response?.vigenciaDesde)
-      setValue("vigenciaDesde", response?.vigenciaDesde ?? "");
+      setValue(
+        "vigenciaDesde",
+        data?.vigenciaDesde
+          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (response?.vigenciaHasta)
-      setValue("vigenciaHasta", response?.vigenciaHasta ?? "");
-    // if (response?.cobertura) setValue("cobertura", response?.cobertura);
-    // if (response?.paymentMethod)
-    //   setValue("paymentMethod", response?.paymentMethod);
-    // if (response?.paymentFrequency)
-    //   setValue("paymentFrequency", response?.paymentFrequency);
-    // if (response?.paymentTerm) setValue("paymentTerm", response?.paymentTerm);
+      setValue(
+        "vigenciaHasta",
+        data?.vigenciaHasta
+          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)
@@ -204,6 +206,8 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     setValue("polizaFileId", response?.polizaFileId);
     setValue("status", response?.status);
     setValue("metadata", response?.metadata);
+    setValue("categoryId", response?.category?.id);
+
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue("relatedContacts", response?.relatedContacts);
     }

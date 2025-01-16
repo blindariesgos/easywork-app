@@ -360,19 +360,16 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                       name: "Aprobado",
                       id: "Aprobado",
                     },
-                    ,
                     {
                       name: "No aprobado-sin seguimiento",
                       id: "No aprobado-sin seguimiento",
                     },
-                    ,
                     {
                       name: "No volver a contactar",
                       id: "No volver a contactar",
                     },
                   ]}
-                  error={errors.agentConnectionStageId}
-                  register={register}
+                  error={errors.status}
                   setValue={setValue}
                   disabled={!isEdit}
                   watch={watch}

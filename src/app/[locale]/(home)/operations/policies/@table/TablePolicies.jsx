@@ -339,7 +339,10 @@ export default function TablePolicies() {
         },
         {
           name: "Cita",
-          disabled: true,
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=policy&prev_id=${id}`
+            ),
         },
         {
           name: "Comentario",

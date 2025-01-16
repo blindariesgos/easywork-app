@@ -47,7 +47,7 @@ export default function AddSignature({
   };
 
   function allOauthPromise() {
-    getAllOauth(session.data.user.id, "Gmail").then((res) => {
+    getAllOauth(session.data.user.sub, "Gmail").then((res) => {
       let newArray = [];
       res.forEach((element) => {
         newArray.push({ email: element.email, state: false });
@@ -134,7 +134,7 @@ export default function AddSignature({
   };
 
   useEffect(() => {
-    getTokenGoogle(session.data.user.id).then((res) => {
+    getTokenGoogle(session.data.user.sub).then((res) => {
       setUser(res);
     });
     if (params.get("isEdit")) getSignature();

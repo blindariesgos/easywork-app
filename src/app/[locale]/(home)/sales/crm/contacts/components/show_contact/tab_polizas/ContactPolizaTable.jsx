@@ -8,6 +8,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { formatToCurrency } from "@/src/utils/formatters";
 
 export default function ContactPolizaTable({ base = 0, contactId }) {
   const [page, setPage] = useState(1);
@@ -314,13 +315,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                     <p>{poliza?.status ?? "S/N"}</p>
                   </td>
                   <td className="whitespace-nowrap py-4 text-sm text-gray-400">
-                    <p>{moment(poliza?.vigenciaDesde).format("DD/MM/yyyy")}</p>
+                    <p>
+                      {moment(poliza?.vigenciaDesde).utc().format("DD/MM/yyyy")}
+                    </p>
                   </td>
                   <td className="whitespace-nowrap py-4 text-sm text-gray-400">
-                    <p>{moment(poliza?.vigenciaHasta).format("DD/MM/yyyy")}</p>
+                    <p>
+                      {moment(poliza?.vigenciaHasta).utc().format("DD/MM/yyyy")}
+                    </p>
                   </td>
                   <td className="whitespace-nowrap py-4 text-sm text-gray-400">
-                    <p>{`${poliza?.currency?.symbol ?? "$"} ${poliza?.importePagar?.toFixed(2) ?? "0.00"}`}</p>
+                    <p>{`${poliza?.currency?.symbol ?? "$"} ${poliza?.importePagar ? formatToCurrency(poliza?.importePagar) : "0.00"}`}</p>
                   </td>
                   <td className="whitespace-nowrap py-4 text-sm text-gray-400">
                     <p>{poliza?.type?.name || "S/N"}</p>

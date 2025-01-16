@@ -18,14 +18,14 @@ export const useRequest = () => {
   );
 
   const request = useCallback(async (url, options = {}) => {
-    const response = await axiosInstance({
+    const { data } = await axiosInstance({
       url,
       method: options.method || 'GET',
       data: options.data,
       headers: options.headers,
     });
 
-    return response.data;
+    return data;
   }, []);
 
   return request;

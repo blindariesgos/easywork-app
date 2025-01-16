@@ -46,7 +46,7 @@ export default function IngresarEmail() {
     password: null,
     senderName: null,
     mailName: null,
-    userId: session.data.user.id,
+    userId: session.data.user.sub,
   });
 
   async function saveIMAP() {
@@ -64,7 +64,7 @@ export default function IngresarEmail() {
   async function getFolders() {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.sub}`,
         {
           headers: {
             Authorization: `${session.data.user.accessToken}`,

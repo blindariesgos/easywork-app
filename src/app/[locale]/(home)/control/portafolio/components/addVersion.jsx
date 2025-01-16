@@ -160,15 +160,19 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
     if (response?.vigenciaDesde)
       setValue(
         "vigenciaDesde",
-        data?.vigenciaDesde
-          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+        response?.vigenciaDesde
+          ? moment(response?.vigenciaDesde)
+              .subtract(utcOffset, "minutes")
+              .format()
           : ""
       );
     if (response?.vigenciaHasta)
       setValue(
         "vigenciaHasta",
-        data?.vigenciaHasta
-          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+        response?.vigenciaHasta
+          ? moment(response?.vigenciaHasta)
+              .subtract(utcOffset, "minutes")
+              .format()
           : ""
       );
     if (response?.formaCobro?.name)
@@ -181,26 +185,18 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
     if (response?.currency?.name)
       setValue("currencyId", response?.currency?.id);
     if (response?.plazoPago) setValue("plazoPago", response?.plazoPago);
-    // if (response?.assignedBy) setValue("assignedById", response?.assignedBy?.id);
-    // if (response?.contact?.address) setValue("address", response?.contact?.address);
-    // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
     if (response?.version) setValue("version", response?.version);
-    // if (response?.importePagar)
     setValue(
       "importePagar",
       response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
     );
-    // if (response?.primaNeta)
     setValue("primaNeta", response?.primaNeta?.toFixed(2) ?? (0).toFixed(2));
-    // if (response?.primaNeta)
     setValue(
       "derechoPoliza",
       response?.derechoPoliza?.toFixed(2) ?? (0).toFixed(2)
     );
-    // if (response?.iva)
     setValue("iva", response?.iva?.toFixed(2) ?? (0).toFixed(2));
-    // if (response?.recargoFraccionado)
     setValue(
       "recargoFraccionado",
       response?.recargoFraccionado?.toFixed(2) ?? (0).toFixed(2)

@@ -20,7 +20,6 @@ export const activitySectors = [
   "Servicios de tecnología",
   "Servicios educativos",
   "Servicios financieros",
-  "servicios financieros",
   "Servicios inmobiliarios",
   "Silvicultura",
   "Transporte",

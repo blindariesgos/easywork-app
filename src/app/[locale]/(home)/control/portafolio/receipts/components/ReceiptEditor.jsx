@@ -30,7 +30,7 @@ import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import useReceiptContext from "@/src/context/receipts";
 
-export default function ReceiptEditor({ data, id, updateReceipt }) {
+export default function ReceiptEditor({ data, id }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
@@ -72,6 +72,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
   });
 
   useEffect(() => {
+    console.log("cambio algo");
     if (data?.responsible?.id) setValue("responsibleId", data?.responsible?.id);
     if (data?.status) setValue("status", data?.status);
     if (data?.methodCollection?.name)
@@ -109,7 +110,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
         return;
       }
       setIsEdit(false);
-      updateReceipt();
+      mutate(`/sales/crm/polizas/receipts/${id}`);
       toast.success("Recibo actualizado correctamente.");
       mutateReceipts();
       router.back();
@@ -137,11 +138,11 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
 
         return;
       }
-      updateReceipt();
+      setValue("status", "");
+      setTimeout(() => setValue("status", status), 1000);
+      mutate(`/sales/crm/polizas/receipts/${id}`);
       toast.success("Recibo actualizado correctamente.");
-      mutate(
-        "/sales/crm/polizas/receipts?page=1&limit=5&orderBy=name&order=DESC"
-      );
+      mutateReceipts();
     } catch (error) {
       console.log({ error });
       toast.error(
@@ -341,7 +342,6 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
                   label={t("control:portafolio:receipt:details:form:status")}
                   options={receiptStatus}
                   name="status"
-                  register={register}
                   setValue={setValue}
                   disabled={!isEdit}
                   watch={watch}
@@ -559,7 +559,7 @@ export default function ReceiptEditor({ data, id, updateReceipt }) {
         {...addFileProps}
         setIsOpen={(open) => setAddFileProps({ ...addFileProps, isOpen: open })}
         update={() => {
-          updateReceipt();
+          mutate(`/sales/crm/polizas/receipts/${id}`);
           mutate(`/sales/crm/polizas/receipts/${id}/activities`);
         }}
       />

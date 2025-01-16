@@ -23,7 +23,6 @@ function SelectInput({
   setValue,
   object,
   border,
-  value,
   watch,
   setSelectedOption,
   placeholder,

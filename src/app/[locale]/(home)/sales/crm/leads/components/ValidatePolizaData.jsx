@@ -89,18 +89,22 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     if (policy?.clientData?.typePerson)
       setValue("typePerson", policy?.clientData?.typePerson);
 
-    if (response?.vigenciaDesde)
+    if (policy?.vigenciaDesde)
       setValue(
         "vigenciaDesde",
-        data?.vigenciaDesde
-          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+        policy?.vigenciaDesde
+          ? moment(policy?.vigenciaDesde)
+              .subtract(utcOffset, "minutes")
+              .format()
           : ""
       );
-    if (response?.vigenciaHasta)
+    if (policy?.vigenciaHasta)
       setValue(
         "vigenciaHasta",
-        data?.vigenciaHasta
-          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+        policy?.vigenciaHasta
+          ? moment(policy?.vigenciaHasta)
+              .subtract(utcOffset, "minutes")
+              .format()
           : ""
       );
     if (policy?.formaCobro?.name)
@@ -139,6 +143,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     setValue("polizaFileId", policy?.file?.id);
     setValue("status", policy?.status);
     setValue("metadata", policy?.metadata);
+    setValue("categoryId", policy?.category?.id);
   }, [policy]);
 
   const handleReset = () => {
@@ -161,6 +166,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     } = data;
     const body = {
       ...otherData,
+      categoryId: otherData?.category?.id,
       version: 0,
       renewal: false,
       iva: iva ? +iva : 0,

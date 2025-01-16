@@ -216,6 +216,8 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
     setValue("polizaFileId", response?.polizaFileId);
     setValue("status", response?.status);
     setValue("metadata", response?.metadata);
+    setValue("categoryId", response?.category?.id);
+
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue("relatedContacts", response?.relatedContacts);
     }

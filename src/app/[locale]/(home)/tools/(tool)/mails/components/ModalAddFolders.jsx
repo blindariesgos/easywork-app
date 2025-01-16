@@ -47,7 +47,7 @@ export default function ModalAddFolders({ fetchUserData, fetchData, allOauthProm
     if (params.get("configlabelid") && selectOauth) {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/labelId/${session.data.user.id}/${selectOauth.id}`,
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/labelId/${session.data.user.sub}/${selectOauth.id}`,
           {
             headers: {
               Authorization: `Bearer ${selectOauth?.access_token}`,
@@ -119,7 +119,7 @@ export default function ModalAddFolders({ fetchUserData, fetchData, allOauthProm
 
   async function deleteOauth() {
     try {
-      await deleteTokenGoogle(session.data.user.id, selectOauth.id, null);
+      await deleteTokenGoogle(session.data.user.sub, selectOauth.id, null);
       router.push("/tools/mails?userdeleted=true");
     } catch (error) {}
   }

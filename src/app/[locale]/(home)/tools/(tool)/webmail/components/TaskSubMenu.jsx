@@ -22,7 +22,7 @@ export default function TaskSubMenu({
   async function updateLabelId(array, label) {
     setSelectedEmails([]);
     await axios.post(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/${label}/${session.data.user.id}/${selectOauth?.id}`,
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/${label}/${session.data.user.sub}/${selectOauth?.id}`,
       { data: array }
     );
 

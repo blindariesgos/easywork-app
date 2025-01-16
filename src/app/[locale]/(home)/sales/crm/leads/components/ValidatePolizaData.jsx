@@ -78,13 +78,14 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     if (policy?.contact?.id) {
       setValue("contact", policy?.contact?.id);
       setValue("contactId", policy?.contact?.id);
+      setValue("isNewContact", false);
     } else {
       setValue("isNewContact", true);
-      setValue("clientData", {
-        ...policy?.clientData,
-        name: policy?.clientData?.fullName,
-      });
     }
+    setValue("clientData", {
+      ...policy?.clientData,
+      name: policy?.clientData?.fullName,
+    });
     if (policy?.poliza) setValue("poliza", policy?.poliza);
     if (policy?.clientData?.typePerson)
       setValue("typePerson", policy?.clientData?.typePerson);
@@ -166,7 +167,6 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     } = data;
     const body = {
       ...otherData,
-      categoryId: otherData?.category?.id,
       version: 0,
       renewal: false,
       iva: iva ? +iva : 0,
@@ -178,7 +178,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       name: `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData?.companyId)?.name} ${otherData?.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData?.typeId)?.name}`,
     };
-    console.log({ body });
+    console.log({ body, data });
 
     try {
       const response = await convertLeadToClient(leadId, body);

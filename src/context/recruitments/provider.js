@@ -6,10 +6,7 @@ import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useRecruitments } from "@/src/lib/api/hooks/recruitments";
 
-export default function RecruitmentsContextProvider({
-  children,
-  customFilters = [],
-}) {
+export default function RecruitmentsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
@@ -36,7 +33,7 @@ export default function RecruitmentsContextProvider({
       code: "name",
     },
     {
-      id: 3,
+      id: 2,
       name: "Gerente de Desarrollo",
       type: "dropdown",
       check: false,
@@ -50,7 +47,6 @@ export default function RecruitmentsContextProvider({
       check: true,
       code: "createdAt",
     },
-    ...customFilters,
   ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -82,7 +78,7 @@ export default function RecruitmentsContextProvider({
         code: "name",
       },
       {
-        id: 3,
+        id: 2,
         name: t("agentsmanagement:accompaniments:agent:manager"),
         type: "dropdown",
         check: false,
@@ -97,21 +93,28 @@ export default function RecruitmentsContextProvider({
         code: "createdAt",
       },
       {
-        id: 1,
+        id: 4,
         name: t("contacts:create:cua"),
         type: "input",
         check: true,
         code: "cua",
       },
       {
-        id: 3,
+        id: 5,
         name: t("agentsmanagement:accompaniments:agent:observer"),
         type: "dropdown",
         check: false,
         code: "observerId",
         options: lists?.users,
       },
-      ...customFilters,
+      {
+        id: 6,
+        name: t("contacts:create:origen"),
+        type: "select",
+        check: false,
+        code: "sourceId",
+        options: lists?.recruitments?.agentSources ?? [],
+      },
     ]);
   }, [lists]);
 

@@ -274,7 +274,20 @@ export default function Table() {
     },
     {
       name: "Actividades",
-      disabled: true,
+      options: [
+        {
+          name: "Tarea",
+          handleClick: (id) =>
+            router.push(`/tools/tasks/task?show=true&prev=agent&prev_id=${id}`),
+        },
+        {
+          name: "Cita",
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=agent&prev_id=${id}`
+            ),
+        },
+      ],
     },
     {
       name: item.developmentManager ? "Reasignar GDD" : "Asignar GDD",
@@ -438,14 +451,9 @@ export default function Table() {
                                         onClick={() => {
                                           item.handleClick &&
                                             item.handleClick(agent.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              agent?.contact?.id
-                                            );
                                         }}
                                       >
                                         <div
-                                          // onClick={item.onClick}
                                           className={
                                             "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           }
@@ -485,10 +493,6 @@ export default function Table() {
                                                   option.handleClick &&
                                                     option.handleClick(
                                                       agent.id
-                                                    );
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      agent?.contact?.id
                                                     );
                                                 }}
                                               >

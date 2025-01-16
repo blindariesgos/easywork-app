@@ -86,7 +86,7 @@ export default function Table() {
 
   const toggleAll = useCallback(() => {
     setSelectedContacts(
-      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+      checked || indeterminate ? [] : data?.items?.map((x) => x?.agent?.id)
     );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);

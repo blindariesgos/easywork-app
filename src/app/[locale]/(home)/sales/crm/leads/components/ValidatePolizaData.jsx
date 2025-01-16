@@ -139,7 +139,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     setValue("fechaEmision", policy?.fechaEmision);
     setValue("plan", policy?.plan);
     setValue("movementDescription", policy?.movementDescription);
-    setValue("conductoPagoId", policy?.conductoPagoId);
+    setValue("conductoPagoId", policy?.conductoPago?.id);
     setValue("polizaFileId", policy?.file?.id);
     setValue("status", policy?.status);
     setValue("metadata", policy?.metadata);

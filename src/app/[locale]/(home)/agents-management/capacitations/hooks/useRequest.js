@@ -23,6 +23,7 @@ export const useRequest = () => {
       method: options.method || 'GET',
       data: options.data,
       headers: options.headers,
+      params: options.params,
     });
 
     return data;

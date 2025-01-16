@@ -59,7 +59,7 @@ export default function SendMessage({
   useEffect(() => {
     setValueText("");
     getSignature();
-    getTokenGoogle(session.data.user.id).then((res) => {
+    getTokenGoogle(session.data.user.sub).then((res) => {
       setUser(res);
     });
   }, [params.get("send")]);
@@ -98,7 +98,7 @@ export default function SendMessage({
         return;
       }
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session.data.user.id}/${selectOauth.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session.data.user.sub}/${selectOauth.id}`,
         data
       );
       toast.success("Correo enviado");

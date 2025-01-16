@@ -45,6 +45,7 @@ import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import SelectUserModal from "@/src/components/modals/SelectUser";
 import ChangeAgentState from "./ChangeAgentState";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 export default function Table() {
   const {
     data,
@@ -273,7 +274,7 @@ export default function Table() {
         ),
     },
     {
-      name: "Actividades",
+      name: "Planificar",
       options: [
         {
           name: "Tarea",
@@ -466,7 +467,7 @@ export default function Table() {
                                         <MenuButton className="flex items-center hover:bg-gray-50">
                                           <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
                                             {item.name}
-                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
+                                            <ChevronRightIcon className="h-4 w-4" />
                                           </div>
                                         </MenuButton>
                                         <Transition

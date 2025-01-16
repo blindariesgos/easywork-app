@@ -282,7 +282,6 @@ export default function TableLeads() {
         setIsOpenDelete(true);
       },
     },
-    // { name: "Agregar Cita" },
     {
       name: "Planificar",
       options: [
@@ -297,7 +296,10 @@ export default function TableLeads() {
         },
         {
           name: "Cita",
-          disabled: true,
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=contact&prev_id=${id}`
+            ),
         },
         {
           name: "Comentario",

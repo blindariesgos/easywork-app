@@ -190,15 +190,20 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
     if (response?.version) setValue("version", response?.version);
-    if (response?.importePagar)
-      setValue("importePagar", response?.importePagar?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("primaNeta", response?.primaNeta?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("derechoPoliza", response?.derechoPoliza?.toFixed(2));
-    if (response?.iva) setValue("iva", response?.iva?.toFixed(2));
-    if (response?.recargoFraccionado)
-      setValue("recargoFraccionado", response?.recargoFraccionado?.toFixed(2));
+    setValue(
+      "importePagar",
+      response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
+    );
+    setValue("primaNeta", response?.primaNeta?.toFixed(2) ?? (0).toFixed(2));
+    setValue(
+      "derechoPoliza",
+      response?.derechoPoliza?.toFixed(2) ?? (0).toFixed(2)
+    );
+    setValue("iva", response?.iva?.toFixed(2) ?? (0).toFixed(2));
+    setValue(
+      "recargoFraccionado",
+      response?.recargoFraccionado?.toFixed(2) ?? (0).toFixed(2)
+    );
     if (response?.company?.id) setValue("companyId", response?.company?.id);
     if (response?.beneficiaries)
       setValue("beneficiaries", response?.beneficiaries);

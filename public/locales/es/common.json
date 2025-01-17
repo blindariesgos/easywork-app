@@ -4,7 +4,13 @@
   "loading": "Cargando...",
   "saving": "Guardando...",
   "with": "Con",
-  "save": "¡Salvado con éxito!",
+  "cancel": "Cancelar",
+  "show-more": "Ver más",
+  "show-less": "Ver menos",
+  "save": "Guardar",
+  "change": "Cambiar",
+  "save-successfully": "¡Salvado con éxito!",
+  "update-successfully": "Actualización exitosa",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",
   "select": "Seleccione",
@@ -131,7 +137,7 @@
       "learning": "E-Learning (Próximamente)",
       "accompaniment": "Seguimiento",
       "commissions": "Comisiones",
-      "recruitement": "Embudo de reclutamiento y selección",
+      "recruitement": "Reclutamiento y selección",
       "capacitations": {
         "name": "Capacitaciones",
         "e-learning": "E-Learning",
@@ -209,11 +215,14 @@
   "alert": {
     "delete-success": "Elemento(s) eliminado(s) exitosamente!",
     "update-items-succes": "Se Actualizo con exito {{count}} elemento(s) de {{total}} seleccionado(s)",
-    "update-items-error": "Ocurrio un error al tratar de eliminar {{count}} elemento(s)"
+    "update-items-error": "Ocurrio un error al tratar de eliminar {{count}} elemento(s)",
+    "error-retry": "Se ha producido un error, inténtelo de nuevo más tarde"
   },
   "add-document": "Añadir Documento ({{document}})",
   "slide": {
-    "renovations": "Renovaciones"
+    "renovations": "Renovaciones",
+    "recruitment": "Reclutamiento",
+    "conexion": "Conexión"
   },
   "activities": {
     "event": "Reunión"

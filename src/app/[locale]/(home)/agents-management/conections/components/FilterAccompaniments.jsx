@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useConnectionsContext from "@/src/context/connections";
 import FilterTable from "@/src/components/FilterTable";
 
 const FilterClaims = () => {
-  const contextValues = useAccompanimentsContext();
+  const contextValues = useConnectionsContext();
 
   return <FilterTable contextValues={contextValues} />;
 };

@@ -236,7 +236,7 @@ export default function MeetEditor({ edit, copy, type }) {
         }
         mutate(`/agent-management/meetings/${edit.id}`);
         toast.success("Junta actualizada exitosamente!");
-        mutateMeets();
+        await mutateMeets();
         router.back();
       } else {
         const response = await postMeet(body);
@@ -249,7 +249,7 @@ export default function MeetEditor({ edit, copy, type }) {
           return;
         }
         toast.success("Junta creada exitosamente!");
-        mutateMeets();
+        await mutateMeets();
 
         if (isNewTask) {
           reset();

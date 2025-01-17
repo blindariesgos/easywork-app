@@ -24,7 +24,9 @@
             "training": "Capacitación",
             "conexions": "Conexiones",
             "mettings": "Juntas individuales"
-        }
+        },
+        "status": "Estado del agente",
+        "select-state": "Seleccionar estado del agente"
     },
     "capacitations": {
         "title": "Capacitaciones",
@@ -114,21 +116,22 @@
             "activity": "Actividades"
         },
         "init-date": "Fecha de inicio del proceso",
+        "end-date": "Fecha de finalización del proceso",
         "entry-date": "Fecha de ingreso o aprobación"
     },
     "conections": {
         "title": "Conexiones",
         "table": {
             "agent": "Agente",
-            "state": "Etapa",
+            "state": "Etapa de avance",
             "initdate": "Periodo de ingreso",
             "indate": "Fecha de cita CNSF",
             "responsible": "Responsable",
             "proccess": "Proceso cerrado",
             "activity": "Actividades"
         },
-        "dni-number": "Número de Cédula Provisional/Definitivo",
-        "date-cvp": "Fecha de Vigencia CUA Provisional",
-        "date-vc": "Fecha de Vigencia Cédula"
+        "idcardNumber": "Número de Cédula Provisional/Definitivo",
+        "effectiveDateCua": "Fecha de Vigencia CUA Provisional",
+        "effectiveDateIdcard": "Fecha de Vigencia Cédula"
     }
 }

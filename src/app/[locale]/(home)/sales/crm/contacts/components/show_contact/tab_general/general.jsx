@@ -27,6 +27,8 @@ import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
+import { activitySectors } from "./common";
+import RelatedCustomer from "./RelatedCustomer";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -158,19 +160,17 @@ export default function ContactGeneral({ contact, id, refPrint }) {
               relation: "",
             },
           ],
-      codigos_dto:
-        //  contact?.codigos_dto?.length
-        //   ? contact?.codigos_dto?.map((e) => ({
-        //       email: e?.email?.email,
-        //       relation: e?.relation ?? "",
-        //     }))
-        //   :
-        [
-          {
-            codigo: "",
-            insuranceId: "",
-          },
-        ],
+      codigos_dto: contact?.codigos?.length
+        ? contact?.codigos?.map((e) => ({
+            codigo: e?.codigo ?? "",
+            insuranceId: e?.insurance?.id ?? "",
+          }))
+        : [
+            {
+              codigo: "",
+              insuranceId: "",
+            },
+          ],
     },
   });
 
@@ -185,6 +185,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       setType(contact?.typePerson);
       setValue("typePerson", contact?.typePerson);
     }
+    if (contact?.relatedContact && contact?.typePerson == "moral") {
+      setValue("contact", contact?.relatedContact?.id);
+    }
     if (contact?.fullName) setValue("fullName", contact?.fullName);
     if (contact?.name) {
       setValue("name", contact?.name);
@@ -197,10 +200,12 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
     if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
     if (contact?.address) setValue("address", contact?.address);
+    if (contact?.activitySector)
+      setValue("activitySector", contact?.activitySector);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
-    if (contact?.intermediario)
-      setValue("intermediarioId", contact?.intermediario?.id);
+    if (contact?.agenteIntermediario)
+      setValue("agenteIntermediarioId", contact?.agenteIntermediario?.id);
     if (contact?.observer) setValue("observerId", contact?.observer?.id);
     if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
     if (contact?.observations) setValue("observations", contact?.observations);
@@ -240,7 +245,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     const { contact: client, subAgent, ...info } = data;
     const body = {
       ...info,
-      contactId: client?.id ?? null,
+      relatedContactId: client?.id ?? null,
     };
 
     if (selectedProfileImage?.file) {
@@ -557,8 +562,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
               />
               <AgentSelectAsync
                 label={t("contacts:create:sub-agent")}
-                name="subAgent"
-                // setSelectedOption={(agent) => setValue("subAgentId", agent.id)}
+                name="subAgentId"
                 register={register}
                 disabled={!isEdit}
                 error={errors.subAgentId}
@@ -568,27 +572,21 @@ export default function ContactGeneral({ contact, id, refPrint }) {
 
               <SelectInput
                 label={t("contacts:create:intermediario")}
-                name="intermediarioId"
+                name="agenteIntermediarioId"
                 options={lists?.policies?.agentesIntermediarios || []}
                 register={register}
                 disabled={!isEdit}
-                error={errors.intermediarioId}
+                error={errors.agenteIntermediarioId}
                 setValue={setValue}
                 watch={watch}
               />
               {type == "moral" && (
                 <SelectInput
                   label={t("contacts:create:company-activity")}
-                  options={[
-                    {
-                      name: "Servicios",
-                      id: "services",
-                    },
-                    {
-                      name: "Producción",
-                      id: "production",
-                    },
-                  ]}
+                  options={activitySectors.map((activity) => ({
+                    name: activity,
+                    id: activity,
+                  }))}
                   watch={watch}
                   name="activitySector"
                   disabled={!isEdit}
@@ -632,6 +630,15 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 disabled={!isEdit}
                 multiple
               />
+              {!isEdit &&
+                contact?.relations &&
+                contact?.relations?.map((relation) => (
+                  <RelatedCustomer
+                    client={relation}
+                    type={type}
+                    key={relation.id}
+                  />
+                ))}
             </div>
           </div>
 

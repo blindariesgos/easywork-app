@@ -138,7 +138,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     resolver: yupResolver(schemaInputs),
   });
 
-  //#region Logica conexion crm desde actividades
+  //#region Logica conexion crm
   const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [
@@ -234,6 +234,31 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", "CRM - Junta: ");
     setLoading(false);
   };
+
+  const setCrmMeetGroup = async (agentId) => {
+    const response = localStorage.getItem(agentId);
+
+    if (!response) {
+      setLoading(false);
+      return;
+    }
+
+    const data = JSON.parse(response);
+
+    if (!data) {
+      setLoading(false);
+      return;
+    }
+    const { userId, ...metadata } = data;
+
+    setValue(
+      "createdBy",
+      lists?.users.filter((user) => user.id === data.developmentManagerId)
+    );
+    setValue("metadata", metadata);
+    setValue("name", "CRM - Junta: ");
+    setLoading(false);
+  };
   useEffect(() => {
     const prevId = params.get("prev_id");
 
@@ -267,9 +292,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    if (params.get("prev") === "meet") {
+    if (params.get("prev") === "meet-individual") {
       setLoading(true);
       setCrmMeet(prevId);
+      return;
+    }
+    if (params.get("prev") === "meet-group") {
+      setLoading(true);
+      setCrmMeetGroup(prevId);
       return;
     }
   }, [params.get("prev")]);

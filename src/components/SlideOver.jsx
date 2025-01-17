@@ -92,6 +92,12 @@ export default function SlideOver({
       case "renovations":
         setLabel(t("common:slide:renovations"));
         break;
+      case "recruitment":
+        setLabel(t("common:slide:recruitment"));
+        break;
+      case "conexion":
+        setLabel(t("common:slide:conexion"));
+        break;
       case "lead":
         setLabel(t("leads:header:lead"));
         break;

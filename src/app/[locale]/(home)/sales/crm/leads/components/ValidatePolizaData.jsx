@@ -28,6 +28,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
   const [loading, setLoading] = useState(false);
   const { mutate: mutateLeads } = useLeadContext();
   const { mutate } = useSWRConfig();
+  const utcOffset = moment().utcOffset();
 
   const schema = yup.object().shape({
     clientData: yup
@@ -77,21 +78,36 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     if (policy?.contact?.id) {
       setValue("contact", policy?.contact?.id);
       setValue("contactId", policy?.contact?.id);
+      setValue("isNewContact", false);
     } else {
       setValue("isNewContact", true);
-      setValue("clientData", {
-        ...policy?.clientData,
-        name: policy?.clientData?.fullName,
-      });
     }
+    setValue("clientData", {
+      ...policy?.clientData,
+      name: policy?.clientData?.fullName,
+    });
     if (policy?.poliza) setValue("poliza", policy?.poliza);
     if (policy?.clientData?.typePerson)
       setValue("typePerson", policy?.clientData?.typePerson);
 
     if (policy?.vigenciaDesde)
-      setValue("vigenciaDesde", policy?.vigenciaDesde ?? "");
+      setValue(
+        "vigenciaDesde",
+        policy?.vigenciaDesde
+          ? moment(policy?.vigenciaDesde)
+              .subtract(utcOffset, "minutes")
+              .format()
+          : ""
+      );
     if (policy?.vigenciaHasta)
-      setValue("vigenciaHasta", policy?.vigenciaHasta ?? "");
+      setValue(
+        "vigenciaHasta",
+        policy?.vigenciaHasta
+          ? moment(policy?.vigenciaHasta)
+              .subtract(utcOffset, "minutes")
+              .format()
+          : ""
+      );
     if (policy?.formaCobro?.name)
       setValue("formaCobroId", policy?.formaCobro?.id);
     if (policy?.frecuenciaCobro?.name)
@@ -124,10 +140,11 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     setValue("fechaEmision", policy?.fechaEmision);
     setValue("plan", policy?.plan);
     setValue("movementDescription", policy?.movementDescription);
-    setValue("conductoPagoId", policy?.conductoPagoId);
+    setValue("conductoPagoId", policy?.conductoPago?.id);
     setValue("polizaFileId", policy?.file?.id);
     setValue("status", policy?.status);
     setValue("metadata", policy?.metadata);
+    setValue("categoryId", policy?.category?.id);
   }, [policy]);
 
   const handleReset = () => {
@@ -135,7 +152,6 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Paso por aqui");
     setLoading(true);
     const {
       iva,
@@ -162,7 +178,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       name: `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData?.companyId)?.name} ${otherData?.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData?.typeId)?.name}`,
     };
-    console.log({ body });
+    console.log({ body, data });
 
     try {
       const response = await convertLeadToClient(leadId, body);
@@ -182,9 +198,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
 
         return;
       }
-      toast.success(
-        "Póliza cargada, se realizo con exito el cierre positivo del prospecto"
-      );
+      toast.success("Prospecto convertido con éxito");
       setIsOpen(false);
       handleReset();
       mutateLeads();

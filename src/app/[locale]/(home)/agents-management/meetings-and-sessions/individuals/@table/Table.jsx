@@ -39,6 +39,8 @@ import Image from "next/image";
 import moment from "moment";
 import { toast } from "react-toastify";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
+import { deleteAgentById, deleteMeetById } from "@/src/lib/apis";
+import useMeets from "../../hooks/useMeets";
 
 export default function Table() {
   const {
@@ -63,7 +65,9 @@ export default function Table() {
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading, itemActions } = useMeets({
+    type: "individuals",
+  });
   const [deleteId, setDeleteId] = useState();
   const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
@@ -88,39 +92,6 @@ export default function Table() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
-
-  const itemActions = [
-    {
-      name: "Ver",
-      handleClick: (meet) =>
-        router.push(
-          `/agents-management/meetings-and-sessions/individuals/meet/${meet.id}?show=true`
-        ),
-    },
-    {
-      name: "Crear",
-      handleClick: (meet) => {
-        if (meet?.agents?.length > 0) {
-          router.push(
-            `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=agent-meet&prev_id=${meet?.agents[0]?.id}`
-          );
-        } else {
-          toast.warning("La junta no tiene agente asignado");
-        }
-      },
-    },
-    {
-      name: "Editar",
-      handleClick: (meet) =>
-        router.push(
-          `/agents-management/meetings-and-sessions/individuals/meet/${meet.id}/edit?show=true`
-        ),
-    },
-    {
-      name: "Eliminar",
-      disabled: true,
-    },
-  ];
 
   const masiveActions = [
     {

@@ -29,6 +29,7 @@ import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { handleApiError } from "@/src/utils/api/errors";
 import ValidatePolizaData from "./ValidatePolizaData";
 import useLeadContext from "@/src/context/leads";
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -267,6 +268,11 @@ export default function CreateLead({ lead, id }) {
     }
   };
 
+  const handleCopyUrl = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Copiado en el Portapapeles");
+  };
+
   return (
     <div
       className={clsx("flex flex-col h-screen relative w-full", {
@@ -286,13 +292,16 @@ export default function CreateLead({ lead, id }) {
         {lead && (
           <div className="bg-transparent p-4">
             <div className="flex items-start flex-col justify-between gap-y-4 relative">
-              <div className="flex gap-2 items-center">
-                <h1 className="text-xl pl-4 font-semibold">
+              <div className="flex gap-3 pl-4 items-center">
+                <h1 className="text-xl font-semibold">
                   {lead ? lead.fullName : t("leads:lead:new")}
                 </h1>
-                {/* <div>
-                <PencilIcon className="h-4 w-4 text-gray-200" />
-              </div> */}
+                <LinkIcon
+                  className="h-4 w-4 text-[#4f4f4f] opacity-50 hover:opacity-100 cursor-pointer"
+                  title="Copiar enlace de prospecto en Portapapeles"
+                  aria-hidden="true"
+                  onClick={handleCopyUrl}
+                />
               </div>
               <div className="w-full relative">
                 <ProgressStages

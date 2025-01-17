@@ -38,6 +38,7 @@ import {
   addCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
+  getAgentById,
 } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
@@ -64,6 +65,7 @@ export default function EventDetails({ data, id }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const session = useSession();
+  const moreRef = useRef();
 
   const repeatOptions = [
     { name: "No repetir", value: 1, id: "none" },
@@ -335,6 +337,7 @@ export default function EventDetails({ data, id }) {
     // return () => subscription.unsubscribe();
   }, [data]);
 
+  //#region Logica conexion crm
   const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
     setValue("crm", [
@@ -345,12 +348,11 @@ export default function EventDetails({ data, id }) {
       },
     ]);
     setValue("name", "CRM - Cliente: ");
-    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
 
   const setCrmLead = async (leadId) => {
-    console.log("paso por lead");
     const response = await getLeadById(leadId);
     setValue("crm", [
       {
@@ -360,7 +362,7 @@ export default function EventDetails({ data, id }) {
       },
     ]);
     setValue("name", "CRM - Prospecto: ");
-    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
 
@@ -375,21 +377,37 @@ export default function EventDetails({ data, id }) {
     ]);
     console.log("receipt", response);
     setValue("name", "CRM - Recibo: ");
-    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
-
-  const setCrmPolicy = async (policyId) => {
-    const response = await getPolicyById(policyId);
+  const setCrmAgent = async (agentId) => {
+    const response = await getAgentById(agentId);
     setValue("crm", [
       {
         id: response?.id,
-        type: "poliza",
-        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+        type: "agent",
+        name: response?.name,
       },
     ]);
-    setValue("name", "CRM - Póliza: ");
-    // setOpenOptions((prev) => ({ ...prev, more: true }));
+    setValue("name", "CRM - Agente: ");
+    moreRef?.current?.onclick && moreRef?.current?.onclick();
+    setLoading(false);
+  };
+  const setCrmPolicy = async (policyId, type) => {
+    const response = await getPolicyById(policyId);
+    if (!response?.id) {
+      setLoading(false);
+      return;
+    }
+    setValue("crm", [
+      {
+        id: response?.id,
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+        type,
+      },
+    ]);
+    setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
+    moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
 
@@ -408,9 +426,9 @@ export default function EventDetails({ data, id }) {
       return;
     }
 
-    if (params.get("prev") === "policy") {
+    if (["policy", "renewal"].includes(params.get("prev"))) {
       setLoading(true);
-      setCrmPolicy(prevId);
+      setCrmPolicy(prevId, params.get("prev"));
       return;
     }
 
@@ -419,7 +437,14 @@ export default function EventDetails({ data, id }) {
       setCrmReceipt(prevId);
       return;
     }
+
+    if (params.get("prev") === "agent") {
+      setLoading(true);
+      setCrmAgent(prevId);
+      return;
+    }
   }, [params.get("prev")]);
+  //#endregion
 
   const deleteEvent = async () => {
     try {
@@ -463,7 +488,6 @@ export default function EventDetails({ data, id }) {
             </DialogTitle>
           </div>
         </div>
-
         {/* Divider container */}
         <div className="gap-y-6 py-1 sm:gap-y-0 sm:divide-y sm:divide-gray-200 sm:py-0 bg-white rounded-xl grid grid-cols-1 ">
           {/* Event name */}
@@ -778,10 +802,14 @@ export default function EventDetails({ data, id }) {
             </div>
           </div>
         </div>
+
         <Disclosure defaultOpen={!!data}>
           {({ open }) => (
             <>
-              <DisclosureButton className="py-2 text-zinc-700 flex items-center text-sm font-medium gap-0.5">
+              <DisclosureButton
+                className="py-2 text-zinc-700 flex items-center text-sm font-medium gap-0.5"
+                ref={moreRef}
+              >
                 {open ? (
                   <ChevronUpIcon className="h-5 w-5" aria-hidden="true" />
                 ) : (
@@ -856,6 +884,7 @@ export default function EventDetails({ data, id }) {
                         setValue={setValue}
                         name="crm"
                         error={errors.crm}
+                        border
                       />
                     </div>
                   </div>

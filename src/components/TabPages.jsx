@@ -16,15 +16,10 @@ const TabPages = ({ tabs, children, defaultIndex }) => {
   );
 
   useEffect(() => {
-    if (Number(params.get("page")) === 0 || !params.get("page")) {
-      params.set("page", 1);
-      replace(`${pathname}?${params.toString()}`);
-    }
-
     if (params.get("gtab")) {
       setSelectedIndex(Number(params.get("gtab")));
     }
-  }, [searchParams, replace, pathname]);
+  }, [params]);
 
   const handleChangeTab = (index) => {
     params.set("gtab", index);

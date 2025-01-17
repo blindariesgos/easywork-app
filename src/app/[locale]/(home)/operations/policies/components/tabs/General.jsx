@@ -1,8 +1,7 @@
 "use client";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextInput from "@/src/components/form/TextInput";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -19,8 +18,8 @@ import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
-import usePolicyContext from "@/src/context/policies";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import moment from "moment";
 
 export default function PolicyDetails({
   data,
@@ -37,7 +36,7 @@ export default function PolicyDetails({
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
   const router = useRouter();
-
+  const utcOffset = moment().utcOffset();
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),
     assignedById: Yup.string(),
@@ -82,9 +81,19 @@ export default function PolicyDetails({
 
   useEffect(() => {
     if (data?.vigenciaDesde)
-      setValue("vigenciaDesde", data?.vigenciaDesde ?? "");
+      setValue(
+        "vigenciaDesde",
+        data?.vigenciaDesde
+          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (data?.vigenciaHasta)
-      setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
+      setValue(
+        "vigenciaHasta",
+        data?.vigenciaHasta
+          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (data?.status) setValue("status", data?.status);
     if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
@@ -272,6 +281,7 @@ export default function PolicyDetails({
             type="text"
             label={t("operations:policies:general:rfc")}
             name="rfc"
+            register={register}
             disabled
           />
           <TextInput

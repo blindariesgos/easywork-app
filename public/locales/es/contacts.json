@@ -63,7 +63,7 @@
     "update-contacts-error": "Error al actualizar Cliente(s)"
   },
   "create": {
-    "msg": "Cliente creado!",
+    "msg": "¡Cliente creado!",
     "error": "Error al crear el cliente!",
     "save": "Guardando...",
     "client": "Nuevo cliente",
@@ -93,7 +93,7 @@
     "contact-type-company": "Tipo de compañía",
     "company-activity": "Sector de Actividad",
     "responsible": "Responsable",
-    "sub-agent": "Agente relacionado - subagente",
+    "sub-agent": "Agente relacionado - Sub Agente",
     "intermediario": "Intermediario",
     "agent": "Agente",
     "origen": "Origen",
@@ -389,5 +389,12 @@
       "others": "Otros (próximamente)",
       "fleets": "Flotillas (próximamente)"
     }
+  },
+  "related": {
+    "moral": "Contacto de la compañia",
+    "fisica": "Compañia contratante",
+    "show": "Ver cliente",
+    "hidden-address": "Ocultar dirección",
+    "show-address": "Mostar dirección"
   }
 }

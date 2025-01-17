@@ -51,6 +51,7 @@ export default function CapacitationsContextProvider({ children }) {
       code: 'poliza',
     },
   ];
+
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,

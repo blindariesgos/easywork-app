@@ -16,10 +16,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { FaTrash } from "react-icons/fa";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import {
-  addPolicyByPdf,
-  getMetadataOfPdf,
-} from "@/src/lib/apis";
+import { addPolicyByPdf, getMetadataOfPdf } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -35,6 +32,7 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
+  const utcOffset = moment().utcOffset();
 
   const schema = yup.object().shape({
     contact: yup
@@ -160,15 +158,23 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       setValue("typePerson", response?.contact?.typePerson);
 
     if (response?.vigenciaDesde)
-      setValue("vigenciaDesde", response?.vigenciaDesde ?? "");
+      setValue(
+        "vigenciaDesde",
+        response?.vigenciaDesde
+          ? moment(response?.vigenciaDesde)
+              .subtract(utcOffset, "minutes")
+              .format()
+          : ""
+      );
     if (response?.vigenciaHasta)
-      setValue("vigenciaHasta", response?.vigenciaHasta ?? "");
-    // if (response?.cobertura) setValue("cobertura", response?.cobertura);
-    // if (response?.paymentMethod)
-    //   setValue("paymentMethod", response?.paymentMethod);
-    // if (response?.paymentFrequency)
-    //   setValue("paymentFrequency", response?.paymentFrequency);
-    // if (response?.paymentTerm) setValue("paymentTerm", response?.paymentTerm);
+      setValue(
+        "vigenciaHasta",
+        response?.vigenciaHasta
+          ? moment(response?.vigenciaHasta)
+              .subtract(utcOffset, "minutes")
+              .format()
+          : ""
+      );
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)
@@ -184,15 +190,20 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
     if (response?.version) setValue("version", response?.version);
-    if (response?.importePagar)
-      setValue("importePagar", response?.importePagar?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("primaNeta", response?.primaNeta?.toFixed(2));
-    if (response?.primaNeta)
-      setValue("derechoPoliza", response?.derechoPoliza?.toFixed(2));
-    if (response?.iva) setValue("iva", response?.iva?.toFixed(2));
-    if (response?.recargoFraccionado)
-      setValue("recargoFraccionado", response?.recargoFraccionado?.toFixed(2));
+    setValue(
+      "importePagar",
+      response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
+    );
+    setValue("primaNeta", response?.primaNeta?.toFixed(2) ?? (0).toFixed(2));
+    setValue(
+      "derechoPoliza",
+      response?.derechoPoliza?.toFixed(2) ?? (0).toFixed(2)
+    );
+    setValue("iva", response?.iva?.toFixed(2) ?? (0).toFixed(2));
+    setValue(
+      "recargoFraccionado",
+      response?.recargoFraccionado?.toFixed(2) ?? (0).toFixed(2)
+    );
     if (response?.company?.id) setValue("companyId", response?.company?.id);
     if (response?.beneficiaries)
       setValue("beneficiaries", response?.beneficiaries);
@@ -200,10 +211,12 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     setValue("fechaEmision", response?.fechaEmision);
     setValue("plan", response?.plan);
     setValue("movementDescription", response?.movementDescription);
-    setValue("conductoPagoId", response?.conductoPagoId);
+    setValue("conductoPagoId", response?.conductoPago.id);
     setValue("polizaFileId", response?.polizaFileId);
     setValue("status", response?.status);
     setValue("metadata", response?.metadata);
+    setValue("categoryId", response?.category?.id);
+
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue("relatedContacts", response?.relatedContacts);
     }

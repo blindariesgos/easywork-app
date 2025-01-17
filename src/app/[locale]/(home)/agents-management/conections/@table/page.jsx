@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useTranslation } from "react-i18next";
 import { XCircleIcon } from "@heroicons/react/20/solid";
-import useAccompanimentsContext from "@/src/context/accompaniments";
+import useConnectionsContext from "@/src/context/connections";
 
 export default function Page({ searchParams }) {
   const { t } = useTranslation();
-  const { setPage, isLoading, isError, data } = useAccompanimentsContext();
+  const { setPage, isLoading, isError, data } = useConnectionsContext();
 
   useEffect(() => {
     setPage(searchParams.page || 1);

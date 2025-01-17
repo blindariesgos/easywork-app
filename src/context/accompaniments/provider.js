@@ -6,10 +6,7 @@ import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useAgents } from "../../lib/api/hooks/agents";
 
-export default function AccompanimentsContextProvider({
-  children,
-  customFilters = [],
-}) {
+export default function AccompanimentsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
@@ -33,7 +30,7 @@ export default function AccompanimentsContextProvider({
       code: "name",
     },
     {
-      id: 3,
+      id: 2,
       name: "Gerente de Desarrollo",
       type: "dropdown",
       check: false,
@@ -47,7 +44,6 @@ export default function AccompanimentsContextProvider({
       check: true,
       code: "createdAt",
     },
-    ...customFilters,
   ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
@@ -79,7 +75,7 @@ export default function AccompanimentsContextProvider({
         code: "name",
       },
       {
-        id: 3,
+        id: 2,
         name: t("agentsmanagement:accompaniments:agent:manager"),
         type: "dropdown",
         check: false,
@@ -94,21 +90,28 @@ export default function AccompanimentsContextProvider({
         code: "createdAt",
       },
       {
-        id: 1,
+        id: 3,
         name: t("contacts:create:cua"),
         type: "input",
         check: true,
         code: "cua",
       },
       {
-        id: 3,
+        id: 4,
         name: t("agentsmanagement:accompaniments:agent:observer"),
         type: "dropdown",
         check: false,
         code: "observerId",
         options: lists?.users,
       },
-      ...customFilters,
+      {
+        id: 6,
+        name: t("contacts:create:origen"),
+        type: "select",
+        check: false,
+        code: "sourceId",
+        options: lists?.recruitments?.agentSources ?? [],
+      },
     ]);
   }, [lists]);
 

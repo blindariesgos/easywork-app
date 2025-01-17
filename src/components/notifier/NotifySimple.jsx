@@ -1,11 +1,11 @@
-"use client"
-import { Fragment } from 'react'
-import { Transition } from '@headlessui/react'
-import { CheckCircleIcon } from '@heroicons/react/24/outline'
-import { XMarkIcon } from '@heroicons/react/20/solid'
-import { useTranslation } from 'react-i18next'
+"use client";
+import { Fragment } from "react";
+import { Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useTranslation } from "react-i18next";
 
-export default function NotifySimple({show, setShow}) {
+export default function NotifySimple({ show, setShow }) {
   const { t } = useTranslation();
 
   return (
@@ -31,21 +31,30 @@ export default function NotifySimple({show, setShow}) {
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+                    <CheckCircleIcon
+                      className="h-6 w-6 text-green-400"
+                      aria-hidden="true"
+                    />
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">{t('common:save')}</p>
-                    <p className="mt-1 text-sm text-gray-500">{t('common:link')}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {t("common:save-successfully")}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {t("common:link")}
+                    </p>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
                     <button
                       type="button"
                       className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       onClick={() => {
-                        setShow(false)
+                        setShow(false);
                       }}
                     >
-                      <span className="sr-only">{t('common:buttons:close')}</span>
+                      <span className="sr-only">
+                        {t("common:buttons:close")}
+                      </span>
                       <XMarkIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </div>
@@ -56,5 +65,5 @@ export default function NotifySimple({show, setShow}) {
         </div>
       </div>
     </>
-  )
+  );
 }

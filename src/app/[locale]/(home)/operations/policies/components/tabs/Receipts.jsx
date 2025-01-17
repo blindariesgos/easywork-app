@@ -1,32 +1,22 @@
 "use client";
-import {
-  ChevronDownIcon,
-  CheckIcon,
-  Cog8ToothIcon,
-} from "@heroicons/react/20/solid";
 import ReceiptEmpty from "../ReceiptEmpty";
-import { useTranslation } from "react-i18next";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Link from "next/link";
+
+import { useState } from "react";
+
 import { formatToCurrency } from "@/src/utils/formatters";
 import { useReceiptsByPolicyId } from "@/src/lib/api/hooks/receipts";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { formatDate } from "@/src/utils/getFormatDate";
 import moment from "moment";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
   const { data, isLoading } = useReceiptsByPolicyId(policyId);
   const [selectedPolizas, setSelectedPolizas] = useState([]);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   const handleShowReceipt = (id) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("show", true);
-    params.set("receipt", id);
-    router.replace(`${pathname}?${params.toString()}`);
+    router.push(`/control/portafolio/receipts/receipt/${id}?show=true`);
   };
 
   if (isLoading) {
@@ -236,10 +226,10 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     {receipt?.methodCollection?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {moment(receipt?.startDate).format("DD/MM/YYYY")}
+                    {moment(receipt?.startDate).utc().format("DD/MM/YYYY")}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {formatDate(receipt?.dueDate, "dd/MM/yyyy")}
+                    {moment(receipt?.dueDate).utc().format("DD/MM/YYYY")}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {formatToCurrency(receipt.paymentAmount)}

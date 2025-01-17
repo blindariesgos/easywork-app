@@ -15,25 +15,46 @@ import { Tab, TabList } from "@headlessui/react";
 import { useReactToPrint } from "react-to-print";
 import moment from "moment";
 import AddDocuments from "./AddDocuments";
-
-export default function AddContactTabs({ tabs, refPrint, contact, type }) {
+import { MdPlayCircleFilled } from "react-icons/md";
+export default function AddContactTabs({ tabs, refPrint, agent, type }) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const handlePrint = useReactToPrint({
-    documentTitle: `Detalle_agente_${contact?.fullName?.split(" ")?.join("_") ?? ""}_${moment().format("DDMMyyyyHHmmss")}`,
+    documentTitle: `Detalle_agente_${agent?.fullName?.split(" ")?.join("_") ?? ""}_${moment().format("DDMMyyyyHHmmss")}`,
     contentRef: refPrint,
   });
 
   const settings = [
-    // {
-    //   value: 0,
-    //   name: t("contacts:create:download"),
-    //   onClick: () => {},
-    //   icon: ArrowDownTrayIcon,
-    // },
+    ...(() => {
+      return type == "accompaniment"
+        ? [
+            {
+              value: 0,
+              name: "Iniciar Proceso",
+              icon: MdPlayCircleFilled,
+              options: [
+                {
+                  name: "Iniciar Reclutamiento",
+                  onClick: () =>
+                    push(
+                      `/agents-management/recruitment/agent/${agent.id}?show=true&edit=true`
+                    ),
+                },
+                {
+                  name: "Iniciar Conexion",
+                  onClick: () =>
+                    push(
+                      `/agents-management/conections/agent/${agent.id}?show=true&edit=true`
+                    ),
+                },
+              ],
+            },
+          ]
+        : [];
+    })(),
     {
       value: 0,
       name: t("contacts:create:print"),
@@ -66,10 +87,7 @@ export default function AddContactTabs({ tabs, refPrint, contact, type }) {
   return (
     <div className="bg-white px-4 w-full rounded-lg">
       <div className="flex justify-between items-center">
-        <TabList
-          className=" flex gap-x-2 gap-y-2 py-2  flex-wrap justify-start"
-          aria-label="Tabs"
-        >
+        <TabList className="flex gap-x-2 gap-y-2 py-2 flex-wrap justify-start">
           {tabs
             .filter((tab) => !tab.hidden)
             .map((tab) => {
@@ -94,15 +112,10 @@ export default function AddContactTabs({ tabs, refPrint, contact, type }) {
             icon={<PlusIcon className="h-4 w-4 text-white" />}
             className="py-2 px-3"
           /> */}
-          <AddDocuments contactId={contact.id} type={type} />
+          <AddDocuments contactId={agent.id} type={type} />
         </TabList>
         <IconDropdown
-          icon={
-            <Cog8ToothIcon
-              className="h-8 w-8 text-primary"
-              aria-hidden="true"
-            />
-          }
+          icon={<Cog8ToothIcon className="h-8 w-8 text-primary" />}
           options={settings}
           width="w-44"
         />

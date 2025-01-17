@@ -4,7 +4,11 @@ import AgentConection from "../../agent/AgentConection";
 
 export default async function page() {
   return (
-    <SlideOver colorTag="bg-easywork-main" labelTag="agent">
+    <SlideOver
+      colorTag="bg-easywork-main"
+      labelTag="conexion"
+      maxWidthClass={"max-w-[46rem]"}
+    >
       <AgentConection />
     </SlideOver>
   );

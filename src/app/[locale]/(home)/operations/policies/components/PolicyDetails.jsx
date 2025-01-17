@@ -19,6 +19,7 @@ import { putPoliza } from "@/src/lib/apis";
 import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
 import ReceiptEmpty from "./ReceiptEmpty";
+import Versions from "./tabs/Versions";
 
 export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
@@ -33,8 +34,10 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insurance?.id === companyId
+      (codigo) => codigo?.insuranceId === companyId
     );
+
+    console.log({ companyId, codigos, matchingCodigo });
 
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };
@@ -48,14 +51,22 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
         ? [
             {
               name: "Asegurados",
+              disabled: !(data?.insured && data?.insured?.length > 0),
             },
             {
               name: "Beneficiarios",
+              disabled: !(
+                data?.beneficiaries && data?.beneficiaries?.length > 0
+              ),
             },
           ]
         : [
             {
               name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
+              disabled:
+                data?.type?.name === "GMM"
+                  ? !(data?.insured && data?.insured?.length > 0)
+                  : !(data?.vehicles && data?.vehicles?.length > 0),
             },
           ];
     })(),
@@ -78,7 +89,6 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
     },
     {
       name: "Versiones",
-      disabled: true,
     },
     {
       name: "Comisiones",
@@ -296,7 +306,9 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               <ReceiptEmpty type="Reembolsos registrados" />
             </TabPanel>
             <TabPanel className="w-full"></TabPanel>
-            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full">
+              <Versions poliza={data?.poliza} />
+            </TabPanel>
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full">

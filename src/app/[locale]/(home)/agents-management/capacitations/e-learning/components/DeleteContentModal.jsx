@@ -6,25 +6,29 @@ import { toast } from 'react-toastify';
 
 import Button from '@/src/components/form/Button';
 
-import { deleteCourse } from '../courses/services/create-course';
-import { deleteLesson } from '../courses/module/services/lessons';
-import { deletePage } from '../courses/module/services/lesson-pages';
+import { useCourses } from '../hooks/useCourses';
+import { useCourseFolders } from '../hooks/useCourseFolders';
+import { useCourseFolderPages } from '../hooks/useCourseFolderPages';
 
-export default function DeleteContentModal({ content, isOpen, setIsOpen, onSuccess, contentType }) {
+export const DeleteContentModal = ({ content, isOpen, setIsOpen, onSuccess, contentType }) => {
   const [loading, setLoading] = useState(false);
+
+  const { deleteCourse } = useCourses();
+  const { deleteCourseFolder } = useCourseFolders();
+  const { deleteCourseFolderPage } = useCourseFolderPages();
 
   const contentTypeLegend = {
     course: {
       name: 'Curso',
       method: deleteCourse,
     },
-    lesson: {
+    folder: {
       name: 'Carpeta',
-      method: deleteLesson,
+      method: deleteCourseFolder,
     },
     page: {
       name: 'Página',
-      method: deletePage,
+      method: deleteCourseFolderPage,
     },
   };
 
@@ -68,4 +72,4 @@ export default function DeleteContentModal({ content, isOpen, setIsOpen, onSucce
       </div>
     </Dialog>
   );
-}
+};

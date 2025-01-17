@@ -44,7 +44,7 @@ export default function CalendarHome({ children }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
-  const { events } = useCalendarContext();
+  const { events, mutate } = useCalendarContext();
   const calendarRef = useRef(null);
   const router = useRouter();
   const [calendarView, setCalendarView] = useState("timeGridWeek");
@@ -55,7 +55,6 @@ export default function CalendarHome({ children }) {
   const [timezoneStart, setTimezoneStart] = useState(false);
   const [timezoneEnd, setTimezoneEnd] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { mutate } = useCalendarContext();
   const calendarViews = [
     {
       name: t("tools:calendar:day"),

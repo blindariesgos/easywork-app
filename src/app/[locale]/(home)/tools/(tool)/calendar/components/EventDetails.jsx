@@ -287,9 +287,9 @@ export default function EventDetails({ data, id }) {
 
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
-      setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'hh:mm"));
+      setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'HH:mm"));
     if (data?.endTime)
-      setValue("endTime", format(data?.endTime, "yyyy-MM-dd'T'hh:mm"));
+      setValue("endTime", format(data?.endTime, "yyyy-MM-dd'T'HH:mm"));
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);

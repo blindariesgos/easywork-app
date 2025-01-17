@@ -44,7 +44,7 @@ export default function CalendarHome({ children }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
-  const { events } = useCalendarContext();
+  const { events, mutate } = useCalendarContext();
   const calendarRef = useRef(null);
   const router = useRouter();
   const [calendarView, setCalendarView] = useState("timeGridWeek");
@@ -55,7 +55,6 @@ export default function CalendarHome({ children }) {
   const [timezoneStart, setTimezoneStart] = useState(false);
   const [timezoneEnd, setTimezoneEnd] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { mutate } = useCalendarContext();
   const calendarViews = [
     {
       name: t("tools:calendar:day"),
@@ -89,7 +88,6 @@ export default function CalendarHome({ children }) {
 
   useEffect(() => {
     getAllOauth(session.data.user.sub, "Google Calendar").then((res) => {
-      console.log(res[0]);
       setSelectOauth(res[0]);
     });
   }, []);
@@ -112,9 +110,9 @@ export default function CalendarHome({ children }) {
     console.log(info.start);
     console.log(info.endStr);
     open();
-    setValue("startTime", format(info?.start, "yyyy-MM-dd'T'hh:mm"));
-    setValue("endTime", format(info?.end, "yyyy-MM-dd'T'hh:mm"));
-  };
+    setValue("startTime", format(info?.start, "yyyy-MM-dd'T'HH:mm"));
+    setValue("endTime", format(info?.end, "yyyy-MM-dd'T'HH:mm"));
+  };  
 
   const schema = yup.object().shape({
     name: yup.string().required(),

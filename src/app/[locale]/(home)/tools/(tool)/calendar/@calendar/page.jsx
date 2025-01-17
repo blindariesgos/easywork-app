@@ -52,8 +52,7 @@ export default function CalendarHome({ children }) {
   const { lists } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const [allDay, setAllDay] = useState(false);
-  const [timezoneStart, setTimezoneStart] = useState(false);
-  const [timezoneEnd, setTimezoneEnd] = useState(false);
+  const [timezone, setTimezone] = useState(null);
   const [loading, setLoading] = useState(false);
   const calendarViews = [
     {
@@ -107,11 +106,14 @@ export default function CalendarHome({ children }) {
   };
 
   const handleSelectDate = (info) => {
-    console.log(info.start);
-    console.log(info.endStr);
     open();
     setValue("startTime", format(info?.start, "yyyy-MM-dd'T'HH:mm"));
     setValue("endTime", format(info?.end, "yyyy-MM-dd'T'HH:mm"));
+    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+    if (timezoneValue) {
+      setTimezone(timezoneValue);
+    }
   };  
 
   const schema = yup.object().shape({
@@ -439,16 +441,11 @@ export default function CalendarHome({ children }) {
                           leaveFrom="opacity-100"
                           leaveTo="opacity-0"
                         >
-                          <DisclosurePanel className="text-gray-500 grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <DisclosurePanel className="text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <ComboBox
                               data={timezones}
-                              selected={timezoneStart}
-                              setSelected={setTimezoneStart}
-                            />
-                            <ComboBox
-                              data={timezones}
-                              selected={timezoneEnd}
-                              setSelected={setTimezoneEnd}
+                              selected={timezone}
+                              setSelected={setTimezone}
                             />
                           </DisclosurePanel>
                         </Transition>

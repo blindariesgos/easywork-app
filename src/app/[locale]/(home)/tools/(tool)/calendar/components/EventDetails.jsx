@@ -142,8 +142,7 @@ export default function EventDetails({ data, id }) {
 
   const quillRef = useRef(null);
 
-  const [timezoneStart, setTimezoneStart] = useState(false);
-  const [timezoneEnd, setTimezoneEnd] = useState(false);
+  const [timezone, setTimezone] = useState(null);
   const [calendary, setCalendary] = useState(calendarios[0]);
   const [formLocalization, setFormLocalization] = useState(
     eventLocalizations[0]
@@ -279,9 +278,13 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(data);
     if (!data) {
       setIsEdit(true);
+      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+      if (timezoneValue) {
+        setTimezone(timezoneValue);
+      }
       return;
     }
 
@@ -325,6 +328,7 @@ export default function EventDetails({ data, id }) {
             }))
           : []
       );
+      // setTimezone();
 
     // const subscription = watch((data, { name }) => {
     //   setIsEdit(true);
@@ -645,17 +649,11 @@ export default function EventDetails({ data, id }) {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <DisclosurePanel className="text-gray-500 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <DisclosurePanel className="text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-4">
                       <ComboBox
                         data={timezones}
-                        selected={timezoneStart}
-                        setSelected={setTimezoneStart}
-                        disabled={!isEdit}
-                      />
-                      <ComboBox
-                        data={timezones}
-                        selected={timezoneEnd}
-                        setSelected={setTimezoneEnd}
+                        selected={timezone}
+                        setSelected={setTimezone}
                         disabled={!isEdit}
                       />
                     </DisclosurePanel>

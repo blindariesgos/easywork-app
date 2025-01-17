@@ -1,6 +1,6 @@
 "use client";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -8,7 +8,6 @@ import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
-import { formatDate } from "@/src/utils/getFormatDate";
 import Vehicle from "./tabs/Vehicle";
 import Beneficiaries from "./tabs/Beneficiaries";
 import Insured from "./tabs/Insured";
@@ -20,6 +19,7 @@ import { useSWRConfig } from "swr";
 import { toast } from "react-toastify";
 import ReceiptEmpty from "./ReceiptEmpty";
 import Versions from "./tabs/Versions";
+import moment from "moment";
 
 export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
@@ -175,7 +175,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-sm">
-                    {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
+                    {moment(data?.vigenciaDesde).utc().format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

@@ -1,6 +1,6 @@
 "use client";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -9,14 +9,17 @@ import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
 import Receipts from "./tabs/Receipts";
 import Vehicle from "./tabs/Vehicle";
-import { formatDate } from "@/src/utils/getFormatDate";
 import Link from "next/link";
+import moment from "moment";
+import ReceiptEmpty from "./ReceiptEmpty";
+import Beneficiaries from "./tabs/Beneficiaries";
+import Insured from "./tabs/Insured";
+import Versions from "./tabs/Versions";
 
 export default function RenovationDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
-  const headerRef = useRef();
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -24,7 +27,7 @@ export default function RenovationDetails({ data, id, mutate }) {
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insurance?.id === companyId
+      (codigo) => codigo?.insuranceId === companyId
     );
 
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
@@ -34,29 +37,39 @@ export default function RenovationDetails({ data, id, mutate }) {
     {
       name: t("control:portafolio:receipt:details:consult"),
     },
-    {
-      name:
-        data?.type?.name === "GMM"
-          ? "Asegurados"
-          : data?.type?.name === "VIDA"
-            ? "Beneficiarios"
-            : "Vehiculos",
-      disabled: data?.type?.name != "AUTOS",
-    },
+    ...(() => {
+      return data?.type?.name === "VIDA"
+        ? [
+            {
+              name: "Asegurados",
+              disabled: !(data?.insured && data?.insured?.length > 0),
+            },
+            {
+              name: "Beneficiarios",
+              disabled: !(
+                data?.beneficiaries && data?.beneficiaries?.length > 0
+              ),
+            },
+          ]
+        : [
+            {
+              name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
+              disabled:
+                data?.type?.name === "GMM"
+                  ? !(data?.insured && data?.insured?.length > 0)
+                  : !(data?.vehicles && data?.vehicles?.length > 0),
+            },
+          ];
+    })(),
+
     {
       name: "Pagos/Recibos",
     },
     {
-      name: "Renovaciones",
-      disabled: true,
-    },
-    {
       name: "Siniestros",
-      disabled: true,
     },
     {
       name: "Reembolsos",
-      disabled: true,
     },
     {
       name: "Facturas",
@@ -64,7 +77,6 @@ export default function RenovationDetails({ data, id, mutate }) {
     },
     {
       name: "Versiones",
-      disabled: true,
     },
     {
       name: "Comisiones",
@@ -76,29 +88,22 @@ export default function RenovationDetails({ data, id, mutate }) {
     },
     {
       name: "Programaciones",
-      disabled: true,
     },
     {
       name: "Rescate de fondos",
-      disabled: true,
     },
   ];
-
-  useEffect(() => {
-    console.log({ headerRef });
-  }, [headerRef]);
 
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
-        <div className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
+        <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
           <div
             id="policy-header"
             className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
-            ref={headerRef}
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
@@ -111,7 +116,7 @@ export default function RenovationDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-sm">
-                    {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
+                    {moment(data?.vigenciaDesde).utc().format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -121,67 +126,7 @@ export default function RenovationDetails({ data, id, mutate }) {
                   <p className="text-sm">{data?.category?.name ?? "S/N"}</p>
                 </div>
                 <Link
-                  className="hover:text-easy-600 text-sm"
-                  href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
-                >
-                  {data?.contact?.fullName}
-                </Link>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    {t("control:portafolio:receipt:details:client-code")}:
-                  </p>
-                  <p className="text-sm">{getClientCode()}</p>
-                </div>
-              </div>
-              <IconDropdown
-                icon={
-                  <Cog8ToothIcon
-                    className="h-8 w-8 text-primary"
-                    aria-hidden="true"
-                  />
-                }
-                options={settingsPolicy}
-                width="w-[140px]"
-              />
-            </div>
-            <div className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
-              <div className="data-[selected]:bg-blue-100 disabled:opacity-60 data-[hover]:bg-blue-400 outline-none text-xs uppercase focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md p-2.5">
-                CONSULTA
-              </div>
-            </div>
-          </div>
-          <div className={"w-full md:px-4"}>
-            <General data={data} id={id} mutate={mutate} headerHeight={200} />
-          </div>
-        </div>
-        {/* <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
-          <div
-            id="policy-header"
-            className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
-            ref={headerRef}
-          >
-            <div className="flex justify-between pb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
-                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
-                </p>
-
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    {t("control:portafolio:receipt:details:date")}:
-                  </p>
-                  <p className="text-sm">
-                    {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="uppercase text-sm">
-                    {t("control:portafolio:receipt:details:product")}:
-                  </p>
-                  <p className="text-sm">{data?.category?.name ?? "S/N"}</p>
-                </div>
-                <Link
-                  className="hover:text-easy-600 text-sm"
+                  className="font-semibold text-easy-600 text-sm hover:underline"
                   href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
                 >
                   {data?.contact?.fullName}
@@ -218,18 +163,60 @@ export default function RenovationDetails({ data, id, mutate }) {
           </div>
           <TabPanels className="w-full">
             <TabPanel className={"w-full md:px-4"}>
-              <General data={data} id={id} mutate={mutate} headerHeight={200} />
+              <General data={data} id={id} mutate={mutate} />
             </TabPanel>
-            <TabPanel className="w-full md:px-4">
-              {data?.type?.name === "AUTOS" && (
-                <Vehicle vehicles={data.vehicles} />
-              )}
-            </TabPanel>
+            {data?.type?.name === "VIDA" ? (
+              <Fragment>
+                <TabPanel className="w-full md:px-4">
+                  <Insured
+                    items={data?.insured ?? []}
+                    typePoliza={data?.type?.name}
+                  />
+                </TabPanel>
+
+                <TabPanel className="w-full md:px-4">
+                  <Beneficiaries items={data?.beneficiaries ?? []} />
+                </TabPanel>
+              </Fragment>
+            ) : (
+              <TabPanel className="w-full md:px-4">
+                {data?.type?.name === "AUTOS" ? (
+                  <Vehicle
+                    vehicles={data.vehicles}
+                    typePoliza={data?.type?.name}
+                  />
+                ) : (
+                  <Insured
+                    items={data?.insured ?? []}
+                    typePoliza={data?.type?.name}
+                  />
+                )}
+              </TabPanel>
+            )}
+
             <TabPanel className="w-full">
               <Receipts policyId={data?.id} />
             </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Siniestros registrados" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Reembolsos registrados" />
+            </TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full">
+              <Versions poliza={data?.poliza} />
+            </TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full"></TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Programaciones registradas" />
+            </TabPanel>
+            <TabPanel className="w-full">
+              <ReceiptEmpty type="Rescate de fondos registrados" />
+            </TabPanel>
           </TabPanels>
-        </TabGroup> */}
+        </TabGroup>
       </div>
     </div>
   );

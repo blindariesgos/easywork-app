@@ -21,6 +21,7 @@ import {
 } from "@headlessui/react";
 import Button from "./Button";
 import { useReceipts } from "@/src/lib/api/hooks/receipts";
+import { useSchedules, useScheduling } from "@/src/lib/api/hooks/schedules";
 
 const CRMMultipleSelectV2 = ({
   getValues,
@@ -43,6 +44,8 @@ const CRMMultipleSelectV2 = ({
     "receipt",
     "renewal",
     "agent",
+    "poliza_scheduling",
+    "poliza_reimbursement",
   ]);
   const { contacts, isLoading: isLoadingContacts } = useContacts({
     filters: { search: query },
@@ -70,7 +73,6 @@ const CRMMultipleSelectV2 = ({
       limit: 10,
     },
   });
-
   const { data: receipts, isLoading: isLoadingReceipts } = useReceipts({
     filters: { search: query },
     config: {
@@ -78,7 +80,6 @@ const CRMMultipleSelectV2 = ({
       limit: 10,
     },
   });
-
   const { data: agents, isLoading: isLoadingAgents } = useAgents({
     filters: { search: query },
     config: {
@@ -86,6 +87,43 @@ const CRMMultipleSelectV2 = ({
       limit: 10,
     },
   });
+  const { data: schedulings, isLoading: isLoadingSchedulings } = useSchedules({
+    filters: { ot: query },
+    config: {
+      page: 1,
+      limit: 10,
+    },
+  });
+
+  const { data: refunds, isLoading: isLoadingRefunds } = useSchedules({
+    filters: { ot: query },
+    config: {
+      page: 1,
+      limit: 10,
+    },
+  });
+
+  const isLoading = useMemo(() => {
+    return (
+      isLoadingContacts ||
+      isLoadingPolicies ||
+      isLoadingReceipts ||
+      isLoadingAgents ||
+      isLoadingRenovations ||
+      isLoadingLeads ||
+      isLoadingSchedulings ||
+      isLoadingRefunds
+    );
+  }, [
+    isLoadingContacts,
+    isLoadingPolicies,
+    isLoadingReceipts,
+    isLoadingAgents,
+    isLoadingRenovations,
+    isLoadingLeads,
+    isLoadingSchedulings,
+    isLoadingRefunds,
+  ]);
 
   useEffect(() => {
     if (hidden && hidden.length > 0) {
@@ -108,7 +146,7 @@ const CRMMultipleSelectV2 = ({
       id: option.id,
       name: ["poliza", "renewal"].includes(type)
         ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
-        : option.fullName || option.name,
+        : option.fullName || option.name || option.ot || option.sigre,
       username: option.username,
       title: option.title,
       type,
@@ -137,6 +175,8 @@ const CRMMultipleSelectV2 = ({
       receipt: receipts?.items ?? [],
       renewal: renovations?.items ?? [],
       agent: agents?.items ?? [],
+      poliza_scheduling: schedulings?.items ?? [],
+      poliza_reimbursement: refunds?.items ?? [],
     };
 
     const key = Object.keys(items).filter((key) => !hidden.includes(key))[
@@ -153,6 +193,8 @@ const CRMMultipleSelectV2 = ({
     receipts,
     renovations,
     agents,
+    schedulings,
+    refunds,
   ]);
 
   return (
@@ -178,13 +220,18 @@ const CRMMultipleSelectV2 = ({
               getValues(name).map((option) => (
                 <div
                   key={option?.id}
-                  className="bg-primary p-1 rounded-md text-white flex gap-1 items-center text-xs"
+                  className="bg-primary p-1 group rounded-md text-white flex gap-1 items-center text-xs"
                 >
+                  <p className="text-xs">
+                    {t(`common:crmType:${option?.type}`)}:
+                  </p>
                   {option.fullName ||
                     option.name ||
                     option.username ||
                     option.title ||
-                    option.id}
+                    option.id ||
+                    option.ot ||
+                    option.sigre}
                   <div
                     type="button"
                     onClick={() => handleRemove(option.id)}
@@ -219,7 +266,7 @@ const CRMMultipleSelectV2 = ({
               <div>
                 <DialogTitle className="font-bold">{label}</DialogTitle>
                 <Description>
-                  <ul className="gap-x-2 flex">
+                  <ul className="gap-2 flex flex-wrap">
                     {crmTypes.map((type, index) => (
                       <li
                         key={type}
@@ -247,11 +294,7 @@ const CRMMultipleSelectV2 = ({
                     <div className="grid grid-cols-1 gap-1 overflow-y-auto max-h-[200px] h-full">
                       {filterData?.length === 0 &&
                       query !== "" &&
-                      !isLoadingContacts &&
-                      !isLoadingPolicies &&
-                      !isLoadingRenovations &&
-                      !isLoadingAgents &&
-                      !isLoadingLeads ? (
+                      !isLoading ? (
                         <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                           {t("common:not-found")}
                         </div>
@@ -295,17 +338,14 @@ const CRMMultipleSelectV2 = ({
                                   option.name ||
                                   option.username ||
                                   option.title ||
+                                  option.ot ||
+                                  option.sigre ||
                                   option.id}
                             </span>
                           </div>
                         ))
                       )}
-                      {(isLoadingContacts ||
-                        isLoadingPolicies ||
-                        isLoadingReceipts ||
-                        isLoadingAgents ||
-                        isLoadingRenovations ||
-                        isLoadingLeads) && <LoadingSpinnerSmall />}
+                      {isLoading && <LoadingSpinnerSmall />}
                     </div>
                   </div>
                 </Description>

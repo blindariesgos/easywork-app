@@ -29,7 +29,7 @@ export default function ProgramationsContextProvider({ children }) {
       type: "dropdown",
       check: true,
       code: "assignedById",
-      options: lists?.users,
+      options: lists?.users ?? [],
     },
     {
       id: 1,
@@ -74,7 +74,7 @@ export default function ProgramationsContextProvider({ children }) {
         type: "dropdown",
         check: true,
         code: "assignedById",
-        options: lists?.users,
+        options: lists?.users ?? [],
       },
       {
         id: 1,
@@ -92,19 +92,11 @@ export default function ProgramationsContextProvider({ children }) {
       },
       {
         id: 3,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "dropdown",
-        check: false,
-        code: "client",
-        options: lists?.users,
-      },
-      {
-        id: 4,
         name: t("operations:policies:general:intermediary"),
         type: "select",
         check: false,
         code: "agenteIntermediarioId",
-        options: lists?.policies?.agentesIntermediarios,
+        options: lists?.policies?.agentesIntermediarios ?? [],
       },
       {
         id: 5,
@@ -130,30 +122,6 @@ export default function ProgramationsContextProvider({ children }) {
             name: "En trámite",
           },
         ],
-      },
-      {
-        id: 6,
-        name: t("operations:policies:general:type"),
-        type: "select",
-        check: false,
-        code: "typeId",
-        options: lists?.policies?.polizaTypes,
-      },
-      {
-        id: 7,
-        name: t("operations:policies:general:payment-frequency"),
-        type: "select",
-        check: false,
-        code: "frecuenciaCobroId",
-        options: lists?.policies?.polizaFrecuenciasPago,
-      },
-      {
-        id: 8,
-        name: t("operations:policies:general:payment-method"),
-        type: "select",
-        check: false,
-        code: "formaCobroId",
-        options: lists?.policies?.polizaFormasCobro,
       },
     ]);
   }, [lists?.listContact, lists?.policies]);

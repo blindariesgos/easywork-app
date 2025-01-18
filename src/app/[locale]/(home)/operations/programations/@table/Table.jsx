@@ -18,7 +18,11 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deletePolicyById, putPoliza } from "@/src/lib/apis";
+import {
+  deletePolicyById,
+  deleteScheduleById,
+  putPoliza,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useProgramationTable } from "../../../../../../hooks/useCommon";
@@ -32,14 +36,13 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useProgramationContext from "@/src/context/programations";
 import { useRouter } from "next/navigation";
-import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function Table() {
   const {
@@ -83,15 +86,26 @@ export default function Table() {
   }, [selectedContacts, data]);
 
   const toggleAll = useCallback(() => {
-    setSelectedContacts(checked || indeterminate ? [] : data?.items);
+    setSelectedContacts(
+      checked || indeterminate ? [] : data?.items?.map((x) => x.id)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }, [checked, indeterminate, data, setSelectedContacts]);
 
-  const deletePolicy = async (id) => {
+  const deleteSchedule = async (id) => {
     try {
       setLoading(true);
-      const response = await deletePolicyById(id);
+      const response = await deleteScheduleById(id);
+      if (response.hasError) {
+        let message = response.message;
+        if (Array.isArray(response.message)) {
+          message = response.message.join(", ");
+        }
+        toast.error(message);
+        setLoading(false);
+        return;
+      }
       toast.success(t("common:alert:delete-success"));
       mutate();
       setLoading(false);
@@ -102,10 +116,10 @@ export default function Table() {
     }
   };
 
-  const deletePolicies = async () => {
+  const deleteSchedules = async () => {
     setLoading(true);
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => deletePolicyById(policyId))
+      selectedContacts.map((scheduleId) => deleteScheduleById(scheduleId))
     );
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
@@ -195,20 +209,11 @@ export default function Table() {
 
   const masiveActions = [
     {
-      id: 1,
-      name: "Asignar agente relacionado - subagente",
-      disabled: true,
-    },
-    {
-      id: 1,
-      name: "Asignar observador",
-      disabled: true,
-    },
-    {
       id: 3,
       name: "Cambiar Responsable",
       onclick: changeResponsible,
       selectUser: true,
+      disabled: true,
     },
     {
       id: 2,
@@ -232,6 +237,7 @@ export default function Table() {
           name: "En proceso",
         },
       ],
+      disabled: true,
     },
     {
       id: 1,
@@ -242,7 +248,6 @@ export default function Table() {
       id: 1,
       name: t("common:buttons:delete"),
       onclick: () => setIsOpenDeleteMasive(true),
-      disabled: true,
     },
   ];
 
@@ -265,22 +270,23 @@ export default function Table() {
         setDeleteId(id);
         setIsOpenDelete(true);
       },
-      disabled: true,
     },
     {
       name: "Planificar",
       options: [
         {
           name: "Tarea",
-          handleClickContact: (id) =>
+          handleClick: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=poliza_scheduling&prev_id=${id}`
             ),
-          disabled: true,
         },
         {
           name: "Cita",
-          disabled: true,
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=poliza_scheduling&prev_id=${id}`
+            ),
         },
         {
           name: "Comentario",
@@ -448,14 +454,9 @@ export default function Table() {
                                         onClick={() => {
                                           item.handleClick &&
                                             item.handleClick(programation.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              programation?.contact?.id
-                                            );
                                         }}
                                       >
                                         <div
-                                          // onClick={item.onClick}
                                           className={
                                             "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                           }
@@ -468,7 +469,7 @@ export default function Table() {
                                         <MenuButton className="flex items-center hover:bg-gray-50">
                                           <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
                                             {item.name}
-                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
+                                            <ChevronRightIcon className="h-4 w-4" />
                                           </div>
                                         </MenuButton>
                                         <Transition
@@ -495,10 +496,6 @@ export default function Table() {
                                                   option.handleClick &&
                                                     option.handleClick(
                                                       programation.id
-                                                    );
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      programation?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -584,6 +581,18 @@ export default function Table() {
                                       {programation?.poliza?.poliza}
                                     </p>
                                   </Link>
+                                ) : column.row == "client" ? (
+                                  programation?.contact?.id ? (
+                                    <Link
+                                      href={`/sales/crm/contacts/contact/${programation?.contact?.id}?show=true`}
+                                    >
+                                      <p className="text-center">
+                                        {programation?.contact?.fullName}
+                                      </p>
+                                    </Link>
+                                  ) : (
+                                    <p className="text-center">No asignado</p>
+                                  )
                                 ) : column.row === "createdAt" ? (
                                   <p className="text-center">
                                     {moment(programation?.createdAt).format(
@@ -617,13 +626,13 @@ export default function Table() {
       <DeleteItemModal
         isOpen={isOpenDelete}
         setIsOpen={setIsOpenDelete}
-        handleClick={() => deletePolicy(deleteId)}
+        handleClick={() => deleteSchedule(deleteId)}
         loading={loading}
       />
       <DeleteItemModal
         isOpen={isOpenDeleteMasive}
         setIsOpen={setIsOpenDeleteMasive}
-        handleClick={() => deletePolicies()}
+        handleClick={() => deleteSchedules()}
         loading={loading}
       />
     </Fragment>

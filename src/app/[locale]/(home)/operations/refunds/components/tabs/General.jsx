@@ -302,6 +302,7 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
               setValue={setValue}
               label={"Requiere reembolso sub-secuente"}
               disabled={!isEdit}
+              defaultValue={data?.requireReimbursementSubsequent}
             />
           </div>
           <TextInput

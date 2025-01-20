@@ -29,6 +29,8 @@ import {
   getPolicyById,
   getReceiptById,
   getAgentById,
+  getSchedulingById,
+  getRefundById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -234,7 +236,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue("name", "CRM - Junta: ");
     setLoading(false);
   };
-
   const setCrmMeetGroup = async (agentId) => {
     const response = localStorage.getItem(agentId);
 
@@ -257,6 +258,32 @@ export default function TaskEditor({ edit, copy, subtask }) {
     );
     setValue("metadata", metadata);
     setValue("name", "CRM - Junta: ");
+    setLoading(false);
+  };
+  const setCrmScheduling = async (schedulingId) => {
+    const response = await getSchedulingById(schedulingId);
+    if (response.hasError) return;
+    setValue("crm", [
+      {
+        id: schedulingId,
+        type: "poliza_scheduling",
+        name: response?.ot ?? response?.sigre,
+      },
+    ]);
+    setValue("name", "CRM - Programación: ");
+    setLoading(false);
+  };
+  const setCrmRefund = async (refundId) => {
+    const response = await getRefundById(refundId);
+    if (response.hasError) return;
+    setValue("crm", [
+      {
+        id: refundId,
+        type: "poliza_reimbursement",
+        name: response?.ot ?? response?.sigre,
+      },
+    ]);
+    setValue("name", "CRM - Reembolso: ");
     setLoading(false);
   };
   useEffect(() => {
@@ -300,6 +327,16 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (params.get("prev") === "meet-group") {
       setLoading(true);
       setCrmMeetGroup(prevId);
+      return;
+    }
+    if (params.get("prev") === "poliza_scheduling") {
+      setLoading(true);
+      setCrmScheduling(prevId);
+      return;
+    }
+    if (params.get("prev") === "poliza_reimbursement") {
+      setLoading(true);
+      setCrmRefund(prevId);
       return;
     }
   }, [params.get("prev")]);

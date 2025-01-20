@@ -141,8 +141,8 @@
             "iva": "IVA",
             "importePagar": "Importe a pagar",
             "sub-agent": "Sub-agente",
-            "intermediary": "Intermediario",
-            "responsible": "Responsable"
+            "intermediary": "Agente Intermediario",
+            "responsible": "Agente Responsable"
         }
     },
     "programations": {
@@ -171,7 +171,8 @@
             "coverage": "Cobertura",
             "payment-method": "Forma de cobro",
             "payment-frequency": "Frecuencia de pago",
-            "claim-number": "Número de siniestro",
+            "claim-number": "Número de siniestro CLAIM",
+            "loss-number": "Número de siniestro",
             "sheet-number": "Número de folio",
             "sheet-number-subsecuent": "Número de folio - Subsecuente",
             "diagnosis": "Diagnostico / Padecimiento",
@@ -182,9 +183,11 @@
             "iva": "IVA",
             "importePagar": "Importe a pagar",
             "sub-agent": "Sub-agente",
-            "intermediary": "Intermediario",
-            "responsible": "Responsable"
-        }
+            "intermediary": "Agente Intermediario",
+            "responsible": "Agente Responsable",
+            "observer": "Observador"
+        },
+        "update": "Programación actualizada correctamente."
     },
     "fundrecovery": {
         "title": "Rescate de Fondos",
@@ -267,7 +270,8 @@
                 "procedure": "Tipo de procedimiento",
                 "branch": "Ramo",
                 "company": "Compañía",
-                "button": "añadir documento"
+                "button": "añadir documento",
+                "client": "Cliente"
             },
             "refund": {
                 "title": "Agregar Reembolso",

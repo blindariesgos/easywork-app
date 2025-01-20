@@ -7,6 +7,7 @@ import TextEditor from "../TextEditor";
 import Button from "../form/Button";
 import { addContactComment } from "../../lib/apis";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function ActivityHeader({
   entityId,
@@ -17,45 +18,52 @@ export default function ActivityHeader({
 }) {
   const [isShowAddComment, setIsShowAddComment] = useState(false);
   const { t } = useTranslation();
+  const router = useRouter();
   const tabs = [
     {
       name: t("contacts:create:activities:tasks"),
-      href: `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${entityId}`,
+      onClick: () =>
+        router.push(
+          `/tools/tasks/task?show=true&prev=${crmType}&prev_id=${entityId}`
+        ),
     },
     {
       name: t("contacts:create:activities:comment"),
-      href: "#",
       onClick: () => setIsShowAddComment(true),
+      hidden: ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:email"),
-      href: "/tools/mails",
+      onClick: () => router.push("/tools/mails"),
       hidden: ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:appointments"),
-      href: `/tools/calendar/addEvent?show=true&prev=${crmType}&prev_id=${entityId}`,
+      onClick: () =>
+        router.push(
+          `/tools/calendar/addEvent?show=true&prev=${crmType}&prev_id=${entityId}`
+        ),
       hidden: contactType == "moral" || ["receipt"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:whatsapp"),
-      href: "#",
       hidden: contactType == "moral" || ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:call"),
-      href: "#",
       hidden: contactType == "moral" || ["receipt", "agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:zoom"),
-      href: "#",
       hidden: contactType == "moral" || ["receipt", "agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:meet"),
-      href: `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=agent-meet&prev_id=${entityId}`,
       hidden: !["agent"].includes(crmType),
+      onClick: () =>
+        router.push(
+          `/agents-management/meetings-and-sessions/individuals/meet?show=true&prev=agent-meet&prev_id=${entityId}`
+        ),
     },
   ];
   return (
@@ -77,19 +85,17 @@ export default function ActivityHeader({
                           />
                         </div>
                       ) : (
-                        <Link
+                        <div
                           key={tab.name}
-                          href={!disabled ? tab.href : ""}
                           className={clsx(
                             "border-transparent text-gray-400 hover:border-gray-300 hover:text-gray-700",
-                            "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase"
+                            "whitespace-nowrap py-2 px-1 text-sm font-medium uppercase cursor-pointer"
                           )}
-                          aria-current={tab.current ? "page" : undefined}
                           onClick={!disabled && tab.onClick}
                           disabled={disabled}
                         >
                           {tab.name}
-                        </Link>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -133,6 +139,8 @@ const AddComment = ({ entityId, close, updateActivities, crmType }) => {
     receipt: "receiptId",
     policy: "polizaId",
     agent: "agentId",
+    poliza_reimbursement: "polizaReimbursementId",
+    poliza_scheduling: "polizaSchedulingId",
   };
 
   const handleAdd = async () => {
@@ -142,10 +150,7 @@ const AddComment = ({ entityId, close, updateActivities, crmType }) => {
       pinned: false,
       [mapId[crmType]]: entityId,
     };
-    const response = await addContactComment(body, crmType).catch((error) => ({
-      hasError: true,
-      ...error,
-    }));
+    const response = await addContactComment(body, crmType);
 
     if (response.hasError) {
       console.log({ response });

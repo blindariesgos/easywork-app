@@ -19,7 +19,7 @@ const getQueries = (filters) => {
     .map((key) =>
       Array.isArray(filters[key])
         ? getRepitKeys(key, filters[key])
-        : getValue(key, userId)
+        : getValue(key)
     )
     .join("&");
 };

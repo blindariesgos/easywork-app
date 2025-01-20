@@ -389,5 +389,12 @@
       "others": "Otros (próximamente)",
       "fleets": "Flotillas (próximamente)"
     }
+  },
+  "related": {
+    "moral": "Contacto de la compañia",
+    "fisica": "Compañia contratante",
+    "show": "Ver cliente",
+    "hidden-address": "Ocultar dirección",
+    "show-address": "Mostar dirección"
   }
 }

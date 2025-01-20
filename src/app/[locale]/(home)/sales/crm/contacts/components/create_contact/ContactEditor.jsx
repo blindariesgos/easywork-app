@@ -27,12 +27,6 @@ export default function ContactEditor({ contact, id }) {
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0, module: "general" },
     {
-      name: contact?.typePerson === "moral" ? "Clientes" : "Compañias",
-      value: 1,
-      module: "contact",
-      hidden: contact?.relations?.length == 0 ?? true,
-    },
-    {
       name: t("contacts:create:tabs:policies"),
       value: 2,
       module: "policies",
@@ -105,11 +99,6 @@ export default function ContactEditor({ contact, id }) {
           <TabPanel className="h-full">
             <ContactGeneral id={id} contact={contact} refPrint={refPrint} />
           </TabPanel>
-          {contact?.relations?.length > 0 && (
-            <TabPanel>
-              <ContactRelationsTable contact={contact} />
-            </TabPanel>
-          )}
           <TabPanel className="px-4 lg:px-8">
             <ContactPolizaTable contactId={id} />
           </TabPanel>

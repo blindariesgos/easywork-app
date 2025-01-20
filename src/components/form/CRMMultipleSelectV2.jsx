@@ -291,7 +291,7 @@ const CRMMultipleSelectV2 = ({
                         placeholder={"Buscar"}
                       />
                     </div>
-                    <div className="grid grid-cols-1 gap-1 overflow-y-auto max-h-[200px] h-full">
+                    <div className="grid grid-cols-1 gap-1 overflow-y-auto max-h-[170px] h-full">
                       {filterData?.length === 0 &&
                       query !== "" &&
                       !isLoading ? (

@@ -143,6 +143,7 @@ export default function EventDetails({ data, id }) {
   const quillRef = useRef(null);
 
   const [timezone, setTimezone] = useState(null);
+  const [fromTimezone, setFromTimezone] = useState(false);
   const [calendary, setCalendary] = useState(calendarios[0]);
   const [formLocalization, setFormLocalization] = useState(
     eventLocalizations[0]
@@ -214,6 +215,8 @@ export default function EventDetails({ data, id }) {
       reminder: formatISO(reminderValue ?? startTime),
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
+      timeZone: timezone.value,
+      localization: formLocalization.name,
       availability: availability ? availability : availabilityOptions[0].id,
       description: value ?? "<p></p>",
       color: color ?? "#141052",
@@ -282,17 +285,29 @@ export default function EventDetails({ data, id }) {
       setIsEdit(true);
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+      console.log(timezoneValue);
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
       return;
     }
-
+    console.log(data);
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'HH:mm"));
     if (data?.endTime)
       setValue("endTime", format(data?.endTime, "yyyy-MM-dd'T'HH:mm"));
+    if (data?.timeZone) {
+      const selectedTimeZone = timezones.find((timezone) => timezone.value === data.timeZone);
+      setTimezone(selectedTimeZone);
+      setFromTimezone(true);
+    }
+    
+    if (data?.localization) {
+      const selectedLocalization = eventLocalizations.find((eventLocalization) => eventLocalization.name === data.localization);
+      setFormLocalization(selectedLocalization);
+    }
+    console.log(watch("localization"));    
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
@@ -642,6 +657,7 @@ export default function EventDetails({ data, id }) {
                     {t("tools:calendar:new-event:time-zone")}
                   </DisclosureButton>
                   <Transition
+                    show={fromTimezone}
                     enter="transition-opacity duration-500"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"

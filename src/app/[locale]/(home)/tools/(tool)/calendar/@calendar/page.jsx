@@ -186,6 +186,8 @@ export default function CalendarHome({ children }) {
       reminder: formatISO(reminderValue ?? startTime),
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
+      timeZone: timezone.value,
+      localization: formLocalization.name,
       color: color ?? "#141052",
       description: "<p></p>",
       availability: "Ocupado",

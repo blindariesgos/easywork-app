@@ -130,11 +130,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     setMarkAsDone(prev => !prev);
 
     try {
-      if (contentType === 'folder') {
-        // await toggleLessonAsCompleted(content.id, toggled);
-      } else {
-        await toggleCourseFolderPageAsCompleted(content.id, toggled);
-      }
+      // if (contentType === 'folder') {
+      //   // await toggleLessonAsCompleted(content.id, toggled);
+      // } else {
+      // }
+      await toggleCourseFolderPageAsCompleted(content.id, toggled);
 
       if (refetchAccordionItems) refetchAccordionItems();
 
@@ -187,15 +187,15 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
           {isEditorDisabled ? (
             <>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
-                <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
+                <div className="block cursor-pointer" onClick={toggleIsCompleted}>
                   <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
-                </button>
+                </div>
               )}
 
               {hasPermission(LMS_PERMISSIONS.editCourse) && (
-                <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
+                <div className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
                   <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-                </button>
+                </div>
               )}
             </>
           ) : (
@@ -226,7 +226,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
               saveContentOnChange();
             }}
             value={values.description}
-            disabled={isEditorDisabled || !hasPermission(LMS_PERMISSIONS.editContentBody)}
+            disabled={isEditorDisabled}
             onDeleteImage={onDeleteImage}
           />
         )}

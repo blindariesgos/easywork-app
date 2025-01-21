@@ -27,7 +27,7 @@ export default function RefundDetails({ data, id, mutate }) {
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insurance?.id === companyId
+      (codigo) => codigo?.insuranceId === companyId
     );
 
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
@@ -142,7 +142,7 @@ export default function RefundDetails({ data, id, mutate }) {
                   <p className="text-sm">{data?.category?.name ?? "N/D"}</p>
                 </div>
                 <Link
-                  className="hover:text-easy-600 text-sm"
+                  className="hover:underline text-easy-600 text-sm"
                   href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
                 >
                   {data?.contact?.fullName}
@@ -151,20 +151,24 @@ export default function RefundDetails({ data, id, mutate }) {
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
-                  <p className="text-sm">{getClientCode()}</p>
+                  <p className="text-sm">
+                    {data?.contact?.codigos?.length > 0
+                      ? getClientCode()
+                      : (data?.contact?.codigo ?? "N/D")}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:claim-number")}:
                   </p>
-                  <p className="text-sm">{"N/D"}</p>
+                  <p className="text-sm">{data?.claimNumber ?? "N/D"}</p>
                 </div>
                 <div></div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:sheet")}:
                   </p>
-                  <p className="text-sm">{"N/D"}</p>
+                  <p className="text-sm">{data?.folioNumber ?? "N/D"}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

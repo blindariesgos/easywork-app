@@ -4,7 +4,7 @@ import FilterTable from '@/src/components/FilterTable';
 import { ELearningNavMenu } from './ELearningNavMenu';
 
 export const ELearningHeader = () => {
-  const contextValues = {};
+  const contextValues = { filters: {}, setFilters: () => null };
 
   return (
     <header>

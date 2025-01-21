@@ -37,6 +37,198 @@ const getQueries = (filters, userId) => {
   return paramsUrl;
 };
 
+//#region LEADS
+export const createLead = async (data) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post("/sales/crm/leads/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
+
+  revalidatePath("/sales/crm/leads", "layout");
+  return response;
+};
+
+export const createSimpleLeadLanding = async (data) => {
+  const response = await axios()
+    .post("/sales/crm/leads/landing/new", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const updateLead = async (data, id) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/leads/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  revalidatePath("/sales/crm/leads", "layout");
+  return response;
+};
+//#endregion
+
+//#region CONTACTS
+export const updateContact = async (data, id) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/contacts/${id}`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const updatePhotoContact = async (photo, id) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .put(`/sales/crm/contacts/${id}/photo`, photo)
+    .catch((error) => ({ ...error, hasError: true }));
+
+  return response;
+};
+
+export const getContacts = async (page = 1) => {
+  const response = await axios().get(
+    `/sales/crm/contacts?limit=6&page=${page}`
+  );
+  return response;
+};
+
+export const getContactId = async (id) => {
+  const response = await axios()
+    .get(`/sales/crm/contacts/${id}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const deleteContactId = async (id) => {
+  const response = await axios().delete(`/sales/crm/contacts/${id}`);
+  return response;
+};
+//#endregion
+
+//#region REFUNDS
+export const deleteRefundById = async (id) => {
+  const response = await axios()
+    .delete(`/operations/reimbursements/${id}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getRefundById = async (refundId) => {
+  const response = await axios()
+    .get(`/operations/reimbursements/${refundId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
+//#region POLICIES
+export const deletePolicyById = async (id) => {
+  const response = await axios().delete(`/sales/crm/polizas/${id}`);
+  revalidatePath("/operations/policies", "layout");
+  return response;
+};
+
+export const getPolicyById = async (id) => {
+  const url = `/sales/crm/polizas/${id}`;
+  const response = await axios().get(url);
+  return response;
+};
+//#endregion
+
+//#region SCHEDULES
+export const deleteScheduleById = async (id) => {
+  const response = await axios()
+    .delete(`/operations/schedulings/${id}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+export const getSchedulingById = async (schedulingId) => {
+  const response = await axios()
+    .get(`/operations/schedulings/${schedulingId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
+//#region AGENTS
+export const deleteAgentById = async (agentId) => {
+  // try {
+  const response = await axios().delete(`/agent-management/agents/${agentId}`);
+  return response;
+};
+//#endregion
+
+//#region MEETS
+export const deleteMeetById = async (meetId) => {
+  // try {
+  const response = await axios()
+    .delete(`/agent-management/meetings/${meetId}`)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+//#endregion
+
+//#region RECEIPTS
+export const deleteReceiptById = async (receiptId) => {
+  const response = await axios().delete(
+    `/sales/crm/polizas/receipts/${receiptId}`
+  );
+  revalidatePath("/control/portafolio/receipts", "page");
+  return response;
+};
+
+export const getPortafolioControlResume = async ({ filters }) => {
+  const queries = getQueries(filters);
+  const response = await axios()
+    .get(`/sales/crm/polizas/receipts/collection_report/header?${queries}`)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getReceiptKanbanByStateId = async (params) => {
+  const queries = getQueries(params);
+  const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
+//#region ADD LISTS
+
+export const getAddListContacts = async () => {
+  const response = await axios().get(`/sales/crm/contacts/get_add_lists`);
+  return response;
+};
+
+export const getAddListLeads = async () => {
+  const response = await axios().get(`/sales/crm/leads/get_add_lists`);
+  return response;
+};
+
+export const getAddListReceipts = async () => {
+  const response = await axios().get(
+    `/sales/crm/polizas/receipts/get_add_lists`
+  );
+  return response;
+};
+
+export const getAddListPolicies = async () => {
+  const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
+  return response;
+};
+
+export const getAddListRecruitments = async () => {
+  const response = await axios().get(
+    `/agent-management/agent-recruitments/get_add_lists`
+  );
+  return response;
+};
+
+export const getAddListConnections = async () => {
+  const response = await axios().get(
+    `/agent-management/agent-connections/get_add_lists`
+  );
+  return response;
+};
+//#endregion
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };
@@ -113,159 +305,6 @@ export const updateAgentConnection = async (data, agentId) => {
   const response = await axios()
     .put(`/agent-management/agent-connections/agent/${agentId}`, data)
     .catch((error) => ({ ...error, hasError: true }));
-  return response;
-};
-
-export const createLead = async (data) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post("/sales/crm/leads/new", data)
-    .catch((error) => ({ ...error, hasError: true }));
-
-  revalidatePath("/sales/crm/leads", "layout");
-  return response;
-};
-
-export const createSimpleLeadLanding = async (data) => {
-  const response = await axios()
-    .post("/sales/crm/leads/landing/new", data)
-    .catch((error) => ({ ...error, hasError: true }));
-  return response;
-};
-
-export const updateLead = async (data, id) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .put(`/sales/crm/leads/${id}`, data)
-    .catch((error) => ({ ...error, hasError: true }));
-  revalidatePath("/sales/crm/leads", "layout");
-  return response;
-};
-export const updateContact = async (data, id) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .put(`/sales/crm/contacts/${id}`, data)
-    .catch((error) => ({ ...error, hasError: true }));
-  return response;
-};
-export const updatePhotoContact = async (photo, id) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .put(`/sales/crm/contacts/${id}/photo`, photo)
-    .catch((error) => ({ ...error, hasError: true }));
-
-  return response;
-};
-
-export const getContacts = async (page = 1) => {
-  const response = await axios().get(
-    `/sales/crm/contacts?limit=6&page=${page}`
-  );
-  return response;
-};
-
-export const getContactId = async (id) => {
-  try {
-    const response = await axios()
-      .get(`/sales/crm/contacts/${id}`)
-      .catch((error) => ({ hasError: true, ...error }));
-    return response;
-  } catch (error) {
-    // throw new Error(error);
-  }
-};
-
-export const getReceiptKanbanByStateId = async (params) => {
-  try {
-    const queries = getQueries(params);
-    const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
-    console.log(url);
-    const response = await axios()
-      .get(url)
-      .catch((error) => ({ hasError: true, ...error }));
-    return response;
-  } catch (error) {}
-};
-
-export const getPolicyById = async (id) => {
-  const url = `/sales/crm/polizas/${id}`;
-  const response = await axios().get(url);
-  return response;
-};
-
-export const deleteContactId = async (id) => {
-  // try {
-  const response = await axios().delete(`/sales/crm/contacts/${id}`);
-  revalidatePath("/sales/crm/contacts", "layout");
-  return response;
-};
-
-export const deletePolicyById = async (id) => {
-  // try {
-  const response = await axios().delete(`/sales/crm/polizas/${id}`);
-  revalidatePath("/operations/policies", "layout");
-  return response;
-};
-export const deleteAgentById = async (agentId) => {
-  // try {
-  const response = await axios().delete(`/agent-management/agents/${agentId}`);
-  return response;
-};
-
-export const deleteMeetById = async (meetId) => {
-  // try {
-  const response = await axios()
-    .delete(`/agent-management/meetings/${meetId}`)
-    .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const deleteReceiptById = async (receiptId) => {
-  // try {
-  const response = await axios().delete(
-    `/sales/crm/polizas/receipts/${receiptId}`
-  );
-  revalidatePath("/control/portafolio/receipts", "page");
-  return response;
-};
-
-export const getAddListContacts = async () => {
-  const response = await axios().get(`/sales/crm/contacts/get_add_lists`);
-  return response;
-};
-
-export const getPortafolioControlResume = async ({ filters }) => {
-  const queries = getQueries(filters);
-  const response = await axios()
-    .get(`/sales/crm/polizas/receipts/collection_report/header?${queries}`)
-    .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const getAddListLeads = async () => {
-  const response = await axios().get(`/sales/crm/leads/get_add_lists`);
-  return response;
-};
-
-export const getAddListReceipts = async () => {
-  const response = await axios().get(
-    `/sales/crm/polizas/receipts/get_add_lists`
-  );
-  return response;
-};
-
-export const getAddListPolicies = async () => {
-  const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
-  return response;
-};
-
-export const getAddListRecruitments = async () => {
-  const response = await axios().get(
-    `/agent-management/agent-recruitments/get_add_lists`
-  );
-  return response;
-};
-
-export const getAddListConnections = async () => {
-  const response = await axios().get(
-    `/agent-management/agent-connections/get_add_lists`
-  );
   return response;
 };
 
@@ -705,6 +744,10 @@ const getCommentPath = (cmrtype) => {
       return "/agent-management/agents";
     case "receipt":
       return "/sales/crm/polizas/receipts";
+    case "poliza_scheduling":
+      return "/operations/schedulings";
+    case "poliza_reimbursement":
+      return "/operations/reimbursements";
     default:
       return "/sales/crm/contacts";
   }
@@ -712,7 +755,9 @@ const getCommentPath = (cmrtype) => {
 export const addContactComment = async (body, cmrType) => {
   const url = `${getCommentPath(cmrType)}/comments`;
   console.log(url, body);
-  const response = await axios().post(url, body);
+  const response = await axios()
+    .post(url, body)
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };
 

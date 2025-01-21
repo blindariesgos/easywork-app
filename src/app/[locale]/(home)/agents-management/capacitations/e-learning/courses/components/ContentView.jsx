@@ -45,6 +45,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
       name: 'Título del contenido',
       description: '<p><span class="ql-size-large">Nueva página</span></p>',
       coverPhoto: null,
+      isPublished: false,
       courseId: course.id,
       files: [],
       filesToDelete: [],
@@ -150,6 +151,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
         name: content ? content.name : 'Título del contenido',
         description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
         coverPhoto: content ? content.coverPhoto : null,
+        isPublished: content ? content.isPublished : false,
         files: [],
         filesToDelete: [],
         imagesToDelete: [],
@@ -261,9 +263,9 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
                 <p>Publicar</p>
                 <Switch
                   disabled={loading}
-                  // checked={isPublished}
+                  checked={values.isPublished}
                   // defaultChecked={isPublished}
-                  // onChange={checked => setValue('isPublished', checked)}
+                  onChange={checked => setValue('isPublished', checked)}
                   className="group relative flex h-5 w-12 cursor-pointer rounded-full bg-gray-300 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-easy-300"
                 >
                   <span

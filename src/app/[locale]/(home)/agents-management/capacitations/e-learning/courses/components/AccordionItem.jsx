@@ -1,10 +1,14 @@
 import React from 'react';
-import { CheckCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 
 import { CourseProgressBar } from '../../components/CourseProgressBar';
 import { AccordionItemMoreMenu } from './AccordionItemMoreMenu';
+import { useUserPermissions } from '../../../hooks/useUserPermissions';
+import { LMS_PERMISSIONS } from '../../../constants';
 
 export const AccordionItem = ({ title, children, isOpen, onToggle, progress, itemType = '', isPrimaryItem = false, actions, isCompleted, onSelect }) => {
+  const { hasPermission } = useUserPermissions();
+
   return (
     <div>
       <div className={`rounded-xl ${isPrimaryItem ? `border-easy-400 bg-easy-50 p-4` : 'bg-white px-2 py-1'}`} style={{ borderWidth: '1px', borderStyle: 'solid' }}>
@@ -22,8 +26,8 @@ export const AccordionItem = ({ title, children, isOpen, onToggle, progress, ite
             <span className={`text-gray-900 ${isPrimaryItem && 'font-bold text-lg'}`}>{title}</span>
           </div>
           <div className="flex items-center justify-center gap-2">
-            {isCompleted && !isPrimaryItem && <CheckCircleIcon className="w-6 text-green-400" aria-hidden="true" />}
-            {itemType && <AccordionItemMoreMenu itemType={itemType} actions={actions} />}
+            {/* {hasPermission(LMS_PERMISSIONS.markAsCompleted) && isCompleted && !isPrimaryItem && <CheckCircleIcon className="w-6 text-green-400" aria-hidden="true" />} */}
+            {hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && itemType && <AccordionItemMoreMenu itemType={itemType} actions={actions} />}
           </div>
         </div>
         {(progress > 0 || isPrimaryItem) && <CourseProgressBar progress={progress} />}

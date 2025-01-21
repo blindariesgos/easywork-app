@@ -1,43 +1,42 @@
 import clsx from "clsx";
-import React, { useState } from "react";
+import { Checkbox, Field, Label } from "@headlessui/react";
+import React, { use, useEffect, useState } from "react";
 import { ImCheckmark } from "react-icons/im";
 function CheckboxInput({
   label,
   error,
-  disabled = false,
+  disabled,
   name,
-  register,
   setValue,
   defaultValue,
 }) {
-  const registerProps = register && register(name);
-  const [checked, setChecked] = useState(!!defaultValue);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setValue && setValue(name, checked);
+  }, [checked]);
+
+  useEffect(() => {
+    setChecked(defaultValue);
+  }, [defaultValue]);
 
   return (
     <div className="flex flex-col gap-y-1 w-full ">
-      <label htmlFor={name} className="flex items-center gap-2">
-        <div className="w-5 h-5 rounded flex justify-center items-center border border-gray-200">
+      <Field className="flex items-center gap-2">
+        <Checkbox
+          checked={checked}
+          onChange={setChecked}
+          disabled={disabled}
+          className="w-5 h-5 rounded flex justify-center items-center border border-gray-200"
+        >
           {checked && <ImCheckmark className="w-4 h-4 text-primary" />}
-        </div>
+        </Checkbox>
         {label && (
-          <p className="block text-sm font-medium leading-6 text-gray-900">
+          <Label className="block text-sm font-medium leading-6 text-gray-900">
             {label}
-          </p>
+          </Label>
         )}
-      </label>
-      <input
-        type="checkbox"
-        {...registerProps}
-        onChange={(e) => {
-          setValue && setValue(name, e.target.checked);
-          setChecked(e.target.checked);
-        }}
-        className="hidden"
-        name={name}
-        id={name}
-        disabled={disabled}
-      />
-
+      </Field>
       {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}
     </div>
   );

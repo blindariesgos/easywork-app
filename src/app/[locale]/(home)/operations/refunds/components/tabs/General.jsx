@@ -17,6 +17,8 @@ import Button from "@/src/components/form/Button";
 import { putRefund, putSchedule } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
+import moment from "moment";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 
 export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
   const { t } = useTranslation();
@@ -26,27 +28,19 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
+  const utcOffset = moment().utcOffset();
 
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),
     assignedById: Yup.string(),
-    rfc: Yup.string(),
-    vigenciaDesde: Yup.string(),
-    vigenciaHasta: Yup.string(),
-    address: Yup.string(),
     status: Yup.string(),
+    type: Yup.string(),
     subramoId: Yup.string(),
-    cobertura: Yup.string(),
-    frecuenciaCobroId: Yup.string(),
-    paymentTerm: Yup.string(),
-    primaNeta: Yup.string(),
-    recargoFraccionado: Yup.string(),
-    derechoPoliza: Yup.string(),
-    iva: Yup.string(),
-    importePagar: Yup.string(),
-    plazoPago: Yup.string(),
-    formaCobroId: Yup.string(),
-    currencyId: Yup.string(),
+    startDate: Yup.string(),
+    claimNumber: Yup.string(),
+    requestType: Yup.string(),
+    folioNumber: Yup.string(),
+    medicalCondition: Yup.string(),
   });
 
   const {
@@ -68,23 +62,48 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
   }, [params.get("edit")]);
 
   useEffect(() => {
+    if (!data) return;
+
+    if (data?.startDate)
+      setValue(
+        "startDate",
+        moment(data?.startDate).subtract(utcOffset, "minutes").format()
+      );
+    if (data?.claimNumber) setValue("claimNumber", data?.claimNumber);
+    if (data?.requestType) setValue("requestType", data?.requestType);
+    if (data?.folioNumber) setValue("folioNumber", data?.folioNumber);
+    if (data?.ot) setValue("ot", data?.ot);
+    if (data?.sigre) setValue("sigre", data?.sigre);
     if (data?.status) setValue("status", data?.status);
-    if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
+    if (data?.subRamo?.name) setValue("subRamoId", data?.subRamo?.id);
+    if (data?.polizaType?.id) setValue("polizaTypeId", data?.polizaType?.id);
+    if (data?.type) setValue("type", data?.type);
+    if (data?.medicalCondition)
+      setValue("medicalCondition", data?.medicalCondition);
     if (data?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
     if (data?.observations) setValue("observations", data?.observations);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
-    if (data?.ot) setValue("ot", data?.ot);
-    if (data?.sigre) setValue("sigre", data?.sigre);
-    if (data?.medicalCondition)
-      setValue("medicalCondition", data?.medicalCondition);
-    if (data?.type) setValue("type", data?.type);
-    if (data?.polizaType?.id) setValue("polizaTypeId", data?.polizaType?.id);
+    if (data?.agenteRelacionado)
+      setValue("agenteRelacionadoId", data?.agenteRelacionado?.id);
+    if (data?.observer) setValue("observerId", data?.observer?.id);
+    if (data?.requireReimbursementSubsequent)
+      setValue(
+        "requireReimbursementSubsequent",
+        data?.requireReimbursementSubsequent
+      );
   }, [data]);
 
   const handleFormSubmit = async (data) => {
+    const { startDate, ...otherData } = data;
+    const body = {
+      ...otherData,
+    };
+    if (startDate) {
+      body.startDate = moment(startDate).format("YYYY-MM-DD");
+    }
     try {
-      const response = await putRefund(id, data);
+      const response = await putRefund(id, body);
       if (response.hasError) {
         console.log(response);
         toast.error(
@@ -125,6 +144,24 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
+          {isEdit && (
+            <Fragment>
+              <TextInput
+                type="text"
+                label={t("operations:programations:general:claim-number")}
+                name="claimNumber"
+                register={register}
+                disabled={!isEdit}
+              />
+              <TextInput
+                type="text"
+                label={t("operations:programations:general:sheet-number")}
+                name="folioNumber"
+                register={register}
+                disabled={!isEdit}
+              />
+            </Fragment>
+          )}
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {
               return (
@@ -133,28 +170,14 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
                   value={value}
                   onChange={onChange}
                   onBlur={onBlur}
-                  error={errors.vigenciaDesde}
+                  error={errors.startDate}
                   disabled={!isEdit}
                 />
               );
             }}
-            name="vigenciaDesde"
+            name="startDate"
             control={control}
             defaultValue=""
-          />
-          <TextInput
-            type="text"
-            label={t("operations:programations:general:claim-number")}
-            name="claim-number"
-            disabled={!isEdit}
-            register={register}
-          />
-          <TextInput
-            type="text"
-            label={t("operations:programations:general:sheet-number")}
-            name="sheet-number"
-            disabled={!isEdit}
-            register={register}
           />
           <TextInput
             type="text"
@@ -227,25 +250,41 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
             register={register}
           />
 
+          <AgentSelectAsync
+            label={t("operations:programations:general:responsible")}
+            name="assignedById"
+            disabled={!isEdit}
+            error={errors.assignedById}
+            setValue={setValue}
+            watch={watch}
+          />
           <SelectInput
-            label={t("operations:policies:general:intermediary")}
+            label={t("operations:programations:general:intermediary")}
             name="agenteIntermediarioId"
             options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
-            register={register}
+            setValue={setValue}
+            watch={watch}
+            error={errors.agenteIntermediarioId}
+          />
+
+          <AgentSelectAsync
+            label={t("operations:programations:general:sub-agent")}
+            name="agenteRelacionadoId"
+            disabled={!isEdit}
+            error={errors.agenteRelacionadoId}
             setValue={setValue}
             watch={watch}
           />
 
-          <SelectDropdown
-            label={t("operations:policies:general:responsible")}
-            name="assignedById"
-            options={lists?.users}
-            register={register}
+          <SelectInput
+            label={t("operations:programations:general:observer")}
+            name="observerId"
+            options={lists?.users ?? []}
             disabled={!isEdit}
-            error={!watch("assignedById") && errors.assignedById}
             setValue={setValue}
             watch={watch}
+            error={errors.observerId}
           />
           <div
             className={clsx(
@@ -259,10 +298,11 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
               MARCAR EN CASO DE REQUERIR UN REEMBOLSO SUBSECUENTE
             </p>
             <CheckboxInput
-              name="isSubsecuente"
+              name="requireReimbursementSubsequent"
               setValue={setValue}
               label={"Requiere reembolso sub-secuente"}
               disabled={!isEdit}
+              defaultValue={data?.requireReimbursementSubsequent}
             />
           </div>
           <TextInput
@@ -279,9 +319,8 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
       {/* Menu Izquierda */}
       <ActivityPanel
         entityId={id}
-        crmType="policy"
+        crmType="poliza_reimbursement"
         className="lg:col-span-7"
-        disabled
       />
       {isEdit && (
         <div

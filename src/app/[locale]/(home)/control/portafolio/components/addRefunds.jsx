@@ -5,18 +5,19 @@ import SliderOverShord from "@/src/components/SliderOverShort";
 import Button from "@/src/components/form/Button";
 import Tag from "@/src/components/Tag";
 import SelectInput from "@/src/components/form/SelectInput";
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import TextInput from "@/src/components/form/TextInput";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
-import { addPolicyByPdf, addRefund } from "@/src/lib/apis";
+import { addRefund } from "@/src/lib/apis";
+import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 
 const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -103,12 +104,18 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     console.log({ policy });
     policy?.company?.id && setValue("insuranceId", policy?.company?.id);
     policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
+    policy?.contact?.id && setValue("contact", policy?.contact?.id);
   };
 
   const onSubmit = async (data) => {
-    const { poliza, ...body } = data;
+    const { poliza, contact, ...otherData } = data;
+    const body = {
+      ...otherData,
+    };
     body.polizaId = poliza.id;
     body.file = file.file;
+    body.contactId = contact.id;
+
     console.log({ body });
     const formData = getFormData(body);
     const response = await addRefund(formData);
@@ -128,6 +135,7 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
 
   const handleReset = () => {
     reset();
+    setFile();
   };
 
   return (
@@ -140,8 +148,8 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
         className="bg-easywork-main"
       />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className=" bg-gray-600  px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
-          <div className="bg-gray-100 rounded-md p-2 max-h-[calc(100vh_-_4rem)] overflow-y-auto">
+        <div className=" bg-gray-600  p-6 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
+          <div className="bg-gray-100 rounded-[11px] p-2 max-h-[calc(100vh_-_48px)] overflow-y-auto">
             <h4 className="text-2xl pb-4">
               {t("operations:managements:add:refund:title")}
             </h4>
@@ -157,6 +165,46 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                 setSelectedOption={handleChangePolicy}
                 error={errors?.poliza}
                 register={register}
+              />
+              <SelectInput
+                label={t("operations:managements:add:refund:company")}
+                options={lists?.policies?.polizaCompanies}
+                name="insuranceId"
+                setValue={setValue}
+                watch={watch}
+                register={register}
+                error={errors?.insuranceId}
+                disabled
+              />
+              <SelectInput
+                label={t("operations:managements:add:refund:branch")}
+                options={lists?.policies?.polizaTypes}
+                name="polizaTypeId"
+                setValue={setValue}
+                watch={watch}
+                register={register}
+                error={errors?.polizaTypeId}
+                disabled
+              />
+              <ContactSelectAsync
+                label={t("operations:managements:add:schedule:client")}
+                setValue={setValue}
+                watch={watch}
+                error={errors?.contact}
+                name="contact"
+                disabled
+              />
+              <TextInput
+                label={t("operations:managements:add:refund:ot")}
+                name="ot"
+                error={errors?.ot}
+                register={register}
+              />
+              <TextInput
+                label={t("operations:managements:add:refund:folio-sigre")}
+                name="sigre"
+                register={register}
+                error={errors?.sigre}
               />
               <SelectInput
                 label={t("operations:managements:add:refund:type")}
@@ -175,44 +223,44 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                 register={register}
                 setValue={setValue}
               />
-              <TextInput
-                label={t("operations:managements:add:refund:ot")}
-                name="ot"
-                error={errors?.ot}
-                register={register}
-              />
-              <TextInput
-                label={t("operations:managements:add:refund:folio-sigre")}
-                name="sigre"
-                register={register}
-                error={errors?.sigre}
-              />
+
               <TextInput
                 label={t("operations:managements:add:refund:affeccion")}
                 name="medicalCondition"
                 error={errors?.medicalCondition}
                 register={register}
                 multiple
-                rows={3}
+                rows={2}
               />
-
-              <SelectInput
-                label={t("operations:managements:add:refund:company")}
-                options={lists?.policies?.polizaCompanies}
-                name="insuranceId"
+              <AgentSelectAsync
+                label={t("operations:programations:general:responsible")}
+                name="assignedById"
+                error={errors.assignedById}
                 setValue={setValue}
                 watch={watch}
-                register={register}
-                error={errors?.insuranceId}
               />
               <SelectInput
-                label={t("operations:managements:add:refund:branch")}
-                options={lists?.policies?.polizaTypes}
-                name="polizaTypeId"
+                label={t("operations:programations:general:intermediary")}
+                name="agenteIntermediarioId"
+                options={lists?.policies?.agentesIntermediarios ?? []}
                 setValue={setValue}
                 watch={watch}
-                register={register}
-                error={errors?.polizaTypeId}
+                error={errors.agenteIntermediarioId}
+              />
+              <AgentSelectAsync
+                label={t("operations:programations:general:sub-agent")}
+                name="agenteRelacionadoId"
+                error={errors.agenteRelacionadoId}
+                setValue={setValue}
+                watch={watch}
+              />
+              <SelectInput
+                label={t("operations:programations:general:observer")}
+                name="observerId"
+                options={lists?.users ?? []}
+                setValue={setValue}
+                watch={watch}
+                error={errors.observerId}
               />
               <div className="w-full">
                 <label

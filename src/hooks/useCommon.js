@@ -2334,8 +2334,8 @@ export const useProgramationTable = () => {
     {
       id: 7,
       name: t("operations:programations:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "client",
+      order: "client",
       check: true,
     },
     {

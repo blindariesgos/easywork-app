@@ -125,7 +125,6 @@ const ColumnTable = ({
                   onClick={() => item.handleClick && item.handleClick(task.id)}
                 >
                   <div
-                    // onClick={item.onClick}
                     className={clsx(
                       "data-[focus]:bg-gray-100  block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
                     )}

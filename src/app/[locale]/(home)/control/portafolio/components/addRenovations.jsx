@@ -211,7 +211,7 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     setValue("fechaEmision", response?.fechaEmision);
     setValue("plan", response?.plan);
     setValue("movementDescription", response?.movementDescription);
-    setValue("conductoPagoId", response?.conductoPagoId);
+    setValue("conductoPagoId", response?.conductoPago.id);
     setValue("polizaFileId", response?.polizaFileId);
     setValue("status", response?.status);
     setValue("metadata", response?.metadata);

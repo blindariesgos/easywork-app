@@ -9,7 +9,7 @@
   "show-less": "Ver menos",
   "save": "Guardar",
   "change": "Cambiar",
-  "save-successfully": "¡Salvado con éxito!",
+  "save-successfully": "Guardado con éxito",
   "update-successfully": "Actualización exitosa",
   "link": "Cualquier persona con un enlace puede ver ahora este archivo.",
   "error-loading": "Error al cargar el recurso solicitado",
@@ -233,6 +233,18 @@
     "lead": "Prospectos",
     "receipt": "Recibos",
     "renewal": "Renovaciones",
-    "agent": "Agentes"
+    "agent": "Agentes",
+    "poliza_scheduling": "Programaciones",
+    "poliza_reimbursement": "Reembolsos"
+  },
+  "crmType": {
+    "contact": "Cliente",
+    "poliza": "Póliza",
+    "lead": "Prospecto",
+    "receipt": "Recibo",
+    "renewal": "Renovación",
+    "agent": "Agente",
+    "poliza_scheduling": "Programación",
+    "poliza_reimbursement": "Reembolso"
   }
 }

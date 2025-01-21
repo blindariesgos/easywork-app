@@ -28,6 +28,7 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { activitySectors } from "./common";
+import RelatedCustomer from "./RelatedCustomer";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -183,6 +184,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.typePerson) {
       setType(contact?.typePerson);
       setValue("typePerson", contact?.typePerson);
+    }
+    if (contact?.relatedContact && contact?.typePerson == "moral") {
+      setValue("contact", contact?.relatedContact?.id);
     }
     if (contact?.fullName) setValue("fullName", contact?.fullName);
     if (contact?.name) {
@@ -626,7 +630,15 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 disabled={!isEdit}
                 multiple
               />
-              {type == "moral"}
+              {!isEdit &&
+                contact?.relations &&
+                contact?.relations?.map((relation) => (
+                  <RelatedCustomer
+                    client={relation}
+                    type={type}
+                    key={relation.id}
+                  />
+                ))}
             </div>
           </div>
 

@@ -21,7 +21,8 @@ import {
 } from "@headlessui/react";
 import Button from "./Button";
 import { useReceipts } from "@/src/lib/api/hooks/receipts";
-import { useSchedules, useScheduling } from "@/src/lib/api/hooks/schedules";
+import { useSchedules } from "@/src/lib/api/hooks/schedules";
+import { useRefunds } from "@/src/lib/api/hooks/refunds";
 
 const CRMMultipleSelectV2 = ({
   getValues,
@@ -95,7 +96,7 @@ const CRMMultipleSelectV2 = ({
     },
   });
 
-  const { data: refunds, isLoading: isLoadingRefunds } = useSchedules({
+  const { data: refunds, isLoading: isLoadingRefunds } = useRefunds({
     filters: { ot: query },
     config: {
       page: 1,

@@ -19,6 +19,27 @@ export const useCourses = () => {
     [request]
   );
 
+  const updateOrder = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/courses/update-order/${id}`, { data, method: 'PUT', ...options });
+    },
+    [request]
+  );
+
+  const assignCourse = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/courses/assign-course/${id}`, { data, method: 'PUT', ...options });
+    },
+    [request]
+  );
+
+  const unassignCourse = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/courses/unassign-course/${id}`, { data, method: 'PUT', ...options });
+    },
+    [request]
+  );
+
   const updateCourse = useCallback(
     async (id, data, options = {}) => {
       return await request(`/courses/${id}`, { data, method: 'PATCH', ...options });
@@ -47,5 +68,5 @@ export const useCourses = () => {
     [request]
   );
 
-  return { getCourses, createCourse, updateCourse, deleteCourse, uploadCourseImage, getCourseById };
+  return { getCourses, createCourse, updateOrder, assignCourse, unassignCourse, updateCourse, deleteCourse, uploadCourseImage, getCourseById };
 };

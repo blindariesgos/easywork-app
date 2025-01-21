@@ -78,18 +78,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const saveChanges = async values => {
-    console.log('values.description.includes(data:image/png;base64,)', values.description.includes('data:image/png;base64,'));
-    if (values.description && values.description.includes('data:image/png;base64,')) {
-      return;
-    }
+    if (values.description && values.description.includes('data:image/png;base64,')) return;
 
     const newValues = prepareValues(values);
 
     if (isEdit) {
-      // if (contentType === 'folder') {
-      //   await updateCourseFolder(content?.id, newValues);
-      // } else if (contentType === 'page') {
-      // }
       await updateCourseFolderPage(content?.id, newValues);
     } else {
       const folderCreated = await createCourseFolder({ name: values.name, courseId: values.courseId });

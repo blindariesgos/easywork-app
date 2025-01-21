@@ -12,8 +12,7 @@ export default function CoursesView() {
 
   useEffect(() => {
     if (!hasPermission(LMS_PERMISSIONS.courses) && !hasPermission(LMS_PERMISSIONS.config)) router.replace('/');
-    if (!hasPermission(LMS_PERMISSIONS.courses)) router.replace('agents-management/capacitations/e-learning/courses/config');
-    if (!hasPermission(LMS_PERMISSIONS.config)) router.replace('agents-management/capacitations/e-learning/courses');
+    if (!hasPermission(LMS_PERMISSIONS.courses)) router.replace('/agents-management/capacitations/e-learning/config');
   }, [hasPermission, router]);
 
   return <CoursesGrid />;

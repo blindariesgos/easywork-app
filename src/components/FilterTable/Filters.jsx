@@ -1,40 +1,30 @@
-"use client";
-import { Menu, MenuItems, MenuButton } from "@headlessui/react";
-import React, { useState, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import FormFilters from "./FormFilters";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+'use client';
+import { Menu, MenuItems, MenuButton } from '@headlessui/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import FormFilters from './FormFilters';
+import { FaMagnifyingGlass } from 'react-icons/fa6';
 // import { postFilter, getFilters } from "../../../../../../../lib/apis";
 // import useAppContext from "../../../../../../../context/app";
-import { useDebouncedCallback } from "use-debounce";
-import { IoIosArrowDown } from "react-icons/io";
-import useFilterTableContext from "../../context/filters-table";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { useDebouncedCallback } from 'use-debounce';
+import { IoIosArrowDown } from 'react-icons/io';
+import useFilterTableContext from '../../context/filters-table';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 const Filters = () => {
   const { t } = useTranslation();
-  const [searchInput, setSearchInput] = useState("");
-  const {
-    filters,
-    setFilters,
-    searchParam,
-    allowSaveCustomFilters,
-    customFilters,
-    filterFields,
-    setDisplayFilters,
-    setCustomFilterSelected,
-    customFilterSelected,
-  } = useFilterTableContext();
+  const [searchInput, setSearchInput] = useState('');
+  const { filters, setFilters, searchParam, allowSaveCustomFilters, customFilters, filterFields, setDisplayFilters, setCustomFilterSelected, customFilterSelected } = useFilterTableContext();
 
   const handleSearch = useDebouncedCallback(() => {
     if (searchInput.length > 0) {
       setFilters({
         ...filters,
-        [searchParam ?? "search"]: searchInput,
+        [searchParam ?? 'search']: searchInput,
       });
     } else {
       const otherFilters = Object.keys(filters)
-        .filter((key) => key != (searchParam ?? "search"))
+        .filter(key => key != (searchParam ?? 'search'))
         .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
       setFilters(otherFilters);
     }
@@ -66,10 +56,10 @@ const Filters = () => {
   //   });
   // };
 
-  const handleSelectCustomFilter = (custom) => {
+  const handleSelectCustomFilter = custom => {
     const keys = Object.keys(custom.filter);
-    const fields = filterFields.filter((field) => keys.includes(field.code));
-    const displayAux = fields.map((field) => {
+    const fields = filterFields.filter(field => keys.includes(field.code));
+    const displayAux = fields.map(field => {
       return {
         ...field,
         value: custom.filter[field.code],
@@ -90,55 +80,33 @@ const Filters = () => {
             name="search"
             id="search-cal"
             className="block w-full py-1.5 text-primary placeholder:text-primary sm:text-sm border-0 focus:ring-0 bg-gray-300"
-            placeholder={t("contacts:header:search")}
-            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder={t('contacts:header:search')}
+            onChange={e => setSearchInput(e.target.value)}
             value={searchInput}
           />
         </div>
-        <MenuButton className="pr-2" onClick={() => setSearchInput("")}>
+        {/* <MenuButton className="pr-2" onClick={() => setSearchInput("")}>
           <IoIosArrowDown className="h-4 w-4 text-primary" />
-        </MenuButton>
+        </MenuButton> */}
       </div>
-      <MenuItems
-        transition
-        className={`absolute right-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-fit`}
-      >
+      <MenuItems transition className={`absolute right-0 mt-2 rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 w-fit`}>
         <div className="p-4">
           <div className="flex gap-4 flex-col sm:flex-row">
             {customFilters && customFilters.length > 0 && (
               <div className="bg-gray-150 flex flex-col w-full sm:w-40 px-4 py-2 rounded-md relative">
-                <p className="text-xs text-gray-60 text-center">
-                  {t("contacts:filters:name")}
-                </p>
+                <p className="text-xs text-gray-60 text-center">{t('contacts:filters:name')}</p>
                 <div className="mt-4 flex flex-col gap-2 mb-14">
                   {customFilters.map((filter, index) => (
-                    <div
-                      key={index}
-                      className="cursor-pointer group"
-                      onClick={() => handleSelectCustomFilter(filter)}
-                    >
-                      <p
-                        className={`text-sm uppercase group-hover:font-semibold  ${
-                          customFilterSelected == filter.id
-                            ? "text-primary font-medium"
-                            : "text-gray-60"
-                        }`}
-                      >
-                        {filter.name}
-                      </p>
+                    <div key={index} className="cursor-pointer group" onClick={() => handleSelectCustomFilter(filter)}>
+                      <p className={`text-sm uppercase group-hover:font-semibold  ${customFilterSelected == filter.id ? 'text-primary font-medium' : 'text-gray-60'}`}>{filter.name}</p>
                     </div>
                   ))}
                 </div>
                 {allowSaveCustomFilters && (
                   <div className="absolute bottom-2">
-                    <div
-                      className="flex gap-2 cursor-pointer items-center"
-                      onClick={() => saveFilter()}
-                    >
+                    <div className="flex gap-2 cursor-pointer items-center" onClick={() => saveFilter()}>
                       <PlusIcon className="h-3 w-3 text-gray-60" />
-                      <p className="text-xs uppercase text-gray-60">
-                        {t("contacts:filters:save")}
-                      </p>
+                      <p className="text-xs uppercase text-gray-60">{t('contacts:filters:save')}</p>
                     </div>
                   </div>
                 )}

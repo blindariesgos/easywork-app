@@ -13,19 +13,24 @@ export const EvaluationMenuDropdown = () => {
 
       <MenuItems transition anchor="bottom end" className="z-50 mt-2.5 w-48 rounded-md bg-white py-2 shadow-lg focus:outline-none">
         <MenuItem>
-          <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">
-            <Link href={`${E_LEARNING_BASE_ROUTE}/evaluations`}>Crear evaluación</Link>
-          </div>
+          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/evaluations/create`}>
+            Crear evaluación
+          </Link>
         </MenuItem>
         <MenuItem>
-          <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">
-            <Link href={`${E_LEARNING_BASE_ROUTE}/tests`}>Lista de pruebas</Link>
-          </div>
+          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/evaluations`}>
+            Evaluaciones creadas
+          </Link>
         </MenuItem>
         <MenuItem>
-          <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">
-            <Link href={`${E_LEARNING_BASE_ROUTE}/certificates`}>Certificados</Link>
-          </div>
+          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/evaluations/tests`}>
+            Lista de pruebas
+          </Link>
+        </MenuItem>
+        <MenuItem>
+          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/evaluations/certificates`}>
+            Certificados
+          </Link>
         </MenuItem>
       </MenuItems>
     </Menu>

@@ -21,7 +21,8 @@ import {
 } from "@headlessui/react";
 import Button from "./Button";
 import { useReceipts } from "@/src/lib/api/hooks/receipts";
-import { useSchedules, useScheduling } from "@/src/lib/api/hooks/schedules";
+import { useSchedules } from "@/src/lib/api/hooks/schedules";
+import { useRefunds } from "@/src/lib/api/hooks/refunds";
 
 const CRMMultipleSelectV2 = ({
   getValues,
@@ -95,7 +96,7 @@ const CRMMultipleSelectV2 = ({
     },
   });
 
-  const { data: refunds, isLoading: isLoadingRefunds } = useSchedules({
+  const { data: refunds, isLoading: isLoadingRefunds } = useRefunds({
     filters: { ot: query },
     config: {
       page: 1,
@@ -291,7 +292,7 @@ const CRMMultipleSelectV2 = ({
                         placeholder={"Buscar"}
                       />
                     </div>
-                    <div className="grid grid-cols-1 gap-1 overflow-y-auto max-h-[200px] h-full">
+                    <div className="grid grid-cols-1 gap-1 overflow-y-auto max-h-[170px] h-full">
                       {filterData?.length === 0 &&
                       query !== "" &&
                       !isLoading ? (

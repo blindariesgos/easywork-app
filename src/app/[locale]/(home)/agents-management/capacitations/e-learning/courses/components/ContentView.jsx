@@ -78,18 +78,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   };
 
   const saveChanges = async values => {
-    console.log('values.description.includes(data:image/png;base64,)', values.description.includes('data:image/png;base64,'));
-    if (values.description && values.description.includes('data:image/png;base64,')) {
-      return;
-    }
+    if (values.description && values.description.includes('data:image/png;base64,')) return;
 
     const newValues = prepareValues(values);
 
     if (isEdit) {
-      // if (contentType === 'folder') {
-      //   await updateCourseFolder(content?.id, newValues);
-      // } else if (contentType === 'page') {
-      // }
       await updateCourseFolderPage(content?.id, newValues);
     } else {
       const folderCreated = await createCourseFolder({ name: values.name, courseId: values.courseId });
@@ -199,9 +192,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
                 </button>
               )}
 
-              <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
-                <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-              </button>
+              {hasPermission(LMS_PERMISSIONS.editCourse) && (
+                <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
+                  <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                </button>
+              )}
             </>
           ) : (
             <button type="submit" className="block cursor-pointer" disabled={loading}>

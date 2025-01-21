@@ -13,6 +13,7 @@ import { EvaluationForm } from '../components/EvaluationForm';
 import { EvaluationFloatingMenu } from '../components/EvaluationFloatingMenu';
 
 import { LMS_PERMISSIONS } from '../../../constants';
+import { BuildingModule } from '../../../components/Building';
 
 export default function CreateEvaluation() {
   const router = useRouter();
@@ -35,6 +36,8 @@ export default function CreateEvaluation() {
 
     // fetchEvaluations();
   }, [hasPermission, router]);
+
+  return <BuildingModule />;
 
   return (
     <div className="max-w-7xl relative mx-auto">

@@ -1,8 +1,11 @@
 'use client';
+import { useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { useUserPermissions } from '../../hooks/useUserPermissions';
-import { useEffect } from 'react';
+
+import { BuildingModule } from '../../components/Building';
+
 import { LMS_PERMISSIONS } from '../../constants';
 
 export default function MyCourses() {
@@ -13,5 +16,5 @@ export default function MyCourses() {
     if (!hasPermission(LMS_PERMISSIONS.myCourses)) router.replace('/');
   }, [hasPermission, router]);
 
-  return <p>My Courses</p>;
+  return <BuildingModule />;
 }

@@ -11,6 +11,7 @@ import { EvaluationHeader } from './components/EvaluationHeader';
 import { EvaluationForm } from './components/EvaluationForm';
 
 import { LMS_PERMISSIONS } from '../../constants';
+import { BuildingModule } from '../../components/Building';
 
 export default function Evaluations() {
   const router = useRouter();
@@ -33,6 +34,8 @@ export default function Evaluations() {
 
     fetchEvaluations();
   }, [hasPermission, router, fetchEvaluations]);
+
+  return <BuildingModule />;
 
   return (
     <div className="max-w-xl mx-auto py-5">

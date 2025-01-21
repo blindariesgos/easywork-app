@@ -158,7 +158,7 @@ export const CourseDetails = ({ courseId }) => {
             <div className="flex items-center justify-between">
               <span className="text-gray-900 font-bold text-lg">{course.name}</span>
               <div className="flex items-center justify-center gap-2">
-                <AccordionItemMoreMenu itemType="course" actions={{ editCourse, addNewCourseFolder, addNewPage, deleteCourse }} />
+                {hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && <AccordionItemMoreMenu itemType="course" actions={{ editCourse, addNewCourseFolder, addNewPage, deleteCourse }} />}
               </div>
             </div>
             <CourseProgressBar progress={course.progress} />
@@ -178,7 +178,7 @@ export const CourseDetails = ({ courseId }) => {
               />
             ))}
 
-          <NewCourseFolderButton onClick={() => setIsNewContentFormOpen(true)} />
+          {hasPermission(LMS_PERMISSIONS.addFolder) && <NewCourseFolderButton onClick={() => setIsNewContentFormOpen(true)} />}
         </div>
 
         <div>
@@ -203,19 +203,21 @@ export const CourseDetails = ({ courseId }) => {
                 </button>
               </div>
               <div>
-                <button
-                  onClick={() => {
-                    const toggled = !selectedContent.item.isCompleted;
-                    toggleCourseFolderPageAsCompleted(contentDetails.id, toggled).then(() => {
-                      toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+                {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
+                  <button
+                    onClick={() => {
+                      const toggled = !selectedContent.item.isCompleted;
+                      toggleCourseFolderPageAsCompleted(contentDetails.id, toggled).then(() => {
+                        toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
 
-                      fetchModuleDetails().then(() => fetchContentDetails());
-                    });
-                  }}
-                  className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold`}
-                >
-                  {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
-                </button>
+                        fetchModuleDetails().then(() => fetchContentDetails());
+                      });
+                    }}
+                    className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold`}
+                  >
+                    {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
+                  </button>
+                )}
               </div>
             </div>
           )}

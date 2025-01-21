@@ -10,10 +10,13 @@ import { NewContentForm } from './NewContentForm';
 
 import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
 import { useCourseFolders } from '../../hooks/useCourseFolders';
+import { LMS_PERMISSIONS } from '../../../constants';
+import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
 export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, refetchAccordionItems }) => {
   const { getCourseFolder } = useCourseFolders();
   const { duplicateCourseFolderPage } = useCourseFolderPages();
+  const { hasPermission } = useUserPermissions();
 
   const [courseFolderDetails, setCourseFolderDetail] = useState(courseFolder);
   const [courseFolderPages, setCourseFolderPages] = useState(courseFolder?.pages || []);
@@ -109,7 +112,7 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
             );
           })}
 
-        <NewPageButton onClick={addNewPage} />
+        {hasPermission(LMS_PERMISSIONS.addPage) && <NewPageButton onClick={addNewPage} />}
       </AccordionItem>
 
       <DeleteContentModal

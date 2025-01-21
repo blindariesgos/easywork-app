@@ -24,7 +24,7 @@ import ComboBox, { ComboBoxWithElement } from "./../components/ComboBox";
 import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import { Controller, useForm } from "react-hook-form";
 import listPlugin from "@fullcalendar/list";
-import { XCircleIcon } from "@heroicons/react/24/outline";
+import { XCircleIcon } from "@heroicons/react/20/solid";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import { add, addHours, format, formatISO, parseISO } from "date-fns";
 import * as yup from "yup";
@@ -186,6 +186,8 @@ export default function CalendarHome({ children }) {
       reminder: formatISO(reminderValue ?? startTime),
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
+      timeZone: timezone.value,
+      localization: formLocalization.name,
       color: color ?? "#141052",
       description: "<p></p>",
       availability: "Ocupado",
@@ -347,7 +349,7 @@ export default function CalendarHome({ children }) {
                     autoComplete="false"
                   />
                   <XCircleIcon
-                    className="w-5 h-5 ml-2 text-easywork-main"
+                    className="w-8 h-8 ml-2 text-red-500 hover:text-red-700 cursor-pointer"
                     onClick={() => close()}
                   />
                 </div>

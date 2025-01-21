@@ -20,6 +20,8 @@ import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
+import MultipleSelect from "@/src/components/form/MultipleSelect";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 
 export default function PolicyDetails({
   data,
@@ -67,6 +69,7 @@ export default function PolicyDetails({
     handleSubmit,
     control,
     setValue,
+    getValues,
     watch,
     formState: { isValid, errors },
   } = useForm({
@@ -110,6 +113,8 @@ export default function PolicyDetails({
     if (data?.contact?.rfc) setValue("rfc", data?.contact?.rfc);
     if (data?.type?.id) setValue("typeId", data?.type?.id);
     if (data?.version) setValue("version", data?.version);
+    if (data?.observers && data?.observers?.length > 0)
+      setValue("observers", data?.observers);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -414,14 +419,13 @@ export default function PolicyDetails({
             watch={watch}
           />
 
-          <SelectInput
-            label={t("operations:policies:general:sub-agent")}
+          <AgentSelectAsync
+            label={t("operations:programations:general:sub-agent")}
             name="subAgentId"
-            options={lists?.policies?.agentesIntermediarios ?? []}
-            disabled={!isEdit}
-            register={register}
+            error={errors.subAgentId}
             setValue={setValue}
             watch={watch}
+            disabled={!isEdit}
           />
 
           <SelectDropdown
@@ -433,6 +437,15 @@ export default function PolicyDetails({
             error={!watch("assignedById") && errors.assignedById}
             setValue={setValue}
             watch={watch}
+          />
+          <MultipleSelect
+            label={t("operations:policies:general:observers")}
+            options={lists?.users || []}
+            getValues={getValues}
+            setValue={setValue}
+            name="observers"
+            error={errors.observers}
+            disabled={!isEdit}
           />
           <TextInput
             type="text"

@@ -281,7 +281,9 @@ export default function EventDetails({ data, id }) {
     if (!data) {
       setIsEdit(true);
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+      const timezoneValue = timezones.find(
+        (timezone) => timezone.value === detectedTimezone
+      );
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
@@ -328,7 +330,7 @@ export default function EventDetails({ data, id }) {
             }))
           : []
       );
-      // setTimezone();
+    // setTimezone();
 
     // const subscription = watch((data, { name }) => {
     //   setIsEdit(true);
@@ -880,7 +882,7 @@ export default function EventDetails({ data, id }) {
                     </p>
                     <div className="w-full">
                       <CRMMultipleSelectV2
-                        getValues={getValues}
+                        watch={watch}
                         setValue={setValue}
                         name="crm"
                         error={errors.crm}

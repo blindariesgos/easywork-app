@@ -20,6 +20,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import moment from "moment";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 
 export default function PolicyDetails({
   data,
@@ -116,6 +117,7 @@ export default function PolicyDetails({
     if (data?.category) setValue("categoryId", data?.category?.id);
     if (data?.observers && data?.observers?.length > 0)
       setValue("observers", data?.observers);
+    if (data?.subAgent?.name) setValue("subAgentId", data?.subAgent?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -446,6 +448,14 @@ export default function PolicyDetails({
             setValue={setValue}
             watch={watch}
           />
+          <AgentSelectAsync
+            label={t("operations:programations:general:sub-agent")}
+            name="subAgentId"
+            error={errors.subAgentId}
+            setValue={setValue}
+            watch={watch}
+            disabled={!isEdit}
+          />
           <SelectDropdown
             label={t("operations:policies:general:responsible")}
             name="assignedById"
@@ -475,58 +485,6 @@ export default function PolicyDetails({
             multiple
           />
         </div>
-        {/* {data?.type?.name === "AUTOS" &&
-          data?.vehicles.map((vehicle) => (
-            <Fragment key={vehicle.id}>
-              <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-                {"Datos del vehiculo asegurado"}
-              </div>
-              <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-                <TextInput
-                  type="text"
-                  label={"Descripción"}
-                  value={vehicle?.description ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Serie"}
-                  value={vehicle?.serial ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Placa"}
-                  value={vehicle?.plates ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Modelo"}
-                  value={vehicle?.model ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Motor"}
-                  value={vehicle?.motor ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Uso"}
-                  value={vehicle?.usage ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Circula en"}
-                  value={vehicle?.circulatesIn ?? "S/N"}
-                  disabled
-                />
-              </div>
-            </Fragment>
-          ))} */}
       </div>
       {/* Menu Izquierda */}
       <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />

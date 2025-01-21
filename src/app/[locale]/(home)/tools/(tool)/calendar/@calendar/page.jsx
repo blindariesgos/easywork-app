@@ -110,11 +110,13 @@ export default function CalendarHome({ children }) {
     setValue("startTime", format(info?.start, "yyyy-MM-dd'T'HH:mm"));
     setValue("endTime", format(info?.end, "yyyy-MM-dd'T'HH:mm"));
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+    const timezoneValue = timezones.find(
+      (timezone) => timezone.value === detectedTimezone
+    );
     if (timezoneValue) {
       setTimezone(timezoneValue);
     }
-  };  
+  };
 
   const schema = yup.object().shape({
     name: yup.string().required(),
@@ -485,7 +487,7 @@ export default function CalendarHome({ children }) {
                   </p>
                   <div className="w-full">
                     <CRMMultipleSelectV2
-                      getValues={getValues}
+                      watch={watch}
                       setValue={setValue}
                       name="crm"
                       error={errors.crm}

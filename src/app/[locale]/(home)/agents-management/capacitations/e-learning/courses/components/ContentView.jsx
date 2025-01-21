@@ -45,6 +45,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
       name: 'Título del contenido',
       description: '<p><span class="ql-size-large">Nueva página</span></p>',
       coverPhoto: null,
+      isPublished: false,
       courseId: course.id,
       files: [],
       filesToDelete: [],
@@ -130,11 +131,11 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     setMarkAsDone(prev => !prev);
 
     try {
-      if (contentType === 'folder') {
-        // await toggleLessonAsCompleted(content.id, toggled);
-      } else {
-        await toggleCourseFolderPageAsCompleted(content.id, toggled);
-      }
+      // if (contentType === 'folder') {
+      //   // await toggleLessonAsCompleted(content.id, toggled);
+      // } else {
+      // }
+      await toggleCourseFolderPageAsCompleted(content.id, toggled);
 
       if (refetchAccordionItems) refetchAccordionItems();
 
@@ -150,6 +151,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
         name: content ? content.name : 'Título del contenido',
         description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
         coverPhoto: content ? content.coverPhoto : null,
+        isPublished: content ? content.isPublished : false,
         files: [],
         filesToDelete: [],
         imagesToDelete: [],
@@ -187,15 +189,15 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
           {isEditorDisabled ? (
             <>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
-                <button type="button" className="block cursor-pointer" onClick={toggleIsCompleted}>
+                <div className="block cursor-pointer" onClick={toggleIsCompleted}>
                   <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
-                </button>
+                </div>
               )}
 
               {hasPermission(LMS_PERMISSIONS.editCourse) && (
-                <button type="button" className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
+                <div className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
                   <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-                </button>
+                </div>
               )}
             </>
           ) : (
@@ -226,7 +228,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
               saveContentOnChange();
             }}
             value={values.description}
-            disabled={isEditorDisabled || !hasPermission(LMS_PERMISSIONS.editContentBody)}
+            disabled={isEditorDisabled}
             onDeleteImage={onDeleteImage}
           />
         )}
@@ -261,9 +263,9 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
                 <p>Publicar</p>
                 <Switch
                   disabled={loading}
-                  // checked={isPublished}
+                  checked={values.isPublished}
                   // defaultChecked={isPublished}
-                  // onChange={checked => setValue('isPublished', checked)}
+                  onChange={checked => setValue('isPublished', checked)}
                   className="group relative flex h-5 w-12 cursor-pointer rounded-full bg-gray-300 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-easy-300"
                 >
                   <span

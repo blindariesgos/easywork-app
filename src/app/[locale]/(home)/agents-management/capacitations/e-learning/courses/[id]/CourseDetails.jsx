@@ -29,7 +29,7 @@ export const CourseDetails = ({ courseId }) => {
 
   const { getCourseById } = useCourses({ fetchOnMount: false });
   const { getCourseFolder } = useCourseFolders();
-  const { getCourseFolderPage } = useCourseFolderPages();
+  const { getCourseFolderPage, toggleCourseFolderPageAsCompleted } = useCourseFolderPages();
 
   const [openSections, setOpenSections] = useState([]);
   const [course, setCourse] = useState(null);
@@ -203,7 +203,17 @@ export const CourseDetails = ({ courseId }) => {
                 </button>
               </div>
               <div>
-                <button className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold`}>
+                <button
+                  onClick={() => {
+                    const toggled = !selectedContent.item.isCompleted;
+                    toggleCourseFolderPageAsCompleted(contentDetails.id, toggled).then(() => {
+                      toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+
+                      fetchModuleDetails().then(() => fetchContentDetails());
+                    });
+                  }}
+                  className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold`}
+                >
                   {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
                 </button>
               </div>

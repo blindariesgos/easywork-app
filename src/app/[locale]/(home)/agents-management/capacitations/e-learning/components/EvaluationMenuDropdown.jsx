@@ -23,12 +23,12 @@ export const EvaluationMenuDropdown = () => {
           </Link>
         </MenuItem>
         <MenuItem>
-          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/tests`}>
+          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/evaluations/tests`}>
             Lista de pruebas
           </Link>
         </MenuItem>
         <MenuItem>
-          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/certificates`}>
+          <Link className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white" href={`${E_LEARNING_BASE_ROUTE}/evaluations/certificates`}>
             Certificados
           </Link>
         </MenuItem>

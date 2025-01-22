@@ -20,6 +20,8 @@
   "validations": {
     "required": "El campo es requerido",
     "min": "El campo debe tener al menos {{min}} caracteres",
+    "min-number": "El campo debe ser un número mayor o igual a {{min}}",
+    "max-number": "El campo debe ser un número menor o igual a {{max}}",
     "email": "Debe ser un correo valido",
     "file": "Debe cargar los documentos",
     "size": "El archivo es mayor de {{size}} MB",

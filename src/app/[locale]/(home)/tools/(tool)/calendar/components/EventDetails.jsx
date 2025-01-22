@@ -299,6 +299,7 @@ export default function EventDetails({ data, id }) {
       const timezoneValue = timezones.find(
         (timezone) => timezone.value === detectedTimezone
       );
+      console.log(timezoneValue);
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
@@ -923,7 +924,7 @@ export default function EventDetails({ data, id }) {
                     </p>
                     <div className="w-full">
                       <CRMMultipleSelectV2
-                        watch={watch}
+                        getValues={getValues}
                         setValue={setValue}
                         name="crm"
                         error={errors.crm}

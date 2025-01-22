@@ -324,6 +324,13 @@ export default function CalendarHome({ children }) {
           as="div"
           className="relative z-50 focus:outline-none"
         >
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50"
+            aria-hidden="true"
+          ></div>
+
+          {/* Contenido del diálogo */}
           <div className="fixed inset-0 flex items-center justify-center">
             <DialogPanel
               transition

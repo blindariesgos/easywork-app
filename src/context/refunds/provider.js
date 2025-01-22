@@ -41,9 +41,9 @@ export default function RefundsContextProvider({ children }) {
     {
       id: 2,
       name: t("operations:policies:table:policy"),
-      type: "input",
-      check: false,
-      code: "poliza",
+      type: "select-policy",
+      check: true,
+      code: "polizaId",
     },
   ];
   const handleChangeConfig = (key, value) => {
@@ -86,9 +86,9 @@ export default function RefundsContextProvider({ children }) {
       {
         id: 2,
         name: t("operations:policies:table:policy"),
-        type: "input",
+        type: "select-policy",
         check: false,
-        code: "poliza",
+        code: "polizaId",
       },
       {
         id: 3,

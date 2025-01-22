@@ -326,7 +326,7 @@ export default function MeetEditor({ edit, copy, type }) {
                   </p>
                   <div className="w-full md:w-[40%]">
                     <CRMMultipleSelectV2
-                      getValues={getValues}
+                      watch={watch}
                       setValue={setValue}
                       name="crm"
                       error={errors.crm}

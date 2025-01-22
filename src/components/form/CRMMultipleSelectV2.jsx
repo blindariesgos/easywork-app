@@ -25,7 +25,7 @@ import { useSchedules } from "@/src/lib/api/hooks/schedules";
 import { useRefunds } from "@/src/lib/api/hooks/refunds";
 
 const CRMMultipleSelectV2 = ({
-  getValues,
+  watch,
   setValue,
   name,
   label,
@@ -38,6 +38,7 @@ const CRMMultipleSelectV2 = ({
   const [isOpen, setIsOpen] = useState(false);
   const [filterSelect, setFilterSelect] = useState(0);
   const [query, setQuery] = useState("");
+  const [values, setValues] = useState([]);
   const [crmTypes, setCrmTypes] = useState([
     "contact",
     "poliza",
@@ -137,8 +138,12 @@ const CRMMultipleSelectV2 = ({
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    setValues(watch(name) ?? []);
+  }, [watch && watch(name)]);
+
   const handleSelect = (option) => {
-    const currentValues = getValues(name) || [];
+    const currentValues = values || [];
 
     // Determine the type based on filterSelect
     const type = crmTypes[filterSelect];
@@ -156,16 +161,16 @@ const CRMMultipleSelectV2 = ({
     const index = currentValues.findIndex((res) => res.id === option.id);
 
     if (index === -1) {
-      setValue(name, [...currentValues, newOption], { shouldValidate: true });
+      setValue(name, [...currentValues, newOption]);
     } else {
       const updatedValue = currentValues.filter((res) => res.id !== option.id);
-      setValue(name, updatedValue, { shouldValidate: true });
+      setValue(name, updatedValue);
     }
   };
 
   const handleRemove = (id) => {
-    const updatedValue = getValues(name).filter((res) => res.id !== id);
-    setValue(name, updatedValue, { shouldValidate: true });
+    const updatedValue = values.filter((res) => res.id !== id);
+    setValue(name, updatedValue);
   };
 
   const filterData = useMemo(() => {
@@ -217,8 +222,8 @@ const CRMMultipleSelectV2 = ({
           )}
         >
           <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
-            {getValues(name)?.length > 0 &&
-              getValues(name).map((option) => (
+            {values.length > 0 &&
+              values.map((option) => (
                 <div
                   key={option?.id}
                   className="bg-primary p-1 group rounded-md text-white flex gap-1 items-center text-xs"
@@ -305,10 +310,8 @@ const CRMMultipleSelectV2 = ({
                           <div
                             key={option.id}
                             className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-md ${
-                              getValues(name) &&
-                              getValues(name).some(
-                                (res) => res.id === option.id
-                              )
+                              values &&
+                              values.some((res) => res.id === option.id)
                                 ? "bg-primary"
                                 : "hover:bg-primary/5"
                             }`}
@@ -325,10 +328,8 @@ const CRMMultipleSelectV2 = ({
                             )}
                             <span
                               className={`text-xs ${
-                                getValues(name) &&
-                                getValues(name).some(
-                                  (res) => res.id === option.id
-                                )
+                                values &&
+                                values.some((res) => res.id === option.id)
                                   ? "text-white"
                                   : "text-black"
                               }`}

@@ -18,7 +18,12 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deletePolicyById, deleteReceiptById, putPoliza } from "@/src/lib/apis";
+import {
+  deletePolicyById,
+  deleteReceiptById,
+  putPoliza,
+  putRefund,
+} from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useRefundTable } from "../../../../../../hooks/useCommon";
@@ -40,6 +45,10 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
+import {
+  polizaReimbursementStatus,
+  polizaReimbursementStatusColor,
+} from "@/src/utils/stages";
 
 export default function Table() {
   const {
@@ -136,13 +145,13 @@ export default function Table() {
     setIsOpenDeleteMasive(false);
   };
 
-  const changeStatusPolicies = async (status) => {
+  const changeStatusRefunds = async (status) => {
     setLoading(true);
     const body = {
       status: status.id,
     };
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => putPoliza(policyId, body))
+      selectedContacts.map((refundId) => putRefund(refundId, body))
     );
     if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
       toast.success(
@@ -215,26 +224,11 @@ export default function Table() {
     {
       id: 2,
       name: t("common:table:checkbox:change-status"),
-      onclick: changeStatusPolicies,
-      disabled: true,
-      selectOptions: [
-        {
-          id: "activa",
-          name: "Activa",
-        },
-        {
-          id: "expirada",
-          name: "Expirada",
-        },
-        {
-          id: "cancelada",
-          name: "Cancelada",
-        },
-        {
-          id: "en_proceso",
-          name: "En proceso",
-        },
-      ],
+      onclick: changeStatusRefunds,
+      selectOptions: Object.keys(polizaReimbursementStatus).map((key) => ({
+        id: key,
+        name: polizaReimbursementStatus[key],
+      })),
     },
     {
       id: 1,
@@ -294,6 +288,34 @@ export default function Table() {
       ],
     },
   ];
+
+  const renderStage = (status) => {
+    const color =
+      polizaReimbursementStatusColor?.[status] ??
+      polizaReimbursementStatusColor?.captura_documentos;
+
+    const stageIndex = status
+      ? Object.keys(polizaReimbursementStatus).findIndex((x) => x == status)
+      : 0;
+
+    return (
+      <div className="flex flex-col gap-1 items-center">
+        <div className={`flex justify-center bg-gray-200`}>
+          {Object.keys(polizaReimbursementStatus).map((_, index) => (
+            <div
+              key={index}
+              className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
+              style={{ background: index <= stageIndex ? color : "" }}
+            />
+          ))}
+        </div>
+        <p className="text-sm text-center">
+          {polizaReimbursementStatus?.[status] ??
+            polizaReimbursementStatus?.captura_documentos}
+        </p>
+      </div>
+    );
+  };
 
   return (
     <Fragment>
@@ -420,10 +442,6 @@ export default function Table() {
                                         onClick={() => {
                                           item.handleClick &&
                                             item.handleClick(refund.id);
-                                          item.handleClickContact &&
-                                            item.handleClickContact(
-                                              refund?.contact?.id
-                                            );
                                         }}
                                       >
                                         <div
@@ -467,10 +485,6 @@ export default function Table() {
                                                   option.handleClick &&
                                                     option.handleClick(
                                                       refund.id
-                                                    );
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      refund?.contact?.id
                                                     );
                                                 }}
                                               >
@@ -570,6 +584,8 @@ export default function Table() {
                                       "DD/MM/YYYY"
                                     )}
                                   </p>
+                                ) : column.row === "status" ? (
+                                  renderStage(refund?.status)
                                 ) : (
                                   refund[column.row] || "-"
                                 )}

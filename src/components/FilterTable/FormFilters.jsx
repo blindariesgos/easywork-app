@@ -268,7 +268,11 @@ const FormFilters = () => {
           value = moment(field.value).utc().format("YYYY-MM-DDTHH:mm:ss");
         }
 
-        if (field.type == "select-contact") {
+        if (
+          ["select-contact", "select-policy", "select-lead"].includes(
+            field.type
+          )
+        ) {
           value = field.value.id;
         }
 

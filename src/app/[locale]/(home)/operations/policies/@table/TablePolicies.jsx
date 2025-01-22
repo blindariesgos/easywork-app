@@ -297,17 +297,7 @@ export default function TablePolicies() {
   ];
 
   const handleShowPolicy = (id) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("show", true);
-    params.set("policy", id);
-    router.replace(`${pathname}?${params.toString()}`);
-  };
-
-  const handleShowEditPolicy = (id) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("show", true);
-    params.set("editPolicy", id);
-    router.replace(`${pathname}?${params.toString()}`);
+    router.push(`/operations/policies/policy/${id}?show=true`);
   };
 
   const itemActions = [
@@ -317,7 +307,8 @@ export default function TablePolicies() {
     },
     {
       name: "Editar",
-      handleClick: (id) => handleShowEditPolicy(id),
+      handleClick: (id) =>
+        router.push(`/operations/policies/policy/${id}?show=true&edit=true`),
     },
     {
       name: "Eliminar",

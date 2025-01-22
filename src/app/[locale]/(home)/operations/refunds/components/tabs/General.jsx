@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
+import { polizaReimbursementStatus } from "@/src/utils/stages";
 
 export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
   const { t } = useTranslation();
@@ -72,6 +73,8 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
     if (data?.claimNumber) setValue("claimNumber", data?.claimNumber);
     if (data?.requestType) setValue("requestType", data?.requestType);
     if (data?.folioNumber) setValue("folioNumber", data?.folioNumber);
+    if (data?.folioSubsequent)
+      setValue("folioSubsequent", data?.folioSubsequent);
     if (data?.ot) setValue("ot", data?.ot);
     if (data?.sigre) setValue("sigre", data?.sigre);
     if (data?.status) setValue("status", data?.status);
@@ -103,6 +106,7 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
       body.startDate = moment(startDate).format("YYYY-MM-DD");
     }
     try {
+      console.log("Reembolso body", body);
       const response = await putRefund(id, body);
       if (response.hasError) {
         console.log(response);
@@ -184,7 +188,7 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
             label={t(
               "operations:programations:general:sheet-number-subsecuent"
             )}
-            name="sheet-number"
+            name="folioSubsequent"
             disabled={!isEdit}
             register={register}
           />

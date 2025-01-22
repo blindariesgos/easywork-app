@@ -496,7 +496,7 @@ export default function CalendarHome({ children }) {
                   </p>
                   <div className="w-full">
                     <CRMMultipleSelectV2
-                      getValues={getValues}
+                      watch={watch}
                       setValue={setValue}
                       name="crm"
                       error={errors.crm}

@@ -14,12 +14,18 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { putSchedule } from "@/src/lib/apis";
 import clsx from "clsx";
 import { toast } from "react-toastify";
+import {
+  polizaReimbursementStatus,
+  polizaReimbursementStatusColor,
+} from "@/src/utils/stages";
+import useProgramationContext from "@/src/context/programations";
 
 export default function ScheduleDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
-  const headerRef = useRef();
+  const { mutate: mutateSchedule } = useProgramationContext();
+
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -51,16 +57,6 @@ export default function ScheduleDetails({ data, id, mutate }) {
     },
   ];
 
-  const status = {
-    capture: "Captura de documentos",
-    in_proccess: "En proceso",
-    paused: "Validación de documentos-pausa",
-    explanation: "Aclaración",
-    collection: "Recolección y envio de médicamentos",
-    approved: "Aprobado",
-    canceled: "No cumple condiciones",
-  };
-
   const updateStatus = async (status) => {
     setLoading(true);
     const body = {
@@ -72,18 +68,19 @@ export default function ScheduleDetails({ data, id, mutate }) {
 
       if (response.hasError) {
         toast.error(
-          "Se ha producido un error al actualizar la programacion, inténtelo de nuevo."
+          "Se ha producido un error al actualizar, inténtelo de nuevo."
         );
         setLoading(false);
 
         return;
       }
       mutate();
-      toast.success("Programacion actualizada correctamente.");
+      mutateSchedule();
+      toast.success("Actualizada correctamente.");
     } catch (error) {
       console.log({ error });
       toast.error(
-        "Se ha producido un error al actualizar la programacion, inténtelo de nuevo."
+        "Se ha producido un error al actualizar, inténtelo de nuevo."
       );
     }
     setLoading(false);
@@ -99,7 +96,6 @@ export default function ScheduleDetails({ data, id, mutate }) {
           <div
             id="policy-header"
             className="pt-6 px-2 pb-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
-            ref={headerRef}
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
@@ -156,20 +152,17 @@ export default function ScheduleDetails({ data, id, mutate }) {
                   <MenuButton>
                     <label
                       className={clsx(
-                        "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]",
-                        {
-                          "bg-[#EFD864]":
-                            data?.status == "capture" || !data?.status,
-                          "bg-[#DFC2FF]": data?.status == "in_proccess",
-                          "bg-[#FFF9C2]": data?.status == "paused",
-                          "bg-[#C2FFF9]": data?.status == "explanation",
-                          "bg-[#73B5FF]": data?.status == "collection",
-                          "bg-[#C2FFCF]": data?.status == "approved",
-                          "bg-[#FFC2C2]": data?.status == "canceled",
-                        }
+                        "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
                       )}
+                      style={{
+                        background: data?.status
+                          ? polizaReimbursementStatusColor[data?.status]
+                          : polizaReimbursementStatusColor.captura_documentos,
+                      }}
                     >
-                      {data?.status ? status[data?.status] : status.capture}
+                      {data?.status
+                        ? polizaReimbursementStatus[data?.status]
+                        : polizaReimbursementStatus.captura_documentos}
                     </label>
                   </MenuButton>
                   <MenuItems
@@ -178,7 +171,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                     className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
                   >
                     {data &&
-                      Object?.keys(status)
+                      Object?.keys(polizaReimbursementStatus)
                         ?.filter((key) => key !== data?.status)
                         .map((key, index) => (
                           <MenuItem
@@ -187,7 +180,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                             onClick={() => updateStatus(key)}
                             className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
                           >
-                            {status[key]}
+                            {polizaReimbursementStatus[key]}
                           </MenuItem>
                         ))}
                   </MenuItems>

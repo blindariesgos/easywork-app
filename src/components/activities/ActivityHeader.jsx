@@ -30,12 +30,10 @@ export default function ActivityHeader({
     {
       name: t("contacts:create:activities:comment"),
       onClick: () => setIsShowAddComment(true),
-      hidden: ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:email"),
       onClick: () => router.push("/tools/mails"),
-      hidden: ["agent"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:appointments"),

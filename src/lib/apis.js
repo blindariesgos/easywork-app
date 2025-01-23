@@ -502,25 +502,19 @@ export const deleteMeetComment = async (commentId) => {
   return response;
 };
 
-export const putComment = async (commentId, body, taskId) => {
-  console.log("Actualizando comentario", commentId, body, taskId);
+export const putComment = async (commentId, body) => {
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  console.log("paso por acaaaaa 2", response);
-
-  // revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 
-export const putMeetComment = async (commentId, body, meetId) => {
-  console.log("Actualizando comentario", commentId, body, meetId);
+export const putMeetComment = async (commentId, body) => {
   const response = await axios().put(
     `/agent-management/meetings/comments/${commentId}`,
     body
   );
-  // revalidatePath(`/tools/tasks/task/${meetId}`, "page");
   return response;
 };
 

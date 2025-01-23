@@ -33,8 +33,8 @@ import { toast } from "react-toastify";
 
 const urls = {
   put: {
-    meet: (commentId, body, meetId) => putMeetComment(commentId, body, meetId),
-    task: (commentId, body, taskId) => putComment(commentId, body, taskId),
+    meet: (commentId, body) => putMeetComment(commentId, body),
+    task: (commentId, body) => putComment(commentId, body),
   },
   post: {
     meet: (body) => postMeetComment(body),
@@ -103,9 +103,10 @@ export default function Comments({ info, type = "task" }) {
       try {
         setDisabled(true);
         if (id) {
-          const responseUpdate = await urls.put[type](id, body, info.id).catch(
+          const responseUpdate = await urls.put[type](id, body).catch(
             (error) => ({ hasError: true, ...error })
           );
+          console.log({ responseUpdate });
           if (responseUpdate?.hasError) {
             toast.error(
               "Se ha producido un error al actualizar el comentario, inténtelo de nuevo más tarde."

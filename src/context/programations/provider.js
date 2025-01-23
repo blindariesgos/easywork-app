@@ -5,6 +5,11 @@ import { ProgramationsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useSchedules } from "../../lib/api/hooks/schedules";
+import {
+  polizaReimbursementStatus,
+  polizaReimbursementStatusColor,
+} from "@/src/utils/stages";
+
 export default function ProgramationsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
@@ -104,24 +109,10 @@ export default function ProgramationsContextProvider({ children }) {
         type: "select",
         check: false,
         code: "status",
-        options: [
-          {
-            id: "activa",
-            name: "Vigente",
-          },
-          {
-            id: "expirada",
-            name: "No vigente",
-          },
-          {
-            id: "cancelada",
-            name: "Cancelada",
-          },
-          {
-            id: "en_proceso",
-            name: "En trámite",
-          },
-        ],
+        options: Object.keys(polizaReimbursementStatus).map((key) => ({
+          id: key,
+          name: polizaReimbursementStatus[key],
+        })),
       },
     ]);
   }, [lists?.listContact, lists?.policies]);

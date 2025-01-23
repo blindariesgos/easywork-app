@@ -112,6 +112,23 @@ export const getRefundById = async (refundId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const getAllRefunds = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/operations/reimbursements?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
 //#endregion
 
 //#region POLICIES
@@ -139,6 +156,23 @@ export const getSchedulingById = async (schedulingId) => {
   const response = await axios()
     .get(`/operations/schedulings/${schedulingId}`)
     .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getAllSchedules = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/operations/schedulings?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
   return response;
 };
 //#endregion

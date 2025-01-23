@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  CheckIcon,
   ChevronDownIcon,
   PlusIcon,
   XMarkIcon,
@@ -9,6 +10,9 @@ import Image from "next/image";
 import TextInput from "./TextInput";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import clsx from "clsx";
+import { useAgents } from "@/src/lib/api/hooks/agents";
+import { useDebouncedCallback } from "use-debounce";
+import { LoadingSpinnerSmall } from "../LoaderSpinner";
 
 const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
   if (tagLabel)
@@ -25,8 +29,7 @@ const getTextLabel = (tagLabel, onlyOne, itemsLength, t) => {
     : t("common:buttons:add");
 };
 
-const MultipleSelect = ({
-  options,
+const MultipleSelectAgentsAsync = ({
   getValues,
   setValue,
   name,
@@ -39,6 +42,26 @@ const MultipleSelect = ({
 }) => {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState({});
+  const { data: options, isLoading } = useAgents({
+    page: 1,
+    limit: 10,
+    filters,
+  });
+
+  const handleSearch = useDebouncedCallback(() => {
+    if (query.length > 0) {
+      setFilters({
+        name: query,
+      });
+    } else {
+      setFilters({});
+    }
+  }, 500);
+
+  useEffect(() => {
+    handleSearch();
+  }, [query]);
 
   const handleSelect = (option) => {
     const array = getValues(name);
@@ -60,15 +83,6 @@ const MultipleSelect = ({
     const updatedResponsible = getValues(name).filter((res) => res.id !== id);
     setValue(name, updatedResponsible, { shouldValidate: true });
   };
-
-  const filterData =
-    query === ""
-      ? options
-      : options.filter((opt) => {
-          return `${opt.username} ${opt.name}`
-            .toLowerCase()
-            .includes(query.toLowerCase());
-        });
 
   return (
     <div className="w-full">
@@ -135,43 +149,47 @@ const MultipleSelect = ({
                 border
               />
             </div>
-            {filterData?.length === 0 && query !== "" ? (
+            {isLoading && (
+              <div className="w-full h-[50px] flex justify-center items-center">
+                <LoadingSpinnerSmall />
+              </div>
+            )}
+            {options?.items?.length === 0 && query !== "" && !isLoading ? (
               <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                 {t("common:not-found")}
               </div>
             ) : (
-              filterData &&
-              filterData.map((option) => (
+              options?.items &&
+              options?.items?.map((option) => (
                 <MenuItem
                   as="div"
                   key={option.id}
-                  className={`flex items-center px-4 py-2 text-sm cursor-pointer rounded-sm ${
-                    getValues(name) &&
-                    getValues(name).some((res) => res.id === option.id)
-                      ? "bg-primary"
-                      : "hover:bg-primary/10"
-                  }`}
+                  className={({ active }) =>
+                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 ${
+                      active ? "bg-primary text-white" : "text-gray-900"
+                    }`
+                  }
                   onClick={() => handleSelect(option)}
+                  disabled={option.disabled}
                 >
-                  {option.avatar && (
-                    <Image
-                      src={option.avatar}
-                      width={100}
-                      height={100}
-                      alt={`${option.name} avatar`}
-                      className="w-6 h-6 rounded-full mr-2"
-                    />
-                  )}
                   <span
-                    className={`text-xs ${
+                    className={`block truncate pl-6 ${
                       getValues(name) &&
                       getValues(name).some((res) => res.id === option.id)
-                        ? "text-white"
-                        : "text-black"
+                        ? "font-medium"
+                        : "font-normal"
                     }`}
                   >
-                    {option.name || option.username}
+                    {option.name}
                   </span>
+                  {getValues(name) &&
+                  getValues(name).some((res) => res.id === option.id) ? (
+                    <span
+                      className={`absolute inset-y-0 left-0 flex items-center pl-2 text-primary`}
+                    >
+                      <CheckIcon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                  ) : null}
                 </MenuItem>
               ))
             )}
@@ -182,4 +200,4 @@ const MultipleSelect = ({
     </div>
   );
 };
-export default MultipleSelect;
+export default MultipleSelectAgentsAsync;

@@ -26,7 +26,11 @@ const ButtonAdd = () => {
     { name: "Programación", onclick: () => setIsOpenSchedule(true) },
     { name: "Reembolso", onclick: () => setIsOpenRefunds(true) },
     { name: "Renovación", onclick: () => setIsOpenRenovation(true) },
-    { name: "Rescate de fondos", onclick: () => setIsOpenFundRescue(true) },
+    {
+      name: "Rescate de fondos",
+      onclick: () => setIsOpenFundRescue(true),
+      disabled: true,
+    },
     { name: "Siniestro", onclick: () => setIsOpenClaim(true) },
     { name: "Versión", onclick: () => setIsOpenVersion(true) },
   ];

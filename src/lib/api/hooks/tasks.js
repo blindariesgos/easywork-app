@@ -76,6 +76,16 @@ export const useTaskComments = (id) => {
   };
 };
 
+export const useComments = (urlBase, id) => {
+  const { data, error, isLoading } = useSWR(`${urlBase}${id}`, fetcher);
+
+  return {
+    comments: data,
+    isLoading,
+    isError: error,
+  };
+};
+
 export const useTaskContactsPolizas = () => {
   const { data, error, isLoading } = useSWR(
     `/tools/tasks/helpers/contacts_polizas`,

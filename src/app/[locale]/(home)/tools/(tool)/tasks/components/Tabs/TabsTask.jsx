@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Tab, TabList, TabGroup, TabPanels, TabPanel } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
-import TabComment from "./TabComment";
+import TabComment from "@/src/components/comments/Comments";
 import TabTableHistory from "./TabTableHistory";
 import TabTableTime from "./TabTableTime";
 import TabTableObjections from "./TabTableObjections";

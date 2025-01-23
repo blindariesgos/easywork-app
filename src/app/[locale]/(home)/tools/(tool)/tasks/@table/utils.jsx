@@ -61,7 +61,7 @@ export const renderCellContent = (
       );
     case "deadline":
       return taskValue ? (
-        <div className="flex">
+        <div className="flex justify-center">
           <span
             className={clsx("p-1 px-2 rounded-full text-sm w-auto", {
               "bg-red-200 text-red-900":
@@ -82,7 +82,7 @@ export const renderCellContent = (
           </span>
         </div>
       ) : (
-        <div className="flex">
+        <div className="flex justify-center">
           <span
             className={clsx("p-1 px-2  rounded-full text-sm w-auto", {
               "bg-gray-300": !task.completedTime,

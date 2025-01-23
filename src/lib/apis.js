@@ -145,7 +145,6 @@ export const getSchedulingById = async (schedulingId) => {
 
 //#region AGENTS
 export const deleteAgentById = async (agentId) => {
-  // try {
   const response = await axios().delete(`/agent-management/agents/${agentId}`);
   return response;
 };
@@ -153,10 +152,19 @@ export const deleteAgentById = async (agentId) => {
 
 //#region MEETS
 export const deleteMeetById = async (meetId) => {
-  // try {
   const response = await axios()
     .delete(`/agent-management/meetings/${meetId}`)
     .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const deleteMeetCommentAttach = async (commentId, data) => {
+  const response = await axios()
+    .delete(`/agent-management/meetings/comment/${commentId}/attachments`, {
+      data,
+    })
+    .catch((error) => ({ ...error, hasError: true }));
+  console.log(response);
   return response;
 };
 
@@ -225,6 +233,18 @@ export const getAddListConnections = async () => {
   const response = await axios().get(
     `/agent-management/agent-connections/get_add_lists`
   );
+  return response;
+};
+//#endregion
+
+//#region TASKS
+export const deleteTaskCommentAttach = async (taskCommentId, data) => {
+  const response = await axios()
+    .delete(`/tools/tasks/comment/${taskCommentId}/attachments`, {
+      data,
+    })
+    .catch((error) => ({ ...error, hasError: true }));
+  console.log(response);
   return response;
 };
 //#endregion
@@ -442,7 +462,7 @@ export const convertToSubtaskOf = async (taskId, parentId) => {
   return response;
 };
 
-export const postComment = async (body, id) => {
+export const postComment = async (body) => {
   const response = await axios()
     .post(`/tools/tasks/comments`, body)
     .catch((error) => ({ hasError: true, error }));
@@ -470,19 +490,8 @@ export const putLeadCancelled = async (leadId, body) => {
   return response;
 };
 
-export const deleteComment = async (commentId, id) => {
+export const deleteComment = async (commentId) => {
   const response = await axios().delete(`/tools/tasks/comments/${commentId}`);
-  revalidatePath(`/tools/tasks/task/${id}`, "page");
-  return response;
-};
-
-export const deleteTaskCommentAttach = async (taskCommentId, data) => {
-  const response = await axios()
-    .delete(`/tools/tasks/comment/${taskCommentId}/attachments`, {
-      data,
-    })
-    .catch((error) => ({ ...error, hasError: true }));
-  console.log(response);
   return response;
 };
 
@@ -493,25 +502,19 @@ export const deleteMeetComment = async (commentId) => {
   return response;
 };
 
-export const putComment = async (commentId, body, taskId) => {
-  console.log("Actualizando comentario", commentId, body, taskId);
+export const putComment = async (commentId, body) => {
   const response = await axios().put(
     `/tools/tasks/comments/${commentId}`,
     body
   );
-  console.log("paso por acaaaaa 2", response);
-
-  // revalidatePath(`/tools/tasks/task/${taskId}`, "page");
   return response;
 };
 
-export const putMeetComment = async (commentId, body, meetId) => {
-  console.log("Actualizando comentario", commentId, body, meetId);
+export const putMeetComment = async (commentId, body) => {
   const response = await axios().put(
     `/agent-management/meetings/comments/${commentId}`,
     body
   );
-  // revalidatePath(`/tools/tasks/task/${meetId}`, "page");
   return response;
 };
 

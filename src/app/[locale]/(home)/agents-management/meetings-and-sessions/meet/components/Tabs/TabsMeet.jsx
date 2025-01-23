@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Tab, TabList, TabGroup, TabPanels, TabPanel } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
-import TabComment from "./TabComment";
+import Comments from "@/src/components/comments/Comments";
 import { useTaskComments } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 
@@ -22,7 +22,7 @@ export default function TabsMeet({ data }) {
         name: t("tools:tasks:edit:comments"),
         qty: comments?.length || 0,
         pings: 9,
-        component: TabComment,
+        component: Comments,
       },
     });
   }, [data, t, comments]);
@@ -65,7 +65,7 @@ export default function TabsMeet({ data }) {
                   "focus:outline-none focus:ring-0"
                 )}
               >
-                <categ.component info={data} />
+                <categ.component info={data} type="meet" />
               </TabPanel>
             ))}
         </TabPanels>

@@ -390,8 +390,7 @@ export const postTask = async (body) => {
 export const postMeet = async (body) => {
   const response = await axios()
     .post(`/agent-management/meetings`, body)
-    .catch((error) => ({ hasError: true, error }));
-  // revalidatePath("/tools/tasks", "page");
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 export const putTaskId = async (id, body) => {

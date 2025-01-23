@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectAgentsAsync from "@/src/components/form/MultipleSelectAgentsAsync";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
@@ -259,20 +260,22 @@ export default function MeetEditor({ edit, copy, type }) {
         }
         mutate(`/agent-management/meetings/${edit.id}`);
         toast.success("Junta actualizada exitosamente!");
-        await mutateMeets();
+        mutateMeets();
         router.back();
       } else {
         const response = await postMeet(body);
+        console.log({ response });
         if (response.hasError) {
-          toast.error(
-            response?.error?.message ?? "Ocurrio un error al crear la junta"
-          );
+          let message = response?.message;
+          if (Array.isArray(message)) {
+            message = response?.message?.join(", ");
+          }
+          toast.error(message ?? "Ocurrio un error al crear la junta");
           setLoading(false);
-
           return;
         }
         toast.success("Junta creada exitosamente!");
-        await mutateMeets();
+        mutateMeets();
 
         if (isNewTask) {
           reset();
@@ -415,12 +418,10 @@ export default function MeetEditor({ edit, copy, type }) {
                     control={control}
                     defaultValue={[]}
                     render={({ field }) => (
-                      <MultipleSelect
+                      <MultipleSelectAgentsAsync
                         {...field}
-                        options={lists?.policies?.agentesIntermediarios || []}
                         getValues={getValues}
                         setValue={setValue}
-                        name="participants"
                         onlyOne={type != "group"}
                         error={errors.participants}
                       />

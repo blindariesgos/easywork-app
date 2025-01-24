@@ -42,8 +42,6 @@ export const useCalendar = ({ filters = {}, page = 1, limit = 15 }) => {
 
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
-  console.log(data);
-
   return {
     data,
     isLoading,

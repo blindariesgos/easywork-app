@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback } from 'react';
-import useAppContext from '@/src/context/app';
-import 'react-quill/dist/quill.snow.css';
-import ReactQuill, { Quill } from 'react-quill';
-import DropdownVisibleUsers from '@/src/components/DropdownVisibleUsers';
-// const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
 
-import ImageResize from 'quill-resize-image';
+import React, { useState, useRef, forwardRef, useImperativeHandle, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import ReactQuill, { Quill } from 'react-quill-new';
+import ImageResize from 'quill-image-resize';
+
 import { useCourses } from '../../hooks/useCourses';
 
 Quill.register('modules/resize', ImageResize);
@@ -21,7 +19,7 @@ const formats = [
   'strike',
   'blockquote',
   'list',
-  'bullet',
+  // 'bullet',
   'indent',
   'link',
   'image',
@@ -35,26 +33,62 @@ const formats = [
   'direction',
 ];
 
-const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChangeSelection, setValue, disabled = false, handleKeyDown, onDeleteImage }, ref) => {
-  const container = [
-    ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-    ['blockquote'],
-    ['link', 'image', 'video'],
-    [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-    [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-    [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-    [{ font: [] }],
-    [{ align: [] }],
-    ['clean'], // remove formatting button
-  ];
+const container = [
+  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+  ['blockquote'],
+  ['link', 'image', 'video'],
+  [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+  [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+  [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+  [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+  [{ font: [] }],
+  [{ align: [] }],
+  ['clean'], // remove formatting button
+];
 
-  const { lists } = useAppContext();
-  const localQuillRef = useRef(null); // Local ref to manage dynamic component ref
-  const [arroba, setArroba] = useState(false);
-  const [dataUsers, setDataUsers] = useState([]);
-  const [userSelected, setUserSelected] = useState(null);
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+async function base64ToFile(base64String) {
+  try {
+    const base64Parts = base64String.split(',');
+    const base64Data = base64Parts[1];
+    const mimeType = base64Parts[0].split(';')[0].split(':')[1];
+
+    if (!mimeType) {
+      throw new Error('Mime type inválido en la cadena base64.');
+    }
+
+    const res = await fetch(`data:${mimeType};base64,${base64Data}`);
+    const blob = await res.blob();
+
+    // Crear el objeto File
+    const fileName = `image.${mimeType.split('/')[1] || 'png'}`;
+    const file = new File([blob], fileName, { type: mimeType });
+    return file;
+  } catch (error) {
+    console.error('Error al convertir base64 a File:', error);
+    return null; // O lanzar el error, dependiendo de cómo quieras manejarlo
+  }
+}
+
+function replaceBase64Images(htmlString, newImageUrls) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+
+    const images = doc.querySelectorAll('img[src^="data:image/"]');
+
+    images.forEach((image, i) => {
+      if (newImageUrls[i] && image.src.startsWith('data:image/')) image.src = newImageUrls[i];
+    });
+
+    return doc.body.innerHTML;
+  } catch (error) {
+    console.error('Error al parsear o modificar el HTML:', error);
+    return htmlString;
+  }
+}
+
+const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChangeSelection, setValue, disabled = false, handleKeyDown, onDeleteImage }, ref) => {
+  const localQuillRef = useRef(null);
   const [internalImages, setInternalImages] = useState([]);
 
   const { uploadCourseImage } = useCourses();
@@ -63,19 +97,7 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
     getEditor: () => localQuillRef.current?.getEditor(),
   }));
 
-  const handleChange = (newValue, delta, source, editor) => {
-    setArroba(false);
-    const text = editor?.getText();
-    if (delta?.ops && delta.ops.length > 0) {
-      delta.ops.forEach(obj => {
-        if (obj.insert === '@') {
-          const atIndex = text?.indexOf('@');
-          const range = editor?.getBounds(atIndex);
-          setModalPosition({ x: range?.left, y: range?.bottom });
-          setArroba(true);
-        }
-      });
-    }
+  const handleChange = newValue => {
     setValue(newValue);
   };
 
@@ -89,15 +111,11 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
         imageUrls.push(srcMatch[1]);
       }
     });
-    return imageUrls.filter(imageUrl => !imageUrl.startsWith('data:image/'));
-  };
 
-  const embedImage = imageUrl => {
-    const quill = localQuillRef.current;
-    if (quill) {
-      const range = quill.getEditorSelection();
-      range && quill.getEditor().insertEmbed(range.index, 'image', imageUrl);
-    }
+    const imagesWithUrls = imageUrls.filter(imageUrl => !imageUrl.startsWith('data:image/'));
+    const base64Images = imageUrls.filter(imageUrl => imageUrl.startsWith('data:image/'));
+
+    return { imagesWithUrls, base64Images };
   };
 
   const uploadImage = useCallback(
@@ -113,6 +131,49 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
     [uploadCourseImage]
   );
 
+  const processImage = useCallback(
+    async ({ file, base64preview = true }) => {
+      const quill = localQuillRef.current;
+      if (!quill) return;
+
+      const embedImage = imageUrl => {
+        const range = quill.getEditorSelection();
+        range && quill.getEditor().insertEmbed(range.index, 'image', imageUrl);
+      };
+
+      try {
+        if (base64preview) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            embedImage(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+
+        // Add image to content view state
+        const editor = quill.getEditor();
+
+        if (editor) {
+          const fileUrl = await uploadImage(file);
+
+          if (base64preview) {
+            const images = editor.container.querySelectorAll('img');
+            images.forEach(img => {
+              const src = img.getAttribute('src');
+              if (src.startsWith('data:image/')) img.setAttribute('src', fileUrl);
+            });
+          } else {
+            embedImage(fileUrl);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error('Tenemos problemas para guardar la imagen insertada');
+      }
+    },
+    [uploadImage]
+  );
+
   const imageHandler = useCallback(() => {
     const input = document.createElement('input');
 
@@ -124,115 +185,35 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
       if (input !== null && input.files !== null) {
         const file = input.files[0];
 
-        if (file) {
-          // Insert base64 at text editor
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            embedImage(reader.result);
-          };
-          reader.readAsDataURL(file);
-
-          // Add image to content view state
-          const quill = localQuillRef.current.getEditor();
-
-          if (quill) {
-            const fileUrl = await uploadImage(file);
-            const images = quill.container.querySelectorAll('img');
-            images.forEach(img => {
-              const src = img.getAttribute('src');
-              if (src.startsWith('data:image/')) img.setAttribute('src', fileUrl);
-            });
-          }
-        }
+        if (file) processImage({ file });
       }
     };
-  }, [uploadImage]);
+  }, [processImage]);
 
-  const onChangeCustom = event => {
-    const { value } = event.target;
-    const filteredData = lists.users.filter(user => user.name.toLowerCase().includes(value.toLowerCase()));
-    setDataUsers(filteredData);
-  };
+  const handleInternalChange = async newContent => {
+    const { imagesWithUrls, base64Images } = extractImageUrls(newContent);
 
-  useEffect(() => {
-    if (lists?.users) {
-      setDataUsers(lists.users);
-    }
-  }, [lists]);
+    if (base64Images.length > 0) {
+      const files = await Promise.all(base64Images.map(base64ToFile));
+      const uploadedFiles = await Promise.all(files.map(file => uploadImage(file)));
 
-  const addUserSelected = user => {
-    const editor = localQuillRef.current?.getEditor();
-    if (editor) {
-      const quillEditor = editor;
-      const currentContents = quillEditor.getContents();
-
-      const newContent = currentContents.ops.map(op => ({
-        insert: op.insert.replace(/\n$/, '').replace('@', ''),
-        attributes: { ...op.attributes },
-      }));
-
-      quillEditor.setContents([
-        ...newContent,
-        {
-          insert: user.name,
-          attributes: {
-            color: '#86BEDF',
-            underline: true,
-            // link: `/sales/crm/contacts/contact/${user.id}?show=true&page=1`,
-          },
-        },
-        { insert: ' ' },
-      ]);
-      setUserSelected(null);
-    }
-  };
-
-  const handleInternalChange = (newContent, delta, source, editor) => {
-    // Actualizar el estado de imágenes
-
-    const currentImages = extractImageUrls(newContent);
-
-    // console.log('🚀 ~ handleInternalChange ~ currentImages:', currentImages);
-    // console.log('🚀 ~ handleInternalChange ~ internalImages:', internalImages);
-
-    const removedImages = internalImages.filter(img => !currentImages.includes(img));
-    if (removedImages.length > 0) {
-      console.log('🚀 ~ handleInternalChange ~ removedImages:', removedImages);
-      onDeleteImage(removedImages);
+      newContent = replaceBase64Images(newContent, uploadedFiles);
     }
 
-    setInternalImages(currentImages);
+    const removedImages = internalImages.filter(img => !imagesWithUrls.includes(img));
+    if (removedImages.length > 0) onDeleteImage(removedImages);
+
+    setInternalImages(imagesWithUrls);
 
     if (onChange) {
-      onChange(newContent, delta, source, editor);
+      onChange(newContent);
     } else if (handleChange) {
-      handleChange(newContent, delta, source, editor);
+      handleChange(newContent);
     }
   };
 
-  useEffect(() => {
-    if (userSelected) {
-      addUserSelected(userSelected.username);
-    }
-  }, [userSelected]);
-
-  // useEffect(() => {
-  //   if (localQuillRef.current?.lastDeltaChangeSet?.ops[1]?.delete === 1) {
-  //     const currentImages = extractImageUrls(value);
-
-  //     // Detectar imágenes eliminadas
-  //     const removedImages = internalImages.filter(img => !currentImages.includes(img));
-  //     if (removedImages.length > 0) {
-  //       console.log(removedImages);
-  //       onDeleteImage(removedImages);
-  //     }
-  //   }
-  // }, [localQuillRef.current?.lastDeltaChangeSet?.ops[1]?.delete]);
-
-  // console.log(internalImages);
-
   return (
-    <div className="w-full relative">
+    <div className="relative">
       <ReactQuill
         ref={localQuillRef}
         value={value}
@@ -240,9 +221,9 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
         modules={{
           toolbar: {
             container,
-            handlers: {
-              image: imageHandler,
-            },
+            // handlers: {
+            //   image: imageHandler,
+            // },
           },
           resize: {
             locale: {},
@@ -255,18 +236,6 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
         readOnly={disabled}
         onKeyDown={handleKeyDown}
       />
-      {arroba && (
-        <DropdownVisibleUsers
-          mentionButtonRef={null}
-          prueba={ref}
-          dataUsers={dataUsers}
-          modalPosition={modalPosition}
-          onChangeCustom={onChangeCustom}
-          setUserSelected={addUserSelected}
-          userSelected={userSelected}
-          setDropdownVisible={setArroba}
-        />
-      )}
     </div>
   );
 });

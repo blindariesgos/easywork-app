@@ -82,7 +82,7 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-2 ">
-        <DialogPanel className="min-w-96 space-y-8  p-6 rounded-xl bg-gray-100">
+        <DialogPanel className="min-w-96 md:w-[600px] space-y-8  p-6 rounded-xl bg-gray-100">
           <DialogTitle className="font-bold">Agregar curso</DialogTitle>
 
           <form action={handleSubmit(onSubmit)}>
@@ -106,7 +106,7 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
                   disabled={loading}
                 />
               </div>
-              <div className="w-full mt-4 bg-white rounded flex justify-between items-center gap-10 p-4">
+              <div className="w-full mt-4 bg-white rounded flex justify-around items-center gap-10 p-4">
                 <div>
                   <input
                     type="checkbox"

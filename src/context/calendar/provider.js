@@ -8,20 +8,21 @@ import { useCalendar } from "../../lib/api/hooks/calendar";
 import { policies } from "./mockups";
 
 export default function CalendarContextProvider({ children }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
-    limit: 5,
+    limit: 20, // Ajusta este valor para controlar cuántos eventos se muestran por página.
     orderBy: "name",
     order: "DESC"
-  })
-  const { lists } = useAppContext()
-  const [filters, setFilters] = useState({})
-  const { data, isLoading, isError, mutate } = useCalendar({ config, filters })
-  const [filterFields, setFilterFields] = useState()
+  });
+  const { lists } = useAppContext();
+  const [filters, setFilters] = useState({});
+  const { data, isLoading, isError, mutate } = useCalendar({ config, filters });
+  const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const [displayFilters, setDisplayFilters] = useState({})
-  const [events, setEvents] = useState()
+  const [displayFilters, setDisplayFilters] = useState({});
+  const [events, setEvents] = useState();
+
   const defaultFilterFields = [
     {
       id: 0,
@@ -38,27 +39,28 @@ export default function CalendarContextProvider({ children }) {
       check: true,
       code: "createdAt",
     },
-  ]
+  ];
+
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
       [key]: value
-    }
-    if (value == config.orderBy) {
+    };
+    if (value === config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy
+        order: value !== config.orderBy
           ? "DESC"
           : config.order === "ASC"
             ? "DESC"
             : "ASC"
-      }
+      };
     }
-
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   useEffect(() => {
+    console.log(data);
     setEvents(
       (data &&
         data.items &&
@@ -70,8 +72,8 @@ export default function CalendarContextProvider({ children }) {
           color: event.color,
           id: event.id
         }))) ?? []
-    )
-  }, [data])
+    );
+  }, [data]);
 
   useEffect(() => {
     setFilterFields([
@@ -105,36 +107,27 @@ export default function CalendarContextProvider({ children }) {
         check: false,
         code: "rfc",
       },
-    ])
-  }, [lists?.listContact])
+    ]);
+  }, [lists?.listContact]);
 
   useEffect(() => {
-    handleChangeConfig("page", 1)
-  }, [config.limit])
-
-  // useEffect(() => {
-  //   if (Object.keys(filters).length == 0 && filterFields) {
-  //     setFilterFields(filterFields?.map(field => ({
-  //       ...field,
-  //       check: field.code === "role"
-  //     })))
-  //   }
-  // }, [filters])
+    handleChangeConfig("page", 1);
+  }, [config.limit]);
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
+    setFilters(newFilters);
+    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName));
     const newFilterFields = filterFields.map(field => {
       return filterName !== field.code
         ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+        : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
@@ -142,9 +135,9 @@ export default function CalendarContextProvider({ children }) {
       isLoading,
       isError,
       mutate,
-      page: 1, //config.page,
+      page: config.page, // Usa la configuración de la paginación
       setPage: (value) => handleChangeConfig("page", value),
-      limit: 5, // config.limit,
+      limit: config.limit, // Usa la configuración del límite
       setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
       setOrderBy: (value) => handleChangeConfig("orderBy", value),
@@ -175,5 +168,9 @@ export default function CalendarContextProvider({ children }) {
     ]
   );
 
-  return <CalendarContext.Provider value={values}>{children}</CalendarContext.Provider>;
+  return (
+    <CalendarContext.Provider value={values}>
+      {children}
+    </CalendarContext.Provider>
+  );
 }

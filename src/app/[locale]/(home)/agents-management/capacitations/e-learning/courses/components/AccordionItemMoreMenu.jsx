@@ -28,7 +28,7 @@ export const AccordionItemMoreMenu = ({ itemType, actions }) => {
 
   return (
     <Menu as="div" className="w-auto">
-      <MenuButton className="align-middle">
+      <MenuButton className="align-middle" onClick={e => e.stopPropagation()}>
         <EllipsisHorizontalIcon className="w-8 text-gray-400" aria-hidden="true" />
       </MenuButton>
 
@@ -36,7 +36,13 @@ export const AccordionItemMoreMenu = ({ itemType, actions }) => {
         {menuItems[itemType]?.map(
           item =>
             hasPermission(item.permission) && (
-              <MenuItem key={item.id} onClick={actions[item.id]}>
+              <MenuItem
+                key={item.id}
+                onClick={e => {
+                  e.stopPropagation();
+                  actions[item.id]();
+                }}
+              >
                 <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">{item.label}</div>
               </MenuItem>
             )

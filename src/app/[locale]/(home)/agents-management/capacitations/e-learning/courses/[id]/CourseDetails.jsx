@@ -31,7 +31,7 @@ export const CourseDetails = ({ courseId }) => {
   const { getCourseFolder } = useCourseFolders();
   const { getCourseFolderPage, toggleCourseFolderPageAsCompleted } = useCourseFolderPages();
 
-  const [openSections, setOpenSections] = useState([]);
+  const [closedSections, setClosedSections] = useState([]);
   const [course, setCourse] = useState(null);
   const [selectedContent, setSelectedContent] = useState({ item: null, type: '', courseFolderIndex: 0, pageIndex: 0 });
   const hasFolders = course?.folders?.length > 0;
@@ -43,7 +43,7 @@ export const CourseDetails = ({ courseId }) => {
   const [contentDetails, setContentDetails] = useState(null);
 
   const toggleSection = section => {
-    setOpenSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
+    setClosedSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
   };
 
   const editCourse = () => {
@@ -83,6 +83,15 @@ export const CourseDetails = ({ courseId }) => {
     if (!hasFolders) return;
   };
 
+  const markAsCompleted = () => {
+    const toggled = !selectedContent.item.isCompleted;
+    toggleCourseFolderPageAsCompleted(contentDetails.id, toggled).then(() => {
+      toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+
+      fetchModuleDetails().then(() => fetchContentDetails());
+    });
+  };
+
   const fetchModuleDetails = useCallback(async () => {
     setFetchingModuleDetails(true);
 
@@ -93,7 +102,7 @@ export const CourseDetails = ({ courseId }) => {
       setCourse(courseFetched);
 
       if (courseFetched.folders?.length > 0) {
-        setOpenSections([courseFetched.folders[0].name]);
+        // setClosedSections([courseFetched.folders[0].name]);
 
         if (courseFetched.folders[0] && courseFetched.folders[0].pages.length > 0) setSelectedContent({ item: courseFetched.folders[0].pages[0], type: 'page', index: 0 });
       }
@@ -151,9 +160,9 @@ export const CourseDetails = ({ courseId }) => {
     );
 
   return (
-    <div className="py-4">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 pb-10">
-        <div className="bg-gray-100 rounded-xl border border-gray-100">
+    <div className="pt-2 pb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
+        <div className="bg-gray-100 rounded-xl border border-gray-100 overflow-y-auto h-[71vh] [&::-webkit-scrollbar]:hidden">
           <div className="rounded-xl border-easy-400 bg-easy-50 p-4" style={{ borderWidth: '1px', borderStyle: 'solid' }}>
             <div className="flex items-center justify-between">
               <span className="text-gray-900 font-bold text-lg">{course.name}</span>
@@ -165,33 +174,36 @@ export const CourseDetails = ({ courseId }) => {
           </div>
 
           {hasFolders &&
-            course.folders.map((courseFolder, index) => (
+            course.folders.map((courseFolder, index, self) => (
               <CourseFolder
                 key={courseFolder.id}
                 courseFolder={courseFolder}
-                isOpen={openSections.includes(courseFolder.name)}
+                isOpen={!closedSections.includes(courseFolder.name)}
                 onToggle={() => toggleSection(courseFolder.name)}
                 // onSelectLesson={() => setSelectedContent({ item: courseFolder, type: 'folder', courseFolderIndex: index, pageIndex: 0 })}
                 onSelectPage={(page, i) => setSelectedContent({ item: page, type: 'page', courseFolderIndex: index, pageIndex: i })}
                 refetchContentDetails={fetchContentDetails}
                 refetchAccordionItems={fetchModuleDetails}
+                folders={self}
               />
             ))}
 
           {hasPermission(LMS_PERMISSIONS.addFolder) && <NewCourseFolderButton onClick={() => setIsNewContentFormOpen(true)} />}
         </div>
 
-        <div>
-          {loading ? (
-            <div className="h-48 w-full bg-white rounded-xl">
-              <LoadingSpinnerSmall />
-            </div>
-          ) : (
-            contentDetails && <ContentView course={course} content={contentDetails} contentType={selectedContent.type} refetchAccordionItems={fetchModuleDetails} />
-          )}
+        <div className="h-[71vh] relative">
+          <div className="max-h-[71vh] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+            {loading ? (
+              <div className="h-48 w-full bg-white rounded-xl">
+                <LoadingSpinnerSmall />
+              </div>
+            ) : (
+              contentDetails && <ContentView course={course} content={contentDetails} contentType={selectedContent.type} refetchAccordionItems={fetchModuleDetails} />
+            )}
+          </div>
 
           {contentDetails && (
-            <div className="flex items-center justify-between gap-1 mt-5">
+            <div className="bg-gray-100 w-full flex items-center justify-between gap-1 absolute bottom-0 pt-5">
               <div className="flex flex-wrap gap-2">
                 <button className={`bg-blue-100 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2`} disabled={loading} onClick={goPreviousContent}>
                   <MdOutlineKeyboardArrowLeft className={`h-4 w-4 bg-gray-100 rounded-full text-black ${selectedContent.index === 0 && 'opacity-60'}`} aria-hidden="true" />
@@ -202,23 +214,13 @@ export const CourseDetails = ({ courseId }) => {
                   <MdOutlineKeyboardArrowRight className="h-4 w-4 bg-gray-100 rounded-full text-black" aria-hidden="true" />
                 </button>
               </div>
-              <div>
-                {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
-                  <button
-                    onClick={() => {
-                      const toggled = !selectedContent.item.isCompleted;
-                      toggleCourseFolderPageAsCompleted(contentDetails.id, toggled).then(() => {
-                        toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
-
-                        fetchModuleDetails().then(() => fetchContentDetails());
-                      });
-                    }}
-                    className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold`}
-                  >
+              {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
+                <div>
+                  <button onClick={markAsCompleted} className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}>
                     {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>

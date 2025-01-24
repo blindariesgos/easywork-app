@@ -11,7 +11,7 @@ export default function CalendarContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
-    limit: 20, // Ajusta este valor para controlar cuántos eventos se muestran por página.
+    limit: 20,
     orderBy: "name",
     order: "DESC"
   });

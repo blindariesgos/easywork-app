@@ -9,36 +9,18 @@ import { DeleteContentModal } from './DeleteContentModal';
 import { PaginationV2 } from '@/src/components/pagination/PaginationV2';
 
 import { useCourses } from '../hooks/useCourses';
+import { toast } from 'react-toastify';
 
 export const CoursesGrid = ({ showCreateButton = false }) => {
   const [courses, setCourses] = useState({ pagesCount: 1, count: 0, data: [] });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const { getCourses } = useCourses();
+  const { getCourses, updateOrder } = useCourses();
 
   const [isEditCreateModalOpen, setIsEditCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const courseRef = useRef(null);
-
-  const onCreateCourse = () => {
-    courseRef.current = null;
-    setIsEditCreateModalOpen(true);
-  };
-
-  const onEditCourse = course => {
-    courseRef.current = course;
-    setIsEditCreateModalOpen(true);
-  };
-
-  const onMoveCourse = course => {
-    courseRef.current = course;
-  };
-
-  const onDeleteCourse = course => {
-    courseRef.current = course;
-    setIsDeleteModalOpen(true);
-  };
 
   const fetchCourses = useCallback(async () => {
     setLoading(true);
@@ -52,6 +34,38 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
       setLoading(false);
     }
   }, [getCourses, page]);
+
+  const onCreateCourse = () => {
+    courseRef.current = null;
+    setIsEditCreateModalOpen(true);
+  };
+
+  const onEditCourse = course => {
+    courseRef.current = course;
+    setIsEditCreateModalOpen(true);
+  };
+
+  const onMoveCourse = async (course, operation) => {
+    if (!course.orders || !course.orders[0]) return;
+
+    try {
+      await updateOrder(course.orders[0].id, {
+        courseId: course.id,
+        operation,
+        order: course.orders[0].order,
+      });
+      await fetchCourses();
+
+      toast.success('Curso movido correctamente');
+    } catch (error) {
+      toast.error('Algo no ha salido bien moviendo el curso. Intente más tarde');
+    }
+  };
+
+  const onDeleteCourse = course => {
+    courseRef.current = course;
+    setIsDeleteModalOpen(true);
+  };
 
   useEffect(() => {
     fetchCourses();
@@ -74,8 +88,16 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
             </div>
           )}
 
-          {courses.data.map(course => (
-            <CourseCard key={course.id} course={course} onEditCourse={onEditCourse} onMoveCourse={onMoveCourse} onDeleteCourse={onDeleteCourse} />
+          {courses.data.map((course, index, self) => (
+            <CourseCard
+              isFirstChild={index === 0}
+              isLastChild={index === self.length - 1}
+              key={course.id}
+              course={course}
+              onEditCourse={onEditCourse}
+              onMoveCourse={onMoveCourse}
+              onDeleteCourse={onDeleteCourse}
+            />
           ))}
 
           <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} onSuccess={fetchCourses} />

@@ -30,7 +30,6 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
       description: '',
       openToAll: false,
       private: false,
-      openAfterNDays: false,
       isPublished: false,
       onlyDeleteImage: false,
       coverPhoto: null,
@@ -39,10 +38,7 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
 
   const values = watch();
 
-  const onCloseModal = () => {
-    reset();
-    setIsOpen(false);
-  };
+  const onCloseModal = () => setIsOpen(false);
 
   const onSubmit = async values => {
     setLoading(true);
@@ -70,32 +66,16 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
   };
 
   useEffect(() => {
-    if (course)
-      reset({
-        name: course ? course.name : '',
-        description: course ? course.description : '',
-        openToAll: course ? course.openToAll : false,
-        private: course ? course.private : false,
-        openAfterNDays: course ? course.openAfterNDays : false,
-        isPublished: course ? course.isPublished : false,
-        onlyDeleteImage: false,
-        coverPhoto: null,
-      });
+    reset({
+      name: course ? course.name : '',
+      description: course ? course.description : '',
+      openToAll: course ? course.openToAll : false,
+      private: course ? course.private : false,
+      isPublished: course ? course.isPublished : false,
+      onlyDeleteImage: false,
+      coverPhoto: null,
+    });
   }, [course, reset]);
-
-  useEffect(() => {
-    if (!isOpen)
-      reset({
-        name: '',
-        description: '',
-        openToAll: false,
-        private: false,
-        openAfterNDays: false,
-        isPublished: false,
-        onlyDeleteImage: false,
-        coverPhoto: null,
-      });
-  }, [isOpen, reset]);
 
   return (
     <Dialog open={isOpen} onClose={onCloseModal} className="relative z-50">
@@ -146,16 +126,6 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
                     defaultChecked={values.private}
                   />
                   Privado
-                </div>
-                <div>
-                  <input
-                    type="checkbox"
-                    className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                    onChange={e => setValue('openAfterNDays', e.target.checked)}
-                    disabled={loading}
-                    defaultChecked={values.openAfterNDays}
-                  />
-                  Desbloquear después de x días
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import { EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
 import { useUserPermissions } from '../../hooks/useUserPermissions';
 import { LMS_PERMISSIONS } from '../../constants';
 
-export const CourseCardMoreMenu = ({ onEditCourse, onMoveCourse, onDeleteCourse }) => {
+export const CourseCardMoreMenu = ({ isFirstChild, isLastChild, onEditCourse, onMoveCourse, onDeleteCourse }) => {
   const { hasPermission } = useUserPermissions();
 
   return (
@@ -23,9 +23,14 @@ export const CourseCardMoreMenu = ({ onEditCourse, onMoveCourse, onDeleteCourse 
             <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Editar</div>
           </MenuItem>
         )}
-        {hasPermission(LMS_PERMISSIONS.coursesMoreMenuMove) && (
-          <MenuItem onClick={onMoveCourse}>
-            <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Mover</div>
+        {hasPermission(LMS_PERMISSIONS.coursesMoreMenuMove) && !isLastChild && (
+          <MenuItem onClick={() => onMoveCourse('up')}>
+            <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Mover a la derecha</div>
+          </MenuItem>
+        )}
+        {hasPermission(LMS_PERMISSIONS.coursesMoreMenuMove) && !isFirstChild && (
+          <MenuItem onClick={() => onMoveCourse('down')}>
+            <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Mover a la izquierda</div>
           </MenuItem>
         )}
         {hasPermission(LMS_PERMISSIONS.coursesMoreMenuDelete) && (

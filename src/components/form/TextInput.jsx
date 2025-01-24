@@ -13,11 +13,14 @@ function TextInput({
   value,
   multiple,
   border,
+  className,
   ...props
 }) {
   const registerProps = register && register(name);
   return (
-    <div className="flex flex-col gap-y-1 w-full">
+    <div
+      className={`flex flex-col gap-y-1  ${className ? className : "w-full"}`}
+    >
       {label && (
         <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
           {label}

@@ -20,7 +20,7 @@ import moment from "moment";
 import { useMemo, Fragment, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import DeleteModal from "@/src/components/modals/DeleteItem";
-import { deletePolicyById } from "@/src/lib/apis";
+import { deleteLeadById, deletePolicyById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { formatToCurrency } from "@/src/utils/formatters";

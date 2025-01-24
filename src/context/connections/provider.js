@@ -31,9 +31,9 @@ export default function ConnectionsContextProvider({
     {
       id: 1,
       name: "Agente",
-      type: "input",
+      type: "select-agent",
       check: true,
-      code: "search",
+      code: "agentId",
     },
     {
       id: 2,
@@ -45,18 +45,25 @@ export default function ConnectionsContextProvider({
     },
     {
       id: 3,
-      name: "Gerente de Desarrollo",
+      name: t("agentsmanagement:accompaniments:agent:manager"),
       type: "dropdown",
-      check: false,
+      check: true,
       code: "developmentManagerId",
       options: lists?.users ?? [],
     },
     {
       id: 4,
-      name: t("leads:filters:created"),
-      type: "date",
+      name: t("agentsmanagement:recruitment:init-date"),
+      type: "date-short",
       check: true,
-      code: "createdAt",
+      code: "connectionStartDate",
+    },
+    {
+      id: 5,
+      name: t("agentsmanagement:recruitment:end-date"),
+      type: "date-short",
+      check: true,
+      code: "connectionEndDate",
     },
   ];
   const handleChangeConfig = (key, value) => {
@@ -84,9 +91,9 @@ export default function ConnectionsContextProvider({
       {
         id: 1,
         name: "Agente",
-        type: "input",
+        type: "select-agent",
         check: true,
-        code: "search",
+        code: "agentId",
       },
       {
         id: 2,
@@ -100,30 +107,37 @@ export default function ConnectionsContextProvider({
         id: 3,
         name: t("agentsmanagement:accompaniments:agent:manager"),
         type: "dropdown",
-        check: false,
+        check: true,
         code: "developmentManagerId",
-        options: lists?.users,
+        options: lists?.users ?? [],
       },
       {
         id: 4,
-        name: t("leads:filters:created"),
+        name: t("agentsmanagement:recruitment:init-date"),
         type: "date",
         check: true,
-        code: "createdAt",
+        code: "connectionStartDate",
       },
       {
         id: 5,
+        name: t("agentsmanagement:recruitment:end-date"),
+        type: "date",
+        check: true,
+        code: "connectionEndDate",
+      },
+      {
+        id: 6,
         name: t("agentsmanagement:accompaniments:agent:observer"),
         type: "dropdown",
         check: false,
         code: "observerId",
-        options: lists?.users,
+        options: lists?.users ?? [],
       },
       {
-        id: 6,
-        name: "Proceso cerrado",
+        id: 7,
+        name: t("agentsmanagement:conections:table:proccess"),
         type: "select",
-        check: true,
+        check: false,
         code: "closed",
         options: [
           {
@@ -135,6 +149,14 @@ export default function ConnectionsContextProvider({
             id: "false",
           },
         ],
+      },
+      {
+        id: 8,
+        name: t("agentsmanagement:conections:source"),
+        type: "dropdown",
+        check: false,
+        code: "sourceId",
+        options: lists?.connections?.agentSources ?? [],
       },
     ]);
   }, [lists]);

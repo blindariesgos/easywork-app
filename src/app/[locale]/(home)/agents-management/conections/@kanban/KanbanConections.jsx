@@ -1,22 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Column from "./components/Column";
-import {
-  getLeadCancelReazon,
-  putLeadStage,
-  putPoliza,
-  updateAgentRecruitment,
-  updateLead,
-} from "@/src/lib/apis";
+import { updateAgentConnection } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Card from "./components/Card";
-import useAppContext from "@/src/context/app";
-import { recruitmentStages } from "@/src/utils/stages";
+import { connectionsStage } from "@/src/utils/stages";
 
 const KanbanLeads = () => {
   const [isLoading, setLoading] = useState(false);
-  const { lists } = useAppContext();
   const [isDragging, setIsDragging] = useState(false);
   const [activeId, setActiveId] = useState(null);
   const [itemDrag, setItemDrag] = useState();
@@ -28,12 +20,10 @@ const KanbanLeads = () => {
     setLoading(true);
 
     const body = {
-      agentRecruitmentStageId: result?.over?.id,
+      agentConnectionStageId: result?.over?.id,
     };
 
-    console.log(result?.active);
-
-    const response = await updateAgentRecruitment(body, result?.active?.id);
+    const response = await updateAgentConnection(body, result?.active?.id);
 
     if (response.hasError) {
       const message = Array.isArray(response.message)
@@ -61,11 +51,11 @@ const KanbanLeads = () => {
 
   return (
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-      {(isLoading || !recruitmentStages) && <LoaderSpinner />}
+      {(isLoading || !connectionsStage) && <LoaderSpinner />}
       <div className="overflow-x-auto">
         <div className="flex gap-2 pt-2 w-max min-h-[60vh]">
-          {recruitmentStages &&
-            recruitmentStages.map((column) => (
+          {connectionsStage &&
+            connectionsStage.map((column) => (
               <Column
                 key={column.id}
                 {...column}

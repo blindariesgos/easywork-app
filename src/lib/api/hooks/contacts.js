@@ -62,6 +62,10 @@ const getActivityPath = (cmrtype) => {
       return "/agent-management/agents";
     case "receipt":
       return "/sales/crm/polizas/receipts";
+    case "poliza_reimbursement":
+      return "/operations/reimbursements";
+    case "poliza_scheduling":
+      return "/operations/schedulings";
     default:
       return "/sales/crm/contacts";
   }

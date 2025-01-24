@@ -20,10 +20,11 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
     if (params.get("disconnect") === "true") {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${session?.data?.user?.sub}/${selectOauth?.id}`
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${selectOauth?.id}`
         )
         .then((res) => {
-          setListCalendars(res.data);
+          console.log(res.data);
+          setListCalendars(res.data.calendars);
         })
         .catch((err) => {
           console.log(err);

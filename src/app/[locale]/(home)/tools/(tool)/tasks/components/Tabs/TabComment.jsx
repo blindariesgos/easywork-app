@@ -8,6 +8,10 @@ import {
   postComment,
   putComment,
   deleteTaskCommentAttach,
+  putMeetComment,
+  postMeetComment,
+  deleteMeetComment,
+  deleteMeetCommentAttach,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
@@ -16,7 +20,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { useTaskComments } from "@/src/lib/api/hooks/tasks";
+import { useComments, useTaskComments } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner, {
   LoadingSpinnerSmall,
 } from "@/src/components/LoaderSpinner";
@@ -33,8 +37,36 @@ import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 
-export default function TabComment({ info }) {
-  const { comments, isLoading, isError } = useTaskComments(info.id);
+const urls = {
+  put: {
+    meet: (commentId, body, meetId) => putMeetComment(commentId, body, meetId),
+    task: (commentId, body, taskId) => putComment(commentId, body, taskId),
+  },
+  post: {
+    meet: (body) => postMeetComment(body),
+    task: (body) => postComment(body),
+  },
+  get: {
+    meet: "/tools/tasks/comments/task/",
+    task: "/agent-management/meetings/comments/meet/",
+  },
+  delete: {
+    meet: (commentId) => deleteMeetComment(commentId),
+    task: (commentId) => deleteComment(commentId),
+  },
+  deleteAttach: {
+    meet: (commentId, body) => deleteMeetCommentAttach(commentId, body),
+    task: (commentId, body) => deleteTaskCommentAttach(commentId, body),
+  },
+};
+
+const types = {
+  meet: "meetingId",
+  task: "taskId",
+};
+
+export default function TabComment({ info, type = "task" }) {
+  const { comments, isLoading, isError } = useComments(urls.get[type], info.id);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const quillRef = useRef(null);
@@ -66,8 +98,7 @@ export default function TabComment({ info }) {
     if (quillRef.current) {
       const body = {
         comment: value,
-        isSummary: info.requireSummary,
-        taskId: info.id,
+        [types[type]]: info.id,
         fileIds: upload?.fileIds ?? [],
       };
 
@@ -78,10 +109,10 @@ export default function TabComment({ info }) {
       try {
         setDisabled(true);
         if (id) {
-          const response1 = await putComment(id, body, info.id).catch(
+          const responseUpdate = await urls.put[type](id, body, info.id).catch(
             (error) => ({ hasError: true, ...error })
           );
-          if (response1?.hasError) {
+          if (responseUpdate?.hasError) {
             toast.error(
               "Se ha producido un error al actualizar el comentario, inténtelo de nuevo más tarde."
             );
@@ -89,8 +120,8 @@ export default function TabComment({ info }) {
             return;
           }
         } else {
-          const response = await postComment(body, info.id);
-          if (response.hasError) {
+          const responsePost = await urls.post[type](body, info.id);
+          if (responsePost.hasError) {
             toast.error(
               "Se ha producido un error al crear el comentario, inténtelo de nuevo más tarde."
             );
@@ -99,7 +130,7 @@ export default function TabComment({ info }) {
           }
         }
 
-        await mutate(`/tools/tasks/comments/task/${info.id}`);
+        await mutate(`${urls.get[type]}${info.id}`);
         setDisabled(false);
         setEditComment({});
         setValueText("");
@@ -142,7 +173,7 @@ export default function TabComment({ info }) {
   const getDeleteComment = async (id) => {
     try {
       setDisabled(true);
-      await deleteComment(id, info.id);
+      await urls.delete[type](id);
       setDisabled(false);
     } catch (error) {
       handleApiError(error.message);
@@ -150,19 +181,19 @@ export default function TabComment({ info }) {
     }
   };
 
-  const handleDeleteFile = async (fileId, taskCommentId) => {
+  const handleDeleteFile = async (fileId, commentId) => {
     setLoading(true);
     const body = {
       attachmentIds: [fileId],
     };
-    const response = await deleteTaskCommentAttach(taskCommentId, body);
+    const response = await urls.deleteAttach[type](commentId, body);
     if (response.hasError) {
       toast.error("Ocurrio un error al eliminar el archivo adjunto");
       setLoading(false);
       return;
     }
 
-    mutate(`/tools/tasks/comments/task/${info.id}`);
+    mutate(`${urls.get[type]}${info.id}`);
     setLoading(false);
     toast.success("Adjunto eliminado con exito");
   };
@@ -235,7 +266,6 @@ export default function TabComment({ info }) {
               {openFiles && (
                 <UploadDocumentsInComment
                   handleChangeFiles={(data) => {
-                    console.log({ upload });
                     setUpload({
                       fileIds: [...upload.fileIds, ...data.fileIds],
                       files: [...upload.files, ...data.files],
@@ -251,7 +281,6 @@ export default function TabComment({ info }) {
                   className="px-3 py-2"
                   onclick={() => {
                     setIsAddComment(false);
-                    // setValueText("");
                     setUpload({
                       fileIds: [],
                       files: [],

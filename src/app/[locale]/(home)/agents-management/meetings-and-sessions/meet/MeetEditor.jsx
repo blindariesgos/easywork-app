@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectAgentsAsync from "@/src/components/form/MultipleSelectAgentsAsync";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import InputDateV2 from "@/src/components/form/InputDateV2";
 import { FaCalendarDays } from "react-icons/fa6";
@@ -33,17 +34,7 @@ import { useSWRConfig } from "swr";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 import useMeetingsContext from "@/src/context/meetings";
-
-const schemaInputs = yup.object().shape({
-  title: yup.string().required(),
-  responsible: yup.string(),
-  createdBy: yup.array(),
-  participants: yup.array(),
-  observers: yup.array(),
-  crm: yup.array(),
-  listField: yup.array(),
-  type: yup.string(),
-});
+import TextInput from "@/src/components/form/TextInput";
 
 export default function MeetEditor({ edit, copy, type }) {
   const { data: session } = useSession();
@@ -61,6 +52,32 @@ export default function MeetEditor({ edit, copy, type }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { mutate: mutateMeets } = useMeetingsContext();
+
+  const schemaInputs = yup.object().shape({
+    title: yup.string().required(),
+    responsible: yup.string(),
+    createdBy: yup.array(),
+    participants: yup.array(),
+    observers: yup.array(),
+    crm: yup.array(),
+    listField: yup.array(),
+    type: yup.string(),
+    queues: yup.object().shape({
+      seconds: yup
+        .number(t("common:validations:number"))
+        .min(0, t("common:validations:min-number", { min: 0 }))
+        .max(60, t("common:validations:max-number", { max: 60 })),
+      hours: yup
+        .number(t("common:validations:number"))
+        .min(0, t("common:validations:min-number", { min: 0 }))
+        .max(60, t("common:validations:max-number", { max: 60 })),
+      minutes: yup
+        .number(t("common:validations:number"))
+        .min(0, t("common:validations:min-number", { min: 0 }))
+        .max(60, t("common:validations:max-number", { max: 60 })),
+    }),
+  });
+
   const {
     register,
     handleSubmit,
@@ -80,6 +97,13 @@ export default function MeetEditor({ edit, copy, type }) {
       crm: formatCrmData(edit?.crm ?? copy?.crm ?? []),
       createdBy: edit ? [edit?.createdBy] : [],
       type: type,
+      queues: {
+        hours: edit?.duration?.length == 8 ? edit?.duration?.split(":")[0] : 0,
+        minutes:
+          edit?.duration?.length == 8 ? edit?.duration?.split(":")[1] : 0,
+        seconds:
+          edit?.duration?.length == 8 ? edit?.duration?.split(":")[2] : 0,
+      },
     },
     resolver: yupResolver(schemaInputs),
   });
@@ -236,20 +260,22 @@ export default function MeetEditor({ edit, copy, type }) {
         }
         mutate(`/agent-management/meetings/${edit.id}`);
         toast.success("Junta actualizada exitosamente!");
-        await mutateMeets();
+        mutateMeets();
         router.back();
       } else {
         const response = await postMeet(body);
+        console.log({ response });
         if (response.hasError) {
-          toast.error(
-            response?.error?.message ?? "Ocurrio un error al crear la junta"
-          );
+          let message = response?.message;
+          if (Array.isArray(message)) {
+            message = response?.message?.join(", ");
+          }
+          toast.error(message ?? "Ocurrio un error al crear la junta");
           setLoading(false);
-
           return;
         }
         toast.success("Junta creada exitosamente!");
-        await mutateMeets();
+        mutateMeets();
 
         if (isNewTask) {
           reset();
@@ -326,7 +352,7 @@ export default function MeetEditor({ edit, copy, type }) {
                   </p>
                   <div className="w-full md:w-[40%]">
                     <CRMMultipleSelectV2
-                      getValues={getValues}
+                      watch={watch}
                       setValue={setValue}
                       name="crm"
                       error={errors.crm}
@@ -392,12 +418,10 @@ export default function MeetEditor({ edit, copy, type }) {
                     control={control}
                     defaultValue={[]}
                     render={({ field }) => (
-                      <MultipleSelect
+                      <MultipleSelectAgentsAsync
                         {...field}
-                        options={lists?.policies?.agentesIntermediarios || []}
                         getValues={getValues}
                         setValue={setValue}
-                        name="participants"
                         onlyOne={type != "group"}
                         error={errors.participants}
                       />
@@ -405,29 +429,6 @@ export default function MeetEditor({ edit, copy, type }) {
                   />
                 </div>
               </div>
-
-              {/* <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                <p className="text-sm text-left w-full md:w-36">
-                  {t("tools:tasks:new:observers")}
-                </p>
-                <div className="w-full md:w-[40%]">
-                  <Controller
-                    name="observers"
-                    control={control}
-                    defaultValue={[]}
-                    render={({ field }) => (
-                      <MultipleSelect
-                        {...field}
-                        options={lists?.users || []}
-                        getValues={getValues}
-                        setValue={setValue}
-                        name="observers"
-                        error={errors.observers}
-                      />
-                    )}
-                  />
-                </div>
-              </div> */}
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
                 <p className="text-sm text-left w-full md:w-36">
                   {t("agentsmanagement:meetings-and-sessions:new:date")}
@@ -466,6 +467,51 @@ export default function MeetEditor({ edit, copy, type }) {
                     subtitle="Seleccionar tarea"
                     taskId={""}
                   />
+                </div>
+              </div>
+              <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("agentsmanagement:meetings-and-sessions:time")}
+                </p>
+                <div className="w-full md:w-[40%]">
+                  <div className="flex gap-1 items-center">
+                    <TextInput
+                      name="queues.hours"
+                      register={register}
+                      type="number"
+                      className="w-11"
+                    />
+                    <p className="text-xs">h</p>
+                    <TextInput
+                      name="queues.minutes"
+                      register={register}
+                      type="number"
+                      className="w-11"
+                    />
+                    <p className="text-xs">m</p>
+                    <TextInput
+                      name="queues.seconds"
+                      register={register}
+                      type="number"
+                      className="w-11"
+                    />
+                    <p className="text-xs">s</p>
+                  </div>
+                  {errors?.queues?.hours && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors?.queues?.hours?.message}
+                    </p>
+                  )}
+                  {errors?.queues?.minutes && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors?.queues?.hours?.message}
+                    </p>
+                  )}
+                  {errors?.queues?.seconds && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {errors?.queues?.hours?.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -558,6 +604,9 @@ const buildMeetBody = (
   }
   if (data.subTasks?.length) {
     body.subtasksIds = data.subTasks.map((x) => x.id);
+  }
+  if (data?.queues) {
+    body.duration = `${(+data?.queues?.hours).toString().padStart(2, "0")}:${(+data?.queues?.minutes).toString().padStart(2, "0")}:${(+data?.queues?.seconds).toString().padStart(2, "0")}`;
   }
 
   if (listField?.length) {

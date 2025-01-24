@@ -8,10 +8,10 @@ import {
 } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
-import { getAgentById, getContactId } from "@/src/lib/apis";
+import { getAgentById } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
 import { useAgents } from "@/src/lib/api/hooks/agents";
 
@@ -37,6 +37,7 @@ function AgentSelectAsync({
     limit: 10,
     filters,
   });
+
   const handleSearch = useDebouncedCallback(() => {
     if (query.length > 0) {
       setFilters({

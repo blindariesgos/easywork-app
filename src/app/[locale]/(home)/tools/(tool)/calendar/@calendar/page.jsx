@@ -24,7 +24,7 @@ import ComboBox, { ComboBoxWithElement } from "./../components/ComboBox";
 import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
 import { Controller, useForm } from "react-hook-form";
 import listPlugin from "@fullcalendar/list";
-import { XCircleIcon } from "@heroicons/react/24/outline";
+import { XCircleIcon } from "@heroicons/react/20/solid";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import { add, addHours, format, formatISO, parseISO } from "date-fns";
 import * as yup from "yup";
@@ -110,11 +110,13 @@ export default function CalendarHome({ children }) {
     setValue("startTime", format(info?.start, "yyyy-MM-dd'T'HH:mm"));
     setValue("endTime", format(info?.end, "yyyy-MM-dd'T'HH:mm"));
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+    const timezoneValue = timezones.find(
+      (timezone) => timezone.value === detectedTimezone
+    );
     if (timezoneValue) {
       setTimezone(timezoneValue);
     }
-  };  
+  };
 
   const schema = yup.object().shape({
     name: yup.string().required(),
@@ -186,6 +188,8 @@ export default function CalendarHome({ children }) {
       reminder: formatISO(reminderValue ?? startTime),
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
+      timeZone: timezone.value,
+      localization: formLocalization.name,
       color: color ?? "#141052",
       description: "<p></p>",
       availability: "Ocupado",
@@ -320,6 +324,13 @@ export default function CalendarHome({ children }) {
           as="div"
           className="relative z-50 focus:outline-none"
         >
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50"
+            aria-hidden="true"
+          ></div>
+
+          {/* Contenido del diálogo */}
           <div className="fixed inset-0 flex items-center justify-center">
             <DialogPanel
               transition
@@ -347,7 +358,7 @@ export default function CalendarHome({ children }) {
                     autoComplete="false"
                   />
                   <XCircleIcon
-                    className="w-5 h-5 ml-2 text-easywork-main"
+                    className="w-8 h-8 ml-2 text-red-500 hover:text-red-700 cursor-pointer"
                     onClick={() => close()}
                   />
                 </div>
@@ -485,7 +496,7 @@ export default function CalendarHome({ children }) {
                   </p>
                   <div className="w-full">
                     <CRMMultipleSelectV2
-                      getValues={getValues}
+                      watch={watch}
                       setValue={setValue}
                       name="crm"
                       error={errors.crm}

@@ -61,6 +61,11 @@ export default function EventDetails({ data, id }) {
   const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [reminder, setReminder] = useState({
+    name: t("tools:calendar:reminder-options:now"),
+    id: 1,
+    value: 1 * 60000,
+  });
   const [value, setValueText] = useState("<p></p>");
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -86,63 +91,69 @@ export default function EventDetails({ data, id }) {
     {
       name: t("tools:calendar:reminder-options:now"),
       id: 1,
-      value: null,
+      value: 1 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:5m"),
       id: 2,
-      value: { minutes: -5 },
+      value: 5 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:10m"),
       id: 3,
-      value: { minutes: -10 },
+      value: 10 * 60000,
+    },
+    {
+      name: t("tools:calendar:reminder-options:15m"),
+      id: 4,
+      value: 15 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:20m"),
-      id: 4,
-      value: { minutes: -20 },
+      id: 5,
+      value: 20 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:30m"),
-      id: 5,
-      value: { minutes: -30 },
+      id: 6,
+      value: 30 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:1h"),
-      id: 6,
-      value: { hours: -1 },
+      id: 7,
+      value: 60 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:2h"),
-      id: 7,
-      value: { hours: -2 },
+      id: 8,
+      value: 120 * 60000,
     },
     {
       name: t("tools:calendar:reminder-options:1d"),
-      id: 8,
-      value: { days: -1 },
-    },
-    {
-      name: t("tools:calendar:reminder-options:-1d"),
       id: 9,
-      value: { days: -1 },
+      value: 1440 * 60000,
     },
+    // {
+    //   name: t("tools:calendar:reminder-options:-1d"),
+    //   id: 10,
+    //   value: { days: -1 },
+    // },
     {
       name: t("tools:calendar:reminder-options:-2d"),
-      id: 10,
-      value: { days: -2 },
-    },
-    {
-      name: t("tools:calendar:reminder-options:custom"),
       id: 11,
-      value: { custom: true },
+      value: 2880 * 60000,
     },
+    // {
+    //   name: t("tools:calendar:reminder-options:custom"),
+    //   id: 12,
+    //   value: { custom: true },
+    // },
   ];
 
   const quillRef = useRef(null);
 
   const [timezone, setTimezone] = useState(null);
+  const [fromTimezone, setFromTimezone] = useState(false);
   const [calendary, setCalendary] = useState(calendarios[0]);
   const [formLocalization, setFormLocalization] = useState(
     eventLocalizations[0]
@@ -188,7 +199,7 @@ export default function EventDetails({ data, id }) {
     setLoading(true);
     const {
       participants,
-      reminder,
+      // reminder,
       startTime,
       endTime,
       reminderCustom,
@@ -202,18 +213,18 @@ export default function EventDetails({ data, id }) {
     } = data;
     let reminderValue;
     if (reminder && reminder?.value) {
-      if (reminder?.value?.custom) {
-        reminderValue = reminderCustom;
-      } else {
-        reminderValue = add(otherData.startTime, reminder.value);
-      }
+      reminderValue = formatISO(
+        new Date(startTime.getTime()) - reminder?.value
+      );
     }
 
     const body = {
       participantsIds: participants?.map((participant) => participant.id) ?? [],
-      reminder: formatISO(reminderValue ?? startTime),
+      reminder: reminderValue,
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
+      timeZone: timezone.value,
+      localization: formLocalization.name,
       availability: availability ? availability : availabilityOptions[0].id,
       description: value ?? "<p></p>",
       color: color ?? "#141052",
@@ -278,21 +289,50 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
+    console.log(watch("reminder"));
+  }, [watch("reminder")]);
+
+  useEffect(() => {
     if (!data) {
       setIsEdit(true);
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const timezoneValue = timezones.find((timezone) => timezone.value === detectedTimezone);
+      const timezoneValue = timezones.find(
+        (timezone) => timezone.value === detectedTimezone
+      );
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
       return;
     }
-
     if (data?.name) setValue("name", data?.name);
     if (data?.startTime)
       setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'HH:mm"));
     if (data?.endTime)
       setValue("endTime", format(data?.endTime, "yyyy-MM-dd'T'HH:mm"));
+    if (data?.timeZone) {
+      const selectedTimeZone = timezones.find(
+        (timezone) => timezone.value === data.timeZone
+      );
+      setTimezone(selectedTimeZone);
+      setFromTimezone(true);
+    }
+    if (data?.reminder) {
+      const startTime = new Date(data?.startTime);
+      const reminderTime = new Date(data.reminder);
+      const differenceInMilliseconds = Math.abs(reminderTime - startTime);
+      const reminderOption = reminderOptions.find(
+        (reminderOption) => reminderOption.value === differenceInMilliseconds
+      );
+      setReminder(reminderOption);
+    }
+
+    if (data?.localization) {
+      const selectedLocalization = eventLocalizations.find(
+        (eventLocalization) => eventLocalization.name === data.localization
+      );
+      setFormLocalization(selectedLocalization);
+    }
+    console.log(watch("localization"));
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);
@@ -328,7 +368,7 @@ export default function EventDetails({ data, id }) {
             }))
           : []
       );
-      // setTimezone();
+    // setTimezone();
 
     // const subscription = watch((data, { name }) => {
     //   setIsEdit(true);
@@ -375,7 +415,6 @@ export default function EventDetails({ data, id }) {
         name: response?.title,
       },
     ]);
-    console.log("receipt", response);
     setValue("name", "CRM - Recibo: ");
     moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
@@ -638,10 +677,14 @@ export default function EventDetails({ data, id }) {
               </div>
               <div>
                 <Disclosure>
-                  <DisclosureButton className="py-2 text-primary underline decoration-dashed underline-offset-4 text-xs hover:decoration-solid">
+                  <DisclosureButton
+                    onClick={() => setFromTimezone(!fromTimezone)}
+                    className="py-2 text-primary underline decoration-dashed underline-offset-4 text-xs hover:decoration-solid"
+                  >
                     {t("tools:calendar:new-event:time-zone")}
                   </DisclosureButton>
                   <Transition
+                    show={fromTimezone}
                     enter="transition-opacity duration-500"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
@@ -880,7 +923,7 @@ export default function EventDetails({ data, id }) {
                     </p>
                     <div className="w-full">
                       <CRMMultipleSelectV2
-                        getValues={getValues}
+                        watch={watch}
                         setValue={setValue}
                         name="crm"
                         error={errors.crm}
@@ -897,26 +940,13 @@ export default function EventDetails({ data, id }) {
                         {t("tools:calendar:reminder")}
                       </label>
                     </div>
-                    <div className="sm:col-span-2 flex  bg-white justify-start">
-                      <div className="border rounded-md w-full md:w-[300px]">
-                        <Controller
-                          name="reminder"
-                          control={control}
-                          render={({ field }) => (
-                            <SelectInput
-                              {...field}
-                              options={reminderOptions}
-                              selectedOption={reminderOptions[0]}
-                              getValues={getValues}
-                              setValue={setValue}
-                              name="reminder"
-                              error={errors.reminder}
-                              object
-                              disabled={!isEdit}
-                            />
-                          )}
-                        />
-                      </div>
+                    <div className="sm:col-span-2 flex bg-white justify-start">
+                      <ComboBox
+                        disabled={!isEdit}
+                        data={reminderOptions}
+                        selected={reminder}
+                        setSelected={setReminder}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">

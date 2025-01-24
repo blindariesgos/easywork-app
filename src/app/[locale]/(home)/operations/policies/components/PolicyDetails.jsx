@@ -11,6 +11,8 @@ import Receipts from "./tabs/Receipts";
 import Vehicle from "./tabs/Vehicle";
 import Beneficiaries from "./tabs/Beneficiaries";
 import Insured from "./tabs/Insured";
+import Refunds from "./tabs/Refunds";
+import Schedules from "./tabs/Schedules";
 import Link from "next/link";
 import clsx from "clsx";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
@@ -303,7 +305,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               <ReceiptEmpty type="Siniestros registrados" />
             </TabPanel>
             <TabPanel className="w-full">
-              <ReceiptEmpty type="Reembolsos registrados" />
+              <Refunds polizaId={data?.id} />
             </TabPanel>
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full">
@@ -312,7 +314,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full"></TabPanel>
             <TabPanel className="w-full">
-              <ReceiptEmpty type="Programaciones registradas" />
+              <Schedules polizaId={data?.id} />
             </TabPanel>
             <TabPanel className="w-full">
               <ReceiptEmpty type="Rescate de fondos registrados" />

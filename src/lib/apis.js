@@ -283,6 +283,44 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
 };
 //#endregion
 
+//#region RECRUITMENT
+export const getAllRecruitments = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/agent-management/agent-recruitments?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+//#region
+
+//#region CONNECTIONS
+export const getAllConnections = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/agent-management/agent-connections?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+//#region
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };

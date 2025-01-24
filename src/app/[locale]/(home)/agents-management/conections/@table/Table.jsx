@@ -26,7 +26,6 @@ import { toast } from "react-toastify";
 import { useConectionsTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -35,15 +34,13 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useConnectionsContext from "@/src/context/connections";
 import { useRouter } from "next/navigation";
-import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-import { connectionsStage } from "../common";
+import { connectionsStage } from "@/src/utils/stages";
 
 export default function Table() {
   const {

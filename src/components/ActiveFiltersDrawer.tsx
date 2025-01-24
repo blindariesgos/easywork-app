@@ -1,11 +1,10 @@
 import { Fragment } from "react";
-import { formatDate } from "../utils/getFormatDate";
 import clsx from "clsx";
 import moment from "moment";
 
 const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
   const getFilterValue = (item) => {
-    if (item.type == "date") {
+    if (["date", "date-short"].includes(item.type)) {
       return moment(item.value).utc().format("DD/MM/yyyy");
     }
 
@@ -19,6 +18,10 @@ const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
 
     if (item.type == "select-contact" || item.type == "select-lead") {
       return item.value.fullName;
+    }
+
+    if (item.type == "select-agent") {
+      return item.value.name;
     }
 
     if (item.type == "select-policy") {

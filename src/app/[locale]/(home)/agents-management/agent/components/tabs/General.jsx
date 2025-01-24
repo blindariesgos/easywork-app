@@ -41,6 +41,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { data: session } = useSession();
+  const utcOffset = moment().utcOffset();
 
   useEffect(() => {
     if (params.get("edit") === "true") {
@@ -123,11 +124,20 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
     if (type === "recruitment") {
       const recruitment = agent?.recruitments[0] ?? {};
       if (recruitment?.startDate)
-        setValue("recruitmentStartDate", recruitment?.startDate);
+        setValue(
+          "recruitmentStartDate",
+          moment(recruitment?.startDate).subtract(utcOffset, "minutes").format()
+        );
       if (recruitment?.endDate)
-        setValue("recruitmentEndDate", recruitment?.endDate);
+        setValue(
+          "recruitmentEndDate",
+          moment(recruitment?.endDate).subtract(utcOffset, "minutes").format()
+        );
       if (recruitment?.entryDate)
-        setValue("recruitmentEntryDate", recruitment?.entryDate);
+        setValue(
+          "recruitmentEntryDate",
+          moment(recruitment?.entryDate).subtract(utcOffset, "minutes").format()
+        );
       if (recruitment?.agentRecruitmentStage)
         setValue(
           "agentRecruitmentStageId",
@@ -138,19 +148,35 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
       const connection = agent?.connections[0] ?? {};
 
       if (connection?.endDate)
-        setValue("connectionEndDate", connection?.endDate);
+        setValue(
+          "connectionEndDate",
+          moment(connection?.endDate).subtract(utcOffset, "minutes").format()
+        );
       if (connection?.startDate)
-        setValue("connectionStartDate", connection?.startDate);
+        setValue(
+          "connectionStartDate",
+          moment(connection?.startDate).subtract(utcOffset, "minutes").format()
+        );
       if (connection?.idcardNumber)
-        setValue("connectionIdcardNumber", connection?.idcardNumber);
+        setValue("idcardNumber", connection?.idcardNumber);
       if (connection?.cnsfDate)
-        setValue("connectionCNSFDate", connection?.cnsfDate);
+        setValue(
+          "connectionCnsfDate",
+          moment(connection?.cnsfDate).subtract(utcOffset, "minutes").format()
+        );
       if (connection?.effectiveDateCua)
-        setValue("connectionEffectiveDateCua", connection?.effectiveDateCua);
+        setValue(
+          "effectiveDateCua",
+          moment(connection?.effectiveDateCua)
+            .subtract(utcOffset, "minutes")
+            .format()
+        );
       if (connection?.effectiveDateIdcard)
         setValue(
-          "connectionEffectiveDateIdcard",
-          connection?.effectiveDateIdcard
+          "effectiveDateIdcard",
+          moment(connection?.effectiveDateIdcard)
+            .subtract(utcOffset, "minutes")
+            .format()
         );
       if (connection?.agentConnectionStage)
         setValue(
@@ -475,9 +501,9 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                   />
                   <TextInput
                     label={t("agentsmanagement:conections:idcardNumber")}
-                    error={errors?.connectionIdcardNumber}
+                    error={errors?.idcardNumber}
                     register={register}
-                    name="connectionIdcardNumber"
+                    name="idcardNumber"
                     disabled={!isEdit}
                   />
                   <Controller
@@ -493,12 +519,12 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                           icon={
                             <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                           }
-                          error={errors.connectionEffectiveDateCua}
+                          error={errors.effectiveDateCua}
                           disabled={!isEdit}
                         />
                       );
                     }}
-                    name="connectionEffectiveDateCua"
+                    name="effectiveDateCua"
                     control={control}
                     defaultValue=""
                   />
@@ -515,12 +541,12 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                           icon={
                             <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                           }
-                          error={errors.connectionEffectiveDateIdcard}
+                          error={errors.effectiveDateIdcard}
                           disabled={!isEdit}
                         />
                       );
                     }}
-                    name="connectionEffectiveDateIdcard"
+                    name="effectiveDateIdcard"
                     control={control}
                     defaultValue=""
                   />
@@ -569,19 +595,19 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
-                          label={t("agentsmanagement:recruitment:table:indate")}
+                          label={t("agentsmanagement:conections:table:indate")}
                           value={value}
                           onChange={onChange}
                           onBlur={onBlur}
                           icon={
                             <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
                           }
-                          error={errors.connectionCNSFDate}
+                          error={errors.connectionCnsfDate}
                           disabled={!isEdit}
                         />
                       );
                     }}
-                    name="connectionCNSFDate"
+                    name="connectionCnsfDate"
                     control={control}
                     defaultValue=""
                   />

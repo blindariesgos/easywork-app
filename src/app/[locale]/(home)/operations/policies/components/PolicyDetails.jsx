@@ -27,8 +27,8 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
-  const headerRef = useRef();
   const { mutate: mutateConfig } = useSWRConfig();
+
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -164,7 +164,6 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
           <div
             id="policy-header"
             className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
-            ref={headerRef}
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">

@@ -132,6 +132,8 @@
         },
         "idcardNumber": "Número de Cédula Provisional/Definitivo",
         "effectiveDateCua": "Fecha de Vigencia CUA Provisional",
-        "effectiveDateIdcard": "Fecha de Vigencia Cédula"
+        "effectiveDateIdcard": "Fecha de Vigencia Cédula",
+        "source": "Origen",
+        "CNSFDate": ""
     }
 }

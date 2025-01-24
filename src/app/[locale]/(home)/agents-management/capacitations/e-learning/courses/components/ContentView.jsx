@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
+import parse from 'html-react-parser';
 
 import { useDebouncedCallback } from 'use-debounce';
 import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
@@ -21,7 +22,7 @@ import { FileUpload } from './FileUpload';
 import '../styles/index.css';
 import { LMS_PERMISSIONS } from '../../../constants';
 
-export const ContentView = ({ course, content, onSuccess, contentType, refetchAccordionItems }) => {
+export const ContentView = ({ course, content, onSuccess, refetchAccordionItems }) => {
   const isEdit = !!content;
 
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   } = useForm({
     defaultValues: {
       name: 'Título del contenido',
-      description: '<p><span class="ql-size-large">Nueva página</span></p>',
+      description: '<p><span class="ql-size-large">Introduzca el contenido...</span></p>',
       coverPhoto: null,
       isPublished: false,
       courseId: course.id,
@@ -131,10 +132,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     setMarkAsDone(prev => !prev);
 
     try {
-      // if (contentType === 'folder') {
-      //   // await toggleLessonAsCompleted(content.id, toggled);
-      // } else {
-      // }
       await toggleCourseFolderPageAsCompleted(content.id, toggled);
 
       if (refetchAccordionItems) refetchAccordionItems();
@@ -149,7 +146,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     if (content) {
       reset({
         name: content ? content.name : 'Título del contenido',
-        description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
+        description: content && content.description && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Introduzca el contenido...</span></p>',
         coverPhoto: content ? content.coverPhoto : null,
         isPublished: content ? content.isPublished : false,
         files: [],
@@ -163,10 +160,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     const toolbar = document.querySelector('.ql-toolbar');
     if (toolbar) toolbar.style.display = isEditorDisabled ? 'none' : 'block';
   }, [isEditorDisabled]);
-
-  // useEffect(() => {
-  //   saveContentOnChange(values);
-  // }, [saveContentOnChange, values]);
 
   return (
     <form action={handleSubmit(onSubmit)}>
@@ -221,17 +214,20 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
           </div>
         )}
 
-        {!loading && (
-          <ContentViewTextEditor
-            onChange={value => {
-              setValue('description', value);
-              saveContentOnChange();
-            }}
-            value={values.description}
-            disabled={isEditorDisabled}
-            onDeleteImage={onDeleteImage}
-          />
-        )}
+        {!loading &&
+          (!isEditorDisabled ? (
+            <ContentViewTextEditor
+              onChange={value => {
+                setValue('description', value);
+                saveContentOnChange();
+              }}
+              value={values.description}
+              disabled={isEditorDisabled}
+              onDeleteImage={onDeleteImage}
+            />
+          ) : (
+            <div className="ql-editor">{parse(values.description)}</div>
+          ))}
 
         <div className="mt-4">
           <FileUpload

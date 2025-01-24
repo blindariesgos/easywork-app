@@ -30,7 +30,6 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
       description: '',
       openToAll: false,
       private: false,
-      openAfterNDays: false,
       isPublished: false,
       onlyDeleteImage: false,
       coverPhoto: null,
@@ -39,10 +38,7 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
 
   const values = watch();
 
-  const onCloseModal = () => {
-    reset();
-    setIsOpen(false);
-  };
+  const onCloseModal = () => setIsOpen(false);
 
   const onSubmit = async values => {
     setLoading(true);
@@ -70,39 +66,23 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
   };
 
   useEffect(() => {
-    if (course)
-      reset({
-        name: course ? course.name : '',
-        description: course ? course.description : '',
-        openToAll: course ? course.openToAll : false,
-        private: course ? course.private : false,
-        openAfterNDays: course ? course.openAfterNDays : false,
-        isPublished: course ? course.isPublished : false,
-        onlyDeleteImage: false,
-        coverPhoto: null,
-      });
+    reset({
+      name: course ? course.name : '',
+      description: course ? course.description : '',
+      openToAll: course ? course.openToAll : false,
+      private: course ? course.private : false,
+      isPublished: course ? course.isPublished : false,
+      onlyDeleteImage: false,
+      coverPhoto: null,
+    });
   }, [course, reset]);
-
-  useEffect(() => {
-    if (!isOpen)
-      reset({
-        name: '',
-        description: '',
-        openToAll: false,
-        private: false,
-        openAfterNDays: false,
-        isPublished: false,
-        onlyDeleteImage: false,
-        coverPhoto: null,
-      });
-  }, [isOpen, reset]);
 
   return (
     <Dialog open={isOpen} onClose={onCloseModal} className="relative z-50">
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-2 ">
-        <DialogPanel className="min-w-96 space-y-8  p-6 rounded-xl bg-gray-100">
+        <DialogPanel className="min-w-96 md:w-[600px] space-y-8  p-6 rounded-xl bg-gray-100">
           <DialogTitle className="font-bold">Agregar curso</DialogTitle>
 
           <form action={handleSubmit(onSubmit)}>
@@ -126,7 +106,7 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
                   disabled={loading}
                 />
               </div>
-              <div className="w-full mt-4 bg-white rounded flex justify-between items-center gap-10 p-4">
+              <div className="w-full mt-4 bg-white rounded flex justify-around items-center gap-10 p-4">
                 <div>
                   <input
                     type="checkbox"
@@ -146,16 +126,6 @@ export const CourseCreateEditModal = ({ course, isOpen, setIsOpen, onSuccess }) 
                     defaultChecked={values.private}
                   />
                   Privado
-                </div>
-                <div>
-                  <input
-                    type="checkbox"
-                    className="mr-1 h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                    onChange={e => setValue('openAfterNDays', e.target.checked)}
-                    disabled={loading}
-                    defaultChecked={values.openAfterNDays}
-                  />
-                  Desbloquear después de x días
                 </div>
               </div>
             </div>

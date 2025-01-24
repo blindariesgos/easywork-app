@@ -31,7 +31,7 @@ export const CourseDetails = ({ courseId }) => {
   const { getCourseFolder } = useCourseFolders();
   const { getCourseFolderPage, toggleCourseFolderPageAsCompleted } = useCourseFolderPages();
 
-  const [openSections, setOpenSections] = useState([]);
+  const [closedSections, setClosedSections] = useState([]);
   const [course, setCourse] = useState(null);
   const [selectedContent, setSelectedContent] = useState({ item: null, type: '', courseFolderIndex: 0, pageIndex: 0 });
   const hasFolders = course?.folders?.length > 0;
@@ -43,7 +43,7 @@ export const CourseDetails = ({ courseId }) => {
   const [contentDetails, setContentDetails] = useState(null);
 
   const toggleSection = section => {
-    setOpenSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
+    setClosedSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
   };
 
   const editCourse = () => {
@@ -93,7 +93,7 @@ export const CourseDetails = ({ courseId }) => {
       setCourse(courseFetched);
 
       if (courseFetched.folders?.length > 0) {
-        setOpenSections([courseFetched.folders[0].name]);
+        // setClosedSections([courseFetched.folders[0].name]);
 
         if (courseFetched.folders[0] && courseFetched.folders[0].pages.length > 0) setSelectedContent({ item: courseFetched.folders[0].pages[0], type: 'page', index: 0 });
       }
@@ -165,16 +165,17 @@ export const CourseDetails = ({ courseId }) => {
           </div>
 
           {hasFolders &&
-            course.folders.map((courseFolder, index) => (
+            course.folders.map((courseFolder, index, self) => (
               <CourseFolder
                 key={courseFolder.id}
                 courseFolder={courseFolder}
-                isOpen={openSections.includes(courseFolder.name)}
+                isOpen={!closedSections.includes(courseFolder.name)}
                 onToggle={() => toggleSection(courseFolder.name)}
                 // onSelectLesson={() => setSelectedContent({ item: courseFolder, type: 'folder', courseFolderIndex: index, pageIndex: 0 })}
                 onSelectPage={(page, i) => setSelectedContent({ item: page, type: 'page', courseFolderIndex: index, pageIndex: i })}
                 refetchContentDetails={fetchContentDetails}
                 refetchAccordionItems={fetchModuleDetails}
+                folders={self}
               />
             ))}
 

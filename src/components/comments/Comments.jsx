@@ -15,12 +15,8 @@ import {
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { useSession } from "next-auth/react";
-import {
-  ChevronRightIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import { useComments, useTaskComments } from "@/src/lib/api/hooks/tasks";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useComments } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner, {
   LoadingSpinnerSmall,
 } from "@/src/components/LoaderSpinner";
@@ -29,26 +25,24 @@ import { es } from "date-fns/locale"; // Importa el locale español
 import { useSWRConfig } from "swr";
 import parse from "html-react-parser";
 import Button from "@/src/components/form/Button";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { GoKebabHorizontal } from "react-icons/go";
-import UploadDocumentsInComment from "../UploadDocumentsInComment";
-import FilePreview from "../FilePreview";
-import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
+import UploadDocumentsInComment from "./UploadDocumentsInComment";
+import FilePreview from "./FilePreview";
+import { PaperClipIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 
 const urls = {
   put: {
-    meet: (commentId, body, meetId) => putMeetComment(commentId, body, meetId),
-    task: (commentId, body, taskId) => putComment(commentId, body, taskId),
+    meet: (commentId, body) => putMeetComment(commentId, body),
+    task: (commentId, body) => putComment(commentId, body),
   },
   post: {
     meet: (body) => postMeetComment(body),
     task: (body) => postComment(body),
   },
   get: {
-    meet: "/tools/tasks/comments/task/",
-    task: "/agent-management/meetings/comments/meet/",
+    task: "/tools/tasks/comments/task/",
+    meet: "/agent-management/meetings/comments/meeting/",
   },
   delete: {
     meet: (commentId) => deleteMeetComment(commentId),
@@ -65,7 +59,7 @@ const types = {
   task: "taskId",
 };
 
-export default function TabComment({ info, type = "task" }) {
+export default function Comments({ info, type = "task" }) {
   const { comments, isLoading, isError } = useComments(urls.get[type], info.id);
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
@@ -109,9 +103,10 @@ export default function TabComment({ info, type = "task" }) {
       try {
         setDisabled(true);
         if (id) {
-          const responseUpdate = await urls.put[type](id, body, info.id).catch(
+          const responseUpdate = await urls.put[type](id, body).catch(
             (error) => ({ hasError: true, ...error })
           );
+          console.log({ responseUpdate });
           if (responseUpdate?.hasError) {
             toast.error(
               "Se ha producido un error al actualizar el comentario, inténtelo de nuevo más tarde."
@@ -120,7 +115,7 @@ export default function TabComment({ info, type = "task" }) {
             return;
           }
         } else {
-          const responsePost = await urls.post[type](body, info.id);
+          const responsePost = await urls.post[type](body);
           if (responsePost.hasError) {
             toast.error(
               "Se ha producido un error al crear el comentario, inténtelo de nuevo más tarde."
@@ -130,7 +125,7 @@ export default function TabComment({ info, type = "task" }) {
           }
         }
 
-        await mutate(`${urls.get[type]}${info.id}`);
+        mutate(`${urls.get[type]}${info.id}`);
         setDisabled(false);
         setEditComment({});
         setValueText("");
@@ -163,7 +158,10 @@ export default function TabComment({ info, type = "task" }) {
   };
 
   useEffect(() => {
-    if (comments.length > 3 && !showMore) {
+    console.log({ comments, isError });
+    if (!comments || !comments?.length) return;
+
+    if (comments?.length > 3 && !showMore) {
       return setShowComments(comments.slice(-3));
     }
 

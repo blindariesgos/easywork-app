@@ -271,7 +271,7 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
                               disabled={option.disabled}
                               onClick={() => {
                                 option.handleClick &&
-                                  option.handleClick(policy.id);
+                                  option.handleClick(data.id);
                               }}
                             >
                               <div className="block px-3 py-1 text-xs leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50">

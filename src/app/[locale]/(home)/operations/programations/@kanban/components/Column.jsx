@@ -1,24 +1,15 @@
 import Card from "./Card";
 import {
-  Fragment,
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import { useDroppable, DragOverlay } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import clsx from "clsx";
-import {
-  getAllSchedules,
-  getAllTasks,
-  getContactId,
-  getReceiptKanbanByStateId,
-} from "@/src/lib/apis";
+import { getAllSchedules } from "@/src/lib/apis";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { formatToCurrency } from "@/src/utils/formatters";
-import useTasksContext from "@/src/context/tasks";
 import useCrmContext from "@/src/context/crm";
 import useProgramationContext from "@/src/context/programations";
 const Column = ({

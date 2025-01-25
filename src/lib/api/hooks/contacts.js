@@ -71,10 +71,8 @@ const getActivityPath = (cmrtype) => {
   }
 };
 export const useEntityActivities = (id, cmrtype) => {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${getActivityPath(cmrtype)}/${id}/activities`,
-    fetcher
-  );
+  const url = `${getActivityPath(cmrtype)}/${id}/activities${cmrtype == "renewal" ? "?renewal=true" : ""}`;
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   console.log("activities data", data);
   return {

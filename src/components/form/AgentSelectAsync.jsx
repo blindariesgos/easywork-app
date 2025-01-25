@@ -27,6 +27,7 @@ function AgentSelectAsync({
   setSelectedOption,
   placeholder,
   helperText,
+  object,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -60,7 +61,7 @@ function AgentSelectAsync({
 
   useEffect(() => {
     if (selected) {
-      setValue && setValue(name, selected.id);
+      setValue && setValue(name, object ? selected : selected.id);
       setSelectedOption && setSelectedOption(selected.id);
     }
   }, [selected, setValue, name, setSelectedOption]);

@@ -25,14 +25,13 @@ import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
 import { formatToCurrency } from "@/src/utils/formatters";
 
-const Card = ({ lead, minWidthClass, stageId }) => {
-  const { lists } = useAppContext();
+const Card = ({ data, minWidthClass, stageId }) => {
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
-  const route = useRouter();
+  const router = useRouter();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: lead.id,
+    id: data?.agent?.id,
     data: {
       stageId,
     },
@@ -40,7 +39,6 @@ const Card = ({ lead, minWidthClass, stageId }) => {
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        position: "fixed",
       }
     : undefined;
 
@@ -61,62 +59,32 @@ const Card = ({ lead, minWidthClass, stageId }) => {
   const options = [
     {
       name: "Ver",
-      handleClick: () =>
-        route.push(`/sales/crm/leads/lead/${lead.id}?show=true`),
+      handleClick: (id) =>
+        router.push(`/agents-management/conections/agent/${id}?show=true`),
     },
     {
       name: "Editar",
-      handleClick: () =>
-        route.push(`/sales/crm/leads/lead/${lead.id}?show=true&edit=true`),
-      disabled: lead?.cancelled || /Positivo/gi.test(lead?.stage?.name),
+      handleClick: (id) =>
+        router.push(
+          `/agents-management/conections/agent/${id}?show=true&edit=true`
+        ),
     },
     {
-      name: "Copiar",
-      handleClick: () =>
-        route.push(`/sales/crm/leads/lead?show=true&copy=${lead.id}`),
+      name: "Tarea",
+      handleClick: (id) =>
+        router.push(`/tools/tasks/task?show=true&prev=agent&prev_id=${id}`),
     },
     {
-      name: "Eliminar",
-      handleClick: () => {
-        setDeleteId(lead.id);
-        setIsOpenDelete(true);
-      },
-    },
-    {
-      name: "Planificar",
-      options: [
-        {
-          name: "Tarea",
-          handleClick: () =>
-            route.push(
-              `/tools/tasks/task?show=true&prev=leads&prev_id=${lead.id}`
-            ),
-        },
-        {
-          name: "Whatsapp",
-          disabled: true,
-        },
-        {
-          name: "Cita",
-          disabled: true,
-        },
-        {
-          name: "Comentario",
-          disabled: true,
-        },
-        {
-          name: "Llamada",
-          disabled: true,
-        },
-      ],
+      name: "Cita",
+      handleClick: (id) =>
+        router.push(
+          `/tools/calendar/addEvent?show=true&prev=agent&prev_id=${id}`
+        ),
     },
   ];
 
-  const handleClickContact = () =>
-    route.push(`/sales/crm/contacts/contact/${lead.id}?show=true`);
-
-  const handleClickLead = () =>
-    route.push(`/sales/crm/leads/lead/${lead.id}?show=true`);
+  const handleClickAgent = (id) =>
+    id && router.push(`/agents-management/conections/agent/${id}?show=true`);
 
   const { role, ...otherAttributes } = attributes;
   const { onPointerDown } = listeners;
@@ -141,17 +109,50 @@ const Card = ({ lead, minWidthClass, stageId }) => {
         }}
       >
         <div className="col-span-10">
-          <p
-            className="font-semibold cursor-pointer text-sm"
-            onClick={() => handleClickLead(lead.id)}
-          >
-            {lead?.fullName}
-          </p>
+          <div className="pb-3">
+            <p
+              className="font-semibold cursor-pointer text-sm"
+              onClick={() => handleClickAgent(data?.agent?.id)}
+            >
+              {`${data?.agent?.name}${data?.idcardNumber ? ` - ${data?.idcardNumber}` : ""}`}
+            </p>
 
-          {lead?.source?.name && (
-            <p className="text-xs text-gray-50">{lead?.source?.name}</p>
+            {data?.agent?.source?.name && (
+              <p className="text-xs text-gray-50">
+                {data?.agent?.source?.name}
+              </p>
+            )}
+          </div>
+
+          {data?.startDate && (
+            <Fragment>
+              <p className="font-semibold cursor-pointer text-xs">
+                Inicio del proceso:
+              </p>
+              <p className="text-xs text-gray-50">
+                {moment(data?.startDate).utc().format("DD/MM/YYYY")}
+              </p>
+            </Fragment>
           )}
-          <p className="text-sm text-primary">{`${lead?.quoteCurrency?.symbol ?? "$"} ${formatToCurrency(lead?.quoteAmount ?? 0)}`}</p>
+          {data?.endDate && (
+            <Fragment>
+              <p className="font-semibold cursor-pointer text-xs">
+                Fin del proceso:
+              </p>
+              <p className="text-xs text-gray-50">
+                {moment(data?.endDate).utc().format("DD/MM/YYYY")}
+              </p>
+            </Fragment>
+          )}
+          {data?.cnsfDate && (
+            <Fragment>
+              <p className="font-semibold cursor-pointer text-xs">Cita CNSF:</p>
+              <p className="text-xs text-gray-50">
+                {moment(data?.cnsfDate).utc().format("DD/MM/YYYY")}
+              </p>
+            </Fragment>
+          )}
+
           {/* <div className="py-6">
             <p
               className="text-start text-easy-400 cursor-pointer text-sm"
@@ -216,7 +217,7 @@ const Card = ({ lead, minWidthClass, stageId }) => {
                       key={item.name}
                       disabled={item.disabled}
                       onClick={() => {
-                        item.handleClick && item.handleClick();
+                        item.handleClick && item.handleClick(data?.agent?.id);
                       }}
                     >
                       <div className="block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 leading-6 text-xs text-black cursor-pointer">
@@ -258,7 +259,8 @@ const Card = ({ lead, minWidthClass, stageId }) => {
                               key={option.name}
                               disabled={option.disabled}
                               onClick={() => {
-                                option.handleClick && option.handleClick();
+                                option.handleClick &&
+                                  option.handleClick(data?.agent?.id);
                               }}
                             >
                               <div className="block px-3 py-1 text-xs leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50">
@@ -274,12 +276,12 @@ const Card = ({ lead, minWidthClass, stageId }) => {
               </MenuItems>
             </Transition>
           </Menu>
-          {lead?.assignedBy && (
+          {data?.agent?.recruitmentManager && (
             <Image
               className="h-6 w-6 rounded-full bg-zinc-200"
               width={30}
               height={30}
-              src={lead?.assignedBy?.avatar || "/img/avatar.svg"}
+              src={data?.agent?.recruitmentManager?.avatar || "/img/avatar.svg"}
               alt=""
             />
           )}

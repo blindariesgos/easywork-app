@@ -37,12 +37,11 @@ import {
 import { formatDate } from "@/src/utils/getFormatDate";
 import useRecruitmentsContext from "@/src/context/recruitments";
 import { useRouter } from "next/navigation";
-import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-import { recruitmentStages } from "../common";
+import { recruitmentStages } from "@/src/utils/stages";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 export default function Table() {
   const {
@@ -594,17 +593,17 @@ export default function Table() {
                                 ) : column.row === "startDate" ? (
                                   <p className="text-center">
                                     {agent?.startDate
-                                      ? moment(agent?.startDate).format(
-                                          "DD-MM-YYYY"
-                                        )
+                                      ? moment(agent?.startDate)
+                                          .utc()
+                                          .format("DD-MM-YYYY")
                                       : "-"}
                                   </p>
                                 ) : column.row === "entryDate" ? (
                                   <p className="text-center">
                                     {agent?.entryDate
-                                      ? moment(agent?.entryDate).format(
-                                          "DD-MM-YYYY"
-                                        )
+                                      ? moment(agent?.entryDate)
+                                          .utc()
+                                          .format("DD-MM-YYYY")
                                       : "-"}
                                   </p>
                                 ) : column.row === "updatedAt" ? (

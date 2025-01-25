@@ -244,7 +244,7 @@ export const CourseDetails = ({ courseId }) => {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  className={`bg-blue-100 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isFirstElement && 'opacity-40'}`}
+                  className={`bg-easy-400 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isFirstElement && 'opacity-40'}`}
                   disabled={loading || isFirstElement}
                   onClick={goPreviousContent}
                 >
@@ -255,7 +255,7 @@ export const CourseDetails = ({ courseId }) => {
                 <button
                   type="button"
                   disabled={loading || isLastElement}
-                  className={`bg-blue-100 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isLastElement && 'opacity-40'}`}
+                  className={`bg-easy-400 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isLastElement && 'opacity-40'}`}
                   onClick={goNextContent}
                 >
                   Lección siguiente
@@ -264,7 +264,7 @@ export const CourseDetails = ({ courseId }) => {
               </div>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
                 <div>
-                  <button onClick={markAsCompleted} className={`bg-${selectedContent.item?.isCompleted ? 'blue-100' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}>
+                  <button onClick={markAsCompleted} className={`bg-${selectedContent.item?.isCompleted ? 'easy-400' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}>
                     {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
                   </button>
                 </div>

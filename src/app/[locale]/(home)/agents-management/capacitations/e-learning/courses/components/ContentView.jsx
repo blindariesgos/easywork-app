@@ -22,7 +22,7 @@ import { FileUpload } from './FileUpload';
 import '../styles/index.css';
 import { LMS_PERMISSIONS } from '../../../constants';
 
-export const ContentView = ({ course, content, onSuccess, refetchAccordionItems }) => {
+export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
   const isEdit = !!content;
 
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,6 @@ export const ContentView = ({ course, content, onSuccess, refetchAccordionItems 
       description: '<p><span class="ql-size-large">Introduzca el contenido...</span></p>',
       coverPhoto: null,
       isPublished: false,
-      courseId: course.id,
       files: [],
       filesToDelete: [],
       imagesToDelete: [],
@@ -134,7 +133,7 @@ export const ContentView = ({ course, content, onSuccess, refetchAccordionItems 
     try {
       await toggleCourseFolderPageAsCompleted(content.id, toggled);
 
-      if (refetchAccordionItems) refetchAccordionItems();
+      if (onToggleIsCompleted) onToggleIsCompleted();
 
       toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
     } catch (error) {

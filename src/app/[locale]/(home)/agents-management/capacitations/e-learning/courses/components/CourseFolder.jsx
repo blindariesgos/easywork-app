@@ -87,39 +87,30 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
       <AccordionItem
         title={courseFolderDetails.name}
         isOpen={isOpen}
-        onToggle={() => {
-          onToggle();
-        }}
-        // onSelect={() => onSelectCourseFolder(courseFolder)}
+        onToggle={onToggle}
         itemType="folder"
         actions={{ editCourseFolder, addNewPage, deleteCourseFolder }}
         isCompleted={courseFolder.isCompleted}
       >
         {courseFolderPages?.length > 0 &&
-          courseFolderPages
-            // .sort((a, b) => {
-            //   const dateA = new Date(a.createdAt);
-            //   const dateB = new Date(b.createdAt);
-            //   return dateA.getTime() - dateB.getTime();
-            // })
-            .map((page, i) => {
-              const isFirstElement = i === 0;
-              const isLastElement = i === countCourseFolderPages - 1;
+          courseFolderPages.map((page, i) => {
+            const isFirstElement = i === 0;
+            const isLastElement = i === countCourseFolderPages - 1;
 
-              return (
-                <div key={page.id} className={`${isFirstElement || isLastElement ? '' : 'my-1'}`}>
-                  <CourseFolderPage
-                    page={page}
-                    onSelectPage={() => onSelectPage(page, i)}
-                    editPage={() => editPage(page)}
-                    duplicatePage={() => duplicatePage(page)}
-                    changeCourseFolder={() => changeCourseFolder(page, courseFolder)}
-                    deletePage={() => deletePage(page)}
-                    isCompleted={page.isCompleted}
-                  />
-                </div>
-              );
-            })}
+            return (
+              <div key={page.id} className={`${isFirstElement || isLastElement ? '' : 'my-1'}`}>
+                <CourseFolderPage
+                  page={page}
+                  onSelectPage={() => onSelectPage(page, i)}
+                  editPage={() => editPage(page)}
+                  duplicatePage={() => duplicatePage(page)}
+                  changeCourseFolder={() => changeCourseFolder(page, courseFolder)}
+                  deletePage={() => deletePage(page)}
+                  isCompleted={page.isCompleted}
+                />
+              </div>
+            );
+          })}
 
         {hasPermission(LMS_PERMISSIONS.addPage) && <NewPageButton onClick={addNewPage} />}
       </AccordionItem>

@@ -87,7 +87,7 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
             <div className="bg-white py-2 rounded-lg px-2 mt-2">
               <div className="rounded-lg grid grid-cols-1 md:grid-cols-2 gap-2 h-[250px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
                 {lists?.users
-                  .filter(user => filterUsers(user, search))
+                  ?.filter(user => filterUsers(user, search))
                   .map(user => {
                     const isSelected = isUserSelected(user.id);
 

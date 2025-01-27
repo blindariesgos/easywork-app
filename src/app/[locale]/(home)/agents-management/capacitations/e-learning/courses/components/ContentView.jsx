@@ -209,7 +209,7 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
       <div className={`${isEditorDisabled ? 'px-2 pt-2 pb-5' : ''} bg-white rounded-xl mb-2`}>
         <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden max-h-[55vh]">
           {loading && (
-            <div className="h-48 w-full">
+            <div className="h-[55vh] w-full">
               <LoadingSpinnerSmall />
             </div>
           )}

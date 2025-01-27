@@ -239,17 +239,8 @@ export const CourseDetails = ({ courseId }) => {
           {hasPermission(LMS_PERMISSIONS.addFolder) && <NewCourseFolderButton onClick={() => setIsNewContentFormOpen(true)} />}
         </div>
 
-        <div className="h-[71vh] relative">
-          <div className="max-h-[71vh] overflow-y-auto [&::-webkit-scrollbar]:hidden">
-            {content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />}
-            {/* {loading ? (
-              <div className="h-48 w-full bg-white rounded-xl">
-                <LoadingSpinnerSmall />
-              </div>
-            ) : (
-              content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />
-            )} */}
-          </div>
+        <div className="relative">
+          <div className="h-[71vh]">{content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />}</div>
 
           {content.data && (
             <div className="bg-gray-100 w-full flex items-center justify-between gap-1 absolute bottom-0 pt-5">

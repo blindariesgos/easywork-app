@@ -44,7 +44,6 @@ export const DeleteContentModal = ({ content, isOpen, setIsOpen, onSuccess, cont
 
     try {
       await contentHandler.method(content.id);
-      // await deleteCourse(content.id);
       setIsOpen(false);
 
       if (onSuccess) onSuccess();

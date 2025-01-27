@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
 
-import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
-
 import { CourseFolder } from '../components/CourseFolder';
 import { NewCourseFolderButton } from '../components/NewCourseFolderButton';
 import { NewContentForm } from '../components/NewContentForm';
@@ -199,8 +197,11 @@ export const CourseDetails = ({ courseId }) => {
 
   if (fetchingModuleDetails)
     return (
-      <div className="h-48 w-full bg-white rounded-xl">
-        <LoadingSpinnerSmall />
+      <div className="h-[71vh] w-full bg-white rounded-xl flex flex-col gap-4 items-center justify-center">
+        <div className={`w-10 h-10 animate-spin rounded-full border-t-2 border-b-2 border-easy-400`} />
+        <p className="text-sm">
+          Obteniendo detalles del curso<span className="text-easy-400">...</span>
+        </p>
       </div>
     );
 

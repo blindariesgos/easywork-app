@@ -2,10 +2,10 @@ import Card from "./Card";
 import { useDroppable } from "@dnd-kit/core";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import useLeadsContext from "@/src/context/leads";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { formatToCurrency } from "@/src/utils/formatters";
-import { getKanbanLeads } from "@/src/lib/apis";
+import { getAllConnections, getAllRecruitments } from "@/src/lib/apis";
+import useRecruitmentsContext from "@/src/context/recruitments";
+import useConnectionsContext from "@/src/context/connections";
 
 const Column = ({
   id,
@@ -15,35 +15,29 @@ const Column = ({
   setItemDrag,
   updateStages,
   name,
-  type,
 }) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
-    data: {
-      type,
-    },
   });
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [totalItems, setTotalItems] = useState();
-  const [totalAmount, setTotalAmount] = useState(0);
-  // const { filters } = useLeadsContext();
-  const { filters } = { filter: {} };
+  const { filters } = useConnectionsContext();
 
-  const getLeads = async (defaultPage) => {
+  const getConnections = async (defaultPage) => {
     try {
       const params = {
         filters: {
           ...filters,
-          ...filter,
+          agentConnectionStageId: id,
         },
         config: {
           page: (typeof defaultPage !== "undefined" ? defaultPage : page) + 1,
           limit: 10,
         },
       };
-      const response = await getKanbanLeads(params);
+      const response = await getAllConnections(params);
       console.log(name, response, params);
       if (response.hasError) {
         setItems([]);
@@ -55,10 +49,11 @@ const Column = ({
           ? response.items
           : [...items, ...response.items];
       setItems(auxItems);
+
       if (page == 0 || defaultPage == 0) {
         setTotalItems(response?.meta?.totalItems);
-        setTotalAmount(response?.meta?.amount ?? 0);
       }
+
       if (auxItems?.length >= response?.meta?.totalItems) {
         setHasMore(false);
       }
@@ -69,19 +64,19 @@ const Column = ({
     }
   };
 
-  // useEffect(() => {
-  //   getLeads();
-  // }, []);
+  useEffect(() => {
+    getConnections();
+  }, []);
 
-  // useEffect(() => {
-  //   if (updateStages.includes(id)) {
-  //     getLeads(0);
-  //   }
-  // }, [updateStages]);
+  useEffect(() => {
+    if (updateStages.includes(id)) {
+      getConnections(0);
+    }
+  }, [updateStages]);
 
-  // useEffect(() => {
-  //   getLeads(0);
-  // }, [filters]);
+  useEffect(() => {
+    getConnections(0);
+  }, [filters]);
 
   useEffect(() => {
     if (activeId) {
@@ -104,24 +99,19 @@ const Column = ({
         {name} ({totalItems ?? 0})
       </p>
 
-      {/* <InfiniteScroll
+      <InfiniteScroll
         dataLength={items.length}
-        next={getLeads}
+        next={getConnections}
         hasMore={hasMore}
         loader={<h4>Cargando...</h4>}
         height="60vh"
-        // endMessage={
-        //   <p style={{ textAlign: "center" }}>
-        //     <b>Yay! You have seen it all</b>
-        //   </p>
-        // }
       >
         <div className={clsx("grid grid-cols-1 gap-2 pt-2")}>
-          {items.map((lead, index) => (
-            <Card lead={lead} index={index} key={lead.id} stageId={id} />
+          {items.map((item, index) => (
+            <Card data={item} index={index} key={item.id} stageId={id} />
           ))}
         </div>
-      </InfiniteScroll> */}
+      </InfiniteScroll>
     </div>
   );
 };

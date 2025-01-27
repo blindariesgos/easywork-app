@@ -38,13 +38,7 @@ const MultipleSelect = ({
   border,
 }) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-
-  const handleToggle = () => {
-    setQuery("");
-    setIsOpen(!isOpen);
-  };
 
   const handleSelect = (option) => {
     const array = getValues(name);
@@ -60,8 +54,6 @@ const MultipleSelect = ({
     } else {
       setValue(name, [option], { shouldValidate: true });
     }
-
-    setIsOpen(false); // Close the dropdown after selection
   };
 
   const handleRemove = (id) => {
@@ -99,7 +91,7 @@ const MultipleSelect = ({
             }
           )}
         >
-          <span className="ml-2 text-gray-60 flex gap-1 flex-wrap items-center">
+          <span className="p-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
               getValues(name).map((res) => (
                 <div

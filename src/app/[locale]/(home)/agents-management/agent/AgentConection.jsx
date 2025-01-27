@@ -28,7 +28,9 @@ export default function AgentRecruitment({ agent, id }) {
       birthdate,
       connectionStartDate,
       connectionEndDate,
-      connectionCNSFDate,
+      connectionCnsfDate,
+      effectiveDateCua,
+      effectiveDateIdcard,
       ...other
     } = data;
     const body = {
@@ -46,9 +48,18 @@ export default function AgentRecruitment({ agent, id }) {
     if (connectionEndDate) {
       body.connectionEndDate = moment(connectionEndDate).format("YYYY-MM-DD");
     }
-    if (connectionCNSFDate) {
-      body.connectionCNSFDate = moment(connectionCNSFDate).format("YYYY-MM-DD");
+    if (connectionCnsfDate) {
+      body.connectionCnsfDate = moment(connectionCnsfDate).format("YYYY-MM-DD");
     }
+
+    if (effectiveDateCua) {
+      body.effectiveDateCua = moment(effectiveDateCua).format("YYYY-MM-DD");
+    }
+    if (effectiveDateIdcard) {
+      body.effectiveDateIdcard =
+        moment(effectiveDateIdcard).format("YYYY-MM-DD");
+    }
+
     try {
       setLoading(true);
       const info = Object.keys(body).reduce((acc, key) => {

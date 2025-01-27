@@ -556,7 +556,7 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
-            {data && (
+            {/* {data && (
               <button
                 type="button"
                 onClick={() => setIsEdit(!isEdit)}
@@ -564,7 +564,7 @@ export default function EventDetails({ data, id }) {
               >
                 <PencilIcon className="h-6 w-6 text-primary" />
               </button>
-            )}
+            )} */}
 
             <div className="relative flex items-start px-2 ml-2 sm:px-0">
               <div className="flex h-6 items-center">
@@ -1039,22 +1039,36 @@ export default function EventDetails({ data, id }) {
       </div>
 
       {/* Action buttons */}
-      {isEdit && (
-        <div className="flex flex-shrink-0 justify-start px-4 py-4">
-          <button
-            type="submit"
-            className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-          >
-            {t("common:buttons:save")}
-          </button>
-          <button
-            type="button"
-            className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-            onClick={() => (data ? setIsEdit(false) : router.back())}
-          >
-            {t("common:buttons:cancel")}
-          </button>
-          {data && (
+      <div className="flex flex-shrink-0 justify-start px-8 py-4">
+        {/* Mostrar botones de "Guardar" y "Cancelar" solo si hay data o se está en modo editar */}
+        {(data || isEdit) && isEdit && (
+          <>
+            <button
+              type="submit"
+              className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            >
+              {t("common:buttons:save")}
+            </button>
+            <button
+              type="button"
+              className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
+              onClick={() => (data ? setIsEdit(false) : router.back())}
+            >
+              {t("common:buttons:cancel")}
+            </button>
+          </>
+        )}
+
+        {/* Mostrar botones de "Editar" y "Eliminar" solo si hay data y NO se está en modo editar */}
+        {data && !isEdit && (
+          <>
+            <button
+              type="button"
+              className="inline-flex ml-4 justify-center rounded-md bg-easywork-main px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-easywork-mainhover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              onClick={() => setIsEdit(true)}
+            >
+              Editar
+            </button>
             <button
               type="button"
               className="inline-flex ml-4 justify-center rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -1062,9 +1076,13 @@ export default function EventDetails({ data, id }) {
             >
               Eliminar
             </button>
-          )}
-        </div>
-      )}
+          </>
+        )}
+
+        {/* <button type="button" onClick={() => setIsEdit(!isEdit)} title="Editar">
+          <PencilIcon className="h-6 w-6 text-primary" />
+        </button> */}
+      </div>
     </form>
   );
 }

@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "./components/OptionsTask";
 import TabsMeet from "./components/Tabs/TabsMeet";
-import { useSWRConfig } from "swr";
 import { useRouter, useSearchParams } from "next/navigation";
 import CrmItems from "@/src/components/CrmItems";
 import Button from "@/src/components/form/Button";
@@ -15,10 +14,6 @@ import { toast } from "react-toastify";
 export default function MeetView({ meet, id }) {
   const [loading, setLoading] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
-  const [openEdit, setOpenEdit] = useState(null);
-  const { mutate } = useSWRConfig();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -144,11 +139,7 @@ export default function MeetView({ meet, id }) {
                   <p className="text-sm font-semibold">
                     {t(`agentsmanagement:meetings-and-sessions:time`)}:
                   </p>
-                  <p className="text-sm">
-                    {meet.duration
-                      ? moment(meet.duration).format("hh:mm:ss")
-                      : "No disponible"}
-                  </p>
+                  <p className="text-sm">{meet?.duration ?? "No disponible"}</p>
                 </div>
                 <div className="flex gap-2">
                   <p className="text-sm font-semibold">

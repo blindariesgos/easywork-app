@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
+import parse from 'html-react-parser';
 
 import { useDebouncedCallback } from 'use-debounce';
 import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
@@ -21,7 +22,7 @@ import { FileUpload } from './FileUpload';
 import '../styles/index.css';
 import { LMS_PERMISSIONS } from '../../../constants';
 
-export const ContentView = ({ course, content, onSuccess, contentType, refetchAccordionItems }) => {
+export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
   const isEdit = !!content;
 
   const [loading, setLoading] = useState(false);
@@ -43,10 +44,9 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
   } = useForm({
     defaultValues: {
       name: 'Título del contenido',
-      description: '<p><span class="ql-size-large">Nueva página</span></p>',
+      description: '<p><span class="ql-size-large">Introduzca el contenido...</span></p>',
       coverPhoto: null,
       isPublished: false,
-      courseId: course.id,
       files: [],
       filesToDelete: [],
       imagesToDelete: [],
@@ -131,13 +131,9 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     setMarkAsDone(prev => !prev);
 
     try {
-      // if (contentType === 'folder') {
-      //   // await toggleLessonAsCompleted(content.id, toggled);
-      // } else {
-      // }
       await toggleCourseFolderPageAsCompleted(content.id, toggled);
 
-      if (refetchAccordionItems) refetchAccordionItems();
+      if (onToggleIsCompleted) onToggleIsCompleted();
 
       toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
     } catch (error) {
@@ -149,7 +145,7 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     if (content) {
       reset({
         name: content ? content.name : 'Título del contenido',
-        description: content && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Nueva página</span></p>',
+        description: content && content.description && content.description !== '<p><br></p>' ? content.description : '<p><span class="ql-size-large">Introduzca el contenido...</span></p>',
         coverPhoto: content ? content.coverPhoto : null,
         isPublished: content ? content.isPublished : false,
         files: [],
@@ -163,10 +159,6 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
     const toolbar = document.querySelector('.ql-toolbar');
     if (toolbar) toolbar.style.display = isEditorDisabled ? 'none' : 'block';
   }, [isEditorDisabled]);
-
-  // useEffect(() => {
-  //   saveContentOnChange(values);
-  // }, [saveContentOnChange, values]);
 
   return (
     <form action={handleSubmit(onSubmit)}>
@@ -215,70 +207,74 @@ export const ContentView = ({ course, content, onSuccess, contentType, refetchAc
       )}
 
       <div className={`${isEditorDisabled ? 'px-2 pt-2 pb-5' : ''} bg-white rounded-xl mb-2`}>
-        {loading && (
-          <div className="h-48 w-full">
-            <LoadingSpinnerSmall />
-          </div>
-        )}
-
-        {!loading && (
-          <ContentViewTextEditor
-            onChange={value => {
-              setValue('description', value);
-              saveContentOnChange();
-            }}
-            value={values.description}
-            disabled={isEditorDisabled}
-            onDeleteImage={onDeleteImage}
-          />
-        )}
-
-        <div className="mt-4">
-          <FileUpload
-            inputRef={inputFileRef}
-            onChange={files => {
-              setValue('files', files);
-              saveContentOnChange();
-            }}
-            onDelete={file => {
-              setValue('filesToDelete', [...values.filesToDelete, file.url]);
-            }}
-            files={content?.files || []}
-            disabled={isEditorDisabled}
-            loading={loading}
-          />
-        </div>
-
-        {!isEditorDisabled && !loading && (
-          <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
-            <div>
-              <ContentViewAttach
-                onAttachFile={() => {
-                  inputFileRef.current?.click();
+        <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden max-h-[55vh]">
+          {loading && (
+            <div className="h-[55vh] w-full">
+              <LoadingSpinnerSmall />
+            </div>
+          )}
+          {!loading &&
+            (!isEditorDisabled ? (
+              <ContentViewTextEditor
+                onChange={value => {
+                  setValue('description', value);
+                  saveContentOnChange();
                 }}
+                value={values.description}
+                disabled={isEditorDisabled}
+                onDeleteImage={onDeleteImage}
               />
-            </div>
-            <div className="flex items-center sm:justify-center md:justify-end gap-4">
-              <div className="flex items-center justify-center gap-2">
-                <p>Publicar</p>
-                <Switch
-                  disabled={loading}
-                  checked={values.isPublished}
-                  // defaultChecked={isPublished}
-                  onChange={checked => setValue('isPublished', checked)}
-                  className="group relative flex h-5 w-12 cursor-pointer rounded-full bg-gray-300 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-easy-300"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none inline-block size-3 translate-x-0 rounded-full bg-white ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
-                  />
-                </Switch>
-              </div>
-              <Button label="Cancelar" type="button" buttonStyle="secondary" className="px-4 py-2 text-lg" disabled={loading} onclick={() => setIsEditorDisabled(true)} />
-              <Button label={loading ? 'Guardando...' : 'Guardar'} type="submit" buttonStyle="primary" className="px-4 py-2 text-lg" disabled={loading} />
-            </div>
+            ) : (
+              <div className="ql-editor">{parse(values.description)}</div>
+            ))}
+
+          <div className="mt-4">
+            <FileUpload
+              inputRef={inputFileRef}
+              onChange={files => {
+                setValue('files', files);
+                saveContentOnChange();
+              }}
+              onDelete={file => {
+                setValue('filesToDelete', [...values.filesToDelete, file.url]);
+              }}
+              files={content?.files || []}
+              disabled={isEditorDisabled}
+              loading={loading}
+            />
           </div>
-        )}
+
+          {!isEditorDisabled && !loading && (
+            <div className="flex items-center sm:justify-center md:justify-between p-4 mt-4">
+              <div>
+                <ContentViewAttach
+                  onAttachFile={() => {
+                    inputFileRef.current?.click();
+                  }}
+                />
+              </div>
+              <div className="flex items-center sm:justify-center md:justify-end gap-4">
+                <div className="flex items-center justify-center gap-2">
+                  <p>Publicar</p>
+                  <Switch
+                    disabled={loading}
+                    checked={values.isPublished}
+                    // defaultChecked={isPublished}
+                    onChange={checked => setValue('isPublished', checked)}
+                    className="group relative flex h-5 w-12 cursor-pointer rounded-full bg-gray-300 p-1 transition-colors duration-200 ease-in-out focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white data-[checked]:bg-easy-300"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none inline-block size-3 translate-x-0 rounded-full bg-white ring-0 shadow-lg transition duration-200 ease-in-out group-data-[checked]:translate-x-7"
+                    />
+                  </Switch>
+                </div>
+                <Button label="Cancelar" type="button" buttonStyle="secondary" className="px-4 py-2 text-lg" disabled={loading} onclick={() => setIsEditorDisabled(true)} />
+                <Button label={loading ? 'Guardando...' : 'Guardar'} type="submit" buttonStyle="primary" className="px-4 py-2 text-lg" disabled={loading} />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </form>
   );

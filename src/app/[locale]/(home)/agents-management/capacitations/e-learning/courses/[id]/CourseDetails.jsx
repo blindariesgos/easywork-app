@@ -25,27 +25,33 @@ import { useUserPermissions } from '../../../hooks/useUserPermissions';
 import { LMS_PERMISSIONS } from '../../../constants';
 
 export const CourseDetails = ({ courseId }) => {
+  // Hooks
   const router = useRouter();
   const { hasPermission } = useUserPermissions();
-
   const { getCourseById } = useCourses({ fetchOnMount: false });
-  // const { getCourseFolder } = useCourseFolders();
-  const { getCourseFolderPage, toggleCourseFolderPageAsCompleted } = useCourseFolderPages();
+  const { toggleCourseFolderPageAsCompleted } = useCourseFolderPages();
 
+  // States
   const [closedSections, setClosedSections] = useState([]);
-  const [course, setCourse] = useState(null);
-  const [selectedContent, setSelectedContent] = useState({ item: null, type: 'page', folderIndex: 0, pageIndex: 0 });
-  const hasFolders = course?.folders?.length > 0;
+
+  // States - Loaders
+  const [fetchingModuleDetails, setFetchingModuleDetails] = useState(true);
+
+  // States - Modales
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
   const [isUncheckAsCompleteModalOpen, setIsUncheckAsCompleteModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [fetchingModuleDetails, setFetchingModuleDetails] = useState(true);
   const [isEditCourseModalOpen, setIsEditModalCourseOpen] = useState(false);
   const [isDeleteContentModalOpen, setIsDeleteModalCourseOpen] = useState(false);
-  const [contentDetails, setContentDetails] = useState(null);
 
-  const isFirstElement = selectedContent.folderIndex === 0 && selectedContent.pageIndex === 0;
-  const isLastElement = selectedContent.folderIndex === course?.folders.length - 1 && selectedContent.pageIndex === course?.folders[selectedContent.folderIndex]?.pages.length - 1;
+  // States - primary
+  const [course, setCourse] = useState(null);
+  const [content, setContent] = useState({ data: null, folderIndex: 0, pageIndex: 0 });
+  // const [contentDetails, setContentDetails] = useState(null);
+
+  // Definitions
+  const hasFolders = course?.folders?.length > 0;
+  const isFirstElement = content.folderIndex === 0 && content.pageIndex === 0;
+  const isLastElement = content.folderIndex === course?.folders.length - 1 && content.pageIndex === course?.folders[content.folderIndex]?.pages.length - 1;
 
   const toggleSection = section => {
     setClosedSections(prev => (prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]));
@@ -73,22 +79,11 @@ export const CourseDetails = ({ courseId }) => {
   const goNextContent = () => {
     if (!hasFolders) return;
 
-    let { pageIndex, folderIndex } = selectedContent;
+    let { pageIndex, folderIndex } = content;
 
     if (!folderIndex) folderIndex = 0;
 
     const currentFolder = course.folders[folderIndex || 0];
-
-    // if (selectedContent.type === 'folder') {
-    //   const courseFolder = course.folders[selectedContent.courseFolderIndex];
-
-    //   setSelectedContent(prev => ({ ...prev, item: courseFolder.pages[0], type: 'page', pageIndex: 0 }));
-    // } else {
-    //   const courseFolder = course.folders[selectedContent.courseFolderIndex];
-    //   const page = courseFolder.pages[selectedContent.pageIndex + 1];
-
-    //   setSelectedContent(prev => ({ ...prev, item: page || courseFolder, type: page ? 'page' : 'folder', pageIndex: page ? selectedContent.pageIndex + 1 : 0 }));
-    // }
 
     if (pageIndex < currentFolder.pages.length - 1) {
       pageIndex++;
@@ -97,12 +92,12 @@ export const CourseDetails = ({ courseId }) => {
       pageIndex = 0;
     }
 
-    setSelectedContent({ item: course.folders[folderIndex].pages[pageIndex], type: 'page', folderIndex, pageIndex });
+    setContent({ data: course.folders[folderIndex].pages[pageIndex], type: 'page', folderIndex, pageIndex });
   };
 
   const goPreviousContent = () => {
     if (!hasFolders) return;
-    let { pageIndex, folderIndex } = selectedContent;
+    let { pageIndex, folderIndex } = content;
 
     if (!folderIndex) folderIndex = 0;
 
@@ -114,30 +109,42 @@ export const CourseDetails = ({ courseId }) => {
       pageIndex = previousFolder.pages.length - 1;
     }
 
-    setSelectedContent({ item: course.folders[folderIndex].pages[pageIndex], type: 'page', folderIndex, pageIndex });
-    // const flattenedPages = course.folders.flatMap((folder, folderIndex) => {
-    //   return folder.pages.map((page, pageIndex) => ({
-    //     pageId: page.id,
-    //     pageIndex,
-    //     folderId: folder.id,
-    //     folderIndex,
-    //   }));
-    // });
-
-    // const currentIndex = flattenedPages.find(page => page.pageId === selectedContent.item.id);
-
-    // const activeItem = course.folders[selectedContent.courseFolderIndex][selectedContent.pageIndex];
-    // const activeItem = course.folders[selectedContent.courseFolderIndex][selectedContent.pageIndex];
-    // const activeItem = course.folders[selectedContent.courseFolderIndex][selectedContent.pageIndex];
+    setContent({ data: course.folders[folderIndex].pages[pageIndex], type: 'page', folderIndex, pageIndex });
   };
 
   const markAsCompleted = () => {
-    const toggled = !selectedContent.item.isCompleted;
-    toggleCourseFolderPageAsCompleted(contentDetails.id, toggled).then(() => {
+    const toggled = !content.data.isCompleted;
+
+    toggleCourseFolderPageAsCompleted(content.data.id, toggled).then(() => {
       toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
 
-      fetchModuleDetails().then(() => fetchContentDetails());
+      // fetchModuleDetails().then(() => fetchContentDetails());
+
+      // setCourse(prev => ({
+      //   ...prev,
+      //   folders: prev.folders.map(folder => {
+      //     return {
+      //       ...folder,
+      //       pages: folder.pages.map(page => {
+      //         if (page.id === content.data.id) return { ...page, isCompleted: toggled };
+
+      //         return page;
+      //       }),
+      //     };
+      //   }),
+      // }));
+
+      // setContent(prev => ({ ...prev, data: { ...prev.data, isCompleted: toggled } }));
+      // setContentDetails(prev => ({ ...prev, isCompleted: toggled }));
     });
+  };
+
+  const onToggleIsCompleted = () => {
+    if (content.data.isCompleted) {
+      setIsUncheckAsCompleteModalOpen(true);
+    } else {
+      markAsCompleted();
+    }
   };
 
   const fetchModuleDetails = useCallback(async () => {
@@ -150,7 +157,7 @@ export const CourseDetails = ({ courseId }) => {
       setCourse(courseFetched);
 
       if (courseFetched.folders[0] && courseFetched.folders[0].pages.length > 0) {
-        setSelectedContent({ item: courseFetched.folders[0].pages[0], type: 'page', folderIndex: 0, pageIndex: 0 });
+        setContent({ data: courseFetched.folders[0].pages[0], folderIndex: 0, pageIndex: 0 });
       }
     } catch (error) {
       toast.error('Algo ha salido mal. Por favor intenta más tarde');
@@ -159,29 +166,28 @@ export const CourseDetails = ({ courseId }) => {
     }
   }, [courseId, getCourseById]);
 
-  const fetchContentDetails = useCallback(async () => {
-    if (!selectedContent || !selectedContent.item) return;
-    setLoading(true);
+  // const fetchContentDetails = useCallback(async () => {
+  //   if (!content || !content.data) return;
+  //   setLoading(true);
 
-    try {
-      const content = { ...selectedContent };
-      const result = await getCourseFolderPage(content.item.id);
+  //   try {
+  //     const result = await getCourseFolderPage(content.data.id);
 
-      if (result) setContentDetails(result);
-    } catch (error) {
-      toast.error('Tenemos problemas para cargar el contenido. Por favor intente más tarde');
-    } finally {
-      setLoading(false);
-    }
-  }, [getCourseFolderPage, selectedContent]);
+  //     if (result) setContentDetails(result);
+  //   } catch (error) {
+  //     toast.error('Tenemos problemas para cargar el contenido. Por favor intente más tarde');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [getCourseFolderPage, content]);
 
   useEffect(() => {
     fetchModuleDetails();
   }, [fetchModuleDetails]);
 
-  useEffect(() => {
-    fetchContentDetails();
-  }, [fetchContentDetails]);
+  // useEffect(() => {
+  //   fetchContentDetails();
+  // }, [fetchContentDetails]);
 
   useEffect(() => {
     if (!hasPermission(LMS_PERMISSIONS.courseDetails)) router.replace('/');
@@ -216,14 +222,17 @@ export const CourseDetails = ({ courseId }) => {
             course.folders.map((courseFolder, folderIndex, self) => (
               <CourseFolder
                 key={courseFolder.id}
+                folders={self}
                 courseFolder={courseFolder}
                 isOpen={!closedSections.includes(courseFolder.name)}
                 onToggle={() => toggleSection(courseFolder.name)}
-                // onSelectLesson={() => setSelectedContent({ item: courseFolder, type: 'folder', courseFolderIndex: index, pageIndex: 0 })}
-                onSelectPage={(page, pageIndex) => setSelectedContent({ item: page, type: 'page', folderIndex, pageIndex })}
-                refetchContentDetails={fetchContentDetails}
+                onSelectPage={(page, pageIndex) => {
+                  if (page.id === content.data?.id) return;
+
+                  setContent({ data: page, folderIndex, pageIndex });
+                }}
+                // refetchContentDetails={fetchContentDetails}
                 refetchAccordionItems={fetchModuleDetails}
-                folders={self}
               />
             ))}
 
@@ -232,31 +241,32 @@ export const CourseDetails = ({ courseId }) => {
 
         <div className="h-[71vh] relative">
           <div className="max-h-[71vh] overflow-y-auto [&::-webkit-scrollbar]:hidden">
-            {loading ? (
+            {content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />}
+            {/* {loading ? (
               <div className="h-48 w-full bg-white rounded-xl">
                 <LoadingSpinnerSmall />
               </div>
             ) : (
-              contentDetails && <ContentView course={course} content={contentDetails} contentType={selectedContent.type} refetchAccordionItems={fetchModuleDetails} />
-            )}
+              content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />
+            )} */}
           </div>
 
-          {contentDetails && (
+          {content.data && (
             <div className="bg-gray-100 w-full flex items-center justify-between gap-1 absolute bottom-0 pt-5">
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   className={`bg-easy-400 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isFirstElement && 'opacity-40'}`}
-                  disabled={loading || isFirstElement}
+                  disabled={isFirstElement}
                   onClick={goPreviousContent}
                 >
-                  <MdOutlineKeyboardArrowLeft className={`h-4 w-4 bg-gray-100 rounded-full text-black ${selectedContent.index === 0 && 'opacity-60'}`} aria-hidden="true" />
+                  <MdOutlineKeyboardArrowLeft className="h-4 w-4 bg-gray-100 rounded-full text-black" aria-hidden="true" />
                   Lección anterior
                 </button>
 
                 <button
                   type="button"
-                  disabled={loading || isLastElement}
+                  disabled={isLastElement}
                   className={`bg-easy-400 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isLastElement && 'opacity-40'}`}
                   onClick={goNextContent}
                 >
@@ -266,17 +276,8 @@ export const CourseDetails = ({ courseId }) => {
               </div>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
                 <div>
-                  <button
-                    onClick={() => {
-                      if (selectedContent.item?.isCompleted) {
-                        setIsUncheckAsCompleteModalOpen(true);
-                      } else {
-                        markAsCompleted();
-                      }
-                    }}
-                    className={`bg-${selectedContent.item?.isCompleted ? 'easy-400' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}
-                  >
-                    {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
+                  <button onClick={onToggleIsCompleted} className={`bg-${content.data?.isCompleted ? 'easy-400' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}>
+                    {content.data?.isCompleted ? 'Lección completada' : 'Completar lección'}
                   </button>
                 </div>
               )}

@@ -310,7 +310,11 @@ export default function Table() {
                                   <Link
                                     href={`/agents-management/meetings-and-sessions/teams/meet/${meet.id}?show=true`}
                                   >
-                                    <p>{meet?.title ?? ""}</p>
+                                    <p>
+                                      {meet?.title
+                                        ? `${meet?.title}${meet?.startTime ? ` - ${moment(meet?.startTime).format("DD/MM/YYYY")}` : ""}`
+                                        : "N/D"}
+                                    </p>
                                   </Link>
                                 ) : column.row == "developmentManager" ? (
                                   meet[column.row] ? (
@@ -378,16 +382,20 @@ export default function Table() {
                                   </div>
                                 ) : column.row === "startTime" ? (
                                   meet[column.row] ? (
-                                    moment(meet[column.row]).format(
-                                      "DD/MM/YYYY hh:mm a"
-                                    )
+                                    <div className="flex justify-center">
+                                      <div className="capitalize bg-blue-100 px-2 py-1 rounded-full">
+                                        {moment(meet[column.row]).format(
+                                          "MMMM, DD hh:mm a"
+                                        )}
+                                      </div>
+                                    </div>
                                   ) : null
-                                ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == meet?.currency?.id)?.symbol ?? ""} ${formatToCurrency(meet[column.row])}`
                                 ) : column.row === "status" ? (
                                   meet[column.row]
                                 ) : (
-                                  meet[column.row] || "-"
+                                  <div className="flex justify-center">
+                                    {meet[column.row] || "-"}
+                                  </div>
                                 )}
                               </div>
                             </td>

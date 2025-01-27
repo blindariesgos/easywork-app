@@ -115,6 +115,7 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     body.polizaId = poliza.id;
     body.file = file.file;
     body.contactId = contact.id;
+    body.status = "captura_documentos";
 
     console.log({ body });
     const formData = getFormData(body);

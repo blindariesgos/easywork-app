@@ -20,6 +20,7 @@ import AddFields from "./AddFields";
 import SelectDropdown from "../../components/form/SelectDropdown";
 import useFilterTableContext from "../../context/filters-table";
 import moment from "moment";
+import AgentSelectAsync from "../form/AgentSelectAsync";
 
 const FormFilters = () => {
   const { t } = useTranslation();
@@ -268,7 +269,18 @@ const FormFilters = () => {
           value = moment(field.value).utc().format("YYYY-MM-DDTHH:mm:ss");
         }
 
-        if (field.type == "select-contact") {
+        if (field.type == "date-short") {
+          value = moment(field.value).utc().format("YYYY-MM-DD");
+        }
+
+        if (
+          [
+            "select-contact",
+            "select-policy",
+            "select-lead",
+            "select-agent",
+          ].includes(field.type)
+        ) {
           value = field.value.id;
         }
 
@@ -305,8 +317,9 @@ const FormFilters = () => {
           const index = fields.findIndex((x) => x.code == key);
           const filterField = filterFields.find((field) => field.code == key);
           if (!filterField) return;
-          const fieldValue =
-            filterField.type == "date" ? getDate(filters[key]) : filters[key];
+          const fieldValue = ["date", "date-short"].includes(filterField.type)
+            ? getDate(filters[key])
+            : filters[key];
           if (index == -1) {
             newItems = [
               ...newItems,
@@ -366,6 +379,16 @@ const FormFilters = () => {
               />
             )}
 
+            {dataField.type === "select-agent" && (
+              <AgentSelectAsync
+                label={dataField.name}
+                name={`fields[${index}].value`}
+                setValue={setValue}
+                watch={watch}
+                object
+              />
+            )}
+
             {dataField.type === "select-policy" && (
               <PolicySelectAsync
                 label={dataField.name}
@@ -409,7 +432,7 @@ const FormFilters = () => {
                 watch={watch}
               />
             )}
-            {dataField.type === "date" && (
+            {["date", "date-short"].includes(dataField.type) && (
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (

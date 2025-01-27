@@ -118,11 +118,7 @@ const Filters = () => {
                       onClick={() => handleSelectCustomFilter(filter)}
                     >
                       <p
-                        className={`text-sm uppercase group-hover:font-semibold  ${
-                          customFilterSelected == filter.id
-                            ? "text-primary font-medium"
-                            : "text-gray-60"
-                        }`}
+                        className={`text-sm uppercase group-hover:font-semibold  ${customFilterSelected == filter.id ? "text-primary font-medium" : "text-gray-60"}`}
                       >
                         {filter.name}
                       </p>

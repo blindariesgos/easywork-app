@@ -116,6 +116,7 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
     body.polizaId = poliza.id;
     body.file = file.file;
     body.contactId = contact.id;
+    body.status = "captura_documentos";
 
     const formData = getFormData(body);
     const response = await addSchedule(formData);
@@ -217,6 +218,12 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
                 name="type"
                 setValue={setValue}
                 error={errors?.type}
+              />
+              <TextInput
+                type="text"
+                label={t("operations:programations:general:diagnosis")}
+                name="medicalCondition"
+                register={register}
               />
               <AgentSelectAsync
                 label={t("operations:programations:general:responsible")}

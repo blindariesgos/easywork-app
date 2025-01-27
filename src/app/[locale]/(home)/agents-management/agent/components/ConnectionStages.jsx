@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
-import { connectionsStage } from "../../conections/common";
+import { connectionsStage } from "@/src/utils/stages";
+
 import { Fragment, useMemo, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { updateAgentConnection, updateAgentRecruitment } from "@/src/lib/apis";

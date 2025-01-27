@@ -11,7 +11,7 @@ import { E_LEARNING_BASE_ROUTE } from '../constants';
 import { LMS_PERMISSIONS } from '../../constants';
 import { useUserPermissions } from '../../hooks/useUserPermissions';
 
-export const CourseCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse }) => {
+export const CourseCard = ({ isFirstChild, isLastChild, course, onAssignCourse, onEditCourse, onMoveCourse, onDeleteCourse }) => {
   const pathname = usePathname();
   const { hasPermission } = useUserPermissions();
 
@@ -20,7 +20,14 @@ export const CourseCard = ({ course, onEditCourse, onMoveCourse, onDeleteCourse 
   return (
     <div className="relative w-[300px] h-[360px]">
       {pathname === `${E_LEARNING_BASE_ROUTE}/config` && hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && (
-        <CourseCardMoreMenu onEditCourse={() => onEditCourse(course)} onMoveCourse={() => onMoveCourse(course)} onDeleteCourse={() => onDeleteCourse(course)} />
+        <CourseCardMoreMenu
+          isFirstChild={isFirstChild}
+          isLastChild={isLastChild}
+          onEditCourse={() => onEditCourse(course)}
+          onMoveCourse={operation => onMoveCourse(course, operation)}
+          onDeleteCourse={() => onDeleteCourse(course)}
+          onAssignCourse={() => onAssignCourse(course)}
+        />
       )}
 
       <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer w-full h-full">

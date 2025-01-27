@@ -143,7 +143,8 @@
             "sub-agent": "Sub-agente",
             "intermediary": "Agente Intermediario",
             "responsible": "Agente Responsable"
-        }
+        },
+        "update": "Reembolso actualizado correctamente."
     },
     "programations": {
         "title": "Programaciones",
@@ -271,7 +272,8 @@
                 "branch": "Ramo",
                 "company": "Compañía",
                 "button": "añadir documento",
-                "client": "Cliente"
+                "client": "Cliente",
+                "medicalCondition": "Diagnostico / Padecimiento"
             },
             "refund": {
                 "title": "Agregar Reembolso",
@@ -284,7 +286,7 @@
                 "company": "Compañía",
                 "button": "añadir documento",
                 "type": "Tipo de reembolso",
-                "affeccion": "Afección médica"
+                "affeccion": "Diagnostico / Padecimiento"
             },
             "fundrescue": {
                 "title": "Agregar Rescate de Fondos",

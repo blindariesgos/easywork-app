@@ -74,6 +74,8 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
       );
     if (data?.claimNumber) setValue("claimNumber", data?.claimNumber);
     if (data?.requestType) setValue("requestType", data?.requestType);
+    if (data?.siniestroNumber)
+      setValue("siniestroNumber", data?.siniestroNumber);
     if (data?.folioNumber) setValue("folioNumber", data?.folioNumber);
     if (data?.ot) setValue("ot", data?.ot);
     if (data?.sigre) setValue("sigre", data?.sigre);
@@ -204,7 +206,7 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
           <TextInput
             type="text"
             label={t("operations:programations:general:loss-number")}
-            name="loss-number"
+            name="siniestroNumber"
             disabled={!isEdit}
             register={register}
           />

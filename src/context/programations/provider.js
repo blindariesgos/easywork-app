@@ -5,6 +5,11 @@ import { ProgramationsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
 import { useSchedules } from "../../lib/api/hooks/schedules";
+import {
+  polizaReimbursementStatus,
+  polizaReimbursementStatusColor,
+} from "@/src/utils/stages";
+
 export default function ProgramationsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
@@ -41,9 +46,9 @@ export default function ProgramationsContextProvider({ children }) {
     {
       id: 2,
       name: t("operations:policies:table:policy"),
-      type: "input",
-      check: false,
-      code: "poliza",
+      type: "select-policy",
+      check: true,
+      code: "polizaId",
     },
   ];
   const handleChangeConfig = (key, value) => {
@@ -86,9 +91,9 @@ export default function ProgramationsContextProvider({ children }) {
       {
         id: 2,
         name: t("operations:policies:table:policy"),
-        type: "input",
-        check: false,
-        code: "poliza",
+        type: "select-policy",
+        check: true,
+        code: "polizaId",
       },
       {
         id: 3,
@@ -104,24 +109,10 @@ export default function ProgramationsContextProvider({ children }) {
         type: "select",
         check: false,
         code: "status",
-        options: [
-          {
-            id: "activa",
-            name: "Vigente",
-          },
-          {
-            id: "expirada",
-            name: "No vigente",
-          },
-          {
-            id: "cancelada",
-            name: "Cancelada",
-          },
-          {
-            id: "en_proceso",
-            name: "En trámite",
-          },
-        ],
+        options: Object.keys(polizaReimbursementStatus).map((key) => ({
+          id: key,
+          name: polizaReimbursementStatus[key],
+        })),
       },
     ]);
   }, [lists?.listContact, lists?.policies]);

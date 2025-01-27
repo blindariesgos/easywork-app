@@ -22,11 +22,29 @@ export default function Page() {
     picture,
     id_token
   ) => {
-    await googleCallback(
+    // await googleCallback(
+    //   {
+    //     refresh_token,
+    //     access_token,
+    //     expires_in,
+    //     usergoogle_id,
+    //     service,
+    //     family_name,
+    //     given_name,
+    //     email,
+    //     picture,
+    //     id_token,
+    //   },
+    //   searchParams.get("state")
+    // );
+
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/google-save-token`,
       {
         refresh_token,
         access_token,
         expires_in,
+        userId: searchParams.get("state"),
         usergoogle_id,
         service,
         family_name,
@@ -34,8 +52,7 @@ export default function Page() {
         email,
         picture,
         id_token,
-      },
-      searchParams.get("state")
+      }
     );
   };
 

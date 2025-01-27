@@ -3,7 +3,7 @@ import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { deleteTokenGoogle } from "../../../../../../../lib/apis";
+// import { deleteTokenGoogle } from "../../../../../../../lib/apis";
 import Tag from "../../../../../../../components/Tag";
 import Image from "next/image";
 import { toast } from "react-toastify";
@@ -20,10 +20,11 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
     if (params.get("disconnect") === "true") {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${session?.data?.user?.sub}/${selectOauth?.id}`
+          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/calendar/list/${selectOauth?.id}`
         )
         .then((res) => {
-          setListCalendars(res.data);
+          console.log(res.data);
+          setListCalendars(res.data.calendars);
         })
         .catch((err) => {
           console.log(err);
@@ -48,6 +49,7 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
         null,
         true
       );
+
       setSelectOauth(null);
       router.push("/tools/calendar");
       toast.success("Calendario de Google desconectado");
@@ -55,6 +57,18 @@ export default function CalendarDisconnect({ selectOauth, setSelectOauth }) {
       toast.error(error);
     }
   }
+
+  const deleteTokenGoogle = async (
+    userId,
+    oauthId,
+    refreshtoken,
+    fromCalendar
+  ) => {
+    const response = await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google/${userId}/${oauthId}?refreshtoken=${refreshtoken}&fromCalendar=${fromCalendar}`
+    );
+    return response;
+  };
 
   return (
     <SliderOverShort openModal={params.get("disconnect")}>

@@ -11,7 +11,7 @@ export default function ConfigView() {
   const { hasPermission } = useUserPermissions();
 
   useEffect(() => {
-    if (!hasPermission(LMS_PERMISSIONS.config)) router.replace('/');
+    if (!hasPermission(LMS_PERMISSIONS.config)) router.replace('/agents-management/capacitations/e-learning/courses');
   }, [hasPermission, router]);
 
   return <CoursesGrid showCreateButton />;

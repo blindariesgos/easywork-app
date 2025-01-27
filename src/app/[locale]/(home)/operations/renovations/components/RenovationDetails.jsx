@@ -15,11 +15,17 @@ import ReceiptEmpty from "./ReceiptEmpty";
 import Beneficiaries from "./tabs/Beneficiaries";
 import Insured from "./tabs/Insured";
 import Versions from "./tabs/Versions";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { renovationStages } from "@/src/utils/stages";
+import { putPoliza } from "@/src/lib/apis";
+import useRenovationContext from "@/src/context/renovations";
+import { toast } from "react-toastify";
 
 export default function RenovationDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
+  const { mutate: mutateRenovation } = useRenovationContext();
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -94,6 +100,33 @@ export default function RenovationDetails({ data, id, mutate }) {
     },
   ];
 
+  const updateStatus = async (status) => {
+    setLoading(true);
+    const body = {
+      renewalStageId: status,
+    };
+    try {
+      const response = await putPoliza(id, body);
+      console.log({ response });
+      if (response.hasError) {
+        toast.error(
+          "Se ha producido un error al actualizar, inténtelo de nuevo."
+        );
+        setLoading(false);
+        return;
+      }
+      mutate();
+      toast.success("Renovación actualizada correctamente.");
+      mutateRenovation();
+    } catch (error) {
+      console.log({ error });
+      toast.error(
+        "Se ha producido un error al actualizar, inténtelo de nuevo."
+      );
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
@@ -138,16 +171,52 @@ export default function RenovationDetails({ data, id, mutate }) {
                   <p className="text-sm">{getClientCode()}</p>
                 </div>
               </div>
-              <IconDropdown
-                icon={
-                  <Cog8ToothIcon
-                    className="h-8 w-8 text-primary"
-                    aria-hidden="true"
-                  />
-                }
-                options={settingsPolicy}
-                width="w-[140px]"
-              />
+              <div className="flex items-center gap-2">
+                <Menu>
+                  <MenuButton>
+                    <label
+                      className={"py-2 px-3 rounded-lg cursor-pointer"}
+                      style={{
+                        background:
+                          renovationStages.find((x) => x.id == data?.status)
+                            ?.color ?? renovationStages[0]?.color,
+                      }}
+                    >
+                      {renovationStages.find((x) => x.id == data?.status)
+                        ?.name ?? renovationStages[0]?.name}
+                    </label>
+                  </MenuButton>
+                  <MenuItems
+                    transition
+                    anchor="bottom end"
+                    className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
+                  >
+                    {data &&
+                      renovationStages
+                        ?.filter((x) => x.id !== data?.status)
+                        .map((option, index) => (
+                          <MenuItem
+                            key={index}
+                            as="div"
+                            onClick={() => updateStatus(option.id)}
+                            className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                          >
+                            {option.name}
+                          </MenuItem>
+                        ))}
+                  </MenuItems>
+                </Menu>
+                <IconDropdown
+                  icon={
+                    <Cog8ToothIcon
+                      className="h-8 w-8 text-primary"
+                      aria-hidden="true"
+                    />
+                  }
+                  options={settingsPolicy}
+                  width="w-[140px]"
+                />
+              </div>
             </div>
             <TabList className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
               {tabs.map((tab) => (

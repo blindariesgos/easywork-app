@@ -47,4 +47,10 @@ export const getCrmTypeConfig = (data) => ({
     labelKey: "Programación",
     name: data?.crmEntity?.ot || data?.crmEntity?.sigre,
   },
+  poliza_reimbursement: {
+    href: `/operations/refunds/refund/${data.crmEntity.id}?show=true`,
+    bgClass: "bg-[#dabea6] text-[#241F61]",
+    labelKey: "Reembolso",
+    name: data?.crmEntity?.ot || data?.crmEntity?.sigre,
+  },
 });

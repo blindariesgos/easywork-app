@@ -62,15 +62,17 @@ const getActivityPath = (cmrtype) => {
       return "/agent-management/agents";
     case "receipt":
       return "/sales/crm/polizas/receipts";
+    case "poliza_reimbursement":
+      return "/operations/reimbursements";
+    case "poliza_scheduling":
+      return "/operations/schedulings";
     default:
       return "/sales/crm/contacts";
   }
 };
 export const useEntityActivities = (id, cmrtype) => {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${getActivityPath(cmrtype)}/${id}/activities`,
-    fetcher
-  );
+  const url = `${getActivityPath(cmrtype)}/${id}/activities${cmrtype == "renewal" ? "?renewal=true" : ""}`;
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   console.log("activities data", data);
   return {

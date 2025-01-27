@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { toast } from 'react-toastify';
 
 import { DeleteContentModal } from '../../components/DeleteContentModal';
 
@@ -7,18 +6,23 @@ import { AccordionItem } from './AccordionItem';
 import { CourseFolderPage } from './CourseFolderPage';
 import { NewPageButton } from './NewPageButton';
 import { NewContentForm } from './NewContentForm';
+import { ChangeFolderForm } from './ChangeFolderForm';
 
 import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
 import { useCourseFolders } from '../../hooks/useCourseFolders';
+import { LMS_PERMISSIONS } from '../../../constants';
+import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
-export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, refetchAccordionItems }) => {
+export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, refetchAccordionItems, folders }) => {
   const { getCourseFolder } = useCourseFolders();
   const { duplicateCourseFolderPage } = useCourseFolderPages();
+  const { hasPermission } = useUserPermissions();
 
   const [courseFolderDetails, setCourseFolderDetail] = useState(courseFolder);
   const [courseFolderPages, setCourseFolderPages] = useState(courseFolder?.pages || []);
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
   const [isDeleteContentModalOpen, setIsDeleteModalContentOpen] = useState(false);
+  const [isChangeFolderModalOpen, setIsChangeFolderModalOpen] = useState(false);
   const contentToHandle = useRef({ content: null, type: '' });
   const countCourseFolderPages = courseFolderPages?.length || 0;
 
@@ -58,8 +62,10 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
     fetchCourseFolderDetails();
   };
 
-  const changeCourseFolder = () => {
-    toast.info('En construcción 🚧');
+  const changeCourseFolder = (page, folder) => {
+    contentToHandle.current.type = 'change-folder';
+    contentToHandle.current.content = { page, folder };
+    setIsChangeFolderModalOpen(true);
   };
 
   const deletePage = page => {
@@ -81,10 +87,7 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
       <AccordionItem
         title={courseFolderDetails.name}
         isOpen={isOpen}
-        onToggle={() => {
-          onToggle();
-        }}
-        // onSelect={() => onSelectCourseFolder(courseFolder)}
+        onToggle={onToggle}
         itemType="folder"
         actions={{ editCourseFolder, addNewPage, deleteCourseFolder }}
         isCompleted={courseFolder.isCompleted}
@@ -101,7 +104,7 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
                   onSelectPage={() => onSelectPage(page, i)}
                   editPage={() => editPage(page)}
                   duplicatePage={() => duplicatePage(page)}
-                  changeCourseFolder={changeCourseFolder}
+                  changeCourseFolder={() => changeCourseFolder(page, courseFolder)}
                   deletePage={() => deletePage(page)}
                   isCompleted={page.isCompleted}
                 />
@@ -109,7 +112,7 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
             );
           })}
 
-        <NewPageButton onClick={addNewPage} />
+        {hasPermission(LMS_PERMISSIONS.addPage) && <NewPageButton onClick={addNewPage} />}
       </AccordionItem>
 
       <DeleteContentModal
@@ -126,6 +129,15 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
         contentType={contentToHandle.current.type}
         parent={courseFolder}
         onSuccess={fetchCourseFolderDetails}
+      />
+
+      <ChangeFolderForm
+        page={contentToHandle.current.content?.page}
+        currentFolder={contentToHandle.current.content?.folder}
+        isOpen={isChangeFolderModalOpen}
+        setIsOpen={setIsChangeFolderModalOpen}
+        folders={folders}
+        onSuccess={refetch}
       />
     </div>
   );

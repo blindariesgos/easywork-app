@@ -3,7 +3,7 @@ import { EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
 import { useUserPermissions } from '../../hooks/useUserPermissions';
 import { LMS_PERMISSIONS } from '../../constants';
 
-export const CourseCardMoreMenu = ({ isFirstChild, isLastChild, onEditCourse, onMoveCourse, onDeleteCourse }) => {
+export const CourseCardMoreMenu = ({ isFirstChild, isLastChild, onEditCourse, onAssignCourse, onMoveCourse, onDeleteCourse }) => {
   const { hasPermission } = useUserPermissions();
 
   return (
@@ -33,6 +33,9 @@ export const CourseCardMoreMenu = ({ isFirstChild, isLastChild, onEditCourse, on
             <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Mover a la izquierda</div>
           </MenuItem>
         )}
+        <MenuItem onClick={onAssignCourse}>
+          <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Asignar agente</div>
+        </MenuItem>
         {hasPermission(LMS_PERMISSIONS.coursesMoreMenuDelete) && (
           <MenuItem onClick={onDeleteCourse}>
             <div className="block px-3 py-1 text-sm leading-6 text-black cursor-pointer hover:bg-gray-400 hover:text-white">Eliminar</div>

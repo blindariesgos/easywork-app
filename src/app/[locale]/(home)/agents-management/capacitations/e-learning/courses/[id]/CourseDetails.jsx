@@ -10,6 +10,7 @@ import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { CourseFolder } from '../components/CourseFolder';
 import { NewCourseFolderButton } from '../components/NewCourseFolderButton';
 import { NewContentForm } from '../components/NewContentForm';
+import { ConfirmUncheckAsCompleted } from '../components/ConfirmUncheckAsCompleted';
 import { ContentView } from '../components/ContentView';
 import { CourseCreateEditModal } from '../../components/CourseCreateEditModal';
 import { DeleteContentModal } from '../../components/DeleteContentModal';
@@ -36,6 +37,7 @@ export const CourseDetails = ({ courseId }) => {
   const [selectedContent, setSelectedContent] = useState({ item: null, type: 'page', folderIndex: 0, pageIndex: 0 });
   const hasFolders = course?.folders?.length > 0;
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
+  const [isUncheckAsCompleteModalOpen, setIsUncheckAsCompleteModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchingModuleDetails, setFetchingModuleDetails] = useState(true);
   const [isEditCourseModalOpen, setIsEditModalCourseOpen] = useState(false);
@@ -264,7 +266,16 @@ export const CourseDetails = ({ courseId }) => {
               </div>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
                 <div>
-                  <button onClick={markAsCompleted} className={`bg-${selectedContent.item?.isCompleted ? 'easy-400' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}>
+                  <button
+                    onClick={() => {
+                      if (selectedContent.item?.isCompleted) {
+                        setIsUncheckAsCompleteModalOpen(true);
+                      } else {
+                        markAsCompleted();
+                      }
+                    }}
+                    className={`bg-${selectedContent.item?.isCompleted ? 'easy-400' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}
+                  >
                     {selectedContent.item?.isCompleted ? 'Lección completada' : 'Completar lección'}
                   </button>
                 </div>
@@ -277,6 +288,7 @@ export const CourseDetails = ({ courseId }) => {
       <CourseCreateEditModal isOpen={isEditCourseModalOpen} setIsOpen={setIsEditModalCourseOpen} course={course} onSuccess={() => fetchModuleDetails()} />
       <DeleteContentModal isOpen={isDeleteContentModalOpen} setIsOpen={setIsDeleteModalCourseOpen} content={course} onSuccess={() => redirectToCourses()} contentType="course" />
       <NewContentForm isOpen={isNewContentFormOpen} setIsOpen={setIsNewContentFormOpen} contentType="folder" parent={course} onSuccess={fetchModuleDetails} />
+      <ConfirmUncheckAsCompleted isOpen={isUncheckAsCompleteModalOpen} setIsOpen={setIsUncheckAsCompleteModalOpen} onConfirm={markAsCompleted} />
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { E_LEARNING_BASE_ROUTE } from '../constants';
 import { LMS_PERMISSIONS } from '../../constants';
 import { useUserPermissions } from '../../hooks/useUserPermissions';
 
-export const CourseCard = ({ isFirstChild, isLastChild, course, onEditCourse, onMoveCourse, onDeleteCourse }) => {
+export const CourseCard = ({ isFirstChild, isLastChild, course, onAssignCourse, onEditCourse, onMoveCourse, onDeleteCourse }) => {
   const pathname = usePathname();
   const { hasPermission } = useUserPermissions();
 
@@ -26,6 +26,7 @@ export const CourseCard = ({ isFirstChild, isLastChild, course, onEditCourse, on
           onEditCourse={() => onEditCourse(course)}
           onMoveCourse={operation => onMoveCourse(course, operation)}
           onDeleteCourse={() => onDeleteCourse(course)}
+          onAssignCourse={() => onAssignCourse(course)}
         />
       )}
 

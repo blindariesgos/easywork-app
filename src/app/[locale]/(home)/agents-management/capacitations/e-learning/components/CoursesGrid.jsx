@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CourseCard } from './CourseCard';
 import { CourseCreateEditModal } from './CourseCreateEditModal';
+import { AssignCourseModal } from './AssignCourseModal';
 import { DeleteContentModal } from './DeleteContentModal';
 
 import { PaginationV2 } from '@/src/components/pagination/PaginationV2';
@@ -18,6 +19,7 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
   const { getCourses, updateOrder } = useCourses();
 
   const [isEditCreateModalOpen, setIsEditCreateModalOpen] = useState(false);
+  const [isAssignCourseModalOpen, setIsAssignCourseModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const courseRef = useRef(null);
@@ -67,6 +69,11 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
     setIsDeleteModalOpen(true);
   };
 
+  const onAssignCourse = course => {
+    courseRef.current = course;
+    setIsAssignCourseModalOpen(true);
+  };
+
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses, page]);
@@ -97,10 +104,12 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
               onEditCourse={onEditCourse}
               onMoveCourse={onMoveCourse}
               onDeleteCourse={onDeleteCourse}
+              onAssignCourse={onAssignCourse}
             />
           ))}
 
           <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} onSuccess={fetchCourses} />
+          <AssignCourseModal isOpen={isAssignCourseModalOpen} setIsOpen={setIsAssignCourseModalOpen} course={courseRef.current} onSuccess={fetchCourses} />
           <DeleteContentModal isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} content={courseRef.current} contentType="course" />
         </div>
       )}

@@ -87,10 +87,7 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
       <AccordionItem
         title={courseFolderDetails.name}
         isOpen={isOpen}
-        onToggle={() => {
-          onToggle();
-        }}
-        // onSelect={() => onSelectCourseFolder(courseFolder)}
+        onToggle={onToggle}
         itemType="folder"
         actions={{ editCourseFolder, addNewPage, deleteCourseFolder }}
         isCompleted={courseFolder.isCompleted}

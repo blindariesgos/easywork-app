@@ -11,14 +11,14 @@ import { E_LEARNING_BASE_ROUTE } from '../constants';
 import { LMS_PERMISSIONS } from '../../constants';
 import { useUserPermissions } from '../../hooks/useUserPermissions';
 
-export const CourseCard = ({ isFirstChild, isLastChild, course, onEditCourse, onMoveCourse, onDeleteCourse }) => {
+export const CourseCard = ({ isFirstChild, isLastChild, course, onAssignCourse, onEditCourse, onMoveCourse, onDeleteCourse }) => {
   const pathname = usePathname();
   const { hasPermission } = useUserPermissions();
 
   if (!course.progress) course.progress = 0;
 
   return (
-    <div className="relative w-[300px] h-[360px]">
+    <div className="relative w-full sm:w-[300px] h-[360px]">
       {pathname === `${E_LEARNING_BASE_ROUTE}/config` && hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && (
         <CourseCardMoreMenu
           isFirstChild={isFirstChild}
@@ -26,6 +26,7 @@ export const CourseCard = ({ isFirstChild, isLastChild, course, onEditCourse, on
           onEditCourse={() => onEditCourse(course)}
           onMoveCourse={operation => onMoveCourse(course, operation)}
           onDeleteCourse={() => onDeleteCourse(course)}
+          onAssignCourse={() => onAssignCourse(course)}
         />
       )}
 

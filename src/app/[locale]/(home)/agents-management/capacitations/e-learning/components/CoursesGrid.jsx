@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CourseCard } from './CourseCard';
 import { CourseCreateEditModal } from './CourseCreateEditModal';
+import { AssignCourseModal } from './AssignCourseModal';
 import { DeleteContentModal } from './DeleteContentModal';
 
 import { PaginationV2 } from '@/src/components/pagination/PaginationV2';
@@ -18,6 +19,7 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
   const { getCourses, updateOrder } = useCourses();
 
   const [isEditCreateModalOpen, setIsEditCreateModalOpen] = useState(false);
+  const [isAssignCourseModalOpen, setIsAssignCourseModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const courseRef = useRef(null);
@@ -67,6 +69,11 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
     setIsDeleteModalOpen(true);
   };
 
+  const onAssignCourse = course => {
+    courseRef.current = course;
+    setIsAssignCourseModalOpen(true);
+  };
+
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses, page]);
@@ -79,12 +86,10 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
           <p>Obteniendo cursos...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-y-5 py-5">
+        <div className="flex flex-wrap items-center justify-start gap-2 mt-4">
           {showCreateButton && (
-            <div className="h-[360px] xs:w-full md:w-[300px] flex items-center justify-center bg-gray-300 rounded-xl hover:shadow-lg transition-shadow">
-              <button onClick={onCreateCourse} className="w-full h-full flex items-center justify-center">
-                <p className="font-bold text-gray-400">+ Nuevo curso</p>
-              </button>
+            <div className="w-full sm:w-[300px] h-[360px] hover:shadow-lg transition-shadow bg-gray-300 rounded-xl cursor-pointer flex items-center justify-center" onClick={onCreateCourse}>
+              <p className="font-bold text-gray-400">+ Nuevo curso</p>
             </div>
           )}
 
@@ -97,11 +102,13 @@ export const CoursesGrid = ({ showCreateButton = false }) => {
               onEditCourse={onEditCourse}
               onMoveCourse={onMoveCourse}
               onDeleteCourse={onDeleteCourse}
+              onAssignCourse={onAssignCourse}
             />
           ))}
 
           <CourseCreateEditModal isOpen={isEditCreateModalOpen} setIsOpen={setIsEditCreateModalOpen} course={courseRef.current} onSuccess={fetchCourses} />
-          <DeleteContentModal isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} content={courseRef.current} contentType="course" />
+          <AssignCourseModal isOpen={isAssignCourseModalOpen} setIsOpen={setIsAssignCourseModalOpen} course={courseRef.current} onSuccess={fetchCourses} />
+          <DeleteContentModal isOpen={isDeleteModalOpen} setIsOpen={setIsDeleteModalOpen} content={courseRef.current} contentType="course" onSuccess={fetchCourses} />
         </div>
       )}
 

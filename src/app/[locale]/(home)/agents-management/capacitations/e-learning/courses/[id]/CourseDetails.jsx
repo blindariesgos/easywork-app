@@ -239,8 +239,8 @@ export const CourseDetails = ({ courseId }) => {
           {hasPermission(LMS_PERMISSIONS.addFolder) && <NewCourseFolderButton onClick={() => setIsNewContentFormOpen(true)} />}
         </div>
 
-        <div className="h-[71vh] relative">
-          <div className="max-h-[71vh] overflow-y-auto [&::-webkit-scrollbar]:hidden">
+        <div className="relative">
+          <div className="h-[71vh]">
             {content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />}
             {/* {loading ? (
               <div className="h-48 w-full bg-white rounded-xl">

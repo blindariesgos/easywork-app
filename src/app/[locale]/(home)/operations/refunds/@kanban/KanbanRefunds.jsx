@@ -7,12 +7,6 @@ import Card from "./components/Card";
 import { putRefund } from "@/src/lib/apis";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import useCrmContext from "@/src/context/crm";
-import {
-  deleteTask as apiDeleteTask,
-  putTaskCompleted,
-  putTaskId,
-  putTaskIdRelations,
-} from "@/src/lib/apis";
 import { useTranslation } from "react-i18next";
 import {
   polizaReimbursementStatus,

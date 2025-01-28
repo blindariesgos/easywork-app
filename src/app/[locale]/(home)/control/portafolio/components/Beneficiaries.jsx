@@ -54,6 +54,14 @@ const Beneficiaries = ({ register, control }) => {
               register={register}
               small
             />
+            <TextInput
+              type="text"
+              label={"Tipo de beneficiario"}
+              name={`beneficiaries[${index}].type`}
+              register={register}
+              small
+              value={"Principal"}
+            />
           </div>
         </div>
       ))}

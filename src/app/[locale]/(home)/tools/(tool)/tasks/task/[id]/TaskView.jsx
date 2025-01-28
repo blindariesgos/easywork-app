@@ -12,7 +12,7 @@ import moment from "moment";
 import TaskEditor from "../TaskEditor";
 import { putTaskCompleted, putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { handleApiError } from "@/src/utils/api/errors";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import { useSWRConfig } from "swr";
 import useAppContext from "@/src/context/app";
@@ -73,7 +73,13 @@ export default function TaskView({ id, task }) {
   const getCompletedTask = async () => {
     try {
       setLoading(true);
-      await putTaskCompleted(task.id);
+      const response = await putTaskCompleted(task.id);
+      console.log({ response });
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
       toast.success(t("tools:tasks:completed-success"));
       setLoading(false);
       mutateTask();

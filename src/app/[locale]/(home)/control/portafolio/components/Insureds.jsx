@@ -80,6 +80,10 @@ const Insureds = ({ register, control, watch, setValue }) => {
                       { id: true, name: "Si" },
                     ]}
                     name={`insureds[${index}].metadata.fumador`}
+                    selectedOption={{
+                      id: insured?.metadata?.fumador,
+                      name: insured?.metadata?.fumador ? "Si" : "No",
+                    }}
                     setValue={setValue}
                     watch={watch}
                     small

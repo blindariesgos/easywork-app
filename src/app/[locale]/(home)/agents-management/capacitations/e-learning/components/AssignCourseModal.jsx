@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { toast } from 'react-toastify';
 
@@ -12,19 +13,27 @@ import Image from 'next/image';
 // import { useDebouncedCallback } from 'use-debounce';
 
 export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { assignCourse } = useCourses({ fetchOnMount: false });
   const { lists } = useAppContext();
+
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
 
-  const onCloseModal = () => setIsOpen(false);
+  const onCloseModal = () => {
+    router.push('/agents-management/capacitations/e-learning/config');
+    setIsOpen(false);
+  };
 
   const onSave = async () => {
-    setLoading(true);
+    // setLoading(true);
 
     try {
       // await assignCourse({ courseId: course.id, userIds: selectedUsers });
+      router.push(`/agents-management/capacitations/e-learning/config?prev=course-assign&prev_id=${course.id}`);
+
+      return;
 
       toast.success('Curso asignado exitosamente!');
       if (onSuccess) onSuccess();

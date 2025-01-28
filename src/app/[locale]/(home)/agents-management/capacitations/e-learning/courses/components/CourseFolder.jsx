@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { DeleteContentModal } from '../../components/DeleteContentModal';
 
@@ -13,13 +13,13 @@ import { useCourseFolders } from '../../hooks/useCourseFolders';
 import { LMS_PERMISSIONS } from '../../../constants';
 import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
-export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, refetchAccordionItems, folders }) => {
+export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, onSelectPage, refetchAccordionItems, folders }) => {
   const { getCourseFolder } = useCourseFolders();
   const { duplicateCourseFolderPage } = useCourseFolderPages();
   const { hasPermission } = useUserPermissions();
 
   const [courseFolderDetails, setCourseFolderDetail] = useState(courseFolder);
-  const [courseFolderPages, setCourseFolderPages] = useState(courseFolder?.pages || []);
+  const [courseFolderPages, setCourseFolderPages] = useState([]);
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
   const [isDeleteContentModalOpen, setIsDeleteModalContentOpen] = useState(false);
   const [isChangeFolderModalOpen, setIsChangeFolderModalOpen] = useState(false);
@@ -82,6 +82,10 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
     }
   };
 
+  useEffect(() => {
+    setCourseFolderPages(courseFolder?.pages || []);
+  }, [courseFolder?.pages]);
+
   return (
     <div className="mt-1.5">
       <AccordionItem
@@ -96,11 +100,13 @@ export const CourseFolder = ({ courseFolder, isOpen, onToggle, onSelectPage, ref
           courseFolderPages.map((page, i) => {
             const isFirstElement = i === 0;
             const isLastElement = i === countCourseFolderPages - 1;
+            const isSelected = contentSelected.id === page.id;
 
             return (
               <div key={page.id} className={`${isFirstElement || isLastElement ? '' : 'my-1'}`}>
                 <CourseFolderPage
                   page={page}
+                  isSelected={isSelected}
                   onSelectPage={() => onSelectPage(page, i)}
                   editPage={() => editPage(page)}
                   duplicatePage={() => duplicatePage(page)}

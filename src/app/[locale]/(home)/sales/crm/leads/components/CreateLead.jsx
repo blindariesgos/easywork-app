@@ -30,6 +30,9 @@ import { handleApiError } from "@/src/utils/api/errors";
 import ValidatePolizaData from "./ValidatePolizaData";
 import useLeadContext from "@/src/context/leads";
 import { LinkIcon } from "@heroicons/react/24/outline";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
+import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
+import { activitySectors } from "@/src/utils/stages";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -169,6 +172,9 @@ export default function CreateLead({ lead, id }) {
     } else {
       setValue("name", lead?.fullName);
     }
+    if (lead?.relatedContact) {
+      setValue("contact", lead?.relatedContact?.id);
+    }
     if (lead?.lastName) setValue("lastName", lead?.lastName);
     if (lead?.polizaType) setValue("polizaTypeId", lead?.polizaType?.id);
     if (lead?.cargo) setValue("cargo", lead?.cargo);
@@ -181,12 +187,16 @@ export default function CreateLead({ lead, id }) {
       setType(lead?.typePerson);
       setValue("typePerson", lead?.typePerson);
     }
-    if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy.id);
     if (lead?.quoteCurrency)
       setValue("quoteCurrencyId", lead?.quoteCurrency.id);
     if (lead?.quoteAmount) setValue("quoteAmount", lead?.quoteAmount);
     if (lead?.observations) setValue("observations", lead?.observations);
-    if (lead?.observer) setValue("observerId", lead?.observer.id);
+    if (lead?.assignedBy) setValue("assignedById", lead?.assignedBy?.id);
+    if (lead?.agenteIntermediario)
+      setValue("agenteIntermediarioId", lead?.agenteIntermediario?.id);
+    if (lead?.observer) setValue("observerId", lead?.observer?.id);
+    if (lead?.subAgent) setValue("subAgentId", lead?.subAgent?.id);
+    if (lead?.activitySector) setValue("activitySector", lead?.activitySector);
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
   }, [lead]);
@@ -206,7 +216,11 @@ export default function CreateLead({ lead, id }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    let body = { ...data };
+    const { contact, subAgent, ...info } = data;
+    let body = {
+      ...info,
+      relatedContactId: contact?.id ?? null,
+    };
 
     if (selectedProfileImage?.file) {
       body = {
@@ -242,7 +256,7 @@ export default function CreateLead({ lead, id }) {
           setLoading(false);
           return;
         }
-        toast.success("Prospecto creado con exito");
+        toast.success("Prospecto creado con éxito");
         mutateLeads();
         setLoading(false);
         router.back();
@@ -415,6 +429,26 @@ export default function CreateLead({ lead, id }) {
                         disabled={!isEdit}
                       />
                     )}
+                    {isEdit && (
+                      <SelectInput
+                        label={t("contacts:create:typePerson")}
+                        options={[
+                          {
+                            name: "Física",
+                            id: "fisica",
+                          },
+                          {
+                            name: "Moral",
+                            id: "moral",
+                          },
+                        ]}
+                        setSelectedOption={(option) => setType(option.id)}
+                        watch={watch}
+                        name="typePerson"
+                        setValue={setValue}
+                        error={errors.typePerson}
+                      />
+                    )}
                     <TextInput
                       label={t("leads:lead:fields:position")}
                       placeholder={t("leads:lead:fields:position")}
@@ -478,25 +512,6 @@ export default function CreateLead({ lead, id }) {
                         disabled={!isEdit}
                       />
                     )}
-
-                    <SelectInput
-                      label={t("contacts:create:company-activity")}
-                      options={[
-                        {
-                          name: "Servicios",
-                          id: "services",
-                        },
-                        {
-                          name: "Producción",
-                          id: "production",
-                        },
-                      ]}
-                      watch={watch}
-                      name="activitySector"
-                      disabled={!isEdit}
-                      setValue={setValue}
-                      error={!watch("activitySector") && errors.activitySector}
-                    />
                     <TextInput
                       label={t("leads:lead:fields:rfc")}
                       placeholder="XEXX010101000"
@@ -559,23 +574,42 @@ export default function CreateLead({ lead, id }) {
                   watch={watch}
                 />
                 <SelectDropdown
-                  label={t("leads:lead:fields:responsible")}
+                  label={t("contacts:create:responsible")}
                   name="assignedById"
-                  options={lists?.users ?? []}
+                  options={lists?.users}
                   register={register}
                   disabled={!isEdit}
-                  error={!watch("assignedById") && errors.assignedById}
+                  error={errors.assignedById}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectDropdown
+                  label={t("contacts:create:observer")}
+                  name="observerId"
+                  options={lists?.users}
+                  register={register}
+                  disabled={!isEdit}
+                  error={errors.observerId}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <AgentSelectAsync
+                  label={t("contacts:create:sub-agent")}
+                  name="subAgentId"
+                  register={register}
+                  disabled={!isEdit}
+                  error={errors.subAgentId}
                   setValue={setValue}
                   watch={watch}
                 />
 
-                <SelectDropdown
-                  label={t("leads:lead:fields:observer")}
-                  name="observerId"
-                  options={lists?.users ?? []}
+                <SelectInput
+                  label={t("contacts:create:intermediario")}
+                  name="agenteIntermediarioId"
+                  options={lists?.policies?.agentesIntermediarios || []}
                   register={register}
                   disabled={!isEdit}
-                  error={!watch("observerId") && errors.observerId}
+                  error={errors.agenteIntermediarioId}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -622,7 +656,47 @@ export default function CreateLead({ lead, id }) {
                     watch={watch}
                   />
                 </div>
-
+                {type == "moral" && (
+                  <SelectInput
+                    label={t("contacts:create:company-activity")}
+                    options={activitySectors.map((activity) => ({
+                      name: activity,
+                      id: activity,
+                    }))}
+                    watch={watch}
+                    name="activitySector"
+                    disabled={!isEdit}
+                    setValue={setValue}
+                    error={!watch("activitySector") && errors.activitySector}
+                  />
+                )}
+                {type == "moral" && isEdit && (
+                  <ContactSelectAsync
+                    label={"Cliente contacto"}
+                    name={"contact"}
+                    setValue={setValue}
+                    watch={watch}
+                    error={errors?.contact}
+                    notFoundHelperText={() => (
+                      <div>
+                        <p className="px-4 py-2 text-gray-700 text-xs">
+                          {t("common:not-found")}
+                          {". "}
+                          <span
+                            className="text-primary underline cursor-pointer"
+                            onClick={() =>
+                              router.push(
+                                "/sales/crm/contacts/contact?show=true&type=fisica"
+                              )
+                            }
+                          >
+                            {"Crear el cliente contacto"}
+                          </span>
+                        </p>
+                      </div>
+                    )}
+                  />
+                )}
                 <TextInput
                   label={t("leads:lead:fields:comments")}
                   error={errors.observations}

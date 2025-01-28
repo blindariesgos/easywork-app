@@ -43,7 +43,7 @@ function SelectInput({
       setValue && setValue(name, object ? selected : selected.id);
       setSelectedOption && setSelectedOption(selected);
     }
-  }, [selected, setValue, name, object, setSelectedOption]);
+  }, [selected]);
 
   const filteredElements =
     query === ""

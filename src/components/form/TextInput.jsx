@@ -14,6 +14,7 @@ function TextInput({
   multiple,
   border,
   className,
+  small,
   ...props
 }) {
   const registerProps = register && register(name);
@@ -22,7 +23,12 @@ function TextInput({
       className={`flex flex-col gap-y-1  ${className ? className : "w-full"}`}
     >
       {label && (
-        <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
+        <label
+          className={clsx("block font-medium leading-6 text-gray-900 px-3", {
+            "text-xs": small,
+            "text-sm": !small,
+          })}
+        >
           {label}
         </label>
       )}
@@ -36,19 +42,24 @@ function TextInput({
             disabled={disabled}
             value={value}
             onChange={(e) => {
-              registerProps && registerProps.onChange(e);
-              onChangeCustom && onChangeCustom(e);
+              e?.target?.value?.length &&
+                registerProps &&
+                registerProps.onChange(e);
+              e?.target?.value?.length && onChangeCustom && onChangeCustom(e);
             }}
             placeholder={placeholder}
             rows={5}
             {...props}
             className={clsx(
-              "w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm",
+              "w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0",
               {
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
                 "border-none focus:ring-0 ": !border,
                 "drop-shadow-md": !disabled,
+                "text-sm": !small,
+                "text-xs": small,
+                "py-1.5": small,
               }
             )}
           />
@@ -69,11 +80,14 @@ function TextInput({
             rows={5}
             {...props}
             className={clsx(
-              `w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md  placeholder:text-xs text-sm focus:ring-0 `,
+              `w-full outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md  placeholder:text-xs focus:ring-0 `,
               {
                 "border border-gray-200 focus:ring-gray-200": border,
                 "border-none focus:ring-0": !border,
                 "drop-shadow-md": !disabled,
+                "text-sm": !small,
+                "text-xs": small,
+                "py-1.5": small,
               }
             )}
           />

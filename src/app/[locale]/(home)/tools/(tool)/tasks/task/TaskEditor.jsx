@@ -1,34 +1,44 @@
-'use client';
-import { Cog8ToothIcon, FireIcon } from '@heroicons/react/20/solid';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import useAppContext from '@/src/context/app';
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { toast } from 'react-toastify';
-import MultipleSelect from '@/src/components/form/MultipleSelect';
-import CRMMultipleSelectV2 from '@/src/components/form/CRMMultipleSelectV2';
-import SubTaskSelect from '@/src/components/form/SubTaskSelect';
-import InputDateV2 from '@/src/components/form/InputDateV2';
-import { FaCalendarDays } from 'react-icons/fa6';
-import DateTimeCalculator from '../components/DateTimeCalculator';
-import CheckBoxMultiple from '@/src/components/form/CkeckBoxMultiple';
-import InputCheckBox from '@/src/components/form/InputCheckBox';
-import Button from '@/src/components/form/Button';
-import { useRouter, useSearchParams } from 'next/navigation';
-import OptionsTask from '../components/OptionsTask';
-import { useSession } from 'next-auth/react';
-import MultiSelectTags from '../components/MultiSelectTags';
-import { getContactId, postTask, putTaskId, getLeadById, getPolicyById, getReceiptById, getAgentById, getSchedulingById, getRefundById } from '@/src/lib/apis';
-import { handleApiError } from '@/src/utils/api/errors';
-import { getFormatDate } from '@/src/utils/getFormatDate';
-import { useTasksConfigs } from '@/src/hooks/useCommon';
-import LoaderSpinner from '@/src/components/LoaderSpinner';
-import IconDropdown from '@/src/components/SettingsButton';
-import { useSWRConfig } from 'swr';
-import useTasksContext from '@/src/context/tasks';
+"use client";
+import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import useAppContext from "@/src/context/app";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { toast } from "react-toastify";
+import MultipleSelect from "@/src/components/form/MultipleSelect";
+import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
+import SubTaskSelect from "@/src/components/form/SubTaskSelect";
+import InputDateV2 from "@/src/components/form/InputDateV2";
+import { FaCalendarDays } from "react-icons/fa6";
+import DateTimeCalculator from "../components/DateTimeCalculator";
+import CheckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
+import InputCheckBox from "@/src/components/form/InputCheckBox";
+import Button from "@/src/components/form/Button";
+import { useRouter, useSearchParams } from "next/navigation";
+import OptionsTask from "../components/OptionsTask";
+import { useSession } from "next-auth/react";
+import MultiSelectTags from "../components/MultiSelectTags";
+import {
+  getContactId,
+  postTask,
+  putTaskId,
+  getLeadById,
+  getPolicyById,
+  getReceiptById,
+  getAgentById,
+  getSchedulingById,
+  getRefundById,
+} from "@/src/lib/apis";
+import { handleApiError } from "@/src/utils/api/errors";
+import { getFormatDate } from "@/src/utils/getFormatDate";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
+import IconDropdown from "@/src/components/SettingsButton";
+import { useSWRConfig } from "swr";
+import useTasksContext from "@/src/context/tasks";
 
 const schemaInputs = yup.object().shape({
   name: yup.string().required(),
@@ -58,7 +68,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
-  const [value, setValueText] = useState(edit?.description ?? copy?.description ?? '');
+  const [value, setValueText] = useState(
+    edit?.description ?? copy?.description ?? ""
+  );
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
@@ -68,29 +80,32 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [openOptions, setOpenOptions] = useState({
     created: !!edit?.createdBy,
-    participants: (edit?.participants?.length ?? copy?.participants?.length) > 0,
+    participants:
+      (edit?.participants?.length ?? copy?.participants?.length) > 0,
     observers: (edit?.observers?.length ?? copy?.observers?.length) > 0,
     time: !!(edit?.deadline ?? copy?.deadline),
-    options: (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) || (edit?.requireRevision ?? copy?.requireRevision),
+    options:
+      (edit?.responsibleCanChangeDate ?? copy?.responsibleCanChangeDate) ||
+      (edit?.requireRevision ?? copy?.requireRevision),
     more: (edit?.crm?.length ?? copy?.crm?.length ?? subtask) > 0,
   });
 
   const optionsTime = [
     {
       id: 1,
-      name: t('tools:tasks:new:person-responsible'),
+      name: t("tools:tasks:new:person-responsible"),
     },
     {
       id: 2,
-      name: t('tools:tasks:new:review-task'),
+      name: t("tools:tasks:new:review-task"),
     },
     {
       id: 3,
-      name: t('tools:tasks:new:add-favorites'),
+      name: t("tools:tasks:new:add-favorites"),
     },
     {
       id: 4,
-      name: t('tools:tasks:new:add-plan'),
+      name: t("tools:tasks:new:add-plan"),
     },
   ];
 
@@ -105,10 +120,13 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setValue,
   } = useForm({
     defaultValues: {
-      name: edit?.name ?? copy?.name ?? '',
-      limitDate: edit?.deadline ?? copy?.deadline ?? '',
-      startDate: edit?.startTime ?? copy?.startTime ?? '',
-      endDate: edit?.startTime || copy?.startTime ? (edit?.deadline ?? copy?.deadline ?? '') : '',
+      name: edit?.name ?? copy?.name ?? "",
+      limitDate: edit?.deadline ?? copy?.deadline ?? "",
+      startDate: edit?.startTime ?? copy?.startTime ?? "",
+      endDate:
+        edit?.startTime || copy?.startTime
+          ? (edit?.deadline ?? copy?.deadline ?? "")
+          : "",
       participants: edit?.participants ?? copy?.participants ?? [],
       responsible: edit?.responsible ?? copy?.responsible ?? [],
       observers: edit?.observers ?? copy?.observers ?? [],
@@ -123,55 +141,55 @@ export default function TaskEditor({ edit, copy, subtask }) {
   });
 
   //#region Logica conexion crm
-  const setCrmContact = async contactId => {
+  const setCrmContact = async (contactId) => {
     const response = await getContactId(contactId);
-    setValue('crm', [
+    setValue("crm", [
       {
         id: response?.id,
-        type: 'contact',
+        type: "contact",
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue('name', 'CRM - Cliente: ');
+    setValue("name", "CRM - Cliente: ");
     setLoading(false);
   };
-  const setCrmLead = async leadId => {
-    console.log('paso por lead');
+  const setCrmLead = async (leadId) => {
+    console.log("paso por lead");
     const response = await getLeadById(leadId);
-    setValue('crm', [
+    setValue("crm", [
       {
         id: response?.id,
-        type: 'lead',
+        type: "lead",
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue('name', 'CRM - Prospecto: ');
+    setValue("name", "CRM - Prospecto: ");
     setLoading(false);
   };
-  const setCrmReceipt = async receiptId => {
+  const setCrmReceipt = async (receiptId) => {
     const response = await getReceiptById(receiptId);
-    setValue('crm', [
+    setValue("crm", [
       {
         id: response?.id,
-        type: 'receipt',
+        type: "receipt",
         name: response?.title,
       },
     ]);
-    console.log('receipt', response);
-    setValue('name', 'CRM - Recibo: ');
+    console.log("receipt", response);
+    setValue("name", "CRM - Recibo: ");
     setLoading(false);
   };
-  const setCrmAgent = async agentId => {
+  const setCrmAgent = async (agentId) => {
     const response = await getAgentById(agentId);
-    setValue('crm', [
+    setValue("crm", [
       {
         id: response?.id,
-        type: 'agent',
+        type: "agent",
         name: response?.name,
       },
     ]);
-    console.log('Agente', response);
-    setValue('name', 'CRM - Agente: ');
+    console.log("Agente", response);
+    setValue("name", "CRM - Agente: ");
     setLoading(false);
   };
   const setCrmPolicy = async (policyId, type) => {
@@ -181,17 +199,17 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setLoading(false);
       return;
     }
-    setValue('crm', [
+    setValue("crm", [
       {
         id: response?.id,
-        name: `${response?.company?.name ?? ''} ${response?.poliza ?? ''} ${response?.type?.name ?? ''}`,
+        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
         type,
       },
     ]);
-    setValue('name', `CRM - ${type == 'policy' ? 'Póliza' : 'Renovación'}: `);
+    setValue("name", `CRM - ${type == "poliza" ? "Póliza" : "Renovación"}: `);
     setLoading(false);
   };
-  const setCrmMeet = async agentId => {
+  const setCrmMeet = async (agentId) => {
     const response = localStorage.getItem(agentId);
     console.log(response, agentId);
 
@@ -208,17 +226,17 @@ export default function TaskEditor({ edit, copy, subtask }) {
     }
     const { userId, ...metadata } = data;
 
-    const user = lists.users.find(x => x.id == userId);
+    const user = lists.users.find((x) => x.id == userId);
     setValue(
-      'createdBy',
-      lists?.users.filter(user => user.id === data.developmentManagerId)
+      "createdBy",
+      lists?.users.filter((user) => user.id === data.developmentManagerId)
     );
-    setValue('responsible', [user]);
-    setValue('metadata', metadata);
-    setValue('name', 'CRM - Junta: ');
+    setValue("responsible", [user]);
+    setValue("metadata", metadata);
+    setValue("name", "CRM - Junta: ");
     setLoading(false);
   };
-  const setCrmMeetGroup = async agentId => {
+  const setCrmMeetGroup = async (agentId) => {
     const response = localStorage.getItem(agentId);
 
     if (!response) {
@@ -235,109 +253,109 @@ export default function TaskEditor({ edit, copy, subtask }) {
     const { userId, ...metadata } = data;
 
     setValue(
-      'createdBy',
-      lists?.users.filter(user => user.id === data.developmentManagerId)
+      "createdBy",
+      lists?.users.filter((user) => user.id === data.developmentManagerId)
     );
-    setValue('metadata', metadata);
-    setValue('name', 'CRM - Junta: ');
+    setValue("metadata", metadata);
+    setValue("name", "CRM - Junta: ");
     setLoading(false);
   };
-  const setCrmScheduling = async schedulingId => {
+  const setCrmScheduling = async (schedulingId) => {
     const response = await getSchedulingById(schedulingId);
     if (response.hasError) return;
-    setValue('crm', [
+    setValue("crm", [
       {
         id: schedulingId,
-        type: 'poliza_scheduling',
+        type: "poliza_scheduling",
         name: response?.ot ?? response?.sigre,
       },
     ]);
-    setValue('name', 'CRM - Programación: ');
+    setValue("name", "CRM - Programación: ");
     setLoading(false);
   };
-  const setCrmRefund = async refundId => {
+  const setCrmRefund = async (refundId) => {
     const response = await getRefundById(refundId);
     if (response.hasError) return;
-    setValue('crm', [
+    setValue("crm", [
       {
         id: refundId,
-        type: 'poliza_reimbursement',
+        type: "poliza_reimbursement",
         name: response?.ot ?? response?.sigre,
       },
     ]);
-    setValue('name', 'CRM - Reembolso: ');
+    setValue("name", "CRM - Reembolso: ");
     setLoading(false);
   };
   useEffect(() => {
-    const prevId = params.get('prev_id');
+    const prevId = params.get("prev_id");
 
-    if (params.get('prev') === 'contact') {
+    if (params.get("prev") === "contact") {
       setLoading(true);
       setCrmContact(prevId);
       return;
     }
 
-    if (params.get('prev') === 'lead') {
+    if (params.get("prev") === "lead") {
       setLoading(true);
       setCrmLead(prevId);
       return;
     }
 
-    if (['policy', 'renewal'].includes(params.get('prev'))) {
+    if (["poliza", "renewal"].includes(params.get("prev"))) {
       setLoading(true);
-      setCrmPolicy(prevId, params.get('prev'));
+      setCrmPolicy(prevId, params.get("prev"));
       return;
     }
 
-    if (params.get('prev') === 'receipt') {
+    if (params.get("prev") === "receipt") {
       setLoading(true);
       setCrmReceipt(prevId);
       return;
     }
 
-    if (params.get('prev') === 'agent') {
+    if (params.get("prev") === "agent") {
       setLoading(true);
       setCrmAgent(prevId);
       return;
     }
 
-    if (params.get('prev') === 'meet-individual') {
+    if (params.get("prev") === "meet-individual") {
       setLoading(true);
       setCrmMeet(prevId);
       return;
     }
-    if (params.get('prev') === 'meet-group') {
+    if (params.get("prev") === "meet-group") {
       setLoading(true);
       setCrmMeetGroup(prevId);
       return;
     }
-    if (params.get('prev') === 'poliza_scheduling') {
+    if (params.get("prev") === "poliza_scheduling") {
       setLoading(true);
       setCrmScheduling(prevId);
       return;
     }
-    if (params.get('prev') === 'poliza_reimbursement') {
+    if (params.get("prev") === "poliza_reimbursement") {
       setLoading(true);
       setCrmRefund(prevId);
       return;
     }
-    if (params.get('prev') === 'course-assign') {
-      console.log('Tarea desde cursos', prevId);
+    if (params.get("prev") === "course-assign") {
+      console.log("Tarea desde cursos", prevId);
       setLoading(true);
       return;
     }
-  }, [params.get('prev')]);
+  }, [params.get("prev")]);
   //#endregion
 
   useEffect(() => {
-    setValue('metadata.taggedUsers', taggedUsers);
+    setValue("metadata.taggedUsers", taggedUsers);
   }, [taggedUsers]);
 
   useEffect(() => {
-    if (session && params.get('prev') != 'meet') {
+    if (session && params.get("prev") != "meet") {
       setValue(
-        'createdBy',
-        lists?.users.filter(user => user.id === session.user?.sub)
+        "createdBy",
+        lists?.users.filter((user) => user.id === session.user?.sub)
       );
     }
   }, [session, lists?.users, setValue]);
@@ -351,33 +369,42 @@ export default function TaskEditor({ edit, copy, subtask }) {
   }, [edit, t]);
 
   useEffect(() => {
-    setValue('important', edit?.important ?? copy?.important ?? false);
+    setValue("important", edit?.important ?? copy?.important ?? false);
     setCheck(edit?.important ?? copy?.important ?? false);
   }, [edit, copy]);
 
   const createTask = async (data, isNewTask) => {
-    if (data.name === '') return toast.error(t('tools:tasks:name-msg'));
+    if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
-    const crm = data?.crm?.map(item => ({ id: item.id, type: item.type })) || [];
-    const body = buildTaskBody(data, value, selectedOptions, session, crm, listField, t);
+    const crm =
+      data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
+    const body = buildTaskBody(
+      data,
+      value,
+      selectedOptions,
+      session,
+      crm,
+      listField,
+      t
+    );
     console.log({ body });
     try {
       setLoading(true);
       if (edit) {
         await putTaskId(edit.id, body);
-        toast.success(t('tools:tasks:update-msg'));
+        toast.success(t("tools:tasks:update-msg"));
         mutate(`/tools/tasks/task/${edit.id}`);
         updateTask();
         router.back();
       } else {
         await postTask(body);
-        toast.success(t('tools:tasks:success-msg'));
+        toast.success(t("tools:tasks:success-msg"));
         updateTask();
 
         if (isNewTask) {
           reset();
-          setValueText('');
-          setValue('name', '');
+          setValueText("");
+          setValue("name", "");
         } else {
           router.back();
         }
@@ -390,7 +417,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   };
 
   const handleCancel = () => {
-    if (params.get('prev')) {
+    if (params.get("prev")) {
       router.back();
     } else {
       router.push(`/tools/tasks?page=1`);
@@ -404,7 +431,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
     }
 
     const isCreator = task.createdBy.id == session.user.sub;
-    const isResponsible = !!task.responsible.find(responsible => responsible.id == session.user.sub);
+    const isResponsible = !!task.responsible.find(
+      (responsible) => responsible.id == session.user.sub
+    );
 
     if (isCreator || isResponsible) return true;
 
@@ -414,18 +443,37 @@ export default function TaskEditor({ edit, copy, subtask }) {
   return (
     <>
       {loading && <LoaderSpinner />}
-      <div className={`col-span-12 flex flex-col ${edit ? 'h-full' : 'h-screen'} relative w-full ${!edit && 'overflow-y-auto'}`}>
-        <div className={`flex flex-col flex-1 ${!edit && 'bg-gray-600 shadow-xl'} opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? 'sm:p-0' : 'sm:p-4'}`}>
+      <div
+        className={`col-span-12 flex flex-col ${edit ? "h-full" : "h-screen"} relative w-full ${!edit && "overflow-y-auto"}`}
+      >
+        <div
+          className={`flex flex-col flex-1 ${!edit && "bg-gray-600 shadow-xl"} opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? "sm:p-0" : "sm:p-4"}`}
+        >
           {(!edit ?? !copy) && (
             <div className="flex justify-between items-center py-2">
-              <h1 className="text-xl font-medium">{t('tools:tasks:new:title')}</h1>
-              <IconDropdown icon={<Cog8ToothIcon className="h-8 w-8 text-primary" aria-hidden="true" />} options={settings} width="w-44" />
+              <h1 className="text-xl font-medium">
+                {t("tools:tasks:new:title")}
+              </h1>
+              <IconDropdown
+                icon={
+                  <Cog8ToothIcon
+                    className="h-8 w-8 text-primary"
+                    aria-hidden="true"
+                  />
+                }
+                options={settings}
+                width="w-44"
+              />
             </div>
           )}
           <div className="flex flex-col flex-1 bg-gray-100 text-black rounded-lg relative p-2 sm:p-4">
             <div className="flex justify-between gap-2 items-center">
               <div className="flex flex-col w-full">
-                <input {...register('name')} placeholder={t('tools:tasks:new:description')} className="bg-transparent border-none focus:ring-0 w-full placeholder:text-black" />
+                <input
+                  {...register("name")}
+                  placeholder={t("tools:tasks:new:description")}
+                  className="bg-transparent border-none focus:ring-0 w-full placeholder:text-black"
+                />
               </div>
               <div className="flex gap-2 items-center w-48">
                 <input
@@ -433,13 +481,15 @@ export default function TaskEditor({ edit, copy, subtask }) {
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-0"
                   value={check}
                   checked={check}
-                  onChange={e => {
+                  onChange={(e) => {
                     setCheck(e.target.checked);
-                    setValue('important', e.target.checked);
+                    setValue("important", e.target.checked);
                   }}
                 />
-                <p className="text-sm">{t('tools:tasks:new:high')}</p>
-                <FireIcon className={`h-5 w-5 ${check ? 'text-orange-400' : 'text-gray-200'}`} />
+                <p className="text-sm">{t("tools:tasks:new:high")}</p>
+                <FireIcon
+                  className={`h-5 w-5 ${check ? "text-orange-400" : "text-gray-200"}`}
+                />
               </div>
             </div>
             <OptionsTask
@@ -451,24 +501,43 @@ export default function TaskEditor({ edit, copy, subtask }) {
               taggedUsers={taggedUsers}
               setTaggedUsers={setTaggedUsers}
               addFile={!edit && setValue}
-              files={!edit && (watch('fileIds') ?? [])}
+              files={!edit && (watch("fileIds") ?? [])}
               canEdit={canEdit}
             />
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:crm')}</p>
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("tools:tasks:new:crm")}
+                </p>
                 <div className="w-full md:w-[40%]">
-                  <CRMMultipleSelectV2 watch={watch} setValue={setValue} name="crm" error={errors.crm} />
+                  <CRMMultipleSelectV2
+                    watch={watch}
+                    setValue={setValue}
+                    name="crm"
+                    error={errors.crm}
+                  />
                 </div>
               </div>
               <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:responsible')}</p>
+                <p className="text-sm text-left w-full md:w-36">
+                  {t("tools:tasks:new:responsible")}
+                </p>
                 <div className="w-full md:w-[40%]">
                   <Controller
                     name="responsible"
                     control={control}
                     defaultValue={[]}
-                    render={({ field }) => <MultipleSelect {...field} options={lists?.users || []} getValues={getValues} setValue={setValue} onlyOne name="responsible" error={errors.responsible} />}
+                    render={({ field }) => (
+                      <MultipleSelect
+                        {...field}
+                        options={lists?.users || []}
+                        getValues={getValues}
+                        setValue={setValue}
+                        onlyOne
+                        name="responsible"
+                        error={errors.responsible}
+                      />
+                    )}
                   />
                 </div>
                 <div className="flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6">
@@ -481,7 +550,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       })
                     }
                   >
-                    <p className="text-sm">{t('tools:tasks:new:created-by')}</p>
+                    <p className="text-sm">{t("tools:tasks:new:created-by")}</p>
                   </div>
                   <div
                     className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
@@ -492,7 +561,9 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       })
                     }
                   >
-                    <p className="text-sm">{t('tools:tasks:new:participants')}</p>
+                    <p className="text-sm">
+                      {t("tools:tasks:new:participants")}
+                    </p>
                   </div>
                   <div
                     className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
@@ -503,56 +574,102 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       })
                     }
                   >
-                    <p className="text-sm">{t('tools:tasks:new:observers')}</p>
+                    <p className="text-sm">{t("tools:tasks:new:observers")}</p>
                   </div>
                 </div>
               </div>
               {openOptions.created && (
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:created-by')}</p>
+                  <p className="text-sm text-left w-full md:w-36">
+                    {t("tools:tasks:new:created-by")}
+                  </p>
                   <div className="w-full md:w-[40%]">
                     <Controller
                       name="createdBy"
                       control={control}
                       defaultValue={[]}
-                      render={({ field }) => <MultipleSelect {...field} options={lists?.users || []} getValues={getValues} setValue={setValue} name="createdBy" error={errors.createdBy} onlyOne />}
+                      render={({ field }) => (
+                        <MultipleSelect
+                          {...field}
+                          options={lists?.users || []}
+                          getValues={getValues}
+                          setValue={setValue}
+                          name="createdBy"
+                          error={errors.createdBy}
+                          onlyOne
+                        />
+                      )}
                     />
                   </div>
                 </div>
               )}
               {openOptions.participants && (
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:participants')}</p>
+                  <p className="text-sm text-left w-full md:w-36">
+                    {t("tools:tasks:new:participants")}
+                  </p>
                   <div className="w-full md:w-[40%]">
                     <Controller
                       name="participants"
                       control={control}
                       defaultValue={[]}
-                      render={({ field }) => <MultipleSelect {...field} options={lists?.users || []} getValues={getValues} setValue={setValue} name="participants" error={errors.participants} />}
+                      render={({ field }) => (
+                        <MultipleSelect
+                          {...field}
+                          options={lists?.users || []}
+                          getValues={getValues}
+                          setValue={setValue}
+                          name="participants"
+                          error={errors.participants}
+                        />
+                      )}
                     />
                   </div>
                 </div>
               )}
               {openOptions.observers && (
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:observers')}</p>
+                  <p className="text-sm text-left w-full md:w-36">
+                    {t("tools:tasks:new:observers")}
+                  </p>
                   <div className="w-full md:w-[40%]">
                     <Controller
                       name="observers"
                       control={control}
                       defaultValue={[]}
-                      render={({ field }) => <MultipleSelect {...field} options={lists?.users || []} getValues={getValues} setValue={setValue} name="observers" error={errors.observers} />}
+                      render={({ field }) => (
+                        <MultipleSelect
+                          {...field}
+                          options={lists?.users || []}
+                          getValues={getValues}
+                          setValue={setValue}
+                          name="observers"
+                          error={errors.observers}
+                        />
+                      )}
                     />
                   </div>
                 </div>
               )}
               <div className="">
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:limit-date')}</p>
+                  <p className="text-sm text-left w-full md:w-36">
+                    {t("tools:tasks:new:limit-date")}
+                  </p>
                   <div className="w-full md:w-[40%]">
                     <Controller
                       render={({ field: { value, onChange, ref, onBlur } }) => {
-                        return <InputDateV2 value={value} onChange={onChange} icon={<FaCalendarDays className="h-4 w-4 text-primary" />} time watch={watch} />;
+                        return (
+                          <InputDateV2
+                            value={value}
+                            onChange={onChange}
+                            icon={
+                              <FaCalendarDays className="h-4 w-4 text-primary" />
+                            }
+                            time
+                            watch={watch}
+                          />
+                        );
                       }}
                       name="limitDate"
                       control={control}
@@ -563,16 +680,16 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     <div
                       className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
                       onClick={() => {
-                        setValue('endDate', '');
-                        setValue('duration', 0);
-                        setValue('startDate', '');
+                        setValue("endDate", "");
+                        setValue("duration", 0);
+                        setValue("startDate", "");
                         setOpenOptions({
                           ...openOptions,
                           time: !openOptions.time,
                         });
                       }}
                     >
-                      <p className="text-sm">{t('tools:tasks:new:time')}</p>
+                      <p className="text-sm">{t("tools:tasks:new:time")}</p>
                     </div>
                     <div
                       className="cursor-pointer hover:text-primary hover:border-b hover:border-dashed"
@@ -583,49 +700,82 @@ export default function TaskEditor({ edit, copy, subtask }) {
                         })
                       }
                     >
-                      <p className="text-sm">{t('tools:tasks:new:options')}</p>
+                      <p className="text-sm">{t("tools:tasks:new:options")}</p>
                     </div>
                   </div>
                 </div>
               </div>
-              {openOptions.time && <DateTimeCalculator control={control} watch={watch} setValue={setValue} />}
+              {openOptions.time && (
+                <DateTimeCalculator
+                  control={control}
+                  watch={watch}
+                  setValue={setValue}
+                />
+              )}
               {openOptions.options && (
                 <div className="flex gap-2 flex-col w-full mt-4 md:pl-36">
                   {optionsTime.map((opt, index) => (
-                    <CheckBoxMultiple key={index} item={opt} setSelectedCheckbox={setSelectedOptions} selectedCheckbox={selectedOptions} label={opt.name} />
+                    <CheckBoxMultiple
+                      key={index}
+                      item={opt}
+                      setSelectedCheckbox={setSelectedOptions}
+                      selectedCheckbox={selectedOptions}
+                      label={opt.name}
+                    />
                   ))}
                 </div>
               )}
               <div>
                 <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                  <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:summary')}</p>
+                  <p className="text-sm text-left w-full md:w-36">
+                    {t("tools:tasks:new:summary")}
+                  </p>
                   <div className="w-full md:w-[40%]">
-                    <InputCheckBox label={t('tools:tasks:new:status')} setChecked={setCheckedTime} checked={checkedTime} />
+                    <InputCheckBox
+                      label={t("tools:tasks:new:status")}
+                      setChecked={setCheckedTime}
+                      checked={checkedTime}
+                    />
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2 flex-wrap cursor-pointer mt-4 items-center" onClick={() => setOpenOptions({ ...openOptions, more: !openOptions.more })}>
+              <div
+                className="flex gap-2 flex-wrap cursor-pointer mt-4 items-center"
+                onClick={() =>
+                  setOpenOptions({ ...openOptions, more: !openOptions.more })
+                }
+              >
                 <div>
-                  <ChevronDownIcon className={`w-4 h-4 ${openOptions.more && 'rotate-180'} text-primary`} />
+                  <ChevronDownIcon
+                    className={`w-4 h-4 ${openOptions.more && "rotate-180"} text-primary`}
+                  />
                 </div>
                 <div className="flex gap-2 text-sm">
-                  <p className="font-medium">{t('tools:tasks:new:more')}</p>
-                  <p>({t('tools:tasks:new:tracking')},</p>
-                  <p>{t('tools:tasks:new:tags')})</p>
+                  <p className="font-medium">{t("tools:tasks:new:more")}</p>
+                  <p>({t("tools:tasks:new:tracking")},</p>
+                  <p>{t("tools:tasks:new:tags")})</p>
                 </div>
               </div>
               {openOptions.more && (
                 <div className="flex flex-col gap-4">
                   <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                    <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:tracking')}</p>
+                    <p className="text-sm text-left w-full md:w-36">
+                      {t("tools:tasks:new:tracking")}
+                    </p>
                     <div className="w-full md:w-[40%]">
-                      <InputCheckBox label={t('tools:tasks:new:time-task')} setChecked={setCheckedTask} checked={checkedTask} />
+                      <InputCheckBox
+                        label={t("tools:tasks:new:time-task")}
+                        setChecked={setCheckedTask}
+                        checked={checkedTask}
+                      />
                     </div>
                   </div>
                   {/* Sub Task */}
                   {!edit && (
                     <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                      <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:subtask')}</p>
+                      <p className="text-sm text-left w-full md:w-36">
+                        {t("tools:tasks:new:subtask")}
+                      </p>
                       <div className="w-full md:w-[40%]">
                         <SubTaskSelect
                           name="subTask"
@@ -635,34 +785,59 @@ export default function TaskEditor({ edit, copy, subtask }) {
                           error={errors.subTask}
                           onlyOne
                           subtitle="Seleccionar tarea padre"
-                          taskId={edit?.id ?? copy?.id ?? ''}
+                          taskId={edit?.id ?? copy?.id ?? ""}
                         />
                       </div>
                     </div>
                   )}
                   <div className="flex gap-2 sm:flex-row flex-col sm:items-center">
-                    <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:tags')}</p>
+                    <p className="text-sm text-left w-full md:w-36">
+                      {t("tools:tasks:new:tags")}
+                    </p>
                     <div className="w-full md:w-[40%]">
-                      <MultiSelectTags getValues={getValues} setValue={setValue} name="tags" error={errors.tags} />
+                      <MultiSelectTags
+                        getValues={getValues}
+                        setValue={setValue}
+                        name="tags"
+                        error={errors.tags}
+                      />
                     </div>
                   </div>
                 </div>
               )}
             </div>
           </div>
-          <div className={`flex gap-4 flex-wrap mt-4 ${edit && 'mb-4'}`}>
+          <div className={`flex gap-4 flex-wrap mt-4 ${edit && "mb-4"}`}>
             <Button
-              label={loading ? t('common:saving') : edit ? t('tools:tasks:new:update-task') : t('tools:tasks:new:add-task')}
+              label={
+                loading
+                  ? t("common:saving")
+                  : edit
+                    ? t("tools:tasks:new:update-task")
+                    : t("tools:tasks:new:add-task")
+              }
               buttonStyle="primary"
               disabled={loading}
               className="px-3 py-2 drop-shadow-lg"
-              onclick={handleSubmit(data => createTask(data, false))}
+              onclick={handleSubmit((data) => createTask(data, false))}
             />
             {!edit && (
-              <Button label={t('tools:tasks:new:add-create')} buttonStyle="secondary" disabled={loading} className="px-3 py-2 drop-shadow-lg" onclick={handleSubmit(data => createTask(data, true))} />
+              <Button
+                label={t("tools:tasks:new:add-create")}
+                buttonStyle="secondary"
+                disabled={loading}
+                className="px-3 py-2 drop-shadow-lg"
+                onclick={handleSubmit((data) => createTask(data, true))}
+              />
             )}
 
-            <Button label={t('common:buttons:cancel')} buttonStyle="secondary" disabled={loading} className="px-3 py-2 drop-shadow-lg" onclick={handleCancel} />
+            <Button
+              label={t("common:buttons:cancel")}
+              buttonStyle="secondary"
+              disabled={loading}
+              className="px-3 py-2 drop-shadow-lg"
+              onclick={handleCancel}
+            />
           </div>
         </div>
       </div>
@@ -671,7 +846,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
 }
 
 // Función actualizada
-const getCmrInfo = cmr => {
+const getCmrInfo = (cmr) => {
   if (!cmr || !cmr.type || !cmr.crmEntity) return null;
 
   const { id } = cmr.crmEntity;
@@ -679,24 +854,24 @@ const getCmrInfo = cmr => {
 
   let name = cmr.crmEntity.name;
 
-  if (type === 'contact' || type === 'lead' || type === 'agent') {
+  if (type === "contact" || type === "lead" || type === "agent") {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
   }
 
-  if (type === 'poliza') {
+  if (type === "poliza") {
     name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
   }
 
-  if (type === 'receipt') {
+  if (type === "receipt") {
     name = cmr?.crmEntity?.title;
   }
 
   return { id, type, name };
 };
 
-const formatCrmData = crmData => {
+const formatCrmData = (crmData) => {
   if (!crmData) return [];
-  return crmData.map(item => getCmrInfo(item));
+  return crmData.map((item) => getCmrInfo(item));
 };
 
 const getSelectedOptions = (edit, t) => {
@@ -704,26 +879,34 @@ const getSelectedOptions = (edit, t) => {
   if (edit?.requireRevision) {
     optionsSelected.push({
       id: 2,
-      name: t('tools:tasks:new:review-task'),
+      name: t("tools:tasks:new:review-task"),
     });
   }
   if (edit?.responsibleCanChangeDate) {
     optionsSelected.push({
       id: 1,
-      name: t('tools:tasks:new:person-responsible'),
+      name: t("tools:tasks:new:person-responsible"),
     });
   }
   return optionsSelected;
 };
 
-const buildTaskBody = (data, description, selectedOptions, session, crm, listField, t) => {
+const buildTaskBody = (
+  data,
+  description,
+  selectedOptions,
+  session,
+  crm,
+  listField,
+  t
+) => {
   console.log({ data });
   const body = {
     name: data.name,
     description,
-    requireRevision: selectedOptions.some(sel => sel.id === 2),
+    requireRevision: selectedOptions.some((sel) => sel.id === 2),
     requireSummary: data.requireSummary,
-    responsibleCanChangeDate: selectedOptions.some(sel => sel.id === 1),
+    responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
     createdById: session.user?.sub,
     crm,
     important: !!data?.important,
@@ -734,27 +917,27 @@ const buildTaskBody = (data, description, selectedOptions, session, crm, listFie
     body.createdById = data.createdBy[0].id;
   }
   if (data.observers?.length) {
-    body.observersIds = data.observers.map(obs => obs.id);
+    body.observersIds = data.observers.map((obs) => obs.id);
   }
   if (data.participants?.length) {
-    body.participantsIds = data.participants.map(part => part.id);
+    body.participantsIds = data.participants.map((part) => part.id);
   }
   if (data.responsible?.length) {
-    body.responsibleIds = data.responsible.map(resp => resp.id);
+    body.responsibleIds = data.responsible.map((resp) => resp.id);
   }
   if (data.subTask?.length) {
     body.parentId = data.subTask[0].id;
   }
   if (data.tags?.length) {
-    body.tagsIds = data.tags.map(tag => tag.id);
+    body.tagsIds = data.tags.map((tag) => tag.id);
   }
   if (listField?.length) {
-    body.listField = listField.map(item => ({
+    body.listField = listField.map((item) => ({
       text: item.name,
-      completed: item.subItems.every(subItem => subItem.value),
+      completed: item.subItems.every((subItem) => subItem.value),
       child: item.subItems
-        .filter(subItem => subItem.name)
-        .map(subItem => ({
+        .filter((subItem) => subItem.name)
+        .map((subItem) => ({
           text: subItem.name,
           completed: subItem.value,
         })),
@@ -767,7 +950,7 @@ const buildTaskBody = (data, description, selectedOptions, session, crm, listFie
   body.deadline = getFormatDate(data.limitDate ?? data.endDate) ?? null;
   body.startTime = getFormatDate(data.startDate) ?? null;
 
-  console.log('body', body);
+  console.log("body", body);
   console.log(data.limitDate);
   console.log(data.endDate);
 

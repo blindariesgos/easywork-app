@@ -173,18 +173,16 @@ export default function RenovationDetails({ data, id, mutate }) {
               </div>
               <div className="flex items-center gap-2">
                 <Menu>
-                  <MenuButton>
-                    <label
-                      className={"py-2 px-3 rounded-lg cursor-pointer"}
-                      style={{
-                        background:
-                          renovationStages.find((x) => x.id == data?.status)
-                            ?.color ?? renovationStages[0]?.color,
-                      }}
-                    >
-                      {renovationStages.find((x) => x.id == data?.status)
-                        ?.name ?? renovationStages[0]?.name}
-                    </label>
+                  <MenuButton
+                    className={"py-2 px-3 rounded-lg cursor-pointer"}
+                    style={{
+                      background:
+                        renovationStages.find(
+                          (x) => x.id == data?.renewalStage?.id
+                        )?.color ?? renovationStages[0]?.color,
+                    }}
+                  >
+                    {data?.renewalStage?.name ?? renovationStages[0]?.name}
                   </MenuButton>
                   <MenuItems
                     transition
@@ -193,7 +191,7 @@ export default function RenovationDetails({ data, id, mutate }) {
                   >
                     {data &&
                       renovationStages
-                        ?.filter((x) => x.id !== data?.status)
+                        ?.filter((x) => x.id !== data?.renewalStage?.id)
                         .map((option, index) => (
                           <MenuItem
                             key={index}

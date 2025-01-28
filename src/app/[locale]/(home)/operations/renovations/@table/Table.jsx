@@ -39,6 +39,7 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
+import { renovationStages } from "@/src/utils/stages";
 
 export default function Table() {
   const {
@@ -575,7 +576,8 @@ export default function Table() {
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : column.row === "status" ? (
-                                  policyStatus[policy[column.row]]
+                                  (policy?.renewalStage?.name ??
+                                  renovationStages[0]?.name)
                                 ) : (
                                   policy[column.row] || "-"
                                 )}

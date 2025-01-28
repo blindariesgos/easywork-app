@@ -1,5 +1,3 @@
-import useAppContext from "@/src/context/app";
-import Link from "next/link";
 import {
   ChatBubbleBottomCenterIcon,
   ChevronRightIcon,
@@ -16,27 +14,36 @@ import {
 } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import moment from "moment";
 import { useMemo, Fragment, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import DeleteModal from "@/src/components/modals/DeleteItem";
-import { deletePolicyById } from "@/src/lib/apis";
+import { deletePolicyById, deleteRefundById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError } from "@/src/utils/api/errors";
+import useCrmContext from "@/src/context/crm";
+import { useTranslation } from "react-i18next";
+import useRefundContext from "@/src/context/refunds";
+import useAppContext from "@/src/context/app";
+import moment from "moment";
 
-const Card = ({ policy: data }) => {
+const Card = ({ data, minWidthClass, stageId, updateList }) => {
+  const { t } = useTranslation();
   const { lists } = useAppContext();
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const route = useRouter();
+  const { selectedContacts: selectedReceipts } = useCrmContext();
+
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: data.id,
+    id: data?.id,
+    data: {
+      stageId,
+    },
   });
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        position: "fixed",
       }
     : undefined;
 
@@ -44,12 +51,14 @@ const Card = ({ policy: data }) => {
     {
       name: "Ver",
       handleClick: (id) =>
-        route.push(`/operations/policies/policy/${id}?show=true`),
+        route.push(`/operations/renovations/renovation/${id}?show=true`),
     },
     {
       name: "Editar",
       handleClick: (id) =>
-        route.push(`/operations/policies/policy/${id}?show=true&edit=true`),
+        route.push(
+          `/operations/renovations/renovation/${id}?show=true&edit=true`
+        ),
     },
     {
       name: "Eliminar",
@@ -65,7 +74,9 @@ const Card = ({ policy: data }) => {
         {
           name: "Tarea",
           handleClick: (id) =>
-            route.push(`/tools/tasks/task?show=true&prev=policy&prev_id=${id}`),
+            route.push(
+              `/tools/tasks/task?show=true&prev=renewal&prev_id=${id}`
+            ),
         },
         {
           name: "Cita",
@@ -99,7 +110,7 @@ const Card = ({ policy: data }) => {
     route.push(`/sales/crm/contacts/contact/${id}?show=true`);
 
   const handleClickPolicy = (id) =>
-    route.push(`/operations/policies/policy/${id}?show=true`);
+    route.push(`/operations/renovations/renovation/${id}?show=true`);
 
   const { role, ...otherAttributes } = attributes;
   const { onPointerDown } = listeners;
@@ -114,7 +125,7 @@ const Card = ({ policy: data }) => {
           event?.target?.onclick();
           return;
         }
-        onPointerDown(event);
+        onPointerDown && onPointerDown(event);
       }}
     >
       <div className="bg-white rounded-md p-3 grid grid-cols-12">
@@ -169,12 +180,12 @@ const Card = ({ policy: data }) => {
             <PhoneIcon className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
-        <div className="col-span-12 flex justify-between">
+        <div className="col-span-12 flex justify-between items-end">
           <Menu
             as="div"
-            className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+            className="relative hover:bg-slate-50/30 w-10 md:w-auto px-1 rounded-lg"
           >
-            <MenuButton className="-m-1.5 flex items-center p-1.5 text-sm">
+            <MenuButton className="flex items-center text-xs">
               + Actividades
             </MenuButton>
             <Transition

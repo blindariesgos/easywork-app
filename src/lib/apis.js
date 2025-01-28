@@ -517,7 +517,12 @@ export const putTaskIdRelations = async (taskId, body) => {
 };
 
 export const putTaskCompleted = async (id) => {
-  const response = await axios().put(`/tools/tasks/${id}/complete`);
+  const response = await axios()
+    .put(`/tools/tasks/${id}/complete`)
+    .catch((error) => ({
+      hasError: true,
+      ...error,
+    }));
   return response;
 };
 
@@ -809,7 +814,7 @@ export const updateLabelIdRules = async (usergoogle_id, newLabelIdRules) => {
 
 const getCommentPath = (cmrtype) => {
   switch (cmrtype) {
-    case "policy":
+    case "poliza":
     case "renewal":
       return "/sales/crm/polizas";
     case "lead":

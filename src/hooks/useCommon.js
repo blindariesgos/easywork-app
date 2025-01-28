@@ -50,9 +50,6 @@ export const useSidebar = () => {
     session?.user?.roles?.flatMap((role) => role.menuPermissions) ??
     [];
 
-
-  console.log(session?.user);
-
   const sidebarNavigation = [
     {
       id: "home",

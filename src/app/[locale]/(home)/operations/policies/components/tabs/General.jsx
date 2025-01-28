@@ -142,6 +142,7 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
     try {
+      console.log({ body });
       const response = await putPoliza(id, body);
       console.log({ response });
       if (response.hasError) {
@@ -202,16 +203,14 @@ export default function PolicyDetails({
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
           {isEdit && (
-            <Fragment>
-              <SelectInput
-                label={t("control:portafolio:receipt:details:product")}
-                name="categoryId"
-                options={lists?.policies?.polizaCategories ?? []}
-                register={register}
-                setValue={setValue}
-                watch={watch}
-              />
-            </Fragment>
+            <SelectInput
+              label={t("control:portafolio:receipt:details:product")}
+              name="categoryId"
+              options={lists?.policies?.polizaCategories ?? []}
+              register={register}
+              setValue={setValue}
+              watch={watch}
+            />
           )}
           <SelectInput
             label={t("operations:policies:general:type")}
@@ -304,7 +303,7 @@ export default function PolicyDetails({
                   onChange={onChange}
                   onBlur={onBlur}
                   error={errors.vigenciaDesde}
-                  disabled
+                  disabled={!isEdit}
                 />
               );
             }}
@@ -321,7 +320,7 @@ export default function PolicyDetails({
                   onChange={onChange}
                   onBlur={onBlur}
                   error={errors.vigenciaHasta}
-                  disabled
+                  disabled={!isEdit}
                 />
               );
             }}
@@ -371,7 +370,7 @@ export default function PolicyDetails({
             name="currencyId"
             register={register}
             setValue={setValue}
-            disabled
+            disabled={!isEdit}
             watch={watch}
           />
           <InputCurrency
@@ -379,7 +378,7 @@ export default function PolicyDetails({
             label={t("operations:policies:general:primaNeta")}
             setValue={setValue}
             name="primaNeta"
-            disabled
+            disabled={!isEdit}
             defaultValue={data?.primaNeta?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -392,7 +391,7 @@ export default function PolicyDetails({
             label={t("operations:policies:general:recargoFraccionado")}
             setValue={setValue}
             name="recargoFraccionado"
-            disabled
+            disabled={!isEdit}
             defaultValue={data?.recargoFraccionado?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -405,7 +404,7 @@ export default function PolicyDetails({
             label={t("operations:policies:general:derechoPoliza")}
             setValue={setValue}
             name="derechoPoliza"
-            disabled
+            disabled={!isEdit}
             defaultValue={data?.derechoPoliza?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -418,7 +417,7 @@ export default function PolicyDetails({
             label={t("operations:policies:general:iva")}
             setValue={setValue}
             name="iva"
-            disabled
+            disabled={!isEdit}
             defaultValue={data?.iva?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(
@@ -431,7 +430,7 @@ export default function PolicyDetails({
             label={t("operations:policies:general:importePagar")}
             setValue={setValue}
             name="importePagar"
-            disabled
+            disabled={!isEdit}
             defaultValue={data?.importePagar?.toFixed(2) ?? null}
             prefix={
               lists?.policies?.currencies?.find(

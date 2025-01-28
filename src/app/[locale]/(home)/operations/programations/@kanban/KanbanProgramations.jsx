@@ -8,12 +8,6 @@ import { putSchedule } from "@/src/lib/apis";
 import moment from "moment";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import useCrmContext from "@/src/context/crm";
-import {
-  deleteTask as apiDeleteTask,
-  putTaskCompleted,
-  putTaskId,
-  putTaskIdRelations,
-} from "@/src/lib/apis";
 import { useTranslation } from "react-i18next";
 import { useTasks } from "@/src/lib/api/hooks/tasks";
 import {

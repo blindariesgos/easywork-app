@@ -65,11 +65,14 @@ const Card = ({ policy: data }) => {
         {
           name: "Tarea",
           handleClick: (id) =>
-            route.push(`/tools/tasks/task?show=true&prev=policy&prev_id=${id}`),
+            route.push(`/tools/tasks/task?show=true&prev=poliza&prev_id=${id}`),
         },
         {
           name: "Cita",
-          disabled: true,
+          handleClick: (id) =>
+            route.push(
+              `/tools/calendar/addEvent?show=true&prev=poliza&prev_id=${id}`
+            ),
         },
         {
           name: "Comentario",

@@ -53,7 +53,7 @@ export const useContact = (id) => {
 
 const getActivityPath = (cmrtype) => {
   switch (cmrtype) {
-    case "policy":
+    case "poliza":
     case "renewal":
       return "/sales/crm/polizas";
     case "lead":
@@ -74,7 +74,7 @@ export const useEntityActivities = (id, cmrtype) => {
   const url = `${getActivityPath(cmrtype)}/${id}/activities${cmrtype == "renewal" ? "?renewal=true" : ""}`;
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
-  console.log("activities data", data);
+  console.log("activities data", data, url);
   return {
     activities: data,
     isLoading,

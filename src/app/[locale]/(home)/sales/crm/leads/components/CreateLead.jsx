@@ -670,12 +670,13 @@ export default function CreateLead({ lead, id }) {
                     error={!watch("activitySector") && errors.activitySector}
                   />
                 )}
-                {type == "moral" && isEdit && (
+                {type == "moral" && (
                   <ContactSelectAsync
                     label={"Cliente contacto"}
                     name={"contact"}
                     setValue={setValue}
                     watch={watch}
+                    disabled={!isEdit}
                     error={errors?.contact}
                     notFoundHelperText={() => (
                       <div>

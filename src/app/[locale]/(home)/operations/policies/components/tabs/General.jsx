@@ -115,6 +115,7 @@ export default function PolicyDetails({
     if (data?.contact?.rfc) setValue("rfc", data?.contact?.rfc);
     if (data?.type?.id) setValue("typeId", data?.type?.id);
     if (data?.category) setValue("categoryId", data?.category?.id);
+    if (data?.specifications) setValue("specifications", data?.specifications);
     if (data?.observers && data?.observers?.length > 0)
       setValue("observers", data?.observers);
     if (data?.subAgent?.name) setValue("subAgentId", data?.subAgent?.id);
@@ -212,7 +213,6 @@ export default function PolicyDetails({
               />
             </Fragment>
           )}
-
           <SelectInput
             label={t("operations:policies:general:type")}
             name="typeId"
@@ -477,8 +477,17 @@ export default function PolicyDetails({
           />
           <TextInput
             type="text"
+            label={t("operations:policies:general:specifications")}
+            error={errors.specifications}
+            register={register}
+            name="specifications"
+            disabled={!isEdit}
+            multiple
+          />
+          <TextInput
+            type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
-            error={errors.observations && errors.observations.message}
+            error={errors.observations}
             register={register}
             name="observations"
             disabled={!isEdit}
@@ -487,7 +496,7 @@ export default function PolicyDetails({
         </div>
       </div>
       {/* Menu Izquierda */}
-      <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />
+      <ActivityPanel entityId={id} crmType="poliza" className="lg:col-span-7" />
       {isEdit && (
         <div
           className={clsx(

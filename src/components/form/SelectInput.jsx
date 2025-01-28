@@ -27,6 +27,7 @@ function SelectInput({
   setSelectedOption,
   placeholder,
   helperText,
+  small,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -74,7 +75,10 @@ function SelectInput({
       >
         {label && (
           <label
-            className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
+            className={clsx("block font-medium leading-6 text-gray-900 px-3", {
+              "text-xs": small,
+              "text-sm": !small,
+            })}
           >
             {label}
           </label>
@@ -84,13 +88,16 @@ function SelectInput({
           <ComboboxInput
             placeholder={placeholder}
             className={clsx(
-              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ",
+              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs",
               {
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
                 "border-none focus:ring-0 ": !border,
                 // "bg-gray-100": disabled,
                 "drop-shadow-md": !disabled,
+                "text-xs": small,
+                "text-sm": !small,
+                "py-1.5": small,
               }
             )}
             displayValue={(person) => person?.name}

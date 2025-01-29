@@ -101,22 +101,22 @@ export default function TablePolicies() {
   const policyStatus = {
     activa: {
       name: "Vigente",
-      color: "#0077BF",
-      id: 1,
+      color: "#A9EA44",
+      id: 2,
     },
     expirada: {
       name: "No vigente",
-      color: "#CD1100",
-      id: 2,
+      color: "#FFC4C2",
+      id: 1,
     },
     cancelada: {
       name: "Cancelada",
-      color: "#CD1100",
-      id: 2,
+      color: "#FFC4C2",
+      id: 1,
     },
     en_proceso: {
       name: "En trámite",
-      color: "#0091CD",
+      color: "#86BEDF",
       id: 0,
     },
   };
@@ -325,14 +325,14 @@ export default function TablePolicies() {
           name: "Tarea",
           handleClick: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=policy&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=poliza&prev_id=${id}`
             ),
         },
         {
           name: "Cita",
           handleClick: (id) =>
             router.push(
-              `/tools/calendar/addEvent?show=true&prev=policy&prev_id=${id}`
+              `/tools/calendar/addEvent?show=true&prev=poliza&prev_id=${id}`
             ),
         },
         {

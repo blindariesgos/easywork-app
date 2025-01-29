@@ -4,15 +4,12 @@ import { toast } from "react-toastify";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Card from "./components/Card";
-import { putRefund } from "@/src/lib/apis";
+import { putPoliza } from "@/src/lib/apis";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import {
-  polizaReimbursementStatus,
-  polizaReimbursementStatusColor,
-} from "@/src/utils/stages";
-import useRefundContext from "@/src/context/refunds";
+import { renovationStages } from "@/src/utils/stages";
+import useRenovationContext from "@/src/context/renovations";
 
 const KanbanProgramations = () => {
   const { t } = useTranslation();
@@ -22,7 +19,7 @@ const KanbanProgramations = () => {
   const [itemDrag, setItemDrag] = useState();
   const [updateStages, setUpdateStages] = useState([]);
   const { selectedContacts: selectedReceipts } = useCrmContext();
-  const { mutate } = useRefundContext();
+  const { mutate } = useRenovationContext();
 
   const handleDragEnd = async (result) => {
     setActiveId(null);
@@ -32,11 +29,11 @@ const KanbanProgramations = () => {
     console.log({ result });
 
     const body = {
-      status: result?.over?.id,
+      renewalStageId: result?.over?.id,
     };
 
     try {
-      const response = await putRefund(result?.active?.id, body);
+      const response = await putPoliza(result?.active?.id, body);
       console.log({ response });
       if (response.hasError) {
         toast.error(
@@ -65,15 +62,6 @@ const KanbanProgramations = () => {
     setIsDragging(true);
   }
 
-  const items = Object.keys(polizaReimbursementStatus).map((key) => ({
-    id: key,
-    filter: {
-      status: key,
-    },
-    title: polizaReimbursementStatus[key],
-    primary: polizaReimbursementStatusColor[key],
-  }));
-
   return (
     <Fragment>
       {isLoading && <LoaderSpinner />}
@@ -84,18 +72,19 @@ const KanbanProgramations = () => {
       )}
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <div className="overflow-x-auto">
-          <div className="grid grid-cols-7 min-w-full w-max gap-2">
-            {items?.map((column) => (
-              <Column
-                {...column}
-                color={column.primary}
-                key={column.id}
-                activeId={activeId}
-                setItemDrag={setItemDrag}
-                updateStages={updateStages}
-                setUpdateStages={setUpdateStages}
-              />
-            ))}
+          <div className="flex min-w-full w-max gap-2 min-h-[60vh]">
+            {renovationStages &&
+              renovationStages.map((column) => (
+                <Column
+                  key={column.id}
+                  {...column}
+                  isDragging={isDragging}
+                  activeId={activeId}
+                  setItemDrag={setItemDrag}
+                  updateStages={updateStages}
+                  setUpdateStages={setUpdateStages}
+                />
+              ))}
           </div>
         </div>
 

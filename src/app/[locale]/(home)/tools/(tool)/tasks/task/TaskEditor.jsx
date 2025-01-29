@@ -206,7 +206,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
         type,
       },
     ]);
-    setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
+    setValue("name", `CRM - ${type == "poliza" ? "Póliza" : "Renovación"}: `);
     setLoading(false);
   };
   const setCrmMeet = async (agentId) => {
@@ -301,7 +301,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    if (["policy", "renewal"].includes(params.get("prev"))) {
+    if (["poliza", "renewal"].includes(params.get("prev"))) {
       setLoading(true);
       setCrmPolicy(prevId, params.get("prev"));
       return;
@@ -337,6 +337,11 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (params.get("prev") === "poliza_reimbursement") {
       setLoading(true);
       setCrmRefund(prevId);
+      return;
+    }
+    if (params.get("prev") === "course-assign") {
+      console.log("Tarea desde cursos", prevId);
+      setLoading(true);
       return;
     }
   }, [params.get("prev")]);
@@ -439,16 +444,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
     <>
       {loading && <LoaderSpinner />}
       <div
-        className={`col-span-12 flex flex-col ${
-          edit ? "h-full" : "h-screen"
-        } relative w-full ${!edit && "overflow-y-auto"}`}
+        className={`col-span-12 flex flex-col ${edit ? "h-full" : "h-screen"} relative w-full ${!edit && "overflow-y-auto"}`}
       >
         <div
-          className={`flex flex-col flex-1 ${
-            !edit && "bg-gray-600 shadow-xl"
-          } opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${
-            edit ? "sm:p-0" : "sm:p-4"
-          }`}
+          className={`flex flex-col flex-1 ${!edit && "bg-gray-600 shadow-xl"} opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? "sm:p-0" : "sm:p-4"}`}
         >
           {(!edit ?? !copy) && (
             <div className="flex justify-between items-center py-2">
@@ -489,9 +488,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
                 />
                 <p className="text-sm">{t("tools:tasks:new:high")}</p>
                 <FireIcon
-                  className={`h-5 w-5 ${
-                    check ? "text-orange-400" : "text-gray-200"
-                  }`}
+                  className={`h-5 w-5 ${check ? "text-orange-400" : "text-gray-200"}`}
                 />
               </div>
             </div>
@@ -750,9 +747,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
               >
                 <div>
                   <ChevronDownIcon
-                    className={`w-4 h-4 ${
-                      openOptions.more && "rotate-180"
-                    } text-primary`}
+                    className={`w-4 h-4 ${openOptions.more && "rotate-180"} text-primary`}
                   />
                 </div>
                 <div className="flex gap-2 text-sm">

@@ -20,6 +20,7 @@ import { renovationStages } from "@/src/utils/stages";
 import { putPoliza } from "@/src/lib/apis";
 import useRenovationContext from "@/src/context/renovations";
 import { toast } from "react-toastify";
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 export default function RenovationDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -127,6 +128,11 @@ export default function RenovationDetails({ data, id, mutate }) {
     setLoading(false);
   };
 
+  const handleCopyUrl = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Copiado en el Portapapeles");
+  };
+
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
@@ -140,9 +146,17 @@ export default function RenovationDetails({ data, id, mutate }) {
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
-                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
-                </p>
+                <div className="flex gap-3 items-center">
+                  <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
+                    {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
+                  </p>
+                  <LinkIcon
+                    className="h-4 w-4 text-[#4f4f4f] opacity-50 hover:opacity-100 cursor-pointer"
+                    title="Copiar enlace en Portapapeles"
+                    aria-hidden="true"
+                    onClick={handleCopyUrl}
+                  />
+                </div>
 
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
@@ -173,18 +187,16 @@ export default function RenovationDetails({ data, id, mutate }) {
               </div>
               <div className="flex items-center gap-2">
                 <Menu>
-                  <MenuButton>
-                    <label
-                      className={"py-2 px-3 rounded-lg cursor-pointer"}
-                      style={{
-                        background:
-                          renovationStages.find((x) => x.id == data?.status)
-                            ?.color ?? renovationStages[0]?.color,
-                      }}
-                    >
-                      {renovationStages.find((x) => x.id == data?.status)
-                        ?.name ?? renovationStages[0]?.name}
-                    </label>
+                  <MenuButton
+                    className={"py-2 px-3 rounded-lg cursor-pointer"}
+                    style={{
+                      background:
+                        renovationStages.find(
+                          (x) => x.id == data?.renewalStage?.id
+                        )?.color ?? renovationStages[0]?.color,
+                    }}
+                  >
+                    {data?.renewalStage?.name ?? renovationStages[0]?.name}
                   </MenuButton>
                   <MenuItems
                     transition
@@ -193,7 +205,7 @@ export default function RenovationDetails({ data, id, mutate }) {
                   >
                     {data &&
                       renovationStages
-                        ?.filter((x) => x.id !== data?.status)
+                        ?.filter((x) => x.id !== data?.renewalStage?.id)
                         .map((option, index) => (
                           <MenuItem
                             key={index}

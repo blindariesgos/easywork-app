@@ -18,7 +18,7 @@ export const CourseCard = ({ isFirstChild, isLastChild, course, onAssignCourse, 
   if (!course.progress) course.progress = 0;
 
   return (
-    <div className="relative w-[300px] h-[360px]">
+    <div className="relative w-full sm:w-[300px] h-[360px]">
       {pathname === `${E_LEARNING_BASE_ROUTE}/config` && hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && (
         <CourseCardMoreMenu
           isFirstChild={isFirstChild}

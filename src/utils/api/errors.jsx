@@ -47,6 +47,17 @@ export const handleApiError = async (error, errorsDuplicated) => {
   }
 };
 
+export const handleFrontError = (error) => {
+  if (error?.statusCode == 401) {
+    toastError("No tiene permiso para realizar esta acción");
+    return;
+  }
+  const message = Array.isArray(error.message)
+    ? error.message.join(", ")
+    : error.message;
+  toastError(message ?? "Se ha producido un error, inténte de nuevo más tarde");
+};
+
 const toastError = (message) => {
   toast.error(message, {
     position: "top-right",

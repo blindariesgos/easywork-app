@@ -226,16 +226,20 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     {receipt?.methodCollection?.name ?? "S/N"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {moment(receipt?.startDate).utc().format("DD/MM/YYYY")}
+                    {receipt?.startDate
+                      ? moment(receipt?.startDate).utc().format("DD/MM/YYYY")
+                      : "No disponible"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {moment(receipt?.dueDate).utc().format("DD/MM/YYYY")}
+                    {receipt?.dueDate
+                      ? moment(receipt?.dueDate).utc().format("DD/MM/YYYY")
+                      : "No disponible"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {formatToCurrency(receipt.paymentAmount)}
+                    {formatToCurrency(receipt.paymentAmount ?? 0)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
-                    {receipt?.currency?.symbol ?? "S/N"}
+                    {receipt?.currency?.symbol ?? "No disponible"}
                   </td>
                 </tr>
               ))}

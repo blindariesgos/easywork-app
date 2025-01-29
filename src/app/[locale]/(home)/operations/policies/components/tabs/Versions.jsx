@@ -42,14 +42,13 @@ export default function Versions({ poliza }) {
   };
 
   const handleShowPolicy = (poliza) => {
-    if (!poliza.operacion || poliza.operacion == "produccion_nueva") {
-      router.push(`/operations/policies/policy/${poliza.id}?show=true`);
-      return;
-    }
     if (poliza.operacion == "renovacion") {
       router.push(`/operations/renovations/renovation/${poliza.id}?show=true`);
       return;
     }
+
+    router.push(`/operations/policies/policy/${poliza.id}?show=true`);
+    return;
   };
 
   if ((!data || data?.items?.length === 0) && !isLoading) {
@@ -251,10 +250,18 @@ export default function Versions({ poliza }) {
               </th>
               <th
                 scope="col"
-                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
               >
                 <div className="group flex items-center">
                   <p>Tipo</p>
+                </div>
+              </th>
+              <th
+                scope="col"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
+              >
+                <div className="group flex items-center">
+                  <p>Versión</p>
                 </div>
               </th>
             </tr>
@@ -306,6 +313,9 @@ export default function Versions({ poliza }) {
                           ? `Renovación - ${poliza.version ?? poliza.renovacion}`
                           : "Póliza"}
                     </p>
+                  </td>
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                    <p className="text-center">{poliza?.version || 0}</p>
                   </td>
                 </tr>
               ))}

@@ -27,12 +27,12 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
 
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
-  const [markAsDone, setMarkAsDone] = useState(content?.isCompleted || false);
+  // const [markAsDone, setMarkAsDone] = useState(content?.isCompleted || false);
   const inputFileRef = useRef(null);
 
   const { hasPermission } = useUserPermissions();
   const { createCourseFolder } = useCourseFolders();
-  const { toggleCourseFolderPageAsCompleted, createCourseFolderPage, updateCourseFolderPage } = useCourseFolderPages();
+  const { createCourseFolderPage, updateCourseFolderPage } = useCourseFolderPages();
 
   const {
     register,
@@ -125,20 +125,19 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
 
   const toggleIsCompleted = async () => {
     if (!hasPermission(LMS_PERMISSIONS.markAsCompleted)) return;
+    if (onToggleIsCompleted) onToggleIsCompleted();
 
-    const toggled = !markAsDone;
+    // const toggled = !markAsDone;
 
-    setMarkAsDone(prev => !prev);
+    // setMarkAsDone(prev => !prev);
 
-    try {
-      await toggleCourseFolderPageAsCompleted(content.id, toggled);
+    // try {
+    //   await toggleCourseFolderPageAsCompleted(content.id, toggled);
 
-      if (onToggleIsCompleted) onToggleIsCompleted();
-
-      toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
-    } catch (error) {
-      toast.info(`Estamos teniendo problemas para guardar los cambios. Intenta más tarde`);
-    }
+    //   toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+    // } catch (error) {
+    //   toast.info(`Estamos teniendo problemas para guardar los cambios. Intenta más tarde`);
+    // }
   };
 
   useEffect(() => {
@@ -182,7 +181,7 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
             <>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
                 <div className="block cursor-pointer" onClick={toggleIsCompleted}>
-                  <CheckCircleIcon className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />
+                  <CheckCircleIcon className={`h-6 w-6 text-${content?.isCompleted ? 'green' : 'gray'}-400`} aria-hidden="true" />
                 </div>
               )}
 
@@ -194,7 +193,7 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
             </>
           ) : (
             <button type="submit" className="block cursor-pointer" disabled={loading}>
-              {loading ? <LoadingSpinnerSmall /> : <FaSave className={`h-6 w-6 text-${markAsDone ? 'green' : 'gray'}-400`} aria-hidden="true" />}
+              {loading ? <LoadingSpinnerSmall /> : <FaSave className={`h-6 w-6 text-gray-400`} aria-hidden="true" />}
             </button>
           )}
         </div>
@@ -206,10 +205,10 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
         </div>
       )}
 
-      <div className={`${isEditorDisabled ? 'px-2 pt-2 pb-5' : ''} bg-white rounded-xl mb-2`}>
-        <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden max-h-[55vh]">
+      <div className={`${isEditorDisabled ? 'px-2 pt-2 pb-5' : ''} bg-white rounded-xl mb-2 border-red-400`}>
+        <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden max-h-[calc(100vh-460px)]">
           {loading && (
-            <div className="h-[55vh] w-full">
+            <div className="h-[calc(100vh-400px)] w-full">
               <LoadingSpinnerSmall />
             </div>
           )}

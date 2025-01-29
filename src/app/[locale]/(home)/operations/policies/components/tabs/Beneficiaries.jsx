@@ -3,7 +3,7 @@ import { Fragment } from "react";
 
 const Beneficiaries = ({ items }) => {
   return (
-    <div className="bg-gray-100 rounded-lg p-4">
+    <div className="bg-gray-100 rounded-lg p-4 overflow-y-auto max-h-[70vh]">
       {items.map((beneficiary, index) => (
         <Fragment key={beneficiary.id}>
           <div className="flex justify-between py-4 px-3 rounded-lg bg-white">

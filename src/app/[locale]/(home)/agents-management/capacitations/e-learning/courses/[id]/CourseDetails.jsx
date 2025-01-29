@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
 
-import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
-
 import { CourseFolder } from '../components/CourseFolder';
 import { NewCourseFolderButton } from '../components/NewCourseFolderButton';
 import { NewContentForm } from '../components/NewContentForm';
@@ -16,7 +14,6 @@ import { CourseCreateEditModal } from '../../components/CourseCreateEditModal';
 import { DeleteContentModal } from '../../components/DeleteContentModal';
 
 import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
-// import { useCourseFolders } from '../../hooks/useCourseFolders';
 import { useCourses } from '../../hooks/useCourses';
 
 import { AccordionItemMoreMenu } from '../components/AccordionItemMoreMenu';
@@ -112,31 +109,48 @@ export const CourseDetails = ({ courseId }) => {
     setContent({ data: course.folders[folderIndex].pages[pageIndex], type: 'page', folderIndex, pageIndex });
   };
 
-  const markAsCompleted = () => {
+  const updateCompletedPages = (pageId, toggled) => {
+    try {
+      setContent(prev => ({ ...prev, data: { ...prev.data, isCompleted: toggled } }));
+      setCourse(prev => {
+        const folders = [...prev.folders];
+
+        prev.folders = folders.map(folder => {
+          const { pages } = folder;
+
+          const index = pages.findIndex(page => pageId === page.id);
+          if (index === -1) return folder;
+
+          folder.pages[index].isCompleted = toggled;
+          return folder;
+        });
+
+        return prev;
+      });
+    } catch (error) {
+      toast.error('Algo ha salido mal al intentar actualizar las lecciones completadas. Intente más tarde por favor');
+    }
+  };
+
+  const markAsCompleted = async () => {
+    const contentToToggle = { ...content.data };
     const toggled = !content.data.isCompleted;
 
-    toggleCourseFolderPageAsCompleted(content.data.id, toggled).then(() => {
-      toast.info(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+    try {
+      toast.info(`Guardando...`);
+      updateCompletedPages(contentToToggle.id, toggled);
+      await toggleCourseFolderPageAsCompleted(contentToToggle.id, toggled);
 
-      // fetchModuleDetails().then(() => fetchContentDetails());
+      const courseFetched = await getCourseById(courseId);
+      if (!courseFetched) return;
 
-      // setCourse(prev => ({
-      //   ...prev,
-      //   folders: prev.folders.map(folder => {
-      //     return {
-      //       ...folder,
-      //       pages: folder.pages.map(page => {
-      //         if (page.id === content.data.id) return { ...page, isCompleted: toggled };
+      setCourse(courseFetched);
 
-      //         return page;
-      //       }),
-      //     };
-      //   }),
-      // }));
-
-      // setContent(prev => ({ ...prev, data: { ...prev.data, isCompleted: toggled } }));
-      // setContentDetails(prev => ({ ...prev, isCompleted: toggled }));
-    });
+      toast.success(`Contenido marcado como ${toggled ? 'completado' : 'no completado'}`);
+    } catch (error) {
+      updateCompletedPages(contentToToggle.id, contentToToggle.isCompleted);
+      toast.info('Algo no ha salido muy bien. Por favor intente más tarde');
+    }
   };
 
   const onToggleIsCompleted = () => {
@@ -166,28 +180,9 @@ export const CourseDetails = ({ courseId }) => {
     }
   }, [courseId, getCourseById]);
 
-  // const fetchContentDetails = useCallback(async () => {
-  //   if (!content || !content.data) return;
-  //   setLoading(true);
-
-  //   try {
-  //     const result = await getCourseFolderPage(content.data.id);
-
-  //     if (result) setContentDetails(result);
-  //   } catch (error) {
-  //     toast.error('Tenemos problemas para cargar el contenido. Por favor intente más tarde');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [getCourseFolderPage, content]);
-
   useEffect(() => {
     fetchModuleDetails();
   }, [fetchModuleDetails]);
-
-  // useEffect(() => {
-  //   fetchContentDetails();
-  // }, [fetchContentDetails]);
 
   useEffect(() => {
     if (!hasPermission(LMS_PERMISSIONS.courseDetails)) router.replace('/');
@@ -199,22 +194,24 @@ export const CourseDetails = ({ courseId }) => {
 
   if (fetchingModuleDetails)
     return (
-      <div className="h-48 w-full bg-white rounded-xl">
-        <LoadingSpinnerSmall />
+      <div className="h-[71vh] w-full bg-white rounded-xl flex flex-col gap-4 items-center justify-center">
+        <div className={`w-10 h-10 animate-spin rounded-full border-t-2 border-b-2 border-easy-400`} />
+        <p className="text-sm">
+          Obteniendo detalles del curso<span className="text-easy-400">...</span>
+        </p>
       </div>
     );
 
   return (
     <div className="pt-2 pb-4">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
-        <div className="bg-gray-100 rounded-xl border border-gray-100 overflow-y-auto h-[71vh] [&::-webkit-scrollbar]:hidden">
-          <div className="rounded-xl border-easy-400 bg-easy-50 p-4" style={{ borderWidth: '1px', borderStyle: 'solid' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 h-[calc(100vh-300px)]">
+        <div className="bg-gray-100 rounded-xl border border-gray-100 overflow-y-auto [&::-webkit-scrollbar]:hidden h-full">
+          <div className="rounded-xl border-easy-400 bg-easy-50 py-4 pl-4 pr-2" style={{ borderWidth: '1px', borderStyle: 'solid' }}>
             <div className="flex items-center justify-between">
               <span className="text-gray-900 font-bold text-lg">{course.name}</span>
-              <div className="flex items-center justify-center gap-2">
-                {hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && <AccordionItemMoreMenu itemType="course" actions={{ editCourse, addNewCourseFolder, addNewPage, deleteCourse }} />}
-              </div>
+              {hasPermission(LMS_PERMISSIONS.coursesMoreMenu) && <AccordionItemMoreMenu itemType="course" actions={{ editCourse, addNewCourseFolder, addNewPage, deleteCourse }} />}
             </div>
+
             <CourseProgressBar progress={course.progress} />
           </div>
 
@@ -224,6 +221,7 @@ export const CourseDetails = ({ courseId }) => {
                 key={courseFolder.id}
                 folders={self}
                 courseFolder={courseFolder}
+                contentSelected={content.data}
                 isOpen={!closedSections.includes(courseFolder.name)}
                 onToggle={() => toggleSection(courseFolder.name)}
                 onSelectPage={(page, pageIndex) => {
@@ -231,7 +229,6 @@ export const CourseDetails = ({ courseId }) => {
 
                   setContent({ data: page, folderIndex, pageIndex });
                 }}
-                // refetchContentDetails={fetchContentDetails}
                 refetchAccordionItems={fetchModuleDetails}
               />
             ))}
@@ -239,8 +236,8 @@ export const CourseDetails = ({ courseId }) => {
           {hasPermission(LMS_PERMISSIONS.addFolder) && <NewCourseFolderButton onClick={() => setIsNewContentFormOpen(true)} />}
         </div>
 
-        <div className="relative">
-          <div className="h-[71vh]">{content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />}</div>
+        <div className="relative h-full">
+          {content.data && <ContentView content={content.data} onToggleIsCompleted={onToggleIsCompleted} />}
 
           {content.data && (
             <div className="bg-gray-100 w-full flex items-center justify-between gap-1 absolute bottom-0 pt-5">

@@ -27,7 +27,7 @@ import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
-import { activitySectors } from "./common";
+import { activitySectors } from "@/src/utils/stages";
 import RelatedCustomer from "./RelatedCustomer";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
@@ -200,8 +200,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.source?.id) setValue("sourceId", contact?.source?.id);
     if (contact?.birthdate) setValue("birthdate", contact?.birthdate);
     if (contact?.address) setValue("address", contact?.address);
-    if (contact?.activitySector)
-      setValue("activitySector", contact?.activitySector);
     if (contact?.rfc) setValue("rfc", contact?.rfc);
     if (contact?.assignedBy) setValue("assignedById", contact?.assignedBy?.id);
     if (contact?.agenteIntermediario)

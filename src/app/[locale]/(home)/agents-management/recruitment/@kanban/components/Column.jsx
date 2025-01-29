@@ -6,15 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { getAllRecruitments } from "@/src/lib/apis";
 import useRecruitmentsContext from "@/src/context/recruitments";
 
-const Column = ({
-  id,
-  color,
-  activeId,
-  filter,
-  setItemDrag,
-  updateStages,
-  name,
-}) => {
+const Column = ({ id, color, activeId, setItemDrag, updateStages, name }) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
   });

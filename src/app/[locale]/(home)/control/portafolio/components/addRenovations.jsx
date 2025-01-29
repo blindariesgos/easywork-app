@@ -239,9 +239,10 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       version,
       contact,
       relatedContacts,
+      specifications,
       ...otherData
     } = data;
-    let body = {
+    const body = {
       ...otherData,
       operacion: "renovacion",
       renewal: true,
@@ -256,8 +257,10 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
 
+    if (specifications && specifications.length > 0) {
+      body.specifications = specifications;
+    }
     console.log({ body });
-
     try {
       const response = await addPolicyByPdf(body, "renovacion");
       console.log({ response });

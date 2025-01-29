@@ -1,7 +1,7 @@
 "use client";
 import { formatDate } from "@/src/utils/getFormatDate";
 import { ChatBubbleBottomCenterIcon } from "@heroicons/react/24/solid";
-import React, { Fragment, useRef } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextEditor from "../TextEditor";
 import clsx from "clsx";
@@ -9,13 +9,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { correctSpecialCharacters } from "@/src/utils/formatters";
 import moment from "moment";
+import IconDropdown from "../SettingsButton";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import { updateComment } from "@/src/lib/apis";
+import { handleFrontError } from "@/src/utils/api/errors";
+import { toast } from "react-toastify";
+import { GiPin } from "react-icons/gi";
+import LoaderSpinner from "../LoaderSpinner";
 
 export const CommentType = {
   USER: "user",
   SYSTEM: "system",
 };
 
-export default function CardComment({ data }) {
+export default function CardComment({ data, crmType, update, crmId }) {
   if (
     data?.metadata?.commentType === CommentType.SYSTEM ||
     data?.metadata?.subType == "lead"
@@ -23,7 +30,9 @@ export default function CardComment({ data }) {
     return <SystemNotification data={data} />;
   }
 
-  return <CommentUser data={data} />;
+  return (
+    <CommentUser data={data} crmType={crmType} update={update} crmId={crmId} />
+  );
 }
 
 function SystemNotification({ data }) {
@@ -190,56 +199,106 @@ function SystemNotification({ data }) {
   );
 }
 
-function CommentUser({ data }) {
+function CommentUser({ data, crmType, update, crmId }) {
   const { t } = useTranslation();
   const quillRef = useRef();
-  const { createdAt, comment, createdBy } = data;
+  const { createdAt, comment, createdBy, pinned } = data;
+  const [loading, setLoading] = useState(false);
+
+  const mapId = {
+    contact: "contactId",
+    lead: "leadId",
+    receipt: "receiptId",
+    poliza: "polizaId",
+    renewal: "polizaId",
+    agent: "agentId",
+    poliza_reimbursement: "polizaReimbursementId",
+    poliza_scheduling: "polizaSchedulingId",
+  };
+
+  const handlePinned = async () => {
+    setLoading(true);
+    const response = await updateComment(
+      { comment, [mapId[crmType]]: crmId, pinned: !pinned },
+      crmType,
+      data.id
+    );
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+    update();
+    toast.success(pinned ? "Comentario fijado" : "Comentario desmarcado");
+    setLoading(false);
+  };
+
+  const options = [
+    {
+      value: 0,
+      name: "Fijar",
+      onClick: handlePinned,
+    },
+  ];
+
   return (
-    <div className="bg-white px-4 py-3 rounded-lg w-full">
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2 items-center">
-          <p className="text-xs text-primary font-bold">
-            {t("contacts:panel:comment")}
-          </p>
-          <p className="text-xs text-primary">
-            {t("common:date:title")}:{" "}
-            {moment(createdAt).format("DD/MM/YYYY hh:mm a")}
-          </p>
-        </div>
-        <Image
-          className="h-6 w-6 rounded-full object-cover"
-          width={36}
-          height={36}
-          src={createdBy?.avatar}
-          alt=""
-          title={
-            createdBy?.profile?.firstName
-              ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
-              : (createdBy.username ?? "")
-          }
-        />
-      </div>
-      <div className="flex gap-4 md:gap-8 mt-3">
-        <div className="">
-          <div className="p-4 bg-primary rounded-full">
-            <ChatBubbleBottomCenterIcon className="h-10 w-10 text-white" />
+    <Fragment>
+      {loading && <LoaderSpinner />}
+      <div className="bg-white px-4 py-3 rounded-lg w-full">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 items-center">
+            <p className="text-xs text-primary font-bold">
+              {t("contacts:panel:comment")}
+            </p>
+            <p className="text-xs text-primary">
+              {t("common:date:title")}:{" "}
+              {moment(createdAt).format("DD/MM/YYYY hh:mm a")}
+            </p>
+            {pinned && (
+              <GiPin
+                className="text-red-700 cursor-pointer h-5 w-5"
+                title="Fijado"
+                onClick={handlePinned}
+              />
+            )}
           </div>
+          <Image
+            className="h-6 w-6 rounded-full object-cover"
+            width={36}
+            height={36}
+            src={createdBy?.avatar}
+            alt=""
+            title={
+              createdBy?.profile?.firstName
+                ? `${createdBy?.profile?.firstName} ${createdBy?.profile?.lastName}`
+                : (createdBy.username ?? "")
+            }
+          />
         </div>
-        <div className="flex flex-col gap-2 w-full">
-          <p className="text-lg text-black font-medium">
-            {t("contacts:panel:comment")}
-          </p>
-          <div className="flex gap-x-4 items-center">
-            <TextEditor
-              quillRef={quillRef}
-              value={comment}
-              className="h-full  w-full"
-              setValue={(e) => {}}
-              disabled={true}
+        <div className="flex gap-4 md:gap-8 mt-3">
+          <TextEditor
+            quillRef={quillRef}
+            value={comment}
+            className="h-full  w-full"
+            setValue={(e) => {}}
+            disabled={true}
+          />
+        </div>
+        <div className="flex justify-end">
+          <div title="Ver Opciones">
+            <IconDropdown
+              icon={
+                <EllipsisHorizontalIcon
+                  className="h-4 w-4 text-black"
+                  aria-hidden="true"
+                />
+              }
+              options={options}
+              width="w-[100px]"
             />
           </div>
         </div>
       </div>
-    </div>
+    </Fragment>
   );
 }

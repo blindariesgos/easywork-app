@@ -98,7 +98,9 @@ const MultipleSelect = ({
                   key={res.id}
                   className="bg-primary p-1 rounded-sm text-white flex gap-1 items-center text-xs"
                 >
-                  {res.name || res.username}
+                  {(res.name ?? res?.profile)
+                    ? `${res?.profile?.firstName} ${res?.profile?.lastName}`
+                    : res.username}
                   <div
                     onClick={() => handleRemove(res.id)}
                     className="text-white cursor-pointer"

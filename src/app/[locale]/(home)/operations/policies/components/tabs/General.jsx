@@ -118,7 +118,7 @@ export default function PolicyDetails({
     if (data?.specifications) setValue("specifications", data?.specifications);
     if (data?.observers && data?.observers?.length > 0)
       setValue("observers", data?.observers);
-    if (data?.subAgent?.name) setValue("subAgentId", data?.subAgent?.id);
+    if (data?.subAgente?.name) setValue("subAgenteId", data?.subAgente?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -449,8 +449,8 @@ export default function PolicyDetails({
           />
           <AgentSelectAsync
             label={t("operations:programations:general:sub-agent")}
-            name="subAgentId"
-            error={errors.subAgentId}
+            name="subAgenteId"
+            error={errors.subAgenteId}
             setValue={setValue}
             watch={watch}
             disabled={!isEdit}

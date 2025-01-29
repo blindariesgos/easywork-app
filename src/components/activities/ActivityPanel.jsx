@@ -163,7 +163,12 @@ export default function ActivityPanel({
                       <div
                         className={`bg-gray-200 lg:w-[93%] w-[90%] ml-4 pb-4 px-4 ${activityIdx === bulkActivity.length - 1 && "rounded-b-lg"}`}
                       >
-                        <ActivityCard activity={activity} />
+                        <ActivityCard
+                          activity={activity}
+                          crmType={crmType}
+                          update={mutate}
+                          crmId={entityId}
+                        />
                       </div>
                     </div>
                   </div>
@@ -176,14 +181,21 @@ export default function ActivityPanel({
   );
 }
 
-function ActivityCard({ activity }) {
+function ActivityCard({ activity, crmType, update, crmId }) {
   switch (activity.type) {
     case "task":
-      return <CardTask data={activity} />;
+      return <CardTask data={activity} crmType={crmType} update={update} />;
     case "event":
-      return <CardEvent data={activity} />;
+      return <CardEvent data={activity} crmType={crmType} update={update} />;
     case "comment":
-      return <CardComment data={activity} />;
+      return (
+        <CardComment
+          data={activity}
+          crmType={crmType}
+          update={update}
+          crmId={crmId}
+        />
+      );
 
     default:
       <>Ok</>;

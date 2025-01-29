@@ -1,6 +1,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import AddPolicy from "./addPolicy";
+import AddPolicyManual from "./addPolicyManual";
 import AddSchedule from "./addSchedule";
 import AddRefunds from "./addRefunds";
 import AddClaim from "./addClaim";
@@ -11,6 +12,7 @@ import AddVersion from "./addVersion";
 
 const ButtonAdd = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenManual, setIsOpenManual] = useState(false);
   const [isOpenRenovation, setIsOpenRenovation] = useState(false);
   const [isOpenClaim, setIsOpenClaim] = useState(false);
   const [isOpenFundRescue, setIsOpenFundRescue] = useState(false);
@@ -31,8 +33,9 @@ const ButtonAdd = () => {
       onclick: () => setIsOpenFundRescue(true),
       disabled: true,
     },
-    { name: "Siniestro", onclick: () => setIsOpenClaim(true) },
+    { name: "Siniestro", onclick: () => setIsOpenClaim(true), disabled: true },
     { name: "Versión", onclick: () => setIsOpenVersion(true) },
+    { name: "Carga manual", onclick: () => setIsOpenManual(true) },
   ];
 
   return (
@@ -61,6 +64,7 @@ const ButtonAdd = () => {
         </MenuItems>
       </Menu>
       <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} />
+      <AddPolicyManual isOpen={isOpenManual} setIsOpen={setIsOpenManual} />
       <AddRenovations
         isOpen={isOpenRenovation}
         setIsOpen={setIsOpenRenovation}

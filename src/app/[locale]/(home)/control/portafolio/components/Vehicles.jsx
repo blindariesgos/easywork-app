@@ -6,26 +6,31 @@ import { useFieldArray } from "react-hook-form";
 import Button from "@/src/components/form/Button";
 import { useTranslation } from "react-i18next";
 
-const Beneficiaries = ({ register, control, isAdd }) => {
+const Vehicles = ({ register, control, isAdd }) => {
   const { t } = useTranslation();
   const { fields, remove, append } = useFieldArray({
     control,
-    name: "beneficiaries",
+    name: "vehicles",
   });
 
   const handleAdd = () => {
     append({
-      nombre: "",
-      parentesco: "",
-      porcentaje: "",
-      type: "Principal",
+      description: "",
+      serial: "",
+      model: "",
+      motor: "",
+      plates: "",
+      usage: "",
+      circulatesIn: "",
+      regularDriver: "",
+      regularDriverAge: "",
     });
   };
 
   return (
     <div className="grid gap-y-1">
       <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-        Beneficiarios
+        Vahiculos
       </label>
       {fields &&
         fields.map((_, index) => (
@@ -47,33 +52,67 @@ const Beneficiaries = ({ register, control, isAdd }) => {
             />
             <TextInput
               type="text"
-              label={"Nombre completo"}
+              label={"Descripción"}
               small
-              name={`beneficiaries[${index}].nombre`}
+              name={`vehicles[${index}].description`}
               register={register}
             />
             <div className="grid grid-cols-2 gap-1">
               <TextInput
                 type="text"
-                label={"Parentesco"}
-                name={`beneficiaries[${index}].parentesco`}
+                label={"Serie"}
+                name={`vehicles[${index}].serial`}
                 register={register}
                 small
               />
               <TextInput
                 type="text"
-                label={"Porcentaje"}
-                name={`beneficiaries[${index}].porcentaje`}
+                label={"Placa"}
+                name={`vehicles[${index}].plates`}
                 register={register}
                 small
               />
               <TextInput
                 type="text"
-                label={"Tipo de beneficiario"}
-                name={`beneficiaries[${index}].type`}
+                label={"Modelo"}
+                name={`vehicles[${index}].model`}
                 register={register}
                 small
-                value={"Principal"}
+              />
+              <TextInput
+                type="text"
+                label={"Motor"}
+                name={`vehicles[${index}].motor`}
+                register={register}
+                small
+              />
+              <TextInput
+                type="text"
+                label={"Uso"}
+                name={`vehicles[${index}].usage`}
+                register={register}
+                small
+              />
+              <TextInput
+                type="text"
+                label={"Circula en"}
+                name={`vehicles[${index}].circulatesIn`}
+                register={register}
+                small
+              />
+              <TextInput
+                type="text"
+                label={"Nombre conductor habitual"}
+                name={`vehicles[${index}].regularDriver`}
+                register={register}
+                small
+              />
+              <TextInput
+                type="text"
+                label={"Edad  conductor habitual"}
+                name={`vehicles[${index}].regularDriverAge`}
+                register={register}
+                small
               />
             </div>
           </div>
@@ -95,4 +134,4 @@ const Beneficiaries = ({ register, control, isAdd }) => {
   );
 };
 
-export default Beneficiaries;
+export default Vehicles;

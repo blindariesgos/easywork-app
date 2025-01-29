@@ -19,7 +19,7 @@ const DropdownVisibleUsers = ({
 
   return (
     <div
-      className={`absolute rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-10 w-54 h-min-96 overflow-y-auto`}
+      className={`absolute rounded-md bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-[500] w-54 overflow-y-auto`}
       style={{
         top: mentionButtonRef
           ? mentionButtonRef.current.offsetTop +
@@ -30,7 +30,7 @@ const DropdownVisibleUsers = ({
           : modalPosition.x,
       }}
     >
-      <div className="p-4 max-h-[80vh]">
+      <div className="p-4 max-h-[300px]">
         <div className="flex justify-end gap-2">
           <div
             className="cursor-pointer"

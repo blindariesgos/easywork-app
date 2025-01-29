@@ -6,21 +6,13 @@ import { formatDate, isTaskOverdue } from "@/src/utils/getFormatDate";
 import {
   ChevronDownIcon,
   EllipsisHorizontalIcon,
-  PencilIcon,
-  UserIcon,
-  XMarkIcon,
 } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BsBriefcase } from "react-icons/bs";
-import { RiFileEditLine } from "react-icons/ri";
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { postComment } from "../../lib/apis";
 import { toast } from "react-toastify";
-import { GrTask } from "react-icons/gr";
-import { GoTasklist } from "react-icons/go";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 

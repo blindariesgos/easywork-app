@@ -195,7 +195,7 @@ export default function CreateLead({ lead, id }) {
     if (lead?.agenteIntermediario)
       setValue("agenteIntermediarioId", lead?.agenteIntermediario?.id);
     if (lead?.observer) setValue("observerId", lead?.observer?.id);
-    if (lead?.subAgent) setValue("subAgentId", lead?.subAgent?.id);
+    if (lead?.subAgente) setValue("subAgenteId", lead?.subAgente?.id);
     if (lead?.activitySector) setValue("activitySector", lead?.activitySector);
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
@@ -216,7 +216,7 @@ export default function CreateLead({ lead, id }) {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    const { contact, subAgent, ...info } = data;
+    const { contact, subAgente, ...info } = data;
     let body = {
       ...info,
       relatedContactId: contact?.id ?? null,
@@ -595,10 +595,10 @@ export default function CreateLead({ lead, id }) {
                 />
                 <AgentSelectAsync
                   label={t("contacts:create:sub-agent")}
-                  name="subAgentId"
+                  name="subAgenteId"
                   register={register}
                   disabled={!isEdit}
-                  error={errors.subAgentId}
+                  error={errors.subAgenteId}
                   setValue={setValue}
                   watch={watch}
                 />

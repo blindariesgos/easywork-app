@@ -840,6 +840,15 @@ export const addContactComment = async (body, cmrType) => {
   return response;
 };
 
+export const updateComment = async (body, cmrType, commentId) => {
+  const url = `${getCommentPath(cmrType)}/comments/${commentId}`;
+  console.log(url, body);
+  const response = await axios()
+    .put(url, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 export const getAllRoles = async () => {
   const response = await axios().get(`/roles`);
   return response;

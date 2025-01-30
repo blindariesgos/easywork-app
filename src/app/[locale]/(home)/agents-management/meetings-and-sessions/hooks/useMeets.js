@@ -19,43 +19,10 @@ const useMeets = ({ type }) => {
     setLoading(false);
   };
 
-  const itemActions = [
-    {
-      name: "Ver",
-      handleClick: (meet) =>
-        router.push(
-          `/agents-management/meetings-and-sessions/${type}/meet/${meet.id}?show=true`
-        ),
-    },
-    {
-      name: "Crear",
-      handleClick: (meet) => {
-        if (meet?.agents?.length > 0) {
-          router.push(
-            `/agents-management/meetings-and-sessions/${type}/meet?show=true&prev=agent-meet&prev_id=${meet?.agents?.map((x) => x.id).join("^")}`
-          );
-        } else {
-          toast.warning("La junta no tiene agente asignado");
-        }
-      },
-    },
-    {
-      name: "Editar",
-      handleClick: (meet) =>
-        router.push(
-          `/agents-management/meetings-and-sessions/${type}/meet/${meet.id}/edit?show=true`
-        ),
-    },
-    {
-      name: "Eliminar",
-      handleClick: (meet) => deleteMeet(meet.id),
-    },
-  ];
-
   return {
     loading,
     setLoading,
-    itemActions,
+    deleteMeet,
   };
 };
 

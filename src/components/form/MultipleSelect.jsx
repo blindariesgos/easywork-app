@@ -95,13 +95,13 @@ const MultipleSelect = ({
             {getValues(name)?.length > 0 &&
               getValues(name).map((res) => (
                 <div
-                  key={res.id}
+                  key={res?.id}
                   className="bg-primary p-1 rounded-sm text-white flex gap-1 items-center text-xs"
                 >
-                  {res.name ??
+                  {res?.name ??
                     (res?.profile
                       ? `${res?.profile?.firstName} ${res?.profile?.lastName}`
-                      : res.username)}
+                      : res?.username)}
                   <div
                     onClick={() => handleRemove(res.id)}
                     className="text-white cursor-pointer"

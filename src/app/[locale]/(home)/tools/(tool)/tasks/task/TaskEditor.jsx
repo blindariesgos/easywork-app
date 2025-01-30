@@ -226,14 +226,15 @@ export default function TaskEditor({ edit, copy, subtask }) {
     }
     const { userId, ...metadata } = data;
 
-    const user = lists.users.find((x) => x.id == userId);
+    // const user = lists.users.find((x) => x.id == userId);
     setValue(
       "createdBy",
       lists?.users.filter((user) => user.id === data.developmentManagerId)
     );
-    setValue("responsible", [user]);
+    console.log({});
+    // setValue("responsible", [user]);
     setValue("metadata", metadata);
-    setValue("name", "CRM - Junta: ");
+    setValue("name", "CRM - Junta Individual: ");
     setLoading(false);
   };
   const setCrmMeetGroup = async (agentId) => {
@@ -257,7 +258,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       lists?.users.filter((user) => user.id === data.developmentManagerId)
     );
     setValue("metadata", metadata);
-    setValue("name", "CRM - Junta: ");
+    setValue("name", "CRM - Junta Grupal: ");
     setLoading(false);
   };
   const setCrmScheduling = async (schedulingId) => {

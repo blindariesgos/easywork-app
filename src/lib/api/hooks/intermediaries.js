@@ -23,27 +23,12 @@ const getQueries = (filters) => {
     .join("&");
 };
 
-export const useUsers = ({ config = {}, filters = {} }) => {
+export const useIntermediaries = ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/users?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-  return {
-    data,
-    isLoading,
-    isError: error,
-    mutate,
-  };
-};
-
-export const useRelatedUsers = ({ config = {}, filters = {} }) => {
-  const queries = getQueries(filters);
-  const configParams = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/users/related_users?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const url = `/agent-management/agente-intermediario?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
@@ -54,19 +39,11 @@ export const useRelatedUsers = ({ config = {}, filters = {} }) => {
   };
 };
 
-export const useCurrentUserInfo = () => {
-  const { data, error, isLoading, mutate } = useSWR("/users/info", fetcher);
-
-  return {
-    user: data,
-    isLoading,
-    isError: !!error,
-    mutate,
-  };
-};
-
-export const useUser = (id) => {
-  const { data, error, isLoading } = useSWR(`/users/${id}`, fetcher);
+export const useAgent = (agentId) => {
+  const { data, error, isLoading } = useSWR(
+    `/agent-management/agents/${agentId}`,
+    fetcher
+  );
 
   return {
     data,

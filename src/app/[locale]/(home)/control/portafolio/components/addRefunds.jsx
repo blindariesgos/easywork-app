@@ -18,6 +18,7 @@ import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
 import { addRefund } from "@/src/lib/apis";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -240,10 +241,9 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
+              <IntermediarySelectAsync
                 label={t("operations:programations:general:intermediary")}
                 name="agenteIntermediarioId"
-                options={lists?.policies?.agentesIntermediarios ?? []}
                 setValue={setValue}
                 watch={watch}
                 error={errors.agenteIntermediarioId}

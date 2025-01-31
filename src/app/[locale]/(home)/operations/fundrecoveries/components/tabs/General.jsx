@@ -20,6 +20,7 @@ import { postComment, putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 export default function PolicyDetails({
   data,
@@ -395,12 +396,10 @@ export default function PolicyDetails({
               )?.symbol ?? ""
             }
           />
-          <SelectInput
+          <IntermediarySelectAsync
             label={t("operations:policies:general:intermediary")}
             name="agenteIntermediarioId"
-            options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
-            register={register}
             setValue={setValue}
             watch={watch}
           />

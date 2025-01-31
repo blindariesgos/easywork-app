@@ -20,6 +20,7 @@ import { useSWRConfig } from "swr";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import moment from "moment";
 import useProgramationContext from "@/src/context/programations";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
   const { t } = useTranslation();
@@ -278,10 +279,9 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             setValue={setValue}
             watch={watch}
           />
-          <SelectInput
+          <IntermediarySelectAsync
             label={t("operations:programations:general:intermediary")}
             name="agenteIntermediarioId"
-            options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
             setValue={setValue}
             watch={watch}

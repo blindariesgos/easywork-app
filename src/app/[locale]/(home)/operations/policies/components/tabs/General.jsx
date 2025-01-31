@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 
@@ -438,12 +439,10 @@ export default function PolicyDetails({
               )?.symbol ?? ""
             }
           />
-          <SelectInput
+          <IntermediarySelectAsync
             label={t("operations:policies:general:intermediary")}
             name="agenteIntermediarioId"
-            options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
-            register={register}
             setValue={setValue}
             watch={watch}
           />

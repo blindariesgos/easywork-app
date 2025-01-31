@@ -11,10 +11,27 @@ import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
-import { getAgentById } from "@/src/lib/apis";
+import {
+  createAgentIntermediary,
+  getAgentById,
+  getAgentIntermediaryById,
+} from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
 import { useAgents } from "@/src/lib/api/hooks/agents";
 import { useIntermediaries } from "@/src/lib/api/hooks/intermediaries";
+import TextInput from "./TextInput";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
+import Button from "./Button";
+import {
+  Description,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 
 function IntermediarySelectAsync({
   label,
@@ -34,25 +51,38 @@ function IntermediarySelectAsync({
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({});
-  const { data: options, isLoading } = useIntermediaries({
+  const [isOpenAdd, setIsOpenAdd] = useState(false);
+  const {
+    data: options,
+    isLoading,
+    mutate,
+  } = useIntermediaries({
     page: 1,
     limit: 10,
     filters,
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = useDebouncedCallback(() => {
-    if (query.length > 0) {
-      setFilters({
-        name: query,
-      });
-    } else {
-      setFilters({});
-    }
-  }, 500);
+  // const handleSearch = useDebouncedCallback(() => {
+  //   if (query.length > 0) {
+  //     setFilters({
+  //       name: query,
+  //     });
+  //   } else {
+  //     setFilters({});
+  //   }
+  // }, 500);
 
-  useEffect(() => {
-    handleSearch();
-  }, [query]);
+  // useEffect(() => {
+  //   handleSearch();
+  // }, [query]);
+
+  const filteredElements =
+    query === ""
+      ? options
+      : options.filter((element) => {
+          return element.name.toLowerCase().includes(query.toLowerCase());
+        });
 
   useEffect(() => {
     if (selectedOption) {
@@ -70,12 +100,44 @@ function IntermediarySelectAsync({
   useEffect(() => {
     if (!watch || !watch(name) || selected) return;
     const getAgent = async (agentId) => {
-      const response = await getAgentById(agentId);
+      const response = await getAgentIntermediaryById(agentId);
       if (response.hasError) return;
       setSelected(response);
     };
     getAgent(watch(name));
   }, [watch && watch(name)]);
+
+  const schema = Yup.object().shape({
+    name: Yup.string()
+      .required(t("common:validations:required"))
+      .min(2, t("common:validations:min", { min: 2 })),
+    cua: Yup.string(),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema),
+  });
+
+  const handleAdd = async (data) => {
+    setLoading(true);
+    const response = await createAgentIntermediary(data);
+    if (response.hasError) {
+      toast.error(
+        response.message ?? "Ocurrio un error, intente de nuevo mas tarde"
+      );
+      setLoading(false);
+      return;
+    }
+    setSelected(response);
+    setIsOpenAdd(false);
+    mutate();
+    setLoading(false);
+  };
 
   return (
     <div className="w-full">
@@ -110,6 +172,12 @@ function IntermediarySelectAsync({
             onChange={(event) => {
               setQuery && setQuery(event.target.value);
             }}
+            onKeyUp={(e) => {
+              e.preventDefault();
+              if (e.key === "Enter") {
+                setIsOpenAdd(true);
+              }
+            }}
           />
           {!disabled && (
             <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -122,7 +190,10 @@ function IntermediarySelectAsync({
 
           <ComboboxOptions
             transition
-            anchor="bottom end"
+            anchor={{
+              to: "bottom end",
+              gap: "5px",
+            }}
             className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             {isLoading && (
@@ -130,13 +201,13 @@ function IntermediarySelectAsync({
                 <LoadingSpinnerSmall />
               </div>
             )}
-            {options?.items?.length === 0 && query !== "" && !isLoading ? (
+            {filteredElements?.length === 0 && query !== "" && !isLoading ? (
               <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                 {t("common:not-found")}
               </div>
             ) : (
-              options?.items &&
-              options?.items?.map((option) => (
+              filteredElements &&
+              filteredElements?.map((option) => (
                 <ComboboxOption
                   key={option.id}
                   className={({ active }) =>
@@ -177,6 +248,67 @@ function IntermediarySelectAsync({
           <p className="mt-1 text-xs text-gray-50 italic">{helperText}</p>
         )}
       </Combobox>
+      <Dialog
+        open={isOpenAdd}
+        onClose={() => setIsOpenAdd(false)}
+        className="relative z-[100000000000000]"
+      >
+        {/* The backdrop, rendered as a fixed sibling to the panel container */}
+        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+        {/* Full-screen container to center the panel */}
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+          {/* The actual dialog panel  */}
+          <DialogPanel className="max-w-lg w-full space-y-4 bg-white p-4 rounded-xl">
+            <DialogTitle className="font-bold">
+              Agregar agente intermediario
+            </DialogTitle>
+            <form onSubmit={handleSubmit(handleAdd)}>
+              <Description>
+                <TextInput
+                  type="text"
+                  label={"Nombre completo"}
+                  error={errors.name}
+                  register={register}
+                  value={query}
+                  name="name"
+                  disabled={loading}
+                />
+                <TextInput
+                  type="text"
+                  label={"Cua"}
+                  error={errors.cua}
+                  register={register}
+                  name="cua"
+                  disabled={loading}
+                />
+              </Description>
+              <div className="flex gap-4 justify-center pt-4">
+                <Button
+                  buttonStyle="secondary"
+                  label={t("common:buttons:cancel")}
+                  type="button"
+                  className="px-2 py-1"
+                  onclick={() => setIsOpenAdd(false)}
+                  disabled={loading}
+                />
+                <Button
+                  buttonStyle="primary"
+                  label={
+                    loading
+                      ? t("common:buttons:adding")
+                      : t("common:buttons:add")
+                  }
+                  type="button"
+                  onclick={handleSubmit(handleAdd)}
+                  className="px-2 py-1"
+                  disabled={loading}
+                />
+              </div>
+            </form>
+          </DialogPanel>
+        </div>
+      </Dialog>
     </div>
   );
 }

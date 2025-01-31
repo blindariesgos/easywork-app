@@ -26,6 +26,7 @@ import InputDate from "@/src/components/form/InputDate";
 import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
 import clsx from "clsx";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
   const [loading, setLoading] = useState(false);
@@ -371,11 +372,9 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectInput
+                <IntermediarySelectAsync
                   label={t("operations:policies:general:intermediary")}
                   name="agenteIntermediarioId"
-                  options={lists?.policies?.agentesIntermediarios ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />

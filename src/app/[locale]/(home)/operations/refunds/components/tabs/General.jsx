@@ -20,6 +20,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import { polizaReimbursementStatus } from "@/src/utils/stages";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
   const { t } = useTranslation();
@@ -262,10 +263,9 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
             setValue={setValue}
             watch={watch}
           />
-          <SelectInput
+          <IntermediarySelectAsync
             label={t("operations:programations:general:intermediary")}
             name="agenteIntermediarioId"
-            options={lists?.policies?.agentesIntermediarios ?? []}
             disabled={!isEdit}
             setValue={setValue}
             watch={watch}

@@ -24,6 +24,7 @@ import moment from "moment";
 import Beneficiaries from "./Beneficiaries";
 import Insureds from "./Insureds";
 import Vehicles from "./Vehicles";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const AddPolicyManual = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -427,11 +428,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   }
                 />
 
-                <SelectInput
+                <IntermediarySelectAsync
                   label={t("operations:policies:general:intermediary")}
                   name="agenteIntermediarioId"
-                  options={lists?.policies?.agentesIntermediarios ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />

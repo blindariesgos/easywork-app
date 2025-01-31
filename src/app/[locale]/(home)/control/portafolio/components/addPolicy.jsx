@@ -25,6 +25,7 @@ import moment from "moment";
 import clsx from "clsx";
 import Beneficiaries from "./Beneficiaries";
 import Insureds from "./Insureds";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);

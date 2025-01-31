@@ -238,6 +238,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       recargoFraccionado,
       relatedContacts,
       contact,
+      specifications,
       ...otherData
     } = data;
     const body = {
@@ -254,6 +255,9 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
+    if (specifications && specifications.length > 0) {
+      body.specifications = specifications;
+    }
     console.log({ body });
 
     try {

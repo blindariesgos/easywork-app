@@ -41,7 +41,8 @@ import { toast } from "react-toastify";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import { deleteAgentById, deleteMeetById } from "@/src/lib/apis";
 import useMeets from "../../hooks/useMeets";
-
+import Assignments from "../../meet/components/Assignments";
+import MeetColumn from "../../meet/components/MeetColumn";
 export default function Table() {
   const {
     data,
@@ -65,7 +66,7 @@ export default function Table() {
   const [selectedColumns, setSelectedColumns] = useState(
     columnTable.filter((c) => c.check)
   );
-  const { loading, setLoading, itemActions } = useMeets({
+  const { loading, setLoading, deleteMeet } = useMeets({
     type: "individuals",
   });
   const [deleteId, setDeleteId] = useState();
@@ -174,238 +175,18 @@ export default function Table() {
               <tbody className="bg-gray-100">
                 {selectedColumns.length > 0 &&
                   data?.items &&
-                  data?.items.map((meet, index) => {
+                  data?.items.map((meet) => {
                     return (
-                      <tr
-                        key={index}
-                        className={clsx(
-                          selectedContacts.includes(meet.id)
-                            ? "bg-gray-200"
-                            : undefined,
-                          "hover:bg-indigo-100/40 cursor-default"
-                        )}
-                      >
-                        <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(meet.id) && (
-                            <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                          )}
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={meet.id}
-                              checked={selectedContacts.includes(meet.id)}
-                              onChange={(e) =>
-                                setSelectedContacts(
-                                  e.target.checked
-                                    ? [...selectedContacts, meet.id]
-                                    : selectedContacts.filter(
-                                        (p) => p !== meet.id
-                                      )
-                                )
-                              }
-                            />
-                            <Menu
-                              as="div"
-                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
-                            >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
-                                <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                              </MenuButton>
-                              <Transition
-                                as={Fragment}
-                                enter="transition ease-out duration-100"
-                                enterFrom="transform opacity-0 scale-95"
-                                enterTo="transform opacity-100 scale-100"
-                                leave="transition ease-in duration-75"
-                                leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95"
-                              >
-                                <MenuItems
-                                  anchor="right start"
-                                  className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                >
-                                  {itemActions.map((item) =>
-                                    !item.options ? (
-                                      <MenuItem
-                                        key={item.name}
-                                        disabled={item.disabled}
-                                        onClick={() => {
-                                          item.handleClick &&
-                                            item.handleClick(meet);
-                                        }}
-                                      >
-                                        <div
-                                          // onClick={item.onClick}
-                                          className={
-                                            "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
-                                          }
-                                        >
-                                          {item.name}
-                                        </div>
-                                      </MenuItem>
-                                    ) : (
-                                      <Menu key={item.name}>
-                                        <MenuButton className="flex items-center hover:bg-gray-50">
-                                          <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
-                                            {item.name}
-                                            <ChevronDownIcon className="h-6 w-6 ml-2" />
-                                          </div>
-                                        </MenuButton>
-                                        <Transition
-                                          as={Fragment}
-                                          enter="transition ease-out duration-100"
-                                          enterFrom="transform opacity-0 scale-95"
-                                          enterTo="transform opacity-100 scale-100"
-                                          leave="transition ease-in duration-75"
-                                          leaveFrom="transform opacity-100 scale-100"
-                                          leaveTo="transform opacity-0 scale-95"
-                                        >
-                                          <MenuItems
-                                            anchor={{
-                                              to: "right start",
-                                              gap: "4px",
-                                            }}
-                                            className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                          >
-                                            {item.options.map((option) => (
-                                              <MenuItem
-                                                key={option.name}
-                                                disabled={option.disabled}
-                                                onClick={() => {
-                                                  option.handleClick &&
-                                                    option.handleClick(meet.id);
-                                                  option.handleClickContact &&
-                                                    option.handleClickContact(
-                                                      meet?.contact?.id
-                                                    );
-                                                }}
-                                              >
-                                                <div
-                                                  className={clsx(
-                                                    "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
-                                                  )}
-                                                >
-                                                  {option.name}
-                                                </div>
-                                              </MenuItem>
-                                            ))}
-                                          </MenuItems>
-                                        </Transition>
-                                      </Menu>
-                                    )
-                                  )}
-                                </MenuItems>
-                              </Transition>
-                            </Menu>
-                          </div>
-                        </td>
-                        {selectedColumns.length > 0 &&
-                          selectedColumns.map((column, index) => (
-                            <td className="ml-4 py-4" key={index}>
-                              <div
-                                className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary"
-                                )}
-                              >
-                                {column.row == "name" ? (
-                                  <Link
-                                    href={`/agents-management/meetings-and-sessions/individuals/meet/${meet.id}?show=true`}
-                                  >
-                                    {meet?.title
-                                      ? `${meet?.title}${meet?.startTime ? ` - ${moment(meet?.startTime).format("DD/MM/YYYY")}` : ""}`
-                                      : "N/D"}
-                                  </Link>
-                                ) : column.row == "developmentManager" ? (
-                                  meet[column.row] ? (
-                                    <div className="flex gap-x-2 items-center justify-left">
-                                      <Image
-                                        className="h-6 w-6 rounded-full bg-zinc-200"
-                                        width={30}
-                                        height={30}
-                                        src={
-                                          meet[column.row]?.avatar ||
-                                          "/img/avatar.svg"
-                                        }
-                                        alt="avatar"
-                                      />
-                                      <div className="font-medium text-black">
-                                        {meet[column.row]?.name ??
-                                          `${meet[column.row]?.profile?.firstName} ${meet[column.row]?.profile?.lastName}`}
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    "N/D"
-                                  )
-                                ) : column.row == "activities" ? (
-                                  <div className="flex justify-center gap-2">
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <FaWhatsapp
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <EnvelopeIcon
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <ChatBubbleBottomCenterIcon
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <PhoneIcon
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                  </div>
-                                ) : column.row == "crm" ? (
-                                  <div className="flex justify-center">
-                                    <ModalCrm conections={meet[column.row]} />
-                                  </div>
-                                ) : column.row === "startTime" ? (
-                                  meet[column.row] ? (
-                                    <div className="flex justify-center">
-                                      <div className="capitalize bg-blue-100 px-2 py-1 rounded-full">
-                                        {moment(meet[column.row]).format(
-                                          "MMMM, DD hh:mm a"
-                                        )}
-                                      </div>
-                                    </div>
-                                  ) : null
-                                ) : column.row === "importePagar" ? (
-                                  `${lists?.policies?.currencies?.find((x) => x.id == meet?.currency?.id)?.symbol ?? ""} ${formatToCurrency(meet[column.row])}`
-                                ) : column.row === "status" ? (
-                                  meet[column.row]
-                                ) : (
-                                  <div className="flex justify-center">
-                                    {meet[column.row] || "-"}
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                          ))}
-                      </tr>
+                      <MeetColumn
+                        meet={meet}
+                        key={meet.id}
+                        selectedContacts={selectedContacts}
+                        setSelectedContacts={setSelectedContacts}
+                        selectedColumns={selectedColumns}
+                        type={"individuals"}
+                        setDeleteId={setDeleteId}
+                        setIsOpenDelete={setIsOpenDelete}
+                      />
                     );
                   })}
               </tbody>
@@ -426,7 +207,7 @@ export default function Table() {
       <DeleteItemModal
         isOpen={isOpenDelete}
         setIsOpen={setIsOpenDelete}
-        handleClick={() => deletePolicy(deleteId)}
+        handleClick={() => deleteMeet(deleteId)}
         loading={loading}
       />
       <DeleteItemModal

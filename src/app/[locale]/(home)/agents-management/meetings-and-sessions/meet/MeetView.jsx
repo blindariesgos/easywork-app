@@ -10,18 +10,40 @@ import CrmItems from "@/src/components/CrmItems";
 import Button from "@/src/components/form/Button";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { getAllTasks } from "@/src/lib/apis";
+import AssignmentsTable from "./components/AssignmentsTable";
 
 export default function MeetView({ meet, id }) {
   const [loading, setLoading] = useState(false);
   const [taskDescription, setTaskDescription] = useState("");
   const { t } = useTranslation();
   const router = useRouter();
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     if (meet) {
       setTaskDescription(meet.description);
     }
   }, [meet]);
+
+  const getTasks = async () => {
+    const response = await getAllTasks({
+      config: {
+        limit: 20,
+        page: 1,
+      },
+      filters: {
+        meetId: meet.id,
+      },
+    });
+    if (response?.items?.length) {
+      setTasks(response?.items);
+    }
+  };
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   const handleCreateMeetTask = () => {
     if (!meet.agents[0]?.user?.id && meet?.type == "individual") {
@@ -98,6 +120,16 @@ export default function MeetView({ meet, id }) {
                     label="Agregar tarea"
                     className="px-3 py-2"
                     onclick={handleCreateMeetTask}
+                  />
+                </div>
+              )}
+              {tasks.length > 0 && (
+                <div className="grid grid-cols-1 gap-2 p-2 sm:p-4">
+                  <p className="font-semibold">Tareas relacionadas</p>
+                  <AssignmentsTable
+                    tasks={tasks}
+                    isLoading={false}
+                    className="pl-0"
                   />
                 </div>
               )}

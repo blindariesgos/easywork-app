@@ -13,14 +13,12 @@ import { useTranslation } from "react-i18next";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
 import {
   createAgentIntermediary,
-  getAgentById,
   getAgentIntermediaryById,
 } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
-import { useAgents } from "@/src/lib/api/hooks/agents";
 import { useIntermediaries } from "@/src/lib/api/hooks/intermediaries";
 import TextInput from "./TextInput";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { toast } from "react-toastify";

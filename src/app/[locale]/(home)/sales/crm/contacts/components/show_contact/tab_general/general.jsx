@@ -10,6 +10,7 @@ import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
 import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
 import MultipleClientCodeByInsuranceInput from "@/src/components/form/MultipleClientCodeByInsuranceInput";
 import SelectInput from "@/src/components/form/SelectInput";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputDate from "@/src/components/form/InputDate";
@@ -100,7 +101,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     typePerson: Yup.string(),
     observerId: Yup.string(),
     subAgentId: Yup.string(),
-    intermediarioId: Yup.string(),
+    agenteIntermediarioId: Yup.string(),
     typeId: Yup.string(),
     observations: Yup.string(),
     emails_dto: Yup.array().of(
@@ -568,11 +569,9 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 watch={watch}
               />
 
-              <SelectInput
+              <IntermediarySelectAsync
                 label={t("contacts:create:intermediario")}
                 name="agenteIntermediarioId"
-                options={lists?.policies?.agentesIntermediarios || []}
-                register={register}
                 disabled={!isEdit}
                 error={errors.agenteIntermediarioId}
                 setValue={setValue}

@@ -33,6 +33,7 @@ import { LinkIcon } from "@heroicons/react/24/outline";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { activitySectors } from "@/src/utils/stages";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -603,11 +604,9 @@ export default function CreateLead({ lead, id }) {
                   watch={watch}
                 />
 
-                <SelectInput
+                <IntermediarySelectAsync
                   label={t("contacts:create:intermediario")}
                   name="agenteIntermediarioId"
-                  options={lists?.policies?.agentesIntermediarios || []}
-                  register={register}
                   disabled={!isEdit}
                   error={errors.agenteIntermediarioId}
                   setValue={setValue}

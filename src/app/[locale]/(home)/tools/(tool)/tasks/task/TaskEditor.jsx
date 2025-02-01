@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
 import { useSession } from "next-auth/react";
 import MultiSelectTags from "../components/MultiSelectTags";
+import MultipleSelectAgentsAsync from "@/src/components/form/MultipleSelectUserAsync";
 import {
   getContactId,
   postTask,
@@ -31,6 +32,7 @@ import {
   getAgentById,
   getSchedulingById,
   getRefundById,
+  getUserById,
 } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { getFormatDate } from "@/src/utils/getFormatDate";
@@ -71,6 +73,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const [value, setValueText] = useState(
     edit?.description ?? copy?.description ?? ""
   );
+  const [isMeetTask, setIsMeetTask] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [checkedTime, setCheckedTime] = useState(false);
   const [checkedTask, setCheckedTask] = useState(false);
@@ -224,15 +227,18 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setLoading(false);
       return;
     }
+    setIsMeetTask(true);
     const { userId, ...metadata } = data;
 
-    // const user = lists.users.find((x) => x.id == userId);
+    const user = await getUserById(userId).then((res) =>
+      res.hasError ? null : res
+    );
+    console.log("metadata user", user);
     setValue(
       "createdBy",
       lists?.users.filter((user) => user.id === data.developmentManagerId)
     );
-    console.log({});
-    // setValue("responsible", [user]);
+    user && setValue("responsible", [user]);
     setValue("metadata", metadata);
     setValue("name", "CRM - Junta Individual: ");
     setLoading(false);
@@ -251,6 +257,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setLoading(false);
       return;
     }
+    setIsMeetTask(true);
+
     const { userId, ...metadata } = data;
 
     setValue(
@@ -524,22 +532,40 @@ export default function TaskEditor({ edit, copy, subtask }) {
                   {t("tools:tasks:new:responsible")}
                 </p>
                 <div className="w-full md:w-[40%]">
-                  <Controller
-                    name="responsible"
-                    control={control}
-                    defaultValue={[]}
-                    render={({ field }) => (
-                      <MultipleSelect
-                        {...field}
-                        options={lists?.users || []}
-                        getValues={getValues}
-                        setValue={setValue}
-                        onlyOne
-                        name="responsible"
-                        error={errors.responsible}
-                      />
-                    )}
-                  />
+                  {isMeetTask ? (
+                    <Controller
+                      name="responsible"
+                      control={control}
+                      defaultValue={[]}
+                      render={({ field }) => (
+                        <MultipleSelectAgentsAsync
+                          {...field}
+                          getValues={getValues}
+                          setValue={setValue}
+                          onlyOne
+                          name="responsible"
+                          error={errors.responsible}
+                        />
+                      )}
+                    />
+                  ) : (
+                    <Controller
+                      name="responsible"
+                      control={control}
+                      defaultValue={[]}
+                      render={({ field }) => (
+                        <MultipleSelect
+                          {...field}
+                          options={lists?.users || []}
+                          getValues={getValues}
+                          setValue={setValue}
+                          onlyOne
+                          name="responsible"
+                          error={errors.responsible}
+                        />
+                      )}
+                    />
+                  )}
                 </div>
                 <div className="flex gap-2 sm:gap-6 flex-wrap items-center sm:ml-6">
                   <div

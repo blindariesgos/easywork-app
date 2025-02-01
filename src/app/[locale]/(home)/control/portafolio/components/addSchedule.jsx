@@ -19,6 +19,7 @@ import { addRefund, addSchedule } from "@/src/lib/apis";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const AddSchedule = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -232,10 +233,9 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
+              <IntermediarySelectAsync
                 label={t("operations:programations:general:intermediary")}
                 name="agenteIntermediarioId"
-                options={lists?.policies?.agentesIntermediarios ?? []}
                 setValue={setValue}
                 watch={watch}
                 error={errors.agenteIntermediarioId}

@@ -1,6 +1,45 @@
 import { Select } from '@headlessui/react';
+import { useState } from 'react';
+import { useCourses } from '../../hooks/useCourses';
+import { toast } from 'react-toastify';
 
-export const EvaluationHeader = () => {
+export const EvaluationHeader = ({ courses, selectedCourse, setSelectedCourse }) => {
+  const { getCourseById } = useCourses();
+  const [fetchingCourseDetails, setFetchingCourseDetails] = useState(false);
+
+  const handleSelectCourse = async e => {
+    const courseId = e.target.value;
+    if (!courseId) {
+      setSelectedCourse(prev => ({ ...prev, courseId: '', pages: [] }));
+      return;
+    }
+
+    setFetchingCourseDetails(true);
+
+    try {
+      setSelectedCourse(prev => ({ ...prev, courseId, pages: [] }));
+      toast.info('Obteniendo información del curso');
+
+      const course = await getCourseById(courseId);
+      if (!course) return;
+
+      const pages = course.folders.flatMap(folder => folder.pages);
+      setSelectedCourse({ courseId, pages, pageId: pages[0]?.id || '' });
+    } catch (error) {
+      toast.error('Tenemos problemas para obtener el detalle del curso seleccionado. Por favor intenta más tarde');
+      setSelectedCourse(prev => ({ ...prev, courseId, pages: [] }));
+    } finally {
+      setFetchingCourseDetails(false);
+    }
+  };
+
+  const handleSelectPage = async e => {
+    const pageId = e.target.value;
+    if (!pageId) return;
+
+    setSelectedCourse(prev => ({ ...prev, pageId }));
+  };
+
   return (
     <div className="w-full">
       <h2 className="font-bold mb-2">Vincular evaluación a:</h2>
@@ -11,11 +50,17 @@ export const EvaluationHeader = () => {
 
           <Select
             id="course-options-evaluations"
-            className="rounded-lg w-full"
-            // onChange={e => setInvite(e.target.value)} // Maneja el evento onChange
-            // value={invite} // Asigna el valor actual del estado
+            className={`rounded-lg w-full ${fetchingCourseDetails ? 'opacity-30' : ''}`}
+            disabled={fetchingCourseDetails}
+            onChange={handleSelectCourse}
+            value={selectedCourse.courseId}
           >
-            <option value="1">Selecciona una opción</option>
+            <option value="">Selecciona una opción</option>
+            {courses.map(course => (
+              <option key={course.id} value={course.id}>
+                {course.name}
+              </option>
+            ))}
           </Select>
         </div>
 
@@ -23,11 +68,17 @@ export const EvaluationHeader = () => {
           <p>Página</p>
           <Select
             id="course-page-options-evaluations"
-            className="rounded-lg w-full"
-            // onChange={e => setInvite(e.target.value)} // Maneja el evento onChange
-            // value={invite} // Asigna el valor actual del estado
+            className={`rounded-lg w-full ${fetchingCourseDetails ? 'opacity-30' : ''}`}
+            disabled={fetchingCourseDetails}
+            onChange={handleSelectPage}
+            value={selectedCourse.pageId}
           >
-            <option value="1">Selecciona una opción</option>
+            <option value="">Selecciona una opción</option>
+            {selectedCourse.pages.map(page => (
+              <option key={page.id} value={page.id}>
+                {page.name}
+              </option>
+            ))}
           </Select>
         </div>
       </div>

@@ -21,9 +21,9 @@ export const useRequest = () => {
     const { data } = await axiosInstance({
       url,
       method: options.method || 'GET',
-      data: options.data,
-      headers: options.headers,
-      params: options.params,
+      ...(options.data ? { data: options.data } : {}),
+      ...(options.headers ? { headers: options.headers } : {}),
+      ...(options.params ? { params: options.params } : {}),
     });
 
     return data;

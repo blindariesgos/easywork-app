@@ -151,6 +151,11 @@ export default function CreateEditEvaluation({ evaluationId }) {
       });
       // setEvaluation(prev => ({ ...prev, id: evaluationCreated.id }));
       router.push(`/agents-management/capacitations/e-learning/evaluations/${evaluationCreated.id}`);
+
+      // const searchParams = new URLSearchParams(window.location.search);
+      // searchParams.set('id', newEvaluation.id);
+
+      // router.push(`?${searchParams.toString()}`, { shallow: true });
     }
 
     toast.info('Guardando cambios');

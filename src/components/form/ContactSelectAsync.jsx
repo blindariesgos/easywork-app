@@ -32,6 +32,7 @@ function ContactSelectAsync({
   placeholder,
   helperText,
   notFoundHelperText,
+  isRequired,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -89,9 +90,14 @@ function ContactSelectAsync({
       >
         {label && (
           <label
-            className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
+            className={`block text-sm font-medium leading-6 text-gray-900 px-3 relative`}
           >
             {label}
+            {isRequired && (
+              <span className="text-sm text-red-600 absolute top-0 left-0">
+                *
+              </span>
+            )}
           </label>
         )}
 

@@ -59,6 +59,10 @@ const MultipleEmailsInput = ({
                   id: "Casa",
                 },
                 {
+                  name: "Personal",
+                  id: "Personal",
+                },
+                {
                   name: "Para boletines",
                   id: "Para boletines",
                 },

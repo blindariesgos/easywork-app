@@ -30,7 +30,7 @@ const Vehicles = ({ register, control, isAdd }) => {
   return (
     <div className="grid gap-y-1">
       <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-        Vahiculos
+        Vehiculos
       </label>
       {fields &&
         fields.map((_, index) => (

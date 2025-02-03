@@ -14,7 +14,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addPolicyByPdf } from "@/src/lib/apis";
+import { addManualPolicy, addPolicyByPdf } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -25,6 +25,8 @@ import Beneficiaries from "./Beneficiaries";
 import Insureds from "./Insureds";
 import Vehicles from "./Vehicles";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import { handleFrontError } from "@/src/utils/api/errors";
+import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 
 const AddPolicyManual = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -33,9 +35,16 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
-  const utcOffset = moment().utcOffset();
 
-  const schema = yup.object().shape({});
+  const schema = yup.object().shape({
+    poliza: yup.string().required(t("common:validations:required")),
+    version: yup.string().required(t("common:validations:required")),
+    contact: yup.object().required(t("common:validations:required")),
+    companyId: yup.string().required(t("common:validations:required")),
+    typeId: yup.string().required(t("common:validations:required")),
+    frecuenciaCobroId: yup.string().required(t("common:validations:required")),
+    currencyId: yup.string().required(t("common:validations:required")),
+  });
 
   const {
     register,
@@ -90,9 +99,27 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     setLoading(false);
   };
 
+  const getFormData = (body) => {
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+    return formData;
+  };
+
   const onSubmit = async (data) => {
     setLoading(true);
     const {
+      version,
       iva,
       primaNeta,
       importePagar,
@@ -102,14 +129,15 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
       recargoFraccionado,
       relatedContacts,
       contact,
+      documentType,
       specifications,
       ...otherData
     } = data;
     const body = {
       ...otherData,
-      // operacion: "produccion_nueva",
-      // version: 0,
-      // renewal: false,
+      file: policy.file,
+      version: version ? 0 : +version,
+      renewal: documentType === "renovacion",
       iva: iva ? +iva : 0,
       primaNeta: primaNeta ? +primaNeta : 0,
       importePagar: importePagar ? +importePagar : 0,
@@ -126,35 +154,25 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
       body.contactId = contact.id;
     }
     console.log({ body });
-
-    // try {
-    //   const response = await addPolicyByPdf(body);
-    //   console.log({ response });
-    //   if (response?.hasError) {
-    //     if (Array.isArray(response?.error?.message)) {
-    //       response?.error?.message.forEach((message) => {
-    //         toast.error(message);
-    //       });
-    //     } else {
-    //       toast.error(
-    //         response?.error?.message ??
-    //           "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
-    //       );
-    //     }
-    //     setLoading(false);
-
-    //     return;
-    //   }
-    //   toast.success("Poliza cargada con exito");
-    //   setIsOpen(false);
-    //   handleReset();
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error(
-    //     error?.message ??
-    //       "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
-    //   );
-    // }
+    const formData = getFormData(body);
+    try {
+      const response = await addManualPolicy(formData, documentType);
+      console.log({ response });
+      if (response?.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
+      toast.success("Póliza cargada con éxito");
+      setIsOpen(false);
+      handleReset();
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error?.message ??
+          "Se ha producido un error cargar la póliza, inténtelo de nuevo más tarde."
+      );
+    }
     setLoading(false);
   };
 
@@ -183,6 +201,40 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
                 <SelectInput
+                  label={"Tipo de documento"}
+                  options={[
+                    {
+                      name: "Póliza nueva",
+                      id: "nueva",
+                    },
+                    {
+                      name: "Renovación",
+                      id: "renovacion",
+                    },
+                    {
+                      name: "Versión",
+                      id: "version",
+                    },
+                  ]}
+                  name="documentType"
+                  error={errors?.observerId}
+                  setValue={setValue}
+                  isRequired
+                />
+                {watch &&
+                  ["renovacion", "version", "endoso"].includes(
+                    watch("documentType")
+                  ) && (
+                    <PolicySelectAsync
+                      label={"Póliza original"}
+                      name={"polizaId"}
+                      setValue={setValue}
+                      watch={watch}
+                      error={errors?.polizaId}
+                      register={register}
+                    />
+                  )}
+                <SelectInput
                   label={"Aseguradora"}
                   options={lists?.policies?.polizaCompanies}
                   name="companyId"
@@ -190,6 +242,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   watch={watch}
                   register={register}
                   error={errors.companyId}
+                  isRequired
                 />
                 <SelectInput
                   label={t("operations:policies:general:type")}
@@ -198,8 +251,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
+                  isRequired
                 />
-                <SelectInput
+                {/* <SelectInput
                   label={"Tipo de cliente"}
                   name="isNewContact"
                   options={[
@@ -215,7 +269,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
-                />
+                /> */}
                 {watch && !watch("isNewContact") ? (
                   <ContactSelectAsync
                     name={"contact"}
@@ -224,6 +278,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     watch={watch}
                     error={errors?.contact}
                     helperText={helpers?.contact}
+                    isRequired
                   />
                 ) : (
                   <Fragment>
@@ -277,6 +332,14 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={"Número de póliza"}
                   name="poliza"
                   register={register}
+                  isRequired
+                />
+                <TextInput
+                  type="number"
+                  label={"Versión"}
+                  name="version"
+                  register={register}
+                  isRequired
                 />
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -317,6 +380,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
+                  isRequired
                 />
                 <SelectInput
                   label={t("operations:policies:general:payment-method")}
@@ -366,6 +430,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
+                  isRequired
                 />
                 <InputCurrency
                   type="text"
@@ -524,6 +589,12 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     </div>
                   )}
                 </div>
+                <p className="text-sm relative font-semibold px-3">
+                  Campos obligatorios
+                  <span className="text-sm text-red-600 absolute top-0 left-0">
+                    *
+                  </span>
+                </p>
 
                 <div className="w-full flex justify-center gap-4 py-4">
                   <Button
@@ -540,7 +611,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     buttonStyle="primary"
                     label="Guardar"
                     type="submit"
-                    // disabled={!policy}
+                    disabled={!policy}
                     // disabled
                   />
                 </div>

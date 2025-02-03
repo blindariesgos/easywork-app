@@ -28,6 +28,7 @@ function SelectInput({
   placeholder,
   helperText,
   small,
+  isRequired,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -75,12 +76,20 @@ function SelectInput({
       >
         {label && (
           <label
-            className={clsx("block font-medium leading-6 text-gray-900 px-3", {
-              "text-xs": small,
-              "text-sm": !small,
-            })}
+            className={clsx(
+              "block font-medium leading-6 text-gray-900 px-3 relative",
+              {
+                "text-xs": small,
+                "text-sm": !small,
+              }
+            )}
           >
             {label}
+            {isRequired && (
+              <span className="text-sm text-red-600 absolute top-0 left-0">
+                *
+              </span>
+            )}
           </label>
         )}
 

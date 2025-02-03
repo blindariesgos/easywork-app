@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import ReceiptEmpty from "./ReceiptEmpty";
 import Versions from "./tabs/Versions";
 import moment from "moment";
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
@@ -154,6 +155,11 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
     },
   ];
 
+  const handleCopyUrl = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Copiado en el Portapapeles");
+  };
+
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
@@ -167,9 +173,17 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
-                <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
-                </p>
+                <div className="flex gap-3 items-center">
+                  <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
+                    {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
+                  </p>
+                  <LinkIcon
+                    className="h-4 w-4 text-[#4f4f4f] opacity-50 hover:opacity-100 cursor-pointer"
+                    title="Copiar enlace en Portapapeles"
+                    aria-hidden="true"
+                    onClick={handleCopyUrl}
+                  />
+                </div>
 
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">

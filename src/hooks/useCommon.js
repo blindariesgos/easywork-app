@@ -50,9 +50,6 @@ export const useSidebar = () => {
     session?.user?.roles?.flatMap((role) => role.menuPermissions) ??
     [];
 
-
-  console.log(session?.user);
-
   const sidebarNavigation = [
     {
       id: "home",
@@ -1979,8 +1976,7 @@ export const useIndividualMeetTable = () => {
     {
       id: 8,
       name: t("agentsmanagement:meetings-and-sessions:table:revision"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "assignments",
       check: true,
     },
   ];
@@ -2027,8 +2023,7 @@ export const useTeamMeetTable = () => {
     {
       id: 8,
       name: t("agentsmanagement:meetings-and-sessions:table:revision"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "assignments",
       check: true,
     },
   ];

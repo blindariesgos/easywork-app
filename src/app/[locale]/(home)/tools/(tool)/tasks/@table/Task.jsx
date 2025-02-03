@@ -84,11 +84,10 @@ const ColumnTable = ({
   return (
     <tr
       className={clsx("hover:bg-indigo-100/40 cursor-default relative", {
-        // "shadow-[inset_0px_0px_4px_2px_#00000075]": isSubTask,
         "bg-gray-200": selectedTasks.includes(task.id),
       })}
     >
-      <td className="relative  px-4 sm:w-12 ">
+      <td className="relative px-4 sm:w-12 ">
         {selectedTasks.includes(task.id) && (
           <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
         )}

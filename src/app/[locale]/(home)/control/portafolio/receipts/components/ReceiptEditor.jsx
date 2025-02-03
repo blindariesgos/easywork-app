@@ -29,6 +29,7 @@ import { formatISO } from "date-fns";
 import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import useReceiptContext from "@/src/context/receipts";
+import moment from "moment";
 
 export default function ReceiptEditor({ data, id }) {
   const { t } = useTranslation();
@@ -212,7 +213,7 @@ export default function ReceiptEditor({ data, id }) {
                     {data?.title}
                   </p>
                   <Link
-                    className="hover:text-easy-600 text-sm"
+                    className="font-semibold text-easy-600 text-sm hover:underline"
                     href={`/sales/crm/contacts/contact/${data?.poliza?.contact?.id}?show=true`}
                   >
                     {data?.poliza?.contact?.fullName ??
@@ -224,7 +225,7 @@ export default function ReceiptEditor({ data, id }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-sm">
-                    {formatDate(data?.dueDate, "dd/MM/yyyy")}
+                    {moment(data?.dueDate).format("DD/MM/YYYY")}
                   </p>
                 </div>
               </div>

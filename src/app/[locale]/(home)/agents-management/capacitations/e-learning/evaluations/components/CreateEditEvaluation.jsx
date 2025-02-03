@@ -149,7 +149,6 @@ export default function CreateEditEvaluation({ evaluationId }) {
         pageId: newEvaluation.pageId,
         questions: newEvaluation.questions,
       });
-      // setEvaluation(prev => ({ ...prev, id: evaluationCreated.id }));
       router.push(`/agents-management/capacitations/e-learning/evaluations/${evaluationCreated.id}`);
     }
 

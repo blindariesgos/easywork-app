@@ -33,7 +33,7 @@ export default function Evaluations() {
   }, [hasPermission, router, fetchEvaluations]);
 
   return (
-    <div className="max-w-7xl mx-auto py-5">
+    <div className="max-w-xl mx-auto py-5">
       {coursesWithEvaluations.map(course => {
         return (
           <div key={course.id}>

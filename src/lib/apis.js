@@ -61,6 +61,28 @@ export const updateLead = async (data, id) => {
   revalidatePath("/sales/crm/leads", "layout");
   return response;
 };
+
+export const getKanbanLeads = async ({ config = {}, filters = {} }) => {
+  const queries = getQueries(filters);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/sales/crm/leads/kanban?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log({ url });
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const getLeadCancelReazon = async () => {
+  const url = `/sales/crm/leads/cancel-reazon`;
+  const response = await axios()
+    .get(url)
+    .then((items) => ({ data: items }))
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
 //#endregion
 
 //#region CONTACTS
@@ -182,6 +204,32 @@ export const deleteAgentById = async (agentId) => {
   const response = await axios().delete(`/agent-management/agents/${agentId}`);
   return response;
 };
+
+export const getAgentById = async (agentId) => {
+  const response = await axios().get(`/agent-management/agents/${agentId}`);
+  return response;
+};
+
+export const getAgentIntermediaryById = async (agentId) => {
+  const response = await axios()
+    .get(`/agent-management/agente-intermediario/${agentId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const updateAgentState = async (data, agentId) => {
+  const response = await axios()
+    .put(`/agent-management/agents/${agentId}/set-status`, data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const createAgentIntermediary = async (data) => {
+  const response = await axios()
+    .post("/agent-management/agente-intermediario", data)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region MEETS
@@ -202,6 +250,12 @@ export const deleteMeetCommentAttach = async (commentId, data) => {
   return response;
 };
 
+export const getMeetById = async (id) => {
+  const response = await axios()
+    .get(`/agent-management/meetings/${id}`)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
 //#endregion
 
 //#region RECEIPTS
@@ -683,11 +737,6 @@ export const getReceiptById = async (receiptId) => {
   return response;
 };
 
-export const getAgentById = async (agentId) => {
-  const response = await axios().get(`/agent-management/agents/${agentId}`);
-  return response;
-};
-
 export const postLead = async (body) => {
   const response = await axios().post(`/sales/crm/leads`, body);
   return response;
@@ -1037,41 +1086,5 @@ export const getAllPolicies = async ({
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const getKanbanLeads = async ({ config = {}, filters = {} }) => {
-  const queries = getQueries(filters);
-  const configParams = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/sales/crm/leads/kanban?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
-  const response = await axios()
-    .get(url)
-    .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const getLeadCancelReazon = async () => {
-  const url = `/sales/crm/leads/cancel-reazon`;
-  const response = await axios()
-    .get(url)
-    .then((items) => ({ data: items }))
-    .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const getMeetById = async (id) => {
-  const response = await axios()
-    .get(`/agent-management/meetings/${id}`)
-    .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const updateAgentState = async (data, agentId) => {
-  const response = await axios()
-    .put(`/agent-management/agents/${agentId}/set-status`, data)
-    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };

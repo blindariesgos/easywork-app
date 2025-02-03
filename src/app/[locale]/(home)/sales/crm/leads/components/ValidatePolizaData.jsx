@@ -21,6 +21,7 @@ import moment from "moment";
 import clsx from "clsx";
 import useLeadContext from "@/src/context/leads";
 import { useSWRConfig } from "swr";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
   const { lists } = useAppContext();
@@ -272,11 +273,9 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
+              <IntermediarySelectAsync
                 label={t("operations:policies:general:intermediary")}
                 name="agenteIntermediarioId"
-                options={lists?.policies?.agentesIntermediarios ?? []}
-                register={register}
                 setValue={setValue}
                 watch={watch}
               />

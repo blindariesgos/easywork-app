@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Switch } from '@headlessui/react';
-import { CheckCircleIcon, PencilIcon } from '@heroicons/react/20/solid';
+import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/20/solid';
 import { FaSave } from 'react-icons/fa';
 import parse from 'html-react-parser';
 
@@ -186,8 +186,9 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
               )}
 
               {hasPermission(LMS_PERMISSIONS.editCourse) && (
-                <div className="block bg-[#fafafa] hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
-                  <PencilIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                <div className="hover:bg-[#f5f5f5] rounded-full p-1 cursor-pointer" onClick={() => setIsEditorDisabled(false)}>
+                  <PencilSquareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  {/* <span>Editar</span> */}
                 </div>
               )}
             </>

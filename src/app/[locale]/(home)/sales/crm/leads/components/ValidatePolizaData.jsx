@@ -146,6 +146,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     setValue("status", policy?.status);
     setValue("metadata", policy?.metadata);
     setValue("categoryId", policy?.category?.id);
+    setValue("wasUnlinked", !!policy?.wasUnlinked);
   }, [policy]);
 
   const handleReset = () => {

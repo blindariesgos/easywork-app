@@ -14,11 +14,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import {
-  addManualPolicy,
-  addPolicyByPdf,
-  uploadTemporalFile,
-} from "@/src/lib/apis";
+import { addManualPolicy, uploadTemporalFile } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -298,7 +294,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   watch={watch}
                   isRequired
                 />
-                <SelectInput
+                {/* <SelectInput
                   label={"Tipo de cliente"}
                   name="isNewContact"
                   options={[
@@ -314,7 +310,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
-                />
+                /> */}
                 {watch && !watch("isNewContact") ? (
                   <ContactSelectAsync
                     name={"contact"}

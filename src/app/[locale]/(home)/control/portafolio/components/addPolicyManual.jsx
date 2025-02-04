@@ -14,7 +14,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addManualPolicy, addPolicyByPdf } from "@/src/lib/apis";
+import { addManualPolicy, uploadTemporalFile } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -60,6 +60,23 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     resolver: yupResolver(schema),
   });
 
+  const getFormData = (body) => {
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+    return formData;
+  };
+
   const handleChangeFile = async (e) => {
     setLoading(true);
     const files = e.target.files;
@@ -82,38 +99,16 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const result = {
-        file: file,
-        size: file.size,
-        name: file.name,
-        result: reader.result,
-      };
-
-      setPolicy(result);
-    };
-
-    reader.readAsDataURL(file);
-    setLoading(false);
-  };
-
-  const getFormData = (body) => {
-    const formData = new FormData();
-    for (const key in body) {
-      if (body[key] === null || body[key] === undefined || body[key] === "") {
-        continue;
-      }
-      if (body[key] instanceof File || body[key] instanceof Blob) {
-        formData.append(key, body[key]);
-      } else if (Array.isArray(body[key])) {
-        formData.append(key, JSON.stringify(body[key]));
-      } else {
-        formData.append(key, body[key]?.toString() || "");
-      }
+    const body = getFormData({ file });
+    const response = await uploadTemporalFile(body);
+    console.log({ response });
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
     }
-    return formData;
+    setPolicy(response);
+    setLoading(false);
   };
 
   const onSubmit = async (data) => {
@@ -131,12 +126,13 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
       contact,
       documentType,
       specifications,
+      oldPoliza,
       ...otherData
     } = data;
     const body = {
       ...otherData,
-      file: policy.file,
-      version: version ? 0 : +version,
+      polizaFileId: policy.id,
+      version: version ? +version : 0,
       renewal: documentType === "renovacion",
       iva: iva ? +iva : 0,
       primaNeta: primaNeta ? +primaNeta : 0,
@@ -153,10 +149,13 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     if (contact) {
       body.contactId = contact.id;
     }
+    if (oldPoliza) {
+      body.polizaId = oldPoliza.id;
+    }
     console.log({ body });
-    const formData = getFormData(body);
+
     try {
-      const response = await addManualPolicy(formData, documentType);
+      const response = await addManualPolicy(body, documentType);
       console.log({ response });
       if (response?.hasError) {
         handleFrontError(response);
@@ -180,6 +179,49 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     setPolicy();
     setHelpers({});
     reset();
+  };
+
+  const clearFile = () => {
+    const inputFile = document.getElementById("policy-file-manual-charge");
+
+    if (inputFile) {
+      const nuevoInputFile = document.createElement("input");
+      nuevoInputFile.type = "file";
+      nuevoInputFile.id = inputFile.id;
+      nuevoInputFile.name = inputFile.name; // Mantener el nombre original
+      nuevoInputFile.classList = inputFile.classList; // Mantener las clases
+      nuevoInputFile.accept = inputFile.accept; // Mantener los tipos de archivo aceptados
+      nuevoInputFile.multiple = inputFile.multiple; // Mantener la opción de múltiples archivos
+      inputFile.parentNode.replaceChild(nuevoInputFile, inputFile);
+    }
+
+    setPolicy();
+  };
+
+  const handleChangeOldPolicy = (policy) => {
+    console.log({ policy });
+    policy.agenteIntermediario &&
+      setValue("agenteIntermediarioId", policy.agenteIntermediario.id);
+    policy.assignedBy && setValue("assignedById", policy.assignedBy.id);
+    policy.subAgente && setValue("subAgenteId", policy.subAgente.id);
+    policy.beneficiaries && setValue("beneficiaries", policy.beneficiaries);
+    policy.insured && setValue("insureds", policy.insured);
+    policy.category && setValue("categoryId", policy.category.id);
+    policy.company && setValue("companyId", policy.company.id);
+    if (policy.contact) {
+      setValue("contact", policy.contact.id);
+      setValue("isNewContact", false);
+      setValue("typePerson", policy.contact.typePerson);
+    }
+    policy.currency && setValue("currencyId", policy.currency.id);
+    policy.frecuenciaCobro &&
+      setValue("frecuenciaCobroId", policy.frecuenciaCobro.id);
+    policy.formaCobro && setValue("formaCobroId", policy.formaCobro.id);
+    policy.plazoPago && setValue("plazoPago", policy.plazoPago);
+    policy.poliza && setValue("poliza", policy.poliza);
+    policy.type && setValue("typeId", policy.type.id);
+    policy?.conductoPago && setValue("conductoPagoId", data?.conductoPago?.id);
+    policy.specifications && setValue("specifications", policy.specifications);
   };
 
   return (
@@ -222,16 +264,15 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   isRequired
                 />
                 {watch &&
-                  ["renovacion", "version", "endoso"].includes(
-                    watch("documentType")
-                  ) && (
+                  ["renovacion", "version"].includes(watch("documentType")) && (
                     <PolicySelectAsync
                       label={"Póliza original"}
-                      name={"polizaId"}
+                      name={"oldPoliza"}
                       setValue={setValue}
                       watch={watch}
-                      error={errors?.polizaId}
+                      error={errors?.oldPoliza}
                       register={register}
+                      setSelectedOption={handleChangeOldPolicy}
                     />
                   )}
                 <SelectInput
@@ -377,7 +418,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={t("operations:policies:general:payment-frequency")}
                   name="frecuenciaCobroId"
                   options={lists?.policies?.polizaFrecuenciasPago ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                   isRequired
@@ -386,15 +426,15 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={t("operations:policies:general:payment-method")}
                   name="formaCobroId"
                   options={lists?.policies?.polizaFormasCobro ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />
                 <SelectInput
-                  label={t("operations:policies:general:payment-frequency")}
-                  name="frecuenciaCobroId"
-                  options={lists?.policies?.polizaFrecuenciasPago ?? []}
-                  register={register}
+                  label={t(
+                    "control:portafolio:receipt:details:form:conducto-pago"
+                  )}
+                  name="conductoPagoId"
+                  options={lists?.policies?.polizaConductoPago}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -411,7 +451,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     },
                   ]}
                   name="plazoPago"
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -419,7 +458,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={t("control:portafolio:receipt:details:product")}
                   name="categoryId"
                   options={lists?.policies?.polizaCategories ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -427,7 +465,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={"Moneda"}
                   options={lists?.policies?.currencies ?? []}
                   name="currencyId"
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                   isRequired
@@ -502,10 +539,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
 
                 <SelectDropdown
                   label={t("operations:policies:general:responsible")}
-                  name="responsibleId"
+                  name="assignedById"
                   options={lists?.users}
-                  register={register}
-                  error={!watch("responsibleId") && errors.responsibleId}
+                  error={errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -515,6 +551,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   name="observerId"
                   error={errors?.observerId}
                   setValue={setValue}
+                  watch={watch}
                 />
                 <TextInput
                   type="text"
@@ -541,6 +578,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     <Beneficiaries
                       register={register}
                       control={control}
+                      watch={watch}
                       isAdd
                     />
                   </Fragment>
@@ -549,21 +587,26 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c", //AUTOS
                 ].includes(watch("typeId")) && (
                   <Fragment>
-                    <Vehicles register={register} control={control} isAdd />
+                    <Vehicles
+                      register={register}
+                      watch={watch}
+                      control={control}
+                      isAdd
+                    />
                   </Fragment>
                 )}
 
                 <div className="w-full">
                   <label
-                    htmlFor="policy-file"
+                    htmlFor="policy-file-manual-charge"
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
                     <p>Subir documento</p>
                   </label>
                   <input
                     type="file"
-                    name="policy-file"
-                    id="policy-file"
+                    name="policy-file-manual-charge"
+                    id="policy-file-manual-charge"
                     className="hidden"
                     accept=".pdf"
                     onChange={handleChangeFile}
@@ -577,12 +620,19 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     <div className="flex flex-col gap-2 justify-center items-center pt-2 relative group">
                       <IoMdCloseCircleOutline
                         className="w-6 h-6 hidden absolute top-0 left-[calc(50%_+_20px)] group-hover:block cursor-pointer"
-                        onClick={() => {
-                          console.log("aqu");
-                          handleReset();
-                        }}
+                        onClick={clearFile}
                       />
-                      <div className="p-2 group-hover:bg-primary bg-easy-500 rounded-md">
+                      <div
+                        className="p-2 group-hover:bg-primary bg-easy-500 rounded-md cursor-zoom-in"
+                        onClick={() =>
+                          policy?.url &&
+                          window.open(
+                            policy?.url,
+                            "self",
+                            "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
+                          )
+                        }
+                      >
                         <FiFileText className="w-6 h-6 text-white" />
                       </div>
                       <p className="text-center text-xs ">{policy.name}</p>

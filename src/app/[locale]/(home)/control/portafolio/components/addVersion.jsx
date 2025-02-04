@@ -55,7 +55,7 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
 
     contactId: yup.string(),
     typeId: yup.string().required(t("common:validations:required")),
-    responsibleId: yup.string().required(t("common:validations:required")),
+    assignedById: yup.string().required(t("common:validations:required")),
     observerId: yup.string().required(t("common:validations:required")),
     isNewContact: yup.bool().default(false),
     poliza: yup.string().required(t("common:validations:required")),
@@ -394,10 +394,10 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
                   />
                   <SelectDropdown
                     label={t("operations:policies:general:responsible")}
-                    name="responsibleId"
+                    name="assignedById"
                     options={lists?.users}
                     register={register}
-                    error={!watch("responsibleId") && errors.responsibleId}
+                    error={!watch("assignedById") && errors.assignedById}
                     setValue={setValue}
                     watch={watch}
                   />

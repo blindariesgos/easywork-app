@@ -181,11 +181,20 @@ export const addPolicyByPdf = async (body, category = "nueva") => {
 };
 
 export const addManualPolicy = async (body, category) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/operations/management/manual/poliza?category=${category}`, body)
+  const url = `/operations/management/manual/poliza?category=${category}`;
+  console.log({ url });
+  const response = await axios()
+    .post(url, body)
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+export const uploadTemporalFile = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/upload/temp`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region SCHEDULES

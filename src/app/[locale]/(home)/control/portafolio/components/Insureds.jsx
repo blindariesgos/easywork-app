@@ -4,7 +4,7 @@ import { useFieldArray } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import TextInput from "@/src/components/form/TextInput";
 import clsx from "clsx";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import Button from "@/src/components/form/Button";
 import { useTranslation } from "react-i18next";
 

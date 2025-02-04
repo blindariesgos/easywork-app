@@ -77,8 +77,8 @@ function IntermediarySelectAsync({
 
   const filteredElements =
     query === ""
-      ? options
-      : options.filter((element) => {
+      ? (options ?? [])
+      : options?.filter((element) => {
           return element.name.toLowerCase().includes(query.toLowerCase());
         });
 

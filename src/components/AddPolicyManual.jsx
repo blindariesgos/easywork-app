@@ -21,14 +21,18 @@ import InputCurrency from "@/src/components/form/InputCurrency";
 import InputDate from "@/src/components/form/InputDate";
 import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
-import Beneficiaries from "./Beneficiaries";
-import Insureds from "./Insureds";
-import Vehicles from "./Vehicles";
+import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
+import Insureds from "@/src/components/policyAdds/Insureds";
+import Vehicles from "@/src/components/policyAdds/Vehicles";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 
-const AddPolicyManual = ({ isOpen, setIsOpen }) => {
+const endpointsByModule = {
+  gestion: (body, documentType) => addManualPolicy(body, documentType),
+};
+
+const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -155,14 +159,16 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     console.log({ body });
 
     try {
-      const response = await addManualPolicy(body, documentType);
-      console.log({ response });
-      if (response?.hasError) {
-        handleFrontError(response);
-        setLoading(false);
-        return;
+      if (Object.keys(endpointsByModule).includes(module)) {
+        const response = await endpointsByModule[module](body, documentType);
+        console.log({ response });
+        if (response?.hasError) {
+          handleFrontError(response);
+          setLoading(false);
+          return;
+        }
+        toast.success("Póliza cargada con éxito");
       }
-      toast.success("Póliza cargada con éxito");
       setIsOpen(false);
       handleReset();
     } catch (error) {

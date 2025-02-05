@@ -12,6 +12,7 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { RxCrossCircled } from "react-icons/rx";
 
 function SelectInput({
   label,
@@ -34,6 +35,12 @@ function SelectInput({
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
 
+  const handleClear = () => {
+    setSelected("");
+    setQuery("");
+    console.log("clear");
+  };
+
   useEffect(() => {
     if (selectedOption && !selected) {
       setSelected(selectedOption);
@@ -44,6 +51,9 @@ function SelectInput({
     if (selected) {
       setValue && setValue(name, object ? selected : selected.id);
       setSelectedOption && setSelectedOption(selected);
+    } else {
+      setValue && setValue(name, object ? {} : "");
+      setSelectedOption && setSelectedOption({});
     }
   }, [selected]);
 
@@ -93,7 +103,7 @@ function SelectInput({
           </label>
         )}
 
-        <div className={`relative ${label ? "mt-1" : "mt-0"}`}>
+        <div className={` group relative ${label ? "mt-1" : "mt-0"}`}>
           <ComboboxInput
             placeholder={placeholder}
             className={clsx(
@@ -115,9 +125,17 @@ function SelectInput({
             }}
           />
           {!disabled && (
-            <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon className="h-5 w-5 text-primary" />
-            </ComboboxButton>
+            <Fragment>
+              <div
+                className="absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
+                onClick={handleClear}
+              >
+                <RxCrossCircled className="w-4 h-4 text-primary" />
+              </div>
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDownIcon className="h-5 w-5 text-primary" />
+              </ComboboxButton>
+            </Fragment>
           )}
 
           <ComboboxOptions

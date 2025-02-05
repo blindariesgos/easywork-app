@@ -43,7 +43,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
   const schema = yup.object().shape({
     poliza: yup.string().required(t("common:validations:required")),
     version: yup.string().required(t("common:validations:required")),
-    contact: yup.object().required(t("common:validations:required")),
+    // contact: yup.object().required(t("common:validations:required")),
     companyId: yup.string().required(t("common:validations:required")),
     typeId: yup.string().required(t("common:validations:required")),
     frecuenciaCobroId: yup.string().required(t("common:validations:required")),
@@ -230,6 +230,21 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
     policy.specifications && setValue("specifications", policy.specifications);
   };
 
+  const handleChangeConducto = (conducto) => {
+    if (!conducto?.id) return;
+
+    if (
+      [
+        "ce1a967c-ccac-4d52-b255-5446ca4c0dff",
+        "60783a4f-d79d-4372-a891-eaf2c9f84350",
+      ].includes(conducto?.id)
+    ) {
+      setValue("formaCobroId", "2cead91b-8134-4763-b841-c9f0f217d32a");
+    } else {
+      setValue("formaCobroId", "17c73ac6-c880-4106-ad92-2da33f2ce2bc");
+    }
+  };
+
   return (
     <Fragment>
       <SliderOverShord openModal={isOpen}>
@@ -300,7 +315,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   watch={watch}
                   isRequired
                 />
-                {/* <SelectInput
+                <SelectInput
                   label={"Tipo de cliente"}
                   name="isNewContact"
                   options={[
@@ -316,7 +331,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
-                /> */}
+                />
                 {watch && !watch("isNewContact") ? (
                   <ContactSelectAsync
                     name={"contact"}
@@ -329,12 +344,41 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   />
                 ) : (
                   <Fragment>
+                    <SelectInput
+                      label={t("control:portafolio:control:form:typePerson")}
+                      options={[
+                        {
+                          name: "Física",
+                          id: "fisica",
+                        },
+                        {
+                          name: "Moral",
+                          id: "moral",
+                        },
+                      ]}
+                      name="typePerson"
+                      setValue={setValue}
+                      watch={watch}
+                    />
                     <TextInput
                       type="text"
-                      label={"Nombre completo cliente"}
-                      name="newContact.fullName"
+                      label={
+                        watch("typePerson") != "moral"
+                          ? "Nombres"
+                          : "Nombre de la compañía"
+                      }
+                      name="newContact.name"
                       register={register}
                     />
+                    {watch("typePerson") == "fisica" && (
+                      <TextInput
+                        type="text"
+                        label={"Apellidos"}
+                        name="newContact.lastName"
+                        register={register}
+                      />
+                    )}
+
                     <TextInput
                       type="text"
                       label={"Código"}
@@ -357,22 +401,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                     />
                   </Fragment>
                 )}
-                <SelectInput
-                  label={t("control:portafolio:control:form:typePerson")}
-                  options={[
-                    {
-                      name: "Física",
-                      id: "fisica",
-                    },
-                    {
-                      name: "Moral",
-                      id: "moral",
-                    },
-                  ]}
-                  name="typePerson"
-                  setValue={setValue}
-                  watch={watch}
-                />
 
                 <TextInput
                   type="text"
@@ -381,6 +409,16 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   register={register}
                   isRequired
                 />
+                {watch && ["renovacion"].includes(watch("documentType")) && (
+                  <TextInput
+                    type="number"
+                    label={"Renovación"}
+                    name="renovacion"
+                    register={register}
+                    value={1}
+                    isRequired
+                  />
+                )}
                 <TextInput
                   type="number"
                   label={"Versión"}
@@ -429,13 +467,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   isRequired
                 />
                 <SelectInput
-                  label={t("operations:policies:general:payment-method")}
-                  name="formaCobroId"
-                  options={lists?.policies?.polizaFormasCobro ?? []}
-                  setValue={setValue}
-                  watch={watch}
-                />
-                <SelectInput
                   label={t(
                     "control:portafolio:receipt:details:form:conducto-pago"
                   )}
@@ -443,7 +474,16 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   options={lists?.policies?.polizaConductoPago}
                   setValue={setValue}
                   watch={watch}
+                  setSelectedOption={handleChangeConducto}
                 />
+                <SelectInput
+                  label={t("operations:policies:general:payment-method")}
+                  name="formaCobroId"
+                  options={lists?.policies?.polizaFormasCobro ?? []}
+                  setValue={setValue}
+                  watch={watch}
+                />
+
                 <SelectInput
                   label={t("operations:policies:general:payment-term")}
                   options={[

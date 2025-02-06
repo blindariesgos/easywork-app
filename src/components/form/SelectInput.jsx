@@ -127,7 +127,12 @@ function SelectInput({
           {!disabled && (
             <Fragment>
               <div
-                className="absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
+                className={clsx(
+                  "absolute inset-y-0 right-5  items-center pr-2 cursor-pointer hidden ",
+                  {
+                    "group-hover:flex": selected && selected.length > 0,
+                  }
+                )}
                 onClick={handleClear}
               >
                 <RxCrossCircled className="w-4 h-4 text-primary" />

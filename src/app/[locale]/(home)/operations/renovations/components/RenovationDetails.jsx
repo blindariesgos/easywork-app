@@ -188,7 +188,7 @@ export default function RenovationDetails({ data, id, mutate }) {
               <div className="flex items-center gap-2">
                 <Menu>
                   <MenuButton
-                    className={"py-2 px-3 rounded-lg cursor-pointer"}
+                    className={"py-2 px-3 rounded-lg cursor-pointer text-white"}
                     style={{
                       background:
                         renovationStages.find(

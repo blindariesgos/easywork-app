@@ -22,6 +22,7 @@ import MultipleSelect from "@/src/components/form/MultipleSelect";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import moment from "moment";
+import { handleFrontError } from "@/src/utils/api/errors";
 
 export default function PolicyDetails({
   data,
@@ -99,10 +100,6 @@ export default function PolicyDetails({
           ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
           : ""
       );
-    // if (data?.vigenciaDesdeRenovacion)
-    //   setValue("vigenciaDesdeRenovacion", data?.vigenciaDesdeRenovacion ?? "");
-    // if (data?.vigenciaHastaRenovacion)
-    //   setValue("vigenciaHastaRenovacion", data?.vigenciaHastaRenovacion ?? "");
     if (data?.status) setValue("status", data?.status);
     if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
@@ -156,13 +153,20 @@ export default function PolicyDetails({
     };
     try {
       console.log({ body });
-      const response = await putPoliza(id, body);
+      const poliza = Object.keys(body).reduce(
+        (acc, key) =>
+          Boolean(body[key])
+            ? {
+                ...acc,
+                [key]: body[key],
+              }
+            : acc,
+        {}
+      );
+      const response = await putPoliza(id, poliza);
       console.log({ response });
       if (response.hasError) {
-        console.log(response);
-        toast.error(
-          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         return;
       }
       setIsEdit(false);
@@ -170,11 +174,6 @@ export default function PolicyDetails({
       updatePolicy();
       toast.success("Poliza actualizada correctamente.");
       mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
-
-      if (params.get("editPolicy")) {
-        params.delete("editPolicy");
-        router.replace(`${pathname}?${params.toString()}`);
-      }
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."

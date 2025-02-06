@@ -144,7 +144,17 @@ export default function PolicyDetails({
     };
     try {
       console.log({ body });
-      const response = await putPoliza(id, body);
+      const poliza = Object.keys(body).reduce(
+        (acc, key) =>
+          Boolean(body[key])
+            ? {
+                ...acc,
+                [key]: body[key],
+              }
+            : acc,
+        {}
+      );
+      const response = await putPoliza(id, poliza);
       console.log({ response });
       if (response.hasError) {
         console.log(response);

@@ -14,28 +14,41 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addPolicyByPdf } from "@/src/lib/apis";
+import { addManualPolicy, uploadTemporalFile } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import InputDate from "@/src/components/form/InputDate";
 import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
-import Beneficiaries from "./Beneficiaries";
-import Insureds from "./Insureds";
-import Vehicles from "./Vehicles";
+import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
+import Insureds from "@/src/components/policyAdds/Insureds";
+import Vehicles from "@/src/components/policyAdds/Vehicles";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import { handleFrontError } from "@/src/utils/api/errors";
+import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 
-const AddPolicyManual = ({ isOpen, setIsOpen }) => {
+const endpointsByModule = {
+  gestion: (body, documentType) => addManualPolicy(body, documentType),
+};
+
+const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
   const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
-  const utcOffset = moment().utcOffset();
 
-  const schema = yup.object().shape({});
+  const schema = yup.object().shape({
+    poliza: yup.string().required(t("common:validations:required")),
+    version: yup.string().required(t("common:validations:required")),
+    // contact: yup.object().required(t("common:validations:required")),
+    companyId: yup.string().required(t("common:validations:required")),
+    typeId: yup.string().required(t("common:validations:required")),
+    frecuenciaCobroId: yup.string().required(t("common:validations:required")),
+    currencyId: yup.string().required(t("common:validations:required")),
+  });
 
   const {
     register,
@@ -50,6 +63,23 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  const getFormData = (body) => {
+    const formData = new FormData();
+    for (const key in body) {
+      if (body[key] === null || body[key] === undefined || body[key] === "") {
+        continue;
+      }
+      if (body[key] instanceof File || body[key] instanceof Blob) {
+        formData.append(key, body[key]);
+      } else if (Array.isArray(body[key])) {
+        formData.append(key, JSON.stringify(body[key]));
+      } else {
+        formData.append(key, body[key]?.toString() || "");
+      }
+    }
+    return formData;
+  };
 
   const handleChangeFile = async (e) => {
     setLoading(true);
@@ -73,26 +103,22 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const result = {
-        file: file,
-        size: file.size,
-        name: file.name,
-        result: reader.result,
-      };
-
-      setPolicy(result);
-    };
-
-    reader.readAsDataURL(file);
+    const body = getFormData({ file });
+    const response = await uploadTemporalFile(body);
+    console.log({ response });
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+    setPolicy(response);
     setLoading(false);
   };
 
   const onSubmit = async (data) => {
     setLoading(true);
     const {
+      version,
       iva,
       primaNeta,
       importePagar,
@@ -102,14 +128,16 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
       recargoFraccionado,
       relatedContacts,
       contact,
+      documentType,
       specifications,
+      oldPoliza,
       ...otherData
     } = data;
     const body = {
       ...otherData,
-      // operacion: "produccion_nueva",
-      // version: 0,
-      // renewal: false,
+      polizaFileId: policy.id,
+      version: version ? +version : 0,
+      renewal: documentType === "renovacion",
       iva: iva ? +iva : 0,
       primaNeta: primaNeta ? +primaNeta : 0,
       importePagar: importePagar ? +importePagar : 0,
@@ -125,36 +153,31 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     if (contact) {
       body.contactId = contact.id;
     }
+    if (oldPoliza) {
+      body.polizaId = oldPoliza.id;
+    }
     console.log({ body });
 
-    // try {
-    //   const response = await addPolicyByPdf(body);
-    //   console.log({ response });
-    //   if (response?.hasError) {
-    //     if (Array.isArray(response?.error?.message)) {
-    //       response?.error?.message.forEach((message) => {
-    //         toast.error(message);
-    //       });
-    //     } else {
-    //       toast.error(
-    //         response?.error?.message ??
-    //           "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
-    //       );
-    //     }
-    //     setLoading(false);
-
-    //     return;
-    //   }
-    //   toast.success("Poliza cargada con exito");
-    //   setIsOpen(false);
-    //   handleReset();
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error(
-    //     error?.message ??
-    //       "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
-    //   );
-    // }
+    try {
+      if (Object.keys(endpointsByModule).includes(module)) {
+        const response = await endpointsByModule[module](body, documentType);
+        console.log({ response });
+        if (response?.hasError) {
+          handleFrontError(response);
+          setLoading(false);
+          return;
+        }
+        toast.success("Póliza cargada con éxito");
+      }
+      setIsOpen(false);
+      handleReset();
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error?.message ??
+          "Se ha producido un error cargar la póliza, inténtelo de nuevo más tarde."
+      );
+    }
     setLoading(false);
   };
 
@@ -162,6 +185,64 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
     setPolicy();
     setHelpers({});
     reset();
+  };
+
+  const clearFile = () => {
+    const inputFile = document.getElementById("policy-file-manual-charge");
+
+    if (inputFile) {
+      const nuevoInputFile = document.createElement("input");
+      nuevoInputFile.type = "file";
+      nuevoInputFile.id = inputFile.id;
+      nuevoInputFile.name = inputFile.name; // Mantener el nombre original
+      nuevoInputFile.classList = inputFile.classList; // Mantener las clases
+      nuevoInputFile.accept = inputFile.accept; // Mantener los tipos de archivo aceptados
+      nuevoInputFile.multiple = inputFile.multiple; // Mantener la opción de múltiples archivos
+      inputFile.parentNode.replaceChild(nuevoInputFile, inputFile);
+    }
+
+    setPolicy();
+  };
+
+  const handleChangeOldPolicy = (policy) => {
+    console.log({ policy });
+    policy.agenteIntermediario &&
+      setValue("agenteIntermediarioId", policy.agenteIntermediario.id);
+    policy.assignedBy && setValue("assignedById", policy.assignedBy.id);
+    policy.subAgente && setValue("subAgenteId", policy.subAgente.id);
+    policy.beneficiaries && setValue("beneficiaries", policy.beneficiaries);
+    policy.insured && setValue("insureds", policy.insured);
+    policy.category && setValue("categoryId", policy.category.id);
+    policy.company && setValue("companyId", policy.company.id);
+    if (policy.contact) {
+      setValue("contact", policy.contact.id);
+      setValue("isNewContact", false);
+      setValue("typePerson", policy.contact.typePerson);
+    }
+    policy.currency && setValue("currencyId", policy.currency.id);
+    policy.frecuenciaCobro &&
+      setValue("frecuenciaCobroId", policy.frecuenciaCobro.id);
+    policy.formaCobro && setValue("formaCobroId", policy.formaCobro.id);
+    policy.plazoPago && setValue("plazoPago", policy.plazoPago);
+    policy.poliza && setValue("poliza", policy.poliza);
+    policy.type && setValue("typeId", policy.type.id);
+    policy?.conductoPago && setValue("conductoPagoId", data?.conductoPago?.id);
+    policy.specifications && setValue("specifications", policy.specifications);
+  };
+
+  const handleChangeConducto = (conducto) => {
+    if (!conducto?.id) return;
+
+    if (
+      [
+        "ce1a967c-ccac-4d52-b255-5446ca4c0dff",
+        "60783a4f-d79d-4372-a891-eaf2c9f84350",
+      ].includes(conducto?.id)
+    ) {
+      setValue("formaCobroId", "2cead91b-8134-4763-b841-c9f0f217d32a");
+    } else {
+      setValue("formaCobroId", "17c73ac6-c880-4106-ad92-2da33f2ce2bc");
+    }
   };
 
   return (
@@ -183,6 +264,39 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
                 <SelectInput
+                  label={"Tipo de documento"}
+                  options={[
+                    {
+                      name: "Póliza nueva",
+                      id: "nueva",
+                    },
+                    {
+                      name: "Renovación",
+                      id: "renovacion",
+                    },
+                    {
+                      name: "Versión",
+                      id: "version",
+                    },
+                  ]}
+                  name="documentType"
+                  error={errors?.observerId}
+                  setValue={setValue}
+                  isRequired
+                />
+                {watch &&
+                  ["renovacion", "version"].includes(watch("documentType")) && (
+                    <PolicySelectAsync
+                      label={"Póliza original"}
+                      name={"oldPoliza"}
+                      setValue={setValue}
+                      watch={watch}
+                      error={errors?.oldPoliza}
+                      register={register}
+                      setSelectedOption={handleChangeOldPolicy}
+                    />
+                  )}
+                <SelectInput
                   label={"Aseguradora"}
                   options={lists?.policies?.polizaCompanies}
                   name="companyId"
@@ -190,6 +304,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   watch={watch}
                   register={register}
                   error={errors.companyId}
+                  isRequired
                 />
                 <SelectInput
                   label={t("operations:policies:general:type")}
@@ -198,6 +313,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
+                  isRequired
                 />
                 <SelectInput
                   label={"Tipo de cliente"}
@@ -224,15 +340,45 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     watch={watch}
                     error={errors?.contact}
                     helperText={helpers?.contact}
+                    isRequired
                   />
                 ) : (
                   <Fragment>
+                    <SelectInput
+                      label={t("control:portafolio:control:form:typePerson")}
+                      options={[
+                        {
+                          name: "Física",
+                          id: "fisica",
+                        },
+                        {
+                          name: "Moral",
+                          id: "moral",
+                        },
+                      ]}
+                      name="typePerson"
+                      setValue={setValue}
+                      watch={watch}
+                    />
                     <TextInput
                       type="text"
-                      label={"Nombre completo cliente"}
-                      name="newContact.fullName"
+                      label={
+                        watch("typePerson") != "moral"
+                          ? "Nombres"
+                          : "Nombre de la compañía"
+                      }
+                      name="newContact.name"
                       register={register}
                     />
+                    {watch("typePerson") == "fisica" && (
+                      <TextInput
+                        type="text"
+                        label={"Apellidos"}
+                        name="newContact.lastName"
+                        register={register}
+                      />
+                    )}
+
                     <TextInput
                       type="text"
                       label={"Código"}
@@ -255,28 +401,30 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     />
                   </Fragment>
                 )}
-                <SelectInput
-                  label={t("control:portafolio:control:form:typePerson")}
-                  options={[
-                    {
-                      name: "Física",
-                      id: "fisica",
-                    },
-                    {
-                      name: "Moral",
-                      id: "moral",
-                    },
-                  ]}
-                  name="typePerson"
-                  setValue={setValue}
-                  watch={watch}
-                />
 
                 <TextInput
                   type="text"
                   label={"Número de póliza"}
                   name="poliza"
                   register={register}
+                  isRequired
+                />
+                {watch && ["renovacion"].includes(watch("documentType")) && (
+                  <TextInput
+                    type="number"
+                    label={"Renovación"}
+                    name="renovacion"
+                    register={register}
+                    value={1}
+                    isRequired
+                  />
+                )}
+                <TextInput
+                  type="number"
+                  label={"Versión"}
+                  name="version"
+                  register={register}
+                  isRequired
                 />
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
@@ -314,26 +462,28 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={t("operations:policies:general:payment-frequency")}
                   name="frecuenciaCobroId"
                   options={lists?.policies?.polizaFrecuenciasPago ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
+                  isRequired
+                />
+                <SelectInput
+                  label={t(
+                    "control:portafolio:receipt:details:form:conducto-pago"
+                  )}
+                  name="conductoPagoId"
+                  options={lists?.policies?.polizaConductoPago}
+                  setValue={setValue}
+                  watch={watch}
+                  setSelectedOption={handleChangeConducto}
                 />
                 <SelectInput
                   label={t("operations:policies:general:payment-method")}
                   name="formaCobroId"
                   options={lists?.policies?.polizaFormasCobro ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectInput
-                  label={t("operations:policies:general:payment-frequency")}
-                  name="frecuenciaCobroId"
-                  options={lists?.policies?.polizaFrecuenciasPago ?? []}
-                  register={register}
-                  setValue={setValue}
-                  watch={watch}
-                />
+
                 <SelectInput
                   label={t("operations:policies:general:payment-term")}
                   options={[
@@ -347,7 +497,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     },
                   ]}
                   name="plazoPago"
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -355,7 +504,6 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={t("control:portafolio:receipt:details:product")}
                   name="categoryId"
                   options={lists?.policies?.polizaCategories ?? []}
-                  register={register}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -363,9 +511,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   label={"Moneda"}
                   options={lists?.policies?.currencies ?? []}
                   name="currencyId"
-                  register={register}
                   setValue={setValue}
                   watch={watch}
+                  isRequired
                 />
                 <InputCurrency
                   type="text"
@@ -437,10 +585,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
 
                 <SelectDropdown
                   label={t("operations:policies:general:responsible")}
-                  name="responsibleId"
+                  name="assignedById"
                   options={lists?.users}
-                  register={register}
-                  error={!watch("responsibleId") && errors.responsibleId}
+                  error={errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -450,6 +597,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   name="observerId"
                   error={errors?.observerId}
                   setValue={setValue}
+                  watch={watch}
                 />
                 <TextInput
                   type="text"
@@ -476,6 +624,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     <Beneficiaries
                       register={register}
                       control={control}
+                      watch={watch}
                       isAdd
                     />
                   </Fragment>
@@ -484,21 +633,26 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                   "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c", //AUTOS
                 ].includes(watch("typeId")) && (
                   <Fragment>
-                    <Vehicles register={register} control={control} isAdd />
+                    <Vehicles
+                      register={register}
+                      watch={watch}
+                      control={control}
+                      isAdd
+                    />
                   </Fragment>
                 )}
 
                 <div className="w-full">
                   <label
-                    htmlFor="policy-file"
+                    htmlFor="policy-file-manual-charge"
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
                     <p>Subir documento</p>
                   </label>
                   <input
                     type="file"
-                    name="policy-file"
-                    id="policy-file"
+                    name="policy-file-manual-charge"
+                    id="policy-file-manual-charge"
                     className="hidden"
                     accept=".pdf"
                     onChange={handleChangeFile}
@@ -512,18 +666,31 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     <div className="flex flex-col gap-2 justify-center items-center pt-2 relative group">
                       <IoMdCloseCircleOutline
                         className="w-6 h-6 hidden absolute top-0 left-[calc(50%_+_20px)] group-hover:block cursor-pointer"
-                        onClick={() => {
-                          console.log("aqu");
-                          handleReset();
-                        }}
+                        onClick={clearFile}
                       />
-                      <div className="p-2 group-hover:bg-primary bg-easy-500 rounded-md">
+                      <div
+                        className="p-2 group-hover:bg-primary bg-easy-500 rounded-md cursor-zoom-in"
+                        onClick={() =>
+                          policy?.url &&
+                          window.open(
+                            policy?.url,
+                            "self",
+                            "status=yes,scrollbars=yes,toolbar=yes,resizable=yes,width=850,height=500"
+                          )
+                        }
+                      >
                         <FiFileText className="w-6 h-6 text-white" />
                       </div>
                       <p className="text-center text-xs ">{policy.name}</p>
                     </div>
                   )}
                 </div>
+                <p className="text-sm relative font-semibold px-3">
+                  Campos obligatorios
+                  <span className="text-sm text-red-600 absolute top-0 left-0">
+                    *
+                  </span>
+                </p>
 
                 <div className="w-full flex justify-center gap-4 py-4">
                   <Button
@@ -540,7 +707,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen }) => {
                     buttonStyle="primary"
                     label="Guardar"
                     type="submit"
-                    // disabled={!policy}
+                    disabled={!policy}
                     // disabled
                   />
                 </div>

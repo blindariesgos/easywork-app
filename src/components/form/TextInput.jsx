@@ -15,6 +15,7 @@ function TextInput({
   border,
   className,
   small,
+  isRequired,
   ...props
 }) {
   const registerProps = register && register(name);
@@ -24,12 +25,20 @@ function TextInput({
     >
       {label && (
         <label
-          className={clsx("block font-medium leading-6 text-gray-900 px-3", {
-            "text-xs": small,
-            "text-sm": !small,
-          })}
+          className={clsx(
+            "block font-medium leading-6 text-gray-900 px-3 relative",
+            {
+              "text-xs": small,
+              "text-sm": !small,
+            }
+          )}
         >
           {label}
+          {isRequired && (
+            <span className="text-sm text-red-600 absolute top-0 left-0">
+              *
+            </span>
+          )}
         </label>
       )}
       <div className="">

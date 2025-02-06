@@ -19,6 +19,7 @@ import {
   polizaReimbursementStatusColor,
 } from "@/src/utils/stages";
 import useProgramationContext from "@/src/context/programations";
+import AddDocumentButton from "./AddDocumentButton"
 
 export default function ScheduleDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -39,23 +40,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };
 
-  const options = [
-    {
-      name: "Informe Médico",
-      type: "pago",
-      disabled: true,
-    },
-    {
-      name: "Documento de Aclaración - Programaciones",
-      type: "factura",
-      disabled: true,
-    },
-    {
-      name: "Carta programación de Médicamentos, cirugias, servicios auxiliares",
-      type: "factura",
-      disabled: true,
-    },
-  ];
+ 
 
   const updateStatus = async (status) => {
     setLoading(true);
@@ -203,33 +188,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                   {t("control:portafolio:receipt:details:consult")}
                 </p>
               </div>
-              <Menu>
-                <MenuButton>
-                  <Button
-                    label={t("common:buttons:add-2")}
-                    buttonStyle="primary"
-                    icon={<PlusIcon className="h-4 w-4 text-white" />}
-                    className="py-2 px-3"
-                  />
-                </MenuButton>
-                <MenuItems
-                  transition
-                  anchor="bottom start"
-                  className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
-                >
-                  {options.map((option, index) => (
-                    <MenuItem
-                      key={index}
-                      as="div"
-                      onClick={() => handleAddDocument(option)}
-                      disabled={option.disabled}
-                      className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
-                    >
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </MenuItems>
-              </Menu>
+              <AddDocumentButton id={id} />
             </div>
           </div>
           <div className="px-4">

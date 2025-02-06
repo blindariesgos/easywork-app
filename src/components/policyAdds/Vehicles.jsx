@@ -5,13 +5,20 @@ import clsx from "clsx";
 import { useFieldArray } from "react-hook-form";
 import Button from "@/src/components/form/Button";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
-const Vehicles = ({ register, control, isAdd }) => {
+const Vehicles = ({ register, control, isAdd, watch }) => {
   const { t } = useTranslation();
   const { fields, remove, append } = useFieldArray({
     control,
     name: "vehicles",
   });
+
+  useEffect(() => {
+    if (fields.length == 0 && watch("vehicles").length > 0) {
+      watch("vehicles").map((insured) => append(insured));
+    }
+  }, [watch && watch("vehicles")]);
 
   const handleAdd = () => {
     append({
@@ -30,7 +37,7 @@ const Vehicles = ({ register, control, isAdd }) => {
   return (
     <div className="grid gap-y-1">
       <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-        Vahiculos
+        Vehiculos
       </label>
       {fields &&
         fields.map((_, index) => (

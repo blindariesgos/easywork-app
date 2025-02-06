@@ -14,6 +14,8 @@ import {
   addContactDocument,
   addLeadPolicy,
   addReceiptDocument,
+  addReimbursementDocument,
+  addScheduleDocument,
 } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { addLeadDocument } from "../../lib/apis";
@@ -58,6 +60,8 @@ const AddDocumentDialog = ({
     lead: (data) => addLeadDocument(id, documentType, data),
     contact: (data) => addContactDocument(id, documentType, data),
     "poliza-lead": (data) => addLeadPolicy(id, data),
+    reimbursement: (data) => addReimbursementDocument(id, data),
+    schedule: (data) => addScheduleDocument(id, data),
   };
 
   const handleFormSubmit = async () => {
@@ -111,34 +115,32 @@ const AddDocumentDialog = ({
         {/* The actual dialog panel  */}
         <DialogPanel className="max-w-lg w-full space-y-4 bg-white px-12 py-6 rounded-xl">
           <DialogTitle className="">{title}</DialogTitle>
-          <Description>
-            <div className="text-center">
-              <label
-                htmlFor="uploadDocument"
-                type="button"
-                className="cursor-pointer text-sm text-black"
-              >
-                <div className="col-span-full flex justify-center items-center flex-col gap-x-4 py-8 bg-white rounded-lg p-3">
-                  <input
-                    id="uploadDocument"
-                    name="uploadDocument"
-                    type="file"
-                    className="peer hidden inset-0 h-full w-full  rounded-md opacity-0"
-                    onChange={handleChangeFile}
-                    accept={
-                      accept ??
-                      ".pdf, .doc, .txt, .key, .csv, .docx, .xls, .xlsx, .ppt, .pptx, .jpg, .jpeg, .png, .gif, .svg"
-                    }
-                  />
-                  <div className="flex gap-1">
-                    <MdUpload className="w-6 h-6 text-pimary" />
-                    <p>Seleccionar Documento</p>
-                  </div>
-                  {file && <p className="text-gray-50">{file.name}</p>}
+          <div className="text-center">
+            <label
+              htmlFor="uploadDocument"
+              type="button"
+              className="cursor-pointer text-sm text-black"
+            >
+              <div className="col-span-full flex justify-center items-center flex-col gap-x-4 py-8 bg-white rounded-lg p-3">
+                <input
+                  id="uploadDocument"
+                  name="uploadDocument"
+                  type="file"
+                  className="peer hidden inset-0 h-full w-full  rounded-md opacity-0"
+                  onChange={handleChangeFile}
+                  accept={
+                    accept ??
+                    ".pdf, .doc, .txt, .key, .csv, .docx, .xls, .xlsx, .ppt, .pptx, .jpg, .jpeg, .png, .gif, .svg"
+                  }
+                />
+                <div className="flex gap-1">
+                  <MdUpload className="w-6 h-6 text-pimary" />
+                  <p>Seleccionar Documento</p>
                 </div>
-              </label>
-            </div>
-          </Description>
+                {file && <p className="text-gray-50">{file.name}</p>}
+              </div>
+            </label>
+          </div>
           <div className="flex gap-4 justify-center">
             <Button
               buttonStyle="secondary"

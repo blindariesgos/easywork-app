@@ -5,13 +5,20 @@ import clsx from "clsx";
 import { useFieldArray } from "react-hook-form";
 import Button from "@/src/components/form/Button";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
-const Beneficiaries = ({ register, control, isAdd }) => {
+const Beneficiaries = ({ register, control, isAdd, watch }) => {
   const { t } = useTranslation();
   const { fields, remove, append } = useFieldArray({
     control,
     name: "beneficiaries",
   });
+
+  useEffect(() => {
+    if (fields.length == 0 && watch("beneficiaries").length > 0) {
+      watch("beneficiaries").map((insured) => append(insured));
+    }
+  }, [watch && watch("beneficiaries")]);
 
   const handleAdd = () => {
     append({

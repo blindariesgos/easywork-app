@@ -39,6 +39,7 @@ export default function ReceiptEditor({ data, id }) {
   const { lists } = useAppContext();
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const utcOffset = moment().utcOffset();
   const { mutate: mutateReceipts } = useReceiptContext();
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
@@ -80,8 +81,20 @@ export default function ReceiptEditor({ data, id }) {
       setValue("methodCollectionId", data?.methodCollection?.id);
     if (data?.frecuencyPayment?.name)
       setValue("frecuencyPaymentId", data?.frecuencyPayment?.id);
-    if (data?.startDate) setValue("startDate", data?.startDate);
-    if (data?.dueDate) setValue("dueDate", data?.dueDate);
+    if (data?.startDate)
+      setValue(
+        "startDate",
+        data?.startDate
+          ? moment(data?.startDate).subtract(utcOffset, "minutes").format()
+          : ""
+      );
+    if (data?.dueDate)
+      setValue(
+        "dueDate",
+        data?.dueDate
+          ? moment(data?.dueDate).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (data?.paymentDate) setValue("paymentDate", data?.paymentDate);
     if (data?.currency?.id) setValue("currencyId", data?.currency?.id);
     if (data?.description) setValue("description", data?.description);
@@ -225,7 +238,7 @@ export default function ReceiptEditor({ data, id }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-sm">
-                    {moment(data?.dueDate).format("DD/MM/YYYY")}
+                    {moment(data?.dueDate).utc().format("DD/MM/YYYY")}
                   </p>
                 </div>
               </div>

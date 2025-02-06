@@ -163,7 +163,7 @@ export default function AgentAccompaniment({ agent, id }) {
                 {agent?.recruitments?.length > 0 && showMore && (
                   <div className="flex items-center">
                     <p className="uppercase text-sm min-w-[260px]">
-                      ETAPA DE AVANCE RECLUTAMENTO:
+                      Etapa de avance de Reclutamiento:
                     </p>
                     <div
                       className={clsx(
@@ -184,7 +184,7 @@ export default function AgentAccompaniment({ agent, id }) {
                 {agent?.connections?.length > 0 && showMore && (
                   <div className="flex items-center">
                     <p className="uppercase text-sm min-w-[260px]">
-                      ETAPA DE AVANCE Capacitación:
+                      Etapa de avance de Conexión:
                     </p>
                     <div className="flex justify-between min-w-[260px]">
                       <div

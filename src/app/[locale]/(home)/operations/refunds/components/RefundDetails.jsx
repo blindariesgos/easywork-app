@@ -19,12 +19,18 @@ import {
   polizaReimbursementStatusColor,
 } from "@/src/utils/stages";
 import useRefundContext from "@/src/context/refunds";
+import AddDocumentButton from "./AddDocumentButton";
 
 export default function RefundDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
   const { mutate: mutateRefund } = useRefundContext();
+  const [addFileProps, setAddFileProps] = useState({
+    isOpen: false,
+    cmrType: "reimbursement",
+    id,
+  });
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -37,44 +43,6 @@ export default function RefundDetails({ data, id, mutate }) {
 
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };
-
-  const options = [
-    {
-      name: "Formato Reembolso de Accidente y/o Enfermedad",
-      type: "pago",
-      disabled: true,
-    },
-    {
-      name: "Recetas Médicas",
-      type: "factura",
-      disabled: true,
-    },
-    {
-      name: "Informe Médico",
-      type: "factura",
-      disabled: true,
-    },
-    {
-      name: "Facturas",
-      type: "pago",
-      disabled: true,
-    },
-    {
-      name: "Estudios de Laboratorio",
-      type: "pago",
-      disabled: true,
-    },
-    {
-      name: "Documento Aclaración - Subsecuente",
-      type: "pago",
-      disabled: true,
-    },
-    {
-      name: "Carta de Finiquito",
-      type: "pago",
-      disabled: true,
-    },
-  ];
 
   const updateStatus = async (status) => {
     setLoading(true);
@@ -103,6 +71,20 @@ export default function RefundDetails({ data, id, mutate }) {
       );
     }
     setLoading(false);
+  };
+
+  const handleAddDocument = (documentToAdd) => {
+    if (documentToAdd?.customOpen) {
+      documentToAdd?.customOpen();
+      return;
+    }
+    setAddFileProps({
+      ...addFileProps,
+      isOpen: true,
+      documentType: documentToAdd?.type,
+      title: t("common:add-document", { document: documentToAdd?.name }),
+      accept: documentToAdd?.accept,
+    });
   };
 
   return (
@@ -222,33 +204,7 @@ export default function RefundDetails({ data, id, mutate }) {
                   {t("control:portafolio:receipt:details:consult")}
                 </p>
               </div>
-              <Menu>
-                <MenuButton>
-                  <Button
-                    label={t("common:buttons:add-2")}
-                    buttonStyle="primary"
-                    icon={<PlusIcon className="h-4 w-4 text-white" />}
-                    className="py-2 px-3"
-                  />
-                </MenuButton>
-                <MenuItems
-                  transition
-                  anchor="bottom start"
-                  className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
-                >
-                  {options.map((option, index) => (
-                    <MenuItem
-                      key={index}
-                      as="div"
-                      onClick={() => handleAddDocument(option)}
-                      disabled={option.disabled}
-                      className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
-                    >
-                      {option.name}
-                    </MenuItem>
-                  ))}
-                </MenuItems>
-              </Menu>
+              <AddDocumentButton id={id} />
             </div>
           </div>
           <div className="px-4">

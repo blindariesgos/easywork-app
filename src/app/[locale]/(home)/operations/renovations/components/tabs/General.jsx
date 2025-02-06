@@ -2,13 +2,11 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextInput from "@/src/components/form/TextInput";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import clsx from "clsx";
-import { formatToCurrency } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
@@ -16,13 +14,14 @@ import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputDate from "@/src/components/form/InputDate";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
-import { postComment, putPoliza } from "@/src/lib/apis";
+import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import moment from "moment";
 
 export default function PolicyDetails({
   data,
@@ -39,6 +38,7 @@ export default function PolicyDetails({
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
   const router = useRouter();
+  const utcOffset = moment().utcOffset();
 
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),
@@ -86,13 +86,23 @@ export default function PolicyDetails({
 
   useEffect(() => {
     if (data?.vigenciaDesde)
-      setValue("vigenciaDesde", data?.vigenciaDesde ?? "");
+      setValue(
+        "vigenciaDesde",
+        data?.vigenciaDesde
+          ? moment(data?.vigenciaDesde).subtract(utcOffset, "minutes").format()
+          : ""
+      );
     if (data?.vigenciaHasta)
-      setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
-    if (data?.vigenciaDesdeRenovacion)
-      setValue("vigenciaDesdeRenovacion", data?.vigenciaDesdeRenovacion ?? "");
-    if (data?.vigenciaHastaRenovacion)
-      setValue("vigenciaHastaRenovacion", data?.vigenciaHastaRenovacion ?? "");
+      setValue(
+        "vigenciaHasta",
+        data?.vigenciaHasta
+          ? moment(data?.vigenciaHasta).subtract(utcOffset, "minutes").format()
+          : ""
+      );
+    // if (data?.vigenciaDesdeRenovacion)
+    //   setValue("vigenciaDesdeRenovacion", data?.vigenciaDesdeRenovacion ?? "");
+    // if (data?.vigenciaHastaRenovacion)
+    //   setValue("vigenciaHastaRenovacion", data?.vigenciaHastaRenovacion ?? "");
     if (data?.status) setValue("status", data?.status);
     if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
@@ -100,6 +110,7 @@ export default function PolicyDetails({
     if (data?.paymentFrequency)
       setValue("paymentFrequency", data?.paymentFrequency);
     if (data?.paymentTerm) setValue("paymentTerm", data?.paymentTerm);
+    if (data?.version) setValue("paymentTerm", data?.version);
     if (data?.formaCobro?.name) setValue("formaCobroId", data?.formaCobro?.id);
     if (data?.frecuenciaCobro?.name)
       setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
@@ -117,6 +128,8 @@ export default function PolicyDetails({
     if (data?.observers && data?.observers?.length > 0)
       setValue("observers", data?.observers);
     if (data?.category) setValue("categoryId", data?.category?.id);
+    if (data?.specifications) setValue("specifications", data?.specifications);
+    if (data?.subAgente?.name) setValue("subAgenteId", data?.subAgente?.id);
   }, [data]);
 
   const handleFormSubmit = async (data) => {

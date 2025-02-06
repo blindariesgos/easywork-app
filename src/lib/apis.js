@@ -151,6 +151,13 @@ export const getAllRefunds = async ({
     .catch((error) => ({ hasError: true, error }));
   return response;
 };
+
+export const addReimbursementDocument = async (reimbursementId, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/reimbursements/upload/${reimbursementId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region POLICIES
@@ -165,6 +172,29 @@ export const getPolicyById = async (id) => {
   const response = await axios().get(url);
   return response;
 };
+
+export const addPolicyByPdf = async (body, category = "nueva") => {
+  const response = await axios()
+    .post(`/operations/management/poliza/new?category=${category}`, body)
+    .catch((error) => ({ error, hasError: true }));
+  return response;
+};
+
+export const addManualPolicy = async (body, category) => {
+  const url = `/operations/management/manual/poliza?category=${category}`;
+  console.log({ url });
+  const response = await axios()
+    .post(url, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+export const uploadTemporalFile = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/upload/temp`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region SCHEDULES
@@ -195,6 +225,13 @@ export const getAllSchedules = async ({
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const addScheduleDocument = async (scheduleId, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/schedulings/upload/${scheduleId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 //#endregion
@@ -966,13 +1003,6 @@ export const addLeadDocument = async (leadId, category, body) => {
   return response;
 };
 
-export const addPolicyByPdf = async (body, category = "nueva") => {
-  const response = await axios()
-    .post(`/operations/management/poliza/new?category=${category}`, body)
-    .catch((error) => ({ error, hasError: true }));
-  return response;
-};
-
 export const convertLeadToClient = async (leadId, body) => {
   const response = await axios()
     .post(`/sales/crm/leads/poliza/generate/lead/${leadId}`, body)
@@ -1033,7 +1063,6 @@ export const addLeadPolicy = async (leadId, body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/sales/crm/leads/poliza/metadata/lead/${leadId}`, body)
     .catch((error) => ({ ...error, hasError: true }));
-  console.log("aaaaaaaaaa", response);
   return response;
 };
 

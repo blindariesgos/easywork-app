@@ -118,7 +118,6 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     if (policy?.currency?.name) setValue("currencyId", policy?.currency?.id);
     if (policy?.plazoPago) setValue("plazoPago", policy?.plazoPago);
     if (policy?.type?.id) setValue("typeId", policy?.type?.id);
-
     setValue(
       "importePagar",
       policy?.importePagar?.toFixed(2) ?? (0).toFixed(2)
@@ -146,6 +145,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
     setValue("status", policy?.status);
     setValue("metadata", policy?.metadata);
     setValue("categoryId", policy?.category?.id);
+    setValue("wasUnlinked", !!policy?.wasUnlinked);
   }, [policy]);
 
   const handleReset = () => {

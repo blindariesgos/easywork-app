@@ -1,7 +1,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import AddPolicy from "./addPolicy";
-import AddPolicyManual from "./addPolicyManual";
+import AddPolicyManual from "@/src/components/AddPolicyManual";
 import AddSchedule from "./addSchedule";
 import AddRefunds from "./addRefunds";
 import AddClaim from "./addClaim";
@@ -64,7 +64,11 @@ const ButtonAdd = () => {
         </MenuItems>
       </Menu>
       <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} />
-      <AddPolicyManual isOpen={isOpenManual} setIsOpen={setIsOpenManual} />
+      <AddPolicyManual
+        isOpen={isOpenManual}
+        setIsOpen={setIsOpenManual}
+        module="gestion"
+      />
       <AddRenovations
         isOpen={isOpenRenovation}
         setIsOpen={setIsOpenRenovation}

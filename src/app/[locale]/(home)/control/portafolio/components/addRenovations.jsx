@@ -23,8 +23,8 @@ import InputDate from "@/src/components/form/InputDate";
 import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
 import clsx from "clsx";
-import Beneficiaries from "./Beneficiaries";
-import Insureds from "./Insureds";
+import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
+import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 const AddRenovation = ({ isOpen, setIsOpen }) => {
@@ -56,7 +56,7 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
 
     contactId: yup.string(),
     typeId: yup.string().required(t("common:validations:required")),
-    responsibleId: yup.string().required(t("common:validations:required")),
+    assignedById: yup.string().required(t("common:validations:required")),
     observerId: yup.string().required(t("common:validations:required")),
     isNewContact: yup.bool().default(false),
     poliza: yup.string().required(t("common:validations:required")),
@@ -397,10 +397,10 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
                   />
                   <SelectDropdown
                     label={t("operations:policies:general:responsible")}
-                    name="responsibleId"
+                    name="assignedById"
                     options={lists?.users}
                     register={register}
-                    error={!watch("responsibleId") && errors.responsibleId}
+                    error={!watch("assignedById") && errors.assignedById}
                     setValue={setValue}
                     watch={watch}
                   />

@@ -12,6 +12,7 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { RxCrossCircled } from "react-icons/rx";
 
 function SelectInput({
   label,
@@ -28,10 +29,17 @@ function SelectInput({
   placeholder,
   helperText,
   small,
+  isRequired,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
+
+  const handleClear = () => {
+    setSelected("");
+    setQuery("");
+    console.log("clear");
+  };
 
   useEffect(() => {
     if (selectedOption && !selected) {
@@ -43,6 +51,9 @@ function SelectInput({
     if (selected) {
       setValue && setValue(name, object ? selected : selected.id);
       setSelectedOption && setSelectedOption(selected);
+    } else {
+      setValue && setValue(name, object ? {} : "");
+      setSelectedOption && setSelectedOption({});
     }
   }, [selected]);
 
@@ -75,16 +86,24 @@ function SelectInput({
       >
         {label && (
           <label
-            className={clsx("block font-medium leading-6 text-gray-900 px-3", {
-              "text-xs": small,
-              "text-sm": !small,
-            })}
+            className={clsx(
+              "block font-medium leading-6 text-gray-900 px-3 relative",
+              {
+                "text-xs": small,
+                "text-sm": !small,
+              }
+            )}
           >
             {label}
+            {isRequired && (
+              <span className="text-sm text-red-600 absolute top-0 left-0">
+                *
+              </span>
+            )}
           </label>
         )}
 
-        <div className={`relative ${label ? "mt-1" : "mt-0"}`}>
+        <div className={` group relative ${label ? "mt-1" : "mt-0"}`}>
           <ComboboxInput
             placeholder={placeholder}
             className={clsx(
@@ -106,9 +125,17 @@ function SelectInput({
             }}
           />
           {!disabled && (
-            <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon className="h-5 w-5 text-primary" />
-            </ComboboxButton>
+            <Fragment>
+              <div
+                className="absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
+                onClick={handleClear}
+              >
+                <RxCrossCircled className="w-4 h-4 text-primary" />
+              </div>
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDownIcon className="h-5 w-5 text-primary" />
+              </ComboboxButton>
+            </Fragment>
           )}
 
           <ComboboxOptions

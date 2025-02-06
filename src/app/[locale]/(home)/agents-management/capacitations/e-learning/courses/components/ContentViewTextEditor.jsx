@@ -5,7 +5,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import React, { useState, useRef, forwardRef, useImperativeHandle, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import ReactQuill, { Quill } from 'react-quill-new';
-import ImageResize from 'quill-image-resize';
+import ImageResize from '@botom/quill-resize-module';
 
 import { useCourses } from '../../hooks/useCourses';
 
@@ -69,24 +69,6 @@ async function base64ToFile(base64String) {
   }
 }
 
-function replaceBase64Images(htmlString, newImageUrls) {
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
-
-    const images = doc.querySelectorAll('img[src^="data:image/"]');
-
-    images.forEach((image, i) => {
-      if (newImageUrls[i] && image.src.startsWith('data:image/')) image.src = newImageUrls[i];
-    });
-
-    return doc.body.innerHTML;
-  } catch (error) {
-    console.error('Error al parsear o modificar el HTML:', error);
-    return htmlString;
-  }
-}
-
 const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChangeSelection, setValue, disabled = false, handleKeyDown, onDeleteImage }, ref) => {
   const localQuillRef = useRef(null);
   const [internalImages, setInternalImages] = useState([]);
@@ -100,6 +82,26 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
   const handleChange = newValue => {
     setValue(newValue);
   };
+
+  function replaceBase64Images(htmlString, newImageUrls) {
+    try {
+      const quill = localQuillRef.current;
+      if (!quill) return;
+
+      const editor = quill.getEditor();
+
+      if (editor) {
+        const images = editor.container.querySelectorAll('img[src^="data:image/"]');
+        images.forEach((img, i) => {
+          const src = img.getAttribute('src');
+          if (newImageUrls[i] && src.startsWith('data:image/')) img.setAttribute('src', newImageUrls[i]);
+        });
+      }
+    } catch (error) {
+      console.error('Error al parsear o modificar el HTML:', error);
+      return htmlString;
+    }
+  }
 
   const extractImageUrls = html => {
     // Extrae URLs de imágenes del contenido HTML usando una expresión regular
@@ -191,26 +193,38 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
   }, [processImage]);
 
   const handleInternalChange = async newContent => {
+    if (!newContent.includes('data:image/jpeg;base64,')) {
+      if (onChange) {
+        onChange(newContent);
+      } else if (handleChange) {
+        handleChange(newContent);
+      }
+    }
+
     const { imagesWithUrls, base64Images } = extractImageUrls(newContent);
 
     if (base64Images.length > 0) {
       const files = await Promise.all(base64Images.map(base64ToFile));
       const uploadedFiles = await Promise.all(files.map(file => uploadImage(file)));
 
-      newContent = replaceBase64Images(newContent, uploadedFiles);
+      replaceBase64Images(newContent, uploadedFiles);
+
+      const newInternalImages = [...imagesWithUrls, ...uploadedFiles];
+
+      const removedImages = internalImages.filter(img => !newInternalImages.includes(img));
+      if (removedImages.length > 0) onDeleteImage(removedImages);
+
+      setInternalImages(newInternalImages);
+      return;
     }
 
     const removedImages = internalImages.filter(img => !imagesWithUrls.includes(img));
     if (removedImages.length > 0) onDeleteImage(removedImages);
 
     setInternalImages(imagesWithUrls);
-
-    if (onChange) {
-      onChange(newContent);
-    } else if (handleChange) {
-      handleChange(newContent);
-    }
   };
+
+  console.log(value);
 
   return (
     <div className="relative">
@@ -226,7 +240,13 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
             // },
           },
           resize: {
-            locale: {},
+            locale: {
+              altTip: 'Hold down the alt key to zoom',
+              floatLeft: 'Izquierda',
+              floatRight: 'Derecha',
+              center: 'Centrar',
+              restore: 'Reiniciar',
+            },
           },
         }}
         formats={formats}

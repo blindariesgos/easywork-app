@@ -1,46 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { toast } from 'react-toastify';
+import { FaUserCheck, FaCircleCheck } from 'react-icons/fa6';
 
 import Button from '@/src/components/form/Button';
 
 import { useCourses } from '../hooks/useCourses';
 import useAppContext from '@/src/context/app';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 // import { useDebouncedCallback } from 'use-debounce';
 
 export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
   const router = useRouter();
-  const { assignCourse } = useCourses({ fetchOnMount: false });
+  const { assignCourse, getCourseById } = useCourses({ fetchOnMount: false });
   const { lists } = useAppContext();
+  const { data: session } = useSession();
 
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [usersAlreadyAssigned, setUsersAlreadyAssigned] = useState([]);
+  const [courseDetails, setCourseDetails] = useState(course);
+
+  const thereAreSelectedUsers = selectedUsers.length > 0;
 
   const onCloseModal = () => {
-    router.push('/agents-management/capacitations/e-learning/config');
     setIsOpen(false);
   };
 
   const onSave = async () => {
-    // setLoading(true);
-
     try {
-      // await assignCourse({ courseId: course.id, userIds: selectedUsers });
-      router.push(`/agents-management/capacitations/e-learning/config?prev=course-assign&prev_id=${course.id}`);
-
-      return;
-
+      await assignCourse(course.id, { userIds: selectedUsers });
       toast.success('Curso asignado exitosamente!');
-      if (onSuccess) onSuccess();
+
+      localStorage.setItem(course.id, JSON.stringify({ ...courseDetails, assignTo: lists?.users?.filter(user => isUserSelected(user.id)), assignedBy: session.user }));
+      router.push(`/tools/tasks/task?show=true&prev=course-assign&prev_id=${course.id}`);
     } catch (error) {
       toast.error('Algo no ha salido muy bien. Por favor intente más tarde');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -60,13 +60,33 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
 
   const isUserSelected = id => selectedUsers.includes(id);
 
+  const isUserAlreadyAssigned = id => usersAlreadyAssigned.includes(id);
+
   const toggleSelectedUser = user => {
     if (isUserSelected(user.id)) {
       setSelectedUsers(prev => prev.filter(id => id !== user.id));
     } else {
-      setSelectedUsers(prev => [...prev, user.id]);
+      // setSelectedUsers(prev => [...prev, user.id]);
+      setSelectedUsers(prev => [user.id]);
     }
   };
+
+  const fetchCourseDetails = useCallback(async () => {
+    if (!course) return;
+
+    try {
+      const result = await getCourseById(course.id);
+      setCourseDetails(result);
+      const { assignedUsers } = result;
+      setUsersAlreadyAssigned(assignedUsers.map(assignedUser => assignedUser.user.id));
+    } catch (error) {
+      toast.error('Estamos teniendo problemas para obtener el detalle del curso a asignar. Por favor intenta más tarde');
+    }
+  }, [course, getCourseById]);
+
+  useEffect(() => {
+    fetchCourseDetails();
+  }, [fetchCourseDetails]);
 
   return (
     <Dialog open={isOpen} onClose={onCloseModal} className="relative z-50">
@@ -99,15 +119,23 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
                   ?.filter(user => filterUsers(user, search))
                   .map(user => {
                     const isSelected = isUserSelected(user.id);
+                    const isAlreadyAssigned = isUserAlreadyAssigned(user.id);
+
+                    // if (isAlreadyAssigned) return null;
 
                     return (
                       <div
                         key={user.id}
-                        className={`max-h-[55px] max-w-[315px] flex items-center cursor-pointer rounded-md ${isSelected ? 'bg-[#e0e0e0]' : 'bg-[#f5f5f5]'} p-2 ${!isSelected ? 'hover:bg-primary/10' : ''}`}
-                        onClick={() => toggleSelectedUser(user)}
+                        className={`max-h-[55px] max-w-[315px] flex items-center rounded-md ${isSelected ? 'bg-[#e0e0e0]' : 'bg-[#f5f5f5]'} p-2 ${!isSelected && !isAlreadyAssigned ? 'hover:bg-primary/10' : ''} ${isAlreadyAssigned ? '' : 'cursor-pointer'}`}
+                        onClick={() => {
+                          if (!isAlreadyAssigned) {
+                            toggleSelectedUser(user);
+                          }
+                        }}
                       >
                         {user.avatar && <Image src={user.avatar} width={150} height={150} alt={`${user.name} avatar`} className="w-10 h-10 rounded-full mr-2" />}
-                        <div>
+                        <div className="relative w-full">
+                          {isAlreadyAssigned && <FaCircleCheck size="20px" className="absolute top-0 right-0 text-green-500" />}
                           <p className={`text-black`}>{user.name || user.username}</p>
                           <p className={`text-xs text-gray-400`}>{user.email}</p>
                         </div>
@@ -120,7 +148,14 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
 
           <div className="flex items-center justify-end gap-2">
             <Button label="Cancelar" type="button" buttonStyle="secondary" className="px-2 py-1 text-lg" onclick={onCloseModal} disabled={loading} />
-            <Button label={loading ? 'Guardando...' : 'Asignar'} type="button" buttonStyle="primary" className="px-2 py-1 text-lg" onclick={onSave} disabled={loading} />
+            <Button
+              label={loading ? 'Guardando...' : 'Asignar'}
+              type="button"
+              buttonStyle="primary"
+              className={`px-2 py-1 text-lg ${thereAreSelectedUsers ? '' : 'opacity-60'}`}
+              onclick={onSave}
+              disabled={loading || !thereAreSelectedUsers}
+            />
           </div>
         </DialogPanel>
       </div>

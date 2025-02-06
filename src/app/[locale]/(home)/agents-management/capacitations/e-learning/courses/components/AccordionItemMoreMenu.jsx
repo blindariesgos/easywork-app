@@ -20,6 +20,7 @@ export const AccordionItemMoreMenu = ({ itemType, actions }) => {
     ],
     page: [
       { id: 'editPage', label: 'Editar página', permission: LMS_PERMISSIONS.editPage },
+      { id: 'addTask', label: 'Agregar tarea', permission: LMS_PERMISSIONS.editPage },
       { id: 'duplicatePage', label: 'Duplicar página', permission: LMS_PERMISSIONS.duplicatePage },
       { id: 'changeCourseFolder', label: 'Cambiar carpeta', permission: LMS_PERMISSIONS.changeFolder },
       { id: 'deletePage', label: 'Eliminar página', permission: LMS_PERMISSIONS.deletePage },

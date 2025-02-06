@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import { DeleteContentModal } from '../../components/DeleteContentModal';
 
@@ -17,6 +19,8 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
   const { getCourseFolder } = useCourseFolders();
   const { duplicateCourseFolderPage } = useCourseFolderPages();
   const { hasPermission } = useUserPermissions();
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const [courseFolderDetails, setCourseFolderDetail] = useState(courseFolder);
   const [courseFolderPages, setCourseFolderPages] = useState([]);
@@ -74,6 +78,11 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
     setIsDeleteModalContentOpen(true);
   };
 
+  const addTask = page => {
+    localStorage.setItem(page.id, JSON.stringify({ ...page, assignedBy: session.user }));
+    router.push(`/tools/tasks/task?show=true&prev=course-page-assign&prev_id=${page.id}`);
+  };
+
   const refetch = () => {
     if (contentToHandle.current.type === 'page') {
       fetchCourseFolderDetails();
@@ -100,7 +109,7 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
           courseFolderPages.map((page, i) => {
             const isFirstElement = i === 0;
             const isLastElement = i === countCourseFolderPages - 1;
-            const isSelected = contentSelected.id === page.id;
+            const isSelected = contentSelected?.id === page.id;
 
             return (
               <div key={page.id} className={`${isFirstElement || isLastElement ? '' : 'my-1'}`}>
@@ -113,6 +122,7 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
                   changeCourseFolder={() => changeCourseFolder(page, courseFolder)}
                   deletePage={() => deletePage(page)}
                   isCompleted={page.isCompleted}
+                  addTask={() => addTask(page)}
                 />
               </div>
             );

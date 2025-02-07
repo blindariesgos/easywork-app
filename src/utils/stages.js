@@ -66,47 +66,55 @@ export const recruitmentStages = [
     id: "f3404a7e-8550-4cbc-9161-9d6197628a41",
     name: "Contacto Inicial",
     color: "#0F8BBF",
+    type: "state",
   },
   {
     id: "fcdc645d-b4c5-4fd6-b9e4-ae6d7c8a19ea",
     name: "Entrevista 1",
     color: "#0879A8",
+    type: "state",
   },
   {
     id: "78c8b0aa-04b8-4c53-bd3c-68924c53ed03",
     name: "PSP",
     color: "#06668E",
+    type: "state",
   },
   {
     id: "580ee85e-ae46-4e78-a4fb-aadb868ff8b4",
     name: "Entrevista de verificación",
     color: "#004D6C",
+    type: "state",
   },
-
   {
     id: "1bd3c42e-ee1a-42d3-ab9e-f3ed75a96006",
     name: "Contactar después - No tiene disponibilidad",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "899ad5ec-0b60-4354-8819-560df0b06d88",
     name: "Contactar después - No cumple FV",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "28f5ff34-ce55-4cd9-b7bf-357f61e9e95f",
     name: "No contactar mas",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "965c079e-3583-4a15-a265-4a1f2bf2b39d",
     name: "Observaciones por CNSF",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "fd995692-4640-4dc9-a78c-67df037a1fe6",
     name: "Ingreso aprobado",
     color: "#00A130",
+    type: "approved",
   },
 ];
 
@@ -115,21 +123,25 @@ export const connectionsStage = [
     id: "5314113e-82d5-4bd7-8d5f-be5de28da950",
     name: "Documentación inicial",
     color: "#0F8BBF",
+    type: "state",
   },
   {
     id: "c8e29a78-42d0-4de0-9a13-bdafe0136e01",
     name: "Clave provincial",
     color: "#0879A8",
+    type: "state",
   },
   {
     id: "1788e751-4c22-4ed6-ab77-ad98ff6ee82f",
     name: "En examen y comisión",
     color: "#06668E",
+    type: "state",
   },
   {
     id: "05051503-92e0-43e4-a9a7-3e1052a7aff0",
     name: "Agente retirado excluido",
     color: "#C62A20",
+    type: "canceled",
   },
   {
     id: "5de88bf9-8180-43c6-9c3e-7bd92076ef0a",

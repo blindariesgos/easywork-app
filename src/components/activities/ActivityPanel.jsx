@@ -20,6 +20,7 @@ export default function ActivityPanel({
   contactType,
   disabled,
 }) {
+  const { t } = useTranslation();
   const [bulkActivity, setBulkActivity] = useState([]);
   const { activities, isError, isLoading, mutate } = useEntityActivities(
     entityId,
@@ -30,12 +31,9 @@ export default function ActivityPanel({
     if (activities) {
       if (!Array.isArray(activities)) return;
 
-      console.log("Bulk activities", activities);
       setBulkActivity(activities);
     }
   }, [activities]);
-
-  const { t } = useTranslation();
 
   if (isError) {
     return <div>Error</div>;

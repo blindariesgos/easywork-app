@@ -277,7 +277,9 @@ export default function Table() {
             />
           ))}
         </div>
-        <p className="text-sm">{data?.name ?? connectionsStage[0].name}</p>
+        <p className="text-sm text-center">
+          {data?.name ?? connectionsStage[0].name}
+        </p>
       </div>
     );
   };

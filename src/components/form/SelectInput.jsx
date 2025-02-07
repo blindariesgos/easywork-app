@@ -71,7 +71,6 @@ function SelectInput({
       return;
     }
     if (selected) return;
-    console.log({ options });
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);

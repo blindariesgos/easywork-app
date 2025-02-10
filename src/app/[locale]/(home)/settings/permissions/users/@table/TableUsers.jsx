@@ -142,7 +142,7 @@ export default function TableUsers() {
         return;
       }
       mutate();
-      toast.success("Usuario actualizado con exito");
+      toast.success("Usuario actualizado con éxito");
     } catch {
       toast.error("No se logro actualizar al usuario");
     }

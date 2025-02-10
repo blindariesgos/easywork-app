@@ -83,6 +83,21 @@ export const getLeadCancelReazon = async () => {
     .catch((error) => ({ hasError: true, error }));
   return response;
 };
+
+export const uploadLeadTemporalFile = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/poliza/manual/upload/temp`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+export const addManualPolicyToLead = async (body, leadId) => {
+  const url = `/sales/crm/leads/poliza/manual/generate/lead/${leadId}`;
+  console.log({ url });
+  const response = await axios()
+    .post(url, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region CONTACTS
@@ -411,6 +426,35 @@ export const getAllConnections = async ({
   return response;
 };
 //#region
+
+//#region INTERMEDIARIES
+export const getIntermediaries = async () => {
+  const url = `/agent-management/agente-intermediario`;
+  console.log({ url });
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
+//#region CATEGORIES
+export const getCategoryById = async (categoryId) => {
+  const response = await axios()
+    .get(`/sales/crm/polizas/category/${categoryId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const createCategory = async (data) => {
+  const response = await axios()
+    .post(`/sales/crm/polizas/category`, data)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
 
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);

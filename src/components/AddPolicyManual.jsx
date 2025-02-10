@@ -10,11 +10,17 @@ import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
+import CategorySelectAsync from "@/src/components/form/CategorySelectAsync";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addManualPolicy, uploadTemporalFile } from "@/src/lib/apis";
+import {
+  addManualPolicy,
+  addManualPolicyToLead,
+  uploadLeadTemporalFile,
+  uploadTemporalFile,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -29,10 +35,16 @@ import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 
 const endpointsByModule = {
-  gestion: (body, documentType) => addManualPolicy(body, documentType),
+  gestion: (body, documentType, id) => addManualPolicy(body, documentType),
+  lead: (body, documentType, id) => addManualPolicyToLead(body, id),
 };
 
-const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
+const endpointsTemporalFileByModule = {
+  gestion: (body) => uploadTemporalFile(body),
+  lead: (body) => uploadLeadTemporalFile(body),
+};
+
+const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -48,6 +60,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
     typeId: yup.string().required(t("common:validations:required")),
     frecuenciaCobroId: yup.string().required(t("common:validations:required")),
     currencyId: yup.string().required(t("common:validations:required")),
+    fechaEmision: yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -104,14 +117,18 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
     }
 
     const body = getFormData({ file });
-    const response = await uploadTemporalFile(body);
-    console.log({ response });
-    if (response.hasError) {
-      handleFrontError(response);
-      setLoading(false);
-      return;
+
+    if (Object.keys(endpointsTemporalFileByModule).includes(module)) {
+      const response = await endpointsTemporalFileByModule[module](body);
+      console.log({ response });
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
+      setPolicy(response);
     }
-    setPolicy(response);
+
     setLoading(false);
   };
 
@@ -131,6 +148,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
       documentType,
       specifications,
       oldPoliza,
+      fechaEmision,
       ...otherData
     } = data;
     const body = {
@@ -145,6 +163,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
+      fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
     if (specifications && specifications.length > 0) {
@@ -160,7 +179,11 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
 
     try {
       if (Object.keys(endpointsByModule).includes(module)) {
-        const response = await endpointsByModule[module](body, documentType);
+        const response = await endpointsByModule[module](
+          body,
+          documentType,
+          id
+        );
         console.log({ response });
         if (response?.hasError) {
           handleFrontError(response);
@@ -256,7 +279,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
           }}
           className="bg-easywork-main"
         />
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d] overflow-y-auto">
             <div className="bg-gray-100 rounded-md p-2">
               <div className="bg-white rounded-md p-4 flex justify-between items-center">
@@ -430,6 +453,22 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
                       <InputDate
+                        label={t("operations:policies:general:fechaEmision")}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={errors.fechaEmision}
+                      />
+                    );
+                  }}
+                  name="fechaEmision"
+                  control={control}
+                  defaultValue=""
+                />
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
                         label={t("operations:policies:general:init-date")}
                         value={value}
                         onChange={onChange}
@@ -500,12 +539,19 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectInput
+                {/* <SelectInput
                   label={t("control:portafolio:receipt:details:product")}
                   name="categoryId"
                   options={lists?.policies?.polizaCategories ?? []}
                   setValue={setValue}
                   watch={watch}
+                /> */}
+                <CategorySelectAsync
+                  name={"categoryId"}
+                  label={t("control:portafolio:receipt:details:product")}
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors?.contact}
                 />
                 <SelectInput
                   label={"Moneda"}
@@ -697,6 +743,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                     className="px-4 py-2"
                     buttonStyle="secondary"
                     label="Cancelar"
+                    type="button"
                     onclick={() => {
                       handleReset();
                       setIsOpen(false);
@@ -706,7 +753,8 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                     className="px-4 py-2"
                     buttonStyle="primary"
                     label="Guardar"
-                    type="submit"
+                    type="button"
+                    onclick={handleSubmit(onSubmit)}
                     disabled={!policy}
                     // disabled
                   />

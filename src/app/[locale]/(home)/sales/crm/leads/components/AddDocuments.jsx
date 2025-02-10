@@ -64,6 +64,7 @@ const AddDocuments = ({ leadId }) => {
         isOpen={isOpenManual}
         setIsOpen={setIsOpenManual}
         module="lead"
+        id={leadId}
       />
       <Menu>
         <MenuButton className="py-2 px-4 bg-primary hover:bg-easy-500 text-white disabled:opacity-50 shadow-sm text-sm flex items-center gap-x-2 rounded-md  font-medium outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 justify-center">

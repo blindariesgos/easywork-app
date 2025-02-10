@@ -14,7 +14,12 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addManualPolicy, uploadTemporalFile } from "@/src/lib/apis";
+import {
+  addManualPolicy,
+  addManualPolicyToLead,
+  uploadLeadTemporalFile,
+  uploadTemporalFile,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -29,10 +34,16 @@ import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 
 const endpointsByModule = {
-  gestion: (body, documentType) => addManualPolicy(body, documentType),
+  gestion: (body, documentType, id) => addManualPolicy(body, documentType),
+  lead: (body, documentType, id) => addManualPolicyToLead(body, id),
 };
 
-const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
+const endpointsTemporalFileByModule = {
+  gestion: (body) => uploadTemporalFile(body),
+  lead: (body) => uploadLeadTemporalFile(body),
+};
+
+const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -104,14 +115,18 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
     }
 
     const body = getFormData({ file });
-    const response = await uploadTemporalFile(body);
-    console.log({ response });
-    if (response.hasError) {
-      handleFrontError(response);
-      setLoading(false);
-      return;
+
+    if (Object.keys(endpointsTemporalFileByModule).includes(module)) {
+      const response = await endpointsTemporalFileByModule[module](body);
+      console.log({ response });
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
+      setPolicy(response);
     }
-    setPolicy(response);
+
     setLoading(false);
   };
 
@@ -160,7 +175,11 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
 
     try {
       if (Object.keys(endpointsByModule).includes(module)) {
-        const response = await endpointsByModule[module](body, documentType);
+        const response = await endpointsByModule[module](
+          body,
+          documentType,
+          id
+        );
         console.log({ response });
         if (response?.hasError) {
           handleFrontError(response);
@@ -256,7 +275,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
           }}
           className="bg-easywork-main"
         />
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d] overflow-y-auto">
             <div className="bg-gray-100 rounded-md p-2">
               <div className="bg-white rounded-md p-4 flex justify-between items-center">
@@ -697,6 +716,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                     className="px-4 py-2"
                     buttonStyle="secondary"
                     label="Cancelar"
+                    type="button"
                     onclick={() => {
                       handleReset();
                       setIsOpen(false);
@@ -706,7 +726,8 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module }) => {
                     className="px-4 py-2"
                     buttonStyle="primary"
                     label="Guardar"
-                    type="submit"
+                    type="button"
+                    onclick={handleSubmit(onSubmit)}
                     disabled={!policy}
                     // disabled
                   />

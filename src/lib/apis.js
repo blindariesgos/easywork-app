@@ -83,6 +83,21 @@ export const getLeadCancelReazon = async () => {
     .catch((error) => ({ hasError: true, error }));
   return response;
 };
+
+export const uploadLeadTemporalFile = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/poliza/manual/upload/temp`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+export const addManualPolicyToLead = async (body, leadId) => {
+  const url = `/sales/crm/leads/poliza/manual/generate/lead/${leadId}`;
+  console.log({ url });
+  const response = await axios()
+    .post(url, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region CONTACTS

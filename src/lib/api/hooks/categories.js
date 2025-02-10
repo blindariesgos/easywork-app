@@ -1,6 +1,7 @@
 "use client";
 import useSWR from "swr";
 import fetcher from "../fetcher";
+import axios from "../../axios";
 
 const getQueries = (filters) => {
   const getRepitKeys = (key, arr) =>
@@ -23,12 +24,12 @@ const getQueries = (filters) => {
     .join("&");
 };
 
-export const useIntermediaries = ({ config = {}, filters = {} }) => {
+export const useCategories = ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/agent-management/agente-intermediario?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const url = `/sales/crm/polizas/category?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
@@ -37,4 +38,18 @@ export const useIntermediaries = ({ config = {}, filters = {} }) => {
     isError: error,
     mutate,
   };
+};
+
+export const getCategoryById = async (categoryId) => {
+  const response = await axios()
+    .get(`/sales/crm/polizas/category/${categoryId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const createCategory = async (data) => {
+  const response = await axios()
+    .post(`/sales/crm/polizas/category`, data)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
 };

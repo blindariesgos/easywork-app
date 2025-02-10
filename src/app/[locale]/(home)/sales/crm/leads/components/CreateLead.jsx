@@ -57,19 +57,6 @@ export default function CreateLead({ lead, id }) {
     setIsEdit(id ? false : true);
   }, [id]);
 
-  useEffect(() => {
-    if (!params.get("type")) return;
-
-    setType(params.get("type"));
-    setValue("typePerson", params.get("type"));
-  }, [params.get("type")]);
-
-  useEffect(() => {
-    if (params.get("edit") === "true") {
-      setIsEdit(true);
-    }
-  }, [params.get("edit")]);
-
   const schema = Yup.object().shape({
     fullName: Yup.string(),
     name: Yup.string()
@@ -288,6 +275,20 @@ export default function CreateLead({ lead, id }) {
     toast.success("Copiado en el Portapapeles");
   };
 
+  useEffect(() => {
+    console.log("params type", params.get("type"));
+    if (!params.get("type")) return;
+
+    setType(params.get("type"));
+    setValue("typePerson", params.get("type"));
+  }, [params.get("type")]);
+
+  useEffect(() => {
+    if (params.get("edit") === "true") {
+      setIsEdit(true);
+    }
+  }, [params.get("edit")]);
+
   return (
     <div
       className={clsx("flex flex-col h-screen relative w-full", {
@@ -443,7 +444,9 @@ export default function CreateLead({ lead, id }) {
                             id: "moral",
                           },
                         ]}
-                        setSelectedOption={(option) => setType(option.id)}
+                        setSelectedOption={(option) =>
+                          option?.id && setType(option.id)
+                        }
                         watch={watch}
                         name="typePerson"
                         setValue={setValue}

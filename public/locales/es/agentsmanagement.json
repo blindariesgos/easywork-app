@@ -117,7 +117,8 @@
         },
         "init-date": "Fecha de inicio del proceso",
         "end-date": "Fecha de finalización del proceso",
-        "entry-date": "Fecha de ingreso o aprobación"
+        "entry-date": "Fecha de ingreso o aprobación",
+        "select-positive": "Seleccione el resultado del reclutamiento"
     },
     "conections": {
         "title": "Conexiones",

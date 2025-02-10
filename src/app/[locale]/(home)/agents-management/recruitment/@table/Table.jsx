@@ -300,7 +300,7 @@ export default function Table() {
             />
           ))}
         </div>
-        <p className="text-sm">
+        <p className="text-sm text-center">
           {recruitmentStages?.[stageIndex]?.name ?? recruitmentStages[0].name}
         </p>
       </div>

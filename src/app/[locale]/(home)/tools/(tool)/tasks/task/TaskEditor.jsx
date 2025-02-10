@@ -1,46 +1,35 @@
-"use client";
-import { Cog8ToothIcon, FireIcon } from "@heroicons/react/20/solid";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import React, { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import useAppContext from "@/src/context/app";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { toast } from "react-toastify";
-import MultipleSelect from "@/src/components/form/MultipleSelect";
-import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
-import SubTaskSelect from "@/src/components/form/SubTaskSelect";
-import InputDateV2 from "@/src/components/form/InputDateV2";
-import { FaCalendarDays } from "react-icons/fa6";
-import DateTimeCalculator from "../components/DateTimeCalculator";
-import CheckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
-import InputCheckBox from "@/src/components/form/InputCheckBox";
-import Button from "@/src/components/form/Button";
-import { useRouter, useSearchParams } from "next/navigation";
-import OptionsTask from "../components/OptionsTask";
-import { useSession } from "next-auth/react";
-import MultiSelectTags from "../components/MultiSelectTags";
-import MultipleSelectAgentsAsync from "@/src/components/form/MultipleSelectUserAsync";
-import {
-  getContactId,
-  postTask,
-  putTaskId,
-  getLeadById,
-  getPolicyById,
-  getReceiptById,
-  getAgentById,
-  getSchedulingById,
-  getRefundById,
-  getUserById,
-} from "@/src/lib/apis";
-import { handleApiError } from "@/src/utils/api/errors";
-import { getFormatDate } from "@/src/utils/getFormatDate";
-import { useTasksConfigs } from "@/src/hooks/useCommon";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
-import IconDropdown from "@/src/components/SettingsButton";
-import { useSWRConfig } from "swr";
-import useTasksContext from "@/src/context/tasks";
+'use client';
+import { Cog8ToothIcon, FireIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import useAppContext from '@/src/context/app';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { toast } from 'react-toastify';
+import MultipleSelect from '@/src/components/form/MultipleSelect';
+import CRMMultipleSelectV2 from '@/src/components/form/CRMMultipleSelectV2';
+import SubTaskSelect from '@/src/components/form/SubTaskSelect';
+import InputDateV2 from '@/src/components/form/InputDateV2';
+import { FaCalendarDays } from 'react-icons/fa6';
+import DateTimeCalculator from '../components/DateTimeCalculator';
+import CheckBoxMultiple from '@/src/components/form/CkeckBoxMultiple';
+import InputCheckBox from '@/src/components/form/InputCheckBox';
+import Button from '@/src/components/form/Button';
+import { useRouter, useSearchParams } from 'next/navigation';
+import OptionsTask from '../components/OptionsTask';
+import { useSession } from 'next-auth/react';
+import MultiSelectTags from '../components/MultiSelectTags';
+import MultipleSelectAgentsAsync from '@/src/components/form/MultipleSelectUserAsync';
+import { getContactId, postTask, putTaskId, getLeadById, getPolicyById, getReceiptById, getAgentById, getSchedulingById, getRefundById, getUserById } from '@/src/lib/apis';
+import { handleApiError } from '@/src/utils/api/errors';
+import { getFormatDate } from '@/src/utils/getFormatDate';
+import { useTasksConfigs } from '@/src/hooks/useCommon';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+import IconDropdown from '@/src/components/SettingsButton';
+import { useSWRConfig } from 'swr';
+import useTasksContext from '@/src/context/tasks';
 
 const schemaInputs = yup.object().shape({
   name: yup.string().required(),
@@ -70,9 +59,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   const { settings } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
   const [check, setCheck] = useState(false);
-  const [value, setValueText] = useState(
-    edit?.description ?? copy?.description ?? ""
-  );
+  const [value, setValueText] = useState(edit?.description ?? copy?.description ?? '');
   const [isMeetTask, setIsMeetTask] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [checkedTime, setCheckedTime] = useState(false);
@@ -203,7 +190,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
         type,
       },
     ]);
-    setValue("name", `CRM - ${type == "poliza" ? "Póliza" : "Renovación"}: `);
+    setValue('name', `CRM - ${type == 'poliza' ? 'Póliza' : 'Renovación'}: `);
     setLoading(false);
   };
   const setCrmMeet = async agentId => {
@@ -224,17 +211,15 @@ export default function TaskEditor({ edit, copy, subtask }) {
     setIsMeetTask(true);
     const { userId, ...metadata } = data;
 
-    const user = await getUserById(userId).then((res) =>
-      res.hasError ? null : res
-    );
-    console.log("metadata user", user);
+    const user = await getUserById(userId).then(res => (res.hasError ? null : res));
+    console.log('metadata user', user);
     setValue(
       'createdBy',
       lists?.users.filter(user => user.id === data.developmentManagerId)
     );
-    user && setValue("responsible", [user]);
-    setValue("metadata", metadata);
-    setValue("name", "CRM - Junta Individual: ");
+    user && setValue('responsible', [user]);
+    setValue('metadata', metadata);
+    setValue('name', 'CRM - Junta Individual: ');
     setLoading(false);
   };
   const setCrmMeetGroup = async agentId => {
@@ -259,8 +244,53 @@ export default function TaskEditor({ edit, copy, subtask }) {
       'createdBy',
       lists?.users.filter(user => user.id === data.developmentManagerId)
     );
-    setValue("metadata", metadata);
-    setValue("name", "CRM - Junta Grupal: ");
+    setValue('metadata', metadata);
+    setValue('name', 'CRM - Junta Grupal: ');
+    setLoading(false);
+  };
+  const setCourseAssign = async courseId => {
+    const response = localStorage.getItem(courseId);
+
+    if (!response) {
+      setLoading(false);
+      return;
+    }
+
+    localStorage.removeItem(courseId);
+    const data = JSON.parse(response);
+
+    if (!data) {
+      setLoading(false);
+      return;
+    }
+
+    const { name, assignedBy, assignTo } = data;
+
+    setValue('createdBy', [assignedBy?.id]);
+    setValue('name', `Capacitación - Curso asignado: "${name}"`);
+    setValue('responsible', assignTo);
+    setLoading(false);
+  };
+  const setCoursePageAssign = async pageId => {
+    const response = localStorage.getItem(pageId);
+
+    if (!response) {
+      setLoading(false);
+      return;
+    }
+
+    localStorage.removeItem(pageId);
+    const data = JSON.parse(response);
+
+    if (!data) {
+      setLoading(false);
+      return;
+    }
+
+    const { name, assignedBy } = data;
+
+    setValue('createdBy', [assignedBy?.id]);
+    setValue('name', `Capacitación - Página asignada: "${name}"`);
     setLoading(false);
   };
   const setCrmScheduling = async schedulingId => {
@@ -304,7 +334,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    if (["poliza", "renewal"].includes(params.get("prev"))) {
+    if (['poliza', 'renewal'].includes(params.get('prev'))) {
       setLoading(true);
       setCrmPolicy(prevId, params.get('prev'));
       return;
@@ -342,12 +372,17 @@ export default function TaskEditor({ edit, copy, subtask }) {
       setCrmRefund(prevId);
       return;
     }
-    if (params.get("prev") === "course-assign") {
-      console.log("Tarea desde cursos", prevId);
+    if (params.get('prev') === 'course-assign') {
       setLoading(true);
+      setCourseAssign(prevId);
       return;
     }
-  }, [params.get("prev")]);
+    if (params.get('prev') === 'course-page-assign') {
+      setLoading(true);
+      setCoursePageAssign(prevId);
+      return;
+    }
+  }, [params.get('prev')]);
   //#endregion
 
   useEffect(() => {
@@ -435,12 +470,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
   return (
     <>
       {loading && <LoaderSpinner />}
-      <div
-        className={`col-span-12 flex flex-col ${edit ? "h-full" : "h-screen"} relative w-full ${!edit && "overflow-y-auto"}`}
-      >
-        <div
-          className={`flex flex-col flex-1 ${!edit && "bg-gray-600 shadow-xl"} opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? "sm:p-0" : "sm:p-4"}`}
-        >
+      <div className={`col-span-12 flex flex-col ${edit ? 'h-full' : 'h-screen'} relative w-full ${!edit && 'overflow-y-auto'}`}>
+        <div className={`flex flex-col flex-1 ${!edit && 'bg-gray-600 shadow-xl'} opacity-100  text-black rounded-tl-[35px] rounded-bl-[35px] p-2 ${edit ? 'sm:p-0' : 'sm:p-4'}`}>
           {(!edit ?? !copy) && (
             <div className="flex justify-between items-center py-2">
               <h1 className="text-xl font-medium">{t('tools:tasks:new:title')}</h1>
@@ -463,10 +494,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     setValue('important', e.target.checked);
                   }}
                 />
-                <p className="text-sm">{t("tools:tasks:new:high")}</p>
-                <FireIcon
-                  className={`h-5 w-5 ${check ? "text-orange-400" : "text-gray-200"}`}
-                />
+                <p className="text-sm">{t('tools:tasks:new:high')}</p>
+                <FireIcon className={`h-5 w-5 ${check ? 'text-orange-400' : 'text-gray-200'}`} />
               </div>
             </div>
             <OptionsTask
@@ -496,33 +525,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       name="responsible"
                       control={control}
                       defaultValue={[]}
-                      render={({ field }) => (
-                        <MultipleSelectAgentsAsync
-                          {...field}
-                          getValues={getValues}
-                          setValue={setValue}
-                          onlyOne
-                          name="responsible"
-                          error={errors.responsible}
-                        />
-                      )}
+                      render={({ field }) => <MultipleSelectAgentsAsync {...field} getValues={getValues} setValue={setValue} onlyOne name="responsible" error={errors.responsible} />}
                     />
                   ) : (
                     <Controller
                       name="responsible"
                       control={control}
                       defaultValue={[]}
-                      render={({ field }) => (
-                        <MultipleSelect
-                          {...field}
-                          options={lists?.users || []}
-                          getValues={getValues}
-                          setValue={setValue}
-                          onlyOne
-                          name="responsible"
-                          error={errors.responsible}
-                        />
-                      )}
+                      render={({ field }) => <MultipleSelect {...field} options={lists?.users || []} getValues={getValues} setValue={setValue} onlyOne name="responsible" error={errors.responsible} />}
                     />
                   )}
                 </div>
@@ -661,9 +671,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
               </div>
               <div className="flex gap-2 flex-wrap cursor-pointer mt-4 items-center" onClick={() => setOpenOptions({ ...openOptions, more: !openOptions.more })}>
                 <div>
-                  <ChevronDownIcon
-                    className={`w-4 h-4 ${openOptions.more && "rotate-180"} text-primary`}
-                  />
+                  <ChevronDownIcon className={`w-4 h-4 ${openOptions.more && 'rotate-180'} text-primary`} />
                 </div>
                 <div className="flex gap-2 text-sm">
                   <p className="font-medium">{t('tools:tasks:new:more')}</p>

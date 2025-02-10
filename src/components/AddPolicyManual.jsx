@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
+import CategorySelectAsync from "@/src/components/form/CategorySelectAsync";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -59,6 +60,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
     typeId: yup.string().required(t("common:validations:required")),
     frecuenciaCobroId: yup.string().required(t("common:validations:required")),
     currencyId: yup.string().required(t("common:validations:required")),
+    fechaEmision: yup.string().required(t("common:validations:required")),
   });
 
   const {
@@ -146,6 +148,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
       documentType,
       specifications,
       oldPoliza,
+      fechaEmision,
       ...otherData
     } = data;
     const body = {
@@ -160,6 +163,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
+      fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
     if (specifications && specifications.length > 0) {
@@ -449,6 +453,22 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
                       <InputDate
+                        label={t("operations:policies:general:fechaEmision")}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={errors.fechaEmision}
+                      />
+                    );
+                  }}
+                  name="fechaEmision"
+                  control={control}
+                  defaultValue=""
+                />
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
                         label={t("operations:policies:general:init-date")}
                         value={value}
                         onChange={onChange}
@@ -519,12 +539,19 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectInput
+                {/* <SelectInput
                   label={t("control:portafolio:receipt:details:product")}
                   name="categoryId"
                   options={lists?.policies?.polizaCategories ?? []}
                   setValue={setValue}
                   watch={watch}
+                /> */}
+                <CategorySelectAsync
+                  name={"categoryId"}
+                  label={t("control:portafolio:receipt:details:product")}
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors?.contact}
                 />
                 <SelectInput
                   label={"Moneda"}

@@ -15,11 +15,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import {
-  createCategory,
-  getCategoryById,
-  useCategories,
-} from "@/src/lib/api/hooks/categories";
+import { useCategories } from "@/src/lib/api/hooks/categories";
+import { createCategory, getCategoryById } from "@/src/lib/apis";
 
 function CategorySelectAsync({
   label,

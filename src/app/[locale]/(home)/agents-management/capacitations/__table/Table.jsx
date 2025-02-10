@@ -74,7 +74,9 @@ export default function Table() {
     setLoading(true);
     const response = await Promise.allSettled(selectedContacts.map(policyId => deletePolicyById(policyId)));
     if (response.some(x => x.status === 'fulfilled')) {
-      toast.success(`Se elimino con exito ${response.filter(x => x.status == 'fulfilled').length} elemento(s) de ${selectedContacts.length} seleccionado(s)`);
+      toast.success(
+        `Se elimino con éxito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
+      );
     }
 
     if (response.some(x => x.status === 'rejected')) {

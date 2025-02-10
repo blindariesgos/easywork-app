@@ -19,6 +19,7 @@
             "subbranch": "Sub-ramo",
             "type": "Ramo",
             "init-date": "Fecha de inicio de vigencia",
+            "fechaEmision": "Fecha de emisión",
             "expiration": "Fecha de vencimiento",
             "coverage": "Cobertura",
             "payment-method": "Forma de cobro",

@@ -50,7 +50,7 @@ export default function ProgressStages({ stage, leadId, disabled }) {
       mutate(`/sales/crm/leads/${leadId}/activities`);
       mutate(`/sales/crm/leads/${leadId}`);
       mutateLeads();
-      toast.success("Prospecto actualizado con exito");
+      toast.success("Prospecto actualizado con éxito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
     }
@@ -90,7 +90,7 @@ export default function ProgressStages({ stage, leadId, disabled }) {
         "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
       );
       console.log("Pro qui");
-      toast.success("Prospecto actualizado con exito");
+      toast.success("Prospecto actualizado con éxito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
     }

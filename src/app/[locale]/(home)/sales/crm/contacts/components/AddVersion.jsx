@@ -148,6 +148,15 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
               .format()
           : ""
       );
+    if (response?.fechaEmision)
+      setValue(
+        "fechaEmision",
+        response?.fechaEmision
+          ? moment(response?.fechaEmision)
+              .subtract(utcOffset, "minutes")
+              .format()
+          : ""
+      );
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)
@@ -208,6 +217,7 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
       contact,
       relatedContacts,
       regenerateReceipts,
+      fechaEmision,
       ...otherData
     } = data;
     let body = {
@@ -222,6 +232,7 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
+      fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
       regenerateReceipts: regenerateReceipts == "YES",
       name: lists
         ? `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData.typeId).name}`
@@ -248,7 +259,7 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
 
         return;
       }
-      toast.success("Poliza cargada con exito");
+      toast.success("Poliza cargada con éxito");
       setIsOpen(false);
       handleReset();
     } catch (error) {
@@ -384,6 +395,22 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
                   name="poliza"
                   register={register}
                   disabled={true}
+                />
+                <Controller
+                  render={({ field: { value, onChange, ref, onBlur } }) => {
+                    return (
+                      <InputDate
+                        label={t("operations:policies:general:fechaEmision")}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        error={errors.fechaEmision}
+                      />
+                    );
+                  }}
+                  name="fechaEmision"
+                  control={control}
+                  defaultValue=""
                 />
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {

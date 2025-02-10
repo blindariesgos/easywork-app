@@ -46,7 +46,7 @@ const Card = ({ data, minWidthClass, stageId }) => {
     try {
       setLoading(true);
       const response = await deleteLeadById(id);
-      toast.success("Prospecto(s) eliminado(s) con exito");
+      toast.success("Prospecto(s) eliminado(s) con éxito");
       mutate();
       setLoading(false);
       setIsOpenDelete(false);

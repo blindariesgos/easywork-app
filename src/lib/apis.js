@@ -427,6 +427,35 @@ export const getAllConnections = async ({
 };
 //#region
 
+//#region INTERMEDIARIES
+export const getIntermediaries = async () => {
+  const url = `/agent-management/agente-intermediario`;
+  console.log({ url });
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
+//#region CATEGORIES
+export const getCategoryById = async (categoryId) => {
+  const response = await axios()
+    .get(`/sales/crm/polizas/category/${categoryId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const createCategory = async (data) => {
+  const response = await axios()
+    .post(`/sales/crm/polizas/category`, data)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };

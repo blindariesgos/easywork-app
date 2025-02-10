@@ -39,17 +39,3 @@ export const useCategories = ({ config = {}, filters = {} }) => {
     mutate,
   };
 };
-
-export const getCategoryById = async (categoryId) => {
-  const response = await axios()
-    .get(`/sales/crm/polizas/category/${categoryId}`)
-    .catch((error) => ({ hasError: true, ...error }));
-  return response;
-};
-
-export const createCategory = async (data) => {
-  const response = await axios()
-    .post(`/sales/crm/polizas/category`, data)
-    .catch((error) => ({ hasError: true, ...error }));
-  return response;
-};

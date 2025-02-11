@@ -229,7 +229,7 @@ function CommentUser({ data, crmType, update, crmId }) {
       return;
     }
     update();
-    toast.success(pinned ? "Comentario fijado" : "Comentario desmarcado");
+    toast.success(!pinned ? "Comentario fijado" : "Comentario desmarcado");
     setLoading(false);
   };
 

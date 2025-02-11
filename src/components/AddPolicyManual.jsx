@@ -44,7 +44,7 @@ const endpointsTemporalFileByModule = {
   lead: (body) => uploadLeadTemporalFile(body),
 };
 
-const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
+const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -191,6 +191,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
           return;
         }
         toast.success("Póliza cargada con éxito");
+        onClosed && onClosed();
       }
       setIsOpen(false);
       handleReset();

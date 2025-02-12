@@ -4,8 +4,8 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import { forwardRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddDocumentDialog from "@/src/components/modals/AddDocument";
+import AddPolicyWithReader from "@/src/components/AddPolicyWithReader";
 import { useSWRConfig } from "swr";
-import AddVersion from "./AddVersion";
 
 const AddDocuments = ({ contactId }) => {
   const { t } = useTranslation();
@@ -59,7 +59,12 @@ const AddDocuments = ({ contactId }) => {
           mutate(`/sales/crm/contacts/${contactId}/activities`);
         }}
       />
-      <AddVersion isOpen={isOpen} setIsOpen={setIsOpen} contactId={contactId} />
+      <AddPolicyWithReader
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        contactId={contactId}
+        type="endoso"
+      />
       <Menu>
         <MenuButton>
           <Button

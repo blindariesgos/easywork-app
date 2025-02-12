@@ -474,6 +474,15 @@ export default function PolicyDetails({
           />
           <TextInput
             type="text"
+            label={t("operations:policies:general:specifications")}
+            error={errors.specifications}
+            register={register}
+            name="specifications"
+            disabled={!isEdit}
+            multiple
+          />
+          <TextInput
+            type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
             error={errors.observations && errors.observations.message}
             register={register}

@@ -332,5 +332,22 @@
                 "number": "Número de Siniestro"
             }
         }
+    },
+    "reader": {
+        "title": {
+            "policy": "Información general de la póliza",
+            "endoso": "Información general del Endoso o Versión de póliza",
+            "renewal": "Información general de la Renovación"
+        },
+        "subtitle": {
+            "policy": "Cargar póliza pagada",
+            "endoso": "Cargar Endoso o Versión de póliza",
+            "renewal": "Cargar Renovación pagada"
+        },
+        "read": {
+            "policy": "Leer datos de la póliza",
+            "endoso": "Leer datos de la Versión",
+            "renewal": "Leer datos de la Renovación"
+        }
     }
 }

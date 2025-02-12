@@ -164,6 +164,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
+      status: "activa",
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
     if (specifications && specifications.length > 0) {

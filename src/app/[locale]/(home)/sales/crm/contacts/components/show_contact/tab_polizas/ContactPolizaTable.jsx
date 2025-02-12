@@ -27,13 +27,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     },
   });
   const { t } = useTranslation();
-  const checkbox = useRef();
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedPolizas, setSelectedPolizas] = useState([]);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
 
   const handleSorting = (fieldToSort) => {
     if (fieldClicked.order === "ASC") {
@@ -45,10 +39,6 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
 
   const handleShowPolicy = (poliza) => {
     if (!poliza.operacion || poliza.operacion == "produccion_nueva") {
-      // const params = new URLSearchParams(searchParams);
-      // params.set("show", true);
-      // params.set("policy", poliza.id);
-      // router.replace(`${pathname}?${params.toString()}`);
       router.push(`/operations/policies/policy/${poliza.id}?show=true`);
       return;
     }
@@ -56,19 +46,6 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
       router.push(`/operations/renovations/renovation/${poliza.id}?show=true`);
     }
   };
-
-  useLayoutEffect(() => {
-    if (checkbox.current) {
-      const isIndeterminate =
-        selectedPolizas &&
-        selectedPolizas.length > 0 &&
-        selectedPolizas.length < data?.items?.length;
-      setChecked(selectedPolizas?.length === data?.items?.length);
-      setIndeterminate(isIndeterminate);
-      checkbox.current.indeterminate = isIndeterminate;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPolizas]);
 
   if ((!data || data?.items?.length === 0) && !isLoading) {
     return <PolizasEmpty />;
@@ -81,18 +58,6 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
         <table className="min-w-full rounded-md bg-gray-100 table-auto">
           <thead className="text-sm bg-white drop-shadow-sm">
             <tr className="">
-              {/* <th
-                scope="col"
-                className="relative px-7 sm:w-12 sm:px-6 rounded-s-xl"
-              >
-                <input
-                  type="checkbox"
-                  className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  ref={checkbox}
-                  checked={checked}
-                  onChange={toggleAll}
-                />
-              </th> */}
               <th
                 scope="col"
                 className="py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer "
@@ -103,7 +68,7 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                 <div className="group flex items-center pl-4">
                   <p>{t("polizas:edit:policies:table:policy")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`invisible ml-2 flex-none rounded text-primary group-hover:block group-focus:block  ${
                       fieldClicked.orderBy === "poliza" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
@@ -121,10 +86,10 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("product");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:product")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hidden flex-none rounded text-primary group-hover:block group-focus:block ${
                       fieldClicked.orderBy === "product" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
@@ -142,20 +107,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("company");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:company")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hidden flex-none rounded text-primary group-hover:block group-focus:block ${
                       fieldClicked.orderBy === "company" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
                         : ""
                     }`}
                   >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
+                    <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
                 </div>
               </th>
@@ -166,20 +128,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("estadoPoliza");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:status")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hodden flex-none rounded text-primary group-hover:block group-focus:block ${
                       fieldClicked.orderBy === "estadoPoliza" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
                         : ""
                     }`}
                   >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
+                    <ChevronDownIcon className=" h-6 w-6" aria-hidden="true" />
                   </span>
                 </div>
               </th>
@@ -190,20 +149,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("vigenciaDesde");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:start")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hidden flex-none rounded text-primary group-hover:block group-focus:block ${
                       fieldClicked.orderBy === "vigenciaDesde" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
                         : ""
                     }`}
                   >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
+                    <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
                 </div>
               </th>
@@ -214,20 +170,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("vigenciaHasta");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:expiration")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hidden flex-none rounded text-primary group-hover:block group-focus:block ${
                       fieldClicked.orderBy === "vigenciaHasta" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
                         : ""
                     }`}
                   >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
+                    <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
                 </div>
               </th>
@@ -240,20 +193,17 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("importePagar");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:amount")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hidden flex-none rounded text-primary group-hover:block group-focus:block ${
                       fieldClicked.orderBy === "importePagar" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
                         : ""
                     }`}
                   >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
+                    <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
                 </div>
               </th>
@@ -264,29 +214,34 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   handleSorting("ramo");
                 }}
               >
-                <div className="group flex items-center">
+                <div className="group flex items-center justify-center">
                   <p>{t("polizas:edit:policies:table:branch")}</p>
                   <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
+                    className={`hidden flex-none rounded text-primary group-hover:block group-focus:block  ${
                       fieldClicked.orderBy === "ramo" &&
                       fieldClicked.order === "DESC"
                         ? "transform rotate-180"
                         : ""
                     }`}
                   >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
+                    <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
+                </div>
+              </th>
+              <th
+                scope="col"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
+              >
+                <div className="group flex items-center justify-center">
+                  <p>Ruta de carga</p>
                 </div>
               </th>
               <th
                 scope="col"
                 className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
               >
-                <div className="group flex items-center">
-                  <p>Tipo</p>
+                <div className="group flex items-center justify-center">
+                  <p>Versión</p>
                 </div>
               </th>
             </tr>
@@ -305,39 +260,42 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                       {poliza.poliza}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
+                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase text-center">
                     <p>{poliza?.category?.name ?? "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
+                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase text-center">
                     <p>{poliza?.company?.name ?? "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase">
+                  <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase text-center">
                     <p>{poliza?.status ?? "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
                     <p>
                       {moment(poliza?.vigenciaDesde).utc().format("DD/MM/yyyy")}
                     </p>
                   </td>
-                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
                     <p>
                       {moment(poliza?.vigenciaHasta).utc().format("DD/MM/yyyy")}
                     </p>
                   </td>
-                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
                     <p>{`${poliza?.currency?.symbol ?? "$"} ${poliza?.importePagar ? formatToCurrency(poliza?.importePagar) : "0.00"}`}</p>
                   </td>
-                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
                     <p>{poliza?.type?.name || "S/N"}</p>
                   </td>
-                  <td className="whitespace-nowrap py-4 text-sm text-gray-400">
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
                     <p>
                       {poliza?.operacion == "cambio_version"
-                        ? `Versión - ${poliza.version}`
+                        ? `Versión`
                         : poliza?.operacion == "renovacion"
-                          ? `Renovación - ${poliza.version ?? poliza.renovacion}`
+                          ? `Renovación - ${poliza.renovacion ?? 0}`
                           : "Póliza"}
                     </p>
+                  </td>
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
+                    <p>{poliza.version ?? 0}</p>
                   </td>
                 </tr>
               ))}

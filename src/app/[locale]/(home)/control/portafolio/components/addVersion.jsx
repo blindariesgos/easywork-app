@@ -694,7 +694,11 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
                     />
                   )}
                   {watch("beneficiaries")?.length > 0 && (
-                    <Beneficiaries register={register} control={control} />
+                    <Beneficiaries
+                      register={register}
+                      control={control}
+                      setValue={setValue}
+                    />
                   )}
                   <TextInput
                     type="text"

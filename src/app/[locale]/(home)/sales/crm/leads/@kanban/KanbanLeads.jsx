@@ -66,7 +66,6 @@ const KanbanLeads = () => {
       name: "Emisión de póliza",
       color: "#234ebb",
     },
-
     {
       id: "d0332445-0863-46cb-89c5-0b1435cf280c",
       type: "cancelled",
@@ -91,7 +90,7 @@ const KanbanLeads = () => {
       filter: {
         cancelReasonId: "5d44dc64-019c-4e94-9148-87cd5e5d30ba",
       },
-      name: "Lo verá con otra persona (familiar)",
+      name: "Lo verá con otra persona",
       color: "#bb2823",
     },
     {

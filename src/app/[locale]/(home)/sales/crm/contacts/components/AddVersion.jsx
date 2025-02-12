@@ -27,6 +27,8 @@ import TextInput from "@/src/components/form/TextInput";
 import moment from "moment";
 import clsx from "clsx";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import Insureds from "@/src/components/policyAdds/Insureds";
+import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 
 const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
   const [loading, setLoading] = useState(false);
@@ -537,111 +539,20 @@ const AddVersion = ({ isOpen, setIsOpen, contactId }) => {
                     )?.symbol ?? ""
                   }
                 />
-                {insureds && insureds.length > 0 && (
-                  <div className="grid gap-y-1">
-                    <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-                      Asegurados
-                    </label>
-                    {insureds.map((beneficiary, index) => (
-                      <div
-                        key={index}
-                        className={clsx(
-                          "grid gap-1 border rounded-md py-2 pl-2 relative",
-                          {
-                            "pr-8": insureds.length > 1,
-                            "pr-2": insureds.length == 1,
-                          }
-                        )}
-                      >
-                        <FaTrash
-                          className={clsx(
-                            "text-red-800 w-4 h-4 absolute right-2 cursor-pointer top-2",
-                            {
-                              hidden: insureds.length == 1,
-                            }
-                          )}
-                          onClick={() => removeInsureds(index)}
-                        />
-                        <p className="text-xs">Nombre completo</p>
-                        <p className="text-xs bg-white py-1 px-2 rounded-md">
-                          {beneficiary?.insured?.fullName ?? "No disponible"}
-                        </p>
-                        <div className="grid grid-cols-2 gap-1">
-                          <div className="grid gap-1">
-                            <p className="text-xs">Edad de Contratación</p>
-                            <p className="text-xs bg-white py-1 px-2 rounded-md">
-                              {beneficiary?.metadata?.edadContratacion}
-                            </p>
-                          </div>
-                          <div className="grid gap-1">
-                            <p className="text-xs">Tipo de riesgo</p>
-                            <p className="text-xs bg-white py-1 px-2 rounded-md">
-                              {beneficiary?.metadata?.tipoRiesgo}
-                            </p>
-                          </div>
-                          <div className="grid gap-1">
-                            <p className="text-xs">Es fumador</p>
-                            <p className="text-xs bg-white py-1 px-2 rounded-md">
-                              {beneficiary?.metadata?.fumador ? "Si" : "No"}
-                            </p>
-                          </div>
-                          <div className="grid gap-1">
-                            <p className="text-xs">Código</p>
-                            <p className="text-xs bg-white py-1 px-2 rounded-md">
-                              {beneficiary?.insured?.codigo ? "Si" : "No"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {watch("insureds")?.length > 0 && (
+                  <Insureds
+                    register={register}
+                    control={control}
+                    watch={watch}
+                    setValue={setValue}
+                  />
                 )}
-                {beneficiaries && beneficiaries.length > 0 && (
-                  <div className="grid gap-y-1">
-                    <label className="block text-sm font-medium leading-6 text-gray-900 px-3">
-                      Beneficiarios
-                    </label>
-                    {beneficiaries.map((beneficiary, index) => (
-                      <div
-                        key={index}
-                        className={clsx(
-                          "grid gap-1 border rounded-md py-2 pl-2 relative",
-                          {
-                            "pr-8": beneficiaries.length > 1,
-                            "pr-2": beneficiaries.length == 1,
-                          }
-                        )}
-                      >
-                        <FaTrash
-                          className={clsx(
-                            "text-red-800 w-4 h-4 absolute right-2 cursor-pointer top-2",
-                            {
-                              hidden: beneficiaries.length == 1,
-                            }
-                          )}
-                          onClick={() => removeBeneficiaries(index)}
-                        />
-                        <p className="text-xs">Nombre completo</p>
-                        <p className="text-xs bg-white py-1 px-2 rounded-md">
-                          {beneficiary.nombre}
-                        </p>
-                        <div className="grid grid-cols-2 gap-1">
-                          <div className="grid gap-1">
-                            <p className="text-xs">Parentesco</p>
-                            <p className="text-xs bg-white py-1 px-2 rounded-md">
-                              {beneficiary.parentesco}
-                            </p>
-                          </div>
-                          <div className="grid gap-1">
-                            <p className="text-xs">Porcentaje</p>
-                            <p className="text-xs bg-white py-1 px-2 rounded-md">
-                              {beneficiary.porcentaje}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {watch("beneficiaries")?.length > 0 && (
+                  <Beneficiaries
+                    register={register}
+                    control={control}
+                    setValue={setValue}
+                  />
                 )}
 
                 <SelectInput

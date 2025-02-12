@@ -168,6 +168,7 @@ export const activitySectors = [
   "Servicios de entretenimiento",
   "Servicios de información",
   "Servicios de investigación y desarrollo",
+  "Servicios de protección y custodia",
   "Servicios de salud",
   "Servicios de tecnología",
   "Servicios educativos",
@@ -176,4 +177,56 @@ export const activitySectors = [
   "Silvicultura",
   "Transporte",
   "Turismo",
+  "Otros",
+];
+
+export const CancelLeadReasons = [
+  {
+    id: "d0332445-0863-46cb-89c5-0b1435cf280c",
+    name: "Cancela cita y no reagenda",
+  },
+  {
+    id: "eb8ffdd1-b5a4-41ce-ba94-eb5522cbcc64",
+    name: "Documentos incompletos",
+  },
+  {
+    id: "5d44dc64-019c-4e94-9148-87cd5e5d30ba",
+    name: "Lo verá con otra persona",
+  },
+  {
+    id: "02f438aa-9298-420f-804e-62ee3559b777",
+    name: "No aprobado por aseguradora",
+  },
+  {
+    id: "e304b128-4ba6-4157-b6cb-656a6cdec85b",
+    name: "No contesta",
+  },
+  {
+    id: "dd3b68cd-4676-4bcc-899c-160e0ef2bbdd",
+    name: "No le interesó",
+  },
+  {
+    id: "95b06de4-afb5-42c9-8205-fa072e5a1c29",
+    name: "No reagendó cita",
+  },
+  {
+    id: "d1cf3051-ecb4-41da-864f-c2c01877ad58",
+    name: "No tiene recursos",
+  },
+  {
+    id: "3ccd0900-ebcc-45d0-a7bf-a3f4aa7b7248",
+    name: "Otro motivo no específico",
+  },
+  {
+    id: "4983f65d-b000-4406-821a-929ba1dca6d7",
+    name: "Pidió retomar en otra fecha",
+  },
+  {
+    id: "21ddc533-6c53-42c9-b088-c544222c9fcd",
+    name: "Precio",
+  },
+  {
+    id: "195e1b3d-d2dc-44a8-89c9-12017a9044f7",
+    name: "Póliza emitida - anulada aseguradora",
+  },
 ];

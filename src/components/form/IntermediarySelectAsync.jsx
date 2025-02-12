@@ -162,7 +162,7 @@ function IntermediarySelectAsync({
           <ComboboxInput
             placeholder={placeholder}
             className={clsx(
-              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ",
+              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm uppercase",
               {
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
@@ -214,7 +214,7 @@ function IntermediarySelectAsync({
                 <ComboboxOption
                   key={option.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 ${
+                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 uppercase ${
                       active ? "bg-primary text-white" : "text-gray-900"
                     }`
                   }

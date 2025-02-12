@@ -394,6 +394,8 @@ export default function ReceiptEditor({ data, id }) {
                     { id: "efectivo", name: "Efectivo" },
                     { id: "tarjeta_credito", name: "Tarjeta de crédito" },
                     { id: "tarjeta_debito", name: "Tarjeta de débito" },
+                    { id: "cheque", name: "Cheque" },
+                    { id: "transferencia", name: "Transferencia" },
                   ]}
                   disabled={!isEdit}
                   register={register}

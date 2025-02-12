@@ -191,7 +191,7 @@ export const getPolicyById = async (id) => {
 export const addPolicyByPdf = async (body, category = "nueva") => {
   const response = await axios()
     .post(`/operations/management/poliza/new?category=${category}`, body)
-    .catch((error) => ({ error, hasError: true }));
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 
@@ -1056,7 +1056,7 @@ export const convertLeadToClient = async (leadId, body) => {
 export const addPolicyVersionByContact = async (contactId, body) => {
   const response = await axios()
     .post(`/sales/crm/contacts/poliza/upload/contact/${contactId}`, body)
-    .catch((error) => ({ error, hasError: true }));
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 

@@ -15,7 +15,12 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { addPolicyByPdf, getMetadataOfPdf } from "@/src/lib/apis";
+import {
+  addPolicyByPdf,
+  addPolicyVersionByContact,
+  getMetadataOfPdf,
+  getMetadataOfPdfVersion,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputCurrency from "@/src/components/form/InputCurrency";
@@ -26,8 +31,26 @@ import clsx from "clsx";
 import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import { handleFrontError } from "../utils/api/errors";
 
-const AddRenovation = ({ isOpen, setIsOpen }) => {
+const getMetadataUrl = {
+  policy: (data, contactId) => getMetadataOfPdf("nueva", data),
+  renewal: (data, contactId) => getMetadataOfPdf("renovacion", data),
+  endoso: (data, contactId) => getMetadataOfPdfVersion(data, contactId),
+};
+
+const addPolicyUrl = {
+  policy: (data, contactId) => addPolicyByPdf(data),
+  renewal: (data, contactId) => addPolicyByPdf(data, "renovacion"),
+  endoso: (data, contactId) => addPolicyVersionByContact(contactId, data),
+};
+
+const AddPolicyWithReader = ({
+  isOpen,
+  setIsOpen,
+  contactId,
+  type = "policy",
+}) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -53,12 +76,13 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
         then: (schema) => schema.required(t("common:formValidator:required")),
         otherwise: (schema) => schema,
       }),
-
     contactId: yup.string(),
     typeId: yup.string().required(t("common:validations:required")),
     assignedById: yup.string().required(t("common:validations:required")),
     observerId: yup.string().required(t("common:validations:required")),
+    subAgente: yup.object().shape({}),
     isNewContact: yup.bool().default(false),
+    polizaFileId: yup.string().required(t("common:validations:required")),
     poliza: yup.string().required(t("common:validations:required")),
     typePerson: yup.string().required(t("common:validations:required")),
     vigenciaDesde: yup.string().required(t("common:validations:required")),
@@ -66,7 +90,6 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     companyId: yup.string().required(t("common:validations:required")),
     currencyId: yup.string().required(t("common:validations:required")),
     primaNeta: yup.string().required(t("common:validations:required")),
-    version: yup.string().required(t("common:validations:required")),
     derechoPoliza: yup.string().default("0"),
     iva: yup.string().default("0"),
     importePagar: yup.string().required(t("common:validations:required")),
@@ -127,7 +150,9 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
 
     const formData = new FormData();
     formData.append("poliza", file);
-    const response = await getMetadataOfPdf("renovacion", formData);
+    const response = await getMetadataUrl[type](formData, contactId).catch(
+      (error) => console.log({ error })
+    );
     console.log(response);
 
     if (response?.hasError) {
@@ -192,15 +217,10 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       setValue("frecuenciaCobroId", response?.frecuenciaCobro?.id);
     if (response?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", response?.agenteIntermediario?.id);
-    // if (response?.observations) setValue("observations", response?.observations);
     if (response?.currency?.name)
       setValue("currencyId", response?.currency?.id);
     if (response?.plazoPago) setValue("plazoPago", response?.plazoPago);
-    // if (response?.assignedBy) setValue("assignedById", response?.assignedBy?.id);
-    // if (response?.contact?.address) setValue("address", response?.contact?.address);
-    // if (response?.contact?.rfc) setValue("rfc", response?.contact?.rfc);
     if (response?.type?.id) setValue("typeId", response?.type?.id);
-    if (response?.version) setValue("version", response?.version);
     setValue(
       "importePagar",
       response?.importePagar?.toFixed(2) ?? (0).toFixed(2)
@@ -219,17 +239,26 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
     if (response?.beneficiaries)
       setValue("beneficiaries", response?.beneficiaries);
     if (response?.insureds) setValue("insureds", response?.insureds);
-    setValue("fechaEmision", response?.fechaEmision);
     setValue("plan", response?.plan);
     setValue("movementDescription", response?.movementDescription);
-    setValue("conductoPagoId", response?.conductoPago.id);
-    setValue("polizaFileId", response?.polizaFileId);
-    setValue("status", response?.status);
+    setValue("conductoPagoId", response?.conductoPago?.id);
+    setValue(
+      "polizaFileId",
+      type == "endoso" ? response?.polizaFileId?.id : response?.polizaFileId
+    );
+    setValue("status", "activa");
+    setValue("version", response?.version ?? 0);
+    setValue("operacion", response?.operacion);
+    setValue("renewal", !!response?.renewal);
     setValue("metadata", response?.metadata);
     setValue("categoryId", response?.category?.id);
 
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue("relatedContacts", response?.relatedContacts);
+    }
+
+    if (type == "endoso") {
+      setValue("regenerateReceipts", "NO");
     }
 
     reader.readAsDataURL(file);
@@ -246,17 +275,17 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       vigenciaDesde,
       vigenciaHasta,
       recargoFraccionado,
+      relatedContacts,
       version,
       contact,
-      relatedContacts,
       specifications,
+      regenerateReceipts,
       fechaEmision,
       ...otherData
     } = data;
     const body = {
       ...otherData,
-      operacion: "renovacion",
-      renewal: true,
+      version: version ? +version : 0,
       iva: iva ? +iva : 0,
       primaNeta: primaNeta ? +primaNeta : 0,
       importePagar: importePagar ? +importePagar : 0,
@@ -265,28 +294,24 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
-      version: version ? +version : 0,
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
 
     if (specifications && specifications.length > 0) {
       body.specifications = specifications;
     }
+
+    if (type == "endoso") {
+      body.regenerateReceipts = regenerateReceipts == "YES";
+    }
+
     console.log({ body });
+
     try {
-      const response = await addPolicyByPdf(body, "renovacion");
+      const response = await addPolicyUrl[type](body, contactId);
       console.log({ response });
       if (response?.hasError) {
-        if (Array.isArray(response?.error?.message)) {
-          response?.error?.message.forEach((message) => {
-            toast.error(message);
-          });
-        } else {
-          toast.error(
-            response?.error?.message ??
-              "Se ha producido un error cargar la poliza, inténtelo de nuevo mas tarde."
-          );
-        }
+        handleFrontError(response);
         setLoading(false);
 
         return;
@@ -325,21 +350,20 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
           <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d] overflow-y-auto">
             <div className="bg-gray-100 rounded-md p-2">
               <div className="bg-white rounded-md p-4 flex justify-between items-center">
-                <p>Información general de la Renovación</p>
-                {/* <RiPencilFill className="w-4 h-4 text-primary" /> */}
+                <p>{t(`operations:reader:title:${type}`)}</p>
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
                 <div className="w-full">
                   <label
                     className={`block text-sm font-medium leading-6 text-gray-900`}
                   >
-                    Cargar Renovación pagada
+                    {t(`operations:reader:subtitle:${type}`)}
                   </label>
                   <label
                     htmlFor="policy-file"
                     className="bg-primary rounded-md group cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
                   >
-                    <p>Leer datos de la Renovación</p>
+                    <p>{t(`operations:reader:read:${type}`)}</p>
                   </label>
                   <input
                     type="file"
@@ -354,7 +378,8 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
                       {errors?.polizaFileId?.message}
                     </p>
                   )}
-                  <p className="text-xs italic text-center pt-2 text-gray-700">
+
+                  <p className="text-xs italic pt-2 text-gray-700">
                     <span className="font-bold">Selecciona un PDF: </span>
                     (Versión Beta para Chubb/Quálitas/GNP/AXA - en el Ramo
                     Autos)
@@ -523,13 +548,6 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
                             multiple
                             rows={2}
                           />
-                          {/* <InputDate
-                              label={t("contacts:create:born-date")}
-                              name="newContact.birthdate"
-                              error={errors.birthdate}
-                              register={register}
-                              disabled
-                            /> */}
                         </TabPanel>
                       </TabPanels>
                     </TabGroup>
@@ -540,12 +558,14 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
                     name="poliza"
                     register={register}
                   />
-                  <TextInput
-                    type="text"
-                    label={"Versión"}
-                    name="version"
-                    register={register}
-                  />
+                  {watch && ["renovacion"].includes(watch("operacion")) && (
+                    <TextInput
+                      type="text"
+                      label={"Versión"}
+                      name="version"
+                      register={register}
+                    />
+                  )}
                   <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
@@ -687,16 +707,24 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
                       )?.symbol ?? ""
                     }
                   />
+
                   {watch("insureds")?.length > 0 && (
                     <Insureds
                       register={register}
                       control={control}
                       watch={watch}
                       setValue={setValue}
+                      isAdd
                     />
                   )}
                   {watch("beneficiaries")?.length > 0 && (
-                    <Beneficiaries register={register} control={control} />
+                    <Beneficiaries
+                      register={register}
+                      control={control}
+                      setValue={setValue}
+                      isAdd
+                      watch={watch}
+                    />
                   )}
                   <TextInput
                     type="text"
@@ -707,56 +735,31 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
                     multiple
                     rows={3}
                   />
+                  {type == "endoso" && (
+                    <SelectInput
+                      label={"Generar Recibos"}
+                      name="regenerateReceipts"
+                      options={[
+                        {
+                          name: "No",
+                          id: "NO",
+                        },
+                        {
+                          name: "Si",
+                          id: "YES",
+                        },
+                      ]}
+                      register={register}
+                      setValue={setValue}
+                      watch={watch}
+                      helperText={
+                        watch("regenerateReceipts") == "NO"
+                          ? "El sistema realizará los cálculos para generar nuevos recibos en base a los montos expresados en la póliza (Se sobreescribirá los recibos existentes)"
+                          : "El sistema trabajará con los recibos previamentes cargados/generados de la póliza que ya está guardada"
+                      }
+                    />
+                  )}
                 </Fragment>
-
-                {/* <SelectSubAgent
-                  label={t("control:portafolio:control:form:subAgente")}
-                  name="subAgente"
-                  register={register}
-                  setValue={setValue}
-                  watch={watch}
-                  error={errors?.subAgente}
-                  helperText={helpers?.subAgent}
-                /> */}
-
-                {/* {policy && ( */}
-                {/* <Fragment> */}
-
-                {/* {response?.type?.name === "GMM" && (
-                  <SelectInput
-                    label={t("operations:policies:general:coverage")}
-                    options={[
-                      {
-                        id: "Nacional",
-                        name: "Nacional",
-                      },
-                      {
-                        id: "Internacional",
-                        name: "Internacional",
-                      },
-                    ]}
-                    name="cobertura"
-                    register={register}
-                    setValue={setValue}
-                    disabled
-                    watch={watch}
-                  />
-                )} */}
-
-                {/* {response?.type?.name === "VIDA" && (
-                      <SelectInput
-                        label={t("operations:policies:general:subbranch")}
-                        name="subramoId"
-                        options={lists?.policies?.polizaSubRamo ?? []}
-                        
-                        register={register}
-                        setValue={setValue}
-                        watch={watch}
-                      />
-                    )} */}
-
-                {/* </Fragment> */}
-                {/* )} */}
 
                 <div className="w-full flex justify-center gap-4 py-4">
                   <Button
@@ -785,4 +788,4 @@ const AddRenovation = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AddRenovation;
+export default AddPolicyWithReader;

@@ -16,9 +16,12 @@ import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
 import useLeadContext from "@/src/context/leads";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { handleFrontError } from "@/src/utils/api/errors";
+import ManualPolicyUpload from "./ManualPolicyUpload";
 
 export default function ProgressStages({ stage, leadId, disabled }) {
-  const { isOpen, setIsOpen } = useLeads();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpload, setIsOpenUpload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
   const { lists } = useAppContext();
@@ -61,10 +64,15 @@ export default function ProgressStages({ stage, leadId, disabled }) {
     setLoading(true);
     const response = await getPolizaLeadData(leadId);
     if (response.hasError) {
-      toast.error(
-        response?.message ??
-          "Se ha producido un error al actualizar el prospecto, inténtelo de nuevo."
-      );
+      console.log({ response });
+      if (response.statusCode == 404) {
+        setIsOpen(false);
+        setIsOpenUpload(true);
+        setLoading(false);
+        return;
+      }
+      handleFrontError(response);
+      setLoading(false);
       return;
     }
 
@@ -89,7 +97,6 @@ export default function ProgressStages({ stage, leadId, disabled }) {
       mutateContext(
         "/sales/crm/leads?limit=5&page=1&orderBy=createdAt&order=DESC"
       );
-      console.log("Pro qui");
       toast.success("Prospecto actualizado con éxito");
     } catch {
       toast.error("Ocurrio un error al actualizar el estado");
@@ -100,6 +107,19 @@ export default function ProgressStages({ stage, leadId, disabled }) {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
+      <ManualPolicyUpload
+        isOpen={isOpenUpload}
+        setIsOpen={setIsOpenUpload}
+        leadId={leadId}
+      />
+      <DialogPositiveStage
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        setSelectedReason={setSelectedReason}
+        selectedReason={selectedReason}
+        handleSubmitCancel={handleSubmitNegativeStage}
+        handleAddPolicy={handleAddPolicy}
+      />
       <div
         className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${lists?.listLead?.leadStages ? `lg:grid-cols-${lists?.listLead?.leadStages?.length + 1}` : "lg:grid-cols-6"} gap-1`}
       >
@@ -179,14 +199,6 @@ export default function ProgressStages({ stage, leadId, disabled }) {
             </p>
           </div>
         </div>
-        <DialogPositiveStage
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          setSelectedReason={setSelectedReason}
-          selectedReason={selectedReason}
-          handleSubmitCancel={handleSubmitNegativeStage}
-          handleAddPolicy={handleAddPolicy}
-        />
       </div>
     </Fragment>
   );

@@ -7,7 +7,7 @@ import Button from "@/src/components/form/Button";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 
-const Beneficiaries = ({ register, control, isAdd, watch }) => {
+const Beneficiaries = ({ register, control, isAdd, watch, setValue }) => {
   const { t } = useTranslation();
   const { fields, remove, append } = useFieldArray({
     control,
@@ -28,6 +28,12 @@ const Beneficiaries = ({ register, control, isAdd, watch }) => {
       type: "Principal",
     });
   };
+
+  useEffect(() => {
+    fields.map((_, index) => {
+      setValue && setValue(`beneficiaries[${index}].type`, "Principal");
+    });
+  }, []);
 
   return (
     <div className="grid gap-y-1">
@@ -80,7 +86,6 @@ const Beneficiaries = ({ register, control, isAdd, watch }) => {
                 name={`beneficiaries[${index}].type`}
                 register={register}
                 small
-                value={"Principal"}
               />
             </div>
           </div>

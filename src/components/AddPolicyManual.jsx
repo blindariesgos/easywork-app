@@ -44,7 +44,7 @@ const endpointsTemporalFileByModule = {
   lead: (body) => uploadLeadTemporalFile(body),
 };
 
-const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
+const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -164,6 +164,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
+      status: "activa",
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
     if (specifications && specifications.length > 0) {
@@ -191,6 +192,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id }) => {
           return;
         }
         toast.success("Póliza cargada con éxito");
+        onClosed && onClosed();
       }
       setIsOpen(false);
       handleReset();

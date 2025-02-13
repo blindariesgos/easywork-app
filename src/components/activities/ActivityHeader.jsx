@@ -53,7 +53,7 @@ export default function ActivityHeader({
     },
     {
       name: t("contacts:create:activities:zoom"),
-      hidden: contactType == "moral" || ["receipt", "agent"].includes(crmType),
+      hidden: contactType == "moral" || ["receipt"].includes(crmType),
     },
     {
       name: t("contacts:create:activities:meet"),

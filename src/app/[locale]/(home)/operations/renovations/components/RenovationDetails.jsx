@@ -163,7 +163,7 @@ export default function RenovationDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-sm">
-                    {moment(data?.vigenciaDesde).utc().format("DD/MM/YYYY")}
+                    {moment(data?.vigenciaHasta).utc().format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

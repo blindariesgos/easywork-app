@@ -424,7 +424,7 @@ export default function ReceiptEditor({ data, id }) {
                   setValue={setValue}
                   watch={watch}
                 />
-                <Controller
+                {/* <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
                       <InputDate
@@ -441,7 +441,7 @@ export default function ReceiptEditor({ data, id }) {
                   }}
                   name="startDate"
                   control={control}
-                />
+                /> */}
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (

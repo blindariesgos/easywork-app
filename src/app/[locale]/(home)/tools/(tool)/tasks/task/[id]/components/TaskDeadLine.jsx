@@ -81,8 +81,6 @@ const TaskDeadLine = ({ task, disabled }) => {
       await mutate(`/tools/tasks/${task?.id}`);
     } catch (error) {
       handleApiError(error.message);
-    } finally {
-      setIsEditing(false);
     }
 
     setSelectedDate(null);

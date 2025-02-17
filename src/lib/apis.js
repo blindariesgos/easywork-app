@@ -282,6 +282,13 @@ export const createAgentIntermediary = async (data) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const getAgentFolders = async (agentId) => {
+  const response = await axios()
+    .get(`/agent-management/agents/${agentId}/document_folder`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region MEETS

@@ -98,6 +98,13 @@ export const addManualPolicyToLead = async (body, leadId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+export const closeLeadManualSale = async (leadId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/${leadId}/close-sale-manual`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region CONTACTS
@@ -280,6 +287,13 @@ export const createAgentIntermediary = async (data) => {
   const response = await axios()
     .post("/agent-management/agente-intermediario", data)
     .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getAgentFolders = async (agentId) => {
+  const response = await axios()
+    .get(`/agent-management/agents/${agentId}/document_folder`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 //#endregion

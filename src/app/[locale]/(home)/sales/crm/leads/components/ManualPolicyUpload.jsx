@@ -12,9 +12,11 @@ import AddPolicyManual from "@/src/components/AddPolicyManual";
 import { toast } from "react-toastify";
 import useLeadContext from "@/src/context/leads";
 import { useSWRConfig } from "swr";
+import ConnectToPolicy from "./ConnectToPolicy";
 
 const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId }) => {
   const [isOpenUpload, setIsOpenUpload] = useState(false);
+  const [isOpenConnect, setIsOpenConnect] = useState(false);
   const { mutate: mutateLeads } = useLeadContext();
   const { mutate } = useSWRConfig();
 
@@ -34,6 +36,11 @@ const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId }) => {
         module="lead"
         id={leadId}
         onClosed={handleClosed}
+      />
+      <ConnectToPolicy
+        isOpen={isOpenConnect}
+        setIsOpen={setIsOpenConnect}
+        leadId={leadId}
       />
       <Dialog
         open={isOpen}
@@ -56,13 +63,6 @@ const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId }) => {
             </div>
             <div className="flex gap-4 justify-end">
               <Button
-                label={"Cancelar"}
-                buttonStyle="secondary"
-                className="px-4 py-2"
-                type="button"
-                onclick={() => setIsOpen(false)}
-              />
-              <Button
                 label={"Sí, cargar manualmente"}
                 buttonStyle="primary"
                 className="px-4 py-2"
@@ -71,6 +71,39 @@ const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId }) => {
                   setIsOpen(false);
                   setIsOpenUpload(true);
                 }}
+              />
+            </div>
+            <div className="py-4">
+              <p>
+                ¿Ya tiene una póliza cargada y necesita hacer una conversión
+                simbólica para vincular con el contacto?
+              </p>
+            </div>
+            <div className="flex gap-4 justify-end">
+              <Button
+                label={"Sí, ya existe contacto con póliza cargada"}
+                buttonStyle="primary"
+                className="px-4 py-2"
+                type="button"
+                onclick={() => {
+                  setIsOpen(false);
+                  setIsOpenConnect(true);
+                }}
+              />
+            </div>
+            <div className="py-4">
+              <p>
+                Si no se encuentra en ninguno de los casos anteriores, proceda a
+                cancelar
+              </p>
+            </div>
+            <div className="flex gap-4 justify-end">
+              <Button
+                label={"Cancelar"}
+                buttonStyle="secondary"
+                className="px-4 py-2"
+                type="button"
+                onclick={() => setIsOpen(false)}
               />
             </div>
           </DialogPanel>

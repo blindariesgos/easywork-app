@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { clsx } from "clsx";
 import General from "./tabs/General";
-
+import AgentFolder from "./AgentFolders";
 import { TabGroup, TabPanel, TabPanels } from "@headlessui/react";
 
 export default function AgentEditor({ agent, id, children, type, handleAdd }) {
@@ -44,6 +44,11 @@ export default function AgentEditor({ agent, id, children, type, handleAdd }) {
       value: 4,
       module: "mettings",
       disabled: true,
+    },
+    {
+      name: "Documentos",
+      value: 5,
+      module: "documents",
     },
   ];
 
@@ -105,6 +110,11 @@ export default function AgentEditor({ agent, id, children, type, handleAdd }) {
           </TabPanel>
           <TabPanel></TabPanel>
           <TabPanel></TabPanel>
+          <TabPanel></TabPanel>
+          <TabPanel></TabPanel>
+          <TabPanel>
+            <AgentFolder id={id} />
+          </TabPanel>
         </TabPanels>
       </TabGroup>
     </Fragment>

@@ -98,6 +98,13 @@ export const addManualPolicyToLead = async (body, leadId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+export const closeLeadManualSale = async (leadId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/${leadId}/close-sale-manual`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region CONTACTS

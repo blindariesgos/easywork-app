@@ -285,7 +285,7 @@ export default function Table() {
 
   const renderStage = (status) => {
     const color =
-      renovationStages?.find((stage) => stage.id == status).color ??
+      renovationStages?.find((stage) => stage.id == status)?.color ??
       renovationStages[0].color;
 
     const stageIndex = status
@@ -304,7 +304,7 @@ export default function Table() {
           ))}
         </div>
         <p className="text-sm text-center">
-          {renovationStages?.find((stage) => stage.id == status).name ??
+          {renovationStages?.find((stage) => stage.id == status)?.name ??
             renovationStages[0].name}
         </p>
       </div>

@@ -177,6 +177,15 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
               .format()
           : ""
       );
+    if (response?.fechaEmision)
+      setValue(
+        "fechaEmision",
+        response?.fechaEmision
+          ? moment(response?.fechaEmision)
+              .subtract(utcOffset, "minutes")
+              .format()
+          : ""
+      );
     if (response?.formaCobro?.name)
       setValue("formaCobroId", response?.formaCobro?.id);
     if (response?.frecuenciaCobro?.name)
@@ -238,6 +247,7 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
       contact,
       relatedContacts,
       specifications,
+      fechaEmision,
       ...otherData
     } = data;
     const body = {
@@ -251,6 +261,7 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
       recargoFraccionado: recargoFraccionado ? +recargoFraccionado : 0,
       vigenciaDesde: moment(vigenciaDesde).format("YYYY-MM-DD"),
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
+      fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
       version: version ? +version : 0,
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
@@ -277,7 +288,7 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
 
         return;
       }
-      toast.success("Poliza cargada con exito");
+      toast.success("Poliza cargada con éxito");
       setIsOpen(false);
       handleReset();
     } catch (error) {
@@ -537,6 +548,22 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
+                          label={t("operations:policies:general:fechaEmision")}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          error={errors.fechaEmision}
+                        />
+                      );
+                    }}
+                    name="fechaEmision"
+                    control={control}
+                    defaultValue=""
+                  />
+                  <Controller
+                    render={({ field: { value, onChange, ref, onBlur } }) => {
+                      return (
+                        <InputDate
                           label={t("operations:policies:general:init-date")}
                           value={value}
                           onChange={onChange}
@@ -667,7 +694,11 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
                     />
                   )}
                   {watch("beneficiaries")?.length > 0 && (
-                    <Beneficiaries register={register} control={control} />
+                    <Beneficiaries
+                      register={register}
+                      control={control}
+                      setValue={setValue}
+                    />
                   )}
                   <TextInput
                     type="text"

@@ -76,13 +76,17 @@ export const useTaskComments = (id) => {
   };
 };
 
-export const useComments = (urlBase, id) => {
-  const { data, error, isLoading } = useSWR(`${urlBase}${id}`, fetcher);
+export const useComments = (urlBase, id, limit) => {
+  const { data, error, isLoading, mutate } = useSWR(
+    `${urlBase}${id}?limit=${limit}`,
+    fetcher
+  );
 
   return {
     comments: data,
     isLoading,
     isError: error,
+    mutate,
   };
 };
 

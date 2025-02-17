@@ -163,7 +163,7 @@ export default function RenovationDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:date")}:
                   </p>
                   <p className="text-sm">
-                    {moment(data?.vigenciaDesde).utc().format("DD/MM/YYYY")}
+                    {moment(data?.vigenciaHasta).utc().format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export default function RenovationDetails({ data, id, mutate }) {
               <div className="flex items-center gap-2">
                 <Menu>
                   <MenuButton
-                    className={"py-2 px-3 rounded-lg cursor-pointer"}
+                    className={"py-2 px-3 rounded-lg cursor-pointer text-white"}
                     style={{
                       background:
                         renovationStages.find(

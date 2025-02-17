@@ -19,6 +19,7 @@
             "subbranch": "Sub-ramo",
             "type": "Ramo",
             "init-date": "Fecha de inicio de vigencia",
+            "fechaEmision": "Fecha de emisión",
             "expiration": "Fecha de vencimiento",
             "coverage": "Cobertura",
             "payment-method": "Forma de cobro",
@@ -330,6 +331,23 @@
                 "paymentForm": "Forma de pago",
                 "number": "Número de Siniestro"
             }
+        }
+    },
+    "reader": {
+        "title": {
+            "policy": "Información general de la póliza",
+            "endoso": "Información general del Endoso o Versión de póliza",
+            "renewal": "Información general de la Renovación"
+        },
+        "subtitle": {
+            "policy": "Cargar póliza pagada",
+            "endoso": "Cargar Endoso o Versión de póliza",
+            "renewal": "Cargar Renovación pagada"
+        },
+        "read": {
+            "policy": "Leer datos de la póliza",
+            "endoso": "Leer datos de la Versión",
+            "renewal": "Leer datos de la Renovación"
         }
     }
 }

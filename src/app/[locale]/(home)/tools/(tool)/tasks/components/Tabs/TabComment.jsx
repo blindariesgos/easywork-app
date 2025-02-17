@@ -195,7 +195,7 @@ export default function TabComment({ info, type = "task" }) {
 
     mutate(`${urls.get[type]}${info.id}`);
     setLoading(false);
-    toast.success("Adjunto eliminado con exito");
+    toast.success("Adjunto eliminado con éxito");
   };
 
   if (isLoading)

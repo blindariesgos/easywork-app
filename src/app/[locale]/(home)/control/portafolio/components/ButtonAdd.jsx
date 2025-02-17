@@ -2,12 +2,12 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import AddPolicy from "./addPolicy";
 import AddPolicyManual from "@/src/components/AddPolicyManual";
+import AddPolicyWithReader from "@/src/components/AddPolicyWithReader";
 import AddSchedule from "./addSchedule";
 import AddRefunds from "./addRefunds";
 import AddClaim from "./addClaim";
 import { FaChevronDown } from "react-icons/fa";
 import AddFundRescue from "./addFundRescue";
-import AddRenovations from "./addRenovations";
 import AddVersion from "./addVersion";
 
 const ButtonAdd = () => {
@@ -63,15 +63,23 @@ const ButtonAdd = () => {
           ))}
         </MenuItems>
       </Menu>
-      <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} />
+      {/* <AddPolicy isOpen={isOpen} setIsOpen={setIsOpen} /> */}
+      <AddPolicyWithReader
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        type="policy"
+      />
+
       <AddPolicyManual
         isOpen={isOpenManual}
         setIsOpen={setIsOpenManual}
         module="gestion"
       />
-      <AddRenovations
+
+      <AddPolicyWithReader
         isOpen={isOpenRenovation}
         setIsOpen={setIsOpenRenovation}
+        type="renewal"
       />
       <AddVersion isOpen={isOpenVersion} setIsOpen={setIsOpenVersion} />
       <AddClaim isOpen={isOpenClaim} setIsOpen={setIsOpenClaim} />

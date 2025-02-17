@@ -71,7 +71,6 @@ function SelectInput({
       return;
     }
     if (selected) return;
-    console.log({ options });
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);
@@ -87,7 +86,7 @@ function SelectInput({
         {label && (
           <label
             className={clsx(
-              "block font-medium leading-6 text-gray-900 px-3 relative",
+              "block font-medium leading-6 text-gray-900 px-3 relative group",
               {
                 "text-xs": small,
                 "text-sm": !small,
@@ -126,12 +125,16 @@ function SelectInput({
           />
           {!disabled && (
             <Fragment>
-              <div
-                className="absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
-                onClick={handleClear}
-              >
-                <RxCrossCircled className="w-4 h-4 text-primary" />
-              </div>
+              {selected && selected.length > 0 && (
+                <div
+                  className={clsx(
+                    "absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
+                  )}
+                  onClick={handleClear}
+                >
+                  <RxCrossCircled className="w-4 h-4 text-primary" />
+                </div>
+              )}
               <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronDownIcon className="h-5 w-5 text-primary" />
               </ComboboxButton>

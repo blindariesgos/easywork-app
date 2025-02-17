@@ -30,6 +30,8 @@ import Link from "next/link";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import useReceiptContext from "@/src/context/receipts";
 import moment from "moment";
+import { handleFrontError } from "@/src/utils/api/errors";
+import MultipleSelect from "@/src/components/form/MultipleSelect";
 
 export default function ReceiptEditor({ data, id }) {
   const { t } = useTranslation();
@@ -56,7 +58,7 @@ export default function ReceiptEditor({ data, id }) {
     paymentAmount: Yup.string(),
     currencyId: Yup.string(),
     description: Yup.string(),
-    observerId: Yup.string(),
+    observers: Yup.array(),
     methodPayment: Yup.string(),
   });
 
@@ -65,6 +67,7 @@ export default function ReceiptEditor({ data, id }) {
     handleSubmit,
     control,
     reset,
+    getValues,
     setValue,
     watch,
     formState: { isValid, errors },
@@ -99,28 +102,38 @@ export default function ReceiptEditor({ data, id }) {
     if (data?.currency?.id) setValue("currencyId", data?.currency?.id);
     if (data?.description) setValue("description", data?.description);
     if (data?.methodPayment) setValue("methodPayment", data?.methodPayment);
-    if (data?.subAgente) setValue("subAgenteId", data?.subAgente?.id);
-    if (data?.observer) setValue("observerId", data?.observer?.id);
+    if (data?.subAgent) setValue("subAgenteId", data?.subAgent?.id);
+    if (data?.observers && data?.observers?.length > 0)
+      setValue("observers", data?.observers);
     if (data?.conductoPago) setValue("conductoPagoId", data?.conductoPago?.id);
   }, [data]);
 
   const onSubmit = async (data) => {
-    const { paymentAmount, dueDate, startDate, ...otherData } = data;
+    const { paymentAmount, dueDate, startDate, observers, ...otherData } = data;
 
     const body = {
       ...otherData,
       paymentAmount: +paymentAmount,
       dueDate: dueDate ? formatISO(dueDate) : null,
       startDate: startDate ? formatISO(startDate) : null,
+      observersIds: observers?.map((x) => x.id) ?? [],
     };
 
     try {
-      const response = await putReceipt(id, body);
+      const receipt = Object.keys(body).reduce(
+        (acc, key) =>
+          Boolean(body[key])
+            ? {
+                ...acc,
+                [key]: body[key],
+              }
+            : acc,
+        {}
+      );
+      const response = await putReceipt(id, receipt);
       console.log({ response });
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar el recibo, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         return;
       }
       setIsEdit(false);
@@ -381,6 +394,8 @@ export default function ReceiptEditor({ data, id }) {
                     { id: "efectivo", name: "Efectivo" },
                     { id: "tarjeta_credito", name: "Tarjeta de crédito" },
                     { id: "tarjeta_debito", name: "Tarjeta de débito" },
+                    { id: "cheque", name: "Cheque" },
+                    { id: "transferencia", name: "Transferencia" },
                   ]}
                   disabled={!isEdit}
                   register={register}
@@ -409,7 +424,7 @@ export default function ReceiptEditor({ data, id }) {
                   setValue={setValue}
                   watch={watch}
                 />
-                <Controller
+                {/* <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
                       <InputDate
@@ -426,7 +441,7 @@ export default function ReceiptEditor({ data, id }) {
                   }}
                   name="startDate"
                   control={control}
-                />
+                /> */}
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
@@ -501,15 +516,14 @@ export default function ReceiptEditor({ data, id }) {
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectDropdown
-                  label={t("control:portafolio:receipt:details:form:observer")}
-                  name="observerId"
-                  options={lists?.users}
-                  register={register}
-                  disabled={!isEdit}
-                  error={!watch("observerId") && errors.observerId}
+                <MultipleSelect
+                  label={t("operations:policies:general:observers")}
+                  options={lists?.users || []}
+                  getValues={getValues}
                   setValue={setValue}
-                  watch={watch}
+                  name="observers"
+                  error={errors.observers}
+                  disabled={!isEdit}
                 />
                 <AgentSelectAsync
                   label={t("contacts:create:sub-agent")}

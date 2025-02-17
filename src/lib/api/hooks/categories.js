@@ -24,12 +24,12 @@ const getQueries = (filters) => {
     .join("&");
 };
 
-export const useIntermediaries = ({ config = {}, filters = {} }) => {
+export const useCategories = ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)
     .join("&");
-  const url = `/agent-management/agente-intermediario?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const url = `/sales/crm/polizas/category?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
   console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {

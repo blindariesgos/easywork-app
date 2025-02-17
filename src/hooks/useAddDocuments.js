@@ -41,7 +41,7 @@ const useAddDocument = ({
           `Se cargo con éxito póliza con contratante ${response.client.fullName}`
         );
       } else {
-        toast.success("Documento agregado con exito");
+        toast.success("Documento agregado con éxito");
       }
 
       if (response?.warns?.length) {

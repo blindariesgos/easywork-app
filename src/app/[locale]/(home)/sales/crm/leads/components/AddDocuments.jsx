@@ -4,12 +4,10 @@ import { forwardRef, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddDocumentDialog from "@/src/components/modals/AddDocument";
 import { useSWRConfig } from "swr";
-import AddPolicyManual from "@/src/components/AddPolicyManual";
 
 const AddDocuments = ({ leadId }) => {
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
-  const [isOpenManual, setIsOpenManual] = useState(false);
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
     cmrType: "lead",
@@ -29,10 +27,6 @@ const AddDocuments = ({ leadId }) => {
       accept: ".pdf",
       fileName: "poliza",
       cmrType: "poliza-lead",
-    },
-    {
-      name: "Carga manual de póliza",
-      customOpen: () => setIsOpenManual(true),
     },
   ];
 
@@ -59,11 +53,6 @@ const AddDocuments = ({ leadId }) => {
         update={() => {
           mutate(`/sales/crm/leads/${leadId}/activities`);
         }}
-      />
-      <AddPolicyManual
-        isOpen={isOpenManual}
-        setIsOpen={setIsOpenManual}
-        module="lead"
       />
       <Menu>
         <MenuButton className="py-2 px-4 bg-primary hover:bg-easy-500 text-white disabled:opacity-50 shadow-sm text-sm flex items-center gap-x-2 rounded-md  font-medium outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 justify-center">

@@ -138,7 +138,7 @@ export default function TableLeads() {
 
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
-        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} pospecto(s) de ${selectedLeads.length} seleccionado(s)`
+        `Se elimino con éxito ${response.filter((x) => x.status == "fulfilled").length} pospecto(s) de ${selectedLeads.length} seleccionado(s)`
       );
     }
 
@@ -249,7 +249,7 @@ export default function TableLeads() {
     try {
       setLoading(true);
       const response = await deleteLeadById(id);
-      toast.success("Prospecto(s) eliminado(s) con exito");
+      toast.success("Prospecto(s) eliminado(s) con éxito");
       mutate();
       setLoading(false);
       setIsOpenDelete(false);

@@ -220,6 +220,7 @@
       "time": "Tiempo transcurrido",
       "objections": "Objeciones",
       "pings": "Mostrar comentarios ({{qty}})",
+      "show-more-comments": "Mostrar más comentarios",
       "pings-hide": "Ocultar comentarios ({{qty}})",
       "edit": "Editar",
       "restart": "Reanudar",

@@ -118,7 +118,7 @@ export default function Table() {
     );
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
-        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
+        `Se elimino con éxito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
       );
     }
 
@@ -282,6 +282,34 @@ export default function Table() {
       ],
     },
   ];
+
+  const renderStage = (status) => {
+    const color =
+      renovationStages?.find((stage) => stage.id == status).color ??
+      renovationStages[0].color;
+
+    const stageIndex = status
+      ? renovationStages.findIndex((x) => x.id == status)
+      : 0;
+
+    return (
+      <div className="flex flex-col gap-1 items-center">
+        <div className={`flex justify-center bg-gray-200`}>
+          {renovationStages.map((_, index) => (
+            <div
+              key={index}
+              className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
+              style={{ background: index <= stageIndex ? color : "" }}
+            />
+          ))}
+        </div>
+        <p className="text-sm text-center">
+          {renovationStages?.find((stage) => stage.id == status).name ??
+            renovationStages[0].name}
+        </p>
+      </div>
+    );
+  };
 
   if (data?.items && data?.items.length === 0) {
     return (
@@ -576,8 +604,7 @@ export default function Table() {
                                 ) : column.row === "importePagar" ? (
                                   `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
                                 ) : column.row === "status" ? (
-                                  (policy?.renewalStage?.name ??
-                                  renovationStages[0]?.name)
+                                  renderStage(policy?.renewalStage?.id)
                                 ) : (
                                   policy[column.row] || "-"
                                 )}

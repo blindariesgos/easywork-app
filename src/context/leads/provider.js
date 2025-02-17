@@ -6,6 +6,7 @@ import { useLeads } from "../../lib/api/hooks/leads";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../app";
 import { useCommon } from "@/src/hooks/useCommon";
+import { CancelLeadReasons } from "@/src/utils/stages";
 
 export default function LeadsContextProvider({ children }) {
   const { t } = useTranslation();
@@ -38,7 +39,13 @@ export default function LeadsContextProvider({ children }) {
       type: "select",
       check: true,
       code: "stageId",
-      options: lists?.listLead?.leadStages,
+      options: [
+        ...(lists?.listLead?.leadStages ?? []),
+        {
+          id: "46b04e7a-3775-4a00-abfa-c195d7e17b81",
+          name: "Póliza Generada",
+        },
+      ],
     },
     {
       id: 3,
@@ -85,7 +92,13 @@ export default function LeadsContextProvider({ children }) {
         type: "select",
         check: true,
         code: "stageId",
-        options: lists?.listLead?.leadStages,
+        options: [
+          ...(lists?.listLead?.leadStages ?? []),
+          {
+            id: "46b04e7a-3775-4a00-abfa-c195d7e17b81",
+            name: "Póliza Generada",
+          },
+        ],
       },
       {
         id: 3,
@@ -126,6 +139,14 @@ export default function LeadsContextProvider({ children }) {
         check: false,
         code: "quoteCurrencyId",
         options: lists?.receipts?.currencies,
+      },
+      {
+        id: 8,
+        name: "Razón de pérdida del prospecto",
+        type: "select",
+        check: false,
+        code: "cancelReasonId",
+        options: CancelLeadReasons,
       },
       // {
       //   id: 6,

@@ -14,9 +14,9 @@ import { LoadingSpinnerSmall } from "../LoaderSpinner";
 import {
   createAgentIntermediary,
   getAgentIntermediaryById,
+  getIntermediaries,
 } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
-import { useIntermediaries } from "@/src/lib/api/hooks/intermediaries";
 import TextInput from "./TextInput";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -48,18 +48,9 @@ function IntermediarySelectAsync({
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState({});
   const [isOpenAdd, setIsOpenAdd] = useState(false);
-  const {
-    data: options,
-    isLoading,
-    mutate,
-  } = useIntermediaries({
-    page: 1,
-    limit: 10,
-    filters,
-  });
   const [loading, setLoading] = useState(false);
+  const [intermediaries, setIntermediaries] = useState([]);
 
   // const handleSearch = useDebouncedCallback(() => {
   //   if (query.length > 0) {
@@ -75,10 +66,20 @@ function IntermediarySelectAsync({
   //   handleSearch();
   // }, [query]);
 
+  const getOptions = async () => {
+    setLoading(true);
+    const response = await getIntermediaries();
+    console.log({ response });
+    if (!response.hasError) {
+      setIntermediaries(response);
+    }
+    setLoading(false);
+  };
+
   const filteredElements =
     query === ""
-      ? (options ?? [])
-      : options?.filter((element) => {
+      ? (intermediaries ?? [])
+      : intermediaries?.filter((element) => {
           return element.name.toLowerCase().includes(query.toLowerCase());
         });
 
@@ -104,6 +105,10 @@ function IntermediarySelectAsync({
     };
     getAgent(watch(name));
   }, [watch && watch(name)]);
+
+  useEffect(() => {
+    getOptions();
+  }, []);
 
   const schema = Yup.object().shape({
     name: Yup.string()
@@ -133,7 +138,7 @@ function IntermediarySelectAsync({
     }
     setSelected(response);
     setIsOpenAdd(false);
-    mutate();
+    getOptions();
     setLoading(false);
   };
 
@@ -157,7 +162,7 @@ function IntermediarySelectAsync({
           <ComboboxInput
             placeholder={placeholder}
             className={clsx(
-              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ",
+              "z-50 w-full outline-none focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm uppercase",
               {
                 "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                   border,
@@ -194,12 +199,12 @@ function IntermediarySelectAsync({
             }}
             className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
-            {isLoading && (
+            {loading && (
               <div className="w-full h-[50px] flex justify-center items-center">
                 <LoadingSpinnerSmall />
               </div>
             )}
-            {filteredElements?.length === 0 && query !== "" && !isLoading ? (
+            {filteredElements?.length === 0 && query !== "" && !loading ? (
               <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                 {t("common:not-found")}
               </div>
@@ -209,7 +214,7 @@ function IntermediarySelectAsync({
                 <ComboboxOption
                   key={option.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 ${
+                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 uppercase ${
                       active ? "bg-primary text-white" : "text-gray-900"
                     }`
                   }

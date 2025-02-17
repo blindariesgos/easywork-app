@@ -66,47 +66,55 @@ export const recruitmentStages = [
     id: "f3404a7e-8550-4cbc-9161-9d6197628a41",
     name: "Contacto Inicial",
     color: "#0F8BBF",
+    type: "state",
   },
   {
     id: "fcdc645d-b4c5-4fd6-b9e4-ae6d7c8a19ea",
     name: "Entrevista 1",
     color: "#0879A8",
+    type: "state",
   },
   {
     id: "78c8b0aa-04b8-4c53-bd3c-68924c53ed03",
     name: "PSP",
     color: "#06668E",
+    type: "state",
   },
   {
     id: "580ee85e-ae46-4e78-a4fb-aadb868ff8b4",
     name: "Entrevista de verificación",
     color: "#004D6C",
+    type: "state",
   },
-
   {
     id: "1bd3c42e-ee1a-42d3-ab9e-f3ed75a96006",
     name: "Contactar después - No tiene disponibilidad",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "899ad5ec-0b60-4354-8819-560df0b06d88",
     name: "Contactar después - No cumple FV",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "28f5ff34-ce55-4cd9-b7bf-357f61e9e95f",
     name: "No contactar mas",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "965c079e-3583-4a15-a265-4a1f2bf2b39d",
     name: "Observaciones por CNSF",
     color: "#C30000",
+    type: "canceled",
   },
   {
     id: "fd995692-4640-4dc9-a78c-67df037a1fe6",
     name: "Ingreso aprobado",
     color: "#00A130",
+    type: "approved",
   },
 ];
 
@@ -115,21 +123,25 @@ export const connectionsStage = [
     id: "5314113e-82d5-4bd7-8d5f-be5de28da950",
     name: "Documentación inicial",
     color: "#0F8BBF",
+    type: "state",
   },
   {
     id: "c8e29a78-42d0-4de0-9a13-bdafe0136e01",
     name: "Clave provincial",
     color: "#0879A8",
+    type: "state",
   },
   {
     id: "1788e751-4c22-4ed6-ab77-ad98ff6ee82f",
     name: "En examen y comisión",
     color: "#06668E",
+    type: "state",
   },
   {
     id: "05051503-92e0-43e4-a9a7-3e1052a7aff0",
     name: "Agente retirado excluido",
     color: "#C62A20",
+    type: "canceled",
   },
   {
     id: "5de88bf9-8180-43c6-9c3e-7bd92076ef0a",
@@ -156,6 +168,7 @@ export const activitySectors = [
   "Servicios de entretenimiento",
   "Servicios de información",
   "Servicios de investigación y desarrollo",
+  "Servicios de protección y custodia",
   "Servicios de salud",
   "Servicios de tecnología",
   "Servicios educativos",
@@ -164,4 +177,56 @@ export const activitySectors = [
   "Silvicultura",
   "Transporte",
   "Turismo",
+  "Otros",
+];
+
+export const CancelLeadReasons = [
+  {
+    id: "d0332445-0863-46cb-89c5-0b1435cf280c",
+    name: "Cancela cita y no reagenda",
+  },
+  {
+    id: "eb8ffdd1-b5a4-41ce-ba94-eb5522cbcc64",
+    name: "Documentos incompletos",
+  },
+  {
+    id: "5d44dc64-019c-4e94-9148-87cd5e5d30ba",
+    name: "Lo verá con otra persona",
+  },
+  {
+    id: "02f438aa-9298-420f-804e-62ee3559b777",
+    name: "No aprobado por aseguradora",
+  },
+  {
+    id: "e304b128-4ba6-4157-b6cb-656a6cdec85b",
+    name: "No contesta",
+  },
+  {
+    id: "dd3b68cd-4676-4bcc-899c-160e0ef2bbdd",
+    name: "No le interesó",
+  },
+  {
+    id: "95b06de4-afb5-42c9-8205-fa072e5a1c29",
+    name: "No reagendó cita",
+  },
+  {
+    id: "d1cf3051-ecb4-41da-864f-c2c01877ad58",
+    name: "No tiene recursos",
+  },
+  {
+    id: "3ccd0900-ebcc-45d0-a7bf-a3f4aa7b7248",
+    name: "Otro motivo no específico",
+  },
+  {
+    id: "4983f65d-b000-4406-821a-929ba1dca6d7",
+    name: "Pidió retomar en otra fecha",
+  },
+  {
+    id: "21ddc533-6c53-42c9-b088-c544222c9fcd",
+    name: "Precio",
+  },
+  {
+    id: "195e1b3d-d2dc-44a8-89c9-12017a9044f7",
+    name: "Póliza emitida - anulada aseguradora",
+  },
 ];

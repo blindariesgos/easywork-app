@@ -58,9 +58,14 @@ const types = {
   meet: "meetingId",
   task: "taskId",
 };
-
+const max = 5;
 export default function Comments({ info, type = "task" }) {
-  const { comments, isLoading, isError } = useComments(urls.get[type], info.id);
+  const [limit, setLimit] = useState(1);
+  const { comments, mutate } = useComments(
+    urls.get[type],
+    info.id,
+    limit * max
+  );
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const quillRef = useRef(null);
@@ -69,9 +74,8 @@ export default function Comments({ info, type = "task" }) {
   const [disabled, setDisabled] = useState(false);
   const [openActions, setOpenActions] = useState({});
   const [editComment, setEditComment] = useState({});
-  const { mutate } = useSWRConfig();
   const [isAddComment, setIsAddComment] = useState(false);
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, setShowMore] = useState(true);
   const [showComments, setShowComments] = useState([]);
   const [upload, setUpload] = useState({
     fileIds: [],
@@ -125,7 +129,8 @@ export default function Comments({ info, type = "task" }) {
           }
         }
 
-        mutate(`${urls.get[type]}${info.id}`);
+        setShowComments([]);
+        mutate();
         setDisabled(false);
         setEditComment({});
         setValueText("");
@@ -135,9 +140,12 @@ export default function Comments({ info, type = "task" }) {
         });
         setOpenFiles(false);
         setTaggedUsers([]);
+        const container = document.getElementById("comments-container");
+        if (container) {
+          const top = container?.scrollTop() ?? null;
+          top && container?.scrollTo(top);
+        }
       } catch (error) {
-        console.log({ error });
-        handleApiError(error.message);
         setDisabled(false);
       }
       setIsAddComment(false);
@@ -158,11 +166,10 @@ export default function Comments({ info, type = "task" }) {
   };
 
   useEffect(() => {
-    console.log({ comments, isError });
     if (!comments || !comments?.length) return;
 
-    if (comments?.length > 3 && !showMore) {
-      return setShowComments(comments.slice(-3));
+    if (comments?.length < limit * max) {
+      setShowMore(false);
     }
 
     setShowComments(comments);
@@ -191,22 +198,10 @@ export default function Comments({ info, type = "task" }) {
       return;
     }
 
-    mutate(`${urls.get[type]}${info.id}`);
+    mutate();
     setLoading(false);
-    toast.success("Adjunto eliminado con exito");
+    toast.success("Adjunto eliminado con éxito");
   };
-
-  if (isLoading)
-    return (
-      <div className="flex flex-col h-screen relative w-full overflow-y-auto">
-        <div
-          className={`flex flex-col flex-1 bg-gray-600 opacity-100 shadow-xl text-black rounded-tl-[35px] rounded-bl-[35px] p-2 sm:p-4 h-full overflow-y-auto`}
-        >
-          <LoadingSpinnerSmall color={"primary"} />
-        </div>
-      </div>
-    );
-  if (isError) return <>Error al cargar la tarea</>;
 
   return (
     <div className="w-full p-3">
@@ -307,7 +302,10 @@ export default function Comments({ info, type = "task" }) {
       )}
 
       {showComments?.length > 0 && (
-        <div className="gap-4 flex flex-col-reverse w-full md:overflow-y-auto md:max-h-[300px]">
+        <div
+          className="gap-4 flex flex-col w-full md:overflow-y-auto md:max-h-[300px]"
+          id="comments-container"
+        >
           {showComments?.map((comment, index) => (
             <div
               className="flex gap-2 items-center w-full group"
@@ -505,16 +503,12 @@ export default function Comments({ info, type = "task" }) {
           ))}
         </div>
       )}
-      {comments?.length > 3 && (
+      {showMore && (
         <div
           className="cursor-pointer pt-4"
-          onClick={() => setShowMore(!showMore)}
+          onClick={() => setLimit(limit + 1)}
         >
-          <p className="text-xs">
-            {t(`tools:tasks:edit:${showMore ? "pings-hide" : "pings"}`, {
-              qty: comments?.length - 3,
-            })}
-          </p>
+          <p className="text-xs">{t(`tools:tasks:edit:show-more-comments`)}</p>
         </div>
       )}
     </div>

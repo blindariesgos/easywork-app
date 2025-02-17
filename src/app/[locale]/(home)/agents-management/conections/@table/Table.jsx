@@ -112,7 +112,7 @@ export default function Table() {
     );
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
-        `Se elimino con exito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
+        `Se elimino con éxito ${response.filter((x) => x.status == "fulfilled").length} elemento(s) de ${selectedContacts.length} seleccionado(s)`
       );
     }
 
@@ -277,7 +277,9 @@ export default function Table() {
             />
           ))}
         </div>
-        <p className="text-sm">{data?.name ?? connectionsStage[0].name}</p>
+        <p className="text-sm text-center">
+          {data?.name ?? connectionsStage[0].name}
+        </p>
       </div>
     );
   };

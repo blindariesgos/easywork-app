@@ -478,7 +478,8 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 placeholder="- Seleccionar -"
                 watch={watch}
                 name="typePerson"
-                disabled
+                disabled={!isEdit}
+                setSelectedOption={(option) => option?.id && setType(option.id)}
                 setValue={setValue}
                 error={!watch("typePerson") && errors.typePerson}
               />

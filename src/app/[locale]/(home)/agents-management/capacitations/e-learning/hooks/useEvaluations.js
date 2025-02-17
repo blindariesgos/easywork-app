@@ -40,5 +40,33 @@ export const useEvaluations = () => {
     [request]
   );
 
-  return { getEvaluations, getEvaluation, getEvaluationsByCourse, createEvaluation, updateEvaluation };
+  const startEvaluation = useCallback(
+    async (id, options = {}) => {
+      return await request(`/evaluations/start/${id}`, { method: 'PATCH', ...options });
+    },
+    [request]
+  );
+
+  const getEvaluationToTake = useCallback(
+    async (id, options = {}) => {
+      return await request(`/evaluations/to-take/${id}`, options);
+    },
+    [request]
+  );
+
+  const updateEvaluationAttempt = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/evaluations/attempt/${id}`, { method: 'PATCH', data, ...options });
+    },
+    [request]
+  );
+
+  const finalizeEvaluation = useCallback(
+    async (id, data, options = {}) => {
+      return await request(`/evaluations/finalize-attempt/${id}`, { method: 'PATCH', data, ...options });
+    },
+    [request]
+  );
+
+  return { getEvaluations, getEvaluation, getEvaluationToTake, getEvaluationsByCourse, createEvaluation, updateEvaluation, startEvaluation, updateEvaluationAttempt, finalizeEvaluation };
 };

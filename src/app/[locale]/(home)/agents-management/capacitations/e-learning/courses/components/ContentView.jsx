@@ -19,11 +19,15 @@ import { ContentViewCoverPhoto } from './ContentViewCoverPhoto';
 import { LoadingSpinnerSmall } from '@/src/components/LoaderSpinner';
 import { FileUpload } from './FileUpload';
 
-import '../styles/index.css';
 import { LMS_PERMISSIONS } from '../../../constants';
 
+import '../styles/index.css';
+
 export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
+  console.log('🚀 ~ ContentView ~ content:', content);
   const isEdit = !!content;
+  const hasEvaluation = !!content?.evaluations[0];
+  const evaluation = content?.evaluations[0];
 
   const [loading, setLoading] = useState(false);
   const [isEditorDisabled, setIsEditorDisabled] = useState(true);
@@ -207,7 +211,7 @@ export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
       )}
 
       <div className={`${isEditorDisabled ? 'px-2 pt-2 pb-5' : ''} bg-white rounded-xl mb-2 border-red-400`}>
-        <div className="overflow-y-auto [&::-webkit-scrollbar]:hidden max-h-[calc(100vh-460px)]">
+        <div className={`overflow-y-auto max-h-[calc(100vh-460px)] ${!isEditorDisabled && 'pt-5'}`}>
           {loading && (
             <div className="h-[calc(100vh-400px)] w-full">
               <LoadingSpinnerSmall />

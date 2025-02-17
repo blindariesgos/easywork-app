@@ -33,6 +33,7 @@ const FormFilters = () => {
     customFilterSelected,
     setCustomFilterSelected,
   } = useFilterTableContext();
+  const utcOffset = moment().utcOffset();
   const schema = yup.object().shape({
     fields: yup.array().of(yup.object().shape({})),
   });
@@ -51,27 +52,60 @@ const FormFilters = () => {
       yesterday: moment()
         .utc()
         .subtract(1, "day")
+        .subtract(utcOffset, "minutes")
         .format("YYYY-MM-DDTHH:mm:ss"),
-      today: moment().utc().format("YYYY-MM-DDTHH:mm:ss"),
-      tomorrow: moment().utc().add(1, "day").format("YYYY-MM-DDTHH:mm:ss"),
+      today: [
+        moment()
+          .utc()
+          .startOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
+      tomorrow: [
+        moment()
+          .utc()
+          .add(1, "day")
+          .startOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .add(1, "day")
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+      ],
       thisWeek: [
         moment()
           .utc()
           .startOf("week")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
-        moment().utc().endOf("week").endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("week")
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       thisMonth: [
         moment()
           .utc()
           .startOf("month")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .endOf("month")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       currentQuarter: [
@@ -79,11 +113,13 @@ const FormFilters = () => {
           .utc()
           .startOf("quarter")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .endOf("quarter")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       last7Days: [
@@ -91,32 +127,52 @@ const FormFilters = () => {
           .utc()
           .subtract(7, "day")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
-        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       last30Days: [
         moment()
           .utc()
           .subtract(30, "day")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
-        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       last60Days: [
         moment()
           .utc()
           .subtract(60, "day")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
-        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       last90Days: [
         moment()
           .utc()
           .subtract(90, "day")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
-        moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment()
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       lastWeek: [
         moment()
@@ -124,12 +180,14 @@ const FormFilters = () => {
           .subtract(1, "week")
           .startOf("week")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .subtract(1, "week")
           .endOf("week")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       lastMonth: [
@@ -138,12 +196,14 @@ const FormFilters = () => {
           .subtract(1, "month")
           .startOf("month")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .subtract(1, "month")
           .endOf("month")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       nextWeek: [
@@ -152,12 +212,14 @@ const FormFilters = () => {
           .add(1, "week")
           .startOf("week")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .add(1, "week")
           .endOf("week")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       nextMonth: [
@@ -166,12 +228,14 @@ const FormFilters = () => {
           .add(1, "month")
           .startOf("month")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment()
           .utc()
           .add(1, "month")
           .endOf("month")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
     };
@@ -185,6 +249,7 @@ const FormFilters = () => {
           .utc()
           .subtract(date, "day")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment().utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
       ],
@@ -194,6 +259,7 @@ const FormFilters = () => {
           .utc()
           .add(date, "day")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       month: (date) => [
@@ -201,11 +267,13 @@ const FormFilters = () => {
           .utc()
           .startOf("month")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment(date)
           .utc()
           .endOf("month")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       quarter: (date) => [
@@ -213,11 +281,13 @@ const FormFilters = () => {
           .utc()
           .startOf("quarter")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment(date)
           .utc()
           .endOf("quarter")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       year: (date) => [
@@ -225,17 +295,27 @@ const FormFilters = () => {
           .utc()
           .startOf("year")
           .startOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
         moment(date)
           .utc()
           .endOf("year")
           .endOf("day")
+          .subtract(utcOffset, "minutes")
           .format("YYYY-MM-DDTHH:mm:ss"),
       ],
       exactDate: (date) => moment(date).utc().format("YYYY-MM-DDTHH:mm:ss"),
       dateRange: (range) => [
-        moment(range[0]).utc().startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
-        moment(range[1]).utc().endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+        moment(range[0])
+          .utc()
+          .startOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
+        moment(range[1])
+          .utc()
+          .endOf("day")
+          .subtract(utcOffset, "minutes")
+          .format("YYYY-MM-DDTHH:mm:ss"),
       ],
     };
 

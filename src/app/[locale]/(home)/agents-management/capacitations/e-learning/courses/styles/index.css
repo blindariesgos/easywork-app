@@ -1,3 +1,8 @@
 .ql-toolbar {
   background-color: #f5f5f5;
 }
+
+.ql-editor a {
+  text-decoration: underline;
+  color: blue;
+}

@@ -15,7 +15,7 @@ export const ELearningNavMenu = () => {
   const NAV_LINKS = [
     { id: LMS_PERMISSIONS.courses, name: 'Courses', href: `${E_LEARNING_BASE_ROUTE}/courses`, component: null },
     { id: LMS_PERMISSIONS.config, name: 'Configuración', href: `${E_LEARNING_BASE_ROUTE}/config`, component: null },
-    { id: LMS_PERMISSIONS.evaluations, name: 'Evaluaciones', href: ``, component: <EvaluationMenuDropdown /> },
+    { id: LMS_PERMISSIONS.createEvaluation, name: 'Evaluaciones', href: ``, component: <EvaluationMenuDropdown /> },
     { id: LMS_PERMISSIONS.myCourses, name: 'Mis cursos', href: `${E_LEARNING_BASE_ROUTE}/my-courses`, component: null },
   ];
 

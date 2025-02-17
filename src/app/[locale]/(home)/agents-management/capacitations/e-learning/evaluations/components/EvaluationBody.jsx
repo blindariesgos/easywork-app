@@ -24,16 +24,34 @@ export const EvaluationBody = ({ questions, onDeleteQuestion, onSaveQuestion, on
         <Component
           index={index}
           question={question}
-          onDelete={() => onDeleteQuestion(question)}
-          onSave={newQuestion => onSaveQuestion(newQuestion)}
-          onDuplicate={() => onDuplicateQuestion(question)}
-          onMove={direction => onMoveQuestion(direction, question)}
+          onDelete={() => {
+            if (onDeleteQuestion) onDeleteQuestion(question);
+          }}
+          onSave={newQuestion => {
+            if (onSaveQuestion) onSaveQuestion(newQuestion);
+          }}
+          onDuplicate={() => {
+            if (onDuplicateQuestion) onDuplicateQuestion(question);
+          }}
+          onMove={direction => {
+            if (onMoveQuestion) onMoveQuestion(direction, question);
+          }}
           isFirstQuestion={isFirstQuestion}
           isLastQuestion={isLastQuestion}
         />
       </div>
     ) : (
-      <div>Formato de pregunta no disponible: {question.type}</div>
+      <div className="flex items-center">
+        <span>Formato de pregunta no disponible: {question.type}</span>
+        <span
+          onClick={() => {
+            if (onDeleteQuestion) onDeleteQuestion(question);
+          }}
+          className="text-blue-400 ml-2"
+        >
+          X
+        </span>
+      </div>
     );
   };
 

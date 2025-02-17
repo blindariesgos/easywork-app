@@ -33,6 +33,7 @@ import Vehicles from "@/src/components/policyAdds/Vehicles";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
+import AgentSelectAsync from "./form/AgentSelectAsync";
 
 const endpointsByModule = {
   gestion: (body, documentType, id) => addManualPolicy(body, documentType),
@@ -630,7 +631,13 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                   setValue={setValue}
                   watch={watch}
                 />
-
+                <AgentSelectAsync
+                  label={t("operations:programations:general:sub-agent")}
+                  name="subAgenteId"
+                  error={errors.subAgentId}
+                  setValue={setValue}
+                  watch={watch}
+                />
                 <SelectDropdown
                   label={t("operations:policies:general:responsible")}
                   name="assignedById"

@@ -38,13 +38,11 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
   };
 
   const handleShowPolicy = (poliza) => {
-    if (!poliza.operacion || poliza.operacion == "produccion_nueva") {
-      router.push(`/operations/policies/policy/${poliza.id}?show=true`);
-      return;
-    }
     if (poliza.operacion == "renovacion") {
       router.push(`/operations/renovations/renovation/${poliza.id}?show=true`);
     }
+
+    router.push(`/operations/policies/policy/${poliza.id}?show=true`);
   };
 
   if ((!data || data?.items?.length === 0) && !isLoading) {

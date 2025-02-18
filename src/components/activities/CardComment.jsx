@@ -11,7 +11,7 @@ import { correctSpecialCharacters } from "@/src/utils/formatters";
 import moment from "moment";
 import IconDropdown from "../SettingsButton";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import { updateComment } from "@/src/lib/apis";
+import { deleteActivityComment, updateComment } from "@/src/lib/apis";
 import { handleFrontError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { GiPin } from "react-icons/gi";
@@ -233,11 +233,29 @@ function CommentUser({ data, crmType, update, crmId }) {
     setLoading(false);
   };
 
+  const handleDelete = async () => {
+    setLoading(true);
+    const response = await deleteActivityComment(crmType, data.id);
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+    update();
+    toast.success("Comentario eliminado");
+    setLoading(false);
+  };
+
   const options = [
     {
       value: 0,
       name: "Fijar",
       onClick: handlePinned,
+    },
+    {
+      value: 1,
+      name: "Eliminar",
+      onClick: handleDelete,
     },
   ];
 

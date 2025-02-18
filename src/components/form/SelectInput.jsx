@@ -30,6 +30,7 @@ function SelectInput({
   helperText,
   small,
   isRequired,
+  className,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
@@ -38,7 +39,6 @@ function SelectInput({
   const handleClear = () => {
     setSelected("");
     setQuery("");
-    console.log("clear");
   };
 
   useEffect(() => {
@@ -76,7 +76,7 @@ function SelectInput({
   }, [watch && watch(name), options]);
 
   return (
-    <div className="w-full">
+    <div className={clsx("w-full", className)}>
       <Combobox
         as="div"
         value={selected}

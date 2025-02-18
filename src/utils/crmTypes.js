@@ -21,7 +21,7 @@ export const getCrmTypeConfig = (data) => ({
     name: data?.crmEntity?.fullName ?? data?.crmEntity?.name ?? "",
   },
   receipt: {
-    href: `/sales/crm/leads/lead/${data.crmEntity.id}?show=true`,
+    href: `/control/portafolio/receipts/receipt/${data.crmEntity.id}?show=true`,
     bgClass: "bg-[#DFE3E6] text-[#241F61]",
     labelKey: "Recibo",
     name: data?.crmEntity?.title ?? data?.crmEntity?.name ?? "",

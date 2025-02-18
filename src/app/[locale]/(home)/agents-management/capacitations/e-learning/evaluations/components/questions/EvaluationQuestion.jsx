@@ -5,11 +5,20 @@ import { FiPlusCircle, FiTrash } from 'react-icons/fi';
 import { EvaluationQuestionHeader } from '../EvaluationQuestionHeader';
 import { EvaluationQuestionToolbar } from '../EvaluationQuestionToolbar';
 
-const EvaluationQuestionOptionsViewType = ({ type, questions }) => {
+const newOptionTemplate = {
+  label: 'Opción',
+  score: 0,
+  selected: false,
+  answeredAt: null,
+  isSelected: false,
+  value: null,
+};
+
+const EvaluationQuestionOptionsViewType = ({ type, body }) => {
   if (['check-list', 'multiple-choice'].includes(type)) {
     return (
       <div className="mt-5 ml-8">
-        {questions.map((question, index) => {
+        {body.map((question, index) => {
           return (
             <div key={`${question.label}-${index}`} className="mb-2">
               <label>
@@ -27,7 +36,7 @@ const EvaluationQuestionOptionsViewType = ({ type, questions }) => {
     return (
       <div className="mt-5 w-full">
         <Select className="rounded-lg w-60">
-          {questions.map((question, index) => (
+          {body.map((question, index) => (
             <option key={`${question.label}-${index}`} value={`${question.label}-${index}`}>
               {question.label}
             </option>
@@ -53,11 +62,11 @@ const EvaluationQuestionFormOptionsType = ({ type, fields, remove, register, isS
             )}
           </label>
 
-          <Textarea rows={1} {...register(`questions.${index}.label`)} className="w-60 rounded-lg text-sm p-1" disabled={isSubmitting} />
+          <Textarea rows={1} {...register(`body.${index}.label`)} className="w-60 rounded-lg text-sm p-1" disabled={isSubmitting} />
         </div>
 
         <div>
-          <Input type="number" {...register(`questions.${index}.score`)} className="w-10 border-t-0 border-l-0 border-r-0 text-center text-sm p-1 mr-1" />
+          <Input type="number" {...register(`body.${index}.score`)} className="w-10 border-t-0 border-l-0 border-r-0 text-center text-sm p-1 mr-1" />
           <span>punto(s)</span>
         </div>
 
@@ -71,10 +80,10 @@ const EvaluationQuestionFormOptionsType = ({ type, fields, remove, register, isS
   if (type === 'selection') {
     return fields.map((field, index) => (
       <div key={field.id} className="flex items-center gap-4 mb-2">
-        <Textarea rows={1} {...register(`questions.${index}.label`)} className="w-60 rounded-lg text-sm p-1" disabled={isSubmitting} />
+        <Textarea rows={1} {...register(`body.${index}.label`)} className="w-60 rounded-lg text-sm p-1" disabled={isSubmitting} />
 
         <div>
-          <Input type="number" {...register(`questions.${index}.score`)} className="w-10 border-t-0 border-l-0 border-r-0 text-center text-sm p-1 mr-1" />
+          <Input type="number" {...register(`body.${index}.score`)} className="w-10 border-t-0 border-l-0 border-r-0 text-center text-sm p-1 mr-1" />
           <span>punto(s)</span>
         </div>
 
@@ -124,7 +133,7 @@ const EvaluationQuestionForm = ({ values, fieldArray, register, formState, setVa
         <div className="mt-10 mb-16">
           <EvaluationQuestionFormOptionsType type={values.type} fields={fields} remove={remove} register={register} isSubmitting={isSubmitting} />
 
-          <button className="flex items-center justify-start gap-2 mt-4" type="button" onClick={() => append({ label: `Opción ${fields.length + 1}`, score: 0 })}>
+          <button className="flex items-center justify-start gap-2 mt-4" type="button" onClick={() => append({ ...newOptionTemplate, label: `Opción ${fields.length + 1}` })}>
             <FiPlusCircle size="18px" className="text-easy-400" />
             <p className="text-easy-400">Agregar opción</p>
           </button>
@@ -165,10 +174,10 @@ const EvaluationQuestionView = ({ values, onEdit, onDuplicate, onDelete, onMove,
       />
 
       {/* Opciones */}
-      {values.questions.length > 0 && (
-        <EvaluationQuestionOptionsViewType type={values.type} questions={values.questions} />
+      {values.body.length > 0 && (
+        <EvaluationQuestionOptionsViewType type={values.type} body={values.body} />
         // <div className="mt-5 ml-8">
-        //   {values.questions.map((question, index) => {
+        //   {values.body.map((question, index) => {
         //     return (
         //       <div key={`${question.label}-${index}`} className="mb-2">
         //         <label>
@@ -189,7 +198,7 @@ export const EvaluationQuestion = ({ question, onSave, onDelete, onDuplicate, on
     title: question && question.title ? question.title : 'Pregunta',
     description: question && question.description ? question.description : '',
     type: question && question.type ? question.type : '',
-    questions: question && question.questions ? question.questions : [],
+    body: question && question.body ? question.body : [],
     required: question && question.required ? question.required : '',
     answer: '',
   };
@@ -199,7 +208,7 @@ export const EvaluationQuestion = ({ question, onSave, onDelete, onDuplicate, on
   const { control, register, setValue, handleSubmit, reset, formState, watch } = useForm({ defaultValues });
   const fieldArray = useFieldArray({
     control,
-    name: 'questions',
+    name: 'body',
   });
 
   const values = watch();
@@ -219,6 +228,7 @@ export const EvaluationQuestion = ({ question, onSave, onDelete, onDuplicate, on
       setValue={setValue}
       handleSubmit={handleSubmit(values => {
         onSave({ ...question, ...values });
+        setIsEditing(false);
       })}
       onCancel={onCancel}
       onDuplicate={onDuplicate}

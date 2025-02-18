@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md';
+import Link from 'next/link';
+import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdTextSnippet } from 'react-icons/md';
 
 import { CourseFolder } from '../components/CourseFolder';
 import { NewCourseFolderButton } from '../components/NewCourseFolderButton';
@@ -204,8 +205,8 @@ export const CourseDetails = ({ courseId }) => {
 
   return (
     <div className="pt-2 pb-4">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 h-[calc(100vh-300px)]">
-        <div className="bg-gray-100 rounded-xl border border-gray-100 overflow-y-auto [&::-webkit-scrollbar]:hidden h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 h-[calc(100vh-300px)] overflow-auto">
+        <div className="bg-gray-100 rounded-xl border border-gray-100 overflow-y-auto h-full">
           <div className="rounded-xl border-easy-400 bg-easy-50 py-4 pl-4 pr-2" style={{ borderWidth: '1px', borderStyle: 'solid' }}>
             <div className="flex items-center justify-between">
               <span className="text-gray-900 font-bold text-lg">{course.name}</span>
@@ -241,7 +242,7 @@ export const CourseDetails = ({ courseId }) => {
 
           {content.data && (
             <div className="bg-gray-100 w-full flex items-center justify-between gap-1 absolute bottom-0 pt-5">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   className={`bg-easy-400 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2 ${isFirstElement && 'opacity-40'}`}
@@ -261,6 +262,17 @@ export const CourseDetails = ({ courseId }) => {
                   Lección siguiente
                   <MdOutlineKeyboardArrowRight className="h-4 w-4 bg-gray-100 rounded-full text-black" aria-hidden="true" />
                 </button>
+
+                {content.data?.evaluations[0] && content.data?.isCompleted && (
+                  <Link
+                    className="bg-easy-400 px-3 py-2 text-white rounded-lg font-bold flex items-center justify-between gap-2"
+                    href={`/agents-management/capacitations/e-learning/evaluations/${content.data?.evaluations[0]?.id}`}
+                    target="_blank"
+                  >
+                    Tomar evaluación
+                    <MdTextSnippet className="h-4 w-4 text-white" aria-hidden="true" />
+                  </Link>
+                )}
               </div>
               {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
                 <div>

@@ -141,11 +141,11 @@ export default function Comments({ info, type = "task" }) {
         setOpenFiles(false);
         setTaggedUsers([]);
         const container = document.getElementById("comments-container");
-        const top = container.scrollTop();
-        container.scrollTo(top);
+        if (container) {
+          const top = container?.scrollTop() ?? null;
+          top && container?.scrollTo(top);
+        }
       } catch (error) {
-        console.log({ error });
-        handleApiError(error.message);
         setDisabled(false);
       }
       setIsAddComment(false);

@@ -69,6 +69,7 @@ export default function AgentAccompaniment({ agent, id }) {
 
         const response = await createAgent(formData);
         if (response.hasError) {
+          console.log({ response });
           let message = response.message;
           if (Array.isArray(response.message)) {
             message = response.message.join(", ");

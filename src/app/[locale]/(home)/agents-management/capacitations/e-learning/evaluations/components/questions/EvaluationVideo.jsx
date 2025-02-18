@@ -55,7 +55,13 @@ export const EvaluationVideo = ({ question, onSave, onDelete, onDuplicate, onMov
       </div>
     </div>
   ) : (
-    <form onSubmit={handleSubmit(values => onSave({ ...question, ...values }))}>
+    <form
+      onSubmit={handleSubmit(values => {
+        onSave({ ...question, ...values });
+
+        setIsEditing(false);
+      })}
+    >
       <Field>
         <Label>Título</Label>
         <Input

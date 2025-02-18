@@ -27,13 +27,39 @@ export default function Evaluations() {
   }, [getEvaluationsByCourse]);
 
   useEffect(() => {
-    if (!hasPermission(LMS_PERMISSIONS.evaluations)) router.replace('/agents-management/capacitations/e-learning/courses');
+    if (!hasPermission(LMS_PERMISSIONS.editEvaluation)) router.replace('/agents-management/capacitations/e-learning/courses');
 
     fetchEvaluations();
   }, [hasPermission, router, fetchEvaluations]);
 
   return (
     <div className="max-w-xl mx-auto py-5">
+      {coursesWithEvaluations.length === 0 && (
+        <div className="bg-white rounded-lg py-10 mt-4">
+          <p className="text-center text-lg">No hay evaluaciones creadas aún</p>
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <button
+              type="button"
+              className="bg-[#969696] px-3 py-2 text-white rounded-lg text-sm"
+              onClick={() => {
+                router.push('/agents-management/capacitations/e-learning/config');
+              }}
+            >
+              Volver a cursos
+            </button>
+            <button
+              type="button"
+              className="bg-easy-400 px-3 py-2 text-white rounded-lg text-sm"
+              onClick={() => {
+                router.push('/agents-management/capacitations/e-learning/evaluations/create');
+              }}
+            >
+              Crear nueva evaluación
+            </button>
+          </div>
+        </div>
+      )}
+
       {coursesWithEvaluations.map(course => {
         return (
           <div key={course.id}>
@@ -52,7 +78,7 @@ export default function Evaluations() {
                     {page.evaluations.map(evaluation => {
                       return (
                         <div key={evaluation.id} className="bg-[#e0e0e0] flex items-center justify-between">
-                          <p className="pl-2 py-2">Evaluación: {evaluation.id}</p>
+                          <p className="pl-2 py-2">Evaluación: {evaluation.name}</p>
                           <div className="pr-4 flex items-center gap-2">
                             <button type="button" onClick={() => router.push(`/agents-management/capacitations/e-learning/evaluations/${evaluation.id}`)}>
                               <FiEdit size="18px" />

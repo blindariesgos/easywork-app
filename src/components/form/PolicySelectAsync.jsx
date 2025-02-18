@@ -21,26 +21,27 @@ function PolicySelectAsync({
   label,
   selectedOption,
   disabled,
-  register,
   name,
   error,
   setValue,
   border,
-  value,
   watch,
   setSelectedOption,
   placeholder,
+  isRenewal,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({});
-  const props = register && register(name);
 
   const { data: options, isLoading } = usePolicies({
     page: 1,
     limit: 5,
-    filters,
+    filters: {
+      ...filters,
+      ...(isRenewal ? { renewal: "true" } : {}),
+    },
   });
   const handleSearch = useDebouncedCallback(() => {
     if (query.length > 0) {

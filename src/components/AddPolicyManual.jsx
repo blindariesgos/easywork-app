@@ -33,6 +33,7 @@ import Vehicles from "@/src/components/policyAdds/Vehicles";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
+import AgentSelectAsync from "./form/AgentSelectAsync";
 
 const endpointsByModule = {
   gestion: (body, documentType, id) => addManualPolicy(body, documentType),
@@ -242,7 +243,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
     if (policy.contact) {
       setValue("contact", policy.contact.id);
       setValue("isNewContact", false);
-      setValue("typePerson", policy.contact.typePerson);
+      setValue("type", policy.contact.typePerson);
     }
     policy.currency && setValue("currencyId", policy.currency.id);
     policy.frecuenciaCobro &&
@@ -381,21 +382,21 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                           id: "moral",
                         },
                       ]}
-                      name="typePerson"
+                      name="type"
                       setValue={setValue}
                       watch={watch}
                     />
                     <TextInput
                       type="text"
                       label={
-                        watch("typePerson") != "moral"
+                        watch("type") != "moral"
                           ? "Nombres"
                           : "Nombre de la compañía"
                       }
                       name="newContact.name"
                       register={register}
                     />
-                    {watch("typePerson") == "fisica" && (
+                    {watch("type") == "fisica" && (
                       <TextInput
                         type="text"
                         label={"Apellidos"}
@@ -630,7 +631,13 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                   setValue={setValue}
                   watch={watch}
                 />
-
+                <AgentSelectAsync
+                  label={t("operations:programations:general:sub-agent")}
+                  name="subAgenteId"
+                  error={errors.subAgentId}
+                  setValue={setValue}
+                  watch={watch}
+                />
                 <SelectDropdown
                   label={t("operations:policies:general:responsible")}
                   name="assignedById"

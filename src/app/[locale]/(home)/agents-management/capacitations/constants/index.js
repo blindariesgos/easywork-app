@@ -25,6 +25,10 @@ export const LMS_PERMISSIONS = {
   myCourses: 'agent-management:capacitations:e-learning:my-courses',
   config: 'agent-management:capacitations:e-learning:config',
   evaluations: 'agent-management:capacitations:e-learning:evaluations',
+  takeEvaluation: 'agent-management:capacitations:e-learning:evaluations:take',
+  createEvaluation: 'agent-management:capacitations:e-learning:evaluations:create',
+  editEvaluation: 'agent-management:capacitations:e-learning:evaluations:edit',
+  listEvaluations: 'agent-management:capacitations:e-learning:evaluations:list',
 };
 
 // capacitations = Acceso a Capacitaciones

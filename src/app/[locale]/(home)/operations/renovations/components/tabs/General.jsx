@@ -289,24 +289,6 @@ export default function PolicyDetails({
             multiple
             rows={2}
           />
-
-          <Controller
-            render={({ field: { value, onChange, ref, onBlur } }) => {
-              return (
-                <InputDate
-                  label={t("operations:policies:general:init-date")}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors.vigenciaDesde}
-                  disabled={!isEdit}
-                />
-              );
-            }}
-            name="vigenciaDesde"
-            control={control}
-            defaultValue=""
-          />
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {
               return (

@@ -7,8 +7,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import dynamic from "next/dynamic";
-import DropdownVisibleUsers from "./DropdownVisibleUsers";
+import TaggedUsers from "@/src/components/modals/TaggedUsers";
 import useAppContext from "@/src/context/app";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill"; // <--- Arroja error SSR.
@@ -157,11 +156,9 @@ const TextEditor = forwardRef(
           onKeyDown={handleKeyDown}
         />
         {arroba && (
-          <DropdownVisibleUsers
-            mentionButtonRef={null}
+          <TaggedUsers
             isOpen={arroba}
             dataUsers={dataUsers}
-            modalPosition={modalPosition}
             onChangeCustom={onChangeCustom}
             setUserSelected={addUserSelected}
             userSelected={userSelected}

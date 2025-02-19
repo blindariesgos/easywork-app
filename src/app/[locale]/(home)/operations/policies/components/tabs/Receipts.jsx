@@ -1,12 +1,9 @@
 "use client";
 import ReceiptEmpty from "../ReceiptEmpty";
-
 import { useState } from "react";
-
 import { formatToCurrency } from "@/src/utils/formatters";
 import { useReceiptsByPolicyId } from "@/src/lib/api/hooks/receipts";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
-import { formatDate } from "@/src/utils/getFormatDate";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
@@ -91,27 +88,6 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                   {/* <span
                     className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
                       fieldClicked.field === "company" &&
-                      fieldClicked.sortDirection === "desc"
-                        ? "transform rotate-180"
-                        : ""
-                    }`}
-                  >
-                    <ChevronDownIcon
-                      className="invisible ml-2 h-6 w-6 flex-none rounded text-primary group-hover:visible group-focus:visible"
-                      aria-hidden="true"
-                    />
-                  </span> */}
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-3 py-3.5 text-center text-sm font-medium text-gray-400 cursor-pointer"
-              >
-                <div className="group inline-flex items-center">
-                  INICIO DE VIGENCIA
-                  {/* <span
-                    className={`invisible ml-2 flex-none rounded text-primary group-hover:visible group-focus:visible ${
-                      fieldClicked.field === "estadoPoliza" &&
                       fieldClicked.sortDirection === "desc"
                         ? "transform rotate-180"
                         : ""
@@ -238,11 +214,6 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
                     {receipt?.methodCollection?.name ?? "S/N"}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {receipt?.startDate
-                      ? moment(receipt?.startDate).utc().format("DD/MM/YYYY")
-                      : "No disponible"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 text-center">
                     {receipt?.dueDate

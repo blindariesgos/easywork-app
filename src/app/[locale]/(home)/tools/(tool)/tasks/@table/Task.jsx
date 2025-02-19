@@ -24,12 +24,7 @@ export default function Task({ task, ...props }) {
       {task?.subTasks?.length > 0 && showSubTasks && (
         <Fragment>
           {task.subTasks.map((subTask) => (
-            <ColumnTable
-              task={subTask}
-              isSubTask={true}
-              {...props}
-              key={subTask.id}
-            />
+            <Task task={subTask} isSubTask={true} {...props} key={subTask.id} />
           ))}
         </Fragment>
       )}

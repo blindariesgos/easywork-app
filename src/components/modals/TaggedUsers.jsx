@@ -1,10 +1,10 @@
-import TextInput from "../../../../../../../components/form/TextInput";
+import TextInput from "../form/TextInput";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import React, { Fragment } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
-const DropdownVisibleUsers = ({
+const TaggedUsers = ({
   dataUsers,
   onChangeCustom,
   setUserSelected,
@@ -87,4 +87,4 @@ const DropdownVisibleUsers = ({
   );
 };
 
-export default DropdownVisibleUsers;
+export default TaggedUsers;

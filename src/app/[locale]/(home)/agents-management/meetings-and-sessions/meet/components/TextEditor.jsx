@@ -3,13 +3,11 @@
 import React, {
   useEffect,
   useState,
-  useCallback,
   useRef,
   forwardRef,
   useImperativeHandle,
 } from "react";
-import dynamic from "next/dynamic";
-import DropdownVisibleUsers from "./DropdownVisibleUsers";
+import TaggedUsers from "@/src/components/modals/TaggedUsers";
 import useAppContext from "@/src/context/app";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
@@ -68,7 +66,6 @@ const TextEditor = forwardRef(
     const [arroba, setArroba] = useState(false);
     const [dataUsers, setDataUsers] = useState([]);
     const [userSelected, setUserSelected] = useState(null);
-    const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
     useImperativeHandle(ref, () => ({
       getEditor: () => localQuillRef.current?.getEditor(),
@@ -80,9 +77,6 @@ const TextEditor = forwardRef(
       if (delta && delta.ops && delta.ops.length > 0) {
         delta.ops.forEach((obj) => {
           if (obj.insert === "@") {
-            const atIndex = text.indexOf("@");
-            const range = editor.getBounds(atIndex);
-            setModalPosition({ x: range.left, y: range.bottom });
             setArroba(true);
           }
         });
@@ -154,11 +148,9 @@ const TextEditor = forwardRef(
           onKeyDown={handleKeyDown}
         />
         {arroba && (
-          <DropdownVisibleUsers
-            mentionButtonRef={null}
+          <TaggedUsers
             isOpen={arroba}
             dataUsers={dataUsers}
-            modalPosition={modalPosition}
             onChangeCustom={onChangeCustom}
             setUserSelected={addUserSelected}
             userSelected={userSelected}

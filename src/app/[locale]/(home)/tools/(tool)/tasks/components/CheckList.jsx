@@ -18,7 +18,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { putTaskId } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useSWRConfig } from "swr";
-
+import { MdEdit } from "react-icons/md";
 export default function CheckList({
   handleSubmit,
   append,
@@ -99,9 +99,9 @@ export default function CheckList({
     setShowSave(false);
   };
 
-  const handleKeyPress = (event, index) => {
+  const handleKeyPress = (event, index, subIndex) => {
     if (event.key === "Enter") {
-      addSubItems(index);
+      addSubItems(index, subIndex);
     }
   };
 
@@ -134,22 +134,21 @@ export default function CheckList({
       );
   };
 
-  const addSubItems = (index, isNew) => {
-    const existingSubItems = getValues(`items.${index}.subItems`);
-    const endIndex =
-      existingSubItems.length > 0 ? existingSubItems.length - 1 : 0;
-    if (!existingSubItems.some((subItem) => subItem.name === "")) {
-      if (existingSubItems.length > 0) {
-        setValue(`items.${index}.subItems.${endIndex}.empty`, false);
-      }
-      if (isNew) {
-        setValue(`items.${index}.subItems`, [
-          ...getValues(`items.${index}.subItems`),
-          { name: "", value: false, empty: true },
-        ]);
-      }
-      setListField && setListField(watch("items"));
+  const editSubItem = (index, subIndex) => {
+    setValue(`items.${index}.subItems.${subIndex}.empty`, true);
+  };
+
+  const addSubItems = (index, subIndex, isNew) => {
+    if (watch(`items.${index}.subItems.${subIndex}.name`) !== "") {
+      setValue(`items.${index}.subItems.${subIndex}.empty`, false);
     }
+    if (isNew) {
+      setValue(`items.${index}.subItems`, [
+        ...getValues(`items.${index}.subItems`),
+        { name: "", value: false, empty: true },
+      ]);
+    }
+    setListField && setListField(watch("items"));
   };
 
   const onChangeCheckBox = (e, index, subIndex) => {
@@ -289,10 +288,7 @@ export default function CheckList({
                         (subField, subIndex) => {
                           return (
                             <li key={subIndex} className="group">
-                              <div
-                                className="flex gap-2 items-center mt-2"
-                                onKeyPress={(e) => handleKeyPress(e, index)}
-                              >
+                              <div className="flex gap-2 items-center mt-2">
                                 {!editTitleList[index] && (
                                   <input
                                     type="checkbox"
@@ -311,6 +307,9 @@ export default function CheckList({
                                       {...register(
                                         `items.${index}.subItems.${subIndex}.name`
                                       )}
+                                      onKeyDown={(e) =>
+                                        handleKeyPress(e, index, subIndex)
+                                      }
                                       type="text"
                                       placeholder={t("tools:tasks:new:item")}
                                       className="text-sm w-full rounded-md border-gray-200 bg-white focus:ring-primary focus:ring-1 placeholder:text-sm text-black"
@@ -321,13 +320,23 @@ export default function CheckList({
                                         {subIndex + 1}. {subField.name}
                                       </p>
                                       {editTitleList[index] && (
-                                        <div
-                                          className="cursor-pointer"
-                                          onClick={() =>
-                                            removeSubItem(index, subIndex)
-                                          }
-                                        >
-                                          <TrashIcon className="h-3 w-3 text-gray-200" />
+                                        <div className="flex items-center gap-2">
+                                          <div
+                                            className="cursor-pointer"
+                                            onClick={() =>
+                                              editSubItem(index, subIndex)
+                                            }
+                                          >
+                                            <MdEdit className="h-3 w-3 text-gray-200 hover:text-primary" />
+                                          </div>
+                                          <div
+                                            className="cursor-pointer"
+                                            onClick={() =>
+                                              removeSubItem(index, subIndex)
+                                            }
+                                          >
+                                            <TrashIcon className="h-3 w-3 text-gray-200 hover:text-primary" />
+                                          </div>
                                         </div>
                                       )}
                                     </div>
@@ -344,7 +353,7 @@ export default function CheckList({
                       <div className="flex justify-between w-full mt-3 ">
                         <button
                           type="button"
-                          onClick={() => addSubItems(index, true)}
+                          onClick={() => addSubItems(index, 0, true)}
                           className="border-b border-dashed  border-gray-400 text-xs text-gray-400 flex gap-2 mt-3"
                         >
                           <PlusIcon className="h-4 w-4" />

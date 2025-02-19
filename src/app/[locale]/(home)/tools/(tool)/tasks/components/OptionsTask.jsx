@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import TextEditor from "./TextEditor";
 import UploadDocuments from "./UploadDocuments";
 import CheckList from "./CheckList";
-import DropdownVisibleUsers from "./DropdownVisibleUsers";
+import TaggedUsers from "@/src/components/modals/TaggedUsers";
 import { useTranslation } from "react-i18next";
 import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
@@ -35,16 +35,13 @@ const OptionsTask = ({
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const quillRef = useRef(null);
-  const mentionButtonRef = useRef(null);
   const [arroba, setArroba] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataUsers, setDataUsers] = useState();
   const [userSelected, setUserSelected] = useState(null);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectText, setSelectText] = useState();
   const [openList, setOpenList] = useState((edit ?? copy) ? true : false);
   const [openFiles, setOpenFiles] = useState(false);
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [localFiles, setLocalFiles] = useState([]);
   const { mutate } = useSWRConfig();
 
@@ -54,38 +51,26 @@ const OptionsTask = ({
       name: t("tools:tasks:new:file"),
       icon: PaperClipIcon,
       onclick: () => setOpenFiles(!openFiles),
+      hidden: !disabled && edit,
     },
     {
       id: 2,
       name: t("tools:tasks:new:document"),
       icon: DocumentTextIcon,
+      hidden: !disabled,
     },
     {
       id: 3,
       name: t("tools:tasks:new:mention"),
       icon: AtSymbolIcon,
-      onclick: () => setDropdownVisible(!dropdownVisible),
-      disabled: arroba || disabled,
+      onclick: () => setArroba(true),
+      hidden: disabled,
     },
     {
       id: 5,
       name: t("tools:tasks:new:verification-list"),
-      onclick: () => {
-        if (fields.length === 0) {
-          append({
-            name: `${t("tools:tasks:new:verification-list")} #${fields.length + 1}`,
-            subItems: [{ name: "", value: false, empty: true }],
-          });
-        }
-        setOpenList(!openList);
-      },
+      onclick: () => setOpenList(!openList),
     },
-    // {
-    //   id: 6,
-    //   name: t("tools:tasks:new:add-list"),
-    //   onclick: () => { },
-    //   menu: true,
-    // },
   ];
 
   const schema = yup.object().shape({
@@ -189,18 +174,6 @@ const OptionsTask = ({
     setDataUsers(filterData);
   };
 
-  const dropdownUsers = (editor) => (
-    <DropdownVisibleUsers
-      mentionButtonRef={editor ? null : mentionButtonRef}
-      modalPosition={modalPosition}
-      dataUsers={dataUsers}
-      onChangeCustom={onChangeCustom}
-      setUserSelected={setUserSelected}
-      userSelected={userSelected}
-      setDropdownVisible={editor ? setArroba : setDropdownVisible}
-    />
-  );
-
   const deleteFile = async (fileId) => {
     if (addFile) {
       console.log(fileId, files);
@@ -270,13 +243,12 @@ const OptionsTask = ({
       {canEdit && (
         <div className="flex justify-start mt-4 gap-3 relative flex-wrap">
           {options
-            .filter((opt) => !opt.disabled)
+            .filter((opt) => !opt.hidden)
             .map((opt) => (
               <div
                 key={opt.id}
                 className="flex gap-1 items-center cursor-pointer"
                 onClick={opt.onclick}
-                ref={opt.id === 3 ? mentionButtonRef : null}
               >
                 <button
                   className="flex gap-2 items-center focus:ring-0"
@@ -287,8 +259,16 @@ const OptionsTask = ({
                 </button>
               </div>
             ))}
-          {dropdownVisible && mentionButtonRef.current && dropdownUsers()}
         </div>
+      )}
+      {arroba && (
+        <TaggedUsers
+          dataUsers={dataUsers}
+          onChangeCustom={onChangeCustom}
+          setUserSelected={setUserSelected}
+          userSelected={userSelected}
+          setDropdownVisible={setArroba}
+        />
       )}
       {openFiles && (
         <UploadDocuments

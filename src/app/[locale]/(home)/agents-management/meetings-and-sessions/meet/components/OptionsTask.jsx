@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import TextEditor from "./TextEditor";
 import UploadDocuments from "./UploadDocuments";
 import CheckList from "./CheckList";
-import DropdownVisibleUsers from "./DropdownVisibleUsers";
+import TaggedUsers from "@/src/components/modals/TaggedUsers";
 import { useTranslation } from "react-i18next";
 import { AtSymbolIcon, PaperClipIcon } from "@heroicons/react/20/solid";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -183,9 +183,7 @@ const OptionsTask = ({
   };
 
   const dropdownUsers = (editor) => (
-    <DropdownVisibleUsers
-      mentionButtonRef={editor ? null : mentionButtonRef}
-      modalPosition={modalPosition}
+    <TaggedUsers
       dataUsers={dataUsers}
       onChangeCustom={onChangeCustom}
       setUserSelected={setUserSelected}

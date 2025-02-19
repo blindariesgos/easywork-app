@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { EvaluationBodyToTake } from './EvaluationBodyToTake';
 
 const calculateElapsedTime = (startedAt, finishedAt) => {
+  startedAt = new Date(startedAt);
+  finishedAt = new Date(finishedAt);
+
   const result = {
     milliseconds: 0,
     seconds: 0,
@@ -12,11 +15,11 @@ const calculateElapsedTime = (startedAt, finishedAt) => {
 
   if (!startedAt || !finishedAt) return result;
 
-  const differenceInMilliseconds = startedAt.getTime() - finishedAt.getTime();
+  const differenceInMilliseconds = finishedAt.getTime() - startedAt.getTime();
   result.milliseconds = differenceInMilliseconds / 1000;
-  result.seconds = result.milliseconds / 60;
-  result.minutes = result.seconds / 60;
-  result.hours = result.minutes / 24;
+  result.seconds = Math.ceil(result.milliseconds / 60);
+  result.minutes = Math.ceil(result.seconds / 60);
+  result.hours = Math.ceil(result.minutes / 24);
 
   return result;
 };
@@ -24,7 +27,7 @@ const calculateElapsedTime = (startedAt, finishedAt) => {
 export const EvaluationFinalized = ({ evaluation, evaluationAttempt }) => {
   const [showDetails, setShowDetails] = useState(false);
 
-  const timeElapsed = calculateElapsedTime(evaluation.startedAt, evaluation.finishedAt);
+  const timeElapsed = calculateElapsedTime(evaluationAttempt.startedAt, evaluationAttempt.finishedAt);
 
   if (!evaluation || !evaluationAttempt)
     return (
@@ -44,14 +47,7 @@ export const EvaluationFinalized = ({ evaluation, evaluationAttempt }) => {
         </p>
 
         <p className="mt-4">
-          Tiempo:{' '}
-          <span className="font-bold text-lg">
-            {timeElapsed.days > 0 && `${timeElapsed.days} día(s)`}
-            {timeElapsed.hours > 0 && `${timeElapsed.hours} hora(s)`}
-            {timeElapsed.minutes > 0 && `${timeElapsed.minutes} minuto(s)`}
-            {timeElapsed.seconds > 0 && `${timeElapsed.seconds} segundo(s)`}
-            {timeElapsed.milliseconds > 0 && `${timeElapsed.milliseconds} segundo(s)`}
-          </span>
+          Tiempo: <span className="font-bold text-lg">{`${timeElapsed.hours}:${timeElapsed.minutes < 10 ? `0${timeElapsed.minutes}` : timeElapsed.minutes}:${timeElapsed.seconds}`}</span>
         </p>
 
         <button type="button" className="bg-easy-400 px-3 py-2 text-white rounded-lg font-bold mt-6" onClick={() => setShowDetails(prev => !prev)}>

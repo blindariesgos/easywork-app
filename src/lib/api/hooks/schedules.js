@@ -30,7 +30,7 @@ export const useSchedules = ({ filters = {}, config = {} }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/schedulings?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+  // console.log(url);
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {

@@ -25,7 +25,7 @@ const KanbanReceipts = () => {
     setIsDragging(false);
     setLoading(true);
     setItemDrag(null);
-    console.log({ result });
+
     if (result?.over?.data?.current?.status !== "pagado") {
       toast.warn("Solo puede mover los recibos a la columna de Pagado");
       setLoading(false);

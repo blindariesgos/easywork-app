@@ -394,9 +394,9 @@ export const getMeetById = async (id) => {
 
 //#region RECEIPTS
 export const deleteReceiptById = async (receiptId) => {
-  const response = await axios().delete(
-    `/sales/crm/polizas/receipts/${receiptId}`
-  );
+  const response = await axios()
+    .delete(`/sales/crm/polizas/receipts/${receiptId}`)
+    .catch((error) => ({ hasError: true, ...error }));
   revalidatePath("/control/portafolio/receipts", "page");
   return response;
 };

@@ -107,10 +107,8 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
       body.startDate = moment(startDate).format("YYYY-MM-DD");
     }
     try {
-      console.log("Reembolso body", body);
       const response = await putRefund(id, body);
       if (response.hasError) {
-        console.log(response);
         toast.error(
           "Se ha producido un error al actualizar el reembolso, inténtelo de nuevo."
         );

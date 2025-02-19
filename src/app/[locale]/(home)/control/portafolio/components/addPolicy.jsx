@@ -129,7 +129,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     const response = await getMetadataOfPdf("nueva", formData).catch((error) =>
       console.log({ error })
     );
-    console.log(response);
 
     if (response?.hasError) {
       if (Array.isArray(response?.error?.message)) {
@@ -270,11 +269,10 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
     if (specifications && specifications.length > 0) {
       body.specifications = specifications;
     }
-    console.log({ body });
 
     try {
       const response = await addPolicyByPdf(body);
-      console.log({ response });
+
       if (response?.hasError) {
         if (Array.isArray(response?.error?.message)) {
           response?.error?.message.forEach((message) => {
@@ -364,7 +362,6 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                       <IoMdCloseCircleOutline
                         className="w-6 h-6 hidden absolute top-0 left-[calc(50%_+_20px)] group-hover:block cursor-pointer"
                         onClick={() => {
-                          console.log("aqu");
                           handleReset();
                         }}
                       />

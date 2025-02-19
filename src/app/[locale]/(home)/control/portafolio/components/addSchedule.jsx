@@ -103,7 +103,6 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
   };
 
   const handleChangePolicy = (policy) => {
-    console.log({ policy });
     policy?.company?.id && setValue("insuranceId", policy?.company?.id);
     policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
     policy?.contact?.id && setValue("contact", policy?.contact?.id);
@@ -121,7 +120,7 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
 
     const formData = getFormData(body);
     const response = await addSchedule(formData);
-    console.log({ response });
+
     if (response.hasError) {
       let message = response.message;
       if (response.errors) {

@@ -46,7 +46,6 @@ const CompleteModalTask = ({ isOpen, setIsOpen, taskId, mutate }) => {
           taskId: taskId,
         };
         await postComment(body, taskId);
-        console.log("comentario realizado");
       }
       toast.success(t("tools:tasks:completed-success"));
       mutate();

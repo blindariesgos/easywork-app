@@ -104,10 +104,8 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
       body.startDate = moment(startDate).format("YYYY-MM-DD");
     }
     try {
-      console.log({ body });
       const response = await putSchedule(id, body);
       if (response.hasError) {
-        console.log(response);
         let message = response.message;
         if (Array.isArray(response.message)) {
           message = response.message.join(", ");

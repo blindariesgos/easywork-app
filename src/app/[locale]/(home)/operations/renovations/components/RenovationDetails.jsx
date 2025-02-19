@@ -108,7 +108,7 @@ export default function RenovationDetails({ data, id, mutate }) {
     };
     try {
       const response = await putPoliza(id, body);
-      console.log({ response });
+
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al actualizar, inténtelo de nuevo."

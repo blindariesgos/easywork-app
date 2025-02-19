@@ -84,10 +84,6 @@ export default function RenovationDetails({ data, id, mutate }) {
     },
   ];
 
-  useEffect(() => {
-    console.log({ headerRef });
-  }, [headerRef]);
-
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}

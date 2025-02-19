@@ -23,8 +23,6 @@ export default function UserDetails({ id }) {
 
   if (isLoading) <LoaderSpinner />;
 
-  console.log("User", data);
-
   return (
     <SlideOver
       openModal={true}

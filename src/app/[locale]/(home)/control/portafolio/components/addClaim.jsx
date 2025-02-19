@@ -85,7 +85,6 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
   };
 
   const onSubmit = (data) => {
-    console.log({ data });
     setIsOpen(false);
   };
 

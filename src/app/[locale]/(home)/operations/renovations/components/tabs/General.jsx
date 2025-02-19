@@ -152,7 +152,6 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
     try {
-      console.log({ body });
       const poliza = Object.keys(body).reduce(
         (acc, key) =>
           Boolean(body[key])
@@ -164,7 +163,7 @@ export default function PolicyDetails({
         {}
       );
       const response = await putPoliza(id, poliza);
-      console.log({ response });
+
       if (response.hasError) {
         handleFrontError(response);
         return;

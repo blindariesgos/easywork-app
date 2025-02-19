@@ -37,6 +37,74 @@ const getQueries = (filters, userId) => {
   return paramsUrl;
 };
 
+//#region COMMONS
+const getCommentPath = (cmrtype) => {
+  switch (cmrtype) {
+    case "poliza":
+    case "renewal":
+      return "/sales/crm/polizas";
+    case "lead":
+      return "/sales/crm/leads";
+    case "agent":
+      return "/agent-management/agents";
+    case "receipt":
+      return "/sales/crm/polizas/receipts";
+    case "poliza_scheduling":
+      return "/operations/schedulings";
+    case "poliza_reimbursement":
+      return "/operations/reimbursements";
+    default:
+      return "/sales/crm/contacts";
+  }
+};
+export const addContactComment = async (body, cmrType) => {
+  const url = `${getCommentPath(cmrType)}/comments`;
+  console.log(url, body);
+  const response = await axios()
+    .post(url, body)
+    .catch((error) => ({ hasError: true, error }));
+  return response;
+};
+
+export const updateComment = async (body, cmrType, commentId) => {
+  const url = `${getCommentPath(cmrType)}/comments/${commentId}`;
+  console.log(url, body);
+  const response = await axios()
+    .put(url, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+const getDeleteCommentPath = (cmrtype) => {
+  switch (cmrtype) {
+    case "poliza":
+    case "renewal":
+      return "/sales/crm/polizas";
+    case "lead":
+      return "/sales/crm/leads/comments";
+    case "agent":
+      return "/agent-management/agents";
+    case "receipt":
+      return "/sales/crm/polizas/receipts";
+    case "poliza_scheduling":
+      return "/operations/schedulings";
+    case "poliza_reimbursement":
+      return "/operations/reimbursements";
+    default:
+      return "/sales/crm/contacts";
+  }
+};
+export const deleteActivityComment = async (cmrType, commentId) => {
+  const url = `${getDeleteCommentPath(cmrType)}/comments/${commentId}`;
+
+  const response = await axios()
+    .delete(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
 //#region LEADS
 export const createLead = async (data) => {
   const response = await axios({ contentType: "multipart/form-data" })
@@ -98,6 +166,13 @@ export const addManualPolicyToLead = async (body, leadId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+export const closeLeadManualSale = async (leadId, body) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/${leadId}/close-sale-manual`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region CONTACTS
@@ -280,6 +355,13 @@ export const createAgentIntermediary = async (data) => {
   const response = await axios()
     .post("/agent-management/agente-intermediario", data)
     .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getAgentFolders = async (agentId) => {
+  const response = await axios()
+    .get(`/agent-management/agents/${agentId}/document_folder`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 //#endregion
@@ -939,43 +1021,6 @@ export const updateLabelIdRules = async (usergoogle_id, newLabelIdRules) => {
     usergoogle_id,
     newLabelIdRules,
   });
-  return response;
-};
-
-const getCommentPath = (cmrtype) => {
-  switch (cmrtype) {
-    case "poliza":
-    case "renewal":
-      return "/sales/crm/polizas";
-    case "lead":
-      return "/sales/crm/leads";
-    case "agent":
-      return "/agent-management/agents";
-    case "receipt":
-      return "/sales/crm/polizas/receipts";
-    case "poliza_scheduling":
-      return "/operations/schedulings";
-    case "poliza_reimbursement":
-      return "/operations/reimbursements";
-    default:
-      return "/sales/crm/contacts";
-  }
-};
-export const addContactComment = async (body, cmrType) => {
-  const url = `${getCommentPath(cmrType)}/comments`;
-  console.log(url, body);
-  const response = await axios()
-    .post(url, body)
-    .catch((error) => ({ hasError: true, error }));
-  return response;
-};
-
-export const updateComment = async (body, cmrType, commentId) => {
-  const url = `${getCommentPath(cmrType)}/comments/${commentId}`;
-  console.log(url, body);
-  const response = await axios()
-    .put(url, body)
-    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 

@@ -32,6 +32,7 @@ import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import { handleFrontError } from "../utils/api/errors";
+import AgentSelectAsync from "./form/AgentSelectAsync";
 
 const getMetadataUrl = {
   policy: (data, contactId) => getMetadataOfPdf("nueva", data),
@@ -425,28 +426,6 @@ const AddPolicyWithReader = ({
                     setValue={setValue}
                     watch={watch}
                   />
-                  <IntermediarySelectAsync
-                    label={t("operations:policies:general:intermediary")}
-                    name="agenteIntermediarioId"
-                    setValue={setValue}
-                    watch={watch}
-                  />
-                  <SelectDropdown
-                    label={t("operations:policies:general:responsible")}
-                    name="assignedById"
-                    options={lists?.users}
-                    register={register}
-                    error={!watch("assignedById") && errors.assignedById}
-                    setValue={setValue}
-                    watch={watch}
-                  />
-                  <SelectInput
-                    label={"Observador"}
-                    options={lists?.users ?? []}
-                    name="observerId"
-                    error={errors?.observerId}
-                    setValue={setValue}
-                  />
                   <div>
                     <label
                       className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
@@ -734,6 +713,35 @@ const AddPolicyWithReader = ({
                     name="specifications"
                     multiple
                     rows={3}
+                  />
+                  <IntermediarySelectAsync
+                    label={t("operations:policies:general:intermediary")}
+                    name="agenteIntermediarioId"
+                    setValue={setValue}
+                    watch={watch}
+                  />
+                  <AgentSelectAsync
+                    label={t("operations:programations:general:sub-agent")}
+                    name="subAgenteId"
+                    error={errors.subAgenteId}
+                    setValue={setValue}
+                    watch={watch}
+                  />
+                  <SelectDropdown
+                    label={t("operations:policies:general:responsible")}
+                    name="assignedById"
+                    options={lists?.users}
+                    register={register}
+                    error={!watch("assignedById") && errors.assignedById}
+                    setValue={setValue}
+                    watch={watch}
+                  />
+                  <SelectInput
+                    label={"Observador"}
+                    options={lists?.users ?? []}
+                    name="observerId"
+                    error={errors?.observerId}
+                    setValue={setValue}
                   />
                   {type == "endoso" && (
                     <SelectInput

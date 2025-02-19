@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { EvaluationBodyToTake } from './EvaluationBodyToTake';
 
 const calculateElapsedTime = (startedAt, finishedAt) => {
+<<<<<<< HEAD
   startedAt = new Date(startedAt);
   finishedAt = new Date(finishedAt);
 
+=======
+>>>>>>> 62af94af555fc1fc2462e0f44b002525786eebbd
   const result = {
     milliseconds: 0,
     seconds: 0,
@@ -15,11 +18,19 @@ const calculateElapsedTime = (startedAt, finishedAt) => {
 
   if (!startedAt || !finishedAt) return result;
 
+<<<<<<< HEAD
   const differenceInMilliseconds = finishedAt.getTime() - startedAt.getTime();
   result.milliseconds = differenceInMilliseconds / 1000;
   result.seconds = Math.ceil(result.milliseconds / 60);
   result.minutes = Math.ceil(result.seconds / 60);
   result.hours = Math.ceil(result.minutes / 24);
+=======
+  const differenceInMilliseconds = startedAt.getTime() - finishedAt.getTime();
+  result.milliseconds = differenceInMilliseconds / 1000;
+  result.seconds = result.milliseconds / 60;
+  result.minutes = result.seconds / 60;
+  result.hours = result.minutes / 24;
+>>>>>>> 62af94af555fc1fc2462e0f44b002525786eebbd
 
   return result;
 };

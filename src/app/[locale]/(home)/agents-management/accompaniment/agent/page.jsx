@@ -1,6 +1,6 @@
 import React from "react";
 import SlideOver from "@/src/components/SlideOver";
-import AgentEditor from "../../agent/components/AgentEditor";
+import AgentAccompaniment from "../../agent/AgentAccompaniment";
 
 export default async function page() {
   return (
@@ -9,7 +9,7 @@ export default async function page() {
       labelTag="agent"
       maxWidthClass={"max-w-[46rem]"}
     >
-      <AgentEditor />
+      <AgentAccompaniment />
     </SlideOver>
   );
 }

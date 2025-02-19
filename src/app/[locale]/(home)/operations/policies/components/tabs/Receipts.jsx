@@ -9,6 +9,7 @@ import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { formatDate } from "@/src/utils/getFormatDate";
 import moment from "moment";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
   const { data, isLoading } = useReceiptsByPolicyId(policyId);
@@ -220,7 +221,20 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
-                    {receipt.status}
+                    <label
+                      className={clsx(
+                        "py-2 px-3 rounded-lg capitalize font-semibold cursor-pointer",
+                        {
+                          "bg-[#A9EA44]": receipt?.status == "pagado",
+                          "bg-[#86BEDF]": receipt?.status == "vigente",
+                          "bg-[#FFC4C2]": ["vencido", "cancelado"].includes(
+                            receipt?.status
+                          ),
+                        }
+                      )}
+                    >
+                      {receipt?.status}
+                    </label>
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-400 uppercase text-center">
                     {receipt?.methodCollection?.name ?? "S/N"}

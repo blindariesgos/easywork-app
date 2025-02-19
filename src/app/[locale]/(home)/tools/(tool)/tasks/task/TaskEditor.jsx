@@ -165,6 +165,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
   };
   const setCrmAgent = async agentId => {
     const response = await getAgentById(agentId);
+    console.log('🚀 ~ TaskEditor ~ response: Agente =>', response);
     setValue('crm', [
       {
         id: response?.id,
@@ -172,7 +173,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
         name: response?.name,
       },
     ]);
-    console.log('Agente', response);
     setValue('name', 'CRM - Agente: ');
     setLoading(false);
   };
@@ -268,7 +268,17 @@ export default function TaskEditor({ edit, copy, subtask }) {
 
     setValue('createdBy', [assignedBy?.id]);
     setValue('name', `Capacitación - Curso asignado: "${name}"`);
-    setValue('responsible', assignTo);
+
+    if (assignTo && assignTo[0]) {
+      setValue('responsible', [{ ...assignTo[0].user, name: assignTo[0].name }]);
+      setValue('crm', [
+        {
+          id: assignTo[0].id,
+          type: 'agent',
+          name: assignTo[0].name,
+        },
+      ]);
+    }
     setLoading(false);
   };
   const setCoursePageAssign = async pageId => {
@@ -373,6 +383,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
     if (params.get('prev') === 'course-assign') {
+      const agentId = params.get('agent');
       setLoading(true);
       setCourseAssign(prevId);
       return;

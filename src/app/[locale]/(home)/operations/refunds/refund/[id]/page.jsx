@@ -8,7 +8,6 @@ import { useReimbursement } from "@/src/lib/api/hooks/refunds";
 export default function Page({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
   const { data, isLoading, isError, mutate } = useReimbursement(id);
-  console.log({ data });
 
   if (isError) {
     <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="refunds">

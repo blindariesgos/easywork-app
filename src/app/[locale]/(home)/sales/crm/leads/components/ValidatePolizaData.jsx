@@ -179,11 +179,10 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
       vigenciaHasta: moment(vigenciaHasta).format("YYYY-MM-DD"),
       name: `${lists?.policies?.polizaCompanies?.find((x) => x.id == otherData?.companyId)?.name} ${otherData?.poliza} ${lists?.policies?.polizaTypes?.find((x) => x.id == otherData?.typeId)?.name}`,
     };
-    console.log({ body, data });
 
     try {
       const response = await convertLeadToClient(leadId, body);
-      console.log({ response });
+
       if (response?.hasError) {
         if (Array.isArray(response?.error?.message)) {
           response?.error?.message.forEach((message) => {

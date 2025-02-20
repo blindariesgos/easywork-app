@@ -29,7 +29,6 @@ const Column = ({ id, color, activeId, setItemDrag, updateStages, name }) => {
         },
       };
       const response = await getAllRecruitments(params);
-      console.log(name, response, params);
       if (response.hasError) {
         setItems([]);
         setHasMore(false);

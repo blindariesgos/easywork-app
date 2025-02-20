@@ -143,7 +143,6 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
     try {
-      console.log({ body });
       const poliza = Object.keys(body).reduce(
         (acc, key) =>
           Boolean(body[key])
@@ -155,9 +154,8 @@ export default function PolicyDetails({
         {}
       );
       const response = await putPoliza(id, poliza);
-      console.log({ response });
+
       if (response.hasError) {
-        console.log(response);
         toast.error(
           "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
         );

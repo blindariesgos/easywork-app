@@ -140,7 +140,6 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
       style={style}
       {...otherAttributes}
       onPointerDown={(event) => {
-        console.log({ event });
         if (event?.target?.onclick) {
           event?.target?.onclick(event);
           return;

@@ -218,7 +218,7 @@ export default function CreateLead({ lead, id }) {
         photo: selectedProfileImage?.file || "",
       };
     }
-    console.log({ body });
+
     const formData = new FormData();
     for (const key in body) {
       if (body[key] === null || body[key] === undefined || body[key] === "") {
@@ -278,7 +278,6 @@ export default function CreateLead({ lead, id }) {
   };
 
   useEffect(() => {
-    console.log("params type", params.get("type"));
     if (!params.get("type")) return;
 
     setType(params.get("type"));

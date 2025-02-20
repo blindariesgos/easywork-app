@@ -194,7 +194,6 @@ const OptionsTask = ({
 
   const deleteFile = async (fileId) => {
     if (addFile) {
-      console.log(fileId, files);
       addFile(
         "fileIds",
         files.filter((id) => id != fileId)
@@ -207,7 +206,6 @@ const OptionsTask = ({
     }).catch((error) => ({ hasError: true, error }));
 
     if (response.hasError) {
-      console.log({ response });
       toast.error(
         "Se ha producido un error al eliminar el archivo, inténtelo de nuevo más tarde."
       );

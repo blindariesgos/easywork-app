@@ -55,7 +55,6 @@ export default function AgentAccompaniment({ agent, id }) {
         birthdate: moment(birthdate).format("YYYY-MM-DD"),
       };
     }
-    console.log({ body });
     try {
       setLoading(true);
       if (!agent) {
@@ -69,7 +68,6 @@ export default function AgentAccompaniment({ agent, id }) {
 
         const response = await createAgent(formData);
         if (response.hasError) {
-          console.log({ response });
           let message = response.message;
           if (Array.isArray(response.message)) {
             message = response.message.join(", ");
@@ -105,7 +103,6 @@ export default function AgentAccompaniment({ agent, id }) {
       setLoading(false);
       router.back();
     } catch (error) {
-      console.log({ error });
       console.error(error.message);
       handleApiError(error.message);
       setLoading(false);

@@ -122,7 +122,6 @@ export default function MeetEditor({ edit, copy, type }) {
     setLoading(false);
   };
   const setCrmLead = async (leadId) => {
-    console.log("paso por lead");
     const response = await getLeadById(leadId);
     setValue("crm", [
       {
@@ -143,7 +142,6 @@ export default function MeetEditor({ edit, copy, type }) {
         name: response?.title,
       },
     ]);
-    console.log("receipt", response);
     setValue("title", "CRM - Recibo: ");
     setLoading(false);
   };
@@ -156,16 +154,13 @@ export default function MeetEditor({ edit, copy, type }) {
         name: response?.name,
       },
     ]);
-    console.log("Agente", response);
     setValue("title", "CRM - Agente: ");
     setLoading(false);
   };
   const setCrmAgentMeet = async (agentIds) => {
     const ids = agentIds.split("^");
     const response = await Promise.all(ids.map((x) => getAgentById(agentIds)));
-    console.log({ response });
     setValue("participants", response);
-    // console.log("Agente", response);
     setLoading(false);
   };
   const setCrmPolicy = async (policyId, type) => {
@@ -233,7 +228,6 @@ export default function MeetEditor({ edit, copy, type }) {
   const createMeet = async (data, isNewTask) => {
     // if (data.name === "") return toast.error(t("tools:tasks:name-msg"));
 
-    console.log({ data });
     const crm =
       data?.crm?.map((item) => ({ id: item.id, type: item.type })) || [];
     const body = buildMeetBody(
@@ -245,7 +239,6 @@ export default function MeetEditor({ edit, copy, type }) {
       listField,
       t
     );
-    console.log({ body });
     try {
       setLoading(true);
       if (edit) {
@@ -264,7 +257,6 @@ export default function MeetEditor({ edit, copy, type }) {
         router.back();
       } else {
         const response = await postMeet(body);
-        console.log({ response });
         if (response.hasError) {
           let message = response?.message;
           if (Array.isArray(message)) {
@@ -625,8 +617,6 @@ const buildMeetBody = (
     body.fileIds = data.fileIds;
   }
   body.startTime = getFormatDate(data.startTime) ?? null;
-
-  console.log("body", body);
 
   return body;
 };

@@ -195,7 +195,6 @@ const KanbanLeads = () => {
     if (type === "stage") {
       const response = await putLeadStage(result?.active?.id, result?.over?.id);
       if (response.hasError) {
-        console.log(response);
         toast.error(
           "Se ha producido un error al actualizar el prospecto, inténtelo de nuevo."
         );
@@ -206,8 +205,6 @@ const KanbanLeads = () => {
     }
 
     setUpdateStages([result?.active?.data?.current?.stageId, result?.over?.id]);
-
-    console.log({ result });
 
     // putPoliza(result?.active?.id, body)
     //   .then((response) => {

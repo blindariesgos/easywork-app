@@ -102,7 +102,6 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
   };
 
   const handleChangePolicy = (policy) => {
-    console.log({ policy });
     policy?.company?.id && setValue("insuranceId", policy?.company?.id);
     policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
     policy?.contact?.id && setValue("contact", policy?.contact?.id);
@@ -118,10 +117,9 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     body.contactId = contact.id;
     body.status = "captura_documentos";
 
-    console.log({ body });
     const formData = getFormData(body);
     const response = await addRefund(formData);
-    console.log({ response });
+
     if (response.hasError) {
       let message = response.message;
       if (response.errors) {

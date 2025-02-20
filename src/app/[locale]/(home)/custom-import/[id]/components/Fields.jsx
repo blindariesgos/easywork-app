@@ -78,8 +78,6 @@ const Fields = ({ handleNext, handleBack }) => {
   }, [watch()]);
 
   const handleSubmitNext = (data) => {
-    console.log({ data });
-
     const object = columns.map((fields) => {
       const emails_dto = Object.keys(emailTypes)
         .filter((key) => fields[data.fields[key]])
@@ -113,7 +111,7 @@ const Fields = ({ handleNext, handleBack }) => {
         phones_dto,
       };
     });
-    console.log({ object });
+
     setInfo({
       ...info,
       items: object,

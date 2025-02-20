@@ -51,7 +51,6 @@ export default function RefundDetails({ data, id, mutate }) {
     };
     try {
       const response = await putRefund(data.id, body);
-      console.log({ response });
 
       if (response.hasError) {
         toast.error(

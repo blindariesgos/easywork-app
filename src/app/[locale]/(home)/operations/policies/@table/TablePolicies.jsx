@@ -216,7 +216,7 @@ export default function TablePolicies() {
     const response = await Promise.allSettled(
       selectedContacts.map((policyId) => putPoliza(policyId, body))
     );
-    console.log({ response });
+
     if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
       toast.success(
         t("common:alert:update-items-succes", {

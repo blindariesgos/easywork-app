@@ -37,7 +37,6 @@ const ConnectionStages = ({ stageId, agentId }) => {
       agentConnectionStageId: id,
     };
     const response = await updateAgentConnection(body, agentId);
-    console.log({ response });
     if (response.hasError) {
       let message = response.message;
       if (response.errors) {

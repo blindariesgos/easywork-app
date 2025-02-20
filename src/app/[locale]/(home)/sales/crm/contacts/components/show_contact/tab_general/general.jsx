@@ -265,30 +265,23 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       }
     }
 
-    console.log({ body });
-
     try {
       setLoading(true);
       if (!contact) {
         const response = await createContact(formData);
         if (response.hasError) {
-          let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
-          }
-          throw { message };
+          handleFormSubmit(response);
+          setLoading(false);
+          return;
         }
         await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success(t("contacts:create:msg"));
       } else {
         const response = await updateContact(formData, id);
         if (response.hasError) {
-          console.log({ response });
-          let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
-          }
-          throw { message };
+          handleFormSubmit(response);
+          setLoading(false);
+          return;
         }
         toast.success(t("contacts:edit:updated-contact"));
         await mutate(`/sales/crm/contacts?limit=5&page=1`);
@@ -297,8 +290,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       setLoading(false);
       router.back();
     } catch (error) {
-      console.log({ error });
-      console.error(error.message);
       handleApiError(error.message);
       setLoading(false);
     }

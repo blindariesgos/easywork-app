@@ -71,9 +71,7 @@ export default function AgentRecruitment({ agent, id }) {
           : acc;
       }, {});
       if (!agent) {
-        console.log({ info });
         const response = await createAgentConnection(info);
-        console.log({ response });
         if (response.hasError) {
           let message = response.message;
           if (Array.isArray(response.message)) {
@@ -86,10 +84,7 @@ export default function AgentRecruitment({ agent, id }) {
         mutateAgents();
         toast.success("Agente creado exitosamente");
       } else {
-        console.log({ info });
-
         const response = await updateAgentConnection(info, id);
-        console.log({ response });
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {

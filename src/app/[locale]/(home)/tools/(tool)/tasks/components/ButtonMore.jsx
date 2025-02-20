@@ -19,7 +19,6 @@ import { putTaskRestart, convertToSubtaskOf } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
-import { useTask, useTasks } from "@/src/lib/api/hooks/tasks";
 import { TbExchange } from "react-icons/tb";
 import SelectTasks from "@/src/components/modals/SelectTask";
 import useTasksContext from "@/src/context/tasks";
@@ -48,7 +47,7 @@ export default function ButtonMore({
       name: t("tools:tasks:edit:subtask"),
       icon: PlusIcon,
       onclick: () => setOpenEdit({ mode: "subtask" }),
-      hidden: !!data.parentTask,
+      // hidden: !!data.parentTask,
     },
     {
       id: 4,

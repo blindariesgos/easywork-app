@@ -29,7 +29,6 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
       const response = await uploadTemporalFile(formData)
         .then((ids) => ({ ids }))
         .catch((error) => ({ hasError: true, error }));
-      console.log({ response });
       if (response.hasError) {
         toast.error(
           "Ocurrio un error al cargar archivo(s), intente de nuevo mas tarde."
@@ -72,7 +71,7 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
     const response = await uploadTemporalFile(formData)
       .then((ids) => ({ ids }))
       .catch((error) => ({ hasError: true, error }));
-    console.log({ response });
+
     if (response.hasError) {
       toast.error(
         "Ocurrio un error al cargar archivo(s), intente de nuevo mas tarde."
@@ -89,7 +88,6 @@ export default function UploadDocuments({ files, addFile, id, deleteFile }) {
       hasError: true,
       error,
     }));
-    console.log({ update, body });
 
     if (update?.hasError) {
       toast.error(

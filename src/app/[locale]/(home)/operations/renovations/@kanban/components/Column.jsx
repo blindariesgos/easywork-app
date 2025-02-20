@@ -55,7 +55,7 @@ const Column = ({
         },
       };
       const response = await getAllPolicies(params);
-      console.log(name, response, params);
+
       const auxItems =
         page == 0 || defaultPage == 0
           ? (response?.items ?? [])

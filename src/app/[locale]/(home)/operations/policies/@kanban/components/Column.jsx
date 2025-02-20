@@ -42,7 +42,7 @@ const Column = ({
         },
       };
       const response = await getAllPolicies(params);
-      console.log(title, response, params);
+
       const auxItems =
         page == 0 || defaultPage == 0
           ? response.items

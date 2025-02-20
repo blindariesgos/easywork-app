@@ -31,7 +31,7 @@ const MultipleClientCodeByInsuranceInput = ({
           {label}
         </label>
       )}
-      {fields.map((field, index) => {
+      {fields.map((_, index) => {
         return (
           <div
             key={index}
@@ -50,16 +50,21 @@ const MultipleClientCodeByInsuranceInput = ({
                 error={errors && (errors[index] ? errors[index]?.codigo : null)}
               />
             </div>
-            <SelectInput
-              options={lists?.policies?.polizaCompanies ?? []}
-              watch={watch}
-              name={`${name}[${index}].insuranceId`}
-              disabled={disabled}
-              setValue={setValue}
-              error={
-                errors && (errors[index] ? errors[index]?.insuranceId : null)
-              }
-            />
+            {lists?.policies?.polizaCompanies?.length > 0 && (
+              <SelectInput
+                options={lists?.policies?.polizaCompanies}
+                watch={watch}
+                name={`${name}[${index}].insuranceId`}
+                disabled={disabled}
+                setSelectedOption={(opt) =>
+                  opt?.id && setValue(`${name}[${index}].insuranceId`, opt?.id)
+                }
+                error={
+                  errors && (errors[index] ? errors[index]?.insuranceId : null)
+                }
+              />
+            )}
+
             <IoCloseCircle
               className={clsx(
                 "text-primary w-4 h-4  absolute -right-1 top-[50%] translate-y-[-50%] cursor-pointer",

@@ -6,6 +6,7 @@ import React, { useLayoutEffect, useRef, useState, Fragment } from "react";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
+import Table from "@/src/components/Table";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import FooterTable from "@/src/components/FooterTable";
 import {
@@ -21,10 +22,12 @@ import useTasksContext from "@/src/context/tasks";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import Task from "./Task";
 import useAppContext from "@/src/context/app";
+import DeleteModal from "@/src/components/modals/DeleteItem";
 
 export default function TableTask() {
-  const checkbox = useRef();
-  const { onCloseAlertDialog } = useAlertContext();
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
+  const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
+  const [deleteId, setDeleteId] = useState();
   const {
     tasks: data,
     mutate: mutateTasks,
@@ -39,9 +42,6 @@ export default function TableTask() {
     setOrderBy,
   } = useTasksContext();
 
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
-
   const { columnTable } = useTasksConfigs();
   const [loading, setLoading] = useState(false);
 
@@ -50,23 +50,6 @@ export default function TableTask() {
   );
 
   const { t } = useTranslation();
-
-  useLayoutEffect(() => {
-    if (selectedTasks.length > 0) {
-      const isIndeterminate =
-        selectedTasks.length > 0 && selectedTasks.length < data?.items.length;
-      setChecked(selectedTasks.length === data?.items.length);
-      setIndeterminate(isIndeterminate);
-      checkbox.current.indeterminate = isIndeterminate;
-    }
-  }, [selectedTasks, data]);
-
-  const toggleAll = () => {
-    const items = checked || indeterminate ? [] : data?.items?.map((x) => x.id);
-    setSelectedTasks(items);
-    setChecked(!checked && !indeterminate);
-    setIndeterminate(false);
-  };
 
   //#region MASIVE ACTIONS
 
@@ -182,7 +165,7 @@ export default function TableTask() {
     }
   };
 
-  const optionsCheckBox = [
+  const masiveActions = [
     {
       id: 1,
       name: t("common:table:checkbox:complete"),
@@ -221,9 +204,21 @@ export default function TableTask() {
     {
       id: 6,
       name: t("common:table:checkbox:delete"),
-      onclick: () => deleteTasks(),
+      onclick: (id) => setIsOpenDeleteMasive(true),
     },
   ];
+
+  const handleDeleteTask = async (id) => {
+    try {
+      setLoading(true);
+      await apiDeleteTask(id);
+      toast.success(t("tools:tasks:table:delete-msg"));
+      mutateTasks && mutateTasks();
+    } catch {
+      toast.error(t("tools:tasks:table:delete-error"));
+    }
+    setLoading(false);
+  };
 
   //#endregion
 
@@ -235,91 +230,34 @@ export default function TableTask() {
           <div className="min-w-full">
             {selectedTasks.length > 0 && (
               <div className="p-2 flex">
-                <SelectedOptionsTable options={optionsCheckBox} />
+                <SelectedOptionsTable options={masiveActions} />
               </div>
             )}
-            <div className="overflow-x-auto">
-              <div className=" min-h-[60vh] h-full">
-                <table className="min-w-full rounded-md bg-gray-100 table-auto relative ">
-                  <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
-                      >
-                        <div className="flex gap-2 items-center">
-                          <input
-                            type="checkbox"
-                            className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                            ref={checkbox}
-                            checked={checked}
-                            onChange={toggleAll}
-                          />
-                          <AddColumnsTable
-                            columns={columnTable.map((x) => ({
-                              ...x,
-                              check: selectedColumns
-                                .map((s) => s.id)
-                                .includes(x.id),
-                            }))}
-                            setSelectedColumns={setSelectedColumns}
-                          />
-                        </div>
-                      </th>
-                      {selectedColumns.length > 0 &&
-                        selectedColumns.map((column, index) => (
-                          <th
-                            key={index}
-                            scope="col"
-                            className={`min-w-[12rem] py-3.5 pr-3 text-sm font-medium text-primary cursor-pointer  ${
-                              index === selectedColumns.length - 1 &&
-                              "rounded-e-xl"
-                            }`}
-                            onClick={() => {
-                              setOrderBy(column.row);
-                            }}
-                          >
-                            <div
-                              className={clsx(
-                                "flex justify-left items-center gap-2",
-                                {
-                                  "font-bold": orderBy === column.row,
-                                }
-                              )}
-                            >
-                              {column.name}
-                              <div>
-                                <ChevronDownIcon
-                                  className={`h-6 w-6 text-primary ${
-                                    orderBy === column.row && order !== "DESC"
-                                      ? "transform rotate-180"
-                                      : ""
-                                  }`}
-                                />
-                              </div>
-                            </div>
-                          </th>
-                        ))}
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-100">
-                    {selectedColumns.length > 0 &&
-                      data?.items?.length > 0 &&
-                      data?.items?.map((task, index) => (
-                        <Task
-                          key={task.id}
-                          task={task}
-                          setLoading={setLoading}
-                          selectedColumns={selectedColumns}
-                          mutateTasks={mutateTasks}
-                          selectedTasks={selectedTasks}
-                          setSelectedTasks={setSelectedTasks}
-                        />
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <Table
+              selectedRows={selectedTasks}
+              setSelectedRows={setSelectedTasks}
+              data={data}
+              order={order}
+              orderBy={orderBy}
+              setOrderBy={setOrderBy}
+              selectedColumns={selectedColumns}
+              setSelectedColumns={setSelectedColumns}
+              columnTable={columnTable}
+            >
+              {selectedColumns.length > 0 &&
+                data?.items?.length > 0 &&
+                data?.items?.map((task, index) => (
+                  <Task
+                    key={task.id}
+                    task={task}
+                    selectedColumns={selectedColumns}
+                    selectedTasks={selectedTasks}
+                    setSelectedTasks={setSelectedTasks}
+                    setDeleteId={setDeleteId}
+                    setIsOpenDelete={setIsOpenDelete}
+                  />
+                ))}
+            </Table>
           </div>
           <div className="w-full mt-2">
             <FooterTable
@@ -333,6 +271,18 @@ export default function TableTask() {
           </div>
         </div>
       )}
+      {/* Delete ConfirmModal */}
+      <DeleteModal
+        isOpen={isOpenDelete}
+        setIsOpen={setIsOpenDelete}
+        handleClick={() => handleDeleteTask(deleteId)}
+      />
+
+      <DeleteModal
+        isOpen={isOpenDeleteMasive}
+        setIsOpen={setIsOpenDeleteMasive}
+        handleClick={() => deleteTasks()}
+      />
     </Fragment>
   );
 }

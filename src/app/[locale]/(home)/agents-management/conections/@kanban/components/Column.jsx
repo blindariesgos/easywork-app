@@ -38,7 +38,6 @@ const Column = ({
         },
       };
       const response = await getAllConnections(params);
-      console.log(name, response, params);
       if (response.hasError) {
         setItems([]);
         setHasMore(false);

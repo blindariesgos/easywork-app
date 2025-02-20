@@ -152,7 +152,6 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
     try {
-      console.log({ body });
       const poliza = Object.keys(body).reduce(
         (acc, key) =>
           Boolean(body[key])
@@ -164,7 +163,7 @@ export default function PolicyDetails({
         {}
       );
       const response = await putPoliza(id, poliza);
-      console.log({ response });
+
       if (response.hasError) {
         handleFrontError(response);
         return;
@@ -288,24 +287,6 @@ export default function PolicyDetails({
             disabled
             multiple
             rows={2}
-          />
-
-          <Controller
-            render={({ field: { value, onChange, ref, onBlur } }) => {
-              return (
-                <InputDate
-                  label={t("operations:policies:general:init-date")}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors.vigenciaDesde}
-                  disabled={!isEdit}
-                />
-              );
-            }}
-            name="vigenciaDesde"
-            control={control}
-            defaultValue=""
           />
           <Controller
             render={({ field: { value, onChange, ref, onBlur } }) => {

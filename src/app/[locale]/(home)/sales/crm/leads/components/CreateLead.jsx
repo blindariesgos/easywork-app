@@ -81,6 +81,7 @@ export default function CreateLead({ lead, id }) {
     observerId: Yup.string(),
     observations: Yup.string(),
     quoteAmount: Yup.string(),
+    activitySector: Yup.string(),
     quoteCurrencyId: Yup.string(),
     emails_dto: Yup.array().of(
       Yup.object().shape({
@@ -154,6 +155,10 @@ export default function CreateLead({ lead, id }) {
 
   useEffect(() => {
     if (!lead) return;
+    if (lead?.typePerson) {
+      setType(lead?.typePerson);
+      setValue("typePerson", lead?.typePerson);
+    }
     if (lead?.fullName) setValue("fullName", lead?.fullName);
     if (lead?.name) {
       setValue("name", lead?.name);
@@ -171,10 +176,6 @@ export default function CreateLead({ lead, id }) {
     if (lead?.birthdate) setValue("birthdate", lead?.birthdate);
     if (lead?.address) setValue("address", lead?.address);
     if (lead?.rfc) setValue("rfc", lead?.rfc);
-    if (lead?.typePerson) {
-      setType(lead?.typePerson);
-      setValue("typePerson", lead?.typePerson);
-    }
     if (lead?.quoteCurrency)
       setValue("quoteCurrencyId", lead?.quoteCurrency.id);
     if (lead?.quoteAmount) setValue("quoteAmount", lead?.quoteAmount);
@@ -184,6 +185,7 @@ export default function CreateLead({ lead, id }) {
       setValue("agenteIntermediarioId", lead?.agenteIntermediario?.id);
     if (lead?.observer) setValue("observerId", lead?.observer?.id);
     if (lead?.subAgente) setValue("subAgenteId", lead?.subAgente?.id);
+
     if (lead?.activitySector) setValue("activitySector", lead?.activitySector);
 
     setSelectedProfileImage({ base64: lead?.photo || null, file: null });
@@ -216,7 +218,7 @@ export default function CreateLead({ lead, id }) {
         photo: selectedProfileImage?.file || "",
       };
     }
-    console.log({ body });
+
     const formData = new FormData();
     for (const key in body) {
       if (body[key] === null || body[key] === undefined || body[key] === "") {
@@ -276,7 +278,6 @@ export default function CreateLead({ lead, id }) {
   };
 
   useEffect(() => {
-    console.log("params type", params.get("type"));
     if (!params.get("type")) return;
 
     setType(params.get("type"));
@@ -653,25 +654,27 @@ export default function CreateLead({ lead, id }) {
                     name="quoteCurrencyId"
                     options={lists?.policies?.currencies ?? []}
                     disabled={!isEdit}
-                    register={register}
                     setValue={setValue}
                     watch={watch}
                   />
                 </div>
-                {type == "moral" && (
-                  <SelectInput
-                    label={t("contacts:create:company-activity")}
-                    options={activitySectors.map((activity) => ({
-                      name: activity,
-                      id: activity,
-                    }))}
-                    watch={watch}
-                    name="activitySector"
-                    disabled={!isEdit}
-                    setValue={setValue}
-                    error={!watch("activitySector") && errors.activitySector}
-                  />
-                )}
+                {/* {type == "moral" && ( */}
+                <SelectInput
+                  label={t("contacts:create:company-activity")}
+                  options={activitySectors.map((activity) => ({
+                    name: activity,
+                    id: activity,
+                  }))}
+                  watch={watch}
+                  name="activitySector"
+                  disabled={!isEdit}
+                  setValue={setValue}
+                  error={errors.activitySector}
+                  className={clsx({
+                    hidden: type !== "moral",
+                  })}
+                />
+                {/* )} */}
                 {type == "moral" && (
                   <ContactSelectAsync
                     label={"Cliente contacto"}

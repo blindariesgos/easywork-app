@@ -68,5 +68,23 @@ export const useEvaluations = () => {
     [request]
   );
 
-  return { getEvaluations, getEvaluation, getEvaluationToTake, getEvaluationsByCourse, createEvaluation, updateEvaluation, startEvaluation, updateEvaluationAttempt, finalizeEvaluation };
+  const getEvaluationAttempts = useCallback(
+    async (options = {}) => {
+      return await request(`/evaluations/attempts`, options);
+    },
+    [request]
+  );
+
+  return {
+    getEvaluations,
+    getEvaluation,
+    getEvaluationToTake,
+    getEvaluationsByCourse,
+    createEvaluation,
+    updateEvaluation,
+    startEvaluation,
+    updateEvaluationAttempt,
+    finalizeEvaluation,
+    getEvaluationAttempts,
+  };
 };

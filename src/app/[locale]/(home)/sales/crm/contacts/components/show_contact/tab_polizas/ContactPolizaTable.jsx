@@ -2,12 +2,12 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import PolizasEmpty from "./PolizasEmpty";
 import { useTranslation } from "react-i18next";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 
 export default function ContactPolizaTable({ base = 0, contactId }) {
@@ -38,13 +38,11 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
   };
 
   const handleShowPolicy = (poliza) => {
-    if (!poliza.operacion || poliza.operacion == "produccion_nueva") {
-      router.push(`/operations/policies/policy/${poliza.id}?show=true`);
-      return;
-    }
     if (poliza.operacion == "renovacion") {
       router.push(`/operations/renovations/renovation/${poliza.id}?show=true`);
     }
+
+    router.push(`/operations/policies/policy/${poliza.id}?show=true`);
   };
 
   if ((!data || data?.items?.length === 0) && !isLoading) {

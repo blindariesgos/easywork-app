@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
 import { useUserPermissions } from '../../hooks/useUserPermissions';
-import { useCourses } from '../hooks/useCourses';
+import { useEvaluations } from '../hooks/useEvaluations';
 
 import { PaginationV2 } from '@/src/components/pagination/PaginationV2';
 import LoaderSpinner from '@/src/components/LoaderSpinner';
@@ -15,6 +15,7 @@ import { TableBodyItem } from '../../components/TableBodyItem';
 
 import { LMS_PERMISSIONS } from '../../constants';
 import Link from 'next/link';
+import { format } from 'date-fns';
 
 export const Qualification = ({ stage }) => {
   const colorsByStage = {
@@ -46,33 +47,33 @@ export default function MyCourses() {
   // Hooks
   const router = useRouter();
   const { hasPermission } = useUserPermissions();
-  const { getCourses, updateOrder } = useCourses();
+  const { getEvaluationAttempts } = useEvaluations();
 
   // States
-  const [courses, setCourses] = useState({ pagesCount: 1, count: 0, data: [] });
+  const [evaluationAttempts, setEvaluationAttempts] = useState({ pagesCount: 1, count: 0, data: [] });
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const fetchCourses = useCallback(async () => {
+  const fetchEvaluationAttempts = useCallback(async () => {
     setLoading(true);
 
     try {
-      const courses = await getCourses({ params: { page } });
-      setCourses(courses || []);
+      const evaluationAttempts = await getEvaluationAttempts({ params: { page } });
+      setEvaluationAttempts(evaluationAttempts || []);
     } catch (error) {
       toast.error('Algo no ha salido bien obteniendo los cursos. Intente más tarde');
     } finally {
       setLoading(false);
     }
-  }, [getCourses, page]);
+  }, [getEvaluationAttempts, page]);
 
   useEffect(() => {
     if (!hasPermission(LMS_PERMISSIONS.myCourses)) router.replace('/');
   }, [hasPermission, router]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses, page]);
+    fetchEvaluationAttempts();
+  }, [fetchEvaluationAttempts, page]);
 
   return (
     <Suspense fallback={<LoaderSpinner />}>
@@ -89,14 +90,14 @@ export default function MyCourses() {
               </thead>
               <tbody className="bg-gray-100">
                 {!loading ? (
-                  courses.data.map(course => {
-                    const { progress } = course.assignedUsers[0];
+                  evaluationAttempts.data.map(evaluationAttempt => {
+                    const { qualification, totalAttempts, attempt } = evaluationAttempt;
 
                     return (
-                      <tr key={course.id} className="hover:bg-indigo-100/40">
+                      <tr key={evaluationAttempt.id} className="hover:bg-indigo-100/40">
                         <TableBodyItem>
-                          <Link href={`/agents-management/capacitations/e-learning/courses/${course.id}`} className="text-easy-500 text-center w-full block text-sm">
-                            <p className="text-center">{course.name}</p>
+                          <Link target="_blank" href={`/agents-management/capacitations/e-learning/courses/${evaluationAttempt.courseId}`} className="text-easy-500 text-center w-full block text-sm">
+                            <p className="text-center">{evaluationAttempt.courseName}</p>
                           </Link>
                         </TableBodyItem>
                         <TableBodyItem>
@@ -104,21 +105,23 @@ export default function MyCourses() {
                         </TableBodyItem>
                         <TableBodyItem>
                           <div className="text-center">
-                            <Qualification stage={Math.floor(Number(progress || 0) / 10)} />
-                            <p className="text-sm">{progress || 0}%</p>
+                            <Qualification stage={Math.floor(Number(qualification || 0) / 10)} />
+                            <p className="text-sm">{qualification || 0}%</p>
                           </div>
                         </TableBodyItem>
                         <TableBodyItem>
-                          <p className="text-center">10/10/2024</p>
+                          <p className="text-center">{evaluationAttempt.startedAt ? format(new Date(evaluationAttempt.startedAt), 'dd/MM/yyyy hh:mm:ss a') : 'Sin iniciar'}</p>
                         </TableBodyItem>
                         <TableBodyItem>
-                          <p className="text-center">10/10/2024</p>
+                          <p className="text-center">{evaluationAttempt.finishedAt ? format(new Date(evaluationAttempt.finishedAt), 'dd/MM/yyyy hh:mm:ss a') : 'N/A'}</p>
                         </TableBodyItem>
                         <TableBodyItem>
-                          <p className="text-center">{progress === '100' ? 'Terminado' : 'En curso'}</p>
+                          <p className="text-center">{qualification === '100' ? 'Terminado' : 'En curso'}</p>
                         </TableBodyItem>
                         <TableBodyItem>
-                          <p className="text-center">1/3</p>
+                          <p className="text-center">
+                            {attempt}/{totalAttempts}
+                          </p>
                         </TableBodyItem>
                         <TableBodyItem>
                           <Link href="/agents-management/capacitations/e-learning/my-courses" className="text-blue-400 text-center w-full block text-sm">
@@ -145,8 +148,8 @@ export default function MyCourses() {
 
         {/* Pagination */}
         <div className="flex items-center justify-center py-5 flex-col">
-          <PaginationV2 totalPages={courses.pagesCount} currentPage={Number(page)} setPage={setPage} />
-          <p className="text-xs">Cursos: {courses.count}</p>
+          <PaginationV2 totalPages={evaluationAttempts.pagesCount} currentPage={Number(page)} setPage={setPage} />
+          <p className="text-xs">Cursos: {evaluationAttempts.count}</p>
         </div>
       </div>
     </Suspense>

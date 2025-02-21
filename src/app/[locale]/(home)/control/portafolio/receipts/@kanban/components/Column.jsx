@@ -56,7 +56,7 @@ const Column = ({
         ...filters,
       };
       const response = await getReceiptKanbanByStateId(params);
-      console.log(title, response, params);
+
       const auxItems =
         page == 0 || defaultPage == 0
           ? response[0].receipts

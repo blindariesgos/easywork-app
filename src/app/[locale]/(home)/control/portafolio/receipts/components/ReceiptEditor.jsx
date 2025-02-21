@@ -77,7 +77,6 @@ export default function ReceiptEditor({ data, id }) {
   });
 
   useEffect(() => {
-    console.log("cambio algo");
     if (data?.responsible?.id) setValue("responsibleId", data?.responsible?.id);
     if (data?.status) setValue("status", data?.status);
     if (data?.methodCollection?.name)
@@ -131,7 +130,7 @@ export default function ReceiptEditor({ data, id }) {
         {}
       );
       const response = await putReceipt(id, receipt);
-      console.log({ response });
+
       if (response.hasError) {
         handleFrontError(response);
         return;
@@ -155,7 +154,6 @@ export default function ReceiptEditor({ data, id }) {
     };
     try {
       const response = await putReceipt(id, body);
-      console.log({ response });
 
       if (response.hasError) {
         toast.error(

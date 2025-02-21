@@ -265,8 +265,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       }
     }
 
-    console.log({ body });
-
     try {
       setLoading(true);
       if (!contact) {
@@ -296,9 +294,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    console.log("codigos_dto", watch("codigos_dto"));
-  }, [watch("codigos_dto")]);
 
   // Calculate the user's 18th birthday
   const eighteenYearsAgo = new Date();

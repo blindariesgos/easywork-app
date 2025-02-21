@@ -24,12 +24,7 @@ export default function Task({ task, ...props }) {
       {task?.subTasks?.length > 0 && showSubTasks && (
         <Fragment>
           {task.subTasks.map((subTask) => (
-            <ColumnTable
-              task={subTask}
-              isSubTask={true}
-              {...props}
-              key={subTask.id}
-            />
+            <Task task={subTask} isSubTask={true} {...props} key={subTask.id} />
           ))}
         </Fragment>
       )}
@@ -38,30 +33,18 @@ export default function Task({ task, ...props }) {
 }
 
 const ColumnTable = ({
-  setLoading,
   selectedColumns,
-  mutateTasks,
   selectedTasks,
   setSelectedTasks,
   task,
   handleShowSubTasks,
   isSubTask,
   showSubTasks,
+  setDeleteId,
+  setIsOpenDelete,
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
-
-  const handleDeleteTask = async (id) => {
-    try {
-      setLoading(true);
-      await apiDeleteTask(id);
-      toast.success(t("tools:tasks:table:delete-msg"));
-      mutateTasks && mutateTasks();
-    } catch {
-      toast.error(t("tools:tasks:table:delete-error"));
-    }
-    setLoading(false);
-  };
 
   const itemOptions = [
     {
@@ -78,7 +61,13 @@ const ColumnTable = ({
       handleClick: (id) =>
         router.push(`/tools/tasks/task/${id}?show=true&action=copy`),
     },
-    { name: "Eliminar", handleClick: (id) => handleDeleteTask(id) },
+    {
+      name: "Eliminar",
+      handleClick: (id) => {
+        setDeleteId(id);
+        setIsOpenDelete(true);
+      },
+    },
   ];
 
   return (

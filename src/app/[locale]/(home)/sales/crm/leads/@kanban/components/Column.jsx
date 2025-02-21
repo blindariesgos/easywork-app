@@ -43,7 +43,7 @@ const Column = ({
         },
       };
       const response = await getKanbanLeads(params);
-      console.log(name, response, params);
+
       if (response.hasError) {
         setItems([]);
         setHasMore(false);

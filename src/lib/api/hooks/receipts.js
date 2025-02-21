@@ -54,7 +54,7 @@ export const useReceipt = (receiptId) => {
 
 export const useReceiptsByPolicyId = (policyId) => {
   const { data, error, isLoading } = useSWR(
-    `/sales/crm/polizas/receipts/poliza/${policyId}?limit=12&orderBy=name&order=DESC`,
+    `/sales/crm/polizas/receipts/poliza/${policyId}?limit=12&orderBy=name&order=ASC`,
     fetcher
   );
 

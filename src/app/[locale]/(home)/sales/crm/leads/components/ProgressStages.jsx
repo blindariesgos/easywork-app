@@ -64,7 +64,6 @@ export default function ProgressStages({ stage, leadId, disabled }) {
     setLoading(true);
     const response = await getPolizaLeadData(leadId);
     if (response.hasError) {
-      console.log({ response });
       if (response.statusCode == 404) {
         setIsOpen(false);
         setIsOpenUpload(true);

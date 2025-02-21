@@ -29,7 +29,6 @@ const KanbanProgramations = () => {
     setIsDragging(false);
     setLoading(true);
     setItemDrag(null);
-    console.log({ result });
 
     const body = {
       status: result?.over?.id,
@@ -37,7 +36,7 @@ const KanbanProgramations = () => {
 
     try {
       const response = await putSchedule(result?.active?.id, body);
-      console.log({ response });
+
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al actualizar, inténtelo de nuevo."

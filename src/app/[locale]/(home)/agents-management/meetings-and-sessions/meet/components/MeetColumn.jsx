@@ -57,7 +57,6 @@ export default function MeetColumn({
         meetId: meet.id,
       },
     });
-    console.log("meet tasks", response);
     if (response?.items?.length) {
       setTasks(response?.items);
     }

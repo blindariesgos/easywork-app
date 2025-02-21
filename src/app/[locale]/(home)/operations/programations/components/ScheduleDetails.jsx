@@ -19,7 +19,7 @@ import {
   polizaReimbursementStatusColor,
 } from "@/src/utils/stages";
 import useProgramationContext from "@/src/context/programations";
-import AddDocumentButton from "./AddDocumentButton"
+import AddDocumentButton from "./AddDocumentButton";
 
 export default function ScheduleDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -40,8 +40,6 @@ export default function ScheduleDetails({ data, id, mutate }) {
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };
 
- 
-
   const updateStatus = async (status) => {
     setLoading(true);
     const body = {
@@ -49,7 +47,6 @@ export default function ScheduleDetails({ data, id, mutate }) {
     };
     try {
       const response = await putSchedule(data.id, body);
-      console.log({ response });
 
       if (response.hasError) {
         toast.error(

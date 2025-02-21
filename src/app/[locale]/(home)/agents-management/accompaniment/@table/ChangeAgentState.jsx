@@ -37,10 +37,8 @@ const ChangeAgentState = ({ isOpen, setIsOpen, id }) => {
   });
 
   const handleChangeState = async (data) => {
-    console.log({ data });
     setIsLoading(true);
     const response = await updateAgentState(data, id);
-    console.log({ response });
     if (response.hasError) {
       let message = response.message;
       if (Array.isArray(response.message)) {

@@ -56,7 +56,6 @@ const KanbanPolicies = () => {
     putPoliza(result?.active?.id, body)
       .then((response) => {
         if (response.hasError) {
-          console.log(response);
           toast.error(
             "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
           );

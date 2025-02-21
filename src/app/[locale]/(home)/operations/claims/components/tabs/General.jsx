@@ -124,7 +124,6 @@ export default function PolicyDetails({
     try {
       const response = await putPoliza(id, body);
       if (response.hasError) {
-        console.log(response);
         toast.error(
           "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
         );

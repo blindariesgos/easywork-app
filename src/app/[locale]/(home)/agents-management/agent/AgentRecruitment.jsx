@@ -8,10 +8,7 @@ import useRecruitmentsContext from "@/src/context/recruitments";
 import { useSWRConfig } from "swr";
 import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
-import {
-  createAgentRecruitment,
-  updateAgentRecruitment,
-} from "@/src/lib/apis";
+import { createAgentRecruitment, updateAgentRecruitment } from "@/src/lib/apis";
 import { useRouter } from "next/navigation";
 import { handleApiError } from "@/src/utils/api/errors";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
@@ -83,10 +80,7 @@ export default function AgentRecruitment({ agent, id }) {
       }, {});
 
       if (!agent) {
-        console.log({ info });
-
         const response = await createAgentRecruitment(info);
-        console.log({ response });
         if (response.hasError) {
           let message = response.message;
           if (Array.isArray(response.message)) {
@@ -99,10 +93,7 @@ export default function AgentRecruitment({ agent, id }) {
         mutateAgents();
         toast.success("Agente creado exitosamente");
       } else {
-        console.log({ info });
-
         const response = await updateAgentRecruitment(info, id);
-        console.log({ response });
         if (response.hasError) {
           let message = response.message;
           if (response.errors) {

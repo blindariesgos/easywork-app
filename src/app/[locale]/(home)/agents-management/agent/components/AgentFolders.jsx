@@ -20,7 +20,7 @@ const AgentFolders = ({ id }) => {
   const getFolders = async () => {
     const response = await getAgentFolders(id);
     if (response.hasError) {
-      handleFrontError(response)
+      handleFrontError(response);
       setLoading(false);
       return;
     }
@@ -29,7 +29,6 @@ const AgentFolders = ({ id }) => {
       setLoading(false);
       return;
     }
-    console.log("folders", response)
     // const responseFolders = await getExplorer(
     //   { limit: 50, page: 1 },
     //   {},

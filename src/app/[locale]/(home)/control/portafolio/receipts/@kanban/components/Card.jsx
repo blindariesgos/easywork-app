@@ -106,7 +106,6 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
       style={style}
       {...otherAttributes}
       onPointerDown={(event) => {
-        console.log({ event });
         if (event?.target?.onclick) {
           event?.target?.onclick(event);
           return;
@@ -170,7 +169,7 @@ const Card = ({ receipt, minWidthClass, stageId }) => {
               const elements = e.target.checked
                 ? [...selectedReceipts, receipt.id]
                 : selectedReceipts.filter((p) => p !== receipt.id);
-              console.log(elements, e, !e.target.checked);
+
               setSelectedReceipts(elements);
             }}
           />

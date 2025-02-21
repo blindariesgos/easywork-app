@@ -8,7 +8,6 @@ import { useScheduling } from "@/src/lib/api/hooks/schedules";
 export default function Page({ params: { id } }) {
   // const { data, isLoading, isError } = useUser(id);
   const { data, isLoading, isError, mutate } = useScheduling(id);
-  console.log({ data });
 
   if (isError) {
     <SlideOver

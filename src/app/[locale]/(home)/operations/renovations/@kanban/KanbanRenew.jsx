@@ -8,7 +8,7 @@ import { putPoliza } from "@/src/lib/apis";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import { renovationStages } from "@/src/utils/stages";
+import { renovationStages } from "@/src/utils/constants";
 import useRenovationContext from "@/src/context/renovations";
 
 const KanbanProgramations = () => {

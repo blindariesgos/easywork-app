@@ -24,41 +24,39 @@ export default function UserEditor({ user, id }) {
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
-      <div className="flex flex-col flex-1 bg-gray-600 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px] p-4">
+      <div className="flex flex-col flex-1 bg-gray-600 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
         <TabGroup className="flex flex-col flex-1 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl">
           {/* Encabezado del Formulario */}
-          <div className="bg-transparent p-4">
-            <div className="flex items-start flex-col justify-between gap-4">
-              <div className="flex gap-2 items-center">
-                <h1 className="text-xl sm:pl-6 pl-2">
-                  {user
-                    ? (`${user?.profile?.firstName} ${user?.profile?.lastName}` ??
-                      user.name)
-                    : t("leads:create:client")}
-                </h1>
-              </div>
-              <TabList className="flex gap-x-8 flex-wrap justify-start bg-white py-2 px-4 w-full rounded-lg">
-                {tabs.map((tab) => (
-                  <Tab
-                    key={tab.value}
-                    className={clsx(
-                      "data-[selected]:border-indigo-500 data-[selected]:text-white data-[selected]:bg-blue-100 data-[selected]:rounded-md data-[selected]:focus:outline-none data-[selected]:focus:ring-0",
-                      "whitespace-nowrap p-2 text-sm font-medium cursor-pointer focus:outline-none focus:ring-0"
-                    )}
-                  >
-                    {tab.name}
-                  </Tab>
-                ))}
-              </TabList>
-              <TabPanels className="w-full overflow-auto">
-                <TabPanel className="w-full ">
-                  <General user={user} id={id} />
-                </TabPanel>
-                <TabPanel className="w-full ">
-                  <Tasks user={user} id={id} />
-                </TabPanel>
-              </TabPanels>
-            </div>
+          <div className="pt-6 pb-4 px-4 lg:px-8">
+            <h1 className="text-xl sm:pl-6 pl-2 font-semibold pb-6">
+              {user
+                ? (`${user?.profile?.firstName} ${user?.profile?.lastName}` ??
+                  user.name)
+                : t("leads:create:client")}
+            </h1>
+            <TabList className="flex gap-x-8 flex-wrap justify-start bg-white py-2 px-4 w-full rounded-lg">
+              {tabs.map((tab) => (
+                <Tab
+                  key={tab.value}
+                  className={clsx(
+                    " data-[selected]:text-white data-[selected]:bg-blue-100 data-[selected]:rounded-md data-[selected]:focus:outline-none data-[selected]:focus:ring-0",
+                    "whitespace-nowrap py-2 px-3 text-sm text-gray-300 font-medium cursor-pointer focus:outline-none focus:ring-0"
+                  )}
+                >
+                  {tab.name}
+                </Tab>
+              ))}
+            </TabList>
+          </div>
+          <div className="pb-6 px-4 lg:px-8">
+            <TabPanels className="w-full overflow-auto ">
+              <TabPanel className="w-full ">
+                <General user={user} id={id} />
+              </TabPanel>
+              <TabPanel className="w-full ">
+                <Tasks user={user} id={id} />
+              </TabPanel>
+            </TabPanels>
           </div>
         </TabGroup>
       </div>

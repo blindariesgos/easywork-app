@@ -12,7 +12,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Card from "./components/Card";
 import useAppContext from "@/src/context/app";
-import { recruitmentStages } from "@/src/utils/stages";
+import { recruitmentStages } from "@/src/utils/constants";
 
 const KanbanLeads = () => {
   const [isLoading, setLoading] = useState(false);

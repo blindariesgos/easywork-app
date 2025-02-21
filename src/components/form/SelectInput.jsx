@@ -42,20 +42,10 @@ function SelectInput({
   };
 
   useEffect(() => {
-    if (selectedOption && !selected) {
+    if (selectedOption) {
       setSelected(selectedOption);
     }
-  }, [selectedOption, selected]);
-
-  useEffect(() => {
-    if (selected) {
-      setValue && setValue(name, object ? selected : selected.id);
-      setSelectedOption && setSelectedOption(selected);
-    } else {
-      setValue && setValue(name, object ? {} : "");
-      setSelectedOption && setSelectedOption({});
-    }
-  }, [selected]);
+  }, [selectedOption]);
 
   const filteredElements =
     query === ""
@@ -70,23 +60,34 @@ function SelectInput({
       setSelected();
       return;
     }
-    if (selected) return;
     const option = options.find((option) => option.id == watch(name));
     setSelected(option);
   }, [watch && watch(name), options]);
 
+  const handleChange = (value) => {
+    setSelected(value);
+    if (value) {
+      setValue && setValue(name, object ? value : value.id);
+      setSelectedOption && setSelectedOption(value);
+    } else {
+      setValue && setValue(name, object ? {} : "");
+      setSelectedOption && setSelectedOption({});
+    }
+  };
+
   return (
-    <div className={clsx("w-full", className)}>
+    <div className={clsx("w-full ", className)}>
       <Combobox
         as="div"
         value={selected}
-        onChange={setSelected}
+        onChange={handleChange}
         disabled={disabled}
+        className="group"
       >
         {label && (
           <label
             className={clsx(
-              "block font-medium leading-6 text-gray-900 px-3 relative group",
+              "block font-medium leading-6 text-gray-900 px-3 relative ",
               {
                 "text-xs": small,
                 "text-sm": !small,

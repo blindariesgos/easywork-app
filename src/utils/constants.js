@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const polizaReimbursementStatus = {
   captura_documentos: "Captura de documentos",
   en_proceso: "En proceso",
@@ -228,5 +230,54 @@ export const CancelLeadReasons = [
   {
     id: "195e1b3d-d2dc-44a8-89c9-12017a9044f7",
     name: "Póliza emitida - anulada aseguradora",
+  },
+];
+
+export const userStatus = (t) => [
+  {
+    label: t("common:header:status:working"),
+    value: "working",
+    icon: (
+      <div className="border-2 border-green-500 rounded-full size-3 mr-1.5"></div>
+    ),
+  },
+  {
+    label: t("common:header:status:do_not_disturb"),
+    value: "do_not_disturb",
+    icon: (
+      <Image
+        className="h-4 w-4 mr-0.5"
+        width={30}
+        height={30}
+        src={"/icons/state/donotdisturb.png"}
+        alt="no"
+      />
+    ),
+  },
+  {
+    label: t("common:header:status:on_vacation"),
+    value: "on_vacation",
+    icon: (
+      <Image
+        className="h-4 w-4 mr-0.5"
+        width={30}
+        height={30}
+        src={"/icons/state/palmer.png"}
+        alt="vacation"
+      />
+    ),
+  },
+  {
+    label: t("common:header:status:out_of_office"),
+    value: "out_of_office",
+    icon: (
+      <Image
+        className="h-4 w-4 mr-0.5"
+        width={30}
+        height={30}
+        src={"/icons/state/out.png"}
+        alt="vacation"
+      />
+    ),
   },
 ];

@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { recruitmentStages } from "@/src/utils/stages";
+import { recruitmentStages } from "@/src/utils/constants";
 import { Fragment, useMemo, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { updateAgentRecruitment } from "@/src/lib/apis";

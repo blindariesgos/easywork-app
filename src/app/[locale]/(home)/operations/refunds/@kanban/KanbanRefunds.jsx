@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import {
   polizaReimbursementStatus,
   polizaReimbursementStatusColor,
-} from "@/src/utils/stages";
+} from "@/src/utils/constants";
 import useRefundContext from "@/src/context/refunds";
 
 const KanbanProgramations = () => {

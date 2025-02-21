@@ -423,38 +423,44 @@ export const getReceiptKanbanByStateId = async (params) => {
 //#region ADD LISTS
 
 export const getAddListContacts = async () => {
-  const response = await axios().get(`/sales/crm/contacts/get_add_lists`);
+  const response = await axios()
+    .get(`/sales/crm/contacts/get_add_lists`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const getAddListLeads = async () => {
-  const response = await axios().get(`/sales/crm/leads/get_add_lists`);
+  const response = await axios()
+    .get(`/sales/crm/leads/get_add_lists`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const getAddListReceipts = async () => {
-  const response = await axios().get(
-    `/sales/crm/polizas/receipts/get_add_lists`
-  );
+  const response = await axios()
+    .get(`/sales/crm/polizas/receipts/get_add_lists`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const getAddListPolicies = async () => {
-  const response = await axios().get(`/sales/crm/polizas/get_add_lists`);
+  const response = await axios()
+    .get(`/sales/crm/polizas/get_add_lists`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const getAddListRecruitments = async () => {
-  const response = await axios().get(
-    `/agent-management/agent-recruitments/get_add_lists`
-  );
+  const response = await axios()
+    .get(`/agent-management/agent-recruitments/get_add_lists`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
 export const getAddListConnections = async () => {
-  const response = await axios().get(
-    `/agent-management/agent-connections/get_add_lists`
-  );
+  const response = await axios()
+    .get(`/agent-management/agent-connections/get_add_lists`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 //#endregion
@@ -623,7 +629,9 @@ export const getUsersContacts = async () => {
 };
 
 export const getRelatedUsers = async () => {
-  const response = await axios().get("/users/related_users");
+  const response = await axios()
+    .get("/users/related_users")
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -1025,7 +1033,9 @@ export const updateLabelIdRules = async (usergoogle_id, newLabelIdRules) => {
 };
 
 export const getAllRoles = async () => {
-  const response = await axios().get(`/roles`);
+  const response = await axios()
+    .get(`/roles`)
+    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -1170,7 +1180,9 @@ export const getPolizaLeadData = async (leadId) => {
 };
 
 export const getUsersGroup = async (idUser) => {
-  const response = await axios().get(`/users/group/${idUser}`);
+  const response = await axios()
+    .get(`/users/group/${idUser}`)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 export const getAllTasks = async ({

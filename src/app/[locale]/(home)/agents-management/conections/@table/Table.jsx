@@ -40,7 +40,7 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-import { connectionsStage } from "@/src/utils/stages";
+import { connectionsStage } from "@/src/utils/constants";
 
 export default function Table() {
   const {

@@ -104,12 +104,8 @@ export default function General({ user, id }) {
     if (user?.cargo) setValue("position", user?.cargo);
     if (user?.phone) setValue("phone", user?.phone);
     if (user?.email) setValue("email", user?.email);
-    if (user?.curp) setValue("rfc", user?.curp);
     if (user?.cua) setValue("cua", user?.cua);
     if (user?.type?.id) setValue("typeContact", user?.type?.id);
-    if (user?.source?.id) setValue("origin", user?.source?.id);
-    if (user?.birthdate) setValue("birthday", user?.birthdate);
-    if (user?.address) setValue("address", user?.address);
     if (user?.bio) setValue("bio", user?.bio);
     if (user?.profile?.firstName)
       setValue("firstName", user?.profile?.firstName);
@@ -179,7 +175,6 @@ export default function General({ user, id }) {
       cua: data.cua,
       address: data.address,
       birthdate: data.birthday,
-      sourceId: data.origin,
       emails_dto: JSON.stringify([{ email: data.email }]),
       phones_dto: [{ number: data.phone }],
       observerId: data.responsible,
@@ -239,7 +234,7 @@ export default function General({ user, id }) {
       >
         {/* Menu Izquierda */}
         <div className="grid grid-cols-1 gap-4">
-          <div className="rounded-lg bg-white">
+          <div className="rounded-lg bg-gray-100">
             <div className="flex w-full justify-between pt-4">
               <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
                 Supervisor
@@ -269,7 +264,7 @@ export default function General({ user, id }) {
             </div>
           </div>
 
-          <div className="w-full p-1 rounded-lg bg-white">
+          <div className="w-full p-1 rounded-lg bg-gray-100">
             <h1 className="text-easywork-main p-2 w-full mt-2 font-medium">
               Compañia: Tu Agencia
             </h1>
@@ -327,8 +322,8 @@ export default function General({ user, id }) {
         </div>
 
         {/* Menu Derecha */}
-        <div className=" bg-white h-auto rounded-lg">
-          <div className="flex justify-between bg-white p-4 rounded-md">
+        <div className=" bg-gray-100 h-auto rounded-lg">
+          <div className="flex justify-between p-4">
             <h1 className="text-primary font-bold text-2xl">
               {t("users:form:title")}
             </h1>
@@ -343,12 +338,12 @@ export default function General({ user, id }) {
               </button>
             )}
           </div>
-          <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
+          <div className="grid grid-cols-1 gap-x-6 bg-gray-100 rounded-lg w-full gap-y-3 px-5 pb-9">
             <TextInput
               type="text"
               label={t("users:form:firstname")}
               placeholder={t("contacts:create:placeholder-name")}
-              error={errors.firstName && errors.firstName.message}
+              error={errors.firstName}
               register={register}
               name="firstName"
               disabled={!isEdit}
@@ -357,7 +352,7 @@ export default function General({ user, id }) {
               type="text"
               label={t("users:form:lastname")}
               placeholder={t("contacts:create:placeholder-name")}
-              error={errors.lastName && errors.lastName.message}
+              error={errors.lastName}
               register={register}
               name="lastName"
               disabled={!isEdit}
@@ -393,110 +388,17 @@ export default function General({ user, id }) {
               placeholder={t("contacts:create:position")}
               error={errors.position}
               register={register}
-              name="position"
+              name="bio"
               disabled={!isEdit}
             />
 
-            <Controller
-              render={({ field: { value, onChange, ref, onBlur } }) => {
-                return (
-                  <InputDate
-                    label={t("contacts:create:born-date")}
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    icon={
-                      <FaCalendarDays className="h-3 w-3 text-primary pr-4 mr-2" />
-                    }
-                    error={errors.birthday}
-                    disabled={!isEdit}
-                    // inactiveDate={eighteenYearsAgo}
-                  />
-                );
-              }}
-              name="birthday"
-              control={control}
-              defaultValue=""
-            />
-
-            <TextInput
-              label={t("contacts:create:rfc")}
-              placeholder="XEXX010101000"
-              error={errors.rfc}
-              register={register}
-              name="rfc"
-              disabled={!isEdit}
-            />
-            <SelectInput
-              label={t("contacts:create:contact-type")}
-              options={lists?.listContact?.contactTypes}
-              selectedOption={contactType && contactType}
-              name="typeContact"
-              error={!watch("typeContact") && errors.typeContact}
-              register={register}
-              setValue={setValue}
-              disabled={!isEdit}
-            />
-            {watch("typeContact") == "Otro" ? (
-              <TextInput
-                label={t("contacts:create:otherType")}
-                placeholder=""
-                error={errors.otherType}
-                register={register}
-                name="otherType"
-                disabled={!isEdit}
-                //value={watch('otherType')}
-              />
-            ) : null}
-            <TextInput
-              label={t("contacts:create:address")}
-              error={errors.address}
-              register={register}
-              name="address"
-              placeholder={t("contacts:create:placeholder-address")}
-              disabled={!isEdit}
-              //value={watch('address')}
-            />
-            <SelectInput
-              label={t("contacts:create:origen")}
-              name="origin"
-              options={lists?.listContact?.contactSources}
-              selectedOption={contactSource && contactSource}
-              error={!watch("origin") && errors.origin}
-              register={register}
-              setValue={setValue}
-              disabled={!isEdit}
-              //value={watch('origin')}
-            />
-            <SelectDropdown
-              label={t("contacts:create:responsible")}
-              name="responsible"
-              options={lists?.users}
-              selectedOption={contactResponsible}
-              register={register}
-              disabled={!isEdit}
-              error={!watch("responsible") && errors.responsible}
-              setValue={setValue}
-              // //value={watch('responsible')}
-            />
             <TextInput
               label={t("contacts:create:cua")}
               error={errors.cua}
               register={register}
               name="cua"
               disabled={!isEdit}
-              //value={watch('cua')}
-              // placeholder={t('contacts:create:placeholder-address')}
             />
-            {isEdit && (
-              <DocumentSelector
-                name="files"
-                onChange={handleFilesUpload}
-                files={files}
-                disabled={!isEdit}
-                setFiles={setFiles}
-              />
-            )}
           </div>
         </div>
       </form>

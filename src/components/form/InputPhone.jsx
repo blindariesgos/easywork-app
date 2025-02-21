@@ -14,7 +14,9 @@ const InputPhone = ({
   return (
     <div className="flex flex-col gap-y-2">
       {label && (
-        <label className="text-sm font-medium text-gray-900">{label}</label>
+        <label className="text-sm font-medium text-gray-900 px-3">
+          {label}
+        </label>
       )}
       <div className="focus:ring-0">
         <div className="relative">

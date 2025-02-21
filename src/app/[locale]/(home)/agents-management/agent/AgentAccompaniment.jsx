@@ -15,9 +15,9 @@ import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import clsx from "clsx";
-import { connectionsStage } from "@/src/utils/stages";
+import { connectionsStage } from "@/src/utils/constants";
 
-import { recruitmentStages } from "@/src/utils/stages";
+import { recruitmentStages } from "@/src/utils/constants";
 export default function AgentAccompaniment({ agent, id }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);

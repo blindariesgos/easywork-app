@@ -39,7 +39,7 @@ import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
-import { renovationStages } from "@/src/utils/stages";
+import { renovationStages } from "@/src/utils/constants";
 
 export default function Table() {
   const {

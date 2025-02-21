@@ -6,7 +6,7 @@ import { useLeads } from "../../lib/api/hooks/leads";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../app";
 import { useCommon } from "@/src/hooks/useCommon";
-import { CancelLeadReasons } from "@/src/utils/stages";
+import { CancelLeadReasons } from "@/src/utils/constants";
 
 export default function LeadsContextProvider({ children }) {
   const { t } = useTranslation();

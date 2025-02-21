@@ -8,11 +8,11 @@ import { Fragment, useEffect } from "react";
 import Button from "@/src/components/form/Button";
 import { useTranslation } from "react-i18next";
 
-const Insureds = ({ register, control, watch, setValue, isAdd }) => {
+const Insureds = ({ register, control, watch, setValue, isAdd, name }) => {
   const { t } = useTranslation();
   const { fields, remove, append } = useFieldArray({
     control,
-    name: "insureds",
+    name: name ?? "insureds",
   });
 
   const handleAdd = () => {
@@ -123,15 +123,14 @@ const Insureds = ({ register, control, watch, setValue, isAdd }) => {
         ))}
       {isAdd && (
         <div className="flex justify-end">
-          <div className="flex justify-end">
-            <Button
-              label={`${t("common:buttons:add")} +`}
-              buttonStyle="text"
-              onclick={handleAdd}
-              className="p-1 text-primary font-bold"
-              type="button"
-            />
-          </div>
+          <Button
+            label={`${t("common:buttons:add")} asegurado +`}
+            buttonStyle="text"
+            onclick={handleAdd}
+            className="p-1 text-primary font-bold"
+            fontSize="text-sm"
+            type="button"
+          />
         </div>
       )}
     </div>

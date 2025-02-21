@@ -8,7 +8,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
 import { useRouter } from "next/navigation";
-import { polizaReimbursementStatus } from "@/src/utils/stages";
+import { polizaReimbursementStatus } from "@/src/utils/constants";
 import { useSchedules } from "@/src/lib/api/hooks/schedules";
 
 export default function Schedules({ polizaId }) {

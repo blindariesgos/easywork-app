@@ -13,7 +13,7 @@ import { useTasks } from "@/src/lib/api/hooks/tasks";
 import {
   polizaReimbursementStatus,
   polizaReimbursementStatusColor,
-} from "@/src/utils/stages";
+} from "@/src/utils/constants";
 
 const KanbanProgramations = () => {
   const { t } = useTranslation();

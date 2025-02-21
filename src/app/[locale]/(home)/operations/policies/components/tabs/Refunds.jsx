@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { formatToCurrency } from "@/src/utils/formatters";
 import { usePolicies } from "@/src/lib/api/hooks/policies";
 import { useRefunds } from "@/src/lib/api/hooks/refunds";
-import { polizaReimbursementStatus } from "@/src/utils/stages";
+import { polizaReimbursementStatus } from "@/src/utils/constants";
 
 export default function Refunds({ polizaId }) {
   const [page, setPage] = useState(1);

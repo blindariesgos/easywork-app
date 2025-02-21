@@ -28,7 +28,7 @@ import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
-import { activitySectors } from "@/src/utils/stages";
+import { activitySectors } from "@/src/utils/constants";
 import RelatedCustomer from "./RelatedCustomer";
 
 export default function ContactGeneral({ contact, id, refPrint }) {

@@ -48,7 +48,7 @@ import moment from "moment";
 import {
   polizaReimbursementStatus,
   polizaReimbursementStatusColor,
-} from "@/src/utils/stages";
+} from "@/src/utils/constants";
 
 export default function Table() {
   const {

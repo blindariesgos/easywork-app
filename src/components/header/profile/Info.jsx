@@ -3,7 +3,7 @@ import SlideOver from "@/src/components/SlideOver";
 import React, { Suspense } from "react";
 import User from "@/src/components/details/User/User";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { useUser } from "@/src/lib/api/hooks/users";
+import { useCurrentUserInfo, useUser } from "@/src/lib/api/hooks/users";
 
 export default function UserDetails() {
   const { user, isLoading, mutate } = useCurrentUserInfo();

@@ -32,7 +32,7 @@ import useLeadContext from "@/src/context/leads";
 import { LinkIcon } from "@heroicons/react/24/outline";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
-import { activitySectors } from "@/src/utils/stages";
+import { activitySectors } from "@/src/utils/constants";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 export default function CreateLead({ lead, id }) {

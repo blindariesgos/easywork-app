@@ -66,11 +66,12 @@ export const useCurrentUserInfo = () => {
 };
 
 export const useUser = (id) => {
-  const { data, error, isLoading } = useSWR(`/users/${id}`, fetcher);
+  const { data, error, isLoading, mutate } = useSWR(`/users/${id}`, fetcher);
 
   return {
     data,
     isLoading,
     isError: error,
+    mutate,
   };
 };

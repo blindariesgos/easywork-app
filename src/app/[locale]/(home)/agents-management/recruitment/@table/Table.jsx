@@ -41,7 +41,7 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import moment from "moment";
-import { recruitmentStages } from "@/src/utils/stages";
+import { recruitmentStages } from "@/src/utils/constants";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 export default function Table() {
   const {

@@ -16,7 +16,7 @@ import Beneficiaries from "./tabs/Beneficiaries";
 import Insured from "./tabs/Insured";
 import Versions from "./tabs/Versions";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { renovationStages } from "@/src/utils/stages";
+import { renovationStages } from "@/src/utils/constants";
 import { putPoliza } from "@/src/lib/apis";
 import useRenovationContext from "@/src/context/renovations";
 import { toast } from "react-toastify";

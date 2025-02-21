@@ -94,11 +94,12 @@ const Beneficiaries = ({ register, control, isAdd, watch, setValue }) => {
         <div className="flex justify-end">
           <div className="flex justify-end">
             <Button
-              label={`${t("common:buttons:add")} +`}
+              label={`${t("common:buttons:add")} beneficiario +`}
               buttonStyle="text"
               onclick={handleAdd}
               className="p-1 text-primary font-bold"
               type="button"
+              fontSize="text-sm"
             />
           </div>
         </div>

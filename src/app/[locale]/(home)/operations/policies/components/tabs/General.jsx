@@ -22,6 +22,10 @@ import MultipleSelect from "@/src/components/form/MultipleSelect";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
+import Insureds from "@/src/components/policyAdds/Insureds";
+import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
+import Vehicles from "@/src/components/policyAdds/Vehicles";
+import { handleFrontError } from "@/src/utils/api/errors";
 
 export default function PolicyDetails({
   data,
@@ -120,6 +124,9 @@ export default function PolicyDetails({
     if (data?.observers && data?.observers?.length > 0)
       setValue("observers", data?.observers);
     if (data?.subAgente?.name) setValue("subAgenteId", data?.subAgente?.id);
+    if (data?.beneficiaries) setValue("beneficiaries", data?.beneficiaries);
+    if (data?.insured) setValue("insureds", data?.insured);
+    if (data?.vehicles) setValue("vehicles", data?.vehicles);
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -153,12 +160,11 @@ export default function PolicyDetails({
             : acc,
         {}
       );
+      console.log({ poliza });
       const response = await putPoliza(id, poliza);
 
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         return;
       }
       setIsEdit(false);
@@ -210,17 +216,16 @@ export default function PolicyDetails({
             </button>
           )}
         </div>
-        <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-          {isEdit && (
-            <SelectInput
-              label={t("control:portafolio:receipt:details:product")}
-              name="categoryId"
-              options={lists?.policies?.polizaCategories ?? []}
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
-          )}
+        <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5 pb-20">
+          <SelectInput
+            label={t("control:portafolio:receipt:details:product")}
+            name="categoryId"
+            options={lists?.policies?.polizaCategories ?? []}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+            className={clsx({ hidden: !isEdit })}
+          />
           <SelectInput
             label={t("operations:policies:general:type")}
             name="typeId"
@@ -230,26 +235,25 @@ export default function PolicyDetails({
             setValue={setValue}
             watch={watch}
           />
-          {data?.type?.name === "GMM" && (
-            <SelectInput
-              label={t("operations:policies:general:coverage")}
-              options={[
-                {
-                  id: "Nacional",
-                  name: "Nacional",
-                },
-                {
-                  id: "Internacional",
-                  name: "Internacional",
-                },
-              ]}
-              name="cobertura"
-              register={register}
-              setValue={setValue}
-              disabled={!isEdit}
-              watch={watch}
-            />
-          )}
+          <SelectInput
+            label={t("operations:policies:general:coverage")}
+            options={[
+              {
+                id: "Nacional",
+                name: "Nacional",
+              },
+              {
+                id: "Internacional",
+                name: "Internacional",
+              },
+            ]}
+            name="cobertura"
+            register={register}
+            setValue={setValue}
+            disabled={!isEdit}
+            watch={watch}
+            className={clsx({ hidden: data?.type?.name !== "GMM" })}
+          />
           {data?.type?.name === "VIDA" && (
             <SelectInput
               label={t("operations:policies:general:subbranch")}
@@ -481,15 +485,7 @@ export default function PolicyDetails({
             error={errors.observers}
             disabled={!isEdit}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:specifications")}
-            error={errors.specifications}
-            register={register}
-            name="specifications"
-            disabled={!isEdit}
-            multiple
-          />
+
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
@@ -499,6 +495,50 @@ export default function PolicyDetails({
             disabled={!isEdit}
             multiple
           />
+          {isEdit && (
+            <Fragment>
+              {[
+                "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+                "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+              ].includes(watch("typeId")) && (
+                <Fragment>
+                  <Insureds
+                    register={register}
+                    control={control}
+                    watch={watch}
+                    setValue={setValue}
+                    isAdd
+                    name={"insured"}
+                  />
+                  <Beneficiaries
+                    register={register}
+                    control={control}
+                    watch={watch}
+                    isAdd
+                  />
+                  <TextInput
+                    type="text"
+                    label={t("operations:policies:general:specifications")}
+                    error={errors.specifications}
+                    register={register}
+                    name="specifications"
+                    disabled={!isEdit}
+                    multiple
+                  />
+                </Fragment>
+              )}
+              {[
+                "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c", //AUTOS
+              ].includes(watch("typeId")) && (
+                <Vehicles
+                  register={register}
+                  watch={watch}
+                  control={control}
+                  isAdd
+                />
+              )}
+            </Fragment>
+          )}
         </div>
       </div>
       {/* Menu Izquierda */}

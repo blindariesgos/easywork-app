@@ -129,6 +129,8 @@ export default function ReceiptEditor({ data, id }) {
             : acc,
         {}
       );
+
+      console.log({ receipt });
       const response = await putReceipt(id, receipt);
 
       if (response.hasError) {
@@ -139,7 +141,7 @@ export default function ReceiptEditor({ data, id }) {
       mutate(`/sales/crm/polizas/receipts/${id}`);
       toast.success("Recibo actualizado correctamente.");
       mutateReceipts();
-      router.back();
+      setIsEdit(false);
     } catch (error) {
       toast.error(
         "Se ha producido un error al actualizar el recibo, inténtelo de nuevo."
@@ -156,15 +158,11 @@ export default function ReceiptEditor({ data, id }) {
       const response = await putReceipt(id, body);
 
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar el recibo, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         setLoading(false);
 
         return;
       }
-      setValue("status", "");
-      setTimeout(() => setValue("status", status), 1000);
       mutate(`/sales/crm/polizas/receipts/${id}`);
       toast.success("Recibo actualizado correctamente.");
       mutateReceipts();
@@ -362,7 +360,7 @@ export default function ReceiptEditor({ data, id }) {
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 gap-x-6  rounded-lg w-full gap-y-3 px-5  pt-9 pb-48">
+              <div className="grid grid-cols-1 gap-x-6 rounded-lg w-full gap-y-3 px-5  pt-9 pb-48">
                 <SelectInput
                   label={t("control:portafolio:receipt:details:form:status")}
                   options={receiptStatus}
@@ -422,24 +420,6 @@ export default function ReceiptEditor({ data, id }) {
                   setValue={setValue}
                   watch={watch}
                 />
-                {/* <Controller
-                  render={({ field: { value, onChange, ref, onBlur } }) => {
-                    return (
-                      <InputDate
-                        label={t(
-                          "control:portafolio:receipt:details:form:init-date"
-                        )}
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        error={errors.startDate}
-                        disabled={!isEdit}
-                      />
-                    );
-                  }}
-                  name="startDate"
-                  control={control}
-                /> */}
                 <Controller
                   render={({ field: { value, onChange, ref, onBlur } }) => {
                     return (
@@ -508,9 +488,8 @@ export default function ReceiptEditor({ data, id }) {
                   )}
                   name="responsibleId"
                   options={lists?.users}
-                  register={register}
                   disabled={!isEdit}
-                  error={!watch("responsibleId") && errors.responsible}
+                  error={errors.responsible}
                   setValue={setValue}
                   watch={watch}
                 />
@@ -543,7 +522,6 @@ export default function ReceiptEditor({ data, id }) {
               </div>
             </div>
             {/* Menu Izquierda */}
-            {/* <div className=" bg-gray-100 rounded-lg w-full"> */}
             {id && (
               <ActivityPanel
                 entityId={id}
@@ -551,7 +529,6 @@ export default function ReceiptEditor({ data, id }) {
                 crmType="receipt"
               />
             )}
-            {/* </div> */}
           </div>
         </div>
       </div>
@@ -569,14 +546,13 @@ export default function ReceiptEditor({ data, id }) {
             disabled={loading}
             buttonStyle="primary"
             className="px-3 py-2"
-            // onclick={() => handleSubmit(handleFormSubmit)}
           />
           <Button
             type="button"
             label={t("common:buttons:cancel")}
             disabled={loading}
             buttonStyle="secondary"
-            onclick={() => router.back()}
+            onclick={() => setIsEdit(false)}
             className="px-3 py-2"
           />
         </div>

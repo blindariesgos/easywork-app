@@ -280,6 +280,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
       ]);
     }
     setLoading(false);
+
+    setValue('metadata', { courseId, course: data });
   };
   const setCoursePageAssign = async pageId => {
     const response = localStorage.getItem(pageId);
@@ -297,10 +299,23 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return;
     }
 
-    const { name, assignedBy } = data;
+    const { name, assignedBy, courseId, courseName, id, assignTo } = data;
 
     setValue('createdBy', [assignedBy?.id]);
     setValue('name', `Capacitación - Página asignada: "${name}"`);
+
+    if (assignTo && assignTo[0]) {
+      setValue('responsible', [{ ...assignTo[0].user, name: assignTo[0].name }]);
+      setValue('crm', [
+        {
+          id: assignTo[0].id,
+          type: 'agent',
+          name: assignTo[0].name,
+        },
+      ]);
+    }
+
+    setValue('metadata', { courseId, courseName, pageId: id, data });
     setLoading(false);
   };
   const setCrmScheduling = async schedulingId => {

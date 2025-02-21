@@ -1,6 +1,12 @@
 "use client";
 import { PencilIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  Fragment,
+} from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
@@ -17,15 +23,13 @@ import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { userStatus } from "@/src/utils/constants";
 import clsx from "clsx";
 
-export function Profile({ data }) {
-  console.log("USERS", { data });
+export function Profile({ data, isLoguedUser, mutate }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [groups, setGroups] = useState([]);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("do_not_disturb");
+  const [status, setStatus] = useState(data?.status ?? "do_not_disturb");
   const {
     register,
     handleSubmit,
@@ -119,21 +123,21 @@ export function Profile({ data }) {
   const changeStatus = async (item) => {
     try {
       await updateStatus(item);
+      setStatus(item);
       mutate();
     } catch (error) {
       toast.error("Error al cambiar status");
     }
   };
 
-  const getStatusLabel = () => {
+  const statusLabel = useMemo(() => {
     const statusSelected = userStatus(t).find((x) => x.value == status);
     return (
       <Fragment>
-        {statusSelected.icon}{" "}
-        <p className="py-1 pr-2">{statusSelected.label}</p>
+        {statusSelected.icon} <p className="text-sm">{statusSelected.label}</p>
       </Fragment>
     );
-  };
+  }, [status]);
 
   return (
     <form
@@ -142,7 +146,7 @@ export function Profile({ data }) {
     >
       {/* Menu Izquierda */}
       <div className="gap-4">
-        <div className="rounded-lg bg-white">
+        <div className="rounded-lg bg-gray-100">
           <div className="flex w-full justify-between pt-4">
             <div>
               {data?.roles?.length && (
@@ -158,11 +162,16 @@ export function Profile({ data }) {
               {({ open }) => {
                 return (
                   <>
-                    <MenuButton className="flex items-center">
-                      {getStatusLabel}
-                      <ChevronDownIcon
-                        className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
-                      />
+                    <MenuButton
+                      className="flex items-center gap-2 group"
+                      disabled={!isLoguedUser}
+                    >
+                      {statusLabel}
+                      {isLoguedUser && (
+                        <ChevronDownIcon
+                          className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
+                        />
+                      )}
                     </MenuButton>
                     <MenuItems
                       transition
@@ -209,7 +218,7 @@ export function Profile({ data }) {
       </div>
       {/* Menu Derecha */}
       <div className="h-auto rounded-lg">
-        <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
+        <div className="grid grid-cols-1 gap-x-6 bg-gray-100 rounded-lg w-full gap-y-3 px-5 pb-9">
           <div className="flex justify-between py-4 px-2 rounded-md">
             <h1 className="text-primary font-bold text-xl">
               Información del usuario
@@ -277,7 +286,7 @@ export function Profile({ data }) {
         </div>
         {groups?.map((group, index) => (
           <div
-            className="w-full py-4 px-2 mt-4 rounded-lg h-60 bg-white overflow-y-auto"
+            className="w-full py-4 px-2 mt-4 rounded-lg h-60 bg-gray-100 overflow-y-hidden hover:overflow-y-auto"
             key={index}
           >
             <h1 className="text-primary font-bold text-xl p-2 w-full">

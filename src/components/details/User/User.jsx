@@ -5,7 +5,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx from "clsx";
 import { Profile, Tasks, Calendar, Drive } from "./components";
 
-const UserDetails = ({ user }) => {
+const UserDetails = ({ user, mutate, isLoguedUser = false }) => {
   const { t } = useTranslation();
 
   const tabs = [
@@ -37,7 +37,11 @@ const UserDetails = ({ user }) => {
             </TabList>
             <TabPanels className="w-full overflow-auto">
               <TabPanel className="w-full">
-                <Profile data={user} />
+                <Profile
+                  data={user}
+                  isLoguedUser={isLoguedUser}
+                  mutate={mutate}
+                />
               </TabPanel>
               <TabPanel className="w-full">
                 <Tasks id={user.id} />

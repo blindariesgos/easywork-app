@@ -48,7 +48,7 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
       // await assignCourse(course.id, { userIds: selectedUsers });
       toast.success('Curso asignado exitosamente!');
 
-      localStorage.setItem(course.id, JSON.stringify({ ...courseDetails, assignTo: userToAssign, assignedBy: session.user }));
+      localStorage.setItem(course.id, JSON.stringify({ ...courseDetails, courseId: course?.id, courseName: course?.name, assignTo: userToAssign, assignedBy: session.user }));
       router.push(`/tools/tasks/task?show=true&prev=course-assign&prev_id=${course.id}`);
     } catch (error) {
       console.log(error);

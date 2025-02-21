@@ -508,7 +508,6 @@ export default function PolicyDetails({
                     watch={watch}
                     setValue={setValue}
                     isAdd
-                    name={"insured"}
                   />
                   <Beneficiaries
                     register={register}

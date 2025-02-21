@@ -12,7 +12,7 @@ export default function UserDetails() {
     <SlideOver
       openModal={true}
       colorTag="bg-easywork-main"
-      labelTag="user"
+      labelTag="profile"
       samePage={`/settings/permissions/users?page=1`}
     >
       <div>
@@ -27,11 +27,11 @@ export default function UserDetails() {
     <SlideOver
       openModal={true}
       colorTag="bg-easywork-main"
-      labelTag="user"
+      labelTag="profile"
       samePage={`/settings/permissions/users?page=1`}
     >
       <Suspense fallback={<LoaderSpinner />}>
-        {user && <User user={user} id={user.id} mutate={mutate} />}
+        {user && <User user={user} id={user.id} mutate={mutate} isLoguedUser />}
       </Suspense>
     </SlideOver>
   );

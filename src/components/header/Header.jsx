@@ -221,17 +221,6 @@ export default function Header() {
             }}
           />
           <General />
-          <Info
-            status={{
-              label: statusList.find(
-                (item) => item.value === session?.user?.status
-              )?.label,
-              icon: statusList.find(
-                (item) => item.value === session?.user?.status
-              )?.icon,
-            }}
-            statusList={statusList}
-          />
         </div>
       </div>
     </div>

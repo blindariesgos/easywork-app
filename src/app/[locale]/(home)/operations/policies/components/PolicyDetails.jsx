@@ -287,7 +287,10 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
                 </TabPanel>
 
                 <TabPanel className="w-full md:px-4">
-                  <Beneficiaries items={data?.beneficiaries ?? []} />
+                  <Beneficiaries
+                    items={data?.beneficiaries ?? []}
+                    specifications={data?.specifications}
+                  />
                 </TabPanel>
               </Fragment>
             ) : (

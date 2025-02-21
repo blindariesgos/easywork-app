@@ -16,7 +16,7 @@ const Vehicles = ({ register, control, isAdd, watch }) => {
 
   useEffect(() => {
     if (fields.length == 0 && watch("vehicles").length > 0) {
-      watch("vehicles").map((insured) => append(insured));
+      watch("vehicles").map((vehicle) => append(vehicle));
     }
   }, [watch && watch("vehicles")]);
 

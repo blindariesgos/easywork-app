@@ -1,6 +1,12 @@
 "use client";
 import { PencilIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  Fragment,
+} from "react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
@@ -8,23 +14,22 @@ import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
 import InputPhone from "@/src/components/form/InputPhone";
 import { handleApiError } from "@/src/utils/api/errors";
-import { Menu } from "@headlessui/react";
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { updateUser, getUsersGroup, updateStatus } from "@/src/lib/apis";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import Image from "next/image";
 import { useCurrentUserInfo } from "@/src/lib/api/hooks/users";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
+import { userStatus } from "@/src/utils/constants";
 import clsx from "clsx";
 
-export function Profile({ status, statusList }) {
-  const { user, isLoading, mutate } = useCurrentUserInfo();
+export function Profile({ data, isLoguedUser, mutate }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [groups, setGroups] = useState([]);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [status, setStatus] = useState(data?.status ?? "do_not_disturb");
   const {
     register,
     handleSubmit,
@@ -36,36 +41,31 @@ export function Profile({ status, statusList }) {
   });
 
   useEffect(() => {
-    if (user) {
+    if (data) {
       reset({
-        name: user.name,
-        position: user.cargo,
-        phone: user.phone,
-        email: user.email,
-        rfc: user.curp,
-        cua: user.cua,
-        typeContact: user.type?.id,
-        origin: user.source?.id,
-        birthday: user.birthdate,
-        address: user.address,
-        bio: user.bio,
-        firstName: user.profile?.firstName,
-        lastName: user.profile?.lastName,
+        name: data.name,
+        position: data.cargo,
+        phone: data.phone,
+        email: data.email,
+        cua: data.cua,
+        bio: data.bio,
+        firstName: data.profile?.firstName,
+        lastName: data.profile?.lastName,
       });
       setSelectedProfileImage({
-        base64: user.avatar || null,
+        base64: data.avatar || null,
         file: null,
       });
     }
-  }, [user, reset]);
+  }, [data, reset]);
 
   useEffect(() => {
-    if (user?.id) {
-      getUsersGroup(user.id).then((res) => {
+    if (data?.id) {
+      getUsersGroup(data.id).then((res) => {
         setGroups(res.groups);
       });
     }
-  }, [user]);
+  }, [data]);
 
   const handleProfileImageChange = useCallback((event) => {
     const file = event.target.files[0];
@@ -83,8 +83,8 @@ export function Profile({ status, statusList }) {
 
   const handleFormSubmit = async (dataUser) => {
     const previousData = {
-      email: user.email,
-      phone: user.phone,
+      email: data.email,
+      phone: data.phone,
     };
 
     const body = {
@@ -110,7 +110,7 @@ export function Profile({ status, statusList }) {
 
     try {
       setLoading(true);
-      await updateUser(user?.id, formData);
+      await updateUser(data?.id, formData);
       mutate(); // Refresca la información del usuario
       setLoading(false);
       setIsEdit(false);
@@ -123,19 +123,21 @@ export function Profile({ status, statusList }) {
   const changeStatus = async (item) => {
     try {
       await updateStatus(item);
+      setStatus(item);
       mutate();
     } catch (error) {
       toast.error("Error al cambiar status");
     }
   };
 
-  if (isLoading) {
+  const statusLabel = useMemo(() => {
+    const statusSelected = userStatus(t).find((x) => x.value == status);
     return (
-      <div className="flex justify-center items-center h-full">
-        <LoadingSpinnerSmall color="primary" />
-      </div>
+      <Fragment>
+        {statusSelected.icon} <p className="text-sm">{statusSelected.label}</p>
+      </Fragment>
     );
-  }
+  }, [status]);
 
   return (
     <form
@@ -144,48 +146,51 @@ export function Profile({ status, statusList }) {
     >
       {/* Menu Izquierda */}
       <div className="gap-4">
-        <div className="rounded-lg bg-white">
+        <div className="rounded-lg bg-gray-100">
           <div className="flex w-full justify-between pt-4">
-            <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
-              {user?.roles[0].name}
+            <div>
+              {data?.roles?.length && (
+                <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
+                  {data?.roles[0].name}
+                </div>
+              )}
             </div>
             <Menu
               as="div"
               className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 pr-4 rounded-lg"
             >
               {({ open }) => {
-                if (open !== isMenuOpen) {
-                  setIsMenuOpen(open);
-                }
                 return (
                   <>
-                    <Menu.Button className="flex items-center">
-                      {status.icon} <p className="py-1 pr-2">{status.label}</p>
-                      <ChevronDownIcon
-                        className={`w-5 h-5 transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
-                      />
-                    </Menu.Button>
-                    <Menu.Items
+                    <MenuButton
+                      className="flex items-center gap-2 group"
+                      disabled={!isLoguedUser}
+                    >
+                      {statusLabel}
+                      {isLoguedUser && (
+                        <ChevronDownIcon
+                          className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
+                        />
+                      )}
+                    </MenuButton>
+                    <MenuItems
                       transition
                       anchor="bottom end"
                       className="z-50 mt-2.5 w-52 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                     >
-                      {statusList.map((item) => (
-                        <Menu.Item key={item.value}>
-                          {({ active }) => (
-                            <div
-                              onClick={() => changeStatus(item.value)}
-                              className={clsx(
-                                active ? "bg-gray-50" : "",
-                                "px-3 py-1 text-sm leading-6 text-black cursor-pointer flex items-center"
-                              )}
-                            >
-                              {item.icon} {item.label}
-                            </div>
-                          )}
-                        </Menu.Item>
+                      {userStatus(t).map((item) => (
+                        <MenuItem key={item.value}>
+                          <div
+                            onClick={() => changeStatus(item.value)}
+                            className={clsx(
+                              "px-3 py-1 data-[seleted]:bg-gray-50 text-sm leading-6 text-black cursor-pointer flex items-center"
+                            )}
+                          >
+                            {item.icon} {item.label}
+                          </div>
+                        </MenuItem>
                       ))}
-                    </Menu.Items>
+                    </MenuItems>
                   </>
                 );
               }}
@@ -202,7 +207,7 @@ export function Profile({ status, statusList }) {
               <Image
                 width={1080}
                 height={1080}
-                src={user?.avatar || "/img/avatar.svg"}
+                src={data?.avatar || "/img/avatar.svg"}
                 alt="Profile picture"
                 className="h-60 w-60 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
                 objectFit="fill"
@@ -213,12 +218,12 @@ export function Profile({ status, statusList }) {
       </div>
       {/* Menu Derecha */}
       <div className="h-auto rounded-lg">
-        <div className="grid grid-cols-1 gap-x-6 bg-white rounded-lg w-full gap-y-3 px-5 pb-9">
+        <div className="grid grid-cols-1 gap-x-6 bg-gray-100 rounded-lg w-full gap-y-3 px-5 pb-9">
           <div className="flex justify-between py-4 px-2 rounded-md">
             <h1 className="text-primary font-bold text-xl">
               Información del usuario
             </h1>
-            {user && (
+            {data && (
               <button
                 type="button"
                 onClick={() => setIsEdit(!isEdit)}
@@ -277,13 +282,11 @@ export function Profile({ status, statusList }) {
             register={register}
             name="cua"
             disabled={!isEdit}
-            //value={watch('cua')}
-            // placeholder={t('contacts:create:placeholder-address')}
           />
         </div>
         {groups?.map((group, index) => (
           <div
-            className="w-full py-4 px-2 mt-4 rounded-lg h-60 bg-white overflow-y-auto"
+            className="w-full py-4 px-2 mt-4 rounded-lg h-60 bg-gray-100 overflow-y-hidden hover:overflow-y-auto"
             key={index}
           >
             <h1 className="text-primary font-bold text-xl p-2 w-full">
@@ -325,7 +328,6 @@ export function Profile({ status, statusList }) {
             disabled={loading}
             buttonStyle="primary"
             className="px-3 py-2"
-            // onclick={() => handleSubmit(handleFormSubmit)}
           />
           <Button
             type="button"

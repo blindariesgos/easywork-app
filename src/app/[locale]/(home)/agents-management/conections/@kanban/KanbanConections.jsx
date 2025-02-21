@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Card from "./components/Card";
-import { connectionsStage } from "@/src/utils/stages";
+import { connectionsStage } from "@/src/utils/constants";
 
 const KanbanLeads = () => {
   const [isLoading, setLoading] = useState(false);

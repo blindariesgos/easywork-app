@@ -8,7 +8,7 @@ import { useSchedules } from "../../lib/api/hooks/schedules";
 import {
   polizaReimbursementStatus,
   polizaReimbursementStatusColor,
-} from "@/src/utils/stages";
+} from "@/src/utils/constants";
 
 export default function ProgramationsContextProvider({ children }) {
   const { t } = useTranslation();

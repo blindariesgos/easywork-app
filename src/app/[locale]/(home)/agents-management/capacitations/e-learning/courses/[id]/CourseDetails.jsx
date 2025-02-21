@@ -220,6 +220,7 @@ export const CourseDetails = ({ courseId }) => {
             course.folders.map((courseFolder, folderIndex, self) => (
               <CourseFolder
                 key={courseFolder.id}
+                course={course}
                 folders={self}
                 courseFolder={courseFolder}
                 contentSelected={content.data}

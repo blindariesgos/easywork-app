@@ -24,7 +24,6 @@ import { LMS_PERMISSIONS } from '../../../constants';
 import '../styles/index.css';
 
 export const ContentView = ({ content, onSuccess, onToggleIsCompleted }) => {
-  console.log('🚀 ~ ContentView ~ content:', content);
   const isEdit = !!content;
   const hasEvaluation = !!content?.evaluations[0];
   const evaluation = content?.evaluations[0];

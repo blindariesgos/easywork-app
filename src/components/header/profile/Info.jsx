@@ -6,7 +6,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { useCurrentUserInfo, useUser } from "@/src/lib/api/hooks/users";
 
 export default function UserDetails() {
-  const { user, isLoading, mutate } = useCurrentUserInfo();
+  const { user, isLoading, mutate, isError } = useCurrentUserInfo();
 
   if (isError) {
     <SlideOver

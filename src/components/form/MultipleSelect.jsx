@@ -81,7 +81,7 @@ const MultipleSelect = ({
         <MenuButton
           disabled={disabled}
           className={clsx(
-            "z-50 w-full outline-none min-h-[36px] bg-white focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm relative",
+            "w-full outline-none min-h-[36px] bg-white focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm relative",
             {
               "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                 border,

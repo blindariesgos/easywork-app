@@ -7,7 +7,6 @@ import { getLogger } from '../logger';
 const logger = getLogger('Error Handler');
 
 export const handleApiError = async (error, errorsDuplicated) => {
-  console.log('🚀 ~ handleApiError ~ error:', error);
   // Determine if the error occurred on the server or client
   const isServerSide = typeof window === 'undefined'; // Checks for window object
 

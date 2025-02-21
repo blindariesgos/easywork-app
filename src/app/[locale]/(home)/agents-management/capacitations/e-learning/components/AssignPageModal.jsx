@@ -15,7 +15,7 @@ import { useSession } from 'next-auth/react';
 import { useAgents } from '@/src/lib/api/hooks/agents';
 // import { useDebouncedCallback } from 'use-debounce';
 
-export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
+export const AssignPageModal = ({ course, page, isOpen, setIsOpen, onSuccess }) => {
   const router = useRouter();
   const { assignCourse, getCourseById } = useCourses({ fetchOnMount: false });
   const { lists } = useAppContext();
@@ -48,8 +48,8 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
       // await assignCourse(course.id, { userIds: selectedUsers });
       toast.success('Curso asignado exitosamente!');
 
-      localStorage.setItem(course.id, JSON.stringify({ ...courseDetails, assignTo: userToAssign, assignedBy: session.user }));
-      router.push(`/tools/tasks/task?show=true&prev=course-assign&prev_id=${course.id}`);
+      localStorage.setItem(page.id, JSON.stringify({ ...page, courseId: course?.id, courseName: course?.name, assignedBy: session.user, assignTo: userToAssign }));
+      router.push(`/tools/tasks/task?show=true&prev=course-page-assign&prev_id=${page.id}`);
     } catch (error) {
       console.log(error);
       toast.error('Algo no ha salido muy bien. Por favor intente más tarde');
@@ -106,15 +106,13 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-2 ">
         <DialogPanel className="min-w-96 md:w-[700px] p-6 rounded-xl bg-gray-100">
-          <DialogTitle className="text-lg">
-            Curso: <span className="text-easy-400 font-bold">{course?.name}</span>
-          </DialogTitle>
+          <DialogTitle className="text-lg">Asignar a:</DialogTitle>
 
           <div className="my-5">
-            <label className="text-sm">Asignar a:</label>
+            <label className="text-sm">Buscar persona:</label>
             <input
               type="text"
-              placeholder="Buscar persona a asignar..."
+              placeholder="Juan..."
               className="mt-1 w-full resize-none outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none rounded-md placeholder:text-xs focus:ring-0 text-sm border  focus:ring-gray-200 focus:outline-0"
               disabled={loading}
               onChange={e => handleSearch(e.target.value)}
@@ -127,44 +125,39 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
 
             <div className="bg-white py-2 rounded-lg px-2 mt-2">
               <div className="rounded-lg grid grid-cols-1 md:grid-cols-2 gap-2 h-[250px] overflow-y-auto [&::-webkit-scrollbar]:hidden">
-                {
-                  // lists?.users?.filter(user => filterUsers(user, search))
-                  agents?.items
-                    .filter(agent => !!agent.user)
-                    .map(agent => {
-                      const { user } = agent;
+                {agents?.items
+                  .filter(agent => !!agent.user)
+                  .map(agent => {
+                    const { user } = agent;
 
-                      if (!user) return null;
+                    if (!user) return null;
 
-                      const isSelected = isUserSelected(user.id);
-                      const isAlreadyAssigned = isUserAlreadyAssigned(user.id);
+                    const isSelected = isUserSelected(user.id);
+                    const isAlreadyAssigned = isUserAlreadyAssigned(user.id);
 
-                      // if (isAlreadyAssigned) return null;
-
-                      return (
-                        <div
-                          key={user.id}
-                          className={`max-h-[55px] max-w-[315px] flex items-center rounded-md ${isSelected ? 'bg-[#e0e0e0]' : 'bg-[#f5f5f5]'} p-2 ${!isSelected && !isAlreadyAssigned ? 'hover:bg-primary/10' : ''} ${isAlreadyAssigned ? '' : 'cursor-pointer'}`}
-                          onClick={() => {
-                            if (!isAlreadyAssigned) {
-                              toggleSelectedUser(user);
-                            }
-                          }}
-                        >
-                          {user.avatar ? (
-                            <Image src={user.avatar} width={150} height={150} alt={`${user.name} avatar`} className="w-10 h-10 rounded-full mr-2" />
-                          ) : (
-                            <FaCircleUser size="48px" className="mr-2 text-[#969696]" />
-                          )}
-                          <div className="relative w-full">
-                            {isAlreadyAssigned && <FaCircleCheck size="20px" className="absolute top-0 right-0 text-green-500" />}
-                            <p className={`text-black`}>{agent.name || user.username}</p>
-                            <p className={`text-xs text-gray-400`}>{user.email}</p>
-                          </div>
+                    return (
+                      <div
+                        key={user.id}
+                        className={`max-h-[55px] max-w-[315px] flex items-center rounded-md ${isSelected ? 'bg-[#e0e0e0]' : 'bg-[#f5f5f5]'} p-2 ${!isSelected && !isAlreadyAssigned ? 'hover:bg-primary/10' : ''} ${isAlreadyAssigned ? '' : 'cursor-pointer'}`}
+                        onClick={() => {
+                          if (!isAlreadyAssigned) {
+                            toggleSelectedUser(user);
+                          }
+                        }}
+                      >
+                        {user.avatar ? (
+                          <Image src={user.avatar} width={150} height={150} alt={`${user.name} avatar`} className="w-10 h-10 rounded-full mr-2" />
+                        ) : (
+                          <FaCircleUser size="48px" className="mr-2 text-[#969696]" />
+                        )}
+                        <div className="relative w-full">
+                          {isAlreadyAssigned && <FaCircleCheck size="20px" className="absolute top-0 right-0 text-green-500" />}
+                          <p className={`text-black`}>{agent.name || user.username}</p>
+                          <p className={`text-xs text-gray-400`}>{user.email}</p>
                         </div>
-                      );
-                    })
-                }
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           </div>

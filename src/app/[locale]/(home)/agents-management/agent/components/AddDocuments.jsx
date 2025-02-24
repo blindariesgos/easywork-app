@@ -11,7 +11,7 @@ const AddDocuments = ({ crmId, type }) => {
   const { mutate } = useSWRConfig();
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
-    cmrType: "contact",
+    cmrType: "agent",
     id: crmId,
   });
 
@@ -20,22 +20,16 @@ const AddDocuments = ({ crmId, type }) => {
       name: "CV",
       type: "cv",
       accept: null,
-      disabled: true,
-      hidden: type == "conection",
     },
     {
       name: t("leads:add:rfc"),
       type: "documentos",
       accept: null,
-      disabled: true,
-      hidden: type == "conection",
     },
     {
       name: "Otros",
       type: "otros",
       accept: null,
-      disabled: true,
-      hidden: type !== "conection",
     },
   ];
 
@@ -55,7 +49,7 @@ const AddDocuments = ({ crmId, type }) => {
         {...addFileProps}
         setIsOpen={(open) => setAddFileProps({ ...addFileProps, isOpen: open })}
         update={() => {
-          mutate(`/sales/crm/contacts/${crmId}/activities`);
+          mutate(`/agent-management/agents/${crmId}/activities`);
         }}
       />
       <Menu>

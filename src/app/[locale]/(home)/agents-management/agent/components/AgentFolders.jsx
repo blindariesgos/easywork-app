@@ -19,27 +19,19 @@ const AgentFolders = ({ id }) => {
 
   const getFolders = async () => {
     const response = await getAgentFolders(id);
+    console.log({ response });
     if (response.hasError) {
       handleFrontError(response);
       setLoading(false);
       return;
     }
-    if (response.items.length == 0) {
+    if (response?.folders?.length == 0) {
       toast.error("El agente no posee carpetas vinculadas");
       setLoading(false);
       return;
     }
-    // const responseFolders = await getExplorer(
-    //   { limit: 50, page: 1 },
-    //   {},
-    //   response?.items[0]?.id
-    // );
-    // if (responseFolders.error) {
-    //   toast.error(responseFolders.message);
-    //   setLoading(false);
-    //   return;
-    // }
-    // setFolders(responseFolders.items);
+
+    setFolders(response?.folders);
     setLoading(false);
   };
 

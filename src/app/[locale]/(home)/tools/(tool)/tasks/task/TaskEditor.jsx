@@ -302,7 +302,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     const { name, assignedBy, courseId, courseName, id, assignTo } = data;
 
     setValue('createdBy', [assignedBy?.id]);
-    setValue('name', `Capacitación - Página asignada: "${name}"`);
+    setValue('name', `Capacitación - Evaluación asignada: "${name}"`);
 
     if (assignTo && assignTo[0]) {
       setValue('responsible', [{ ...assignTo[0].user, name: assignTo[0].name }]);

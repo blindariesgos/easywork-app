@@ -45,7 +45,7 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
     try {
       const userToAssign = agents?.items.filter(({ user }) => user && isUserSelected(user.id));
 
-      // await assignCourse(course.id, { userIds: selectedUsers });
+      await assignCourse(course.id, { userIds: selectedUsers });
       toast.success('Curso asignado exitosamente!');
 
       localStorage.setItem(course.id, JSON.stringify({ ...courseDetails, courseId: course?.id, courseName: course?.name, assignTo: userToAssign, assignedBy: session.user }));

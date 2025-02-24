@@ -42,7 +42,7 @@ export const useEvaluations = () => {
 
   const updateEvaluation = useCallback(
     async (id, data, options = {}) => {
-      return await request(`/evaluations/${id}`, { method: 'PUT', data, ...options });
+      return await request(`/evaluations/${id}`, { method: 'PATCH', data, ...options });
     },
     [request]
   );

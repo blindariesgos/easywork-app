@@ -93,49 +93,41 @@ export default function Page() {
   );
 
   return (
-    <div
-      className="bg-center bg-cover rounded-2xl"
-      style={{ backgroundImage: `url(${BACKGROUND_IMAGE_URL})` }}
-    >
-      <div className="w-full p-4 h-full grid grid-cols-1 gap-4">
-        <Header />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          {renderTaskSection({
-            tasks: overdueTasks,
-            isLoading: isLoadingOverdueTasks,
-            mutate: mutateOverdueTasks,
-            title: "Actividades vencidas",
-            icon: ClockIcon,
-            emptyMessage: "¡Buen trabajo! No tienes actividades vencidas",
-          })}
-          {renderTaskSection({
-            tasks: deadlineTodayTasks,
-            isLoading: isLoadingDeadlineTodayTasks,
-            mutate: mutateDeadlineTodayTasks,
-            title: "Actividades de hoy",
-            icon: CalendarIcon,
-            emptyMessage: "No tienes actividades para hoy",
-          })}
-          {renderTaskSection({
-            tasks: nextTasks,
-            isLoading: isLoadingNextTasks,
-            mutate: mutateNextTasks,
-            title: "Actividades próximas",
-            icon: CalendarIcon,
-            emptyMessage: "No tienes próximas actividades",
-          })}
-          <PolicyList />
-          <div className="col-span-1 md:col-span-2 bg-white rounded-lg p-2 h-72 justify-between flex flex-col">
-            <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
-            <div className="flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
-              <h1 className="text-sm p-2">
-                En este momento no tienes recordatorios
-              </h1>
-            </div>
-          </div>
-          <ContactList />
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+      {renderTaskSection({
+        tasks: overdueTasks,
+        isLoading: isLoadingOverdueTasks,
+        mutate: mutateOverdueTasks,
+        title: "Actividades vencidas",
+        icon: ClockIcon,
+        emptyMessage: "¡Buen trabajo! No tienes actividades vencidas",
+      })}
+      {renderTaskSection({
+        tasks: deadlineTodayTasks,
+        isLoading: isLoadingDeadlineTodayTasks,
+        mutate: mutateDeadlineTodayTasks,
+        title: "Actividades de hoy",
+        icon: CalendarIcon,
+        emptyMessage: "No tienes actividades para hoy",
+      })}
+      {renderTaskSection({
+        tasks: nextTasks,
+        isLoading: isLoadingNextTasks,
+        mutate: mutateNextTasks,
+        title: "Actividades próximas",
+        icon: CalendarIcon,
+        emptyMessage: "No tienes próximas actividades",
+      })}
+      <PolicyList />
+      <div className="col-span-1 md:col-span-2 bg-white rounded-lg p-2 h-72 justify-between flex flex-col">
+        <h1 className="h-1/6 font-medium">Recordatorios recientes</h1>
+        <div className="flex justify-center items-center bg-slate-200 shadow-lg text-center rounded-lg w-full h-[60px]">
+          <h1 className="text-sm p-2">
+            En este momento no tienes recordatorios
+          </h1>
         </div>
       </div>
+      <ContactList />
     </div>
   );
 }

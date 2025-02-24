@@ -271,6 +271,58 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
     }
   };
 
+  const handleChangeType = (policyType) => {
+    console.log({ policyType });
+    if (!policyType?.id) return;
+    console.log("paosssss");
+    if (
+      [
+        "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+        "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+      ].includes(policyType?.id)
+    ) {
+      console.log("paosssssvid");
+
+      setValue("beneficiaries", [
+        {
+          nombre: "",
+          parentesco: "",
+          porcentaje: "",
+          type: "Principal",
+        },
+      ]);
+
+      setValue("insureds", [
+        {
+          metadata: {
+            edadContratacion: "",
+            fechaNacimiento: "",
+            tipoRiesgo: "",
+            fumador: false,
+          },
+          insured: { codigo: "", fullName: "" },
+        },
+      ]);
+    }
+    if (policyType?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
+      console.log("paosssssveh");
+
+      setValue("vehicles", [
+        {
+          description: "",
+          serial: "",
+          model: "",
+          motor: "",
+          plates: "",
+          usage: "",
+          circulatesIn: "",
+          regularDriver: "",
+          regularDriverAge: "",
+        },
+      ]);
+    }
+  };
+
   return (
     <Fragment>
       <SliderOverShord openModal={isOpen}>
@@ -340,6 +392,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                   setValue={setValue}
                   watch={watch}
                   isRequired
+                  setSelectedOption={handleChangeType}
                 />
                 <SelectInput
                   label={"Tipo de cliente"}

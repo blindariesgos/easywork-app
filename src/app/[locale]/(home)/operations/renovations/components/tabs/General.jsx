@@ -130,12 +130,59 @@ export default function PolicyDetails({
     if (data?.category) setValue("categoryId", data?.category?.id);
     if (data?.specifications) setValue("specifications", data?.specifications);
     if (data?.subAgente?.name) setValue("subAgenteId", data?.subAgente?.id);
-    if (data?.beneficiaries && data?.beneficiaries.length > 0)
-      setValue("beneficiaries", data?.beneficiaries);
-    if (data?.insured && data?.insured.length > 0)
-      setValue("insureds", data?.insured);
-    if (data?.vehicles && data?.vehicles.length > 0)
-      setValue("vehicles", data?.vehicles);
+    if (
+      [
+        "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+        "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+      ].includes(data?.type?.id)
+    ) {
+      if (data?.beneficiaries) {
+        setValue("beneficiaries", data?.beneficiaries);
+      } else {
+        setValue("beneficiaries", [
+          {
+            nombre: "",
+            parentesco: "",
+            porcentaje: "",
+            type: "Principal",
+          },
+        ]);
+      }
+      if (data?.insured) {
+        setValue("insureds", data?.insured);
+      } else {
+        setValue("insureds", [
+          {
+            metadata: {
+              edadContratacion: "",
+              fechaNacimiento: "",
+              tipoRiesgo: "",
+              fumador: false,
+            },
+            insured: { codigo: "", fullName: "" },
+          },
+        ]);
+      }
+    }
+    if (data?.type?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
+      if (data?.vehicles) {
+        setValue("vehicles", data?.vehicles);
+      } else {
+        setValue("vehicles", [
+          {
+            description: "",
+            serial: "",
+            model: "",
+            motor: "",
+            plates: "",
+            usage: "",
+            circulatesIn: "",
+            regularDriver: "",
+            regularDriverAge: "",
+          },
+        ]);
+      }
+    }
   }, [data]);
 
   const handleFormSubmit = async (data) => {

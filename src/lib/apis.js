@@ -365,12 +365,16 @@ export const getAgentFolders = async (agentId) => {
   return response;
 };
 
-export const addAgentDocument = async (scheduleId, body) => {
+export const addAgentDocument = async (agentId, category, body) => {
   const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/operations/schedulings/upload/${scheduleId}`, body)
+    .post(
+      `/agent-management/agents/upload/${agentId}?category=${category}`,
+      body
+    )
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
 //#endregion
 
 //#region MEETS

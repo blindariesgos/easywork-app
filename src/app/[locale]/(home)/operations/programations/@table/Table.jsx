@@ -18,12 +18,7 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import {
-  deletePolicyById,
-  deleteScheduleById,
-  putPoliza,
-  putSchedule,
-} from "@/src/lib/apis";
+import { deleteScheduleById, putPoliza, putSchedule } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useProgramationTable } from "../../../../../../hooks/useCommon";
@@ -48,6 +43,7 @@ import {
   polizaReimbursementStatus,
   polizaReimbursementStatusColor,
 } from "@/src/utils/constants";
+import TableHeader from "@/src/components/Table";
 
 export default function Table() {
   const {
@@ -326,286 +322,236 @@ export default function Table() {
           <SelectedOptionsTable options={masiveActions} />
         </div>
       )}
-      <div className="overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
-          <div className="relative sm:rounded-lg h-[60vh]">
-            <table className="min-w-full rounded-md bg-gray-100 table-auto relative">
-              <thead className="text-sm bg-white drop-shadow-sm sticky top-0 z-10">
-                <tr>
-                  <th
-                    scope="col"
-                    className="relative px-4  rounded-xl py-5 flex gap-2 items-center"
-                  >
+      <TableHeader
+        selectedRows={selectedContacts}
+        setSelectedRows={setSelectedContacts}
+        data={data}
+        order={order}
+        orderBy={orderBy}
+        setOrderBy={setOrderBy}
+        selectedColumns={selectedColumns}
+        setSelectedColumns={setSelectedColumns}
+        columnTable={columnTable}
+      >
+        {selectedColumns.length > 0 &&
+          data?.items &&
+          data?.items.map((programation, index) => {
+            return (
+              <tr
+                key={index}
+                className={clsx(
+                  selectedContacts.includes(programation.id)
+                    ? "bg-gray-200"
+                    : undefined,
+                  "hover:bg-indigo-100/40 cursor-default"
+                )}
+              >
+                <td className="pr-7 pl-4 sm:w-12 relative">
+                  {selectedContacts.includes(programation.id) && (
+                    <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
+                  )}
+                  <div className="flex items-center">
                     <input
                       type="checkbox"
-                      className=" h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                      ref={checkbox}
-                      checked={checked}
-                      onChange={toggleAll}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      value={programation.id}
+                      checked={selectedContacts.includes(programation.id)}
+                      onChange={(e) =>
+                        setSelectedContacts(
+                          e.target.checked
+                            ? [...selectedContacts, programation.id]
+                            : selectedContacts.filter(
+                                (p) => p !== programation.id
+                              )
+                        )
+                      }
                     />
-                    <AddColumnsTable
-                      columns={columnTable}
-                      setSelectedColumns={setSelectedColumns}
-                    />
-                  </th>
-                  {selectedColumns.length > 0 &&
-                    selectedColumns.map((column, index) => (
-                      <th
-                        key={index}
-                        scope="col"
-                        className={`min-w-[12rem] py-2 pr-3 text-sm font-medium text-gray-400 cursor-pointer ${
-                          index === selectedColumns.length - 1 && "rounded-e-xl"
-                        }`}
-                        onClick={() => {
-                          column.order && setOrderBy(column.order);
-                        }}
+                    <Menu
+                      as="div"
+                      className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
+                    >
+                      <MenuButton className="-m-1.5 flex items-center p-1.5">
+                        <Bars3Icon
+                          className="ml-3 h-5 w-5 text-gray-400"
+                          aria-hidden="true"
+                        />
+                      </MenuButton>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
                       >
-                        <div className="flex justify-center items-center gap-2">
-                          {column.name}
-                          <div>
-                            {column.order && (
-                              <ChevronDownIcon
-                                className={clsx("h-6 w-6", {
-                                  "text-primary": orderBy === column.order,
-                                  "transform rotate-180":
-                                    orderBy === column.order && order === "ASC",
-                                })}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </th>
-                    ))}
-                </tr>
-              </thead>
-              <tbody className="bg-gray-100">
-                {selectedColumns.length > 0 &&
-                  data?.items &&
-                  data?.items.map((programation, index) => {
-                    return (
-                      <tr
-                        key={index}
-                        className={clsx(
-                          selectedContacts.includes(programation.id)
-                            ? "bg-gray-200"
-                            : undefined,
-                          "hover:bg-indigo-100/40 cursor-default"
-                        )}
-                      >
-                        <td className="pr-7 pl-4 sm:w-12 relative">
-                          {selectedContacts.includes(programation.id) && (
-                            <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
-                          )}
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                              value={programation.id}
-                              checked={selectedContacts.includes(
-                                programation.id
-                              )}
-                              onChange={(e) =>
-                                setSelectedContacts(
-                                  e.target.checked
-                                    ? [...selectedContacts, programation.id]
-                                    : selectedContacts.filter(
-                                        (p) => p !== programation.id
-                                      )
-                                )
-                              }
-                            />
-                            <Menu
-                              as="div"
-                              className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
-                            >
-                              <MenuButton className="-m-1.5 flex items-center p-1.5">
-                                <Bars3Icon
-                                  className="ml-3 h-5 w-5 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                              </MenuButton>
-                              <Transition
-                                as={Fragment}
-                                enter="transition ease-out duration-100"
-                                enterFrom="transform opacity-0 scale-95"
-                                enterTo="transform opacity-100 scale-100"
-                                leave="transition ease-in duration-75"
-                                leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95"
+                        <MenuItems
+                          anchor="right start"
+                          className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                        >
+                          {itemActions.map((item) =>
+                            !item.options ? (
+                              <MenuItem
+                                key={item.name}
+                                disabled={item.disabled}
+                                onClick={() => {
+                                  item.handleClick &&
+                                    item.handleClick(programation.id);
+                                }}
                               >
-                                <MenuItems
-                                  anchor="right start"
-                                  className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                <div
+                                  className={
+                                    "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
+                                  }
                                 >
-                                  {itemActions.map((item) =>
-                                    !item.options ? (
+                                  {item.name}
+                                </div>
+                              </MenuItem>
+                            ) : (
+                              <Menu key={item.name}>
+                                <MenuButton className="flex items-center hover:bg-gray-50">
+                                  <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
+                                    {item.name}
+                                    <ChevronRightIcon className="h-4 w-4" />
+                                  </div>
+                                </MenuButton>
+                                <Transition
+                                  as={Fragment}
+                                  enter="transition ease-out duration-100"
+                                  enterFrom="transform opacity-0 scale-95"
+                                  enterTo="transform opacity-100 scale-100"
+                                  leave="transition ease-in duration-75"
+                                  leaveFrom="transform opacity-100 scale-100"
+                                  leaveTo="transform opacity-0 scale-95"
+                                >
+                                  <MenuItems
+                                    anchor={{
+                                      to: "right start",
+                                      gap: "4px",
+                                    }}
+                                    className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                                  >
+                                    {item.options.map((option) => (
                                       <MenuItem
-                                        key={item.name}
-                                        disabled={item.disabled}
+                                        key={option.name}
+                                        disabled={option.disabled}
                                         onClick={() => {
-                                          item.handleClick &&
-                                            item.handleClick(programation.id);
+                                          option.handleClick &&
+                                            option.handleClick(programation.id);
                                         }}
                                       >
                                         <div
-                                          className={
-                                            "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
-                                          }
+                                          className={clsx(
+                                            "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
+                                          )}
                                         >
-                                          {item.name}
+                                          {option.name}
                                         </div>
                                       </MenuItem>
-                                    ) : (
-                                      <Menu key={item.name}>
-                                        <MenuButton className="flex items-center hover:bg-gray-50">
-                                          <div className="w-full flex items-center justify-between px-3 py-1 text-sm">
-                                            {item.name}
-                                            <ChevronRightIcon className="h-4 w-4" />
-                                          </div>
-                                        </MenuButton>
-                                        <Transition
-                                          as={Fragment}
-                                          enter="transition ease-out duration-100"
-                                          enterFrom="transform opacity-0 scale-95"
-                                          enterTo="transform opacity-100 scale-100"
-                                          leave="transition ease-in duration-75"
-                                          leaveFrom="transform opacity-100 scale-100"
-                                          leaveTo="transform opacity-0 scale-95"
-                                        >
-                                          <MenuItems
-                                            anchor={{
-                                              to: "right start",
-                                              gap: "4px",
-                                            }}
-                                            className="rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                                          >
-                                            {item.options.map((option) => (
-                                              <MenuItem
-                                                key={option.name}
-                                                disabled={option.disabled}
-                                                onClick={() => {
-                                                  option.handleClick &&
-                                                    option.handleClick(
-                                                      programation.id
-                                                    );
-                                                }}
-                                              >
-                                                <div
-                                                  className={clsx(
-                                                    "block px-3 py-1 text-sm leading-6 text-black cursor-pointer data-[focus]:bg-gray-50 data-[disabled]:opacity-50"
-                                                  )}
-                                                >
-                                                  {option.name}
-                                                </div>
-                                              </MenuItem>
-                                            ))}
-                                          </MenuItems>
-                                        </Transition>
-                                      </Menu>
-                                    )
-                                  )}
-                                </MenuItems>
-                              </Transition>
-                            </Menu>
+                                    ))}
+                                  </MenuItems>
+                                </Transition>
+                              </Menu>
+                            )
+                          )}
+                        </MenuItems>
+                      </Transition>
+                    </Menu>
+                  </div>
+                </td>
+                {selectedColumns.length > 0 &&
+                  selectedColumns.map((column, index) => (
+                    <td className="ml-4 py-4" key={index}>
+                      <div
+                        className={clsx(
+                          "font-medium text-sm  text-black hover:text-primary"
+                        )}
+                      >
+                        {column.row == "name" ? (
+                          <Link
+                            href={`/operations/programations/programation/${programation.id}?show=true`}
+                          >
+                            <p>{`${
+                              programation?.insurance?.name ?? ""
+                            } ${programation?.poliza?.poliza} ${programation?.polizaType?.name}`}</p>
+                          </Link>
+                        ) : column.row == "activities" ? (
+                          <div className="flex justify-center gap-2">
+                            <button
+                              type="button"
+                              className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              <FaWhatsapp
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              <EnvelopeIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              <ChatBubbleBottomCenterIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              <PhoneIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
+                            </button>
                           </div>
-                        </td>
-                        {selectedColumns.length > 0 &&
-                          selectedColumns.map((column, index) => (
-                            <td className="ml-4 py-4" key={index}>
-                              <div
-                                className={clsx(
-                                  "font-medium text-sm  text-black hover:text-primary"
-                                )}
-                              >
-                                {column.row == "name" ? (
-                                  <Link
-                                    href={`/operations/programations/programation/${programation.id}?show=true`}
-                                  >
-                                    <p>{`${
-                                      programation?.insurance?.name ?? ""
-                                    } ${programation?.poliza?.poliza} ${programation?.polizaType?.name}`}</p>
-                                  </Link>
-                                ) : column.row == "activities" ? (
-                                  <div className="flex justify-center gap-2">
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-green-100 p-1 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <FaWhatsapp
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <EnvelopeIcon
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <ChatBubbleBottomCenterIcon
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="rounded-full bg-primary p-1 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                                    >
-                                      <PhoneIcon
-                                        className="h-4 w-4"
-                                        aria-hidden="true"
-                                      />
-                                    </button>
-                                  </div>
-                                ) : column.row === "poliza" ? (
-                                  <Link
-                                    href={`/operations/policies/policy/${programation?.poliza?.id}?show=true`}
-                                  >
-                                    <p className="text-center">
-                                      {programation?.poliza?.poliza}
-                                    </p>
-                                  </Link>
-                                ) : column.row == "client" ? (
-                                  programation?.contact?.id ? (
-                                    <Link
-                                      href={`/sales/crm/contacts/contact/${programation?.contact?.id}?show=true`}
-                                    >
-                                      <p className="text-center">
-                                        {programation?.contact?.fullName}
-                                      </p>
-                                    </Link>
-                                  ) : (
-                                    <p className="text-center">No asignado</p>
-                                  )
-                                ) : column.row === "createdAt" ? (
-                                  <p className="text-center">
-                                    {moment(programation?.createdAt).format(
-                                      "DD/MM/YYYY"
-                                    )}
-                                  </p>
-                                ) : column.row === "status" ? (
-                                  renderStage(programation?.status)
-                                ) : (
-                                  programation[column.row] || "-"
-                                )}
-                              </div>
-                            </td>
-                          ))}
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+                        ) : column.row === "poliza" ? (
+                          <Link
+                            href={`/operations/policies/policy/${programation?.poliza?.id}?show=true`}
+                          >
+                            <p className="text-center">
+                              {programation?.poliza?.poliza}
+                            </p>
+                          </Link>
+                        ) : column.row == "client" ? (
+                          programation?.contact?.id ? (
+                            <Link
+                              href={`/sales/crm/contacts/contact/${programation?.contact?.id}?show=true`}
+                            >
+                              <p className="text-center">
+                                {programation?.contact?.fullName}
+                              </p>
+                            </Link>
+                          ) : (
+                            <p className="text-center">No asignado</p>
+                          )
+                        ) : column.row === "createdAt" ? (
+                          <p className="text-center">
+                            {moment(programation?.createdAt).format(
+                              "DD/MM/YYYY"
+                            )}
+                          </p>
+                        ) : column.row === "status" ? (
+                          renderStage(programation?.status)
+                        ) : (
+                          programation[column.row] || "-"
+                        )}
+                      </div>
+                    </td>
+                  ))}
+              </tr>
+            );
+          })}
+      </TableHeader>
       <div className="w-full pt-4 ">
         <FooterTable
           limit={limit}

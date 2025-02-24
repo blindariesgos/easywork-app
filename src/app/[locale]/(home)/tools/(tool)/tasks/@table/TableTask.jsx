@@ -1,11 +1,8 @@
 "use client";
 
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import clsx from "clsx";
-import React, { useLayoutEffect, useRef, useState, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import AddColumnsTable from "@/src/components/AddColumnsTable";
 import Table from "@/src/components/Table";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import FooterTable from "@/src/components/FooterTable";
@@ -17,11 +14,9 @@ import {
 } from "@/src/lib/apis";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import useTasksContext from "@/src/context/tasks";
 import { getFormatDate } from "@/src/utils/getFormatDate";
 import Task from "./Task";
-import useAppContext from "@/src/context/app";
 import DeleteModal from "@/src/components/modals/DeleteItem";
 
 export default function TableTask() {

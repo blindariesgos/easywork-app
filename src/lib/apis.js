@@ -364,6 +364,13 @@ export const getAgentFolders = async (agentId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const addAgentDocument = async (scheduleId, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/schedulings/upload/${scheduleId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region MEETS

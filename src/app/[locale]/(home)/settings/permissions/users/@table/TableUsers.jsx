@@ -131,11 +131,11 @@ export default function TableUsers() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      <div className="flex">
-        {selectedContacts.length > 0 && (
+      {selectedContacts.length > 0 && (
+        <div className="flex">
           <SelectedOptionsTable options={options} />
-        )}
-      </div>
+        </div>
+      )}
       <Table
         selectedRows={selectedContacts}
         setSelectedRows={setSelectedContacts}

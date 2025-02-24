@@ -1,20 +1,12 @@
 "use client";
 import React from "react";
-import {
-  ChevronDownIcon,
-  Cog8ToothIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
+import { Cog8ToothIcon } from "@heroicons/react/20/solid";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../../../components/form/Button";
-import useAppContext from "../../../../../../../context/app";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import FiltersReceipt from "./filters/FiltersReceipt";
 import { useCommon } from "../../../../../../../hooks/useCommon";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
-import ButtonAdd from "../../components/ButtonAdd";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import useReceiptContext from "@/src/context/receipts";
 

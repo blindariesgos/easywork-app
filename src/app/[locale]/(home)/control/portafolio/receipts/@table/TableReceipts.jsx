@@ -1,18 +1,15 @@
 "use client";
 import {
   ChatBubbleBottomCenterIcon,
-  ChevronDownIcon,
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
-  CheckIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import Image from "next/image";
 import React, {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -21,12 +18,10 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deleteContactId, deleteReceiptById } from "@/src/lib/apis";
+import { deleteReceiptById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useReceiptTable } from "../../../../../../../hooks/useCommon";
-import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { formatToCurrency } from "@/src/utils/formatters";
 
@@ -250,14 +245,12 @@ export default function TableReceipts() {
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
-      <div className="flex flex-col justify-start gap-2 items-start pb-2">
-        {selectedReceipts.length > 0 && (
-          <Fragment>
-            <p className="text-sm">{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
-            <SelectedOptionsTable options={masiveActions} />
-          </Fragment>
-        )}
-      </div>
+      {selectedReceipts.length > 0 && (
+        <div className="flex flex-col justify-start gap-2 items-start pb-2">
+          <p className="text-sm">{`Elementos seleccionados: ${selectedReceipts.length} / ${data?.meta?.totalItems}`}</p>
+          <SelectedOptionsTable options={masiveActions} />
+        </div>
+      )}
       <Table
         selectedRows={selectedReceipts}
         setSelectedRows={setSelectedReceipts}

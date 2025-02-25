@@ -263,7 +263,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         formData.append(key, body[key]?.toString() || "");
       }
     }
-    formData.append("relatedContactId", client?.id ?? null);
+    formData.append("relatedContactId", client?.id ?? "");
 
     try {
       setLoading(true);
@@ -286,6 +286,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         }
         toast.success(t("contacts:edit:updated-contact"));
         mutate(`/sales/crm/contacts/${id}`);
+        setIsEdit(false);
       }
       setLoading(false);
     } catch (error) {

@@ -5,14 +5,10 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
-  CheckIcon,
-  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
-import Image from "next/image";
 import React, {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -21,14 +17,12 @@ import React, {
 } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
-import Link from "next/link";
-import { deleteContactId, deletePolicyById, putPoliza } from "@/src/lib/apis";
+import { deletePolicyById, putPoliza } from "@/src/lib/apis";
 import { handleApiError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { usePoliciesTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -67,8 +61,6 @@ export default function TablePolicies() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
   const { selectedContacts, setSelectedContacts } = useCrmContext();
   const { columnTable } = usePoliciesTable();
   const [selectedColumns, setSelectedColumns] = useState(

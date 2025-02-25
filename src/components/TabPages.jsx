@@ -28,7 +28,7 @@ const TabPages = ({ tabs, children, defaultIndex }) => {
 
   return (
     <TabGroup
-      className="w-full flex flex-col items-start gap-4"
+      className="w-full flex flex-col items-start gap-2"
       selectedIndex={selectedIndex}
       onChange={handleChangeTab}
     >

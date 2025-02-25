@@ -112,7 +112,7 @@ export default function AddContactTabs({ tabs, refPrint, agent, type }) {
             icon={<PlusIcon className="h-4 w-4 text-white" />}
             className="py-2 px-3"
           /> */}
-          <AddDocuments contactId={agent.id} type={type} />
+          <AddDocuments crmId={agent.id} type={type} />
         </TabList>
         <IconDropdown
           icon={<Cog8ToothIcon className="h-8 w-8 text-primary" />}

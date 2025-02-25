@@ -364,6 +364,17 @@ export const getAgentFolders = async (agentId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const addAgentDocument = async (agentId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(
+      `/agent-management/agents/upload/${agentId}?category=${category}`,
+      body
+    )
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region MEETS

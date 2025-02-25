@@ -2,6 +2,7 @@
 import Footer from "./Footer";
 import useAppContext from "../context/app/index";
 import clsx from "clsx";
+import Header from "@/src/components/header/Header";
 
 const PageBody = ({ children }) => {
   const { sidebarOpenDesktop1, sidebarOpenDesktop2 } = useAppContext();
@@ -15,7 +16,10 @@ const PageBody = ({ children }) => {
       {/* Contenedor principal flexible */}
       <main className="flex-grow">
         {/* Contenido creciente */}
-        {children}
+        <div className="bg-gray-100 h-full p-2 rounded-xl relative flex flex-col gap-2">
+          <Header />
+          {children}
+        </div>
       </main>
       <Footer /> {/* Footer fuera del main */}
     </div>

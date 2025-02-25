@@ -18,8 +18,7 @@ export default function LayoutPage({ table, children, kanban }) {
     },
   ];
   return (
-    <div className="bg-gray-100 h-full p-2 rounded-xl relative flex flex-col gap-4">
-      <Header />
+    <div className="h-full relative flex flex-col gap-2">
       <AccompanimentsHeader />
       <Suspense fallback={<LoaderSpinner />}>
         <TabPages tabs={tabs} />

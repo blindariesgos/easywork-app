@@ -234,11 +234,6 @@ export default function PolicyDetails({
       setIsEdit(false);
       updatePolicy();
       toast.success("Poliza actualizada correctamente.");
-
-      if (params.get("editPolicy")) {
-        params.delete("editPolicy");
-        router.replace(`${pathname}?${params.toString()}`);
-      }
     } catch (error) {
       console.log({ error });
       toast.error(

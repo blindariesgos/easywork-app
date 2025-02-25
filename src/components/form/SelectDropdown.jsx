@@ -2,7 +2,6 @@
 "use client";
 import {
   Combobox,
-  Transition,
   ComboboxButton,
   ComboboxOptions,
   ComboboxOption,
@@ -13,13 +12,13 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import Image from "next/image";
 import React, { Fragment, useEffect, useState } from "react";
+import { RxCrossCircled } from "react-icons/rx";
 
 function SelectDropdown({
   label,
   selectedOption,
   options,
   disabled,
-  register,
   name,
   error,
   setValue,
@@ -27,19 +26,32 @@ function SelectDropdown({
   border,
   watch,
   placeholder,
+  setSelectedOption,
 }) {
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (selectedOption && !selected) {
+    if (selectedOption) {
       setSelected(selectedOption);
     }
-  }, [selectedOption, selected]);
+  }, [selectedOption]);
 
-  useEffect(() => {
-    if (selected) setValue && setValue(name, selected?.id);
-  }, [selected, setValue, name]);
+  const handleClear = () => {
+    handleChange(null);
+    setQuery("");
+  };
+
+  const handleChange = (value) => {
+    setSelected(value);
+    if (value) {
+      setValue && setValue(name, object ? value : value.id);
+      setSelectedOption && setSelectedOption(value);
+    } else {
+      setValue && setValue(name, object ? {} : "");
+      setSelectedOption && setSelectedOption({});
+    }
+  };
 
   const filteredElements =
     query === ""
@@ -61,9 +73,9 @@ function SelectDropdown({
       <Combobox
         as="div"
         value={selected}
-        onChange={setSelected}
+        onChange={handleChange}
         disabled={disabled}
-        className="relative"
+        className="relative group"
         name={name}
       >
         {label && (
@@ -91,9 +103,21 @@ function SelectDropdown({
             placeholder={placeholder}
           />
           {!disabled && (
-            <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon className="h-5 w-5 text-gray-400" />
-            </ComboboxButton>
+            <Fragment>
+              {selected && (
+                <div
+                  className={clsx(
+                    "absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
+                  )}
+                  onClick={handleClear}
+                >
+                  <RxCrossCircled className="w-4 h-4 text-primary" />
+                </div>
+              )}
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDownIcon className="h-5 w-5 text-primary" />
+              </ComboboxButton>
+            </Fragment>
           )}
 
           <ComboboxOptions

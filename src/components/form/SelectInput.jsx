@@ -37,7 +37,7 @@ function SelectInput({
   const [query, setQuery] = useState("");
 
   const handleClear = () => {
-    setSelected("");
+    handleChange(null);
     setQuery("");
   };
 

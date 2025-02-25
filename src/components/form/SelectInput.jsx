@@ -126,7 +126,7 @@ function SelectInput({
           />
           {!disabled && (
             <Fragment>
-              {selected && selected.length > 0 && (
+              {selected && (
                 <div
                   className={clsx(
                     "absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "

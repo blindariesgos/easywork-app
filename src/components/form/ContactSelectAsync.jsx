@@ -2,7 +2,6 @@
 "use client";
 import {
   Combobox,
-  Transition,
   ComboboxInput,
   ComboboxButton,
   ComboboxOption,
@@ -16,6 +15,7 @@ import { useContacts } from "@/src/lib/api/hooks/contacts";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
 import { getContactId } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
+import { RxCrossCircled } from "react-icons/rx";
 
 function ContactSelectAsync({
   label,
@@ -53,6 +53,12 @@ function ContactSelectAsync({
     }
   }, 500);
 
+  const handleClear = () => {
+    setSelected("");
+    setQuery("");
+    setValue(name, null);
+  };
+
   useEffect(() => {
     handleSearch();
   }, [query]);
@@ -87,6 +93,7 @@ function ContactSelectAsync({
         value={selected}
         onChange={setSelected}
         disabled={disabled}
+        className="group"
       >
         {label && (
           <label
@@ -120,12 +127,24 @@ function ContactSelectAsync({
             }}
           />
           {!disabled && (
-            <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronDownIcon
-                className="h-5 w-5 text-primary"
-                aria-hidden="true"
-              />
-            </ComboboxButton>
+            <Fragment>
+              {selected && (
+                <div
+                  className={clsx(
+                    "absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
+                  )}
+                  onClick={handleClear}
+                >
+                  <RxCrossCircled className="w-4 h-4 text-primary" />
+                </div>
+              )}
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <ChevronDownIcon
+                  className="h-5 w-5 text-primary"
+                  aria-hidden="true"
+                />
+              </ComboboxButton>
+            </Fragment>
           )}
 
           <ComboboxOptions

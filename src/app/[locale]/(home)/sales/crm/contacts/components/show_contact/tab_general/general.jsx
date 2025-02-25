@@ -244,7 +244,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     const { contact: client, subAgent, ...info } = data;
     const body = {
       ...info,
-      relatedContactId: client?.id ?? null,
     };
 
     if (selectedProfileImage?.file) {
@@ -264,6 +263,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         formData.append(key, body[key]?.toString() || "");
       }
     }
+    formData.append("relatedContactId", client?.id ?? null);
 
     try {
       setLoading(true);

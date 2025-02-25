@@ -144,7 +144,7 @@
             "importePagar": "Importe a pagar",
             "sub-agent": "Sub-agente",
             "intermediary": "Agente Intermediario",
-            "responsible": "Agente Responsable"
+            "responsible": "Responsable"
         },
         "update": "Reembolso actualizado correctamente."
     },
@@ -187,7 +187,7 @@
             "importePagar": "Importe a pagar",
             "sub-agent": "Sub-agente",
             "intermediary": "Agente Intermediario",
-            "responsible": "Agente Responsable",
+            "responsible": "Responsable",
             "observer": "Observador"
         },
         "update": "Programación actualizada correctamente."

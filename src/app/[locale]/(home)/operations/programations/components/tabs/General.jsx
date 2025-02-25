@@ -268,14 +268,14 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             disabled={!isEdit}
             register={register}
           />
-
-          <AgentSelectAsync
+          <SelectInput
             label={t("operations:programations:general:responsible")}
             name="assignedById"
+            options={lists?.users ?? []}
             disabled={!isEdit}
-            error={errors.assignedById}
             setValue={setValue}
             watch={watch}
+            error={errors.assignedById}
           />
           <IntermediarySelectAsync
             label={t("operations:programations:general:intermediary")}

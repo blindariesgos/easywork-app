@@ -225,12 +225,13 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
                 name="medicalCondition"
                 register={register}
               />
-              <AgentSelectAsync
+              <SelectInput
                 label={t("operations:programations:general:responsible")}
                 name="assignedById"
-                error={errors.assignedById}
+                options={lists?.users ?? []}
                 setValue={setValue}
                 watch={watch}
+                error={errors.assignedById}
               />
               <IntermediarySelectAsync
                 label={t("operations:programations:general:intermediary")}

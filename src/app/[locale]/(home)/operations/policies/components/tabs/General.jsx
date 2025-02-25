@@ -190,7 +190,7 @@ export default function PolicyDetails({
       iva,
       importePagar,
       observers,
-      // insureds,
+      insureds,
       ...otherData
     } = data;
 
@@ -204,15 +204,15 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
 
-    // if (insureds.length > 0 && insureds[0]?.insured?.codigo?.length > 0) {
-    //   body.insureds = insureds
-    //     .filter((x) => x?.insured?.codigo?.length > 0)
-    //     .map((x) => ({
-    //       codigo: x?.insured?.codigo,
-    //       fullName: x?.insured?.fullName,
-    //       metadata: x.metadata,
-    //     }));
-    // }
+    if (insureds.length > 0 && insureds[0]?.insured?.codigo?.length > 0) {
+      body.insureds = insureds
+        .filter((x) => x?.insured?.codigo?.length > 0)
+        .map((x) => ({
+          codigo: x?.insured?.codigo,
+          fullName: x?.insured?.fullName,
+          metadata: x.metadata,
+        }));
+    }
     try {
       const poliza = Object.keys(body).reduce(
         (acc, key) =>

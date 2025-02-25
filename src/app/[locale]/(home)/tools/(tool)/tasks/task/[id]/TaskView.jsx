@@ -223,7 +223,7 @@ export default function TaskView({ id, task }) {
                           <p className="text-sm text-white">Curso: {task.metadata.courseName}</p>
                         </Link>
                       )}
-                      {task.metadata.data?.evaluations?.length > 0 && (
+                      {task.metadata.data.evaluations?.length > 0 && (
                         <Link
                           target="_blank"
                           href={`/agents-management/capacitations/e-learning/evaluations/${task.metadata.data.evaluations[0]?.id}`}

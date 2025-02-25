@@ -282,6 +282,8 @@ const AddPolicyWithReader = ({
       specifications,
       regenerateReceipts,
       fechaEmision,
+      beneficiaries,
+      insureds,
       ...otherData
     } = data;
     const body = {
@@ -306,6 +308,21 @@ const AddPolicyWithReader = ({
       body.regenerateReceipts = regenerateReceipts == "YES";
     }
 
+    if (
+      insureds &&
+      insureds.length > 0 &&
+      insureds[0]?.insured?.fullName?.length > 0
+    ) {
+      body.insureds = insureds;
+    }
+
+    if (
+      beneficiaries &&
+      beneficiaries.length > 0 &&
+      beneficiaries[0]?.nombre?.length > 0
+    ) {
+      body.beneficiaries = beneficiaries;
+    }
     console.log({ body });
 
     try {

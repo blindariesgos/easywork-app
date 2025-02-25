@@ -204,7 +204,11 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
 
-    if (insureds.length > 0 && insureds[0]?.insured?.codigo?.length > 0) {
+    if (
+      insureds &&
+      insureds.length > 0 &&
+      insureds[0]?.insured?.codigo?.length > 0
+    ) {
       body.insureds = insureds
         .filter((x) => x?.insured?.codigo?.length > 0)
         .map((x) => ({

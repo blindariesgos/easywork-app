@@ -206,7 +206,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.agenteIntermediario)
       setValue("agenteIntermediarioId", contact?.agenteIntermediario?.id);
     if (contact?.observer) setValue("observerId", contact?.observer?.id);
-    if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
+    if (contact?.subAgente) setValue("subAgentId", contact?.subAgente?.id);
     if (contact?.observations) setValue("observations", contact?.observations);
     if (contact?.activitySector)
       setValue("activitySector", contact?.activitySector);

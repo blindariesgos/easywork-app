@@ -82,6 +82,13 @@ export const useEvaluations = () => {
     [request]
   );
 
+  const deleteEvaluation = useCallback(
+    async (id, options = {}) => {
+      return await request(`/evaluations/${id}`, { method: 'DELETE', ...options });
+    },
+    [request]
+  );
+
   return {
     getEvaluations,
     getEvaluation,
@@ -94,5 +101,6 @@ export const useEvaluations = () => {
     finalizeEvaluation,
     getEvaluationAttempts,
     updateEvaluationBasicInfo,
+    deleteEvaluation,
   };
 };

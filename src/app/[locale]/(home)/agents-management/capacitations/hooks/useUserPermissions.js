@@ -10,8 +10,6 @@ export const useUserPermissions = () => {
 
   const hasPermission = useCallback(
     permission => {
-      // if (process.env.NEXT_PUBLIC_DISABLE_LMS_PERMISSIONS && process.env.NEXT_PUBLIC_DISABLE_LMS_PERMISSIONS === 'true') return true;
-
       return userMenuPermissions.includes(permission);
     },
     [userMenuPermissions]

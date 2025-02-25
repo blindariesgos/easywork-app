@@ -10,7 +10,7 @@ import { renderCellContent } from "./utils";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 
-export default function Task({ task, ...props }) {
+export default function Task({ task, level = 0, ...props }) {
   const [showSubTasks, setShowSubtaks] = useState(false);
 
   return (
@@ -20,11 +20,18 @@ export default function Task({ task, ...props }) {
         {...props}
         handleShowSubTasks={() => setShowSubtaks(!showSubTasks)}
         showSubTasks={showSubTasks}
+        level={level}
       />
       {task?.subTasks?.length > 0 && showSubTasks && (
         <Fragment>
           {task.subTasks.map((subTask) => (
-            <Task task={subTask} isSubTask={true} {...props} key={subTask.id} />
+            <Task
+              task={subTask}
+              isSubTask={true}
+              {...props}
+              key={subTask.id}
+              level={level + 1}
+            />
           ))}
         </Fragment>
       )}
@@ -42,6 +49,7 @@ const ColumnTable = ({
   showSubTasks,
   setDeleteId,
   setIsOpenDelete,
+  level,
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
@@ -135,7 +143,8 @@ const ColumnTable = ({
                 t,
                 handleShowSubTasks,
                 showSubTasks,
-                isSubTask
+                isSubTask,
+                level
               )}
             </div>
           </td>

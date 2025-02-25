@@ -687,33 +687,42 @@ const AddPolicyWithReader = ({
                     }
                   />
 
-                  {watch("insureds")?.length > 0 && (
-                    <Insureds
-                      register={register}
-                      control={control}
-                      watch={watch}
-                      setValue={setValue}
-                      isAdd
-                    />
+                  {[
+                    "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+                    "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+                  ].includes(watch("typeId")) && (
+                    <Fragment>
+                      <Insureds
+                        register={register}
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                        isAdd
+                      />
+                      {watch("typeId") ==
+                        "e1794ba3-892d-4c51-ad62-32dcf836873b" && (
+                        <Fragment>
+                          <Beneficiaries
+                            register={register}
+                            control={control}
+                            watch={watch}
+                            isAdd
+                          />
+                          <TextInput
+                            type="text"
+                            label={t(
+                              "operations:policies:general:specifications"
+                            )}
+                            error={errors.specifications}
+                            register={register}
+                            name="specifications"
+                            multiple
+                            rows={3}
+                          />
+                        </Fragment>
+                      )}
+                    </Fragment>
                   )}
-                  {watch("beneficiaries")?.length > 0 && (
-                    <Beneficiaries
-                      register={register}
-                      control={control}
-                      setValue={setValue}
-                      isAdd
-                      watch={watch}
-                    />
-                  )}
-                  <TextInput
-                    type="text"
-                    label={t("operations:policies:general:specifications")}
-                    error={errors.specifications}
-                    register={register}
-                    name="specifications"
-                    multiple
-                    rows={3}
-                  />
                   <IntermediarySelectAsync
                     label={t("operations:policies:general:intermediary")}
                     name="agenteIntermediarioId"
@@ -722,8 +731,8 @@ const AddPolicyWithReader = ({
                   />
                   <AgentSelectAsync
                     label={t("operations:programations:general:sub-agent")}
-                    name="subAgenteId"
-                    error={errors.subAgenteId}
+                    name="subAgentId"
+                    error={errors.subAgentId}
                     setValue={setValue}
                     watch={watch}
                   />

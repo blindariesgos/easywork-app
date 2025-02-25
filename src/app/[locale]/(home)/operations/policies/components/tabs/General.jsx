@@ -261,9 +261,6 @@ export default function PolicyDetails({
       onSubmit={handleSubmit(handleFormSubmit)}
       className={clsx(
         `grid grid-cols-1 lg:grid-cols-12 lg:overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full lg:h-[calc(100vh_-_220px)]`
-        // {
-        //   [`h-[calc(100vh_-_${headerHeight}px)]`]: headerHeight,
-        // }
       )}
     >
       {/* Menu Derecha */}

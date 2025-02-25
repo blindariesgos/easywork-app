@@ -6,6 +6,7 @@ import {
   PhoneIcon,
   Bars3Icon,
 } from "@heroicons/react/20/solid";
+import { IoIosArrowDropdown } from "react-icons/io";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
 import React, { useState, Fragment, useEffect } from "react";
@@ -222,14 +223,14 @@ export default function MeetColumn({
                 )}
               >
                 {column.row == "name" ? (
-                  <div className="flex gap-1 items-center justify-start">
+                  <div className="flex gap-x-1 items-center">
                     {tasks.length > 0 && (
                       <div
                         onClick={() => setShowTasks(!showTasks)}
-                        className="rounded-full h-5 w-5 flex justify-center items-center cursor-pointer bg-[#D2CEFF]"
+                        className="h-5 w-5 cursor-pointer"
                       >
-                        <FaAngleDown
-                          className={clsx("h-3 w-3 text-primary", {
+                        <IoIosArrowDropdown
+                          className={clsx("h-5 w-5 text-primary", {
                             "rotate-180": showTasks,
                           })}
                         />

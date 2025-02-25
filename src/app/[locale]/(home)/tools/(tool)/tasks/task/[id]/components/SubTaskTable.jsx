@@ -2,7 +2,7 @@
 
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React from "react";
+import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { renderCellContent } from "../../../@table/utils";
 
@@ -40,50 +40,39 @@ export default function SubTaskTable({ tasks }) {
   ];
 
   return (
-    <table className="min-w-full rounded-md  table-auto shadow-md">
-      <thead className="text-sm bg-white drop-shadow-sm">
-        <tr>
-          {columnTable.length > 0 &&
-            columnTable.map((column, index) => (
-              <th
-                key={index}
-                scope="col"
-                className={`py-2 pr-3 text-sm font-medium text-primary cursor-pointer  ${
-                  index === columnTable.length - 1 && "rounded-e-xl"
-                }`}
-              >
-                <div
-                  className={clsx(
-                    "flex justify-left items-center gap-2 pl-2 text-sm"
-                  )}
-                >
-                  {column.name}
-                </div>
-              </th>
-            ))}
-        </tr>
-      </thead>
-      <tbody className="bg-gray-100">
+    <div className={`grid grid-cols-1`}>
+      <div className="grid grid-cols-4 rounded-xl gap-y-1 text-xs">
+        {columnTable.length > 0 &&
+          columnTable.map((column, index) => (
+            <p
+              className={clsx("p-2 bg-white", {
+                "rounded-s-xl": index === 0,
+                "rounded-e-xl": index === 3,
+              })}
+              key={column.id}
+            >
+              {column.name}
+            </p>
+          ))}
         {columnTable.length > 0 &&
           tasks?.length > 0 &&
           tasks?.map((task) => (
-            <tr
-              key={task.id}
-              className={clsx(
-                "hover:bg-indigo-100/40 cursor-default relative bg-gray-100"
-              )}
-            >
+            <Fragment key={task.id}>
               {columnTable.length > 0 &&
                 columnTable.map((column, index) => (
-                  <td className="text-left pl-2" key={index}>
-                    <div className="font-medium text-sm text-black hover:text-primary capitalize">
-                      {renderCellContent(column, task, t)}
-                    </div>
-                  </td>
+                  <div
+                    className={clsx("bg-[#f3f1f5] py-1 px-2", {
+                      "rounded-s-xl": index == 0,
+                      "rounded-e-xl": index === 3,
+                    })}
+                    key={index}
+                  >
+                    {renderCellContent(column, task, t)}
+                  </div>
                 ))}
-            </tr>
+            </Fragment>
           ))}
-      </tbody>
-    </table>
+      </div>
+    </div>
   );
 }

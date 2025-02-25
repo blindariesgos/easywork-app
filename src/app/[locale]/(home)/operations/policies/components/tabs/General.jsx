@@ -131,19 +131,7 @@ export default function PolicyDetails({
         "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
       ].includes(data?.type?.id)
     ) {
-      if (data?.beneficiaries) {
-        setValue("beneficiaries", data?.beneficiaries);
-      } else {
-        setValue("beneficiaries", [
-          {
-            nombre: "",
-            parentesco: "",
-            porcentaje: "",
-            type: "Principal",
-          },
-        ]);
-      }
-      if (data?.insured) {
+      if (data?.insured && data?.insured?.length > 0) {
         setValue("insureds", data?.insured);
       } else {
         setValue("insureds", [
@@ -157,6 +145,20 @@ export default function PolicyDetails({
             insured: { codigo: "", fullName: "" },
           },
         ]);
+      }
+      if (data?.type?.id == "e1794ba3-892d-4c51-ad62-32dcf836873b") {
+        if (data?.beneficiaries && data?.beneficiaries?.length > 0) {
+          setValue("beneficiaries", data?.beneficiaries);
+        } else {
+          setValue("beneficiaries", [
+            {
+              nombre: "",
+              parentesco: "",
+              porcentaje: "",
+              type: "Principal",
+            },
+          ]);
+        }
       }
     }
     if (data?.type?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
@@ -188,6 +190,7 @@ export default function PolicyDetails({
       iva,
       importePagar,
       observers,
+      // insureds,
       ...otherData
     } = data;
 
@@ -200,6 +203,16 @@ export default function PolicyDetails({
       importePagar: +importePagar,
       observersIds: observers?.map((x) => x.id) ?? [],
     };
+
+    // if (insureds.length > 0 && insureds[0]?.insured?.codigo?.length > 0) {
+    //   body.insureds = insureds
+    //     .filter((x) => x?.insured?.codigo?.length > 0)
+    //     .map((x) => ({
+    //       codigo: x?.insured?.codigo,
+    //       fullName: x?.insured?.fullName,
+    //       metadata: x.metadata,
+    //     }));
+    // }
     try {
       const poliza = Object.keys(body).reduce(
         (acc, key) =>
@@ -560,21 +573,26 @@ export default function PolicyDetails({
                     setValue={setValue}
                     isAdd
                   />
-                  <Beneficiaries
-                    register={register}
-                    control={control}
-                    watch={watch}
-                    isAdd
-                  />
-                  <TextInput
-                    type="text"
-                    label={t("operations:policies:general:specifications")}
-                    error={errors.specifications}
-                    register={register}
-                    name="specifications"
-                    disabled={!isEdit}
-                    multiple
-                  />
+                  {watch("typeId") ==
+                    "e1794ba3-892d-4c51-ad62-32dcf836873b" && (
+                    <Fragment>
+                      <Beneficiaries
+                        register={register}
+                        control={control}
+                        watch={watch}
+                        isAdd
+                      />
+                      <TextInput
+                        type="text"
+                        label={t("operations:policies:general:specifications")}
+                        error={errors.specifications}
+                        register={register}
+                        name="specifications"
+                        disabled={!isEdit}
+                        multiple
+                      />
+                    </Fragment>
+                  )}
                 </Fragment>
               )}
               {[

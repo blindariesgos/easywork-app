@@ -211,16 +211,18 @@ export default function TaskView({ id, task }) {
                   </div>
                 )}
 
-                {task?.metadata && (
+                {task?.metadata && task?.metadata.data && task?.metadata.pageId && (
                   <div className="flex justify-end">
                     <div className="w-full sm:w-2/3 lg:w-1/2 2xl:w-1/3 flex flex-cols items-end flex-col p-2 sm:p-4 gap-2">
-                      <Link
-                        target="_blank"
-                        href={`/agents-management/capacitations/e-learning/courses/${task.metadata.courseId}`}
-                        className={`bg-[#7169CA] p-2 rounded-lg flex gap-2 justify-between w-full hover:shadow-[-2px_2px_5px_1px_#00000082]`}
-                      >
-                        <p className="text-sm text-white">Curso: {task.metadata.courseName}</p>
-                      </Link>
+                      {task.metadata.courseId && (
+                        <Link
+                          target="_blank"
+                          href={`/agents-management/capacitations/e-learning/courses/${task.metadata.courseId}`}
+                          className={`bg-[#7169CA] p-2 rounded-lg flex gap-2 justify-between w-full hover:shadow-[-2px_2px_5px_1px_#00000082]`}
+                        >
+                          <p className="text-sm text-white">Curso: {task.metadata.courseName}</p>
+                        </Link>
+                      )}
                       {task.metadata.data?.evaluations?.length > 0 && (
                         <Link
                           target="_blank"

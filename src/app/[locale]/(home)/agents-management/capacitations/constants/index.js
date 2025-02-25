@@ -29,6 +29,7 @@ export const LMS_PERMISSIONS = {
   createEvaluation: 'agent-management:capacitations:e-learning:evaluations:create',
   editEvaluation: 'agent-management:capacitations:e-learning:evaluations:edit',
   listEvaluations: 'agent-management:capacitations:e-learning:evaluations:list',
+  tests: 'agent-management:capacitations:e-learning:evaluations:tests-list',
 };
 
 // capacitations = Acceso a Capacitaciones

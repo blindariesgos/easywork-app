@@ -474,6 +474,13 @@ export const getAddListConnections = async () => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const getPoliciesCanceledReazons = async () => {
+  const response = await axios()
+    .get(`/sales/crm/polizas/cancel-reazon`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region TASKS

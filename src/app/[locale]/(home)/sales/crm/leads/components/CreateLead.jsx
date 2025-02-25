@@ -184,7 +184,7 @@ export default function CreateLead({ lead, id }) {
     if (lead?.agenteIntermediario)
       setValue("agenteIntermediarioId", lead?.agenteIntermediario?.id);
     if (lead?.observer) setValue("observerId", lead?.observer?.id);
-    if (lead?.subAgente) setValue("subAgenteId", lead?.subAgente?.id);
+    if (lead?.subAgente) setValue("subAgentId", lead?.subAgente?.id);
 
     if (lead?.activitySector) setValue("activitySector", lead?.activitySector);
 
@@ -328,6 +328,7 @@ export default function CreateLead({ lead, id }) {
                   disabled={
                     lead?.cancelled || /Positivo/gi.test(lead?.stage?.name)
                   }
+                  lead={lead}
                 />
               </div>
               <div className="bg-white rounded-md shadow-sm w-full">
@@ -600,10 +601,10 @@ export default function CreateLead({ lead, id }) {
                 />
                 <AgentSelectAsync
                   label={t("contacts:create:sub-agent")}
-                  name="subAgenteId"
+                  name="subAgentId"
                   register={register}
                   disabled={!isEdit}
-                  error={errors.subAgenteId}
+                  error={errors.subAgentId}
                   setValue={setValue}
                   watch={watch}
                 />

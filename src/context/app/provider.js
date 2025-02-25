@@ -11,6 +11,7 @@ import {
   getAddListReceipts,
   getAddListRecruitments,
   getAllRoles,
+  getPoliciesCanceledReazons,
   getRelatedUsers,
 } from "../../lib/apis";
 import { handleApiError, handleFrontError } from "../../utils/api/errors";
@@ -47,11 +48,15 @@ export default function AppContextProvider({ children }) {
       const receipts = await getListsReceipts();
       const recruitments = await getListsRecruitment();
       const connections = await getListsConnection();
+      const policyCanceledReazons = await getPolicyCancelReazon();
 
       appList.listContact = listContact;
       appList.users = users;
       appList.roles = roles;
-      appList.policies = policies;
+      appList.policies = {
+        ...policies,
+        canceledReazons: policyCanceledReazons,
+      };
       appList.listLead = listLead;
       appList.receipts = receipts;
       appList.recruitments = recruitments;
@@ -116,6 +121,16 @@ export default function AppContextProvider({ children }) {
     const response = await getAddListPolicies();
     if (response.hasError) {
       console.error("getAddListPolicies");
+      handleFrontError(response);
+      return [];
+    }
+    return response;
+  };
+
+  const getPolicyCancelReazon = async () => {
+    const response = await getPoliciesCanceledReazons();
+    if (response.hasError) {
+      console.error("getPolicyCancelReazon");
       handleFrontError(response);
       return [];
     }

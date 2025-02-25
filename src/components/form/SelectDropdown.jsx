@@ -27,6 +27,7 @@ function SelectDropdown({
   watch,
   placeholder,
   setSelectedOption,
+  object,
 }) {
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");

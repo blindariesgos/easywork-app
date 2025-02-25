@@ -19,7 +19,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { handleFrontError } from "@/src/utils/api/errors";
 import ManualPolicyUpload from "./ManualPolicyUpload";
 
-export default function ProgressStages({ stage, leadId, disabled }) {
+export default function ProgressStages({ stage, leadId, disabled, lead }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenUpload, setIsOpenUpload] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -110,6 +110,7 @@ export default function ProgressStages({ stage, leadId, disabled }) {
         isOpen={isOpenUpload}
         setIsOpen={setIsOpenUpload}
         leadId={leadId}
+        lead={lead}
       />
       <DialogPositiveStage
         isOpen={isOpen}

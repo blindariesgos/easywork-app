@@ -5,7 +5,7 @@ import SliderOverShord from "@/src/components/SliderOverShort";
 import Button from "@/src/components/form/Button";
 import Tag from "@/src/components/Tag";
 import SelectInput from "@/src/components/form/SelectInput";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
@@ -45,7 +45,14 @@ const endpointsTemporalFileByModule = {
   lead: (body) => uploadLeadTemporalFile(body),
 };
 
-const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
+const AddPolicyManual = ({
+  isOpen,
+  setIsOpen,
+  module,
+  id,
+  onClosed,
+  defaultValues,
+}) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -77,6 +84,23 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (!defaultValues) return;
+
+    if (defaultValues.assignedBy)
+      setValue("assignedById", defaultValues.assignedBy.id);
+    if (defaultValues.subAgente)
+      setValue("subAgentId", defaultValues.subAgente.id);
+    if (defaultValues.polizaType)
+      setValue("typeId", defaultValues.polizaType.id);
+    if (defaultValues.quoteCurrency)
+      setValue("currencyId", defaultValues.quoteCurrency.id);
+    if (defaultValues?.agenteIntermediario)
+      setValue("agenteIntermediarioId", defaultValues?.agenteIntermediario?.id);
+    if (defaultValues?.observer)
+      setValue("observerId", defaultValues?.observer?.id);
+  }, [defaultValues]);
 
   const getFormData = (body) => {
     const formData = new FormData();
@@ -150,6 +174,8 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
       specifications,
       oldPoliza,
       fechaEmision,
+      insureds,
+      beneficiaries,
       ...otherData
     } = data;
     const body = {
@@ -176,6 +202,21 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
     }
     if (oldPoliza) {
       body.polizaId = oldPoliza.id;
+    }
+    if (
+      insureds &&
+      insureds.length > 0 &&
+      insureds[0]?.insured?.fullName?.length > 0
+    ) {
+      body.insureds = insureds;
+    }
+
+    if (
+      beneficiaries &&
+      beneficiaries.length > 0 &&
+      beneficiaries[0]?.nombre?.length > 0
+    ) {
+      body.beneficiaries = beneficiaries;
     }
     console.log({ body });
 
@@ -410,8 +451,13 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
+                  helperText={
+                    watch("isNewContact") && module == "lead"
+                      ? "Se creará un nuevo cliente a partir de la información cargada en el prospecto."
+                      : null
+                  }
                 />
-                {watch && !watch("isNewContact") ? (
+                {watch && !watch("isNewContact") && (
                   <ContactSelectAsync
                     name={"contact"}
                     label="Cliente"
@@ -421,7 +467,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                     helperText={helpers?.contact}
                     isRequired
                   />
-                ) : (
+                )}
+
+                {watch && watch("isNewContact") && module !== "lead" && (
                   <Fragment>
                     <SelectInput
                       label={t("control:portafolio:control:form:typePerson")}
@@ -675,6 +723,12 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                     lists?.policies?.currencies?.find(
                       (x) => x.id == watch("currencyId")
                     )?.symbol ?? ""
+                  }
+                  defaultValue={
+                    defaultValues?.quoteAmount &&
+                    defaultValues?.quoteAmount?.length
+                      ? (+defaultValues?.quoteAmount)?.toFixed(2)
+                      : null
                   }
                 />
 

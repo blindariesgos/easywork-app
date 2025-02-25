@@ -13,7 +13,7 @@ import {
   getAllRoles,
   getRelatedUsers,
 } from "../../lib/apis";
-import { handleApiError } from "../../utils/api/errors";
+import { handleApiError, handleFrontError } from "../../utils/api/errors";
 import { useSession } from "next-auth/react";
 
 export default function AppContextProvider({ children }) {
@@ -63,75 +63,83 @@ export default function AppContextProvider({ children }) {
   }, [session, lists]);
 
   const getUsers = async () => {
-    try {
-      const response = await getRelatedUsers();
-      return response?.items ?? [];
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getRelatedUsers();
+    if (response.hasError) {
+      console.error("getRelatedUsers");
+      handleFrontError(response);
+      return [];
     }
+    return response?.items ?? [];
   };
 
   const getListsContact = async () => {
-    try {
-      const response = await getAddListContacts();
-      return response;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAddListContacts();
+    if (response.hasError) {
+      console.error("getAddListContacts");
+      handleFrontError(response);
+      return [];
     }
+    return response;
   };
 
   const getListsLead = async () => {
-    try {
-      const response = await getAddListLeads();
-      return response;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAddListLeads();
+    if (response.hasError) {
+      console.error("getAddListLeads");
+      handleFrontError(response);
+      return [];
     }
+    return response;
   };
 
   const getListsReceipts = async () => {
-    try {
-      const response = await getAddListReceipts();
-      return response;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAddListReceipts();
+    if (response.hasError) {
+      console.error("getAddListReceipts");
+      handleFrontError(response);
+      return [];
     }
+    return response;
   };
 
   const getRoles = async () => {
-    try {
-      const response = await getAllRoles();
-      return response.items;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAllRoles();
+    if (response.hasError) {
+      console.error("getAllRoles");
+      handleFrontError(response);
+      return [];
     }
+    return response.items;
   };
 
   const getListsPolicies = async () => {
-    try {
-      const response = await getAddListPolicies();
-      return response;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAddListPolicies();
+    if (response.hasError) {
+      console.error("getAddListPolicies");
+      handleFrontError(response);
+      return [];
     }
+    return response;
   };
 
   const getListsRecruitment = async () => {
-    try {
-      const response = await getAddListRecruitments();
-      return response;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAddListRecruitments();
+    if (response.hasError) {
+      console.error("getAddListRecruitments");
+      handleFrontError(response);
+      return [];
     }
+    return response;
   };
 
   const getListsConnection = async () => {
-    try {
-      const response = await getAddListConnections();
-      return response;
-    } catch (error) {
-      handleApiError(error.message);
+    const response = await getAddListConnections();
+    if (response.hasError) {
+      console.error("getAddListConnections");
+      handleFrontError(response);
+      return [];
     }
+    return response;
   };
 
   const values = useMemo(

@@ -27,7 +27,7 @@ export default function CreateEditEvaluation({ evaluationId }) {
   const isEdit = !!evaluationId;
   const router = useRouter();
 
-  const { getEvaluation, createEvaluation, updateEvaluation } = useEvaluations();
+  const { getEvaluation, createEvaluation, updateEvaluation, updateEvaluationBasicInfo } = useEvaluations();
 
   // Refs
   const questionToDeleteRef = useRef(null);
@@ -156,6 +156,29 @@ export default function CreateEditEvaluation({ evaluationId }) {
     }
   };
 
+  const onUpdateEvaluation = async ({ name, description, coverPhotoSrc, courseId, pageId }) => {
+    if (!name || !evaluation || !evaluation.id) return;
+
+    try {
+      const formData = new FormData();
+
+      formData.append('id', evaluation.id);
+      formData.append('name', name);
+      formData.append('courseId', courseId);
+
+      if (description) formData.append('description', description);
+      if (coverPhotoSrc) formData.append('coverPhoto', coverPhotoSrc);
+      if (pageId) formData.append('pageId', pageId);
+
+      await updateEvaluationBasicInfo(formData);
+
+      toast.success('Cambios guardados con éxito');
+    } catch (error) {
+      console.log(error);
+      toast.error('Ha ocurrido un error al intentar crear la evaluación. Por favor intente más tarde');
+    }
+  };
+
   const onSaveQuestion = async newQuestion => {
     if (!newQuestion) return;
 
@@ -194,7 +217,7 @@ export default function CreateEditEvaluation({ evaluationId }) {
   return (
     <div className="max-w-7xl mx-auto pt-2">
       <div className="max-w-3xl mx-auto px-2">
-        <EvaluationHeader evaluation={evaluation} onCreateEvaluation={onCreateEvaluation} />
+        <EvaluationHeader evaluation={evaluation} onCreateEvaluation={onCreateEvaluation} onUpdateEvaluation={onUpdateEvaluation} />
       </div>
 
       {evaluation.name && (

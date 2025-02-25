@@ -220,6 +220,7 @@ export const CourseDetails = ({ courseId }) => {
             course.folders.map((courseFolder, folderIndex, self) => (
               <CourseFolder
                 key={courseFolder.id}
+                course={course}
                 folders={self}
                 courseFolder={courseFolder}
                 contentSelected={content.data}
@@ -274,13 +275,13 @@ export const CourseDetails = ({ courseId }) => {
                   </Link>
                 )}
               </div>
-              {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
+              {/* {hasPermission(LMS_PERMISSIONS.markAsCompleted) && (
                 <div>
                   <button onClick={onToggleIsCompleted} className={`bg-${content.data?.isCompleted ? 'easy-400' : 'gray-50'} px-3 py-2 text-white rounded-lg font-bold mr-20`}>
                     {content.data?.isCompleted ? 'Lección completada' : 'Completar lección'}
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
           )}
         </div>

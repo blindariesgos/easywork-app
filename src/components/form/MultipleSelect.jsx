@@ -81,7 +81,7 @@ const MultipleSelect = ({
         <MenuButton
           disabled={disabled}
           className={clsx(
-            "z-50 w-full outline-none min-h-[36px] bg-white focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm ",
+            "w-full outline-none min-h-[36px] bg-white focus:outline-none focus:ring-0 rounded-md  placeholder:text-xs text-sm relative",
             {
               "border border-gray-200 focus:ring-gray-200 focus:outline-0":
                 border,
@@ -93,18 +93,27 @@ const MultipleSelect = ({
         >
           <span className="p-2 text-gray-60 flex gap-1 flex-wrap items-center">
             {getValues(name)?.length > 0 &&
-              getValues(name).map((res) => (
+              getValues(name).map((res, index, arr) => (
                 <div
                   key={res?.id}
-                  className="bg-primary p-1 rounded-sm text-white flex gap-1 items-center text-xs"
+                  className={clsx(
+                    " rounded-sm flex gap-1 items-center text-black ",
+                    {
+                      "bg-primary text-white p-1 text-xs": !disabled,
+                    }
+                  )}
                 >
-                  {res?.name ??
+                  {`${
+                    res?.name ??
                     (res?.profile
                       ? `${res?.profile?.firstName} ${res?.profile?.lastName}`
-                      : res?.username)}
+                      : res?.username)
+                  }${arr.length > 1 && index < arr.length - 1 && disabled ? "," : ""}`}
                   <div
                     onClick={() => handleRemove(res.id)}
-                    className="text-white cursor-pointer"
+                    className={clsx("text-white cursor-pointer", {
+                      hidden: disabled,
+                    })}
                   >
                     <XMarkIcon className="h-3 w-3 text-white" />
                   </div>
@@ -119,7 +128,12 @@ const MultipleSelect = ({
               </div>
             )}
           </span>
-          <span className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none">
+          <span
+            className={clsx(
+              "absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none",
+              { hidden: disabled }
+            )}
+          >
             <ChevronDownIcon className="h-4 w-4" />
           </span>
         </MenuButton>

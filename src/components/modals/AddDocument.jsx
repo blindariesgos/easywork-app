@@ -11,6 +11,7 @@ import Button from "../form/Button";
 import { useTranslation } from "react-i18next";
 import { MdUpload } from "react-icons/md";
 import {
+  addAgentDocument,
   addContactDocument,
   addLeadPolicy,
   addReceiptDocument,
@@ -62,6 +63,7 @@ const AddDocumentDialog = ({
     "poliza-lead": (data) => addLeadPolicy(id, data),
     reimbursement: (data) => addReimbursementDocument(id, data),
     schedule: (data) => addScheduleDocument(id, data),
+    agent: (data) => addAgentDocument(id, documentType, data),
   };
 
   const handleFormSubmit = async () => {

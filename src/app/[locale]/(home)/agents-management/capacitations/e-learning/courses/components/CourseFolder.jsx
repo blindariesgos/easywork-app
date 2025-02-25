@@ -9,13 +9,14 @@ import { CourseFolderPage } from './CourseFolderPage';
 import { NewPageButton } from './NewPageButton';
 import { NewContentForm } from './NewContentForm';
 import { ChangeFolderForm } from './ChangeFolderForm';
+import { AssignPageModal } from '../../components/AssignPageModal';
 
 import { useCourseFolderPages } from '../../hooks/useCourseFolderPages';
 import { useCourseFolders } from '../../hooks/useCourseFolders';
 import { LMS_PERMISSIONS } from '../../../constants';
 import { useUserPermissions } from '../../../hooks/useUserPermissions';
 
-export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, onSelectPage, refetchAccordionItems, folders }) => {
+export const CourseFolder = ({ course, courseFolder, contentSelected, isOpen, onToggle, onSelectPage, refetchAccordionItems, folders }) => {
   const { getCourseFolder } = useCourseFolders();
   const { duplicateCourseFolderPage } = useCourseFolderPages();
   const { hasPermission } = useUserPermissions();
@@ -27,6 +28,7 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
   const [isNewContentFormOpen, setIsNewContentFormOpen] = useState(false);
   const [isDeleteContentModalOpen, setIsDeleteModalContentOpen] = useState(false);
   const [isChangeFolderModalOpen, setIsChangeFolderModalOpen] = useState(false);
+  const [isAssignPageModalOpen, setIsAssignPageModalOpen] = useState(false);
   const contentToHandle = useRef({ content: null, type: '' });
   const countCourseFolderPages = courseFolderPages?.length || 0;
 
@@ -79,8 +81,13 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
   };
 
   const addTask = page => {
-    localStorage.setItem(page.id, JSON.stringify({ ...page, assignedBy: session.user }));
-    router.push(`/tools/tasks/task?show=true&prev=course-page-assign&prev_id=${page.id}`);
+    contentToHandle.current.type = 'page';
+    contentToHandle.current.content = page;
+
+    setIsAssignPageModalOpen(true);
+
+    // localStorage.setItem(page.id, JSON.stringify({ ...page, courseId: course?.id, courseName: course?.name, assignedBy: session.user }));
+    // router.push(`/tools/tasks/task?show=true&prev=course-page-assign&prev_id=${page.id}`);
   };
 
   const refetch = () => {
@@ -130,6 +137,8 @@ export const CourseFolder = ({ courseFolder, contentSelected, isOpen, onToggle, 
 
         {hasPermission(LMS_PERMISSIONS.addPage) && <NewPageButton onClick={addNewPage} />}
       </AccordionItem>
+
+      <AssignPageModal course={course} page={contentToHandle.current.content} isOpen={isAssignPageModalOpen} setIsOpen={setIsAssignPageModalOpen} />
 
       <DeleteContentModal
         isOpen={isDeleteContentModalOpen}

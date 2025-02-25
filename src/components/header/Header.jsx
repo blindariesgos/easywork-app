@@ -100,7 +100,7 @@ export default function Header() {
   ];
 
   return (
-    <div className="rounded-md flex h-16 shrink-0 items-center gap-x-4 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 w-full">
+    <div className="rounded-md flex max-h-[72px] shrink-0 items-center gap-x-4 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 w-full">
       {ifWebmailPath() ? (
         <button
           type="button"
@@ -221,17 +221,6 @@ export default function Header() {
             }}
           />
           <General />
-          <Info
-            status={{
-              label: statusList.find(
-                (item) => item.value === session?.user?.status
-              )?.label,
-              icon: statusList.find(
-                (item) => item.value === session?.user?.status
-              )?.icon,
-            }}
-            statusList={statusList}
-          />
         </div>
       </div>
     </div>

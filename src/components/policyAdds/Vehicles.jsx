@@ -16,7 +16,7 @@ const Vehicles = ({ register, control, isAdd, watch }) => {
 
   useEffect(() => {
     if (fields.length == 0 && watch("vehicles").length > 0) {
-      watch("vehicles").map((insured) => append(insured));
+      watch("vehicles").map((vehicle) => append(vehicle));
     }
   }, [watch && watch("vehicles")]);
 
@@ -128,11 +128,12 @@ const Vehicles = ({ register, control, isAdd, watch }) => {
         <div className="flex justify-end">
           <div className="flex justify-end">
             <Button
-              label={`${t("common:buttons:add")} +`}
+              label={`${t("common:buttons:add")} vehiculo +`}
               buttonStyle="text"
               onclick={handleAdd}
               className="p-1 text-primary font-bold"
               type="button"
+              fontSize="text-sm"
             />
           </div>
         </div>

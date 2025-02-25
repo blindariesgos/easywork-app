@@ -23,6 +23,9 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import moment from "moment";
 import { handleFrontError } from "@/src/utils/api/errors";
+import Vehicles from "@/src/components/policyAdds/Vehicles";
+import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
+import Insureds from "@/src/components/policyAdds/Insureds";
 
 export default function PolicyDetails({
   data,
@@ -127,6 +130,59 @@ export default function PolicyDetails({
     if (data?.category) setValue("categoryId", data?.category?.id);
     if (data?.specifications) setValue("specifications", data?.specifications);
     if (data?.subAgente?.name) setValue("subAgenteId", data?.subAgente?.id);
+    if (
+      [
+        "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+        "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+      ].includes(data?.type?.id)
+    ) {
+      if (data?.beneficiaries) {
+        setValue("beneficiaries", data?.beneficiaries);
+      } else {
+        setValue("beneficiaries", [
+          {
+            nombre: "",
+            parentesco: "",
+            porcentaje: "",
+            type: "Principal",
+          },
+        ]);
+      }
+      if (data?.insured) {
+        setValue("insureds", data?.insured);
+      } else {
+        setValue("insureds", [
+          {
+            metadata: {
+              edadContratacion: "",
+              fechaNacimiento: "",
+              tipoRiesgo: "",
+              fumador: false,
+            },
+            insured: { codigo: "", fullName: "" },
+          },
+        ]);
+      }
+    }
+    if (data?.type?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
+      if (data?.vehicles) {
+        setValue("vehicles", data?.vehicles);
+      } else {
+        setValue("vehicles", [
+          {
+            description: "",
+            serial: "",
+            model: "",
+            motor: "",
+            plates: "",
+            usage: "",
+            circulatesIn: "",
+            regularDriver: "",
+            regularDriverAge: "",
+          },
+        ]);
+      }
+    }
   }, [data]);
 
   const handleFormSubmit = async (data) => {
@@ -214,16 +270,15 @@ export default function PolicyDetails({
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-          {isEdit && (
-            <SelectInput
-              label={t("control:portafolio:receipt:details:product")}
-              name="categoryId"
-              options={lists?.policies?.polizaCategories ?? []}
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
-          )}
+          <SelectInput
+            label={t("control:portafolio:receipt:details:product")}
+            name="categoryId"
+            options={lists?.policies?.polizaCategories ?? []}
+            register={register}
+            setValue={setValue}
+            watch={watch}
+            className={clsx({ hidden: !isEdit })}
+          />
           <TextInput
             type="text"
             label={t("operations:renovations:general:version")}
@@ -240,26 +295,25 @@ export default function PolicyDetails({
             setValue={setValue}
             watch={watch}
           />
-          {data?.type?.name === "GMM" && (
-            <SelectInput
-              label={t("operations:policies:general:coverage")}
-              options={[
-                {
-                  id: "Nacional",
-                  name: "Nacional",
-                },
-                {
-                  id: "Internacional",
-                  name: "Internacional",
-                },
-              ]}
-              name="cobertura"
-              register={register}
-              setValue={setValue}
-              disabled={!isEdit}
-              watch={watch}
-            />
-          )}
+          <SelectInput
+            label={t("operations:policies:general:coverage")}
+            options={[
+              {
+                id: "Nacional",
+                name: "Nacional",
+              },
+              {
+                id: "Internacional",
+                name: "Internacional",
+              },
+            ]}
+            name="cobertura"
+            register={register}
+            setValue={setValue}
+            disabled={!isEdit}
+            watch={watch}
+            className={clsx({ hidden: data?.type?.name !== "GMM" })}
+          />
 
           {data?.type?.name === "VIDA" && (
             <SelectInput
@@ -272,6 +326,32 @@ export default function PolicyDetails({
               watch={watch}
             />
           )}
+          <SelectInput
+            label={t("control:portafolio:receipt:details:form:status")}
+            options={[
+              {
+                id: "activa",
+                name: "Vigente",
+              },
+              {
+                id: "expirada",
+                name: "No vigente",
+              },
+              {
+                id: "cancelada",
+                name: "Cancelada",
+              },
+              {
+                id: "en_proceso",
+                name: "En trámite",
+              },
+            ]}
+            name="status"
+            register={register}
+            setValue={setValue}
+            disabled={!isEdit}
+            watch={watch}
+          />
           <TextInput
             type="text"
             label={t("operations:policies:general:rfc")}
@@ -453,15 +533,50 @@ export default function PolicyDetails({
             error={errors.observers}
             disabled={!isEdit}
           />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:specifications")}
-            error={errors.specifications}
-            register={register}
-            name="specifications"
-            disabled={!isEdit}
-            multiple
-          />
+          {isEdit && (
+            <Fragment>
+              {[
+                "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+                "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+              ].includes(watch("typeId")) && (
+                <Fragment>
+                  <Insureds
+                    register={register}
+                    control={control}
+                    watch={watch}
+                    setValue={setValue}
+                    isAdd
+                    name={"insured"}
+                  />
+                  <Beneficiaries
+                    register={register}
+                    control={control}
+                    watch={watch}
+                    isAdd
+                  />
+                  <TextInput
+                    type="text"
+                    label={t("operations:policies:general:specifications")}
+                    error={errors.specifications}
+                    register={register}
+                    name="specifications"
+                    disabled={!isEdit}
+                    multiple
+                  />
+                </Fragment>
+              )}
+              {[
+                "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c", //AUTOS
+              ].includes(watch("typeId")) && (
+                <Vehicles
+                  register={register}
+                  watch={watch}
+                  control={control}
+                  isAdd
+                />
+              )}
+            </Fragment>
+          )}
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}

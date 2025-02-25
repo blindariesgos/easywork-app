@@ -153,10 +153,10 @@ export default function ControlTable({ name }) {
     <Fragment>
       <div className="flow-root">
         {loading && <LoaderSpinner />}
-        <div className="min-w-full py-2">
-          <div className="sm:rounded-lg ">
+        <div className="min-w-full">
+          <div className="sm:rounded-lg pt-4">
             <div className="flex justify-between flex-col md:flex-row">
-              <h2 className="text-xl font-bold text-primary hidden md:block">
+              <h2 className="text-xl font-bold text-primary hidden md:block pb-2 pl-4">
                 {name}
               </h2>
             </div>

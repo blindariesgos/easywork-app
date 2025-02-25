@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
-import { polizaReimbursementStatus } from "@/src/utils/stages";
+import { polizaReimbursementStatus } from "@/src/utils/constants";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 
 export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {

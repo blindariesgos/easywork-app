@@ -43,7 +43,7 @@ const IconDropdown = ({
                     anchor="right start"
                     className={`mt-2 rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50 ${width} ${disabled ? "bg-gray-200" : "bg-white"}`}
                   >
-                    <div className="px-1 py-1 ">
+                    <div className="px-1 py-1">
                       {opt.options &&
                         opt.options.map((opt1, index) => (
                           <MenuItem

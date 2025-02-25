@@ -6,36 +6,30 @@ import { useTranslation } from "react-i18next";
 import AddDocumentDialog from "@/src/components/modals/AddDocument";
 import { useSWRConfig } from "swr";
 
-const AddDocuments = ({ contactId, type }) => {
+const AddDocuments = ({ crmId, type }) => {
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
   const [addFileProps, setAddFileProps] = useState({
     isOpen: false,
-    cmrType: "contact",
-    id: contactId,
+    cmrType: "agent",
+    id: crmId,
   });
 
   const options = [
     {
       name: "CV",
-      type: "documentos",
+      type: "cv",
       accept: null,
-      disabled: true,
-      hidden: type == "conection",
     },
     {
       name: t("leads:add:rfc"),
       type: "documentos",
       accept: null,
-      disabled: true,
-      hidden: type == "conection",
     },
     {
-      name: "Cédula",
-      type: "documentos",
+      name: "Otros",
+      type: "otros",
       accept: null,
-      disabled: true,
-      hidden: type !== "conection",
     },
   ];
 
@@ -55,7 +49,7 @@ const AddDocuments = ({ contactId, type }) => {
         {...addFileProps}
         setIsOpen={(open) => setAddFileProps({ ...addFileProps, isOpen: open })}
         update={() => {
-          mutate(`/sales/crm/contacts/${contactId}/activities`);
+          mutate(`/agent-management/agents/${crmId}/activities`);
         }}
       />
       <Menu>

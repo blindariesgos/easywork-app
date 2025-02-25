@@ -14,6 +14,7 @@ import ProfileImageInput from "@/src/components/ProfileImageInput";
 import Image from "next/image";
 import { useCurrentUserInfo } from "@/src/lib/api/hooks/users";
 import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
+import clsx from "clsx";
 
 export function Profile({ status, statusList }) {
   const { user, isLoading, mutate } = useCurrentUserInfo();
@@ -174,7 +175,7 @@ export function Profile({ status, statusList }) {
                           {({ active }) => (
                             <div
                               onClick={() => changeStatus(item.value)}
-                              className={classNames(
+                              className={clsx(
                                 active ? "bg-gray-50" : "",
                                 "px-3 py-1 text-sm leading-6 text-black cursor-pointer flex items-center"
                               )}

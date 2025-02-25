@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 import {
   polizaReimbursementStatus,
   polizaReimbursementStatusColor,
-} from "@/src/utils/stages";
+} from "@/src/utils/constants";
 import useProgramationContext from "@/src/context/programations";
 import AddDocumentButton from "./AddDocumentButton";
 

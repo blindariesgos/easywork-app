@@ -33,6 +33,13 @@ export const useEvaluations = () => {
     [request]
   );
 
+  const updateEvaluationBasicInfo = useCallback(
+    async (data, options = {}) => {
+      return await request(`/evaluations/basic-info`, { method: 'POST', data, ...options });
+    },
+    [request]
+  );
+
   const updateEvaluation = useCallback(
     async (id, data, options = {}) => {
       return await request(`/evaluations/${id}`, { method: 'PATCH', data, ...options });
@@ -86,5 +93,6 @@ export const useEvaluations = () => {
     updateEvaluationAttempt,
     finalizeEvaluation,
     getEvaluationAttempts,
+    updateEvaluationBasicInfo,
   };
 };

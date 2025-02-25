@@ -17,15 +17,13 @@ export default async function Layout({ children, table, kanban }) {
     },
   ];
   return (
-    <div className="bg-gray-100 h-full p-2 rounded-xl relative">
-      <RenovationsContextProvider>
-        <LayoutPage>
-          <Suspense fallback={<LoaderSpinner />}>
-            <TabPages tabs={tabs} />
-            {children}
-          </Suspense>
-        </LayoutPage>
-      </RenovationsContextProvider>
-    </div>
+    <RenovationsContextProvider>
+      <LayoutPage>
+        <Suspense fallback={<LoaderSpinner />}>
+          <TabPages tabs={tabs} />
+          {children}
+        </Suspense>
+      </LayoutPage>
+    </RenovationsContextProvider>
   );
 }

@@ -316,11 +316,11 @@ export default function TableLeads() {
   return (
     <div className="flow-root ">
       {loading && <LoaderSpinner />}
-      <div className="flex pb-2">
-        {selectedLeads.length > 0 && (
+      {selectedLeads.length > 0 && (
+        <div className="flex pb-2">
           <SelectedOptionsTable options={masiveOptions} />
-        )}
-      </div>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full align-middle">
           <div className="relative sm:rounded-lg h-[60vh]">

@@ -21,6 +21,7 @@ export default function SlideOver({
   className,
   remove,
   maxWidthClass,
+  openModal,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -106,6 +107,12 @@ export default function SlideOver({
         break;
       case "agent":
         setLabel(t("agentsmanagement:accompaniments:table:agent"));
+        break;
+      case "user":
+        setLabel(t("Usuarios"));
+        break;
+      case "profile":
+        setLabel(t("Perfil"));
         break;
       default:
         break;

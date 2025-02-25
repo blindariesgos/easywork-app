@@ -41,7 +41,7 @@ const Beneficiaries = ({ items, specifications }) => {
           </div>
         </Fragment>
       ))}
-      {specifications.length > 0 && (
+      {specifications?.length > 0 && (
         <Fragment>
           <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
             {t("operations:policies:general:specifications")}

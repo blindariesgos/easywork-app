@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useCourses } from '../../hooks/useCourses';
 import Image from 'next/image';
 
-export const EvaluationHeader = ({ evaluation, onCreateEvaluation, onUpdateEvaluation }) => {
+export const EvaluationHeader = ({ evaluation, onCreateEvaluation, onUpdateEvaluation, isCreatingEvaluation }) => {
   const isEdit = !!evaluation.name;
   const { getCourseById, getCourses } = useCourses();
 
@@ -218,7 +218,7 @@ export const EvaluationHeader = ({ evaluation, onCreateEvaluation, onUpdateEvalu
           Cancelar
         </button>
         <button type="submit" className={`bg-easy-400 px-3 py-2 text-white rounded-lg font-bold mt-4 ${isEditingDisabled && isEdit && 'hidden'}`}>
-          {isEdit ? 'Guardar cambios' : 'Crear evaluación'}
+          {isEdit ? 'Guardar cambios' : isCreatingEvaluation ? 'Creando...' : 'Crear evaluación'}
         </button>
       </form>
     </div>

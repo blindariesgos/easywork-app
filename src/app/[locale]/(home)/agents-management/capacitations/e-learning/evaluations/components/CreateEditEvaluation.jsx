@@ -34,6 +34,7 @@ export default function CreateEditEvaluation({ evaluationId }) {
 
   // States
   const [isDeleteQuestionModalOpen, setIsDeleteQuestionModalOpen] = useState(false);
+  const [isCreatingEvaluation, setIsCreatingEvaluation] = useState(false);
   const [evaluation, setEvaluation] = useState({ id: '', name: '', description: '', coverPhotoSrc: '', questions: [] });
 
   const findQuestionIndexById = id => evaluation.questions.findIndex(q => q.id === id);
@@ -134,6 +135,7 @@ export default function CreateEditEvaluation({ evaluationId }) {
 
   const onCreateEvaluation = async ({ name, description, coverPhotoSrc, courseId, pageId }) => {
     if (!name) return;
+    setIsCreatingEvaluation(true);
 
     try {
       const formData = new FormData();
@@ -147,10 +149,12 @@ export default function CreateEditEvaluation({ evaluationId }) {
 
       const evaluationCreated = await createEvaluation(formData);
 
+      setIsCreatingEvaluation(false);
       router.push(`/agents-management/capacitations/e-learning/evaluations/${evaluationCreated.id}`);
 
       toast.info('Guardando cambios');
     } catch (error) {
+      setIsCreatingEvaluation(false);
       console.log(error);
       toast.error('Ha ocurrido un error al intentar crear la evaluación. Por favor intente más tarde');
     }
@@ -217,7 +221,7 @@ export default function CreateEditEvaluation({ evaluationId }) {
   return (
     <div className="max-w-7xl mx-auto pt-2">
       <div className="max-w-3xl mx-auto px-2">
-        <EvaluationHeader evaluation={evaluation} onCreateEvaluation={onCreateEvaluation} onUpdateEvaluation={onUpdateEvaluation} />
+        <EvaluationHeader evaluation={evaluation} onCreateEvaluation={onCreateEvaluation} onUpdateEvaluation={onUpdateEvaluation} isCreatingEvaluation={isCreatingEvaluation} />
       </div>
 
       {evaluation.name && (

@@ -1,8 +1,7 @@
 "use client";
 
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { renderCellContent } from "../../../@table/utils";
 
@@ -57,22 +56,74 @@ export default function SubTaskTable({ tasks }) {
         {columnTable.length > 0 &&
           tasks?.length > 0 &&
           tasks?.map((task) => (
-            <Fragment key={task.id}>
-              {columnTable.length > 0 &&
-                columnTable.map((column, index) => (
-                  <div
-                    className={clsx("bg-[#f3f1f5] py-1 px-2", {
-                      "rounded-s-xl": index == 0,
-                      "rounded-e-xl": index === 3,
-                    })}
-                    key={index}
-                  >
-                    {renderCellContent(column, task, t)}
-                  </div>
-                ))}
-            </Fragment>
+            <Task key={task.id} task={task} columnTable={columnTable} />
           ))}
       </div>
     </div>
   );
 }
+
+const Task = ({ task, level = 0, ...props }) => {
+  const [showSubTasks, setShowSubtaks] = useState(false);
+
+  return (
+    <Fragment>
+      <Row
+        task={task}
+        {...props}
+        handleShowSubTasks={() => setShowSubtaks(!showSubTasks)}
+        showSubTasks={showSubTasks}
+        level={level}
+      />
+      {task?.subTasks?.length > 0 && showSubTasks && (
+        <Fragment>
+          {task.subTasks.map((subTask) => (
+            <Task
+              task={subTask}
+              isSubTask={true}
+              {...props}
+              key={subTask.id}
+              level={level + 1}
+            />
+          ))}
+        </Fragment>
+      )}
+    </Fragment>
+  );
+};
+
+const Row = ({
+  columnTable,
+  task,
+  showSubTasks,
+  handleShowSubTasks,
+  isSubTask,
+  level,
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Fragment>
+      {columnTable.length > 0 &&
+        columnTable.map((column, index) => (
+          <div
+            className={clsx("bg-[#f3f1f5] py-1 px-2", {
+              "rounded-s-xl": index == 0,
+              "rounded-e-xl": index === 3,
+            })}
+            key={index}
+          >
+            {renderCellContent(
+              column,
+              task,
+              t,
+              handleShowSubTasks,
+              showSubTasks,
+              isSubTask,
+              level
+            )}
+          </div>
+        ))}
+    </Fragment>
+  );
+};

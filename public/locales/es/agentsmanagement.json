@@ -16,8 +16,8 @@
             "data": "Datos del Agente",
             "age": "Edad",
             "children": "Hijos",
-            "responsible": "Responsable del reclutamiento",
-            "manager": "Gerente de desarrollo",
+            "responsible": "Reclutador",
+            "manager": "Gerente de desarrollo asignado",
             "observer": "Observador",
             "comments": "Comentarios",
             "recruitment": "Reclutamiento y selección",
@@ -115,8 +115,8 @@
             "origin": "Origen",
             "activity": "Actividades"
         },
-        "init-date": "Fecha de inicio del proceso",
-        "end-date": "Fecha de finalización del proceso",
+        "init-date": "Entrevista 1",
+        "end-date": "Entrevista 2",
         "entry-date": "Fecha de ingreso o aprobación",
         "select-positive": "Seleccione el resultado del reclutamiento"
     },
@@ -136,5 +136,9 @@
         "effectiveDateIdcard": "Fecha de Vigencia Cédula",
         "source": "Origen",
         "CNSFDate": ""
+    },
+    "general": {
+        "firstname": "Nombres",
+        "lastname": "Apellidos"
     }
 }

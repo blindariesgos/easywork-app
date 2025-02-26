@@ -53,7 +53,7 @@ export function Profile({ data, isLoguedUser, mutate }) {
         lastName: data.profile?.lastName,
       });
       setSelectedProfileImage({
-        base64: data.avatar || null,
+        base64: data?.avatar || null,
         file: null,
       });
     }
@@ -62,6 +62,7 @@ export function Profile({ data, isLoguedUser, mutate }) {
   useEffect(() => {
     if (data?.id) {
       getUsersGroup(data.id).then((res) => {
+        console.log({ res });
         setGroups(res.groups);
       });
     }
@@ -132,10 +133,14 @@ export function Profile({ data, isLoguedUser, mutate }) {
 
   const statusLabel = useMemo(() => {
     const statusSelected = userStatus(t).find((x) => x.value == status);
-    return (
+
+    return statusSelected ? (
       <Fragment>
-        {statusSelected.icon} <p className="text-sm">{statusSelected.label}</p>
+        {statusSelected?.icon}{" "}
+        <p className="text-sm">{statusSelected?.label}</p>
       </Fragment>
+    ) : (
+      <div></div>
     );
   }, [status]);
 
@@ -151,7 +156,7 @@ export function Profile({ data, isLoguedUser, mutate }) {
             <div>
               {data?.roles?.length && (
                 <div className="px-2 flex items-center bg-easywork-main hover:bg-easywork-mainhover text-white">
-                  {data?.roles[0].name}
+                  {data?.roles[0]?.name}
                 </div>
               )}
             </div>
@@ -237,7 +242,7 @@ export function Profile({ data, isLoguedUser, mutate }) {
             type="text"
             label={t("users:form:firstname")}
             placeholder={t("contacts:create:placeholder-name")}
-            error={errors.firstName && errors.firstName.message}
+            error={errors.firstName}
             register={register}
             name="firstName"
             disabled={!isEdit}
@@ -246,7 +251,7 @@ export function Profile({ data, isLoguedUser, mutate }) {
             type="text"
             label={t("users:form:lastname")}
             placeholder={t("contacts:create:placeholder-name")}
-            error={errors.lastName && errors.lastName.message}
+            error={errors.lastName}
             register={register}
             name="lastName"
             disabled={!isEdit}
@@ -301,7 +306,7 @@ export function Profile({ data, isLoguedUser, mutate }) {
                       className="h-12 w-12 rounded-full object-cover"
                       width={100}
                       height={100}
-                      src={user?.avatar}
+                      src={user?.avatar ?? "/img/avatar.svg"}
                       alt="user"
                     />
                     <div className="ml-2">

@@ -602,6 +602,23 @@ const AddPolicyManual = ({
                   defaultValue=""
                 />
                 <SelectInput
+                  label={t("operations:policies:general:coverage")}
+                  options={[
+                    {
+                      id: "Nacional",
+                      name: "Nacional",
+                    },
+                    {
+                      id: "Internacional",
+                      name: "Internacional",
+                    },
+                  ]}
+                  name="cobertura"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
                   label={t("operations:policies:general:payment-frequency")}
                   name="frecuenciaCobroId"
                   options={lists?.policies?.polizaFrecuenciasPago ?? []}

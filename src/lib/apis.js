@@ -287,6 +287,19 @@ export const uploadTemporalFile = async (body) => {
 
 //#endregion
 
+//#region MANAGEMENTS
+export const getManagementReport = async ({ filters = {} }) => {
+  const queries = getQueries(filters);
+
+  const url = `/operations/management${queries.length > 0 ? `?${queries}` : ""}`;
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
 //#region SCHEDULES
 export const deleteScheduleById = async (id) => {
   const response = await axios()

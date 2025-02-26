@@ -67,7 +67,7 @@ export default function CardTask({ data }) {
             className="h-6 w-6 rounded-full object-cover"
             width={36}
             height={36}
-            src={data?.createdBy?.avatar}
+            src={data?.createdBy?.avatar ?? "/img/avatar.svg"}
             alt=""
             title={
               data?.createdBy?.profile?.firstName

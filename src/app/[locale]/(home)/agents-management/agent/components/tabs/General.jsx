@@ -260,7 +260,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
             <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-[7rem] pt-4">
               <TextInput
                 type="text"
-                label={t("users:form:firstname")}
+                label={t("agentsmanagement:general:firstname")}
                 placeholder={t("contacts:create:placeholder-name")}
                 error={errors.firstName}
                 register={register}
@@ -269,7 +269,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
               />
               <TextInput
                 type="text"
-                label={t("users:form:lastname")}
+                label={t("agentsmanagement:general:lastname")}
                 placeholder={t("contacts:create:placeholder-name")}
                 error={errors.lastName}
                 register={register}
@@ -301,7 +301,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 name="email"
                 disabled={!isEdit}
               />
-              {!isEdit && (
+              {/* {!isEdit && (
                 <TextInput
                   label={t("agentsmanagement:accompaniments:agent:age")}
                   error={errors.age}
@@ -310,7 +310,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                   disabled={true}
                   type="number"
                 />
-              )}
+              )} */}
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -331,13 +331,23 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 control={control}
                 defaultValue=""
               />
-              <TextInput
+              <SelectInput
                 label={t("contacts:create:position")}
-                placeholder={t("contacts:create:position")}
-                error={errors.bio}
-                register={register}
                 name="bio"
+                options={[
+                  {
+                    id: "Novel",
+                    name: "Novel",
+                  },
+                  {
+                    id: "Consolidado",
+                    name: "Consolidado",
+                  },
+                ]}
+                error={errors.bio}
+                setValue={setValue}
                 disabled={!isEdit}
+                watch={watch}
               />
 
               <TextInput
@@ -349,29 +359,24 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 disabled={!isEdit}
               />
               <TextInput
-                label={t("contacts:create:rfc")}
-                placeholder="XEXX010101000"
-                error={errors?.rfc}
-                register={register}
-                name="rfc"
-                disabled={!isEdit}
-              />
-              <TextInput
-                label={t("contacts:create:cua")}
-                error={errors?.cua}
-                register={register}
-                name="cua"
-                disabled={!isEdit}
-              />
-              <TextInput
                 label={t("contacts:create:address")}
                 error={errors?.address}
                 register={register}
                 name="address"
-                placeholder={t("contacts:create:placeholder-address")}
+                placeholder={"Opcional"}
                 disabled={!isEdit}
                 multiple
                 rows={3}
+              />
+              <SelectInput
+                label={t("contacts:create:origen")}
+                name="sourceId"
+                options={lists?.recruitments?.agentSources ?? []}
+                error={errors.sourceId}
+                register={register}
+                setValue={setValue}
+                disabled={!isEdit}
+                watch={watch}
               />
               {type === "accompaniment" && (
                 <SelectInput
@@ -453,7 +458,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  <Controller
+                  {/* <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
@@ -472,18 +477,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     name="recruitmentEntryDate"
                     control={control}
                     defaultValue=""
-                  />
-
-                  <SelectInput
-                    label={t("contacts:create:origen")}
-                    name="sourceId"
-                    options={lists?.recruitments?.agentSources ?? []}
-                    error={errors.sourceId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
-                  />
+                  /> */}
                 </Fragment>
               )}
 
@@ -611,16 +605,6 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  <SelectInput
-                    label={t("contacts:create:origen")}
-                    name="sourceId"
-                    options={lists?.connections?.agentSources ?? []}
-                    error={errors.sourceId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
-                  />
                 </Fragment>
               )}
               <SelectDropdown
@@ -657,6 +641,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 register={register}
                 name="observations"
                 disabled={!isEdit}
+                placeholder={"Opcional"}
                 multiple
               />
             </div>

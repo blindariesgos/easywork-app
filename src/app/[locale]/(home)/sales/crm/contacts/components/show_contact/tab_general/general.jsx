@@ -20,7 +20,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
-import { handleApiError } from "@/src/utils/api/errors";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { createContact, getContactId, updateContact } from "@/src/lib/apis";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -206,7 +206,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.agenteIntermediario)
       setValue("agenteIntermediarioId", contact?.agenteIntermediario?.id);
     if (contact?.observer) setValue("observerId", contact?.observer?.id);
-    if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
+    if (contact?.subAgente) setValue("subAgentId", contact?.subAgente?.id);
     if (contact?.observations) setValue("observations", contact?.observations);
     if (contact?.activitySector)
       setValue("activitySector", contact?.activitySector);
@@ -263,32 +263,32 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         formData.append(key, body[key]?.toString() || "");
       }
     }
-    formData.append("relatedContactId", client?.id ?? null);
+    formData.append("relatedContactId", client?.id ?? "");
 
     try {
       setLoading(true);
       if (!contact) {
         const response = await createContact(formData);
         if (response.hasError) {
-          handleFormSubmit(response);
+          handleFrontError(response);
           setLoading(false);
           return;
         }
-        await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success(t("contacts:create:msg"));
+        router.back();
       } else {
         const response = await updateContact(formData, id);
+        console.log({ response });
         if (response.hasError) {
-          handleFormSubmit(response);
+          handleFrontError(response);
           setLoading(false);
           return;
         }
         toast.success(t("contacts:edit:updated-contact"));
-        await mutate(`/sales/crm/contacts?limit=5&page=1`);
-        await mutate(`/sales/crm/contacts/${id}`);
+        mutate(`/sales/crm/contacts/${id}`);
+        setIsEdit(false);
       }
       setLoading(false);
-      router.back();
     } catch (error) {
       handleApiError(error.message);
       setLoading(false);

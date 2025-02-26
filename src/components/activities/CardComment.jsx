@@ -54,7 +54,7 @@ function SystemNotification({ data }) {
               className="h-6 w-6 rounded-full object-cover"
               width={36}
               height={36}
-              src={createdBy?.avatar}
+              src={createdBy?.avatar ?? "/img/avatar.svg"}
               alt=""
               title={
                 createdBy?.profile?.firstName
@@ -104,7 +104,7 @@ function SystemNotification({ data }) {
               className="h-6 w-6 rounded-full object-cover"
               width={36}
               height={36}
-              src={createdBy?.avatar}
+              src={createdBy?.avatar ?? "/img/avatar.svg"}
               alt=""
               title={
                 createdBy?.profile?.firstName
@@ -143,7 +143,7 @@ function SystemNotification({ data }) {
               className="h-6 w-6 rounded-full object-cover"
               width={36}
               height={36}
-              src={createdBy?.avatar}
+              src={createdBy?.avatar ?? "/img/avatar.svg"}
               alt=""
               title={
                 createdBy?.profile?.firstName
@@ -179,7 +179,7 @@ function SystemNotification({ data }) {
               className="h-6 w-6 rounded-full object-cover"
               width={36}
               height={36}
-              src={createdBy?.avatar}
+              src={createdBy?.avatar ?? "/img/avatar.svg"}
               alt=""
               title={
                 createdBy?.profile?.firstName
@@ -284,7 +284,7 @@ function CommentUser({ data, crmType, update, crmId }) {
             className="h-6 w-6 rounded-full object-cover"
             width={36}
             height={36}
-            src={createdBy?.avatar}
+            src={createdBy?.avatar ?? "/img/avatar.svg"}
             alt=""
             title={
               createdBy?.profile?.firstName

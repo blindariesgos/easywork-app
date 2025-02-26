@@ -162,7 +162,7 @@ export default function PolicyDetails({
       }
     }
     if (data?.type?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
-      if (data?.vehicles) {
+      if (data?.vehicles && data?.vehicles?.length > 0) {
         setValue("vehicles", data?.vehicles);
       } else {
         setValue("vehicles", [

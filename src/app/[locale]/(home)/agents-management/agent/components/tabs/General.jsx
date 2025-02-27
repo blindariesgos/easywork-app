@@ -331,6 +331,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 control={control}
                 defaultValue=""
               />
+              {type === "accompaniment" && <Fragment></Fragment>}
               <SelectInput
                 label={t("contacts:create:position")}
                 name="bio"
@@ -458,7 +459,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  {/* <Controller
+                  <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
@@ -477,7 +478,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     name="recruitmentEntryDate"
                     control={control}
                     defaultValue=""
-                  /> */}
+                  />
                 </Fragment>
               )}
 

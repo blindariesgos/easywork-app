@@ -33,6 +33,7 @@ import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import { handleFrontError } from "../utils/api/errors";
 import AgentSelectAsync from "./form/AgentSelectAsync";
+import UserSelectAsync from "./form/UserSelectAsync";
 
 const getMetadataUrl = {
   policy: (data, contactId) => getMetadataOfPdf("nueva", data),
@@ -753,18 +754,16 @@ const AddPolicyWithReader = ({
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectDropdown
+                  <UserSelectAsync
                     label={t("operations:policies:general:responsible")}
                     name="assignedById"
-                    options={lists?.users}
                     register={register}
                     error={!watch("assignedById") && errors.assignedById}
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectInput
+                  <UserSelectAsync
                     label={"Observador"}
-                    options={lists?.users ?? []}
                     name="observerId"
                     error={errors?.observerId}
                     setValue={setValue}

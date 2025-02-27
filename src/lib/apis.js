@@ -575,6 +575,15 @@ export const createCategory = async (data) => {
 
 //#endregion
 
+//#region USERS
+export const getRelatedUsers = async () => {
+  const response = await axios()
+    .get("/users/related_users")
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };
@@ -656,13 +665,6 @@ export const updateAgentConnection = async (data, agentId) => {
 
 export const getUsersContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/users`);
-  return response;
-};
-
-export const getRelatedUsers = async () => {
-  const response = await axios()
-    .get("/users/related_users")
-    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 

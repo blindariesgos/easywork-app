@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
-import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectUserAsync from "@/src/components/form/MultipleSelectUserAsync";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 import InputDateV2 from "@/src/components/form/InputDateV2";
@@ -634,9 +634,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       control={control}
                       defaultValue={[]}
                       render={({ field }) => (
-                        <MultipleSelect
+                        <MultipleSelectUserAsync
                           {...field}
-                          options={lists?.users || []}
                           getValues={getValues}
                           setValue={setValue}
                           onlyOne
@@ -696,9 +695,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       control={control}
                       defaultValue={[]}
                       render={({ field }) => (
-                        <MultipleSelect
+                        <MultipleSelectUserAsync
                           {...field}
-                          options={lists?.users || []}
                           getValues={getValues}
                           setValue={setValue}
                           name="createdBy"
@@ -721,9 +719,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       control={control}
                       defaultValue={[]}
                       render={({ field }) => (
-                        <MultipleSelect
+                        <MultipleSelectUserAsync
                           {...field}
-                          options={lists?.users || []}
                           getValues={getValues}
                           setValue={setValue}
                           name="participants"
@@ -745,9 +742,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
                       control={control}
                       defaultValue={[]}
                       render={({ field }) => (
-                        <MultipleSelect
+                        <MultipleSelectUserAsync
                           {...field}
-                          options={lists?.users || []}
                           getValues={getValues}
                           setValue={setValue}
                           name="observers"

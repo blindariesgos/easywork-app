@@ -21,6 +21,7 @@ import {
 import useAppContext from "../../../../../../../context/app/index";
 import SliderOverShort from "../../../../../../../components/SliderOverShort";
 import MultipleSelect from "../../../../../../../components/form/MultipleSelect";
+import MultipleSelectUserAsync from "../../../../../../../components/form/MultipleSelectUserAsync";
 import Tag from "../../../../../../../components/Tag";
 
 export default function ModalConfigGmail({ fetchUserData }) {
@@ -635,9 +636,8 @@ export default function ModalConfigGmail({ fetchUserData }) {
                         control={control}
                         defaultValue={[]}
                         render={({ field }) => (
-                          <MultipleSelect
+                          <MultipleSelectUserAsync
                             {...field}
-                            options={lists?.users || []}
                             getValues={getValues}
                             setValue={setValue}
                           />
@@ -662,9 +662,8 @@ export default function ModalConfigGmail({ fetchUserData }) {
                   control={control}
                   defaultValue={[]}
                   render={({ field }) => (
-                    <MultipleSelect
+                    <MultipleSelectUserAsync
                       {...field}
-                      options={lists?.users || []}
                       getValues={getValues}
                       setValue={setValue}
                     />

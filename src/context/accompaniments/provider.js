@@ -32,10 +32,9 @@ export default function AccompanimentsContextProvider({ children }) {
     {
       id: 2,
       name: "Gerente de Desarrollo",
-      type: "dropdown",
+      type: "select-user",
       check: false,
       code: "developmentManagerId",
-      options: lists?.users,
     },
     {
       id: 3,
@@ -77,10 +76,9 @@ export default function AccompanimentsContextProvider({ children }) {
       {
         id: 2,
         name: t("agentsmanagement:accompaniments:agent:manager"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "developmentManagerId",
-        options: lists?.users,
       },
       {
         id: 3,
@@ -99,10 +97,9 @@ export default function AccompanimentsContextProvider({ children }) {
       {
         id: 4,
         name: t("agentsmanagement:accompaniments:agent:observer"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "observerId",
-        options: lists?.users,
       },
       {
         id: 6,

@@ -23,6 +23,7 @@ import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import moment from "moment";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function General({ agent, id, refPrint }) {
   const { lists } = useAppContext();
@@ -364,29 +365,25 @@ export default function General({ agent, id, refPrint }) {
                 multiple
                 rows={3}
               />
-
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:responsible")}
                 name="developmentManagerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.developmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="recruitmentManagerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.recruitmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:observer")}
                 name="observerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.observerId}
                 setValue={setValue}

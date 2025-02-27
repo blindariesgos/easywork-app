@@ -18,12 +18,14 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
+import RecruitmentCanceledReazon from "./RecruitmentCanceledReazon";
 
-const RecruitmentStages = ({ stageId, agentId }) => {
+const RecruitmentStages = ({ stageId, agentId, agent }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const { mutate } = useSWRConfig();
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCanceled, setIsOpenCanceled] = useState(false);
   const { mutate: mutateAgents } = useRecruitmentsContext();
   const currentIndexStage = useMemo(() => {
     return recruitmentStages.map((x) => x.id).findIndex((id) => id == stageId);
@@ -52,11 +54,24 @@ const RecruitmentStages = ({ stageId, agentId }) => {
     setLoading(false);
   };
 
+  const handleApprovedAgent = () => {
+    if (!agent?.recruitments?.[0]?.entryDate) {
+      toast.warning(t("agentsmanagement:recruitment:entry-date-warning"));
+      return;
+    }
+    updateState("fd995692-4640-4dc9-a78c-67df037a1fe6");
+  };
+
+  const handleCancelRecruitment = () => {
+    setIsOpen(false);
+    setIsOpenCanceled(true);
+  };
+
   return (
     <Fragment>
       {loading && <LoaderSpinner />}
       <div className="overflow-x-hidden hover:overflow-x-auto py-1">
-        <div className=" grid grid-cols-5 gap-2 w-full">
+        <div className=" grid grid-cols-4 gap-2 w-full">
           {recruitmentStages
             .filter((stage) => stage.type === "state")
             .map((stage, index) => (
@@ -168,45 +183,27 @@ const RecruitmentStages = ({ stageId, agentId }) => {
                 <div className="flex gap-2 justify-center mt-6">
                   <button
                     className="inline-flex justify-center rounded-md text-sm font-medium text-white bg-green-500 py-2 px-3 focus:outline-none focus:ring-0"
-                    onClick={() =>
-                      updateState("fd995692-4640-4dc9-a78c-67df037a1fe6")
-                    }
+                    onClick={handleApprovedAgent}
                   >
                     {"Ingreso aprobado"}
                   </button>
-                  <Menu>
-                    <MenuButton className="text-white group inline-flex items-center rounded-md bg-red-500 px-4 py-2 text-sm font-medium hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
-                      Descartar reclutamiento
-                    </MenuButton>
-
-                    <MenuItems
-                      transition
-                      anchor={{
-                        to: "bottom start",
-                        gap: 5,
-                      }}
-                      className=" origin-top-right bg-white rounded-xl border shadow-lg border-white/5 p-1 text-sm/6 transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
-                    >
-                      {recruitmentStages
-                        .filter((state) => state.type == "canceled")
-                        .map((state) => (
-                          <MenuItem
-                            key={state.id}
-                            as="div"
-                            onClick={() => updateState(state.id)}
-                            className="py-1 px-2 cursor-pointer hover:bg-primary rounded-md hover:text-white"
-                          >
-                            {state.name}
-                          </MenuItem>
-                        ))}
-                    </MenuItems>
-                  </Menu>
+                  <button
+                    className="text-white group inline-flex items-center rounded-md bg-red-500 px-4 py-2 text-sm font-medium hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+                    onClick={handleCancelRecruitment}
+                  >
+                    {"Descartar reclutamiento"}
+                  </button>
                 </div>
               </DialogPanel>
             </TransitionChild>
           </div>
         </div>
       </Dialog>
+      <RecruitmentCanceledReazon
+        isOpen={isOpenCanceled}
+        setIsOpen={setIsOpenCanceled}
+        updateState={updateState}
+      />
     </Fragment>
   );
 };

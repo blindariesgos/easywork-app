@@ -248,22 +248,24 @@ export default function Table() {
         ?.map((stage) => stage.id)
         ?.findIndex((value) => data?.id == value) ?? -1;
     let color = "";
-    if (stageIndex >= 0 && stageIndex <= 3) {
+    if (stageIndex >= 0 && stageIndex <= 2) {
       color = recruitmentStages[stageIndex]?.color;
-    } else if (stageIndex >= 4 && stageIndex <= 7) {
+    } else if (stageIndex >= 3 && stageIndex <= 6) {
+      color = recruitmentStages[6]?.color;
+    } else if (stageIndex == 7) {
       color = recruitmentStages[7]?.color;
-    } else if (stageIndex == 8) {
-      color = recruitmentStages[8]?.color;
     }
 
     return (
       <div className="flex flex-col gap-1 items-center">
         <div className={`flex justify-center  ${"bg-gray-200"}`}>
-          {new Array(6).fill(1).map((_, index) => (
+          {new Array(5).fill(1).map((_, index) => (
             <div
               key={index}
               className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
-              style={{ background: index <= stageIndex ? color : "" }}
+              style={{
+                background: index <= stageIndex || stageIndex >= 3 ? color : "",
+              }}
             />
           ))}
         </div>

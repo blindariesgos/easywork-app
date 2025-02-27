@@ -21,6 +21,7 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import moment from "moment";
 import useProgramationContext from "@/src/context/programations";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
   const { t } = useTranslation();
@@ -268,10 +269,9 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             disabled={!isEdit}
             register={register}
           />
-          <SelectInput
+          <UserSelectAsync
             label={t("operations:programations:general:responsible")}
             name="assignedById"
-            options={lists?.users ?? []}
             disabled={!isEdit}
             setValue={setValue}
             watch={watch}
@@ -285,7 +285,6 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             watch={watch}
             error={errors.agenteIntermediarioId}
           />
-
           <AgentSelectAsync
             label={t("operations:programations:general:sub-agent")}
             name="agenteRelacionadoId"
@@ -294,17 +293,14 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
             setValue={setValue}
             watch={watch}
           />
-
-          <SelectInput
+          <UserSelectAsync
             label={t("operations:programations:general:observer")}
             name="observerId"
-            options={lists?.users ?? []}
             disabled={!isEdit}
             setValue={setValue}
             watch={watch}
             error={errors.observerId}
           />
-
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}

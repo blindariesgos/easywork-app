@@ -26,6 +26,7 @@ import clsx from "clsx";
 import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -403,18 +404,16 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectDropdown
+                  <UserSelectAsync
                     label={t("operations:policies:general:responsible")}
                     name="assignedById"
-                    options={lists?.users}
                     register={register}
                     error={!watch("assignedById") && errors.assignedById}
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectInput
+                  <UserSelectAsync
                     label={"Observador"}
-                    options={lists?.users ?? []}
                     name="observerId"
                     error={errors?.observerId}
                     setValue={setValue}

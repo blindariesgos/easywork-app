@@ -1,14 +1,7 @@
 "use client";
 import useAppContext from "@/src/context/app";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { toast } from "react-toastify";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
@@ -20,16 +13,14 @@ import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
-import { handleApiError } from "@/src/utils/api/errors";
-import { createAgent, updateAgent } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import moment from "moment";
 import { useSession } from "next-auth/react";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function General({ agent, id, refPrint, type, handleAdd }) {
   const { lists } = useAppContext();
@@ -331,6 +322,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 control={control}
                 defaultValue=""
               />
+              {type === "accompaniment" && <Fragment></Fragment>}
               <SelectInput
                 label={t("contacts:create:position")}
                 name="bio"
@@ -458,7 +450,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  {/* <Controller
+                  <Controller
                     render={({ field: { value, onChange, ref, onBlur } }) => {
                       return (
                         <InputDate
@@ -477,7 +469,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     name="recruitmentEntryDate"
                     control={control}
                     defaultValue=""
-                  /> */}
+                  />
                 </Fragment>
               )}
 
@@ -607,28 +599,25 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                   />
                 </Fragment>
               )}
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="developmentManagerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.developmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:responsible")}
                 name="recruitmentManagerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.recruitmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:observer")}
                 name="observerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.observerId}
                 setValue={setValue}
@@ -637,7 +626,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
 
               <TextInput
                 label={t("agentsmanagement:accompaniments:agent:comments")}
-                error={errors.address}
+                error={errors.observations}
                 register={register}
                 name="observations"
                 disabled={!isEdit}

@@ -32,6 +32,8 @@ import useReceiptContext from "@/src/context/receipts";
 import moment from "moment";
 import { handleFrontError } from "@/src/utils/api/errors";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectUserAsync from "@/src/components/form/MultipleSelectUserAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function ReceiptEditor({ data, id }) {
   const { t } = useTranslation();
@@ -482,20 +484,18 @@ export default function ReceiptEditor({ data, id }) {
                     )?.symbol ?? ""
                   }
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t(
                     "control:portafolio:receipt:details:form:responsible"
                   )}
                   name="responsibleId"
-                  options={lists?.users}
                   disabled={!isEdit}
                   error={errors.responsible}
                   setValue={setValue}
                   watch={watch}
                 />
-                <MultipleSelect
+                <MultipleSelectUserAsync
                   label={t("operations:policies:general:observers")}
-                  options={lists?.users || []}
                   getValues={getValues}
                   setValue={setValue}
                   name="observers"

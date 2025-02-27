@@ -46,10 +46,9 @@ export default function ConnectionsContextProvider({
     {
       id: 3,
       name: t("agentsmanagement:accompaniments:agent:manager"),
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "developmentManagerId",
-      options: lists?.users ?? [],
     },
     {
       id: 4,
@@ -106,10 +105,9 @@ export default function ConnectionsContextProvider({
       {
         id: 3,
         name: t("agentsmanagement:accompaniments:agent:manager"),
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "developmentManagerId",
-        options: lists?.users ?? [],
       },
       {
         id: 4,
@@ -128,10 +126,9 @@ export default function ConnectionsContextProvider({
       {
         id: 6,
         name: t("agentsmanagement:accompaniments:agent:observer"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "observerId",
-        options: lists?.users ?? [],
       },
       {
         id: 7,

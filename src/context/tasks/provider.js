@@ -37,8 +37,7 @@ export default function TasksContextProvider({ children }) {
     {
       id: 6,
       name: t("tools:tasks:filters:fields:responsible"),
-      type: "dropdown",
-      options: lists?.users,
+      type: "select-user",
       check: false,
       code: "responsible",
     },
@@ -63,10 +62,9 @@ export default function TasksContextProvider({ children }) {
     {
       id: 2,
       name: t("tools:tasks:filters:fields:createdBy"),
-      type: "dropdown",
+      type: "select-user",
       check: false,
       code: "createdBy",
-      options: lists?.users,
     },
     {
       id: 3,
@@ -97,8 +95,7 @@ export default function TasksContextProvider({ children }) {
       {
         id: 6,
         name: t("tools:tasks:filters:fields:responsible"),
-        type: "dropdown",
-        options: lists?.users,
+        type: "select-user",
         check: false,
         code: "responsible",
       },
@@ -123,10 +120,9 @@ export default function TasksContextProvider({ children }) {
       {
         id: 2,
         name: t("tools:tasks:filters:fields:createdBy"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "createdBy",
-        options: lists?.users,
       },
       {
         id: 3,
@@ -193,18 +189,16 @@ export default function TasksContextProvider({ children }) {
       {
         id: 10,
         name: t("tools:tasks:filters:fields:participant"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "participants",
-        options: lists?.users,
       },
       {
         id: 11,
         name: t("tools:tasks:filters:fields:observer"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "observers",
-        options: lists?.users,
       },
       {
         id: 12,

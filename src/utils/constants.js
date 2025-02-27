@@ -77,12 +77,6 @@ export const recruitmentStages = [
     type: "state",
   },
   {
-    id: "78c8b0aa-04b8-4c53-bd3c-68924c53ed03",
-    name: "PSP",
-    color: "#06668E",
-    type: "state",
-  },
-  {
     id: "580ee85e-ae46-4e78-a4fb-aadb868ff8b4",
     name: "Entrevista de verificación",
     color: "#004D6C",

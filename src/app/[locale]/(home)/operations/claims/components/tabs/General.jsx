@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function PolicyDetails({
   data,
@@ -402,21 +403,19 @@ export default function PolicyDetails({
             setValue={setValue}
             watch={watch}
           />
-
-          <SelectDropdown
+          <UserSelectAsync
             label={t("operations:policies:general:responsible")}
             name="assignedById"
-            options={lists?.users}
             register={register}
             disabled={!isEdit}
-            error={!watch("assignedById") && errors.assignedById}
+            error={errors.assignedById}
             setValue={setValue}
             watch={watch}
           />
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
-            error={errors.observations && errors.observations.message}
+            error={errors.observations}
             register={register}
             name="observations"
             disabled={!isEdit}

@@ -8,6 +8,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import SelectInput from "../../components/form/SelectInput";
 import ContactSelectAsync from "../../components/form/ContactSelectAsync";
 import PolicySelectAsync from "../../components/form/PolicySelectAsync";
+import UserSelectAsync from "../../components/form/UserSelectAsync";
 import LeadSelectAsync from "../../components/form/LeadSelectAsync";
 import MultipleSelect from "../../components/form/MultipleSelect";
 import InputDate from "../../components/form/InputDate";
@@ -359,6 +360,7 @@ const FormFilters = () => {
             "select-policy",
             "select-lead",
             "select-agent",
+            "select-user",
           ].includes(field.type)
         ) {
           value = field.value.id;
@@ -461,6 +463,15 @@ const FormFilters = () => {
 
             {dataField.type === "select-agent" && (
               <AgentSelectAsync
+                label={dataField.name}
+                name={`fields[${index}].value`}
+                setValue={setValue}
+                watch={watch}
+                object
+              />
+            )}
+            {dataField.type === "select-user" && (
+              <UserSelectAsync
                 label={dataField.name}
                 name={`fields[${index}].value`}
                 setValue={setValue}

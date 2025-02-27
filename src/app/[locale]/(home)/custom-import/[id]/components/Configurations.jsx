@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 const Configurations = ({ handleNext, type }) => {
   const { t } = useTranslation();
@@ -226,9 +227,8 @@ const Configurations = ({ handleNext, type }) => {
         <div className="col-span-3">
           <div className="grid grid-cols-3">
             <div className="col-span-3 md:col-span-2 xl:col-span-1">
-              <SelectDropdown
+              <UserSelectAsync
                 name="responsibleId"
-                options={lists?.users}
                 register={register}
                 setValue={setValue}
                 watch={watch}

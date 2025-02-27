@@ -36,11 +36,9 @@ const FormFilters = () => {
         {
           id: 1,
           name: t("control:portafolio:control:form:agent"),
-          options: lists?.users,
-          type: "select",
+          type: "select-user",
           check: true,
           code: "user",
-          default: lists?.users[0],
         },
         {
           id: 2,

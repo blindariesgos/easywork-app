@@ -91,10 +91,9 @@ export default function DriveContextProvider({ children }) {
       {
         id: 5,
         name: t("contacts:filters:created-by"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "createdby",
-        options: lists?.users,
       },
     ]);
   }, [lists?.users]);

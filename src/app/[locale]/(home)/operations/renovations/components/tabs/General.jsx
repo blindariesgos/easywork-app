@@ -18,7 +18,7 @@ import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
-import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectUserAsync from "@/src/components/form/MultipleSelectUserAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import moment from "moment";
@@ -26,6 +26,7 @@ import { handleFrontError } from "@/src/utils/api/errors";
 import Vehicles from "@/src/components/policyAdds/Vehicles";
 import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Insureds from "@/src/components/policyAdds/Insureds";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function PolicyDetails({
   data,
@@ -316,7 +317,6 @@ export default function PolicyDetails({
             watch={watch}
             className={clsx({ hidden: data?.type?.name !== "GMM" })}
           />
-
           {data?.type?.name === "VIDA" && (
             <SelectInput
               label={t("operations:policies:general:subbranch")}
@@ -387,7 +387,6 @@ export default function PolicyDetails({
             control={control}
             defaultValue=""
           />
-
           <SelectInput
             label={t("operations:policies:general:payment-method")}
             name="formaCobroId"
@@ -433,7 +432,6 @@ export default function PolicyDetails({
             disabled={!isEdit}
             watch={watch}
           />
-
           <InputCurrency
             type="text"
             label={t("operations:policies:general:primaNeta")}
@@ -506,7 +504,6 @@ export default function PolicyDetails({
             setValue={setValue}
             watch={watch}
           />
-
           <AgentSelectAsync
             label={t("operations:programations:general:sub-agent")}
             name="subAgentId"
@@ -515,20 +512,17 @@ export default function PolicyDetails({
             watch={watch}
             disabled={!isEdit}
           />
-
-          <SelectDropdown
+          <UserSelectAsync
             label={t("operations:policies:general:responsible")}
             name="assignedById"
-            options={lists?.users}
             register={register}
             disabled={!isEdit}
             error={!watch("assignedById") && errors.assignedById}
             setValue={setValue}
             watch={watch}
           />
-          <MultipleSelect
+          <MultipleSelectUserAsync
             label={t("operations:policies:general:observers")}
-            options={lists?.users || []}
             getValues={getValues}
             setValue={setValue}
             name="observers"

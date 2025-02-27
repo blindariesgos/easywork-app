@@ -22,6 +22,7 @@ import clsx from "clsx";
 import useLeadContext from "@/src/context/leads";
 import { useSWRConfig } from "swr";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
   const { lists } = useAppContext();
@@ -278,18 +279,16 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("operations:policies:general:responsible")}
                 name="responsibleId"
-                options={lists?.users}
                 register={register}
                 error={!watch("responsibleId") && errors.responsibleId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
+              <UserSelectAsync
                 label={"Observador"}
-                options={lists?.users ?? []}
                 name="observerId"
                 error={errors?.observerId}
                 setValue={setValue}

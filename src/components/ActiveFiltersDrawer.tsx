@@ -20,7 +20,7 @@ const ActiveFiltersDrawer = ({ displayFilters, removeFilter, notRemove }) => {
       return item.value.fullName;
     }
 
-    if (item.type == "select-agent") {
+    if (item.type == "select-agent" || item.type == "select-user") {
       return item.value.name;
     }
 

@@ -627,6 +627,13 @@ export const getRelatedUsers = async () => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const getUserActivities = async (userId) => {
+  const response = await axios()
+    .get(`/users/activity/${userId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region POSTAL CODE

@@ -1706,6 +1706,37 @@ export const useUserTable = () => {
   return { columnTable };
 };
 
+export const useUserActivitiesTable = () => {
+  const { t } = useTranslation();
+  const columnTable = [
+    {
+      id: 1,
+      name: t("users:table:name"),
+      row: "contactName",
+      check: true,
+    },
+    {
+      id: 2,
+      name: t("users:table:email"),
+      row: "email",
+      check: true,
+    },
+    {
+      id: 3,
+      name: t("users:table:phone"),
+      row: "phone",
+      check: true,
+    },
+    {
+      id: 5,
+      name: t("users:table:mobile-app"),
+      row: "mobile-app",
+      check: true,
+    },
+  ];
+  return { columnTable };
+};
+
 export const useReceiptTable = () => {
   const { t } = useTranslation();
   const columnTable = [

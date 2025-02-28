@@ -23,12 +23,18 @@ import ReceiptEmpty from "./ReceiptEmpty";
 import Versions from "./tabs/Versions";
 import moment from "moment";
 import { LinkIcon } from "@heroicons/react/24/outline";
+import AddDocuments from "@/src/components/AddDocuments";
+import usePolicyContext from "@/src/context/policies";
+import CanceledReazons from "../../components/CanceledReazons";
+import { handleFrontError } from "@/src/utils/api/errors";
 
 export default function PolicyDetails({ data, id, mutate, edit }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
+  const [isOpenCanceledReazon, setIsOpenCanceledReazon] = useState(false);
   const { mutate: mutateConfig } = useSWRConfig();
+  const { mutate: mutatePolicies } = usePolicyContext();
 
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
@@ -108,6 +114,10 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
   ];
 
   const updateStatus = async (status) => {
+    if (status === "cancelada") {
+      setIsOpenCanceledReazon(true);
+      return;
+    }
     setLoading(true);
     const body = {
       status,
@@ -116,15 +126,13 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
       const response = await putPoliza(id, body);
 
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         setLoading(false);
         return;
       }
       mutate();
-      toast.success("Paliza actualizada correctamente.");
-      mutateConfig("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
+      mutatePolicies();
+      toast.success(t("operations:policies:update"));
     } catch (error) {
       console.log({ error });
       toast.error(
@@ -162,6 +170,16 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
+      <CanceledReazons
+        isOpen={isOpenCanceledReazon}
+        setIsOpen={setIsOpenCanceledReazon}
+        id={id}
+        onUpdate={() => {
+          mutateConfig(`/sales/crm/polizas/${id}/activities`);
+          mutate();
+          mutatePolicies();
+        }}
+      />
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
         <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
@@ -271,6 +289,20 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
                   {tab.name}
                 </Tab>
               ))}
+              <AddDocuments
+                crmId={id}
+                crmType="policy"
+                options={[
+                  {
+                    name: "Finiquito",
+                    type: "finiquito",
+                    accept: null,
+                  },
+                ]}
+                onUpdate={() => {
+                  mutateConfig(`/sales/crm/polizas/${id}/activities`);
+                }}
+              />
             </TabList>
           </div>
           <TabPanels className="w-full">

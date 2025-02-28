@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import TextInput from "./TextInput";
 import clsx from "clsx";
 import { useDebouncedCallback } from "use-debounce";
-import { getAddListConnections, getAddressByPostalCode } from "@/src/lib/apis";
+import { getAddressByPostalCode } from "@/src/lib/apis";
 import { VALIDATE_POSTAL_CODE } from "@/src/utils/regularExp";
 import SelectInput from "./SelectInput";
 import { handleFrontError } from "@/src/utils/api/errors";

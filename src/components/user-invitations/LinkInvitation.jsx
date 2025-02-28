@@ -5,20 +5,24 @@ import { LuRefreshCcw } from 'react-icons/lu';
 import { IoArrowRedo } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 
+// Services
+import { generateLink } from '@/src/lib/services/users/invitations';
+
 export const LinkInvitation = () => {
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const [link, setLink] = useState('');
   const [isAdminApprovedRequired, setIsAdminApproveRequired] = useState(false);
 
-  const handleGenerateLink = () => {
+  const handleGenerateLink = async () => {
     setIsGeneratingLink(true);
     try {
-      setTimeout(() => {
-        setLink('https://easywork.com/invite/u/n/JASIOD98asdnjaksdnqh7e21');
-        setIsGeneratingLink(false);
-      }, [3000]);
+      const linkGenerated = await generateLink();
+      setLink(linkGenerated);
     } catch (error) {
+      console.log(error);
       toast.error('Error al generar el enlace');
+    } finally {
+      setIsGeneratingLink(false);
     }
   };
 

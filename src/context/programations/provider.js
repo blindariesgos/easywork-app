@@ -31,10 +31,9 @@ export default function ProgramationsContextProvider({ children }) {
     {
       id: 0,
       name: t("control:portafolio:receipt:filters:responsible"),
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "assignedById",
-      options: lists?.users ?? [],
     },
     {
       id: 1,
@@ -76,10 +75,9 @@ export default function ProgramationsContextProvider({ children }) {
       {
         id: 0,
         name: t("control:portafolio:receipt:filters:responsible"),
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "assignedById",
-        options: lists?.users ?? [],
       },
       {
         id: 1,

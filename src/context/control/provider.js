@@ -42,8 +42,7 @@ export default function ControlContextProvider({ children }) {
     {
       id: 1,
       name: t("control:portafolio:control:form:agent"),
-      options: lists?.users,
-      type: "select",
+      type: "select-user",
       check: true,
       code: "responsibleId",
     },
@@ -57,13 +56,11 @@ export default function ControlContextProvider({ children }) {
     },
   ];
   useEffect(() => {
-    if (!lists?.users) return;
     setFilterFields([
       {
         id: 1,
         name: t("control:portafolio:control:form:agent"),
-        options: lists?.users,
-        type: "select",
+        type: "select-user",
         check: true,
         code: "responsibleId",
       },

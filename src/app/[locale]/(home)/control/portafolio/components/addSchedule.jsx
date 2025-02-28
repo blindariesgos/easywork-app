@@ -20,6 +20,7 @@ import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 const AddSchedule = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -225,12 +226,12 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
                 name="medicalCondition"
                 register={register}
               />
-              <AgentSelectAsync
+              <UserSelectAsync
                 label={t("operations:programations:general:responsible")}
                 name="assignedById"
-                error={errors.assignedById}
                 setValue={setValue}
                 watch={watch}
+                error={errors.assignedById}
               />
               <IntermediarySelectAsync
                 label={t("operations:programations:general:intermediary")}
@@ -246,10 +247,9 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectInput
+              <UserSelectAsync
                 label={t("operations:programations:general:observer")}
                 name="observerId"
-                options={lists?.users ?? []}
                 setValue={setValue}
                 watch={watch}
                 error={errors.observerId}

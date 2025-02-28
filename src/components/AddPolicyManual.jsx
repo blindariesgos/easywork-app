@@ -5,7 +5,7 @@ import SliderOverShord from "@/src/components/SliderOverShort";
 import Button from "@/src/components/form/Button";
 import Tag from "@/src/components/Tag";
 import SelectInput from "@/src/components/form/SelectInput";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
 import useAppContext from "@/src/context/app";
@@ -34,6 +34,7 @@ import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsy
 import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import AgentSelectAsync from "./form/AgentSelectAsync";
+import UserSelectAsync from "./form/UserSelectAsync";
 
 const endpointsByModule = {
   gestion: (body, documentType, id) => addManualPolicy(body, documentType),
@@ -45,7 +46,14 @@ const endpointsTemporalFileByModule = {
   lead: (body) => uploadLeadTemporalFile(body),
 };
 
-const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
+const AddPolicyManual = ({
+  isOpen,
+  setIsOpen,
+  module,
+  id,
+  onClosed,
+  defaultValues,
+}) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
@@ -77,6 +85,23 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (!defaultValues) return;
+
+    if (defaultValues.assignedBy)
+      setValue("assignedById", defaultValues.assignedBy.id);
+    if (defaultValues.subAgente)
+      setValue("subAgentId", defaultValues.subAgente.id);
+    if (defaultValues.polizaType)
+      setValue("typeId", defaultValues.polizaType.id);
+    if (defaultValues.quoteCurrency)
+      setValue("currencyId", defaultValues.quoteCurrency.id);
+    if (defaultValues?.agenteIntermediario)
+      setValue("agenteIntermediarioId", defaultValues?.agenteIntermediario?.id);
+    if (defaultValues?.observer)
+      setValue("observerId", defaultValues?.observer?.id);
+  }, [defaultValues]);
 
   const getFormData = (body) => {
     const formData = new FormData();
@@ -150,6 +175,8 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
       specifications,
       oldPoliza,
       fechaEmision,
+      insureds,
+      beneficiaries,
       ...otherData
     } = data;
     const body = {
@@ -168,7 +195,7 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
       status: "activa",
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
-    if (specifications && specifications.length > 0) {
+    if (specifications && specifications?.length > 0) {
       body.specifications = specifications;
     }
     if (contact) {
@@ -176,6 +203,21 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
     }
     if (oldPoliza) {
       body.polizaId = oldPoliza.id;
+    }
+    if (
+      insureds &&
+      insureds.length > 0 &&
+      insureds[0]?.insured?.fullName?.length > 0
+    ) {
+      body.insureds = insureds;
+    }
+
+    if (
+      beneficiaries &&
+      beneficiaries.length > 0 &&
+      beneficiaries[0]?.nombre?.length > 0
+    ) {
+      body.beneficiaries = beneficiaries;
     }
     console.log({ body });
 
@@ -410,8 +452,13 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                   register={register}
                   setValue={setValue}
                   watch={watch}
+                  helperText={
+                    watch("isNewContact") && module == "lead"
+                      ? "Se creará un nuevo cliente a partir de la información cargada en el prospecto."
+                      : null
+                  }
                 />
-                {watch && !watch("isNewContact") ? (
+                {watch && !watch("isNewContact") && (
                   <ContactSelectAsync
                     name={"contact"}
                     label="Cliente"
@@ -421,7 +468,9 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                     helperText={helpers?.contact}
                     isRequired
                   />
-                ) : (
+                )}
+
+                {watch && watch("isNewContact") && module !== "lead" && (
                   <Fragment>
                     <SelectInput
                       label={t("control:portafolio:control:form:typePerson")}
@@ -554,6 +603,23 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                   defaultValue=""
                 />
                 <SelectInput
+                  label={t("operations:policies:general:coverage")}
+                  options={[
+                    {
+                      id: "Nacional",
+                      name: "Nacional",
+                    },
+                    {
+                      id: "Internacional",
+                      name: "Internacional",
+                    },
+                  ]}
+                  name="cobertura"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
                   label={t("operations:policies:general:payment-frequency")}
                   name="frecuenciaCobroId"
                   options={lists?.policies?.polizaFrecuenciasPago ?? []}
@@ -676,6 +742,12 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                       (x) => x.id == watch("currencyId")
                     )?.symbol ?? ""
                   }
+                  defaultValue={
+                    defaultValues?.quoteAmount &&
+                    defaultValues?.quoteAmount?.length
+                      ? (+defaultValues?.quoteAmount)?.toFixed(2)
+                      : null
+                  }
                 />
 
                 <IntermediarySelectAsync
@@ -686,36 +758,26 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                 />
                 <AgentSelectAsync
                   label={t("operations:programations:general:sub-agent")}
-                  name="subAgenteId"
+                  name="subAgentId"
                   error={errors.subAgentId}
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t("operations:policies:general:responsible")}
                   name="assignedById"
-                  options={lists?.users}
                   error={errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectInput
+                <UserSelectAsync
                   label={"Observador"}
-                  options={lists?.users ?? []}
                   name="observerId"
                   error={errors?.observerId}
                   setValue={setValue}
                   watch={watch}
                 />
-                <TextInput
-                  type="text"
-                  label={t("operations:policies:general:specifications")}
-                  error={errors.specifications}
-                  register={register}
-                  name="specifications"
-                  multiple
-                  rows={3}
-                />
+
                 {[
                   "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
                   "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
@@ -728,13 +790,28 @@ const AddPolicyManual = ({ isOpen, setIsOpen, module, id, onClosed }) => {
                       setValue={setValue}
                       isAdd
                     />
-
-                    <Beneficiaries
-                      register={register}
-                      control={control}
-                      watch={watch}
-                      isAdd
-                    />
+                    {watch("typeId") ==
+                      "e1794ba3-892d-4c51-ad62-32dcf836873b" && (
+                      <Fragment>
+                        <Beneficiaries
+                          register={register}
+                          control={control}
+                          watch={watch}
+                          isAdd
+                        />
+                        <TextInput
+                          type="text"
+                          label={t(
+                            "operations:policies:general:specifications"
+                          )}
+                          error={errors.specifications}
+                          register={register}
+                          name="specifications"
+                          multiple
+                          rows={3}
+                        />
+                      </Fragment>
+                    )}
                   </Fragment>
                 )}
                 {[

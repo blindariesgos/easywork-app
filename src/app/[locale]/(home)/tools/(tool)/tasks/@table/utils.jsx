@@ -14,14 +14,15 @@ import {
   isDateMoreFiveDayOverdue,
   isDateMoreTenDayOverdue,
 } from "@/src/utils/getFormatDate";
-import { FaChevronCircleDown } from "react-icons/fa";
+
 export const renderCellContent = (
   column,
   task,
   t,
   handleShowSubTasks,
   showSubTasks,
-  isSubTask
+  isSubTask,
+  level
 ) => {
   const { row, link } = column;
   const taskValue = task[row];
@@ -179,7 +180,12 @@ export const renderCellContent = (
 
     case "name":
       return (
-        <div className="flex items-center gap-x-2">
+        <div
+          className={clsx("flex items-center gap-x-1")}
+          style={{
+            paddingLeft: 24 * level,
+          }}
+        >
           {handleShowSubTasks && task?.subTasks?.length > 0 && (
             <div
               className="w-5 h-5 cursor-pointer"
@@ -194,7 +200,6 @@ export const renderCellContent = (
           )}
           <Link
             className={clsx("text-black", {
-              "pl-8": isSubTask,
               "text-gray-800/45 line-through":
                 task.status === "pending_review" || task.isCompleted,
             })}

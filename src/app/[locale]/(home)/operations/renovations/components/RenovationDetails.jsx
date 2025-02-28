@@ -21,12 +21,18 @@ import { putPoliza } from "@/src/lib/apis";
 import useRenovationContext from "@/src/context/renovations";
 import { toast } from "react-toastify";
 import { LinkIcon } from "@heroicons/react/24/outline";
+import CanceledReazons from "../../components/CanceledReazons";
+import { handleFrontError } from "@/src/utils/api/errors";
+import { useSWRConfig } from "swr";
 
 export default function RenovationDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
   const { mutate: mutateRenovation } = useRenovationContext();
+  const [isOpenCanceledReazon, setIsOpenCanceledReazon] = useState(false);
+  const { mutate: mutateConfig } = useSWRConfig();
+
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -102,6 +108,10 @@ export default function RenovationDetails({ data, id, mutate }) {
   ];
 
   const updateStatus = async (status) => {
+    if (status === "cancelada") {
+      setIsOpenCanceledReazon(true);
+      return;
+    }
     setLoading(true);
     const body = {
       renewalStageId: status,
@@ -110,15 +120,13 @@ export default function RenovationDetails({ data, id, mutate }) {
       const response = await putPoliza(id, body);
 
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         setLoading(false);
         return;
       }
       mutate();
-      toast.success("Renovación actualizada correctamente.");
       mutateRenovation();
+      toast.success(t("operations:policies:update"));
     } catch (error) {
       console.log({ error });
       toast.error(
@@ -137,6 +145,16 @@ export default function RenovationDetails({ data, id, mutate }) {
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
+      <CanceledReazons
+        isOpen={isOpenCanceledReazon}
+        setIsOpen={setIsOpenCanceledReazon}
+        id={id}
+        onUpdate={() => {
+          mutateConfig(`/sales/crm/polizas/${id}/activities`);
+          mutate();
+          mutateRenovation();
+        }}
+      />
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
         <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}

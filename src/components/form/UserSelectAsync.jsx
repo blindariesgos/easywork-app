@@ -1,4 +1,3 @@
-// SelectInput.js
 "use client";
 import {
   Combobox,
@@ -9,55 +8,46 @@ import {
 } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useContacts } from "@/src/lib/api/hooks/contacts";
 import { LoadingSpinnerSmall } from "../LoaderSpinner";
-import { getContactId } from "@/src/lib/apis";
+import { getUserById } from "@/src/lib/apis";
 import { useDebouncedCallback } from "use-debounce";
-import { RxCrossCircled } from "react-icons/rx";
+import { useRelatedUsers } from "@/src/lib/api/hooks/users";
 
-function ContactSelectAsync({
+function UserSelectAsync({
   label,
   selectedOption,
   disabled,
-  register,
   name,
   error,
   setValue,
   border,
-  value,
   watch,
   setSelectedOption,
   placeholder,
   helperText,
-  notFoundHelperText,
-  isRequired,
+  object,
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({});
-  const { contacts: options, isLoading } = useContacts({
+  const { data: options, isLoading } = useRelatedUsers({
     page: 1,
     limit: 10,
     filters,
   });
+
   const handleSearch = useDebouncedCallback(() => {
     if (query.length > 0) {
       setFilters({
-        name: query,
+        search: query,
       });
     } else {
       setFilters({});
     }
   }, 500);
-
-  const handleClear = () => {
-    setSelected("");
-    setQuery("");
-    setValue(name, null);
-  };
 
   useEffect(() => {
     handleSearch();
@@ -71,19 +61,19 @@ function ContactSelectAsync({
 
   useEffect(() => {
     if (selected) {
-      setValue && setValue(name, selected);
-      setSelectedOption && setSelectedOption(selected);
+      setValue && setValue(name, object ? selected : selected.id);
+      setSelectedOption && setSelectedOption(selected.id);
     }
   }, [selected, setValue, name, setSelectedOption]);
 
   useEffect(() => {
     if (!watch || !watch(name) || selected) return;
-    const getContact = async (contactId) => {
-      const response = await getContactId(contactId);
+    const getUser = async (userId) => {
+      const response = await getUserById(userId);
       if (response.hasError) return;
       setSelected(response);
     };
-    getContact(watch(name));
+    getUser(watch(name));
   }, [watch && watch(name)]);
 
   return (
@@ -93,18 +83,12 @@ function ContactSelectAsync({
         value={selected}
         onChange={setSelected}
         disabled={disabled}
-        className="group"
       >
         {label && (
           <label
-            className={`block text-sm font-medium leading-6 text-gray-900 px-3 relative`}
+            className={`block text-sm font-medium leading-6 text-gray-900 px-3`}
           >
             {label}
-            {isRequired && (
-              <span className="text-sm text-red-600 absolute top-0 left-0">
-                *
-              </span>
-            )}
           </label>
         )}
 
@@ -121,38 +105,23 @@ function ContactSelectAsync({
                 "drop-shadow-md": !disabled,
               }
             )}
-            displayValue={(person) => person?.fullName}
+            displayValue={(person) => person?.name}
             onChange={(event) => {
               setQuery && setQuery(event.target.value);
             }}
           />
           {!disabled && (
-            <Fragment>
-              {selected && (
-                <div
-                  className={clsx(
-                    "absolute inset-y-0 right-5 group-hover:flex items-center pr-2 cursor-pointer hidden "
-                  )}
-                  onClick={handleClear}
-                >
-                  <RxCrossCircled className="w-4 h-4 text-primary" />
-                </div>
-              )}
-              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronDownIcon
-                  className="h-5 w-5 text-primary"
-                  aria-hidden="true"
-                />
-              </ComboboxButton>
-            </Fragment>
+            <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <ChevronDownIcon
+                className="h-5 w-5 text-primary"
+                aria-hidden="true"
+              />
+            </ComboboxButton>
           )}
 
           <ComboboxOptions
             transition
-            anchor={{
-              to: "bottom end",
-              gap: 5,
-            }}
+            anchor="bottom end"
             className="z-50 w-[var(--input-width)] overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
           >
             {isLoading && (
@@ -161,13 +130,9 @@ function ContactSelectAsync({
               </div>
             )}
             {options?.items?.length === 0 && query !== "" && !isLoading ? (
-              notFoundHelperText ? (
-                notFoundHelperText()
-              ) : (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                  {t("common:not-found")}
-                </div>
-              )
+              <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+                {t("common:not-found")}
+              </div>
             ) : (
               options?.items &&
               options?.items?.map((option) => (
@@ -188,7 +153,7 @@ function ContactSelectAsync({
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {option.fullName}
+                        {option.name}
                       </span>
                       {selected ? (
                         <span
@@ -215,4 +180,4 @@ function ContactSelectAsync({
   );
 }
 
-export default ContactSelectAsync;
+export default UserSelectAsync;

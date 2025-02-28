@@ -20,7 +20,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
-import { handleApiError } from "@/src/utils/api/errors";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { createContact, getContactId, updateContact } from "@/src/lib/apis";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,6 +30,8 @@ import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { activitySectors } from "@/src/utils/constants";
 import RelatedCustomer from "./RelatedCustomer";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import AddressInput from "@/src/components/form/AddressInput";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -206,7 +208,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     if (contact?.agenteIntermediario)
       setValue("agenteIntermediarioId", contact?.agenteIntermediario?.id);
     if (contact?.observer) setValue("observerId", contact?.observer?.id);
-    if (contact?.subAgent) setValue("subAgentId", contact?.subAgent?.id);
+    if (contact?.subAgente) setValue("subAgentId", contact?.subAgente?.id);
     if (contact?.observations) setValue("observations", contact?.observations);
     if (contact?.activitySector)
       setValue("activitySector", contact?.activitySector);
@@ -244,7 +246,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
     const { contact: client, subAgent, ...info } = data;
     const body = {
       ...info,
-      relatedContactId: client?.id ?? null,
     };
 
     if (selectedProfileImage?.file) {
@@ -264,31 +265,32 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         formData.append(key, body[key]?.toString() || "");
       }
     }
+    formData.append("relatedContactId", client?.id ?? "");
 
     try {
       setLoading(true);
       if (!contact) {
         const response = await createContact(formData);
         if (response.hasError) {
-          handleFormSubmit(response);
+          handleFrontError(response);
           setLoading(false);
           return;
         }
-        await mutate(`/sales/crm/contacts?limit=5&page=1`);
         toast.success(t("contacts:create:msg"));
+        router.back();
       } else {
         const response = await updateContact(formData, id);
+        console.log({ response });
         if (response.hasError) {
-          handleFormSubmit(response);
+          handleFrontError(response);
           setLoading(false);
           return;
         }
         toast.success(t("contacts:edit:updated-contact"));
-        await mutate(`/sales/crm/contacts?limit=5&page=1`);
-        await mutate(`/sales/crm/contacts/${id}`);
+        mutate(`/sales/crm/contacts/${id}`);
+        setIsEdit(false);
       }
       setLoading(false);
-      router.back();
     } catch (error) {
       handleApiError(error.message);
       setLoading(false);
@@ -520,31 +522,29 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                     disabled={!isEdit}
                     watch={watch}
                   />
-                  <TextInput
+                  <AddressInput
                     label={t("contacts:create:address")}
                     error={errors.address}
                     register={register}
                     name="address"
                     placeholder={t("contacts:create:placeholder-address")}
                     disabled={!isEdit}
-                    //value={watch('address')}
+                    setValue={setValue}
                   />
                 </Fragment>
               )}
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("contacts:create:responsible")}
                 name="assignedById"
-                options={lists?.users}
                 register={register}
                 disabled={!isEdit}
                 error={errors.assignedById}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("contacts:create:observer")}
                 name="observerId"
-                options={lists?.users}
                 register={register}
                 disabled={!isEdit}
                 error={errors.observerId}

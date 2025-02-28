@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
-import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectUserAsync from "@/src/components/form/MultipleSelectUserAsync";
 import MultipleSelectAgentsAsync from "@/src/components/form/MultipleSelectAgentsAsync";
 import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
 import InputDateV2 from "@/src/components/form/InputDateV2";
@@ -35,6 +35,7 @@ import SelectDropdown from "@/src/components/form/SelectDropdown";
 import SubTaskSelect from "@/src/components/form/SubTaskSelect";
 import useMeetingsContext from "@/src/context/meetings";
 import TextInput from "@/src/components/form/TextInput";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function MeetEditor({ edit, copy, type }) {
   const { data: session } = useSession();
@@ -362,9 +363,8 @@ export default function MeetEditor({ edit, copy, type }) {
                     name="responsible"
                     control={control}
                     render={({ field }) => (
-                      <SelectDropdown
+                      <UserSelectAsync
                         {...field}
-                        options={lists?.users || []}
                         getValues={getValues}
                         setValue={setValue}
                         name="responsible"
@@ -385,9 +385,8 @@ export default function MeetEditor({ edit, copy, type }) {
                     control={control}
                     defaultValue={[]}
                     render={({ field }) => (
-                      <MultipleSelect
+                      <MultipleSelectUserAsync
                         {...field}
-                        options={lists?.users || []}
                         getValues={getValues}
                         setValue={setValue}
                         name="createdBy"

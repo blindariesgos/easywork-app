@@ -26,6 +26,7 @@ import clsx from "clsx";
 import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 const AddPolicy = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -266,7 +267,7 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
       fechaEmision: moment(fechaEmision).format("YYYY-MM-DD"),
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
-    if (specifications && specifications.length > 0) {
+    if (specifications && specifications?.length > 0) {
       body.specifications = specifications;
     }
 
@@ -403,18 +404,16 @@ const AddPolicy = ({ isOpen, setIsOpen }) => {
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectDropdown
+                  <UserSelectAsync
                     label={t("operations:policies:general:responsible")}
                     name="assignedById"
-                    options={lists?.users}
                     register={register}
                     error={!watch("assignedById") && errors.assignedById}
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectInput
+                  <UserSelectAsync
                     label={"Observador"}
-                    options={lists?.users ?? []}
                     name="observerId"
                     error={errors?.observerId}
                     setValue={setValue}

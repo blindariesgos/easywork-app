@@ -1,14 +1,7 @@
 "use client";
 import useAppContext from "@/src/context/app";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { toast } from "react-toastify";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
@@ -20,16 +13,14 @@ import SelectInput from "@/src/components/form/SelectInput";
 import InputDate from "@/src/components/form/InputDate";
 import { FaCalendarDays } from "react-icons/fa6";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
-import { handleApiError } from "@/src/utils/api/errors";
-import { createAgent, updateAgent } from "@/src/lib/apis";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSWRConfig } from "swr";
 import Image from "next/image";
 import { clsx } from "clsx";
 import moment from "moment";
 import { useSession } from "next-auth/react";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function General({ agent, id, refPrint, type, handleAdd }) {
   const { lists } = useAppContext();
@@ -260,7 +251,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
             <div className="grid grid-cols-1 gap-x-6 gap-y-3 pb-[7rem] pt-4">
               <TextInput
                 type="text"
-                label={t("users:form:firstname")}
+                label={t("agentsmanagement:general:firstname")}
                 placeholder={t("contacts:create:placeholder-name")}
                 error={errors.firstName}
                 register={register}
@@ -269,7 +260,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
               />
               <TextInput
                 type="text"
-                label={t("users:form:lastname")}
+                label={t("agentsmanagement:general:lastname")}
                 placeholder={t("contacts:create:placeholder-name")}
                 error={errors.lastName}
                 register={register}
@@ -301,7 +292,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 name="email"
                 disabled={!isEdit}
               />
-              {!isEdit && (
+              {/* {!isEdit && (
                 <TextInput
                   label={t("agentsmanagement:accompaniments:agent:age")}
                   error={errors.age}
@@ -310,7 +301,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                   disabled={true}
                   type="number"
                 />
-              )}
+              )} */}
               <Controller
                 render={({ field: { value, onChange, ref, onBlur } }) => {
                   return (
@@ -331,13 +322,24 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 control={control}
                 defaultValue=""
               />
-              <TextInput
+              {type === "accompaniment" && <Fragment></Fragment>}
+              <SelectInput
                 label={t("contacts:create:position")}
-                placeholder={t("contacts:create:position")}
-                error={errors.bio}
-                register={register}
                 name="bio"
+                options={[
+                  {
+                    id: "Novel",
+                    name: "Novel",
+                  },
+                  {
+                    id: "Consolidado",
+                    name: "Consolidado",
+                  },
+                ]}
+                error={errors.bio}
+                setValue={setValue}
                 disabled={!isEdit}
+                watch={watch}
               />
 
               <TextInput
@@ -349,29 +351,24 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 disabled={!isEdit}
               />
               <TextInput
-                label={t("contacts:create:rfc")}
-                placeholder="XEXX010101000"
-                error={errors?.rfc}
-                register={register}
-                name="rfc"
-                disabled={!isEdit}
-              />
-              <TextInput
-                label={t("contacts:create:cua")}
-                error={errors?.cua}
-                register={register}
-                name="cua"
-                disabled={!isEdit}
-              />
-              <TextInput
                 label={t("contacts:create:address")}
                 error={errors?.address}
                 register={register}
                 name="address"
-                placeholder={t("contacts:create:placeholder-address")}
+                placeholder={"Opcional"}
                 disabled={!isEdit}
                 multiple
                 rows={3}
+              />
+              <SelectInput
+                label={t("contacts:create:origen")}
+                name="sourceId"
+                options={lists?.recruitments?.agentSources ?? []}
+                error={errors.sourceId}
+                register={register}
+                setValue={setValue}
+                disabled={!isEdit}
+                watch={watch}
               />
               {type === "accompaniment" && (
                 <SelectInput
@@ -472,17 +469,6 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     name="recruitmentEntryDate"
                     control={control}
                     defaultValue=""
-                  />
-
-                  <SelectInput
-                    label={t("contacts:create:origen")}
-                    name="sourceId"
-                    options={lists?.recruitments?.agentSources ?? []}
-                    error={errors.sourceId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
                   />
                 </Fragment>
               )}
@@ -611,40 +597,27 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                     control={control}
                     defaultValue=""
                   />
-                  <SelectInput
-                    label={t("contacts:create:origen")}
-                    name="sourceId"
-                    options={lists?.connections?.agentSources ?? []}
-                    error={errors.sourceId}
-                    register={register}
-                    setValue={setValue}
-                    disabled={!isEdit}
-                    watch={watch}
-                  />
                 </Fragment>
               )}
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="developmentManagerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.developmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:responsible")}
                 name="recruitmentManagerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.recruitmentManagerId}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:observer")}
                 name="observerId"
-                options={lists?.users ?? []}
                 disabled={!isEdit}
                 error={errors?.observerId}
                 setValue={setValue}
@@ -653,10 +626,11 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
 
               <TextInput
                 label={t("agentsmanagement:accompaniments:agent:comments")}
-                error={errors.address}
+                error={errors.observations}
                 register={register}
                 name="observations"
                 disabled={!isEdit}
+                placeholder={"Opcional"}
                 multiple
               />
             </div>

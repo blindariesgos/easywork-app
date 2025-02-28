@@ -14,7 +14,7 @@ import useLeadContext from "@/src/context/leads";
 import { useSWRConfig } from "swr";
 import ConnectToPolicy from "./ConnectToPolicy";
 
-const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId }) => {
+const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId, lead }) => {
   const [isOpenUpload, setIsOpenUpload] = useState(false);
   const [isOpenConnect, setIsOpenConnect] = useState(false);
   const { mutate: mutateLeads } = useLeadContext();
@@ -36,6 +36,7 @@ const ManualPolicyUpload = ({ isOpen, setIsOpen, leadId }) => {
         module="lead"
         id={leadId}
         onClosed={handleClosed}
+        defaultValues={lead}
       />
       <ConnectToPolicy
         isOpen={isOpenConnect}

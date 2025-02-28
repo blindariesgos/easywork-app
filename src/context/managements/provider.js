@@ -7,162 +7,74 @@ import { useTranslation } from "react-i18next";
 import { usePolicies } from "../../lib/api/hooks/policies";
 
 export default function ManagementsContextProvider({ children }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
     orderBy: "name",
-    order: "DESC"
-  })
-  const { lists } = useAppContext()
-  const [filters, setFilters] = useState({})
+    order: "DESC",
+  });
+  const { lists } = useAppContext();
+  const [filters, setFilters] = useState({});
   const { data, isLoading, isError, mutate } = usePolicies({
-    config, filters: {
-      ...filters,
-      renewal: "true",
-    }
-  })
-  const [filterFields, setFilterFields] = useState()
+    config,
+    filters,
+  });
+  const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
-  const [displayFilters, setDisplayFilters] = useState({})
+  const [displayFilters, setDisplayFilters] = useState({});
   const defaultFilterFields = [
     {
       id: 0,
-      name: t("control:portafolio:receipt:filters:responsible"),
-      type: "dropdown",
+      name: "Estatus de póliza",
+      type: "select",
       check: true,
-      code: "assignedById",
-      options: lists?.users,
+      code: "status",
+      options: [
+        { id: "activas", name: "Activa" },
+        { id: "anuladas", name: "Anulada" },
+      ],
     },
-    {
-      id: 1,
-      name: t("control:portafolio:receipt:filters:expiration-date"),
-      type: "date",
-      check: true,
-      code: "vigenciaHasta",
-    },
-    {
-      id: 2,
-      name: t("operations:policies:table:policy"),
-      type: "input",
-      check: false,
-      code: "poliza",
-    },
-  ]
+  ];
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
-      [key]: value
-    }
+      [key]: value,
+    };
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy
-          ? "DESC"
-          : config.order === "ASC"
+        order:
+          value != config.orderBy
             ? "DESC"
-            : "ASC"
-      }
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
+      };
     }
 
-    setConfig(newConfig)
-  }
+    setConfig(newConfig);
+  };
 
   useEffect(() => {
     setFilterFields([
       {
         id: 0,
-        name: t("control:portafolio:receipt:filters:responsible"),
-        type: "dropdown",
-        check: true,
-        code: "assignedById",
-        options: lists?.users,
-      },
-      {
-        id: 1,
-        name: t("control:portafolio:receipt:filters:expiration-date"),
-        type: "date",
-        check: true,
-        code: "vigenciaHasta",
-      },
-      {
-        id: 2,
-        name: t("operations:policies:table:policy"),
-        type: "input",
-        check: false,
-        code: "poliza",
-      },
-      {
-        id: 3,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "dropdown",
-        check: false,
-        code: "client",
-        options: lists?.users,
-      },
-      {
-        id: 4,
-        name: t("operations:policies:general:intermediary"),
+        name: "Estatus de póliza",
         type: "select",
-        check: false,
-        code: "agenteIntermediarioId",
-        options: lists?.policies?.agentesIntermediarios,
-      },
-      {
-        id: 5,
-        name: t("operations:policies:table:state"),
-        type: "select",
-        check: false,
+        check: true,
         code: "status",
         options: [
-          {
-            id: "activa",
-            name: "Vigente",
-          },
-          {
-            id: "expirada",
-            name: "No vigente",
-          },
-          {
-            id: "cancelada",
-            name: "Cancelada",
-          },
-          {
-            id: "en_proceso",
-            name: "En trámite",
-          },
+          { id: "activas", name: "Activa" },
+          { id: "anuladas", name: "Anulada" },
         ],
       },
-      {
-        id: 6,
-        name: t("operations:policies:general:type"),
-        type: "select",
-        check: false,
-        code: "typeId",
-        options: lists?.policies?.polizaTypes,
-      },
-      {
-        id: 7,
-        name: t("operations:policies:general:payment-frequency"),
-        type: "select",
-        check: false,
-        code: "frecuenciaCobroId",
-        options: lists?.policies?.polizaFrecuenciasPago,
-      },
-      {
-        id: 8,
-        name: t("operations:policies:general:payment-method"),
-        type: "select",
-        check: false,
-        code: "formaCobroId",
-        options: lists?.policies?.polizaFormasCobro,
-      },
-    ])
-  }, [lists?.listContact, lists?.policies])
+    ]);
+  }, [lists?.listContact, lists?.policies]);
 
   useEffect(() => {
-    handleChangeConfig("page", 1)
-  }, [config.limit])
+    handleChangeConfig("page", 1);
+  }, [config.limit]);
 
   // useEffect(() => {
   //   if (Object.keys(filters).length == 0 && filterFields) {
@@ -176,17 +88,17 @@ export default function ManagementsContextProvider({ children }) {
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
       .filter((key) => key !== filterName)
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {})
+      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
-    setFilters(newFilters)
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName))
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false }
-    })
-    setFilterFields(newFilterFields)
-  }
+    setFilters(newFilters);
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
+    });
+    setFilterFields(newFilterFields);
+  };
 
   const values = useMemo(
     () => ({
@@ -210,7 +122,7 @@ export default function ManagementsContextProvider({ children }) {
       setFilterFields,
       filters,
       setFilters,
-      defaultFilterFields
+      defaultFilterFields,
     }),
     [
       data,
@@ -222,9 +134,13 @@ export default function ManagementsContextProvider({ children }) {
       filterFields,
       filters,
       defaultFilterFields,
-      lists
+      lists,
     ]
   );
 
-  return <ManagementsContext.Provider value={values}>{children}</ManagementsContext.Provider>;
+  return (
+    <ManagementsContext.Provider value={values}>
+      {children}
+    </ManagementsContext.Provider>
+  );
 }

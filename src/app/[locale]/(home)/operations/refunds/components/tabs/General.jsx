@@ -21,6 +21,7 @@ import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import { polizaReimbursementStatus } from "@/src/utils/constants";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
   const { t } = useTranslation();
@@ -252,14 +253,13 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
             disabled={!isEdit}
             register={register}
           />
-
-          <AgentSelectAsync
+          <UserSelectAsync
             label={t("operations:programations:general:responsible")}
             name="assignedById"
             disabled={!isEdit}
-            error={errors.assignedById}
             setValue={setValue}
             watch={watch}
+            error={errors.assignedById}
           />
           <IntermediarySelectAsync
             label={t("operations:programations:general:intermediary")}
@@ -278,11 +278,9 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
             setValue={setValue}
             watch={watch}
           />
-
-          <SelectInput
+          <UserSelectAsync
             label={t("operations:programations:general:observer")}
             name="observerId"
-            options={lists?.users ?? []}
             disabled={!isEdit}
             setValue={setValue}
             watch={watch}

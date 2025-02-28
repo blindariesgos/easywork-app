@@ -33,6 +33,7 @@ import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import { handleFrontError } from "../utils/api/errors";
 import AgentSelectAsync from "./form/AgentSelectAsync";
+import UserSelectAsync from "./form/UserSelectAsync";
 
 const getMetadataUrl = {
   policy: (data, contactId) => getMetadataOfPdf("nueva", data),
@@ -282,6 +283,8 @@ const AddPolicyWithReader = ({
       specifications,
       regenerateReceipts,
       fechaEmision,
+      beneficiaries,
+      insureds,
       ...otherData
     } = data;
     const body = {
@@ -298,7 +301,7 @@ const AddPolicyWithReader = ({
       name: `${lists.policies.polizaCompanies.find((x) => x.id == otherData.companyId).name} ${otherData.poliza} ${lists.policies.polizaTypes.find((x) => x.id == otherData.typeId).name}`,
     };
 
-    if (specifications && specifications.length > 0) {
+    if (specifications && specifications?.length > 0) {
       body.specifications = specifications;
     }
 
@@ -306,6 +309,21 @@ const AddPolicyWithReader = ({
       body.regenerateReceipts = regenerateReceipts == "YES";
     }
 
+    if (
+      insureds &&
+      insureds.length > 0 &&
+      insureds[0]?.insured?.fullName?.length > 0
+    ) {
+      body.insureds = insureds;
+    }
+
+    if (
+      beneficiaries &&
+      beneficiaries.length > 0 &&
+      beneficiaries[0]?.nombre?.length > 0
+    ) {
+      body.beneficiaries = beneficiaries;
+    }
     console.log({ body });
 
     try {
@@ -687,33 +705,42 @@ const AddPolicyWithReader = ({
                     }
                   />
 
-                  {watch("insureds")?.length > 0 && (
-                    <Insureds
-                      register={register}
-                      control={control}
-                      watch={watch}
-                      setValue={setValue}
-                      isAdd
-                    />
+                  {[
+                    "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
+                    "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
+                  ].includes(watch("typeId")) && (
+                    <Fragment>
+                      <Insureds
+                        register={register}
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                        isAdd
+                      />
+                      {watch("typeId") ==
+                        "e1794ba3-892d-4c51-ad62-32dcf836873b" && (
+                        <Fragment>
+                          <Beneficiaries
+                            register={register}
+                            control={control}
+                            watch={watch}
+                            isAdd
+                          />
+                          <TextInput
+                            type="text"
+                            label={t(
+                              "operations:policies:general:specifications"
+                            )}
+                            error={errors.specifications}
+                            register={register}
+                            name="specifications"
+                            multiple
+                            rows={3}
+                          />
+                        </Fragment>
+                      )}
+                    </Fragment>
                   )}
-                  {watch("beneficiaries")?.length > 0 && (
-                    <Beneficiaries
-                      register={register}
-                      control={control}
-                      setValue={setValue}
-                      isAdd
-                      watch={watch}
-                    />
-                  )}
-                  <TextInput
-                    type="text"
-                    label={t("operations:policies:general:specifications")}
-                    error={errors.specifications}
-                    register={register}
-                    name="specifications"
-                    multiple
-                    rows={3}
-                  />
                   <IntermediarySelectAsync
                     label={t("operations:policies:general:intermediary")}
                     name="agenteIntermediarioId"
@@ -722,23 +749,21 @@ const AddPolicyWithReader = ({
                   />
                   <AgentSelectAsync
                     label={t("operations:programations:general:sub-agent")}
-                    name="subAgenteId"
-                    error={errors.subAgenteId}
+                    name="subAgentId"
+                    error={errors.subAgentId}
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectDropdown
+                  <UserSelectAsync
                     label={t("operations:policies:general:responsible")}
                     name="assignedById"
-                    options={lists?.users}
                     register={register}
                     error={!watch("assignedById") && errors.assignedById}
                     setValue={setValue}
                     watch={watch}
                   />
-                  <SelectInput
+                  <UserSelectAsync
                     label={"Observador"}
-                    options={lists?.users ?? []}
                     name="observerId"
                     error={errors?.observerId}
                     setValue={setValue}

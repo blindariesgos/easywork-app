@@ -24,10 +24,9 @@ export default function PoliciesContextProvider({ children }) {
     {
       id: 0,
       name: t("control:portafolio:receipt:filters:responsible"),
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "assignedById",
-      options: lists?.users,
     },
     {
       id: 1,
@@ -69,10 +68,9 @@ export default function PoliciesContextProvider({ children }) {
       {
         id: 0,
         name: t("control:portafolio:receipt:filters:responsible"),
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "assignedById",
-        options: lists?.users,
       },
       {
         id: 1,
@@ -91,10 +89,9 @@ export default function PoliciesContextProvider({ children }) {
       {
         id: 3,
         name: t("control:portafolio:receipt:filters:client"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "client",
-        options: lists?.users,
       },
       {
         id: 4,

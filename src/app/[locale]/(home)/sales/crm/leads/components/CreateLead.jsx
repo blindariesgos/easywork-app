@@ -34,6 +34,7 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { activitySectors } from "@/src/utils/constants";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -184,7 +185,7 @@ export default function CreateLead({ lead, id }) {
     if (lead?.agenteIntermediario)
       setValue("agenteIntermediarioId", lead?.agenteIntermediario?.id);
     if (lead?.observer) setValue("observerId", lead?.observer?.id);
-    if (lead?.subAgente) setValue("subAgenteId", lead?.subAgente?.id);
+    if (lead?.subAgente) setValue("subAgentId", lead?.subAgente?.id);
 
     if (lead?.activitySector) setValue("activitySector", lead?.activitySector);
 
@@ -328,6 +329,7 @@ export default function CreateLead({ lead, id }) {
                   disabled={
                     lead?.cancelled || /Positivo/gi.test(lead?.stage?.name)
                   }
+                  lead={lead}
                 />
               </div>
               <div className="bg-white rounded-md shadow-sm w-full">
@@ -578,20 +580,18 @@ export default function CreateLead({ lead, id }) {
                   disabled={!isEdit}
                   watch={watch}
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t("contacts:create:responsible")}
                   name="assignedById"
-                  options={lists?.users}
                   register={register}
                   disabled={!isEdit}
                   error={errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t("contacts:create:observer")}
                   name="observerId"
-                  options={lists?.users}
                   register={register}
                   disabled={!isEdit}
                   error={errors.observerId}
@@ -600,10 +600,10 @@ export default function CreateLead({ lead, id }) {
                 />
                 <AgentSelectAsync
                   label={t("contacts:create:sub-agent")}
-                  name="subAgenteId"
+                  name="subAgentId"
                   register={register}
                   disabled={!isEdit}
-                  error={errors.subAgenteId}
+                  error={errors.subAgentId}
                   setValue={setValue}
                   watch={watch}
                 />

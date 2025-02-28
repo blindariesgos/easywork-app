@@ -182,6 +182,7 @@ export default function AgentRecruitment({ agent, id }) {
                 agent?.recruitments?.[0]?.agentRecruitmentStage?.id ?? ""
               }
               agentId={id}
+              agent={agent}
             />
           </div>
         )}

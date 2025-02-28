@@ -35,7 +35,10 @@
             "responsible": "Responsable",
             "observers": "Observadores",
             "specifications": "Especificaciones Especiales"
-        }
+        },
+        "canceled-reazon": "Seleccione la razon por la cual esta cancelando la póliza",
+        "canceled-reazon-note": "Nota: una vez cancelada la poliza se cancelaran todos los recibos que no fueron pagados.",
+        "update": "Póliza actualizada correctamente."
     },
     "renovations": {
         "title": "Renovaciones",
@@ -144,7 +147,7 @@
             "importePagar": "Importe a pagar",
             "sub-agent": "Sub-agente",
             "intermediary": "Agente Intermediario",
-            "responsible": "Agente Responsable"
+            "responsible": "Responsable"
         },
         "update": "Reembolso actualizado correctamente."
     },
@@ -187,7 +190,7 @@
             "importePagar": "Importe a pagar",
             "sub-agent": "Sub-agente",
             "intermediary": "Agente Intermediario",
-            "responsible": "Agente Responsable",
+            "responsible": "Responsable",
             "observer": "Observador"
         },
         "update": "Programación actualizada correctamente."

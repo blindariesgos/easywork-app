@@ -10,7 +10,12 @@ import ButtonMore from "../../components/ButtonMore";
 import TabsTask from "../../components/Tabs/TabsTask";
 import moment from "moment";
 import TaskEditor from "../TaskEditor";
-import { initTaskTracking, putTaskCompleted, putTaskId } from "@/src/lib/apis";
+import {
+  initTaskTracking,
+  putTaskCompleted,
+  putTaskId,
+  stopTaskTracking,
+} from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { useTasksConfigs } from "@/src/hooks/useCommon";
@@ -33,6 +38,7 @@ import CrmItems from "../../../../../../../../components/CrmItems";
 import { useSession } from "next-auth/react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import useTasksContext from "@/src/context/tasks";
+import Timer from "@/src/components/Timer";
 
 export default function TaskView({ id, task }) {
   const { lists } = useAppContext();
@@ -140,6 +146,19 @@ export default function TaskView({ id, task }) {
       return;
     }
     toast.success("Seguimiento de Tarea Iniciado");
+    mutate(`/tools/tasks/${task?.id}`);
+    setLoading(false);
+  };
+
+  const handleStopTracking = async () => {
+    setLoading(true);
+    const response = await stopTaskTracking(task?.id);
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+    toast.success("Seguimiento de Tarea pausado");
     mutate(`/tools/tasks/${task?.id}`);
     setLoading(false);
   };
@@ -327,7 +346,6 @@ export default function TaskView({ id, task }) {
                 )}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
-                    {/* TODO: Boton para dar inicio a la logica de cronometrar tarea */}
                     {!task.isCompleted &&
                       task.timeTrackingEnabled &&
                       !task.currentTrackingStartTime && (
@@ -347,7 +365,7 @@ export default function TaskView({ id, task }) {
                           buttonStyle="green"
                           className="px-3 py-2"
                           fontSize="text-xs"
-                          onclick={handleInitTracking}
+                          onclick={handleStopTracking}
                         />
                       )}
                     {!task.isCompleted && (
@@ -374,6 +392,12 @@ export default function TaskView({ id, task }) {
                         setIsDelegating={setIsDelegating}
                         responsibleId={task?.responsible[0]?.id}
                         taskId={task?.id}
+                      />
+                    )}
+                    {task.currentTrackingStartTime && (
+                      <Timer
+                        date={task.currentTrackingStartTime}
+                        timeSpent={(task?.totalTimeSpent ?? 0) * 1000}
                       />
                     )}
                     {/* <div className="flex gap-2 items-center">

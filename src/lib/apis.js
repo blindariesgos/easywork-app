@@ -560,6 +560,12 @@ export const initTaskTracking = async (taskId) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+export const stopTaskTracking = async (taskId) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/stop`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 export const toggleTaskTracking = async (taskId, body) => {
   const response = await axios()
     .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/toggle`, body)

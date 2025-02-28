@@ -1016,6 +1016,7 @@ const buildTaskBody = (
     crm,
     important: !!data?.important,
     metadata: data.metadata,
+    timeTrackingEnabled: !!data?.timeTrackingEnabled,
   };
 
   if (data.createdBy?.length) {

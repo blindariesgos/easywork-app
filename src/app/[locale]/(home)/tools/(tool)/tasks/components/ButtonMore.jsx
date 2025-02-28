@@ -90,7 +90,7 @@ export default function ButtonMore({
         : "Activar seguimiento",
       icon: TfiTimer,
       onclick: handleTracking,
-      hidden: !isCreator,
+      hidden: !isCreator || !!data?.currentTrackingStartTime,
     },
   ]);
 

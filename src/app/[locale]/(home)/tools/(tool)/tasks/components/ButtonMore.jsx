@@ -15,26 +15,46 @@ import {
 import { DocumentDuplicateIcon, PencilIcon } from "@heroicons/react/24/outline";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { putTaskRestart, convertToSubtaskOf } from "@/src/lib/apis";
+import {
+  putTaskRestart,
+  convertToSubtaskOf,
+  toggleTaskTracking,
+} from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import { handleApiError } from "@/src/utils/api/errors";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { TbExchange } from "react-icons/tb";
 import SelectTasks from "@/src/components/modals/SelectTask";
 import useTasksContext from "@/src/context/tasks";
 import { useSWRConfig } from "swr";
+import { TfiTimer } from "react-icons/tfi";
 
 export default function ButtonMore({
   setOpenEdit,
   data,
   setIsDelegating,
   canEdit,
+  isCreator,
 }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const { mutate: mutateTasks } = useTasksContext();
   const [isOpenParentTaskModal, setIsOpenParentTaskModal] = useState(false);
   const { mutate } = useSWRConfig();
+
+  const handleTracking = async () => {
+    setLoading(true);
+    const response = await toggleTaskTracking(data?.id, {
+      enabled: !!data?.timeTrackingEnabled,
+    });
+
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+  };
+
   const [options, setOptions] = useState([
     {
       id: 1,
@@ -50,18 +70,27 @@ export default function ButtonMore({
       // hidden: !!data.parentTask,
     },
     {
-      id: 4,
+      id: 3,
       name: t("tools:tasks:edit:to-subtask"),
       icon: TbExchange,
       onclick: () => setIsOpenParentTaskModal(true),
       hidden: !!data.parentTask || data?.subTasks?.length > 0,
     },
     {
-      id: 3,
+      id: 4,
       name: t("tools:tasks:edit:delegate"),
       icon: UserPlusIcon,
       onclick: () => setIsDelegating(true),
       hidden: !canEdit,
+    },
+    {
+      id: 5,
+      name: !!data?.timeTrackingEnabled
+        ? "Desactivar seguimiento"
+        : "Activar seguimiento",
+      icon: TfiTimer,
+      onclick: handleTracking,
+      hidden: !isCreator,
     },
   ]);
 

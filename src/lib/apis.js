@@ -553,6 +553,21 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
 };
 //#endregion
 
+//#region TIME TRACKING TASKS
+export const initTaskTracking = async (taskId) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/start`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const toggleTaskTracking = async (taskId, body) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/toggle`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+//#endregion
+
 //#region RECRUITMENT
 export const getAllRecruitments = async ({
   filters = {},

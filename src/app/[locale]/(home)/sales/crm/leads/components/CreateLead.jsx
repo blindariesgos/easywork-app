@@ -35,6 +35,7 @@ import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { activitySectors } from "@/src/utils/constants";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import AddressInput from "@/src/components/form/AddressInput";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -551,14 +552,16 @@ export default function CreateLead({ lead, id }) {
                     />
                   </Fragment>
                 )}
-                <TextInput
+                <AddressInput
                   label={t("leads:lead:fields:address")}
                   error={errors.address}
                   register={register}
                   name="address"
                   placeholder={t("leads:lead:fields:placeholder-address")}
                   disabled={!isEdit}
-                  // value={watch('address')}
+                  setValue={setValue}
+                  multiple
+                  rows={2}
                 />
                 <SelectInput
                   label={t("leads:lead:fields:origin")}

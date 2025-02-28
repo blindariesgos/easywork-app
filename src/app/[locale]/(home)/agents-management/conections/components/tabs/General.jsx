@@ -24,6 +24,7 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import moment from "moment";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import AddressInput from "@/src/components/form/AddressInput";
 
 export default function General({ agent, id, refPrint }) {
   const { lists } = useAppContext();
@@ -355,7 +356,7 @@ export default function General({ agent, id, refPrint }) {
                 name="cua"
                 disabled={!isEdit}
               />
-              <TextInput
+              <AddressInput
                 label={t("contacts:create:address")}
                 error={errors?.address}
                 register={register}
@@ -364,6 +365,7 @@ export default function General({ agent, id, refPrint }) {
                 disabled={!isEdit}
                 multiple
                 rows={3}
+                setValue={setValue}
               />
               <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:responsible")}

@@ -21,6 +21,7 @@ import { clsx } from "clsx";
 import moment from "moment";
 import { useSession } from "next-auth/react";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import AddressInput from "@/src/components/form/AddressInput";
 
 export default function General({ agent, id, refPrint, type, handleAdd }) {
   const { lists } = useAppContext();
@@ -350,7 +351,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 type="number"
                 disabled={!isEdit}
               />
-              <TextInput
+              <AddressInput
                 label={t("contacts:create:address")}
                 error={errors?.address}
                 register={register}
@@ -359,6 +360,7 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 disabled={!isEdit}
                 multiple
                 rows={3}
+                setValue={setValue}
               />
               <SelectInput
                 label={t("contacts:create:origen")}

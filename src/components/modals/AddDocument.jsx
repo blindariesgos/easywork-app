@@ -14,6 +14,7 @@ import {
   addAgentDocument,
   addContactDocument,
   addLeadPolicy,
+  addPolicyDocument,
   addReceiptDocument,
   addReimbursementDocument,
   addScheduleDocument,
@@ -64,6 +65,7 @@ const AddDocumentDialog = ({
     reimbursement: (data) => addReimbursementDocument(id, data),
     schedule: (data) => addScheduleDocument(id, data),
     agent: (data) => addAgentDocument(id, documentType, data),
+    policy: (data) => addPolicyDocument(id, documentType, data),
   };
 
   const handleFormSubmit = async () => {

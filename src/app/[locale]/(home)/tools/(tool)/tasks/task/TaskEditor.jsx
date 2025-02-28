@@ -868,8 +868,10 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     <div className="w-full md:w-[40%]">
                       <InputCheckBox
                         label={t("tools:tasks:new:time-task")}
-                        setChecked={setCheckedTask}
-                        checked={checkedTask}
+                        setChecked={(checked) =>
+                          setValue("timeTrackingEnabled", checked)
+                        }
+                        checked={!!watch("timeTrackingEnabled")}
                       />
                     </div>
                   </div>
@@ -1014,6 +1016,7 @@ const buildTaskBody = (
     crm,
     important: !!data?.important,
     metadata: data.metadata,
+    timeTrackingEnabled: !!data?.timeTrackingEnabled,
   };
 
   if (data.createdBy?.length) {

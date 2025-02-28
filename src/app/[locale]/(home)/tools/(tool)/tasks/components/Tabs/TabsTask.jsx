@@ -8,6 +8,8 @@ import TabTableTime from "./TabTableTime";
 import TabTableObjections from "./TabTableObjections";
 import { useTaskComments } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
+import { calculateElapsedTime } from "@/src/components/Timer";
+import moment from "moment";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -20,6 +22,10 @@ export default function TabsTask({ data }) {
   let [categories, setCategories] = useState(null);
 
   useEffect(() => {
+    const timer = calculateElapsedTime(
+      data?.totalTimeSpent ? data?.totalTimeSpent * 1000 : 0,
+      moment().format()
+    );
     setCategories({
       comments: {
         name: t("tools:tasks:edit:comments"),
@@ -71,7 +77,7 @@ export default function TabsTask({ data }) {
       },
       time: {
         name: t("tools:tasks:edit:time"),
-        qty: "00:00:00",
+        qty: `${timer.hours}:${timer.minutes}:${timer.seconds}`,
         pings: 9,
         component: TabTableTime,
         data: [

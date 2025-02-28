@@ -669,6 +669,18 @@ export const getAddressByPostalCode = async (postalCode) => {
 };
 //#endregion
 
+//#region POSTAL CODE
+
+export const getAddressByPostalCode = async (postalCode) => {
+  const response = await axios({
+    baseURL: process.env.NEXT_PUBLIC_API_THIRDPARTY,
+  })
+    .get(`/copomex/addresses?postalCode=${postalCode}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
 export const login = async (formdata) => {
   return await signIn("credentials", formdata);
 };

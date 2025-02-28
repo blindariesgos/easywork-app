@@ -1,12 +1,10 @@
 'use client';
-import { Fragment, useState, useEffect } from 'react';
+
+import { Fragment, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { useTranslation } from 'react-i18next';
-import { Dialog, DialogPanel, Transition, TransitionChild, Switch, Select } from '@headlessui/react';
+import { Dialog, DialogPanel, Transition, TransitionChild, Select } from '@headlessui/react';
 import { PaperClipIcon, EnvelopeIcon } from '@heroicons/react/20/solid';
 import { VscLink } from 'react-icons/vsc';
-import * as yup from 'yup';
 
 // Components
 import { EnableFastRegistration } from './user-invitations/EnableFastRegistration';
@@ -46,83 +44,74 @@ const InvitationMethods = {
 };
 
 export default function InviteUser({ previousModalPadding, colorTag }) {
-  const [invite, setInvite] = useState(1);
-  const { t } = useTranslation();
-  const session = useSession();
-  const [enabled, setEnabled] = useState(false);
+  // Hooks
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  const schema = yup.object().shape({
-    responsible: yup.string(),
-  });
+  // States
+  const [invitationOption, setInvitationOption] = useState('');
 
-  useEffect(() => {}, [params.get('inviteuser')]);
+  // Definitions
+  const isInviteUserDialogOpen = JSON.parse(params.get('inviteuser'));
 
-  const SelectedMethod = InvitationMethods[invite];
+  const SelectedMethod = InvitationMethods[invitationOption];
+
+  const closeDrawer = () => {
+    router.back();
+  };
 
   return (
-    <Transition show={params.get('inviteuser')} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => {}}>
-        <div className="fixed inset-0" />
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 2xl:pl-52">
-              <TransitionChild
-                as={Fragment}
-                enter="transform transition ease-in-out duration-500 sm:duration-700"
-                enterFrom="translate-x-full"
-                enterTo="translate-x-0"
-                leave="transform transition ease-in-out duration-500 sm:duration-700"
-                leaveFrom="translate-x-0"
-                leaveTo="translate-x-full"
-              >
-                <DialogPanel className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}>
-                  <div className="flex justify-end h-screen">
-                    <div className={`flex flex-col`}>
-                      <Tag
-                        onclick={() => {
-                          router.back();
-                        }}
-                        className={colorTag}
-                      />
-                    </div>
+    <Transition show={isInviteUserDialogOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50 bg-red-400" onClose={closeDrawer}>
+        <div className="bg-gray-900 bg-opacity-60 fixed inset-0 z-40 overflow-y-auto">
+          <TransitionChild
+            as={Fragment}
+            enter="transform transition ease-in-out duration-500 sm:duration-700"
+            enterFrom="translate-x-full"
+            enterTo="translate-x-0"
+            leave="transform transition ease-in-out duration-500 sm:duration-700"
+            leaveFrom="translate-x-0"
+            leaveTo="translate-x-full"
+          >
+            <DialogPanel className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}>
+              <div className="flex justify-end h-screen max-w-full pl-0 2xl:pl-52">
+                <div className={`flex flex-col`}>
+                  <Tag onclick={closeDrawer} className={colorTag} />
+                </div>
 
-                    <div className="h-screen rounded-tl-lg rounded-bl-lg bg-gray-300 p-6 max-md:w-full w-1/2">
-                      <h1 className="text-xl">Invitar usuario</h1>
+                <div className="h-screen rounded-tl-lg rounded-bl-lg bg-gray-300 p-6 xs:w-full sm:w-full md:w-1/2 lg:w-[600px]">
+                  <h1 className="text-xl">Invitar usuario</h1>
 
-                      <Select
-                        className="bg-easywork-main hover:bg-easywork-mainhover text-white rounded-md w-full text-sm mt-5 mb-2"
-                        onChange={e => setInvite(e.target.value)} // Maneja el evento onChange
-                        value={invite} // Asigna el valor actual del estado
-                      >
-                        <option value="">Selecciona una opción</option>
-                        <option value="1">Mediante enlace</option>
-                        <option value="2">Mediante correo electrónico o número de teléfono</option>
-                        <option value="3">Masiva</option>
-                        <option value="4">Usuario de otra compañía</option>
-                      </Select>
+                  <Select
+                    className="bg-easywork-main hover:bg-easywork-mainhover text-white rounded-md w-full text-sm mt-5 mb-2"
+                    onChange={e => setInvitationOption(e.target.value)}
+                    value={invitationOption}
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="1">Enlace</option>
+                    <option value="2">Correo electrónico o número de teléfono</option>
+                    <option value="3">Invitación masiva</option>
+                    <option value="4">Usuario de otra compañía</option>
+                  </Select>
 
-                      <div className="bg-white rounded-lg p-5">
-                        {!SelectedMethod && <p>Debe seleccionar un método</p>}
+                  <div className="bg-white rounded-lg p-5">
+                    {!SelectedMethod && <p>Debe seleccionar un método</p>}
 
-                        {SelectedMethod && (
-                          <>
-                            <InvitationMethodTitle title={SelectedMethod.title} icon={SelectedMethod.icon} rightAction={SelectedMethod.headerAction} />
+                    {SelectedMethod && (
+                      <>
+                        <InvitationMethodTitle title={SelectedMethod.title} icon={SelectedMethod.icon} rightAction={SelectedMethod.headerAction} />
 
-                            <div className="mt-5">{SelectedMethod.component}</div>
-                          </>
-                        )}
-                      </div>
-
-                      <InvitationFooter />
-                    </div>
+                        <div className="mt-5">{SelectedMethod.component}</div>
+                      </>
+                    )}
                   </div>
-                </DialogPanel>
-              </TransitionChild>
-            </div>
-          </div>
+
+                  {invitationOption && <InvitationFooter />}
+                </div>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
         </div>
       </Dialog>
     </Transition>

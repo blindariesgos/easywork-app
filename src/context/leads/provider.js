@@ -66,10 +66,9 @@ export default function LeadsContextProvider({ children }) {
     {
       id: 5,
       name: t("contacts:filters:responsible"),
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "assignedById",
-      options: lists?.users,
     },
   ];
   useEffect(() => {
@@ -119,10 +118,9 @@ export default function LeadsContextProvider({ children }) {
       {
         id: 5,
         name: t("contacts:filters:responsible"),
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "assignedById",
-        options: lists?.users,
       },
       {
         id: 6,

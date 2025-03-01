@@ -173,6 +173,12 @@ export const closeLeadManualSale = async (leadId, body) => {
   return response;
 };
 
+export const addLeadDocument = async (leadId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/leads/upload/${leadId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region CONTACTS
@@ -281,6 +287,48 @@ export const addManualPolicy = async (body, category) => {
 export const uploadTemporalFile = async (body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/operations/management/upload/temp`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const addPolicyDocument = async (policyId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/sales/crm/polizas/${policyId}/upload?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getPolizaByContact = async (id) => {
+  const response = await axios().get(`/sales/crm/polizas/contact/${id}`);
+  return response;
+};
+
+export const putPoliza = async (policyId, body) => {
+  const response = await axios()
+    .put(`/sales/crm/polizas/${policyId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+
+  revalidatePath(`/operations/policies/policy/${policyId}`, "page");
+
+  return response;
+};
+
+export const cancelPolicy = async (polizaId, body) => {
+  const response = await axios()
+    .put(`/sales/crm/polizas/${polizaId}/cancel`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
+//#region MANAGEMENTS
+export const getManagementReport = async ({ filters = {} }) => {
+  const queries = getQueries(filters);
+
+  const url = `/operations/management${queries.length > 0 ? `?${queries}` : ""}`;
+  const response = await axios()
+    .get(url)
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
@@ -429,6 +477,16 @@ export const getReceiptKanbanByStateId = async (params) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const addReceiptDocument = async (receiptId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(
+      `/sales/crm/polizas/receipts/upload/${receiptId}?category=${category}`,
+      body
+    )
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region ADD LISTS
@@ -491,6 +549,27 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
     })
     .catch((error) => ({ ...error, hasError: true }));
   console.log(response);
+  return response;
+};
+//#endregion
+
+//#region TIME TRACKING TASKS
+export const initTaskTracking = async (taskId) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/start`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const stopTaskTracking = async (taskId) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/stop`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const toggleTaskTracking = async (taskId, body) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/toggle`, body)
+    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 //#endregion
@@ -560,6 +639,34 @@ export const createCategory = async (data) => {
   return response;
 };
 
+//#endregion
+
+//#region USERS
+export const getRelatedUsers = async () => {
+  const response = await axios()
+    .get("/users/related_users")
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getUserActivities = async (userId) => {
+  const response = await axios()
+    .get(`/users/activity/${userId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
+//#region POSTAL CODE
+
+export const getAddressByPostalCode = async (postalCode) => {
+  const response = await axios({
+    baseURL: process.env.NEXT_PUBLIC_API_THIRDPARTY,
+  })
+    .get(`/copomex/addresses?postalCode=${postalCode}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 export const login = async (formdata) => {
@@ -643,13 +750,6 @@ export const updateAgentConnection = async (data, agentId) => {
 
 export const getUsersContacts = async () => {
   const response = await axios().get(`/sales/crm/contacts/users`);
-  return response;
-};
-
-export const getRelatedUsers = async () => {
-  const response = await axios()
-    .get("/users/related_users")
-    .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -876,21 +976,6 @@ export const deleteTags = async (id) => {
   return response;
 };
 
-export const getPolizaByContact = async (id) => {
-  const response = await axios().get(`/sales/crm/polizas/contact/${id}`);
-  return response;
-};
-
-export const putPoliza = async (policyId, body) => {
-  const response = await axios()
-    .put(`/sales/crm/polizas/${policyId}`, body)
-    .catch((error) => ({ hasError: true, ...error }));
-
-  revalidatePath(`/operations/policies/policy/${policyId}?show=true`, "page");
-
-  return response;
-};
-
 export const putSchedule = async (scheduleId, body) => {
   const response = await axios()
     .put(`/operations/schedulings/${scheduleId}`, body)
@@ -1100,23 +1185,6 @@ export const getContactsNeedAttention = async () => {
 export const getPoliciesNeedAttention = async () => {
   const response = await axios().get(`/tools/tasks/home/lists/polizas`);
   console.log(response);
-  return response;
-};
-
-export const addReceiptDocument = async (receiptId, category, body) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(
-      `/sales/crm/polizas/receipts/upload/${receiptId}?category=${category}`,
-      body
-    )
-    .catch((error) => ({ ...error, hasError: true }));
-  return response;
-};
-
-export const addLeadDocument = async (leadId, category, body) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/sales/crm/leads/upload/${leadId}?category=${category}`, body)
-    .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
 

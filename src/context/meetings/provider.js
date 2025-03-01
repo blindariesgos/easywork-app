@@ -30,10 +30,9 @@ export default function MeetingsContextProvider({ children, type }) {
     {
       id: 0,
       name: "Agente",
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "assignedById",
-      options: lists?.users,
     },
     {
       id: 9,
@@ -52,10 +51,9 @@ export default function MeetingsContextProvider({ children, type }) {
     {
       id: 3,
       name: "Responsable",
-      type: "dropdown",
+      type: "select-user",
       check: false,
       code: "responsibleId",
-      options: lists?.users,
     },
   ];
   const handleChangeConfig = (key, value) => {
@@ -83,10 +81,9 @@ export default function MeetingsContextProvider({ children, type }) {
       {
         id: 0,
         name: "Agente",
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "assignedById",
-        options: lists?.users,
       },
       {
         id: 1,
@@ -105,10 +102,9 @@ export default function MeetingsContextProvider({ children, type }) {
       {
         id: 3,
         name: "Responsable",
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "responsibleId",
-        options: lists?.users,
       },
       {
         id: 4,

@@ -34,6 +34,7 @@ import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsy
 import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import AgentSelectAsync from "./form/AgentSelectAsync";
+import UserSelectAsync from "./form/UserSelectAsync";
 
 const endpointsByModule = {
   gestion: (body, documentType, id) => addManualPolicy(body, documentType),
@@ -602,6 +603,23 @@ const AddPolicyManual = ({
                   defaultValue=""
                 />
                 <SelectInput
+                  label={t("operations:policies:general:coverage")}
+                  options={[
+                    {
+                      id: "Nacional",
+                      name: "Nacional",
+                    },
+                    {
+                      id: "Internacional",
+                      name: "Internacional",
+                    },
+                  ]}
+                  name="cobertura"
+                  register={register}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <SelectInput
                   label={t("operations:policies:general:payment-frequency")}
                   name="frecuenciaCobroId"
                   options={lists?.policies?.polizaFrecuenciasPago ?? []}
@@ -745,17 +763,15 @@ const AddPolicyManual = ({
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t("operations:policies:general:responsible")}
                   name="assignedById"
-                  options={lists?.users}
                   error={errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectInput
+                <UserSelectAsync
                   label={"Observador"}
-                  options={lists?.users ?? []}
                   name="observerId"
                   error={errors?.observerId}
                   setValue={setValue}

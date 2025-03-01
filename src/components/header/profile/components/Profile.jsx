@@ -277,8 +277,6 @@ export function Profile({ status, statusList }) {
             register={register}
             name="cua"
             disabled={!isEdit}
-            //value={watch('cua')}
-            // placeholder={t('contacts:create:placeholder-address')}
           />
         </div>
         {groups?.map((group, index) => (

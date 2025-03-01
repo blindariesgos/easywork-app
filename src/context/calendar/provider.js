@@ -13,7 +13,7 @@ export default function CalendarContextProvider({ children }) {
     page: 1,
     limit: 20,
     orderBy: "name",
-    order: "DESC"
+    order: "DESC",
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
@@ -27,10 +27,9 @@ export default function CalendarContextProvider({ children }) {
     {
       id: 0,
       name: t("control:portafolio:receipt:filters:responsible"),
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "responsible",
-      options: lists?.users,
     },
     {
       id: 1,
@@ -44,16 +43,17 @@ export default function CalendarContextProvider({ children }) {
   const handleChangeConfig = (key, value) => {
     let newConfig = {
       ...config,
-      [key]: value
+      [key]: value,
     };
     if (value === config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value !== config.orderBy
-          ? "DESC"
-          : config.order === "ASC"
+        order:
+          value !== config.orderBy
             ? "DESC"
-            : "ASC"
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
       };
     }
     setConfig(newConfig);
@@ -70,8 +70,9 @@ export default function CalendarContextProvider({ children }) {
           start: event.startTime,
           end: event.endTime,
           color: event.color,
-          id: event.id
-        }))) ?? []
+          id: event.id,
+        }))) ??
+        []
     );
   }, [data]);
 
@@ -80,10 +81,9 @@ export default function CalendarContextProvider({ children }) {
       {
         id: 0,
         name: t("control:portafolio:receipt:filters:responsible"),
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "responsible",
-        options: lists?.users,
       },
       {
         id: 1,
@@ -95,10 +95,9 @@ export default function CalendarContextProvider({ children }) {
       {
         id: 2,
         name: t("control:portafolio:receipt:filters:client"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "client",
-        options: lists?.users,
       },
       {
         id: 3,
@@ -120,11 +119,11 @@ export default function CalendarContextProvider({ children }) {
       .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
     setFilters(newFilters);
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName));
-    const newFilterFields = filterFields.map(field => {
-      return filterName !== field.code
-        ? field
-        : { ...field, check: false };
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
+      return filterName !== field.code ? field : { ...field, check: false };
     });
     setFilterFields(newFilterFields);
   };
@@ -152,7 +151,7 @@ export default function CalendarContextProvider({ children }) {
       filters,
       setFilters,
       defaultFilterFields,
-      events
+      events,
     }),
     [
       data,
@@ -164,7 +163,7 @@ export default function CalendarContextProvider({ children }) {
       filterFields,
       filters,
       defaultFilterFields,
-      events
+      events,
     ]
   );
 

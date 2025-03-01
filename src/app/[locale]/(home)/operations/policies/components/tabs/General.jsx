@@ -10,7 +10,6 @@ import clsx from "clsx";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
 import InputDate from "@/src/components/form/InputDate";
 import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
@@ -18,7 +17,7 @@ import { putPoliza } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
-import MultipleSelect from "@/src/components/form/MultipleSelect";
+import MultipleSelectUserAsync from "@/src/components/form/MultipleSelectUserAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import moment from "moment";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
@@ -26,6 +25,7 @@ import Insureds from "@/src/components/policyAdds/Insureds";
 import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Vehicles from "@/src/components/policyAdds/Vehicles";
 import { handleFrontError } from "@/src/utils/api/errors";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 
 export default function PolicyDetails({
   data,
@@ -162,7 +162,7 @@ export default function PolicyDetails({
       }
     }
     if (data?.type?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
-      if (data?.vehicles) {
+      if (data?.vehicles && data?.vehicles?.length > 0) {
         setValue("vehicles", data?.vehicles);
       } else {
         setValue("vehicles", [
@@ -248,11 +248,6 @@ export default function PolicyDetails({
 
   const handleCancelEdit = () => {
     setIsEdit(false);
-
-    if (params.get("editPolicy")) {
-      params.delete("editPolicy");
-      router.replace(`${pathname}?${params.toString()}`);
-    }
   };
 
   return (
@@ -325,7 +320,7 @@ export default function PolicyDetails({
               watch={watch}
             />
           )}
-          <SelectInput
+          {/* <SelectInput
             label={t("control:portafolio:receipt:details:form:status")}
             options={[
               {
@@ -350,7 +345,7 @@ export default function PolicyDetails({
             setValue={setValue}
             disabled={!isEdit}
             watch={watch}
-          />
+          /> */}
           <TextInput
             type="text"
             label={t("operations:policies:general:rfc")}
@@ -526,19 +521,17 @@ export default function PolicyDetails({
             watch={watch}
             disabled={!isEdit}
           />
-          <SelectDropdown
+          <UserSelectAsync
             label={t("operations:policies:general:responsible")}
             name="assignedById"
-            options={lists?.users}
             register={register}
             disabled={!isEdit}
-            error={!watch("assignedById") && errors.assignedById}
+            error={errors.assignedById}
             setValue={setValue}
             watch={watch}
           />
-          <MultipleSelect
+          <MultipleSelectUserAsync
             label={t("operations:policies:general:observers")}
-            options={lists?.users || []}
             getValues={getValues}
             setValue={setValue}
             name="observers"

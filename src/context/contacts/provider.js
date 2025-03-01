@@ -24,10 +24,9 @@ export default function ContactsContextProvider({ children }) {
     {
       id: 1,
       name: t("contacts:filters:responsible"),
-      type: "dropdown",
+      type: "select-user",
       check: true,
       code: "responsibleId",
-      options: lists?.users,
     },
     {
       id: 2,
@@ -43,10 +42,9 @@ export default function ContactsContextProvider({ children }) {
       {
         id: 1,
         name: t("contacts:filters:responsible"),
-        type: "dropdown",
+        type: "select-user",
         check: true,
         code: "responsibleId",
-        options: lists?.users,
       },
       {
         id: 2,
@@ -66,10 +64,9 @@ export default function ContactsContextProvider({ children }) {
       {
         id: 4,
         name: t("contacts:filters:created-by"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "createdbyId",
-        options: lists?.users,
       },
       {
         id: 5,
@@ -110,10 +107,9 @@ export default function ContactsContextProvider({ children }) {
       {
         id: 10,
         name: t("contacts:filters:observer"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "observerId",
-        options: lists?.users,
       },
     ]);
   }, [lists?.listContact]);

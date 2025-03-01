@@ -30,6 +30,8 @@ import { clsx } from "clsx";
 import { VALIDATE_EMAIL_REGEX } from "@/src/utils/regularExp";
 import { activitySectors } from "@/src/utils/constants";
 import RelatedCustomer from "./RelatedCustomer";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import AddressInput from "@/src/components/form/AddressInput";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -520,31 +522,29 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                     disabled={!isEdit}
                     watch={watch}
                   />
-                  <TextInput
+                  <AddressInput
                     label={t("contacts:create:address")}
                     error={errors.address}
                     register={register}
                     name="address"
                     placeholder={t("contacts:create:placeholder-address")}
                     disabled={!isEdit}
-                    //value={watch('address')}
+                    setValue={setValue}
                   />
                 </Fragment>
               )}
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("contacts:create:responsible")}
                 name="assignedById"
-                options={lists?.users}
                 register={register}
                 disabled={!isEdit}
                 error={errors.assignedById}
                 setValue={setValue}
                 watch={watch}
               />
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("contacts:create:observer")}
                 name="observerId"
-                options={lists?.users}
                 register={register}
                 disabled={!isEdit}
                 error={errors.observerId}

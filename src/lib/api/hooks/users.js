@@ -75,3 +75,18 @@ export const useUser = (id) => {
     mutate,
   };
 };
+
+export const useUserActivities = ({ config = {}, filters = {}, userId }) => {
+  const queries = getQueries(filters);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/users/activity/${userId}?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
+  return {
+    data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+};

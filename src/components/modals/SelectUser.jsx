@@ -12,6 +12,7 @@ import {
 import SelectDropdown from "../form/SelectDropdown";
 import { useTranslation } from "react-i18next";
 import useAppContext from "@/src/context/app";
+import UserSelectAsync from "../form/UserSelectAsync";
 
 export default function SelectUserModal({
   isOpen,
@@ -53,10 +54,9 @@ export default function SelectUserModal({
               {title}
             </DialogTitle>
             <div className="p-4">
-              <SelectDropdown
+              <UserSelectAsync
                 label={t("agentsmanagement:accompaniments:agent:manager")}
                 name="developmentManager"
-                options={lists?.users ?? []}
                 error={errors?.developmentManager}
                 setValue={setValue}
                 watch={watch}

@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { CapacitationsContext } from '..';
-import useAppContext from '../app';
-import { useTranslation } from 'react-i18next';
-import { useCapacitations } from '../../lib/api/hooks/capacitations';
+import React, { useEffect, useMemo, useState } from "react";
+import { CapacitationsContext } from "..";
+import useAppContext from "../app";
+import { useTranslation } from "react-i18next";
+import { useCapacitations } from "../../lib/api/hooks/capacitations";
 
 export default function CapacitationsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
-    orderBy: 'name',
-    order: 'DESC',
+    orderBy: "name",
+    order: "DESC",
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
@@ -30,25 +30,24 @@ export default function CapacitationsContextProvider({ children }) {
   const defaultFilterFields = [
     {
       id: 0,
-      name: t('control:portafolio:receipt:filters:responsible'),
-      type: 'dropdown',
+      name: t("control:portafolio:receipt:filters:responsible"),
+      type: "select-user",
       check: true,
-      code: 'assignedById',
-      options: lists?.users,
+      code: "assignedById",
     },
     {
       id: 1,
-      name: t('control:portafolio:receipt:filters:expiration-date'),
-      type: 'date',
+      name: t("control:portafolio:receipt:filters:expiration-date"),
+      type: "date",
       check: true,
-      code: 'vigenciaHasta',
+      code: "vigenciaHasta",
     },
     {
       id: 2,
-      name: t('operations:policies:table:policy'),
-      type: 'input',
+      name: t("operations:policies:table:policy"),
+      type: "input",
       check: false,
-      code: 'poliza',
+      code: "poliza",
     },
   ];
 
@@ -60,7 +59,12 @@ export default function CapacitationsContextProvider({ children }) {
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy ? 'DESC' : config.order === 'ASC' ? 'DESC' : 'ASC',
+        order:
+          value != config.orderBy
+            ? "DESC"
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
       };
     }
 
@@ -71,89 +75,87 @@ export default function CapacitationsContextProvider({ children }) {
     setFilterFields([
       {
         id: 0,
-        name: t('control:portafolio:receipt:filters:responsible'),
-        type: 'dropdown',
+        name: t("control:portafolio:receipt:filters:responsible"),
+        type: "select-user",
         check: true,
-        code: 'assignedById',
-        options: lists?.users,
+        code: "assignedById",
       },
       {
         id: 1,
-        name: t('control:portafolio:receipt:filters:expiration-date'),
-        type: 'date',
+        name: t("control:portafolio:receipt:filters:expiration-date"),
+        type: "date",
         check: true,
-        code: 'vigenciaHasta',
+        code: "vigenciaHasta",
       },
       {
         id: 2,
-        name: t('operations:policies:table:policy'),
-        type: 'input',
+        name: t("operations:policies:table:policy"),
+        type: "input",
         check: false,
-        code: 'poliza',
+        code: "poliza",
       },
       {
         id: 3,
-        name: t('control:portafolio:receipt:filters:client'),
-        type: 'dropdown',
+        name: t("control:portafolio:receipt:filters:client"),
+        type: "select-user",
         check: false,
-        code: 'client',
-        options: lists?.users,
+        code: "client",
       },
       {
         id: 4,
-        name: t('operations:policies:general:intermediary'),
-        type: 'select',
+        name: t("operations:policies:general:intermediary"),
+        type: "select",
         check: false,
-        code: 'agenteIntermediarioId',
+        code: "agenteIntermediarioId",
         options: lists?.policies?.agentesIntermediarios,
       },
       {
         id: 5,
-        name: t('operations:policies:table:state'),
-        type: 'select',
+        name: t("operations:policies:table:state"),
+        type: "select",
         check: false,
-        code: 'status',
+        code: "status",
         options: [
           {
-            id: 'activa',
-            name: 'Vigente',
+            id: "activa",
+            name: "Vigente",
           },
           {
-            id: 'expirada',
-            name: 'No vigente',
+            id: "expirada",
+            name: "No vigente",
           },
           {
-            id: 'cancelada',
-            name: 'Cancelada',
+            id: "cancelada",
+            name: "Cancelada",
           },
           {
-            id: 'en_proceso',
-            name: 'En trámite',
+            id: "en_proceso",
+            name: "En trámite",
           },
         ],
       },
       {
         id: 6,
-        name: t('operations:policies:general:type'),
-        type: 'select',
+        name: t("operations:policies:general:type"),
+        type: "select",
         check: false,
-        code: 'typeId',
+        code: "typeId",
         options: lists?.policies?.polizaTypes,
       },
       {
         id: 7,
-        name: t('operations:policies:general:payment-frequency'),
-        type: 'select',
+        name: t("operations:policies:general:payment-frequency"),
+        type: "select",
         check: false,
-        code: 'frecuenciaCobroId',
+        code: "frecuenciaCobroId",
         options: lists?.policies?.polizaFrecuenciasPago,
       },
       {
         id: 8,
-        name: t('operations:policies:general:payment-method'),
-        type: 'select',
+        name: t("operations:policies:general:payment-method"),
+        type: "select",
         check: false,
-        code: 'formaCobroId',
+        code: "formaCobroId",
         options: lists?.policies?.polizaFormasCobro,
       },
     ]);
@@ -161,7 +163,7 @@ export default function CapacitationsContextProvider({ children }) {
   }, [lists?.listContact, lists?.policies]);
 
   useEffect(() => {
-    handleChangeConfig('page', 1);
+    handleChangeConfig("page", 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config.limit]);
 
@@ -174,14 +176,16 @@ export default function CapacitationsContextProvider({ children }) {
   //   }
   // }, [filters])
 
-  const removeFilter = filterName => {
+  const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
-      .filter(key => key !== filterName)
+      .filter((key) => key !== filterName)
       .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
     setFilters(newFilters);
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName));
-    const newFilterFields = filterFields.map(field => {
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
       return filterName !== field.code ? field : { ...field, check: false };
     });
     setFilterFields(newFilterFields);
@@ -194,11 +198,11 @@ export default function CapacitationsContextProvider({ children }) {
       isError,
       mutate,
       page: config.page,
-      setPage: value => handleChangeConfig('page', value),
+      setPage: (value) => handleChangeConfig("page", value),
       limit: config.limit,
-      setLimit: value => handleChangeConfig('limit', value),
+      setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
-      setOrderBy: value => handleChangeConfig('orderBy', value),
+      setOrderBy: (value) => handleChangeConfig("orderBy", value),
       order: config.order,
       removeFilter,
       selectedContacts,
@@ -212,8 +216,23 @@ export default function CapacitationsContextProvider({ children }) {
       defaultFilterFields,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, isLoading, isError, config, selectedContacts, displayFilters, filterFields, filters, defaultFilterFields, lists]
+    [
+      data,
+      isLoading,
+      isError,
+      config,
+      selectedContacts,
+      displayFilters,
+      filterFields,
+      filters,
+      defaultFilterFields,
+      lists,
+    ]
   );
 
-  return <CapacitationsContext.Provider value={values}>{children}</CapacitationsContext.Provider>;
+  return (
+    <CapacitationsContext.Provider value={values}>
+      {children}
+    </CapacitationsContext.Provider>
+  );
 }

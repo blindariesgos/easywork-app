@@ -361,6 +361,7 @@ export default function EmailBody({
                                           className="ml-2 w-full"
                                           setContactsArray={setContactsArray}
                                         />
+
                                         <p
                                           className="ml-2 hover:underline cursor-pointer"
                                           onClick={() => {

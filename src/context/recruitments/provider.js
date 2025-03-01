@@ -43,10 +43,9 @@ export default function RecruitmentsContextProvider({ children }) {
     {
       id: 3,
       name: t("agentsmanagement:accompaniments:agent:responsible"),
-      type: "dropdown",
+      type: "select-user",
       check: false,
       code: "recruitmentManagerId",
-      options: lists?.users ?? [],
     },
     {
       id: 4,
@@ -103,10 +102,9 @@ export default function RecruitmentsContextProvider({ children }) {
       {
         id: 3,
         name: t("agentsmanagement:accompaniments:agent:responsible"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "recruitmentManagerId",
-        options: lists?.users ?? [],
       },
 
       {
@@ -133,10 +131,9 @@ export default function RecruitmentsContextProvider({ children }) {
       {
         id: 7,
         name: t("agentsmanagement:accompaniments:agent:manager"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "developmentManagerId",
-        options: lists?.users ?? [],
       },
       {
         id: 8,
@@ -149,10 +146,9 @@ export default function RecruitmentsContextProvider({ children }) {
       {
         id: 9,
         name: t("agentsmanagement:accompaniments:agent:observer"),
-        type: "dropdown",
+        type: "select-user",
         check: false,
         code: "observerId",
-        options: lists?.users ?? [],
       },
     ]);
   }, [lists]);

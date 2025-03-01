@@ -34,6 +34,8 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import { activitySectors } from "@/src/utils/constants";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import AddressInput from "@/src/components/form/AddressInput";
 
 export default function CreateLead({ lead, id }) {
   const { t } = useTranslation();
@@ -550,14 +552,16 @@ export default function CreateLead({ lead, id }) {
                     />
                   </Fragment>
                 )}
-                <TextInput
+                <AddressInput
                   label={t("leads:lead:fields:address")}
                   error={errors.address}
                   register={register}
                   name="address"
                   placeholder={t("leads:lead:fields:placeholder-address")}
                   disabled={!isEdit}
-                  // value={watch('address')}
+                  setValue={setValue}
+                  multiple
+                  rows={2}
                 />
                 <SelectInput
                   label={t("leads:lead:fields:origin")}
@@ -579,20 +583,18 @@ export default function CreateLead({ lead, id }) {
                   disabled={!isEdit}
                   watch={watch}
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t("contacts:create:responsible")}
                   name="assignedById"
-                  options={lists?.users}
                   register={register}
                   disabled={!isEdit}
                   error={errors.assignedById}
                   setValue={setValue}
                   watch={watch}
                 />
-                <SelectDropdown
+                <UserSelectAsync
                   label={t("contacts:create:observer")}
                   name="observerId"
-                  options={lists?.users}
                   register={register}
                   disabled={!isEdit}
                   error={errors.observerId}

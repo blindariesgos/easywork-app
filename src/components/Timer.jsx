@@ -6,7 +6,7 @@ export const calculateElapsedTime = (timeSpent, initDate, endDate) => {
   const init = new Date(initDate);
   const difference = end - init;
   const spent = timeSpent ?? 0;
-  console.log({ difference, spent });
+
   const seconds = (Math.floor((difference + spent) / 1000) % 60)
     .toString()
     .padStart(2, "0");

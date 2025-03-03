@@ -20,10 +20,11 @@ export const calculateElapsedTime = (timeSpent, initDate, endDate) => {
   return { hours, minutes, seconds };
 };
 
-const Timer = ({ date, timeSpent }) => {
+const Timer = ({ date, timeSpent, paused }) => {
   const [timer, setTimer] = useState(calculateElapsedTime(timeSpent, date));
 
   useEffect(() => {
+    if (paused) return;
     const interval = setInterval(() => {
       setTimer(calculateElapsedTime(timeSpent, date));
     }, 1000);

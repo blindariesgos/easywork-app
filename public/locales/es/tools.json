@@ -209,7 +209,9 @@
       "policy": "Póliza",
       "lead": "Prospecto",
       "init": "Iniciar",
+      "init-time-tracking": "Iniciar seguimiento de tiempo",
       "pause": "Pausar",
+      "pause-time-tracking": "Pausar seguimiento de tiempo",
       "end": "Terminar",
       "more": "Más",
       "copy": "Copia",
@@ -235,6 +237,7 @@
         "updating": "Actualización",
         "time": "Tiempo Transcurrido",
         "objections": "Objeciones",
+        "comments": "Comentarios",
         "add": "Agregar"
       }
     },

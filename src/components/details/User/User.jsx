@@ -35,7 +35,7 @@ const UserDetails = ({ user, mutate, isLoguedUser = false }) => {
                 </Tab>
               ))}
             </TabList>
-            <TabPanels className="w-full overflow-auto">
+            <TabPanels className="w-full overflow-auto max-h-[calc(100vh_-_150px)]">
               <TabPanel className="w-full">
                 <Profile
                   data={user}

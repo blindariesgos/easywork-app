@@ -15,5 +15,17 @@
         "phone": "Teléfono",
         "email": "Correo Electrónico",
         "role": "Rol"
+    },
+    "activities": {
+        "name": "Actividad",
+        "title": "Título",
+        "description": "Descripción",
+        "type": "Tipo de Actividad",
+        "lastUpdate": "Fecha de la última actualización",
+        "types": {
+            "task": "Tarea",
+            "unknown": "Desconocido",
+            "event": "Evento"
+        }
     }
 }

@@ -572,6 +572,39 @@ export const toggleTaskTracking = async (taskId, body) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const getTaskTrackings = async (taskId) => {
+  const response = await axios()
+    .get(`/tools/tasks/time-tracking/${taskId}/time-tracking/entries`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addManualTracking = async (taskId, body) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/entries`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const deleteTrackingEntry = async (taskId, entryId) => {
+  const response = await axios()
+    .delete(
+      `/tools/tasks/time-tracking/${taskId}/time-tracking/entries/${entryId}`
+    )
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const updateTrackingEntry = async (taskId, entryId, body) => {
+  const response = await axios()
+    .patch(
+      `/tools/tasks/time-tracking/${taskId}/time-tracking/entries/${entryId}`,
+      body
+    )
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 //#endregion
 
 //#region RECRUITMENT

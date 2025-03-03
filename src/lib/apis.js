@@ -572,6 +572,14 @@ export const toggleTaskTracking = async (taskId, body) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const getTaskTrackings = async (taskId) => {
+  const response = await axios()
+    .get(`/tools/tasks/time-tracking/${taskId}/time-tracking/entries`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 //#endregion
 
 //#region RECRUITMENT

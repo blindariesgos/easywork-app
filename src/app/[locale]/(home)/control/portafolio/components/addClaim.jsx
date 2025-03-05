@@ -18,11 +18,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
 import { FaCalendarDay } from "react-icons/fa6";
+import { MAX_FILE_SIZE } from "@/src/utils/constants";
 
 const AddClaim = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
-  const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
@@ -61,7 +61,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
     const file = Array.from(files)[0];
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       return;
     }
 

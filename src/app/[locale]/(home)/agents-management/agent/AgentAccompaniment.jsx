@@ -64,6 +64,7 @@ export default function AgentAccompaniment({ agent, id }) {
             avatar: selectedProfileImage?.file || "",
           };
         }
+
         const formData = getFormData(body);
 
         const response = await createAgent(formData);
@@ -85,6 +86,7 @@ export default function AgentAccompaniment({ agent, id }) {
             image: selectedProfileImage?.file || "",
           };
         }
+        console.log({ body });
         const formData = getFormData(body);
         const response = await updateAgent(formData, id);
         if (response.hasError) {

@@ -3,16 +3,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import clsx from "clsx";
-import { Profile, Tasks, Calendar, Drive } from "./components";
+import { Profile, Tasks, Calendar, Drive, Activities } from "./components";
 
 const UserDetails = ({ user, mutate, isLoguedUser = false }) => {
   const { t } = useTranslation();
 
   const tabs = [
     { name: t("contacts:create:tabs:general"), value: 0 },
-    { name: "Tareas", value: 1 },
-    { name: "Calendario", value: 2 },
-    { name: "Drive", value: 3 },
+    // { name: "Tareas", value: 1 },
+    // { name: "Calendario", value: 2 },
+    // { name: "Drive", value: 3 },
     { name: "Actividades", value: 4 },
   ];
 
@@ -35,7 +35,7 @@ const UserDetails = ({ user, mutate, isLoguedUser = false }) => {
                 </Tab>
               ))}
             </TabList>
-            <TabPanels className="w-full overflow-auto">
+            <TabPanels className="w-full overflow-auto max-h-[calc(100vh_-_150px)]">
               <TabPanel className="w-full">
                 <Profile
                   data={user}
@@ -44,6 +44,9 @@ const UserDetails = ({ user, mutate, isLoguedUser = false }) => {
                 />
               </TabPanel>
               <TabPanel className="w-full">
+                <Activities userId={user.id} />
+              </TabPanel>
+              {/* <TabPanel className="w-full">
                 <Tasks id={user.id} />
               </TabPanel>
               <TabPanel className="w-full">
@@ -51,7 +54,7 @@ const UserDetails = ({ user, mutate, isLoguedUser = false }) => {
               </TabPanel>
               <TabPanel className="w-full">
                 <Drive />
-              </TabPanel>
+              </TabPanel> */}
             </TabPanels>
           </div>
         </div>

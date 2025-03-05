@@ -9,6 +9,7 @@ function CheckboxInput({
   name,
   setValue,
   defaultValue,
+  fullWidth,
 }) {
   const [checked, setChecked] = useState(false);
 
@@ -21,7 +22,11 @@ function CheckboxInput({
   }, [defaultValue]);
 
   return (
-    <div className="flex flex-col gap-y-1 w-full ">
+    <div
+      className={clsx("flex flex-col gap-y-1", {
+        "w-full": fullWidth,
+      })}
+    >
       <Field className="flex items-center gap-2">
         <Checkbox
           checked={checked}

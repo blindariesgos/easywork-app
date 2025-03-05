@@ -553,6 +553,60 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
 };
 //#endregion
 
+//#region TIME TRACKING TASKS
+export const initTaskTracking = async (taskId) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/start`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const stopTaskTracking = async (taskId) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/stop`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const toggleTaskTracking = async (taskId, body) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/toggle`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getTaskTrackings = async (taskId) => {
+  const response = await axios()
+    .get(`/tools/tasks/time-tracking/${taskId}/time-tracking/entries`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addManualTracking = async (taskId, body) => {
+  const response = await axios()
+    .post(`/tools/tasks/time-tracking/${taskId}/time-tracking/entries`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+export const deleteTrackingEntry = async (taskId, entryId) => {
+  const response = await axios()
+    .delete(
+      `/tools/tasks/time-tracking/${taskId}/time-tracking/entries/${entryId}`
+    )
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const updateTrackingEntry = async (taskId, entryId, body) => {
+  const response = await axios()
+    .patch(
+      `/tools/tasks/time-tracking/${taskId}/time-tracking/entries/${entryId}`,
+      body
+    )
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+//#endregion
+
 //#region RECRUITMENT
 export const getAllRecruitments = async ({
   filters = {},
@@ -624,6 +678,13 @@ export const createCategory = async (data) => {
 export const getRelatedUsers = async () => {
   const response = await axios()
     .get("/users/related_users")
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getUserActivities = async (userId) => {
+  const response = await axios()
+    .get(`/users/activity/${userId}`)
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };

@@ -23,6 +23,7 @@ const Table = ({
   const [indeterminate, setIndeterminate] = useState(false);
 
   useLayoutEffect(() => {
+    if (!selectedRows) return;
     if (selectedRows.length > 0) {
       const isIndeterminate =
         selectedRows.length > 0 && selectedRows.length < data?.items.length;
@@ -34,7 +35,7 @@ const Table = ({
 
   const toggleAll = () => {
     const items = checked || indeterminate ? [] : data?.items?.map((x) => x.id);
-    setSelectedRows(items);
+    setSelectedRows && setSelectedRows(items);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   };
@@ -50,13 +51,16 @@ const Table = ({
                 className="relative pl-4 pr-7 sm:w-12 rounded-s-xl py-5"
               >
                 <div className="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    ref={checkbox}
-                    checked={checked}
-                    onChange={toggleAll}
-                  />
+                  {setSelectedRows && (
+                    <input
+                      type="checkbox"
+                      className=" h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      ref={checkbox}
+                      checked={checked}
+                      onChange={toggleAll}
+                    />
+                  )}
+
                   <AddColumnsTable
                     columns={columnTable.map((x) => ({
                       ...x,
@@ -84,15 +88,17 @@ const Table = ({
                       })}
                     >
                       {column.name}
-                      <div>
-                        <ChevronDownIcon
-                          className={`h-6 w-6 text-primary ${
-                            orderBy === column.row && order !== "DESC"
-                              ? "transform rotate-180"
-                              : ""
-                          }`}
-                        />
-                      </div>
+                      {column?.order && (
+                        <div>
+                          <ChevronDownIcon
+                            className={`h-6 w-6 text-primary ${
+                              orderBy === column.row && order !== "DESC"
+                                ? "transform rotate-180"
+                                : ""
+                            }`}
+                          />
+                        </div>
+                      )}
                     </div>
                   </th>
                 ))}

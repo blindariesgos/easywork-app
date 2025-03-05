@@ -21,11 +21,11 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import SelectDropdown from "@/src/components/form/SelectDropdown";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import { MAX_FILE_SIZE } from "@/src/utils/constants";
 
 const AddSchedule = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
-  const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
@@ -84,7 +84,7 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
     const file = Array.from(files)[0];
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       return;
     }
 

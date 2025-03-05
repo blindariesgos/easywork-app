@@ -13,7 +13,6 @@ import React, {
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Button from "@/src/components/form/Button";
 import {
-  Description,
   Dialog,
   DialogBackdrop,
   DialogPanel,
@@ -25,12 +24,13 @@ export default function DeleteModal({
   setIsOpen,
   handleClick,
   loading,
+  title,
 }) {
   return (
     <Dialog
       open={isOpen}
       onClose={() => setIsOpen(false)}
-      className="relative z-50"
+      className="relative z-[100000000000]"
     >
       {/* The backdrop, rendered as a fixed sibling to the panel container */}
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
@@ -40,7 +40,7 @@ export default function DeleteModal({
         {/* The actual dialog panel  */}
         <DialogPanel className="max-w-lg space-y-8 bg-white p-12 rounded-xl">
           <DialogTitle className="font-bold text-xl text-center">
-            ¿Desea eliminar?
+            {title ?? "¿Desea eliminar?"}
           </DialogTitle>
           <div className="flex justify-center gap-4">
             <Button

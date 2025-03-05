@@ -11,7 +11,6 @@ import {
 } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { recruitmentStages } from "@/src/utils/constants";
 import useAppContext from "@/src/context/app";
 import { cancelPolicy } from "@/src/lib/apis";
 import { handleFrontError } from "@/src/utils/api/errors";
@@ -26,10 +25,11 @@ const PolicyCanceledReazon = ({ isOpen, setIsOpen, onUpdate, id }) => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    console.log({ cancelReasonId: selectedReason });
+
     const response = await cancelPolicy(id, {
       cancelReasonId: selectedReason,
     });
+
     if (response.hasError) {
       console.log({ response });
       handleFrontError(response);

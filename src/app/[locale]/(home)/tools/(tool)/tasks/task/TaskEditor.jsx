@@ -16,6 +16,7 @@ import { FaCalendarDays } from "react-icons/fa6";
 import DateTimeCalculator from "../components/DateTimeCalculator";
 import CheckBoxMultiple from "@/src/components/form/CkeckBoxMultiple";
 import InputCheckBox from "@/src/components/form/InputCheckBox";
+import CheckboxInput from "@/src/components/form/CheckboxInput";
 import Button from "@/src/components/form/Button";
 import { useRouter, useSearchParams } from "next/navigation";
 import OptionsTask from "../components/OptionsTask";
@@ -139,6 +140,8 @@ export default function TaskEditor({ edit, copy, subtask }) {
       createdBy: edit ? [edit.createdBy] : [],
       important: edit?.important ?? copy?.important ?? false,
       metadata: edit?.metadata ?? copy?.metadata ?? {},
+      timeTrackingEnabled:
+        edit?.timeTrackingEnabled ?? copy?.timeTrackingEnabled ?? false,
     },
     resolver: yupResolver(schemaInputs),
   });
@@ -512,6 +515,16 @@ export default function TaskEditor({ edit, copy, subtask }) {
       router.push(`/tools/tasks?page=1`);
     }
   };
+  useEffect(() => {}, [watch("timeTrackingEnabled")]);
+
+  const isCreator = useMemo(() => {
+    const task = edit || copy || subtask || null;
+    if (!task) {
+      return true;
+    }
+
+    return task?.createdBy?.id == session?.user?.sub;
+  }, [edit, copy, subtask, session?.user?.sub]);
 
   const canEdit = useMemo(() => {
     const task = edit || copy || subtask || null;
@@ -519,7 +532,6 @@ export default function TaskEditor({ edit, copy, subtask }) {
       return true;
     }
 
-    const isCreator = task?.createdBy?.id == session?.user?.sub;
     const isResponsible = !!task?.responsible?.find(
       (responsible) => responsible.id == session?.user?.sub
     );
@@ -527,7 +539,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (isCreator || isResponsible) return true;
 
     return false;
-  }, [edit, copy, subtask, session?.user?.sub]);
+  }, [edit, copy, subtask, session?.user?.sub, isCreator]);
 
   return (
     <>
@@ -865,12 +877,31 @@ export default function TaskEditor({ edit, copy, subtask }) {
                     <p className="text-sm text-left w-full md:w-36">
                       {t("tools:tasks:new:tracking")}
                     </p>
-                    <div className="w-full md:w-[40%]">
+                    <div className="w-full flex gap-4">
                       <InputCheckBox
                         label={t("tools:tasks:new:time-task")}
-                        setChecked={setCheckedTask}
-                        checked={checkedTask}
+                        setChecked={(checked) =>
+                          setValue("timeTrackingEnabled", checked)
+                        }
+                        checked={watch("timeTrackingEnabled")}
+                        disabled={!isCreator}
                       />
+                      <div className="flex gap-1 items-center">
+                        <input
+                          {...register(`queues.hours`)}
+                          className="h-full w-10 rounded-md focus:ring-0 focus:outline-none ring-0 text-[10px] outline-none"
+                          type="number"
+                          disabled={!isCreator}
+                        />
+                        <p className="text-xs">h</p>
+                        <input
+                          {...register(`queues.minutes`)}
+                          className="h-full w-10 rounded-md focus:ring-0 focus:outline-none ring-0 text-[10px] outline-none"
+                          type="number"
+                          disabled={!isCreator}
+                        />
+                        <p className="text-xs">m</p>
+                      </div>
                     </div>
                   </div>
                   {/* Sub Task */}
@@ -1014,8 +1045,14 @@ const buildTaskBody = (
     crm,
     important: !!data?.important,
     metadata: data.metadata,
+    timeTrackingEnabled: !!data?.timeTrackingEnabled,
   };
 
+  if (data?.queues) {
+    body.plannedTime =
+      +(data?.queues.hours?.length > 0 ? data?.queues.hours : "0") * 60 * 60 +
+      +(data?.queues.minutes?.length > 0 ? data?.queues.minutes : "0") * 60;
+  }
   if (data.createdBy?.length) {
     body.createdById = data.createdBy[0].id;
   }

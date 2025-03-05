@@ -328,7 +328,7 @@ export default function PolicyDetails({
               watch={watch}
             />
           )}
-          <SelectInput
+          {/* <SelectInput
             label={t("control:portafolio:receipt:details:form:status")}
             options={[
               {
@@ -353,7 +353,7 @@ export default function PolicyDetails({
             setValue={setValue}
             disabled={!isEdit}
             watch={watch}
-          />
+          /> */}
           <TextInput
             type="text"
             label={t("operations:policies:general:rfc")}

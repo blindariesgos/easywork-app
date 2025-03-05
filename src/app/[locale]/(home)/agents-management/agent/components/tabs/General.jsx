@@ -22,6 +22,8 @@ import moment from "moment";
 import { useSession } from "next-auth/react";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import AddressInput from "@/src/components/form/AddressInput";
+import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
+import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
 
 export default function General({ agent, id, refPrint, type, handleAdd }) {
   const { lists } = useAppContext();
@@ -108,6 +110,8 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
     if (agent?.observer) setValue("observerId", agent?.observer?.id);
     if (agent?.observations) setValue("observations", agent?.observations);
     if (agent?.source) setValue("sourceId", agent?.source?.id);
+    if (agent?.otherPhones) setValue("otherPhones", agent?.otherPhones);
+    if (agent?.otherEmails) setValue("otherEmails", agent?.otherEmails);
 
     if (type === "accompaniment") {
       if (agent?.status) setValue("status", agent?.status);
@@ -285,6 +289,15 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 control={control}
                 defaultValue=""
               />
+              <MultiplePhonesInput
+                errors={errors.otherPhones}
+                register={register}
+                name="otherPhones"
+                disabled={!isEdit}
+                control={control}
+                watch={watch}
+                setValue={setValue}
+              />
               <TextInput
                 label={t("contacts:create:email")}
                 placeholder={t("contacts:create:placeholder-lastname")}
@@ -292,6 +305,16 @@ export default function General({ agent, id, refPrint, type, handleAdd }) {
                 register={register}
                 name="email"
                 disabled={!isEdit}
+              />
+
+              <MultipleEmailsInput
+                errors={errors.otherEmails}
+                register={register}
+                name="otherEmails"
+                disabled={!isEdit}
+                control={control}
+                watch={watch}
+                setValue={setValue}
               />
               {/* {!isEdit && (
                 <TextInput

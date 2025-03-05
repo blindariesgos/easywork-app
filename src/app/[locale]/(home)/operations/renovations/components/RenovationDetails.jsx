@@ -24,6 +24,7 @@ import { LinkIcon } from "@heroicons/react/24/outline";
 import CanceledReazons from "../../components/CanceledReazons";
 import { handleFrontError } from "@/src/utils/api/errors";
 import { useSWRConfig } from "swr";
+import clsx from "clsx";
 
 export default function RenovationDetails({ data, id, mutate }) {
   const { t } = useTranslation();
@@ -107,11 +108,7 @@ export default function RenovationDetails({ data, id, mutate }) {
     },
   ];
 
-  const updateStatus = async (status) => {
-    if (status === "cancelada") {
-      setIsOpenCanceledReazon(true);
-      return;
-    }
+  const updateStage = async (status) => {
     setLoading(true);
     const body = {
       renewalStageId: status,
@@ -136,10 +133,58 @@ export default function RenovationDetails({ data, id, mutate }) {
     setLoading(false);
   };
 
+  const updateStatus = async (status) => {
+    if (status === "cancelada") {
+      setIsOpenCanceledReazon(true);
+      return;
+    }
+    setLoading(true);
+    const body = {
+      status,
+    };
+    try {
+      const response = await putPoliza(id, body);
+
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
+      mutate();
+      mutatePolicies();
+      toast.success(t("operations:policies:update"));
+    } catch (error) {
+      console.log({ error });
+      toast.error(
+        "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
+      );
+    }
+    setLoading(false);
+  };
+
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(window.location.href);
     toast.success("Copiado en el Portapapeles");
   };
+
+  const policyStatus = [
+    {
+      id: "en_proceso",
+      name: "En Trámite",
+    },
+    {
+      id: "activa",
+      name: "Vigente",
+    },
+    {
+      id: "cancelada",
+      name: "Cancelada",
+    },
+    {
+      id: "vencida",
+      name: "No Vigente",
+    },
+  ];
 
   return (
     <div className="flex flex-col h-screen relative w-full">
@@ -204,38 +249,81 @@ export default function RenovationDetails({ data, id, mutate }) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Menu>
-                  <MenuButton
-                    className={"py-2 px-3 rounded-lg cursor-pointer text-white"}
-                    style={{
-                      background:
-                        renovationStages.find(
-                          (x) => x.id == data?.renewalStage?.id
-                        )?.color ?? renovationStages[0]?.color,
-                    }}
-                  >
-                    {data?.renewalStage?.name ?? renovationStages[0]?.name}
-                  </MenuButton>
-                  <MenuItems
-                    transition
-                    anchor="bottom end"
-                    className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
-                  >
-                    {data &&
-                      renovationStages
-                        ?.filter((x) => x.id !== data?.renewalStage?.id)
-                        .map((option, index) => (
-                          <MenuItem
-                            key={index}
-                            as="div"
-                            onClick={() => updateStatus(option.id)}
-                            className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
-                          >
-                            {option.name}
-                          </MenuItem>
-                        ))}
-                  </MenuItems>
-                </Menu>
+                <div className="flex flex-col gap-2 items-end">
+                  <Menu>
+                    <MenuButton>
+                      <label
+                        className={clsx(
+                          "py-2 px-3 text-sm rounded-lg capitalize cursor-pointer",
+                          {
+                            "bg-[#86BEDF]": data?.status == "en_proceso",
+                            "bg-[#A9EA44]": data?.status == "activa",
+                            "bg-[#FFC4C2]": ["cancelada", "vencida"].includes(
+                              data?.status
+                            ),
+                          }
+                        )}
+                      >
+                        {policyStatus.find((x) => x.id == data?.status)?.name ??
+                          "No Disponible"}
+                      </label>
+                    </MenuButton>
+                    <MenuItems
+                      transition
+                      anchor="bottom end"
+                      className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
+                    >
+                      {data &&
+                        policyStatus
+                          ?.filter((x) => x.id !== data?.status)
+                          .map((option, index) => (
+                            <MenuItem
+                              key={index}
+                              as="div"
+                              onClick={() => updateStatus(option.id)}
+                              className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                            >
+                              {option.name}
+                            </MenuItem>
+                          ))}
+                    </MenuItems>
+                  </Menu>
+                  <Menu>
+                    <MenuButton
+                      className={
+                        "py-2 px-3 rounded-lg cursor-pointer text-sm text-white"
+                      }
+                      style={{
+                        background:
+                          renovationStages.find(
+                            (x) => x.id == data?.renewalStage?.id
+                          )?.color ?? renovationStages[0]?.color,
+                      }}
+                    >
+                      {data?.renewalStage?.name ?? renovationStages[0]?.name}
+                    </MenuButton>
+                    <MenuItems
+                      transition
+                      anchor="bottom end"
+                      className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
+                    >
+                      {data &&
+                        renovationStages
+                          ?.filter((x) => x.id !== data?.renewalStage?.id)
+                          .map((option, index) => (
+                            <MenuItem
+                              key={index}
+                              as="div"
+                              onClick={() => updateStage(option.id)}
+                              className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                            >
+                              {option.name}
+                            </MenuItem>
+                          ))}
+                    </MenuItems>
+                  </Menu>
+                </div>
+
                 <IconDropdown
                   icon={
                     <Cog8ToothIcon

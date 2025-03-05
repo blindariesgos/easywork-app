@@ -44,15 +44,21 @@ export default function ButtonMore({
 
   const handleTracking = async () => {
     setLoading(true);
-    const response = await toggleTaskTracking(data?.id, {
-      enabled: !!data?.timeTrackingEnabled,
-    });
-
+    const body = {
+      enabled: !!!data?.timeTrackingEnabled,
+    };
+    const response = await toggleTaskTracking(data?.id, body);
+    console.log({ body });
     if (response.hasError) {
       handleFrontError(response);
       setLoading(false);
       return;
     }
+    mutate(`/tools/tasks/${data?.id}`);
+    toast.success(
+      `Se ${!!data?.timeTrackingEnabled ? "desactivo" : "activo"} el seguimiento de tiempo`
+    );
+    setLoading(false);
   };
 
   const [options, setOptions] = useState([

@@ -56,7 +56,6 @@ export default function ReceiptEditor({ data, id }) {
     status: Yup.string(),
     methodCollection: Yup.string(),
     startDate: Yup.string(),
-    dueDate: Yup.string(),
     paymentAmount: Yup.string(),
     currencyId: Yup.string(),
     description: Yup.string(),
@@ -110,13 +109,18 @@ export default function ReceiptEditor({ data, id }) {
   }, [data]);
 
   const onSubmit = async (data) => {
-    const { paymentAmount, dueDate, startDate, observers, ...otherData } = data;
+    const {
+      paymentAmount,
+      dueDate,
+      startDate,
+      observers,
+      paymentDate,
+      ...otherData
+    } = data;
 
     const body = {
       ...otherData,
       paymentAmount: +paymentAmount,
-      dueDate: dueDate ? formatISO(dueDate) : null,
-      startDate: startDate ? formatISO(startDate) : null,
       observersIds: observers?.map((x) => x.id) ?? [],
     };
 
@@ -131,6 +135,9 @@ export default function ReceiptEditor({ data, id }) {
             : acc,
         {}
       );
+
+      receipt.dueDate = dueDate ? formatISO(dueDate) : null;
+      receipt.paymentDate = paymentDate ? formatISO(paymentDate) : null;
 
       console.log({ receipt });
       const response = await putReceipt(id, receipt);

@@ -346,28 +346,57 @@ export default function TaskView({ id, task }) {
                 )}
                 <div className="p-2 sm:p-4">
                   <div className="flex gap-2 flex-wrap">
+                    {task.timeTrackingEnabled && (
+                      <Timer
+                        date={
+                          task.currentTrackingStartTime ?? moment().format()
+                        }
+                        timeSpent={(task?.totalTimeSpent ?? 0) * 1000}
+                        paused={!!!task.currentTrackingStartTime}
+                      />
+                    )}
                     {!task.isCompleted &&
                       task.timeTrackingEnabled &&
                       !task.currentTrackingStartTime && (
                         <Button
-                          label={t("tools:tasks:edit:init")}
+                          label={t("tools:tasks:edit:init-time-tracking")}
                           buttonStyle="green"
                           className="px-3 py-2"
                           fontSize="text-xs"
                           onclick={handleInitTracking}
                         />
                       )}
+                    {!task.isCompleted && !task.timeTrackingEnabled && (
+                      <Button
+                        label={t("tools:tasks:edit:init")}
+                        buttonStyle="green"
+                        className="px-3 py-2"
+                        fontSize="text-xs"
+                        onclick={() => {}}
+                      />
+                    )}
                     {!task.isCompleted &&
                       task.timeTrackingEnabled &&
                       task.currentTrackingStartTime && (
                         <Button
-                          label={t("tools:tasks:edit:pause")}
+                          label={t("tools:tasks:edit:pause-time-tracking")}
                           buttonStyle="green"
                           className="px-3 py-2"
                           fontSize="text-xs"
                           onclick={handleStopTracking}
                         />
                       )}
+                    {/* {!task.isCompleted &&
+                      !task.timeTrackingEnabled &&
+                      task.currentTrackingStartTime && (
+                        <Button
+                          label={t("tools:tasks:edit:pause")}
+                          buttonStyle="green"
+                          className="px-3 py-2"
+                          fontSize="text-xs"
+                          onclick={() => {}}
+                        />
+                      )} */}
                     {!task.isCompleted && (
                       <button
                         type="button"
@@ -394,16 +423,6 @@ export default function TaskView({ id, task }) {
                         taskId={task?.id}
                       />
                     )}
-                    {task.currentTrackingStartTime && (
-                      <Timer
-                        date={task.currentTrackingStartTime}
-                        timeSpent={(task?.totalTimeSpent ?? 0) * 1000}
-                      />
-                    )}
-                    {/* <div className="flex gap-2 items-center">
-                      <BsStopwatchFill className="h-4 w-4 text-easy-400" />
-                      <p className="text-easy-400 text-xs">00:00:00</p>
-                    </div> */}
                   </div>
                 </div>
               </div>

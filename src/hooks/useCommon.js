@@ -1710,27 +1710,27 @@ export const useUserActivitiesTable = () => {
   const { t } = useTranslation();
   const columnTable = [
     {
-      id: 1,
-      name: t("users:table:name"),
-      row: "contactName",
+      id: 2,
+      name: t("users:activities:name"),
+      row: "type",
       check: true,
     },
     {
-      id: 2,
-      name: t("users:table:email"),
-      row: "email",
+      id: 1,
+      name: t("users:activities:title"),
+      row: "name",
+      check: true,
+    },
+    {
+      id: 1,
+      name: t("users:activities:description"),
+      row: "description",
       check: true,
     },
     {
       id: 3,
-      name: t("users:table:phone"),
-      row: "phone",
-      check: true,
-    },
-    {
-      id: 5,
-      name: t("users:table:mobile-app"),
-      row: "mobile-app",
+      name: t("users:activities:lastUpdate"),
+      row: "updatedAt",
       check: true,
     },
   ];

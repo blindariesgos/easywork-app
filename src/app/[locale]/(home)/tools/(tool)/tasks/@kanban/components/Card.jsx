@@ -1,37 +1,16 @@
-import useAppContext from "@/src/context/app";
-import Link from "next/link";
-import {
-  ChatBubbleBottomCenterIcon,
-  ChevronRightIcon,
-  EnvelopeIcon,
-  FireIcon,
-  PhoneIcon,
-} from "@heroicons/react/20/solid";
-import { FaWhatsapp } from "react-icons/fa6";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition,
-} from "@headlessui/react";
+import { FireIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import moment from "moment";
-import { useMemo, Fragment, useState } from "react";
+import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import DeleteModal from "@/src/components/modals/DeleteItem";
-import { deletePolicyById } from "@/src/lib/apis";
 import { toast } from "react-toastify";
-import { handleApiError } from "@/src/utils/api/errors";
-import { formatToCurrency } from "@/src/utils/formatters";
 import "moment/locale/es.js";
 import useCrmContext from "@/src/context/crm";
 import clsx from "clsx";
 import { deleteTask as apiDeleteTask } from "@/src/lib/apis"; // Ajusta el path según sea necesario
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import {
-  formatDate,
   getTaskOverdueTimeDelta,
   isDateOverdue,
   isDateTomorrowOverdue,

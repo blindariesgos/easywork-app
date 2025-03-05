@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+export const MAX_FILE_SIZE = 10000000;
+
 export const polizaReimbursementStatus = {
   captura_documentos: "Captura de documentos",
   en_proceso: "En proceso",

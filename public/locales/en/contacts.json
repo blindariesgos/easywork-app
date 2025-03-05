@@ -54,7 +54,7 @@
     "origen": "Origin",
     "passport": "INE, RFC or Passport IDs",
     "upload-file": "Upload a file",
-    "png": "PNG, JPG, PDF up to 5MB",
+    "png": "PNG, JPG, PDF up to 10MB",
     "drap-drop": "or drag and drop",
     "select": "Select",
     "change-photo": "Change photo",

@@ -20,11 +20,11 @@ import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import { MAX_FILE_SIZE } from "@/src/utils/constants";
 
 const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
-  const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
 
   const schema = yup.object().shape({
@@ -66,7 +66,7 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     const file = Array.from(files)[0];
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       return;
     }
 
@@ -112,15 +112,15 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     const { poliza, contact, ...otherData } = data;
     const body = {
       ...otherData,
+      polizaId: poliza.id,
+      file: file.file,
+      contactId: contact.id,
+      status: "captura_documentos",
     };
-    body.polizaId = poliza.id;
-    body.file = file.file;
-    body.contactId = contact.id;
-    body.status = "captura_documentos";
 
     const formData = getFormData(body);
     const response = await addRefund(formData);
-
+    console.log({ response, body });
     if (response.hasError) {
       let message = response.message;
       if (response.errors) {

@@ -26,12 +26,12 @@ import Beneficiaries from "@/src/components/policyAdds/Beneficiaries";
 import Insureds from "@/src/components/policyAdds/Insureds";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import { MAX_FILE_SIZE } from "@/src/utils/constants";
 
 const AddVersion = ({ isOpen, setIsOpen }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
-  const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
   const utcOffset = moment().utcOffset();
@@ -108,7 +108,7 @@ const AddVersion = ({ isOpen, setIsOpen }) => {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       setLoading(false);
       return;
     }

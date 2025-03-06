@@ -42,6 +42,8 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { useSWRConfig } from "swr";
 import useTasksContext from "@/src/context/tasks";
+import { calculateElapsedTime } from "@/src/components/Timer";
+import moment from "moment";
 
 const schemaInputs = yup.object().shape({
   name: yup.string().required(),
@@ -463,6 +465,14 @@ export default function TaskEditor({ edit, copy, subtask }) {
   useEffect(() => {
     setValue("important", edit?.important ?? copy?.important ?? false);
     setCheck(edit?.important ?? copy?.important ?? false);
+
+    if (edit?.plannedTime || copy?.plannedTime) {
+      const elapsedTime = calculateElapsedTime(
+        (edit?.plannedTime ?? copy?.plannedTime) * 1000,
+        moment().format()
+      );
+      setValue("queues", elapsedTime);
+    }
   }, [edit, copy]);
 
   const createTask = async (data, isNewTask) => {

@@ -20,11 +20,11 @@ const InvitationMethods = {
   1: {
     title: 'Enlace',
     icon: <VscLink className="w-5 h-5 text-white" />,
-    headerAction: <EnableFastRegistration />,
+    headerAction: null,
     component: <LinkInvitation />,
   },
   2: {
-    title: 'Mediante correo electrónico o número de teléfono',
+    title: 'Correo electrónico',
     icon: <EnvelopeIcon className="w-5 h-5 text-white" />,
     headerAction: null,
     component: <EmailInvitation />,
@@ -80,7 +80,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                   <Tag onclick={closeDrawer} className={colorTag} />
                 </div>
 
-                <div className="h-screen rounded-tl-lg rounded-bl-lg bg-gray-300 p-6 xs:w-full sm:w-full md:w-1/2 lg:w-[600px]">
+                <div className="h-screen rounded-tl-lg rounded-bl-lg bg-gray-300 p-6 xs:w-full sm:w-full md:w-1/2 lg:w-[700px]">
                   <h1 className="text-xl">Invitar usuario</h1>
 
                   <Select
@@ -90,7 +90,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                   >
                     <option value="">Selecciona una opción</option>
                     <option value="1">Enlace</option>
-                    <option value="2">Correo electrónico o número de teléfono</option>
+                    <option value="2">Correo electrónico</option>
                     <option value="3">Invitación masiva</option>
                     <option value="4">Usuario de otra compañía</option>
                   </Select>

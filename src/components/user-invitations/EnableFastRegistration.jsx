@@ -3,7 +3,7 @@ import { Switch } from '@headlessui/react';
 export const EnableFastRegistration = ({ enabled, setEnabled }) => {
   return (
     <div className="flex items-center gap-2">
-      <p className="ml-1">Registro rápido</p>
+      <p className="ml-1 text-sm">Registro rápido</p>
       <Switch
         checked={enabled}
         onChange={setEnabled}

@@ -249,5 +249,10 @@
     "agent": "Agente",
     "poliza_scheduling": "Programación",
     "poliza_reimbursement": "Reembolso"
+  },
+  "address": {
+    "enter": "Introduzca código postal",
+    "habitation": "Asentamiento",
+    "select": "Seleccionar {{selection}}"
   }
 }

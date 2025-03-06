@@ -256,7 +256,15 @@ const AddPolicyWithReader = ({
     setValue("categoryId", response?.category?.id);
 
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
-      setValue("relatedContacts", response?.relatedContacts);
+      setValue(
+        "relatedContacts",
+        response?.relatedContacts?.map((contact) => {
+          return {
+            id: contact.id,
+            name: contact?.fullName ?? `${contact?.name} ${contact?.lastName}`,
+          };
+        })
+      );
     }
 
     if (type == "endoso") {
@@ -498,6 +506,9 @@ const AddPolicyWithReader = ({
                             watch={watch}
                             error={errors?.contact}
                             helperText={helpers?.contact}
+                            setSelectedOption={(contact) =>
+                              setValue("contactId", contact.id)
+                            }
                           />
                         </TabPanel>
                         <TabPanel
@@ -509,8 +520,8 @@ const AddPolicyWithReader = ({
                         >
                           <SelectInput
                             options={watch("relatedContacts") ?? []}
-                            name="observerId"
-                            error={errors?.observerId}
+                            name="contactId"
+                            error={errors?.contactId}
                             setValue={setValue}
                           />
                         </TabPanel>

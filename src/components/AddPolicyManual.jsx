@@ -277,7 +277,7 @@ const AddPolicyManual = ({
     policy.agenteIntermediario &&
       setValue("agenteIntermediarioId", policy.agenteIntermediario.id);
     policy.assignedBy && setValue("assignedById", policy.assignedBy.id);
-    policy.subAgente && setValue("subAgenteId", policy.subAgente.id);
+    policy.subAgente && setValue("subAgentId", policy.subAgente.id);
     policy.beneficiaries && setValue("beneficiaries", policy.beneficiaries);
     policy.insured && setValue("insureds", policy.insured);
     policy.category && setValue("categoryId", policy.category.id);

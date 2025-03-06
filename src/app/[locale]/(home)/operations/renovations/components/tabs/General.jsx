@@ -130,7 +130,7 @@ export default function PolicyDetails({
       setValue("observers", data?.observers);
     if (data?.category) setValue("categoryId", data?.category?.id);
     if (data?.specifications) setValue("specifications", data?.specifications);
-    if (data?.subAgente?.name) setValue("subAgenteId", data?.subAgente?.id);
+    if (data?.subAgente?.name) setValue("subAgentId", data?.subAgente?.id);
     if (
       [
         "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM

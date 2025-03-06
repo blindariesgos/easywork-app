@@ -102,7 +102,7 @@ export default function ReceiptEditor({ data, id }) {
     if (data?.currency?.id) setValue("currencyId", data?.currency?.id);
     if (data?.description) setValue("description", data?.description);
     if (data?.methodPayment) setValue("methodPayment", data?.methodPayment);
-    if (data?.subAgent) setValue("subAgenteId", data?.subAgent?.id);
+    if (data?.subAgent) setValue("subAgentId", data?.subAgent?.id);
     if (data?.observers && data?.observers?.length > 0)
       setValue("observers", data?.observers);
     if (data?.conductoPago) setValue("conductoPagoId", data?.conductoPago?.id);
@@ -511,10 +511,10 @@ export default function ReceiptEditor({ data, id }) {
                 />
                 <AgentSelectAsync
                   label={t("contacts:create:sub-agent")}
-                  name="subAgenteId"
+                  name="subAgentId"
                   register={register}
                   disabled={!isEdit}
-                  error={errors.subAgenteId}
+                  error={errors.subAgentId}
                   setValue={setValue}
                   watch={watch}
                 />

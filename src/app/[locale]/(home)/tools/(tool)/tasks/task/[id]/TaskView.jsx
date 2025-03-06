@@ -38,7 +38,7 @@ import CrmItems from "../../../../../../../../components/CrmItems";
 import { useSession } from "next-auth/react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import useTasksContext from "@/src/context/tasks";
-import Timer from "@/src/components/Timer";
+import Timer, { calculateElapsedTime } from "@/src/components/Timer";
 
 export default function TaskView({ id, task }) {
   const { lists } = useAppContext();
@@ -51,6 +51,7 @@ export default function TaskView({ id, task }) {
   const [openEdit, setOpenEdit] = useState(null);
   const { mutate } = useSWRConfig();
   const [isDelegating, setIsDelegating] = useState(false);
+  const [plannedTime, setPlannedTime] = useState();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
@@ -109,6 +110,18 @@ export default function TaskView({ id, task }) {
   useEffect(() => {
     if (task) {
       setTaskDescription(task.description);
+    }
+
+    if (task?.plannedTime && task?.timeTrackingEnabled) {
+      const elapsedTime = calculateElapsedTime(
+        task?.plannedTime * 1000,
+        moment().format()
+      );
+      setPlannedTime(
+        `/ ${elapsedTime.hours}:${elapsedTime.minutes}:${elapsedTime.seconds}`
+      );
+    } else {
+      setPlannedTime();
     }
   }, [task]);
 
@@ -345,7 +358,7 @@ export default function TaskView({ id, task }) {
                   </div>
                 )}
                 <div className="p-2 sm:p-4">
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap items-center">
                     {task.timeTrackingEnabled && (
                       <Timer
                         date={
@@ -354,6 +367,9 @@ export default function TaskView({ id, task }) {
                         timeSpent={(task?.totalTimeSpent ?? 0) * 1000}
                         paused={!!!task.currentTrackingStartTime}
                       />
+                    )}
+                    {plannedTime && (
+                      <p className="text-easy-400 text-sm">{plannedTime}</p>
                     )}
                     {!task.isCompleted &&
                       task.timeTrackingEnabled &&

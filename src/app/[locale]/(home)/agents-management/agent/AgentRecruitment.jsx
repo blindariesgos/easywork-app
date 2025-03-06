@@ -10,7 +10,7 @@ import { SlArrowDown } from "react-icons/sl";
 import { SlArrowUp } from "react-icons/sl";
 import { createAgentRecruitment, updateAgentRecruitment } from "@/src/lib/apis";
 import { useRouter } from "next/navigation";
-import { handleApiError } from "@/src/utils/api/errors";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { toast } from "react-toastify";
 import RecruitmentStages from "./components/RecruitmentStages";
@@ -47,6 +47,8 @@ export default function AgentRecruitment({ agent, id }) {
       recruitmentStartDate,
       recruitmentEndDate,
       recruitmentEntryDate,
+      otherPhones,
+      otherEmails,
       ...other
     } = data;
     const body = {
@@ -54,6 +56,12 @@ export default function AgentRecruitment({ agent, id }) {
       children: childrens,
     };
 
+    if (otherPhones) {
+      body.otherPhones = JSON.stringify(otherPhones);
+    }
+    if (otherEmails) {
+      body.otherEmails = JSON.stringify(otherEmails);
+    }
     if (birthdate) {
       body.birthdate = moment(birthdate).format("YYYY-MM-DD");
     }
@@ -82,11 +90,7 @@ export default function AgentRecruitment({ agent, id }) {
       if (!agent) {
         const response = await createAgentRecruitment(info);
         if (response.hasError) {
-          let message = response.message;
-          if (Array.isArray(response.message)) {
-            message = response.message.join(", ");
-          }
-          toast.error(message ?? "Ocurrio un error al crear al agente");
+          handleFrontError(response);
           setLoading(false);
           return;
         }
@@ -94,12 +98,9 @@ export default function AgentRecruitment({ agent, id }) {
         toast.success("Agente creado exitosamente");
       } else {
         const response = await updateAgentRecruitment(info, id);
+        console.log({ response, info });
         if (response.hasError) {
-          let message = response.message;
-          if (response.errors) {
-            message = response.errors.join(", ");
-          }
-          toast.error(message ?? "Ocurrio un error al crear al agente");
+          handleFrontError(response);
           setLoading(false);
           return;
         }

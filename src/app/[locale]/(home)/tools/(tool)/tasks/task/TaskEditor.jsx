@@ -1044,7 +1044,6 @@ const buildTaskBody = (
   listField,
   t
 ) => {
-  console.log({ data });
   const body = {
     name: data.name,
     description,

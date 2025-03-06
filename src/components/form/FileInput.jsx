@@ -1,3 +1,4 @@
+import { MAX_FILE_SIZE } from "@/src/utils/constants";
 import { useEffect, useState } from "react";
 
 const FileInput = ({ handleChange, name }) => {
@@ -12,7 +13,7 @@ const FileInput = ({ handleChange, name }) => {
     const currentFile = Array.from(files)[0];
 
     if (currentFile.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       return;
     }
 

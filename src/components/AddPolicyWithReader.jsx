@@ -34,6 +34,7 @@ import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsy
 import { handleFrontError } from "../utils/api/errors";
 import AgentSelectAsync from "./form/AgentSelectAsync";
 import UserSelectAsync from "./form/UserSelectAsync";
+import { MAX_FILE_SIZE } from "../utils/constants";
 
 const getMetadataUrl = {
   policy: (data, contactId) => getMetadataOfPdf("nueva", data),
@@ -56,7 +57,6 @@ const AddPolicyWithReader = ({
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
-  const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
   const utcOffset = moment().utcOffset();
@@ -132,7 +132,7 @@ const AddPolicyWithReader = ({
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       setLoading(false);
       return;
     }
@@ -256,7 +256,15 @@ const AddPolicyWithReader = ({
     setValue("categoryId", response?.category?.id);
 
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
-      setValue("relatedContacts", response?.relatedContacts);
+      setValue(
+        "relatedContacts",
+        response?.relatedContacts?.map((contact) => {
+          return {
+            id: contact.id,
+            name: contact?.fullName ?? `${contact?.name} ${contact?.lastName}`,
+          };
+        })
+      );
     }
 
     if (type == "endoso") {
@@ -498,6 +506,9 @@ const AddPolicyWithReader = ({
                             watch={watch}
                             error={errors?.contact}
                             helperText={helpers?.contact}
+                            setSelectedOption={(contact) =>
+                              setValue("contactId", contact.id)
+                            }
                           />
                         </TabPanel>
                         <TabPanel
@@ -509,8 +520,8 @@ const AddPolicyWithReader = ({
                         >
                           <SelectInput
                             options={watch("relatedContacts") ?? []}
-                            name="observerId"
-                            error={errors?.observerId}
+                            name="contactId"
+                            error={errors?.contactId}
                             setValue={setValue}
                           />
                         </TabPanel>

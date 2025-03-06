@@ -7,6 +7,7 @@ import { VALIDATE_POSTAL_CODE } from "@/src/utils/regularExp";
 import SelectInput from "./SelectInput";
 import { handleFrontError } from "@/src/utils/api/errors";
 import LoaderSpinner from "../LoaderSpinner";
+import { t } from "i18next";
 
 const AddressInput = ({
   label,
@@ -104,7 +105,7 @@ const AddressInput = ({
         >
           <TextInput
             onChangeCustom={handleChangePostalCode}
-            placeholder={"Ingrese codigo postal"}
+            placeholder={t("common:address:enter")}
           />
           <SelectInput
             options={habitations}
@@ -112,8 +113,10 @@ const AddressInput = ({
             setSelectedOption={(a) => setHabitation(a.id)}
             placeholder={
               address?.tipo_asentamiento
-                ? `Seleccionar ${address?.tipo_asentamiento}`
-                : "Asentamiento"
+                ? t("common:address:select", {
+                    selection: address?.tipo_asentamiento,
+                  })
+                : t("common:address:habitation")
             }
           />
         </div>

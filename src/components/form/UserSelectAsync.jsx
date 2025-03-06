@@ -105,7 +105,9 @@ function UserSelectAsync({
                 "drop-shadow-md": !disabled,
               }
             )}
-            displayValue={(person) => person?.name}
+            displayValue={(user) =>
+              `${user?.profile?.firstName} ${user?.profile?.lastName}`
+            }
             onChange={(event) => {
               setQuery && setQuery(event.target.value);
             }}

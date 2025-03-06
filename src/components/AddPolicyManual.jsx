@@ -35,6 +35,7 @@ import { handleFrontError } from "@/src/utils/api/errors";
 import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import AgentSelectAsync from "./form/AgentSelectAsync";
 import UserSelectAsync from "./form/UserSelectAsync";
+import { MAX_FILE_SIZE } from "../utils/constants";
 
 const endpointsByModule = {
   gestion: (body, documentType, id) => addManualPolicy(body, documentType),
@@ -57,7 +58,6 @@ const AddPolicyManual = ({
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const [policy, setPolicy] = useState();
-  const MAX_FILE_SIZE = 5000000; //5MB
   const { lists } = useAppContext();
   const [helpers, setHelpers] = useState({});
 
@@ -137,7 +137,7 @@ const AddPolicyManual = ({
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo debe tener un tamaño menor a 5MB.");
+      toast.error("El archivo debe tener un tamaño menor a 10MB.");
       setLoading(false);
       return;
     }
@@ -277,7 +277,7 @@ const AddPolicyManual = ({
     policy.agenteIntermediario &&
       setValue("agenteIntermediarioId", policy.agenteIntermediario.id);
     policy.assignedBy && setValue("assignedById", policy.assignedBy.id);
-    policy.subAgente && setValue("subAgenteId", policy.subAgente.id);
+    policy.subAgente && setValue("subAgentId", policy.subAgente.id);
     policy.beneficiaries && setValue("beneficiaries", policy.beneficiaries);
     policy.insured && setValue("insureds", policy.insured);
     policy.category && setValue("categoryId", policy.category.id);

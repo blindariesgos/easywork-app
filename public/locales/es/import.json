@@ -105,7 +105,8 @@
             "subtitle": "Control de la singularidad",
             "fullName": "Nombre completo",
             "phone": "Teléfono",
-            "email": "E-mail"
+            "email": "E-mail",
+            "rfc": "RFC"
         },
         "import": {
             "title": "Importar resultado",

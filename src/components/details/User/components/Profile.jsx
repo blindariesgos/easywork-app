@@ -13,15 +13,14 @@ import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
 import { Controller, useForm } from "react-hook-form";
 import InputPhone from "@/src/components/form/InputPhone";
-import { handleApiError } from "@/src/utils/api/errors";
+import { handleFrontError } from "@/src/utils/api/errors";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { updateUser, getUsersGroup, updateStatus } from "@/src/lib/apis";
 import ProfileImageInput from "@/src/components/ProfileImageInput";
 import Image from "next/image";
-import { useCurrentUserInfo } from "@/src/lib/api/hooks/users";
-import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 import { userStatus } from "@/src/utils/constants";
 import clsx from "clsx";
+import { useSession } from "next-auth/react";
 
 export function Profile({ data, isLoguedUser, mutate }) {
   const { t } = useTranslation();
@@ -30,6 +29,8 @@ export function Profile({ data, isLoguedUser, mutate }) {
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(data?.status ?? "do_not_disturb");
+  const { data: session, update: updateSession } = useSession();
+
   const {
     register,
     handleSubmit,
@@ -111,12 +112,22 @@ export function Profile({ data, isLoguedUser, mutate }) {
 
     try {
       setLoading(true);
-      await updateUser(data?.id, formData);
+      const response = await updateUser(data?.id, formData);
+
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
+
+      if (isLoguedUser) {
+      }
+
       mutate(); // Refresca la información del usuario
       setLoading(false);
       setIsEdit(false);
     } catch (error) {
-      handleApiError(error.message);
+      handleFrontError(error);
       setLoading(false);
     }
   };

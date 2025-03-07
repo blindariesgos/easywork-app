@@ -62,11 +62,9 @@ const Duplicates = ({ handleNext, handleBack }) => {
             </Field>
           ))}
         </RadioGroup>
-        {selected === "permit" && (
-          <p className="px-2 py-3 bg-[#FCF8DF] border border-[#D9BB00] rounded-[5px] inline-block">
-            {t("import:contacts:duplicates:warning")}
-          </p>
-        )}
+        <p className="px-2 py-3 bg-[#FCF8DF] border border-[#D9BB00] rounded-[5px] inline-block">
+          {t(`import:contacts:duplicates:warning:${selected}`)}
+        </p>
       </div>
       {selected !== "permit" && (
         <Fragment>
@@ -80,19 +78,25 @@ const Duplicates = ({ handleNext, handleBack }) => {
               {t(`import:contacts:duplicates:fullName`)}:
             </div>
             <div className="col-span-3">
-              <CheckboxInput name="columns-emply1" setValue={setValue} />
+              <CheckboxInput name="singularity.name" setValue={setValue} />
             </div>
             <div className="text-sm flex items-center justify-end text-right">
               {t(`import:contacts:duplicates:phone`)}:
             </div>
             <div className="col-span-3">
-              <CheckboxInput name="columns-emply2" setValue={setValue} />
+              <CheckboxInput name="singularity.phone" setValue={setValue} />
             </div>
             <div className="text-sm flex items-center justify-end text-right">
               {t(`import:contacts:duplicates:email`)}:
             </div>
             <div className="col-span-3">
-              <CheckboxInput name="columns-emply3" setValue={setValue} />
+              <CheckboxInput name="singularity.email" setValue={setValue} />
+            </div>
+            <div className="text-sm flex items-center justify-end text-right">
+              {t(`import:contacts:duplicates:rfc`)}:
+            </div>
+            <div className="col-span-3">
+              <CheckboxInput name="singularity.rfc" setValue={setValue} />
             </div>
           </div>
         </Fragment>

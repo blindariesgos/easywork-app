@@ -35,8 +35,8 @@ export const Review = ({ formData }) => {
         <div className="bg-gray-100 p-4 rounded-md">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Detalles de contacto</h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="text-gray-400">Correo electrónico:</div>
-            <div className="font-medium">{formData.email}</div>
+            {/* <div className="text-gray-400">Correo electrónico:</div>
+            <div className="font-medium">{formData.email}</div> */}
 
             <div className="text-gray-400">Teléfono:</div>
             <div className="font-medium">{formData.phone}</div>

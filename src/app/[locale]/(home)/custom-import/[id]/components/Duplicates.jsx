@@ -23,17 +23,17 @@ const Duplicates = ({ handleNext, handleBack }) => {
   });
   const router = useRouter();
   const {
-    register,
     handleSubmit,
-    control,
-    reset,
     setValue,
-    watch,
     formState: { isValid, errors },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  const saveConfig = (data) => {
+    console.log({ data });
+  };
 
   return (
     <div className="px-3 py-4">
@@ -114,7 +114,7 @@ const Duplicates = ({ handleNext, handleBack }) => {
             label={t("common:buttons:next")}
             className="px-2 py-1"
             buttonStyle="primary"
-            onclick={handleNext}
+            onclick={handleSubmit(saveConfig)}
           />
           <Button
             label={t("common:buttons:cancel")}

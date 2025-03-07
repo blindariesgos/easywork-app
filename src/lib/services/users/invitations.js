@@ -1,20 +1,26 @@
 'use server';
 
-import axios from '../../axios';
+import authHttp from '../../axios';
 import { endpoints } from './endpoints';
 
+const baseURL = process.env.API_HOST;
+
 export const generateLink = data => {
-  return axios().post(endpoints.generateLink, data);
+  return authHttp().post(endpoints.generateLink, data);
 };
 
 export const sendInvitations = data => {
-  return axios().post(endpoints.sendEmail, data);
+  return authHttp().post(endpoints.sendEmail, data);
 };
 
 export const sendMassiveInvitations = data => {
-  return axios().post(endpoints.sendMassiveInvitation, data);
+  return authHttp().post(endpoints.sendMassiveInvitation, data);
 };
 
 export const verifyLink = (token, linkId) => {
-  return axios().post(endpoints.verifyLink(token, linkId));
+  return authHttp().get(endpoints.verifyLink(token, linkId));
+};
+
+export const registerUser = data => {
+  return authHttp().post(endpoints.registerNewUser, data);
 };

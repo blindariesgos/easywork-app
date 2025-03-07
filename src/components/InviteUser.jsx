@@ -92,7 +92,7 @@ export default function InviteUser({ previousModalPadding, colorTag }) {
                     <option value="1">Enlace</option>
                     <option value="2">Correo electrónico</option>
                     <option value="3">Invitación masiva</option>
-                    <option value="4">Usuario de otra compañía</option>
+                    {/* <option value="4">Usuario de otra compañía</option> */}
                   </Select>
 
                   <div className="bg-white rounded-lg p-5">

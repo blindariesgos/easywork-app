@@ -3,5 +3,5 @@ export const endpoints = {
   sendEmail: '/users/invitations/send',
   sendMassiveInvitation: '/users/invitations/massive-send',
   verifyLink: (token, linkId) => `/onboarding/invitations/v/${token}/link/${linkId}`,
-  registerNewUser: '/users/invitations/send',
+  registerNewUser: '/onboarding/user/register',
 };

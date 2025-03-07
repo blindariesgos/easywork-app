@@ -101,7 +101,12 @@
             "replace": "Reemplazar",
             "join": "Unir",
             "omit": "Omitir",
-            "warning": "Todos los datos del archivo seran importados. No se realizara la detección de duplicados",
+            "warning": {
+                "permit": "Todos los datos del archivo seran importados. No se realizara la detección de duplicados.",
+                "replace": "Si se detecta un duplicado durante la importación, los campos en el registro de contacto se actualizarán utilizando los datos importados.",
+                "join": "Si se detecta un duplicado durante la importación, sólo los campos vacíos en el registro de contacto se actualizarán utilizando los datos importados.",
+                "omit": "Se omitirán los registros duplicados."
+            },
             "subtitle": "Control de la singularidad",
             "fullName": "Nombre completo",
             "phone": "Teléfono",

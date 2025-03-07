@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight, FaCheck } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 // Form step components
 import { PersonalInfo } from '../../components/PersonalInfo';
@@ -13,7 +14,7 @@ import { VerifyingLink } from '../../components/VerifyingLink';
 import { Review } from '../../components/Review';
 
 // Services
-import { verifyLink } from '@/src/lib/services/users/invitations';
+import { registerUser, verifyLink } from '@/src/lib/services/users/invitations';
 
 // Form step titles
 const steps = [
@@ -23,40 +24,33 @@ const steps = [
   { id: 4, title: 'Resumen' },
 ];
 
+const initialValues = {
+  // Personal Info
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+
+  // Contact Details
+  // email: '',
+  phone: '',
+  address: '',
+
+  // Account Setup
+  username: '',
+  password: '',
+  confirmPassword: '',
+};
+
 function Onboarding({ token, linkId }) {
+  const router = useRouter();
+
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    // Personal Info
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-
-    // Contact Details
-    email: '',
-    phone: '',
-    address: '',
-
-    // Account Setup
-    username: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [formData, setFormData] = useState(initialValues);
 
   const [errors, setErrors] = useState({});
   const [verifyingLink, setVerifyingLink] = useState(true);
   const [isLinkInvalid, setIsLinkInvalid] = useState(false);
-
-  const verifyLinkStatus = useCallback(async () => {
-    try {
-      return true;
-      await verifyLink(token, linkId);
-    } catch (error) {
-      setIsLinkInvalid(true);
-      toast.error('El enlace es inválido o ha expirado');
-    } finally {
-      setVerifyingLink(false);
-    }
-  }, [token, linkId]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Update form data
   const handleChange = e => {
@@ -82,11 +76,11 @@ function Onboarding({ token, linkId }) {
       if (!formData.lastName.trim()) newErrors.lastName = 'El apellido es obligatorio';
       if (!formData.dateOfBirth) newErrors.dateOfBirth = 'La fecha de nacimiento es obligatoria';
     } else if (currentStep === 2) {
-      if (!formData.email.trim()) {
-        newErrors.email = 'El correo es obligatorio';
-      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = 'El correo ingresado no es válido';
-      }
+      // if (!formData.email.trim()) {
+      //   newErrors.email = 'El correo es obligatorio';
+      // } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      //   newErrors.email = 'El correo ingresado no es válido';
+      // }
       if (!formData.phone.trim()) newErrors.phone = 'El número de teléfono es obligatorio';
     } else if (currentStep === 3) {
       if (!formData.username.trim()) newErrors.username = 'El usuario es obligatorio';
@@ -121,7 +115,8 @@ function Onboarding({ token, linkId }) {
     if (currentStep === steps.length) {
       console.log('Form submitted:', formData);
       // Here you would typically send the data to your backend
-      alert('Form submitted successfully!');
+
+      saveUser(formData);
     } else {
       handleNext();
     }
@@ -143,12 +138,41 @@ function Onboarding({ token, linkId }) {
     }
   };
 
-  // Calculate progress percentage
-  const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
+  const saveUser = async data => {
+    setIsSubmitting(true);
+
+    try {
+      await registerUser(data);
+      toast.success('Su registro ha sido exitoso!');
+
+      // setFormData(initialValues);
+
+      // router.push('/');
+    } catch (error) {
+      console.log(error);
+      // toast.error('Ha ocurrido un error durante el registro de sus datos. Por favor intente más tarde');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const verifyLinkStatus = useCallback(async () => {
+    try {
+      const { result } = await verifyLink(token, linkId);
+      if (!result) throw new Error('Invalid link');
+    } catch (error) {
+      console.log('🚀 ~ verifyLinkStatus ~ error:', error);
+    } finally {
+      setVerifyingLink(false);
+    }
+  }, [token, linkId]);
 
   useEffect(() => {
     verifyLinkStatus();
   }, [verifyLinkStatus]);
+
+  // Calculate progress percentage
+  const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
 
   if (verifyingLink) return <VerifyingLink />;
   if (isLinkInvalid) return <InvalidLink />;
@@ -196,6 +220,7 @@ function Onboarding({ token, linkId }) {
                 type="button"
                 onClick={handleBack}
                 className="flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                disabled={isSubmitting}
               >
                 <FaChevronLeft className="w-4 h-4 mr-1" />
                 Volver
@@ -206,8 +231,9 @@ function Onboarding({ token, linkId }) {
               type="submit"
               className={`flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors
                 ${currentStep === 1 ? 'ml-auto' : ''}`}
+              disabled={isSubmitting}
             >
-              {currentStep === steps.length ? 'Finalizar' : 'Siguiente'}
+              {currentStep === steps.length ? (isSubmitting ? 'Guardando...' : 'Finalizar') : 'Siguiente'}
               {currentStep !== steps.length && <FaChevronRight className="w-4 h-4 ml-1" />}
             </button>
           </div>

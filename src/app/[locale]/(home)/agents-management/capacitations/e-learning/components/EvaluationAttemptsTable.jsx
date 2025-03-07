@@ -9,7 +9,7 @@ import { PaginationV2 } from '@/src/components/pagination/PaginationV2';
 import LoaderSpinner from '@/src/components/LoaderSpinner';
 import { TableHeaderItem } from '../../components/TableHeaderItem';
 import { TableBodyItem } from '../../components/TableBodyItem';
-import { QualificationBar } from '../components/QualificationBar';
+import { Qualification } from './QualificationBar';
 
 import { useEvaluations } from '../hooks/useEvaluations';
 
@@ -69,7 +69,7 @@ export const EvaluationAttemptsTable = () => {
                         </TableBodyItem>
                         <TableBodyItem>
                           <div className="text-center">
-                            <QualificationBar stage={Math.floor(Number(qualification || 0) / 10)} />
+                            <Qualification stage={Math.floor(Number(qualification || 0) / 10)} />
                             <p className="text-sm">{qualification || 0}%</p>
                           </div>
                         </TableBodyItem>

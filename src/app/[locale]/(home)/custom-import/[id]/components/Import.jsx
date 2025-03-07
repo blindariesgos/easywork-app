@@ -1,39 +1,29 @@
-import SelectInput from "@/src/components/form/SelectInput";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
 import { useTranslation } from "react-i18next";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import TextInput from "@/src/components/form/TextInput";
-import CheckboxInput from "@/src/components/form/CheckboxInput";
-import FileInput from "@/src/components/form/FileInput";
 import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
-import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 import useCustomImportContext from "@/src/context/custom-import";
+import { startBulkImportContacts } from "@/src/lib/apis";
+import { useEffect } from "react";
 
-const Import = ({ handleNext, handleBack, type }) => {
+const urlImports = {
+  contacts: (body) => startBulkImportContacts(body),
+};
+
+const Import = ({ handleNext, type }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
   const router = useRouter();
-  const schema = yup.object().shape({
-    fields: yup.array().of(yup.object().shape({})),
-  });
   const { info } = useCustomImportContext();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    watch,
-    formState: { isValid, errors },
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
+  const startImportation = async () => {
+    console.log({ info });
+    // const response = await urlImports[type]();
+  };
+
+  useEffect(() => {
+    startImportation();
+  }, []);
 
   return (
     <div className="px-3 py-4">

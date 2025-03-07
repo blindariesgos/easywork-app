@@ -214,6 +214,13 @@ export const deleteContactId = async (id) => {
   const response = await axios().delete(`/sales/crm/contacts/${id}`);
   return response;
 };
+export const startBulkImportContacts = async (body) => {
+  const response = await axios()
+    .post(`/sales/crm/contacts/batch`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
 //#endregion
 
 //#region REFUNDS

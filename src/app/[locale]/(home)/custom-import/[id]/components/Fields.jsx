@@ -1,36 +1,30 @@
 import SelectInput from "@/src/components/form/SelectInput";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
 import { useTranslation } from "react-i18next";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import TextInput from "@/src/components/form/TextInput";
-import CheckboxInput from "@/src/components/form/CheckboxInput";
-import FileInput from "@/src/components/form/FileInput";
 import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import useCustomImportContext from "@/src/context/custom-import";
 import { contactImportKeys, emailTypes, phoneTypes } from "./contants";
 import { useRouter } from "next/navigation";
+import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
 
 const Fields = ({ handleNext, handleBack }) => {
   const { t } = useTranslation();
-  const { lists } = useAppContext();
   const { header, columns, info, setInfo } = useCustomImportContext();
+  const [configColumn, setConfigColumns] = useState();
   const schema = yup.object().shape({
     fields: yup.object().shape({}),
   });
   const [options, setOptions] = useState();
   const router = useRouter();
   const {
-    register,
     handleSubmit,
-    control,
-    reset,
     setValue,
     watch,
-    getValues,
+    control,
     formState: { isValid, errors },
   } = useForm({
     mode: "onChange",
@@ -53,29 +47,14 @@ const Fields = ({ handleNext, handleBack }) => {
     );
   }, [header]);
 
-  const columnsRender = useMemo(() => {
-    return (
-      columns &&
-      columns.map((fields, index) => {
-        const indexValues = getValues("fields");
-        return (
-          <tr key={`tr-${index}`}>
-            {indexValues &&
-              contactImportKeys.map((key) => (
-                <td
-                  key={key}
-                  className="min-w-[150px] border border-gray-60 p-2"
-                >
-                  <p className="text-sm whitespace-nowrap">
-                    {fields[indexValues[key]] ?? ""}
-                  </p>
-                </td>
-              ))}
-          </tr>
-        );
-      })
+  useEffect(() => {
+    setConfigColumns(
+      contactImportKeys.reduce(
+        (acc, key, index) => ({ ...acc, [key]: index }),
+        {}
+      )
     );
-  }, [watch()]);
+  }, []);
 
   const handleSubmitNext = (data) => {
     const object = columns.map((fields) => {
@@ -119,6 +98,10 @@ const Fields = ({ handleNext, handleBack }) => {
     handleNext();
   };
 
+  const handleUpdateColumnsConfig = () => {
+    setConfigColumns(watch("fields"));
+  };
+
   return (
     <form onSubmit={handleSubmit(handleSubmitNext)} className="px-3 py-4">
       <p className="text-sm font-bold pb-4 ">
@@ -137,14 +120,10 @@ const Fields = ({ handleNext, handleBack }) => {
                   <div className="col-span-3 md:col-span-2 xl:col-span-1">
                     <SelectInput
                       options={options}
-                      selectedOption={{
-                        id: index,
-                        name: header[index],
-                      }}
-                      name={`fields.${key}`}
                       setValue={setValue}
                       border
                       watch={watch}
+                      name={`fields.${key}`}
                     />
                   </div>
                 </div>
@@ -152,23 +131,57 @@ const Fields = ({ handleNext, handleBack }) => {
             </div>
           ))}
       </div>
-      <div className="py-4">
-        <p className="text-sm font-bold py-4 rounded-[10px] bg-[#EFEFEF] px-2">
-          {t("import:contacts:fields:preview")}
-        </p>
+      <div className="py-4 ">
+        <div className="rounded-[10px] bg-[#EFEFEF] px-2 flex justify-between py-4">
+          <p className="text-sm font-bold ">
+            {t("import:contacts:fields:preview")}
+          </p>
+          <Button
+            label={"Actualizar Columnas"}
+            buttonStyle={"primary"}
+            className="px-3 py-1"
+            type="button"
+            onclick={handleUpdateColumnsConfig}
+          />
+        </div>
       </div>
       <div className="overflow-auto max-h-[400px] relative">
         <table className="table-auto  border-spacing-0">
-          <tr className="sticky -top-0.5  border-spacing-0 p-0 m-0 z-10 bg-white ">
-            {contactImportKeys.map((key) => (
-              <td key={key} className="border border-gray-60 bg-primary ">
-                <p className="text-sm font-bold whitespace-nowrap min-w-[150px] p-2 text-white">
-                  {t(`import:contacts:fields:${key}`)}
-                </p>
-              </td>
-            ))}
-          </tr>
-          {columnsRender}
+          <thead>
+            <tr className="sticky -top-0.5  border-spacing-0 p-0 m-0 z-10 bg-white ">
+              {contactImportKeys.map((key) => (
+                <td key={key} className="border border-gray-60 bg-primary ">
+                  <p className="text-sm font-bold whitespace-nowrap min-w-[150px] p-2 text-white">
+                    {t(`import:contacts:fields:${key}`)}
+                  </p>
+                </td>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <Suspense fallback={<LoadingSpinnerSmall />}>
+              {columns &&
+                configColumn &&
+                columns.slice(0, 20).map((fields, index) => {
+                  const indexValues = configColumn;
+                  return (
+                    <tr key={`tr-${index}`}>
+                      {indexValues &&
+                        contactImportKeys.map((key) => (
+                          <td
+                            key={key}
+                            className="min-w-[150px] border border-gray-60 p-2"
+                          >
+                            <p className="text-sm whitespace-nowrap">
+                              {fields[indexValues[key]] ?? ""}
+                            </p>
+                          </td>
+                        ))}
+                    </tr>
+                  );
+                })}
+            </Suspense>
+          </tbody>
         </table>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4">

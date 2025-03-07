@@ -106,6 +106,7 @@ function UserSelectAsync({
               }
             )}
             displayValue={(user) =>
+              user?.name ??
               `${user?.profile?.firstName} ${user?.profile?.lastName}`
             }
             onChange={(event) => {
@@ -155,7 +156,8 @@ function UserSelectAsync({
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {option.name}
+                        {option?.name ??
+                          `${option?.profile?.firstName} ${option?.profile?.lastName}`}
                       </span>
                       {selected ? (
                         <span

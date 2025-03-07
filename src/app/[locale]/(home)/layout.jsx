@@ -13,6 +13,7 @@ import OtherSettings from "../../../components/OtherSettings";
 import ChangePassword from "../../../components/ChangePassword";
 import InviteUser from "../../../components/InviteUser";
 import CrmDetailsModals from "./details/CrmDetailsModals";
+
 export default function HomeLayout({ children }) {
   return (
     <SessionProvider>

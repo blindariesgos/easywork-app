@@ -61,7 +61,7 @@ const ConnectToPolicy = ({ isOpen, setIsOpen, leadId }) => {
       <Dialog
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        className="relative z-[100]"
+        className="relative z-[1000000000]"
       >
         {/* The backdrop, rendered as a fixed sibling to the panel container */}
         <DialogBackdrop className="fixed inset-0 bg-black/30" />

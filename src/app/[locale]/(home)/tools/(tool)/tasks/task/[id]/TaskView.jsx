@@ -68,9 +68,8 @@ export default function TaskView({ id, task }) {
     if (!task) {
       return true;
     }
-    console.log({ task });
 
-    const isResponsible = !!task.responsible.find(
+    const isResponsible = !!task?.responsible?.find(
       (responsible) => responsible.id == session.data.user.sub
     );
 

@@ -37,6 +37,7 @@ const createAxiosInstance = (props) => {
   axiosInstance.interceptors.response.use(
     (response) => response.data,
     async (error) => {
+      console.log("🚀 ~ error:", JSON.stringify(error));
       return Promise.reject(
         error?.response?.data || {
           statusCode: 500,

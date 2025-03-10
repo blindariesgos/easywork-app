@@ -134,8 +134,10 @@ const CRMMultipleSelectV2 = ({
   }, [hidden]);
 
   const handleToggle = () => {
-    setQuery("");
-    setIsOpen(!isOpen);
+    if (!disabled) {
+      setQuery("");
+      setIsOpen(!isOpen);
+    }
   };
 
   useEffect(() => {
@@ -247,13 +249,15 @@ const CRMMultipleSelectV2 = ({
                   </div>
                 </div>
               ))}
-            <div
-              className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold"
-              onClick={handleToggle}
-            >
-              <PlusIcon className="h-3 w-3" />
-              <p className="text-xs">{t("common:buttons:add")}</p>
-            </div>
+            {!disabled && (
+              <div
+                className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold"
+                onClick={handleToggle}
+              >
+                <PlusIcon className="h-3 w-3" />
+                <p className="text-xs">{t("common:buttons:add")}</p>
+              </div>
+            )}
           </span>
           <div
             className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none"

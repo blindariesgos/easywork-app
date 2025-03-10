@@ -32,7 +32,7 @@ export const useMeetings = ({ filters = {}, config = {}, userId = "" }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/agent-management/meetings?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   console.log({ data, error, isLoading });
   return {
@@ -53,7 +53,7 @@ export const usePortfolioControl = ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/sales/crm/polizas/receipts/collection_report/${groupKey}?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   console.log({ data, error, isLoading });
   if (!groupKey) {

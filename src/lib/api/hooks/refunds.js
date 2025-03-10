@@ -30,10 +30,9 @@ export const useRefunds = ({ filters = {}, config = {} }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/reimbursements?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
-  console.log({ data, isLoading, isError: error });
   return {
     data,
     isLoading,

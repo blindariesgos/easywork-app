@@ -29,7 +29,7 @@ export const useConnections = ({ config = {}, filters = {} }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/agent-management/agent-connections?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     data,

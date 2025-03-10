@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "src/app/[locale]/(home)/agents-management/capacitations/e-learning/courses/services/get-courses.js"],
+  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "src/app/[locale]/(home)/agents-management/capacitations/e-learning/courses/services/get-courses.js", "src/hooks/use-boolean.js", "src/sections/calendar/hooks/index.js", "src/sections/calendar/calendar-tabs.jsx", "src/constants/index.js", "src/hooks/use-set-state.js"],
   "exclude": ["node_modules"]
 }

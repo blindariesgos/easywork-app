@@ -30,7 +30,6 @@ export const useCategories = ({ config = {}, filters = {} }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/sales/crm/polizas/category?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     data,

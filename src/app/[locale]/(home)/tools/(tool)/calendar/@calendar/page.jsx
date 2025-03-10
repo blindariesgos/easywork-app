@@ -362,6 +362,7 @@ export default function CalendarHome({ children }) {
                     onClick={() => close()}
                   />
                 </div>
+
                 <div className="gap-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:gap-y-0 sm:px-6 sm:py-5 transition-all duration-500">
                   <div className="my-auto">
                     <label
@@ -464,6 +465,7 @@ export default function CalendarHome({ children }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 flex items-center sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                   <div>
                     <h3 className="text-sm font-medium leading-6 text-gray-900">
@@ -490,6 +492,7 @@ export default function CalendarHome({ children }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 flex items-center sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                   <p className="text-sm text-left w-full md:w-36">
                     {t("tools:tasks:new:crm")}
@@ -503,6 +506,7 @@ export default function CalendarHome({ children }) {
                     />
                   </div>
                 </div>
+
                 <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 flex items-center sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                   <div>
                     <h3 className="text-sm font-medium leading-6 text-gray-900">
@@ -519,6 +523,7 @@ export default function CalendarHome({ children }) {
                     </div>
                   </div>
                 </div>
+
                 <div className="flex justify-center">
                   <button
                     type="button"

@@ -137,20 +137,22 @@ const TextEditor = forwardRef(
 
     return (
       <div className="w-full relative">
-        <ReactQuill
-          ref={localQuillRef}
-          value={value}
-          onChange={onChange || handleChange}
-          modules={{
-            toolbar: disabled ? null : toolbar,
-          }}
-          formats={formats}
-          theme="snow"
-          className={className}
-          onChangeSelection={onChangeSelection}
-          readOnly={disabled}
-          onKeyDown={handleKeyDown}
-        />
+        {!disabled && (
+          <ReactQuill
+            ref={localQuillRef}
+            value={value}
+            onChange={onChange || handleChange}
+            modules={{
+              toolbar: toolbar,
+            }}
+            formats={formats}
+            theme="snow"
+            className={className}
+            onChangeSelection={onChangeSelection}
+            // readOnly={disabled}
+            onKeyDown={handleKeyDown}
+          />
+        )}
         {arroba && (
           <DropdownVisibleUsers
             mentionButtonRef={null}

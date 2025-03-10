@@ -1,15 +1,21 @@
 "use client";
 
-import { Fragment } from "react";
-import CalendarContextProvider from "../../../../../../context/calendar/provider";
+import { CalendarView } from "@/src/sections/calendar/view";
+// TODO: @Luis modificado
 
-export default function CalendarLayout({ children, calendar }) {
+// import { Fragment } from "react";
+// import CalendarContextProvider from "../../../../../../context/calendar/provider";
+
+export default function CalendarLayout({ children }) {
   return (
-    <CalendarContextProvider>
-      <Fragment>
-        {calendar}
-        {children}
-      </Fragment>
-    </CalendarContextProvider>
+    <>
+      <CalendarView />
+      {children}
+    </>
+    // <CalendarContextProvider>
+    //   <Fragment>
+    //     {calendar}
+    // {/* </Fragment>
+    // </CalendarContextProvider> */}
   );
 }

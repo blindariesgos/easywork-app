@@ -3,6 +3,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 
 const colors = [
+  "#141052",
   "#FF0000",
   "#FF7A00",
   "#FFE500",
@@ -14,7 +15,7 @@ const colors = [
   "#FF007A",
 ];
 
-export default function RadioGroupColors({ setValue, name, watch }) {
+export default function RadioGroupColors({ setValue, name, watch, disabled }) {
   const [selected, setSelected] = useState();
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function RadioGroupColors({ setValue, name, watch }) {
   return (
     <RadioGroup
       value={selected}
+      disabled={disabled}
       onChange={handleChange}
       className="gap-4 flex flex-wrap"
     >

@@ -20,3 +20,7 @@ export const fetcherV2 = async ([baseKey, params]) => {
     .get(endpoint)
     .catch((error) => error);
 };
+
+export const fetcherPost = async (endpoint, data) => {
+  return await axios().post(endpoint, data);
+};

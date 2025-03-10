@@ -68,7 +68,7 @@ export const getKanbanLeads = async ({ config = {}, filters = {} }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/sales/crm/leads/kanban?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -92,7 +92,7 @@ export const uploadLeadTemporalFile = async (body) => {
 };
 export const addManualPolicyToLead = async (body, leadId) => {
   const url = `/sales/crm/leads/poliza/manual/generate/lead/${leadId}`;
-  console.log({ url });
+
   const response = await axios()
     .post(url, body)
     .catch((error) => ({ hasError: true, ...error }));
@@ -167,7 +167,7 @@ export const getAllRefunds = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/reimbursements?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -204,7 +204,7 @@ export const addPolicyByPdf = async (body, category = "nueva") => {
 
 export const addManualPolicy = async (body, category) => {
   const url = `/operations/management/manual/poliza?category=${category}`;
-  console.log({ url });
+
   const response = await axios()
     .post(url, body)
     .catch((error) => ({ hasError: true, ...error }));
@@ -243,7 +243,7 @@ export const getAllSchedules = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/schedulings?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -344,7 +344,7 @@ export const getPortafolioControlResume = async ({ filters }) => {
 export const getReceiptKanbanByStateId = async (params) => {
   const queries = getQueries(params);
   const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, ...error }));
@@ -414,7 +414,7 @@ export const getAllRecruitments = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/agent-management/agent-recruitments?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -433,7 +433,7 @@ export const getAllConnections = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/agent-management/agent-connections?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -444,7 +444,7 @@ export const getAllConnections = async ({
 //#region INTERMEDIARIES
 export const getIntermediaries = async () => {
   const url = `/agent-management/agente-intermediario`;
-  console.log({ url });
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, ...error }));
@@ -1152,7 +1152,7 @@ export const getAllTasks = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/tools/tasks/user?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -1169,7 +1169,7 @@ export const getAllPolicies = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/sales/crm/polizas?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));

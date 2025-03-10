@@ -1,26 +1,14 @@
 "use client";
-import SlideOver from "../../../../../../../../components/SlideOver";
-import React, { useEffect } from "react";
-import EventDetails from "../../components/EventDetails";
-import { useEvent } from "../../../../../../../../lib/api/hooks/calendar";
-import LoaderSpinner from "../../../../../../../../components/LoaderSpinner";
+
+import React from "react";
+
+import { CalendarEventDetails } from "@/src/sections/calendar/view";
+import SlideOver from "@/src/components/SlideOver";
 
 export default function Page({ params: { id } }) {
-  const { data, isError, isLoading } = useEvent(id);
-
-  if (isError) {
-    <SlideOver openModal={true} colorTag="bg-easywork-main" labelTag="user">
-      <div>
-        <p>Error</p>
-      </div>
-    </SlideOver>;
-  }
-
-  if (isLoading) <LoaderSpinner />;
-
   return (
     <SlideOver colorTag="bg-easywork-main" samePage={`/tools/calendar`}>
-      <EventDetails data={data} id={id} />
+      <CalendarEventDetails eventId={id} />
     </SlideOver>
   );
 }

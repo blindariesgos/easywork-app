@@ -119,6 +119,9 @@ importers:
       pino:
         specifier: ^9.6.0
         version: 9.6.0
+      prop-types:
+        specifier: ^15.8.1
+        version: 15.8.1
       qs:
         specifier: ^6.14.0
         version: 6.14.0

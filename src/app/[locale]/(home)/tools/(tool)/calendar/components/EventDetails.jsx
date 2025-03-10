@@ -42,7 +42,7 @@ import {
 } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
-import useCalendarContext from "@/src/context/calendar";
+// import useCalendarContext from "@/src/context/calendar";
 import { useSession } from "next-auth/react";
 
 const calendarios = [{ name: "Mi calendario", value: 1 }];
@@ -58,7 +58,7 @@ const eventLocalizations = [
 export default function EventDetails({ data, id }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
-  const { mutate } = useCalendarContext();
+  // const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [reminder, setReminder] = useState({
@@ -246,7 +246,7 @@ export default function EventDetails({ data, id }) {
           );
         } else {
           toast.success("Evento editado con éxito.");
-          mutate();
+          // mutate();
           router.back();
         }
       } else {
@@ -258,7 +258,7 @@ export default function EventDetails({ data, id }) {
           );
         } else {
           toast.success("Evento creado con éxito.");
-          mutate();
+          // mutate();
           router.back();
         }
       }
@@ -499,7 +499,7 @@ export default function EventDetails({ data, id }) {
         );
       } else {
         toast.success("Evento eliminado.");
-        mutate();
+        // mutate();
         router.back();
       }
     } catch (error) {
@@ -833,6 +833,7 @@ export default function EventDetails({ data, id }) {
                     <ComboBoxMultiSelect
                       {...field}
                       options={lists?.users || []}
+                      // options={[]}
                       getValues={getValues}
                       setValue={setValue}
                       name="participants"

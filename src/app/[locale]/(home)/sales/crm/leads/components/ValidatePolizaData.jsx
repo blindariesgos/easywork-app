@@ -576,7 +576,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
                     >
                       <p className="text-xs">Nombre completo</p>
                       <p className="text-xs bg-white py-1 px-2 rounded-md">
-                        {beneficiary?.insured?.fullName ?? "No disponible"}
+                        {beneficiary?.fullName ?? "No disponible"}
                       </p>
                       <div className="grid grid-cols-2 gap-1">
                         <div className="grid gap-1">
@@ -600,7 +600,7 @@ const ValidatePolizaData = ({ policy, isOpen, setIsOpen, leadId }) => {
                         <div className="grid gap-1">
                           <p className="text-xs">Código</p>
                           <p className="text-xs bg-white py-1 px-2 rounded-md">
-                            {beneficiary?.insured?.codigo ? "Si" : "No"}
+                            {beneficiary?.codigo ? beneficiary?.codigo : "S/N"}
                           </p>
                         </div>
                       </div>

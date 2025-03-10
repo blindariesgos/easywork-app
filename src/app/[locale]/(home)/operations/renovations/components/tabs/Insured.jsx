@@ -14,14 +14,14 @@ const Insures = ({ items, typePoliza }) => {
               <TextInput
                 type="text"
                 label={"Nombre"}
-                value={beneficiary?.insured?.fullName ?? "S/N"}
+                value={beneficiary?.fullName ?? "S/N"}
                 disabled
               />
             </div>
             <TextInput
               type="text"
               label={"Código"}
-              value={beneficiary?.insured?.codigo ?? "S/N"}
+              value={beneficiary?.codigo ?? "S/N"}
               disabled
             />
             {typePoliza === "VIDA" && (

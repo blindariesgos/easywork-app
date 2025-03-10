@@ -137,8 +137,8 @@ export default function PolicyDetails({
         "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
       ].includes(data?.type?.id)
     ) {
-      if (data?.insured && data?.insured?.length > 0) {
-        setValue("insureds", data?.insured);
+      if (data?.insureds && data?.insureds?.length > 0) {
+        setValue("insureds", data?.insureds);
       } else {
         setValue("insureds", [
           {
@@ -148,7 +148,8 @@ export default function PolicyDetails({
               tipoRiesgo: "",
               fumador: false,
             },
-            insured: { codigo: "", fullName: "" },
+            codigo: "",
+            fullName: "",
           },
         ]);
       }

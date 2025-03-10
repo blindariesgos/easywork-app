@@ -9,16 +9,13 @@ import { FaCircleCheck, FaCircleUser } from 'react-icons/fa6';
 import Button from '@/src/components/form/Button';
 
 import { useCourses } from '../hooks/useCourses';
-import useAppContext from '@/src/context/app';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useAgents } from '@/src/lib/api/hooks/agents';
-// import { useDebouncedCallback } from 'use-debounce';
 
 export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
   const router = useRouter();
   const { assignCourse, getCourseById } = useCourses({ fetchOnMount: false });
-  const { lists } = useAppContext();
   const { data: session } = useSession();
 
   const [loading, setLoading] = useState(false);
@@ -31,7 +28,7 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
     filters: { search },
     config: {
       page: 1,
-      limit: 10,
+      limit: 100,
     },
   });
 
@@ -57,18 +54,6 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
   };
 
   const handleSearch = value => setSearch(value);
-
-  const filterUsers = (user, search) => {
-    if (!search) return user;
-
-    return Object.entries(user).some(([key, value]) => {
-      if (['name', 'email'].includes(key)) {
-        return value.toLowerCase().includes(search.toLowerCase());
-      }
-
-      return false;
-    });
-  };
 
   const isUserSelected = id => selectedUsers.includes(id);
 
@@ -123,7 +108,7 @@ export const AssignCourseModal = ({ course, isOpen, setIsOpen, onSuccess }) => {
           </div>
 
           <div className="mb-5">
-            <p className="text-sm">Personas</p>
+            <p className="text-sm">Personas ({agents?.meta.totalItems || agents?.items.length || 0})</p>
 
             <div className="bg-white py-2 rounded-lg px-2 mt-2">
               <div className="rounded-lg grid grid-cols-1 md:grid-cols-2 gap-2 h-[250px] overflow-y-auto [&::-webkit-scrollbar]:hidden">

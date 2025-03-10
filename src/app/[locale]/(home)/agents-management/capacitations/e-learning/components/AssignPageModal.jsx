@@ -31,7 +31,7 @@ export const AssignPageModal = ({ course, page, isOpen, setIsOpen, onSuccess }) 
     filters: { search },
     config: {
       page: 1,
-      limit: 10,
+      limit: 100,
     },
   });
 

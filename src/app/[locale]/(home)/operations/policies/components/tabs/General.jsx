@@ -131,8 +131,8 @@ export default function PolicyDetails({
         "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
       ].includes(data?.type?.id)
     ) {
-      if (data?.insured && data?.insured?.length > 0) {
-        setValue("insureds", data?.insured);
+      if (data?.insureds && data?.insureds?.length > 0) {
+        setValue("insureds", data?.insureds);
       } else {
         setValue("insureds", [
           {
@@ -142,7 +142,8 @@ export default function PolicyDetails({
               tipoRiesgo: "",
               fumador: false,
             },
-            insured: { codigo: "", fullName: "" },
+            fullName: "",
+            codigo: "",
           },
         ]);
       }
@@ -204,16 +205,12 @@ export default function PolicyDetails({
       observersIds: observers?.map((x) => x.id) ?? [],
     };
 
-    if (
-      insureds &&
-      insureds.length > 0 &&
-      insureds[0]?.insured?.codigo?.length > 0
-    ) {
+    if (insureds && insureds.length > 0 && insureds[0]?.codigo?.length > 0) {
       body.insureds = insureds
-        .filter((x) => x?.insured?.codigo?.length > 0)
+        .filter((x) => x?.codigo?.length > 0)
         .map((x) => ({
-          codigo: x?.insured?.codigo,
-          fullName: x?.insured?.fullName,
+          codigo: x?.codigo,
+          fullName: x?.fullName,
           metadata: x.metadata,
         }));
     }

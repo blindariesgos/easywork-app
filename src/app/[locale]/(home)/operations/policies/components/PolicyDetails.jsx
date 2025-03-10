@@ -58,7 +58,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
         ? [
             {
               name: "Asegurados",
-              disabled: !(data?.insured && data?.insured?.length > 0),
+              disabled: !(data?.insureds && data?.insureds?.length > 0),
             },
             {
               name: "Beneficiarios",
@@ -72,7 +72,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
               disabled:
                 data?.type?.name === "GMM"
-                  ? !(data?.insured && data?.insured?.length > 0)
+                  ? !(data?.insureds && data?.insureds?.length > 0)
                   : !(data?.vehicles && data?.vehicles?.length > 0),
             },
           ];
@@ -313,7 +313,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               <Fragment>
                 <TabPanel className="w-full md:px-4">
                   <Insured
-                    items={data?.insured ?? []}
+                    items={data?.insureds ?? []}
                     typePoliza={data?.type?.name}
                   />
                 </TabPanel>
@@ -334,7 +334,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
                   />
                 ) : (
                   <Insured
-                    items={data?.insured ?? []}
+                    items={data?.insureds ?? []}
                     typePoliza={data?.type?.name}
                   />
                 )}

@@ -23,7 +23,8 @@ const Insureds = ({ register, control, watch, setValue, isAdd, name }) => {
         tipoRiesgo: "",
         fumador: false,
       },
-      insured: { codigo: "", fullName: "" },
+      codigo: "",
+      fullName: "",
     });
   };
 
@@ -54,7 +55,7 @@ const Insureds = ({ register, control, watch, setValue, isAdd, name }) => {
               type="text"
               label={"Nombre completo"}
               small
-              name={`insureds[${index}].insured.fullName`}
+              name={`insureds[${index}].fullName`}
               register={register}
             />
             <div className="grid grid-cols-2 gap-1">
@@ -62,7 +63,7 @@ const Insureds = ({ register, control, watch, setValue, isAdd, name }) => {
                 type="text"
                 label={"Código"}
                 small
-                name={`insureds[${index}].insured.codigo`}
+                name={`insureds[${index}].codigo`}
                 register={register}
               />
               {watch &&

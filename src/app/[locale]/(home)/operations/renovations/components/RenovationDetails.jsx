@@ -56,7 +56,7 @@ export default function RenovationDetails({ data, id, mutate }) {
         ? [
             {
               name: "Asegurados",
-              disabled: !(data?.insured && data?.insured?.length > 0),
+              disabled: !(data?.insureds && data?.insureds?.length > 0),
             },
             {
               name: "Beneficiarios",
@@ -70,7 +70,7 @@ export default function RenovationDetails({ data, id, mutate }) {
               name: data?.type?.name === "GMM" ? "Asegurados" : "Vehiculos",
               disabled:
                 data?.type?.name === "GMM"
-                  ? !(data?.insured && data?.insured?.length > 0)
+                  ? !(data?.insured && data?.insureds?.length > 0)
                   : !(data?.vehicles && data?.vehicles?.length > 0),
             },
           ];

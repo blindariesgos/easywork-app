@@ -82,7 +82,7 @@ const FormFilters = () => {
     if (data.fields.length == 0) return;
 
     const newFilters = data.fields
-      .filter((field) => field.value && field.value.length)
+      .filter((field) => field?.value && field?.value?.length)
       .reduce((acc, field) => {
         let value = field.value;
 

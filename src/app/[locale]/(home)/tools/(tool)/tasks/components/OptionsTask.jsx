@@ -207,7 +207,7 @@ const OptionsTask = ({
       <div
         className={clsx("bg-white w-full rounded-lg mt-2  relative", {
           "drop-shadow-md": !disabled,
-          "h-60 sm:h-48": value.length > 0,
+          "h-60 sm:h-48": value?.length > 0,
         })}
       >
         <TextEditor

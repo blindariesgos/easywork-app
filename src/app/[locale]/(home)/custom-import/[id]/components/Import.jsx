@@ -24,10 +24,16 @@ const Import = ({ handleNext, type }) => {
     const { otherData, items, ...rest } = info;
     const body = {
       ...rest,
-      items: items?.map((item) => ({
-        ...item,
-        ...otherData,
-      })),
+      items: items?.map((item) => {
+        return {
+          ...item,
+          ...otherData,
+          fullName:
+            item?.typeContact == "moral"
+              ? item?.fullName
+              : `${item?.name ?? ""} ${item?.lastname ?? ""}`,
+        };
+      }),
     };
 
     const response = await urlImports[type](body);

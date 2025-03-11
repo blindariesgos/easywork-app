@@ -1,12 +1,8 @@
-import SelectInput from "@/src/components/form/SelectInput";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
 import { useTranslation } from "react-i18next";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import TextInput from "@/src/components/form/TextInput";
 import CheckboxInput from "@/src/components/form/CheckboxInput";
-import FileInput from "@/src/components/form/FileInput";
 import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
 import { Fragment, useState } from "react";
@@ -14,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
 import useCustomImportContext from "@/src/context/custom-import";
 import { toast } from "react-toastify";
+
 const Duplicates = ({ handleNext, handleBack }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();

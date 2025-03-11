@@ -33,3 +33,20 @@ export function correctSpecialCharacters(texto) {
 
   return textCorrected;
 }
+
+export const getFormatFormData = (body) => {
+  const formData = new FormData();
+  for (const key in body) {
+    if (body[key] === null || body[key] === undefined || body[key] === "") {
+      continue;
+    }
+    if (body[key] instanceof File || body[key] instanceof Blob) {
+      formData.append(key, body[key]);
+    } else if (Array.isArray(body[key])) {
+      formData.append(key, JSON.stringify(body[key]));
+    } else {
+      formData.append(key, body[key]?.toString() || "");
+    }
+  }
+  return formData;
+};

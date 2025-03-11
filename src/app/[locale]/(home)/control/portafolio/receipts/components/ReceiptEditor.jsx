@@ -34,6 +34,7 @@ import { handleFrontError } from "@/src/utils/api/errors";
 import MultipleSelect from "@/src/components/form/MultipleSelect";
 import MultipleSelectUserAsync from "@/src/components/form/MultipleSelectUserAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import { methodPayments } from "@/src/utils/constants";
 
 export default function ReceiptEditor({ data, id }) {
   const { t } = useTranslation();
@@ -395,13 +396,7 @@ export default function ReceiptEditor({ data, id }) {
                     "control:portafolio:receipt:details:form:method-payment"
                   )}
                   name="methodPayment"
-                  options={[
-                    { id: "efectivo", name: "Efectivo" },
-                    { id: "tarjeta_credito", name: "Tarjeta de crédito" },
-                    { id: "tarjeta_debito", name: "Tarjeta de débito" },
-                    { id: "cheque", name: "Cheque" },
-                    { id: "transferencia", name: "Transferencia" },
-                  ]}
+                  options={methodPayments}
                   disabled={!isEdit}
                   register={register}
                   setValue={setValue}

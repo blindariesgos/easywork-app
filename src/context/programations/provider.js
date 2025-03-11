@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useSchedules } from "../../lib/api/hooks/schedules";
 import {
   polizaReimbursementStatus,
-  polizaReimbursementStatusColor,
+  polizaClaimStatusColor,
 } from "@/src/utils/constants";
 
 export default function ProgramationsContextProvider({ children }) {

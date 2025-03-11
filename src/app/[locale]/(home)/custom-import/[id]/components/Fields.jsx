@@ -162,24 +162,26 @@ const Fields = ({ handleNext, handleBack }) => {
             <Suspense fallback={<LoadingSpinnerSmall />}>
               {columns &&
                 configColumn &&
-                columns.slice(0, 20).map((fields, index) => {
-                  const indexValues = configColumn;
-                  return (
-                    <tr key={`tr-${index}`}>
-                      {indexValues &&
-                        contactImportKeys.map((key) => (
-                          <td
-                            key={key}
-                            className="min-w-[150px] border border-gray-60 p-2"
-                          >
-                            <p className="text-sm whitespace-nowrap">
-                              {fields[indexValues[key]] ?? ""}
-                            </p>
-                          </td>
-                        ))}
-                    </tr>
-                  );
-                })}
+                (columns?.length > 20 ? columns.slice(0, 20) : columns).map(
+                  (fields, index) => {
+                    const indexValues = configColumn;
+                    return (
+                      <tr key={`tr-${index}`}>
+                        {indexValues &&
+                          contactImportKeys.map((key) => (
+                            <td
+                              key={key}
+                              className="min-w-[150px] border border-gray-60 p-2"
+                            >
+                              <p className="text-sm whitespace-nowrap">
+                                {fields[indexValues[key]] ?? ""}
+                              </p>
+                            </td>
+                          ))}
+                      </tr>
+                    );
+                  }
+                )}
             </Suspense>
           </tbody>
         </table>

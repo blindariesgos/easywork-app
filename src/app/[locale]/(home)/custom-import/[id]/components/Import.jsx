@@ -3,11 +3,14 @@ import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
 import { useRouter } from "next/navigation";
 import useCustomImportContext from "@/src/context/custom-import";
-import { startBulkImportContacts } from "@/src/lib/apis";
-import { useEffect } from "react";
+import { startBulkImportContacts, startBulkImportLeads } from "@/src/lib/apis";
+import { useEffect, useState } from "react";
+import { LoadingSpinnerSmall } from "@/src/components/LoaderSpinner";
+import { handleFrontError } from "@/src/utils/api/errors";
 
 const urlImports = {
   contacts: (body) => startBulkImportContacts(body),
+  leads: (body) => startBulkImportLeads(body),
 };
 
 const Import = ({ handleNext, type }) => {
@@ -15,10 +18,26 @@ const Import = ({ handleNext, type }) => {
   const { lists } = useAppContext();
   const router = useRouter();
   const { info } = useCustomImportContext();
+  const [isLoading, setIsLoading] = useState(true);
 
   const startImportation = async () => {
-    console.log({ info });
-    // const response = await urlImports[type]();
+    const { otherData, items, ...rest } = info;
+    const body = {
+      ...rest,
+      items: items?.map((item) => ({
+        ...item,
+        ...otherData,
+      })),
+    };
+
+    const response = await urlImports[type](body);
+
+    if (response.hasError) {
+      handleFrontError(response);
+      return;
+    }
+    console.log({ body });
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -27,18 +46,14 @@ const Import = ({ handleNext, type }) => {
 
   return (
     <div className="px-3 py-4">
-      <p className="text-sm font-bold pb-4 ">
-        {t("import:contacts:import:title")}
-      </p>
       <div className="pr-4 pl-8 grid grid-cols-1 gap-y-4">
-        <div className="flex gap-2">
-          <p className="text-sm">{t(`import:${type}:import:subtitle1`)}</p>
-          <p className="text-sm font-bold">{info?.items?.length ?? 0}</p>
-        </div>
-        <div className="flex gap-2">
-          <p className="text-sm">{t("import:contacts:import:subtitle2")}</p>
-          <p className="text-sm font-bold">0</p>
-        </div>
+        {isLoading ? (
+          <LoadingSpinnerSmall />
+        ) : (
+          <div className="flex gap-2">
+            <p className="text-sm">{t(`import:${type}:import:subtitle3`)}</p>
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4">
         <div className="flex justify-center gap-2 pt-4 xl:col-span-2">

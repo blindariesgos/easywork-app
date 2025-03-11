@@ -179,6 +179,13 @@ export const addLeadDocument = async (leadId, category, body) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const startBulkImportLeads = async (body) => {
+  const response = await axios()
+    .post(`/sales/crm/leads/batch`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region CONTACTS

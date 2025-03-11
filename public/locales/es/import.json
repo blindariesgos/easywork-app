@@ -92,7 +92,7 @@
             "cua": "Cua",
             "curp": "Curp",
             "example": "Ejemplo de la data a importar",
-            "preview": "Visualización previa de datos importados"
+            "preview": "Visualización previa de las primeras 20 columnas de los datos importados"
         },
         "duplicates": {
             "title": "Configurar control de duplicados",
@@ -100,12 +100,12 @@
             "permit": "Permitir",
             "replace": "Reemplazar",
             "join": "Unir",
-            "omit": "Omitir",
+            "skip": "Omitir",
             "warning": {
                 "permit": "Todos los datos del archivo seran importados. No se realizara la detección de duplicados.",
                 "replace": "Si se detecta un duplicado durante la importación, los campos en el registro de contacto se actualizarán utilizando los datos importados.",
                 "join": "Si se detecta un duplicado durante la importación, sólo los campos vacíos en el registro de contacto se actualizarán utilizando los datos importados.",
-                "omit": "Se omitirán los registros duplicados."
+                "skip": "Se omitirán los registros duplicados."
             },
             "subtitle": "Control de la singularidad",
             "fullName": "Nombre completo",
@@ -117,6 +117,7 @@
             "title": "Importar resultado",
             "subtitle1": "Los contactos se importaron exitosamente:",
             "subtitle2": "Duplicados procesados:",
+            "subtitle3": "Se ha iniciado el proceso de importación de contactos, este se realizará en segundo plano, una vez finalizado el proceso se le notificará el resultado del mismo.",
             "other": "Importar otro archivo"
         }
     },
@@ -125,6 +126,7 @@
         "import": {
             "subtitle1": "Los prospectos se importaron exitosamente:",
             "subtitle2": "Duplicados procesados:",
+            "subtitle3": "Se ha iniciado el proceso de importación de prospectos, este se realizará en segundo plano, una vez finalizado el proceso se le notificará el resultado del mismo.",
             "other": "Importar otro archivo"
         }
     }

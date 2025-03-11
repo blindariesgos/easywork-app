@@ -30,7 +30,7 @@ export default function DeleteModal({
     <Dialog
       open={isOpen}
       onClose={() => setIsOpen(false)}
-      className="relative z-[100000000000]"
+      className="relative z-[10000]"
     >
       {/* The backdrop, rendered as a fixed sibling to the panel container */}
       <DialogBackdrop className="fixed inset-0 bg-black/30" />

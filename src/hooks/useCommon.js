@@ -1944,15 +1944,14 @@ export const useClaimTable = () => {
     {
       id: 7,
       name: t("operations:claims:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
       check: true,
     },
     {
       id: 7,
       name: t("operations:claims:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "createdAt",
+      order: "createdAt",
       check: true,
     },
     {

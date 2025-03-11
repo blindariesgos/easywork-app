@@ -22,6 +22,24 @@ export const polizaReimbursementStatusColor = {
   no_cumple_condiciones: "#FFC2C2",
 };
 
+export const polizaClaimStatus = {
+  captura_documentos: "Captura de documentos",
+  en_proceso: "En proceso",
+  validacion_documentos: "Validación de documentos",
+  aclaracion: "Aclaración",
+  aprobado: "Aprobado",
+  no_cumple_condiciones: "No cumple condiciones",
+};
+
+export const polizaClaimStatusColor = {
+  captura_documentos: "#EFD864",
+  en_proceso: "#DFC2FF",
+  validacion_documentos: "#FFF9C2",
+  aclaracion: "#C2FFF9",
+  aprobado: "#C2FFCF",
+  no_cumple_condiciones: "#FFC2C2",
+};
+
 export const renovationStages = [
   {
     name: "Seguimiento de renovación",
@@ -276,4 +294,35 @@ export const userStatus = (t) => [
       />
     ),
   },
+];
+
+export const claimTypes = [
+  {
+    id: "natural",
+    name: "Natural",
+  },
+  {
+    id: "accidental",
+    name: "Accidental",
+  },
+  {
+    id: "perdida_organica",
+    name: "Pérdida orgánica",
+  },
+  {
+    id: "invalidez",
+    name: "Invalidez",
+  },
+  {
+    id: "funerarios",
+    name: "Funerarios",
+  },
+];
+
+export const methodPayments = [
+  { id: "efectivo", name: "Efectivo" },
+  { id: "tarjeta_credito", name: "Tarjeta de crédito" },
+  { id: "tarjeta_debito", name: "Tarjeta de débito" },
+  { id: "cheque", name: "Cheque" },
+  { id: "transferencia", name: "Transferencia" },
 ];

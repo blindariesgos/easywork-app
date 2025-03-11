@@ -140,6 +140,7 @@ const AddComment = ({ entityId, close, updateActivities, crmType }) => {
     agent: "agentId",
     poliza_reimbursement: "polizaReimbursementId",
     poliza_scheduling: "polizaSchedulingId",
+    claim: "polizaClaimId",
   };
 
   const handleAdd = async () => {

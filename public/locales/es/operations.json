@@ -92,7 +92,7 @@
             "not-data": "No hay Siniestros"
         },
         "general": {
-            "title": "Datos generales de la póliza",
+            "title": "Datos generales del siniestro",
             "address": "Dirección",
             "rfc": "RFC",
             "status": "Estado de la póliza",

@@ -248,7 +248,8 @@
     "renewal": "Renovación",
     "agent": "Agente",
     "poliza_scheduling": "Programación",
-    "poliza_reimbursement": "Reembolso"
+    "poliza_reimbursement": "Reembolso",
+    "poliza_claim": "Siniestro"
   },
   "address": {
     "enter": "Introduzca código postal",

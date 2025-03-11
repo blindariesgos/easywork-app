@@ -186,7 +186,6 @@ export const startBulkImportLeads = async (body) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
-
 //#endregion
 
 //#region CONTACTS

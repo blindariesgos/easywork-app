@@ -283,7 +283,7 @@ export default function Comments({ info, type = "task" }) {
                 <Button
                   type="button"
                   onclick={() => handleComment()}
-                  disabled={disabled || value.length == 0}
+                  disabled={disabled || value?.length == 0}
                   label={t("tools:tasks:edit:comment:send")}
                   buttonStyle="primary"
                   className="px-3 py-2"
@@ -398,7 +398,7 @@ export default function Comments({ info, type = "task" }) {
                       <button
                         type="button"
                         onClick={() => handleComment(comment.id)}
-                        disabled={disabled || value.length == 0}
+                        disabled={disabled || value?.length == 0}
                         className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
                         {disabled ? (

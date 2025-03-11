@@ -332,7 +332,7 @@ const FormFilters = () => {
     console.log(data.fields);
     const displayAux = data.fields.filter((field) =>
       field.type == "multipleSelect"
-        ? field.value.length > 0
+        ? field?.value?.length > 0
         : typeof field.value !== "undefined" && field.value !== ""
     );
     setDisplayFilters(displayAux);
@@ -340,7 +340,7 @@ const FormFilters = () => {
     const newFilters = data.fields
       .filter((field) =>
         field.type == "multipleSelect"
-          ? field.value.length > 0
+          ? field?.value?.length > 0
           : typeof field.value !== "undefined" && field.value !== ""
       )
       .reduce((acc, field) => {

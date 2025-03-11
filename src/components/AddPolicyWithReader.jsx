@@ -317,11 +317,7 @@ const AddPolicyWithReader = ({
       body.regenerateReceipts = regenerateReceipts == "YES";
     }
 
-    if (
-      insureds &&
-      insureds.length > 0 &&
-      insureds[0]?.insured?.fullName?.length > 0
-    ) {
+    if (insureds && insureds.length > 0 && insureds[0]?.fullName?.length > 0) {
       body.insureds = insureds;
     }
 

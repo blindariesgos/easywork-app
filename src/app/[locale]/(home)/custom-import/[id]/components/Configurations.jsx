@@ -70,7 +70,7 @@ const Configurations = ({ handleNext, type }) => {
     setColumns(body);
     setInfo({
       ...info,
-      ...otherData,
+      otherData,
     });
     handleNext();
   };

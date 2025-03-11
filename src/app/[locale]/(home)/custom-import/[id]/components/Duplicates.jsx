@@ -1,21 +1,21 @@
-import SelectInput from "@/src/components/form/SelectInput";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
 import { useTranslation } from "react-i18next";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import TextInput from "@/src/components/form/TextInput";
 import CheckboxInput from "@/src/components/form/CheckboxInput";
-import FileInput from "@/src/components/form/FileInput";
 import useAppContext from "@/src/context/app";
 import Button from "@/src/components/form/Button";
 import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
+import useCustomImportContext from "@/src/context/custom-import";
+import { toast } from "react-toastify";
+
 const Duplicates = ({ handleNext, handleBack }) => {
   const { t } = useTranslation();
   const { lists } = useAppContext();
-  const options = ["permit", "replace", "join", "omit"];
+  const options = ["permit", "replace", "join", "skip"];
+  const { info, setInfo } = useCustomImportContext();
 
   const [selected, setSelected] = useState(options[0]);
   const schema = yup.object().shape({
@@ -32,7 +32,22 @@ const Duplicates = ({ handleNext, handleBack }) => {
   });
 
   const saveConfig = (data) => {
-    console.log({ data });
+    const params = {
+      singularityParams: data?.singularity
+        ? Object.keys(data?.singularity).filter((key) => data?.singularity[key])
+        : [],
+      duplicates: selected,
+    };
+
+    if (selected != "permit" && params?.singularityParams?.length == 0) {
+      toast.warning("Debe seleccionar un parámetro de singularidad");
+      return;
+    }
+    setInfo({
+      ...info,
+      ...params,
+    });
+    handleNext();
   };
 
   return (
@@ -78,7 +93,7 @@ const Duplicates = ({ handleNext, handleBack }) => {
               {t(`import:contacts:duplicates:fullName`)}:
             </div>
             <div className="col-span-3">
-              <CheckboxInput name="singularity.name" setValue={setValue} />
+              <CheckboxInput name="singularity.fullName" setValue={setValue} />
             </div>
             <div className="text-sm flex items-center justify-end text-right">
               {t(`import:contacts:duplicates:phone`)}:

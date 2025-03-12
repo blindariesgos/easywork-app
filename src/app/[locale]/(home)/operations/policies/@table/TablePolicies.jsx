@@ -238,7 +238,7 @@ export default function TablePolicies() {
   const masiveActions = [
     {
       id: 1,
-      name: "Asignar agente relacionado - subagente",
+      name: "Asignar Socio",
       disabled: true,
     },
     {

@@ -30,7 +30,7 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub agente",
+            "sub-agent": "Socio",
             "intermediary": "Intermediario",
             "responsible": "Responsable",
             "observers": "Observadores",
@@ -73,7 +73,7 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
+            "sub-agent": "Socio",
             "intermediary": "Intermediario",
             "responsible": "Responsable"
         }
@@ -109,7 +109,7 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
+            "sub-agent": "Socio",
             "intermediary": "Intermediario",
             "responsible": "Responsable"
         }
@@ -145,8 +145,8 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
-            "intermediary": "Agente Intermediario",
+            "sub-agent": "Socio",
+            "intermediary": "Intermediario",
             "responsible": "Responsable"
         },
         "update": "Reembolso actualizado correctamente."
@@ -188,8 +188,8 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
-            "intermediary": "Agente Intermediario",
+            "sub-agent": "Socio",
+            "intermediary": "Intermediario",
             "responsible": "Responsable",
             "observer": "Observador"
         },
@@ -226,7 +226,7 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
+            "sub-agent": "Socio",
             "intermediary": "Intermediario",
             "responsible": "Responsable"
         }
@@ -262,7 +262,7 @@
             "derechoPoliza": "Derecho de póliza",
             "iva": "IVA",
             "importePagar": "Importe a pagar",
-            "sub-agent": "Sub-agente",
+            "sub-agent": "Socio",
             "intermediary": "Intermediario",
             "responsible": "Responsable"
         },

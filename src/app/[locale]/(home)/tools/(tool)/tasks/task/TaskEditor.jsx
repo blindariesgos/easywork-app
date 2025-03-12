@@ -145,7 +145,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
     if (session && params.get("prev") != "meet") {
       setValue(
         "createdBy",
-        lists?.users.filter((user) => user.id === session.user?.sub)
+        lists?.users.filter((user) => user.id === session?.user?.sub)
       );
     }
   }, [session, lists?.users, setValue]);
@@ -747,7 +747,7 @@ const buildTaskBody = (
     requireRevision: selectedOptions.some((sel) => sel.id === 2),
     requireSummary: data.requireSummary,
     responsibleCanChangeDate: selectedOptions.some((sel) => sel.id === 1),
-    createdById: session.user?.sub,
+    createdById: session?.user?.sub,
     crm,
     important: !!data?.important,
     metadata: data.metadata,

@@ -47,7 +47,7 @@ const Configurations = ({ handleNext, type }) => {
 
   useEffect(() => {
     if (!session?.data?.user?.sub) return;
-    setValue("responsibleId", session.data.user.sub);
+    setValue("responsibleId", session?.data.user.sub);
   }, [session?.data?.user?.sub]);
 
   const handleSubmitNext = (data) => {

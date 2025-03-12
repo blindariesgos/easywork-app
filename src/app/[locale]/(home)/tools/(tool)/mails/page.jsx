@@ -20,7 +20,7 @@ export default function IngresarEmail() {
   const searchParams = useSearchParams();
   const { setSelectOauth, setUserData } = useAppContext();
 
-  // getAllOauth(session.data.user.id).then((response) => {
+  // getAllOauth(session?.data.user.id).then((response) => {
   //   if (response.length > 0) {
   //     router.push("/tools/webmail?page=1");
   //   }
@@ -46,7 +46,7 @@ export default function IngresarEmail() {
     password: null,
     senderName: null,
     mailName: null,
-    userId: session.data.user.sub,
+    userId: session?.data.user.sub,
   });
 
   async function saveIMAP() {
@@ -64,10 +64,10 @@ export default function IngresarEmail() {
   async function getFolders() {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session.data.user.sub}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/folders/${session?.data.user.sub}`,
         {
           headers: {
-            Authorization: `${session.data.user.accessToken}`,
+            Authorization: `${session?.data.user.accessToken}`,
           },
         }
       );

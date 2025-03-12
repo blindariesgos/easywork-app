@@ -55,7 +55,7 @@ const FiltersContact = () => {
   //   await postFilter({
   //     view: "/sales/crm/contacts",
   //     name: "filter ",
-  //     userId: session.data.user.id,
+  //     userId: session?.data.user.id,
   //     jsonData: filter,
   //   });
   //   toast.success("Filtro guardado");
@@ -63,7 +63,7 @@ const FiltersContact = () => {
   // };
 
   // const getFilterSaved = () => {
-  //   getFilters(session.data.user.id).then((res) => {
+  //   getFilters(session?.data.user.id).then((res) => {
   //     const updatedRes = res.map((obj) => ({ ...obj, selected: false }));
   //     setContacts(updatedRes);
   //   });

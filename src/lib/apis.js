@@ -780,6 +780,7 @@ export const getClaimById = async (claimId) => {
 //#endregion
 
 export const login = async (formdata) => {
+  console.log("LOGIN", formdata);
   return await signIn("credentials", formdata);
 };
 

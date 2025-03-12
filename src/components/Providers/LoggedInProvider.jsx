@@ -1,25 +1,10 @@
-"use client";
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import LoaderSpinner from "../LoaderSpinner";
-import { useEffect } from "react";
-import { logout } from "@/src/lib/apis";
 
-export default function LoggedInProvider({ children }) {
-  const { data: session, status } = useSession();
-
-  useEffect(() => {
-    if (session?.error === "RefreshTokenError") {
-      logout();
-    }
-  }, [session]);
-
-  if (status === "loading") {
-    return <LoaderSpinner />; // Mostrar un componente de carga mientras se verifica la sesión
-  }
-
-  if (!session?.user) {
-    redirect("/auth"); // Redirigir a la página de autenticación si no hay sesión activa
+export default async function LoggedInProvider({ children }) {
+  const session = await auth();
+  if (session?.error === "RefreshTokenError") {
+    //redirect("/auth");
   }
 
   return <div>{children}</div>; // Renderizar el contenido si la sesión es válida

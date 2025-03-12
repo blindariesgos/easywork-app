@@ -57,8 +57,8 @@ export default function Table({
   async function updateLabelId(array, label) {
     const apiUrl =
       label === "inbox"
-        ? `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/inbox/${session.data.user.sub}/${selectOauth?.id}`
-        : `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/${label}/${session.data.user.sub}/${selectOauth?.id}`;
+        ? `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/inbox/${session?.data.user.sub}/${selectOauth?.id}`
+        : `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/updatelabel/${label}/${session?.data.user.sub}/${selectOauth?.id}`;
 
     await axios.post(apiUrl, { data: array });
 
@@ -67,7 +67,7 @@ export default function Table({
       prevMails.map((mail) => {
         if (array.includes(mail.email.googleId)) {
           if (label === "read") {
-            getTokenGoogle(session.data.user.sub).then((res) => {
+            getTokenGoogle(session?.data.user.sub).then((res) => {
               console.log(res);
             });
             return {
@@ -78,7 +78,7 @@ export default function Table({
               },
             };
           } else if (label === "unread") {
-            getTokenGoogle(session.data.user.sub).then((res) => {
+            getTokenGoogle(session?.data.user.sub).then((res) => {
               console.log(res);
             });
             return {

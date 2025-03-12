@@ -39,612 +39,61 @@ import { toast } from "react-toastify";
 import { deleteLeadById, deleteTask } from "../lib/apis";
 import { handleApiError } from "../utils/api/errors";
 import { useSWRConfig } from "swr";
+import { useMemo, useEffect } from "react";
+import { getFullMenuStructure } from "../config/menuStructure";
+
+import {
+  codesToPaths,
+  inferParentPermissions,
+} from "../utils/permissionMapping";
 
 export const useSidebar = () => {
   const { t } = useTranslation();
   const { data: session } = useSession();
+  const [sidebarItems, setSidebarItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Obtener los permisos de menú del usuario
-  const userMenuPermissions =
-    session?.user?.menuPermissions ??
-    session?.user?.roles?.flatMap((role) => role.menuPermissions) ??
-    [];
+  // Memorizar la estructura completa del menú (solo se recalcula cuando cambia el idioma)
+  const fullMenuStructure = useMemo(() => getFullMenuStructure(t), [t]);
 
-  const sidebarNavigation = [
-    {
-      id: "home",
-      name: t("common:menu:home:name"),
-      href: "/home",
-      icon: ChevronRightIcon,
-      iconShortBar: HomeIcon,
-      current: true,
-      roles: ["admin", "user"],
-    },
-    {
-      id: "tools",
-      name: t("common:menu:tools:name"),
-      href: "/tools",
-      icon: ChevronRightIcon,
-      iconShortBar: SquaresPlusIcon,
-      current: false,
-      children: [
-        {
-          id: "tools:tasks",
-          name: t("common:menu:tools:tasks"),
-          href: "/tools/tasks?page=1",
-          image: "/img/herramientas/tareas.png",
-          iconShortBar: BookOpenIcon,
-        },
-        {
-          id: "tools:calendar",
-          name: t("common:menu:tools:calendar"),
-          href: "/tools/calendar",
-          image: "/img/herramientas/calendario.png",
-          iconShortBar: CalendarDaysIcon,
-        },
-        {
-          id: "tools:drive",
-          name: t("common:menu:tools:drive"),
-          href: "/tools/drive",
-          image: "/img/herramientas/drive.png",
-          iconShortBar: ArchiveBoxIcon,
-        },
-        {
-          id: "tools:email",
-          name: t("common:menu:tools:email"),
-          href: "/tools/webmail?page=1",
-          image: "/img/herramientas/correo.png",
-          iconShortBar: InboxArrowDownIcon,
-        },
-      ],
-    },
-    {
-      id: "sales",
-      name: t("common:menu:sales:name"),
-      icon: ChevronRightIcon,
-      current: false,
-      href: "/sales",
-      iconShortBar: TagIcon,
-      children: [
-        {
-          id: "sales:crm",
-          name: t("common:menu:sales:crm:name"),
-          href: "/sales/crm",
-          image: "/img/ventas/crm.png",
-          iconShortBar: NewspaperIcon,
-          children: [
-            {
-              id: "sales:crm:contacts",
-              name: t("common:menu:sales:crm:contacts"),
-              href: "/sales/crm/contacts?page=1",
-              image: "/img/crm/contacto.svg",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "sales:crm:leads",
-              name: t("common:menu:sales:crm:prospects"),
-              href: "/sales/crm/leads?page=1",
-              image: "/img/crm/prospecto.png",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-          ],
-        },
-        {
-          id: "sales:reports",
-          name: t("common:menu:sales:reports:name"),
-          href: "",
-          image: "/img/ventas/reportes.png",
-          iconShortBar: PresentationChartBarIcon,
-          children: [
-            {
-              id: "sales:reports:activities",
-              name: t("common:menu:sales:reports:activities"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "sales:reports:history",
-              name: t("common:menu:sales:reports:history"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "sales:reports:reports",
-              name: t("common:menu:sales:reports:reports"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "sales:reports:agent",
-              name: t("common:menu:sales:reports:agent"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-              children: [
-                {
-                  id: "sales:reports:agent:performance",
-                  name: "Embudo de ventas sin conversión",
-                  href: "",
-                  iconShortBar: ArrowDownCircleIcon,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "control",
-      name: t("common:menu:control:name"),
-      icon: ChevronRightIcon,
-      current: false,
-      href: "/control",
-      iconShortBar: WalletIcon,
-      children: [
-        {
-          id: "control:commissions",
-          name: t("common:menu:control:portfolio:commissions"),
-          href: "",
-          iconShortBar: GlobeAltIcon,
-          children: [
-            {
-              id: "control:commissions:commission-simulator",
-              name: t("common:menu:control:portfolio:commission-simulator"),
-              href: "",
-              iconShortBar: GlobeAltIcon,
-            },
-            {
-              id: "control:commissions:commissions-generated",
-              name: t("common:menu:control:portfolio:commissions-generated"),
-              href: "",
-              iconShortBar: GlobeAltIcon,
-            },
-          ],
-        },
-        {
-          id: "control:portfolio",
-          name: t("common:menu:control:portfolio:name"),
-          href: "/control/portafolio",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-          children: [
-            {
-              id: "control:portfolio:receipts",
-              name: t("common:menu:control:portfolio:receipts"),
-              href: "/control/portafolio/receipts",
-              image: "/img/cobranza/recibos.png",
-              iconShortBar: GlobeAltIcon,
-            },
-            {
-              id: "control:portfolio:control",
-              name: t("common:menu:control:portfolio:control"),
-              href: "/control/portafolio/control",
-              image: "/img/cobranza/cobranzasub.png",
-              iconShortBar: GlobeAltIcon,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "operations",
-      name: "OPERACIONES",
-      icon: ChevronRightIcon,
-      current: false,
-      href: "/operations",
-      iconShortBar: WalletIcon,
-      children: [
-        {
-          id: "operations:management",
-          name: "Gestión",
-          href: "/operations/managements",
-          image: "/img/operations/management.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "operations:policies",
-          name: "Pólizas",
-          href: "/operations/policies",
-          image: "/img/operations/policies.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "operations:endorsements",
-          name: "Renovaciones",
-          href: "/operations/renovations",
-          image: "/img/operations/renovations.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "operations:sinisters",
-          name: "Siniestros",
-          href: "/operations/claims",
-          image: "/img/operations/accidents.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "operations:refunds",
-          name: "Reembolsos",
-          href: "/operations/refunds",
-          image: "/img/operations/refunds.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "operations:refunds",
-          name: "Programaciones",
-          href: "/operations/programations",
-          image: "/img/operations/programations.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "operations:fund-recovery",
-          name: "Rescate de Fondos",
-          href: "/operations/fundrecoveries",
-          image: "/img/operations/fund_recovery.svg",
-          iconShortBar: GlobeAltIcon,
-        },
-      ],
-    },
-    {
-      id: "marketing",
-      name: t("common:menu:sales:marketing:name"),
-      icon: ChevronRightIcon,
-      current: false,
-      href: "/marketing",
-      iconShortBar: PuzzlePieceIcon,
-      children: [
-        {
-          id: "marketing:campaigns",
-          name: "Canales (REDES SOCIALES)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "marketing:phone",
-          name: "Telefonía (PRÓXIMAMENTE)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "marketing:sms",
-          name: "SMS (PRÓXIMAMENTE)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "marketing:widgets",
-          name: "WIDGETS (PRÓXIMAMENTE)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "marketing:forms",
-          name: "Formularios (PRÓXIMAMENTE)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "marketing:websites",
-          name: "Sitios Web (PRÓXIMAMENTE)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "marketing:landing",
-          name: "Landing (PRÓXIMAMENTE)",
-          href: "",
-          image: "/img/cobranza/portafolio.png",
-          iconShortBar: GlobeAltIcon,
-        },
-      ],
-    },
-    {
-      id: "services",
-      name: t("common:menu:services:name"),
-      icon: ChevronRightIcon,
-      current: false,
-      href: "/services",
-      iconShortBar: PuzzlePieceIcon,
-      children: [
-        {
-          id: "services:automations",
-          name: t("common:menu:services:automations"),
-          href: "",
-          image: "/img/services/automatizaciones.png",
-          iconShortBar: GlobeAltIcon,
-        },
-        {
-          id: "services:funnels",
-          name: t("common:menu:services:funnels"),
-          href: "",
-          image: "/img/services/embudos.png",
-          iconShortBar: FunnelIcon,
-        },
-        {
-          id: "services:chat",
-          name: t("common:menu:services:soport"),
-          href: "",
-          image: "/img/services/soporte.png",
-          iconShortBar: ChatBubbleOvalLeftEllipsisIcon,
-        },
-        {
-          id: "services:trash",
-          name: t("common:menu:services:trash"),
-          href: "",
-          image: "/img/services/papelera.png",
-          iconShortBar: TrashIcon,
-        },
-        {
-          id: "services:logs",
-          name: t("common:menu:services:logs"),
-          href: "",
-          image: "/img/services/logs.png",
-          iconShortBar: ShieldCheckIcon,
-        },
-        {
-          id: "services:academy",
-          name: t("common:menu:services:academy"),
-          href: "",
-          image: "/img/services/academia.png",
-          iconShortBar: AcademicCapIcon,
-        },
-      ],
-    },
-    {
-      id: "agent-management",
-      name: t("common:menu:agent-management:name"),
-      href: "/agents-management",
-      icon: ChevronRightIcon,
-      current: false,
-      iconShortBar: IdentificationIcon,
-      children: [
-        {
-          id: "agent-management",
-          name: t("common:menu:agent-management:accompaniment"),
-          href: "/agents-management/accompaniment",
-          iconShortBar: ArrowDownCircleIcon,
-          image: "/img/agentsManagement/accompaniment.svg",
-        },
-        {
-          id: "agent-management",
-          name: t("common:menu:agent-management:recruitement"),
-          href: "/agents-management/recruitment",
-          iconShortBar: UserPlusIcon,
-          image: "/img/agentsManagement/recruitement.svg",
-        },
-        {
-          id: "agent-management:capacitations",
-          name: t("common:menu:agent-management:capacitations:name"),
-          href: "/agents-management/capacitations",
-          iconShortBar: NewspaperIcon,
-          image: "/img/agentsManagement/capacitations.svg",
-          children: [
-            {
-              id: "agent-management:capacitations",
-              name: t("common:menu:agent-management:capacitations:e-learning"),
-              href: "/agents-management/capacitations/e-learning/courses",
-              image: "/img/crm/contacto.png",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "agent-management:capacitations",
-              name: t("common:menu:agent-management:capacitations:academy"),
-              href: "/agents-management/capacitations/academy",
-              image: "/img/crm/contacto.png",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-          ],
-        },
-        {
-          id: "agent-management",
-          name: t("common:menu:agent-management:conections"),
-          href: "/agents-management/conections",
-          iconShortBar: ArrowPathIcon,
-          image: "/img/agentsManagement/conections.svg",
-        },
-        {
-          id: "agent-management",
-          name: "Reuniones y sesiones",
-          href: "/agents-management/meetings-and-sessions",
-          icon: ChevronRightIcon,
-          image: "/img/agentsManagement/metting-and-sessions.svg",
-          current: false,
-          iconShortBar: IdentificationIcon,
-          children: [
-            {
-              id: "agent-management",
-              name: t("common:menu:agent-management:team-meetings"),
-              href: "/agents-management/meetings-and-sessions/teams",
-              image: "/img/agentsManagement/group-meet.svg",
-              iconShortBar: SparklesIcon,
-            },
-            {
-              id: "agent-management",
-              name: t("common:menu:agent-management:individual-meetings"),
-              href: "/agents-management/meetings-and-sessions/individuals",
-              image: "/img/agentsManagement/individual-meet.svg",
-              iconShortBar: SparklesIcon,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "companies",
-      name: t("common:menu:companies:name"),
-      href: "/",
-      icon: ChevronRightIcon,
-      current: false,
-      iconShortBar: BuildingOfficeIcon,
-      children: [
-        {
-          id: "companies:insurance",
-          name: t("common:menu:companies:insurance"),
-          href: "",
-          iconShortBar: GlobeAltIcon,
-          children: [
-            {
-              id: "companies:insurance:gnp",
-              name: t("common:menu:companies:gnp"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:axa",
-              name: t("common:menu:companies:axa"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:banorte",
-              name: t("common:menu:companies:banorte"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:atlas",
-              name: t("common:menu:companies:atlas"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:zurich",
-              name: t("common:menu:companies:zurich"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:qualitas",
-              name: t("common:menu:companies:qualitas"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:afirme",
-              name: t("common:menu:companies:afirme"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:insurance:others",
-              name: t("common:menu:companies:others"),
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-          ],
-        },
-        {
-          id: "companies:agency-addresses",
-          name: t("common:menu:companies:agency-addresses"),
-          href: "",
-          iconShortBar: GlobeAltIcon,
-          children: [
-            {
-              id: "companies:agency-addresses:gya",
-              name: "GYA TUS SUEÑOS",
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-            {
-              id: "companies:agency-addresses:blinda",
-              name: "BLINDARIESGOS",
-              href: "",
-              iconShortBar: ArrowDownCircleIcon,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "settings",
-      name: t("common:menu:settings:name"),
-      href: "/settings",
-      icon: ChevronRightIcon,
-      current: false,
-      iconShortBar: ArrowDownCircleIcon,
-      children: [
-        {
-          id: "settings:permissions",
-          name: t("common:menu:settings:permissions"),
-          href: "/settings/permissions",
-          iconShortBar: ArrowDownCircleIcon,
-          image: "/img/settings/permissions.png",
-          children: [
-            {
-              id: "settings:permissions:invite",
-              name: t("common:menu:settings:invite"),
-              href: `${window.location.pathname}?inviteuser=true`,
-              image: "/img/settings/invitar.png",
-              iconShortBar: ArchiveBoxIcon,
-            },
-            {
-              id: "settings:permissions:user-list",
-              name: t("common:menu:settings:user-list"),
-              href: "/settings/permissions/users",
-              image: "/img/settings/listausuarios.png",
-              iconShortBar: BookOpenIcon,
-            },
-          ],
-        },
-        {
-          id: "settings:others",
-          name: t("common:menu:settings:others"),
-          href: "/settings/others",
-          iconShortBar: ArrowDownCircleIcon,
-          image: "/img/settings/others.png",
-          children: [
-            {
-              id: "settings:others:other-settings",
-              name: t("common:menu:settings:other-settings"),
-              href: `${window.location.pathname}?othersettings=true`,
-              image: "/img/settings/othersettings.png",
-              iconShortBar: BookOpenIcon,
-            },
-            {
-              id: "settings:others:change-password",
-              name: t("common:menu:settings:change-password"),
-              href: `${window.location.pathname}?changepassword=true`,
-              image: "/img/settings/changepassword.png",
-              iconShortBar: InboxArrowDownIcon,
-            },
-            {
-              id: "settings:others:other-notifications",
-              name: t("common:menu:settings:other-notifications"),
-              href: `${window.location.pathname}?othernotifications=true`,
-              image: "/img/settings/otrasnotificaciones.png",
-              iconShortBar: InboxArrowDownIcon,
-            },
-            {
-              id: "settings:others:subscriptions",
-              name: "Suscripciones",
-              href: "",
-              image: "/img/settings/subscriptions.png",
-              iconShortBar: ArchiveBoxIcon,
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  console.log("session", session?.user);
 
-  // Función para filtrar el menú según los permisos del usuario
-  const filterMenuByPermissions = (menuItems) => {
+  // Memorizar los permisos expandidos (solo se recalcula cuando cambia la sesión)
+  const permissionPaths = useMemo(() => {
+    if (!session?.user?.roles?.[0]?.menuPermissions) return [];
+
+    const permissionCodes = session.user.roles[0].menuPermissions;
+    const expandedCodes = inferParentPermissions(permissionCodes);
+    return codesToPaths(expandedCodes);
+  }, [session?.user?.roles?.[0]?.menuPermissions]);
+
+  // Filtrar el menú según los permisos (solo se recalcula cuando cambian los permisos o la estructura)
+  useEffect(() => {
+    setLoading(true);
+    try {
+      const filtered = filterMenuByPermissions(
+        fullMenuStructure,
+        permissionPaths
+      );
+      setSidebarItems(filtered);
+    } catch (error) {
+      console.error("Error filtering menu:", error);
+      setSidebarItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [fullMenuStructure, permissionPaths]);
+
+  // Filtrar menú según permisos
+  const filterMenuByPermissions = (menuItems, permissionPaths) => {
     return menuItems
-      .filter((item) => {
-        // Verificar si el id del menú está en los permisos del usuario
-        return userMenuPermissions.includes(item.id);
-      })
+      .filter((item) => permissionPaths.includes(item.id))
       .map((item) => {
         // Si tiene hijos, aplicar el filtro recursivamente
         if (item.children) {
           return {
             ...item,
-            children: filterMenuByPermissions(item.children),
+            children: filterMenuByPermissions(item.children, permissionPaths),
           };
         }
         return item;
@@ -658,10 +107,9 @@ export const useSidebar = () => {
       });
   };
 
-  const filteredSidebarNavigation = filterMenuByPermissions(sidebarNavigation);
-
   return {
-    sidebarNavigation: filteredSidebarNavigation,
+    sidebarNavigation: sidebarItems,
+    isLoadingSidebar: loading,
   };
 };
 
@@ -1944,15 +1392,14 @@ export const useClaimTable = () => {
     {
       id: 7,
       name: t("operations:claims:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
       check: true,
     },
     {
       id: 7,
       name: t("operations:claims:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "createdAt",
+      order: "createdAt",
       check: true,
     },
     {

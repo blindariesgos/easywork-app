@@ -34,32 +34,40 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
 
   async function openWindowOauth() {
     localStorage.setItem("service", "Google Calendar");
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.sub}&service=calendar`
-    );
-    const oauthWindow = window.open(
-      response.data.url,
-      "_blank",
-      "width=500, height=500"
-    );
 
-    const checkWindowClosed = setInterval(async function () {
-      if (oauthWindow.closed && params.get("connect")) {
-        clearInterval(checkWindowClosed);
-        if (localStorage.getItem("service")) localStorage.removeItem("service");
-        if (localStorage.getItem("connectBuzon")) {
-          toast.error("Este email ya está conectado");
-          localStorage.removeItem("connectBuzon");
-        } else {
-          getDataNewGoogleUser();
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session?.data.user.sub}&service=calendar`
+      );
+      console.log(response.data.url);
+      const oauthWindow = window.open(
+        response.data.url,
+        "_blank",
+        "width=500, height=500"
+      );
+
+      const checkWindowClosed = setInterval(async function () {
+        if (oauthWindow.closed && params.get("connect")) {
+          clearInterval(checkWindowClosed);
+          if (localStorage.getItem("service"))
+            localStorage.removeItem("service");
+          if (localStorage.getItem("connectBuzon")) {
+            toast.error("Este email ya está conectado");
+            localStorage.removeItem("connectBuzon");
+          } else {
+            getDataNewGoogleUser();
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
   }
 
   async function getDataNewGoogleUser() {
     try {
-      const res = await getAllOauth(session.data.user.sub, "Google Calendar");
+      const res = await getAllOauth(session?.data.user.sub, "Google Calendar");
       console.log(res);
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {

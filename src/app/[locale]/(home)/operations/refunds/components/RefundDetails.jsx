@@ -9,9 +9,7 @@ import General from "./tabs/General";
 import Link from "next/link";
 import moment from "moment";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import Button from "@/src/components/form/Button";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { putRefund, putSchedule } from "@/src/lib/apis";
+import { putRefund } from "@/src/lib/apis";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 import {
@@ -70,20 +68,6 @@ export default function RefundDetails({ data, id, mutate }) {
       );
     }
     setLoading(false);
-  };
-
-  const handleAddDocument = (documentToAdd) => {
-    if (documentToAdd?.customOpen) {
-      documentToAdd?.customOpen();
-      return;
-    }
-    setAddFileProps({
-      ...addFileProps,
-      isOpen: true,
-      documentType: documentToAdd?.type,
-      title: t("common:add-document", { document: documentToAdd?.name }),
-      accept: documentToAdd?.accept,
-    });
   };
 
   return (

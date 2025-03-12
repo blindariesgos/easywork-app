@@ -13,10 +13,19 @@ import OtherSettings from "../../../components/OtherSettings";
 import ChangePassword from "../../../components/ChangePassword";
 import InviteUser from "../../../components/InviteUser";
 import CrmDetailsModals from "./details/CrmDetailsModals";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function HomeLayout({ children }) {
+export default async function HomeLayout({ children }) {
+  const session = await auth();
+
+  console.log(" 📶 session", session?.error);
+
+  if (session?.error === "RefreshTokenError") {
+    redirect("/auth");
+  }
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <LoggedInProvider>
         <AppContextProvider>
           <SocketProvider>

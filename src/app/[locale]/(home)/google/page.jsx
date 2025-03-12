@@ -131,7 +131,7 @@ export default function Page() {
         console.error("Error getting token:", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.data]);
+  }, [session?.data]);
 
   return (
     <div

@@ -21,6 +21,7 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import { MAX_FILE_SIZE } from "@/src/utils/constants";
+import { handleFrontError } from "@/src/utils/api/errors";
 
 const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -120,13 +121,9 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
 
     const formData = getFormData(body);
     const response = await addRefund(formData);
-    console.log({ response, body });
+
     if (response.hasError) {
-      let message = response.message;
-      if (response.errors) {
-        message = response.errors.join(", ");
-      }
-      toast.error(message);
+      handleFrontError(response);
       return;
     }
 

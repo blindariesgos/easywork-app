@@ -63,7 +63,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
     try {
       axios.get(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/savemails/${session.data.user.sub}/${selectOauth.id}`
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/savemails/${session?.data.user.sub}/${selectOauth.id}`
       );
     } catch (error) {}
 
@@ -215,7 +215,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
   async function deleteOauth() {
     try {
       await deleteTokenGoogle(
-        session.data.user.sub,
+        session?.data.user.sub,
         selectOauth.id,
         null,
         false
@@ -229,7 +229,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
   async function openWindowOauth() {
     localStorage.setItem("service", "Gmail");
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session.data.user.sub}&service=gmail`
+      `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session?.data.user.sub}&service=gmail`
     );
     const oauthWindow = window.open(
       response.data.url,
@@ -253,7 +253,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
 
   async function getDataNewGoogleUser() {
     try {
-      const res = await getAllOauth(session.data.user.sub, "Gmail");
+      const res = await getAllOauth(session?.data.user.sub, "Gmail");
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {
       console.log(error);

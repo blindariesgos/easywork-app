@@ -85,21 +85,6 @@ export default function CalendarHome({ children }) {
     eventLocalizations[0]
   );
 
-  useEffect(() => {
-    getAllOauth(session.data.user.sub, "Google Calendar").then((res) => {
-      setSelectOauth(res[0]);
-    });
-  }, []);
-
-  useEffect(() => {
-    const changeView = () => {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.changeView(calendarView);
-    };
-
-    changeView();
-  }, [calendarView]);
-
   const openConnect = () => {
     params.set("connect", true);
     router.replace(`/tools/calendar?${params.toString()}`);
@@ -228,8 +213,19 @@ export default function CalendarHome({ children }) {
   }
 
   useEffect(() => {
-    console.log(events);
-  }, [events]);
+    getAllOauth(session?.data.user.sub, "Google Calendar").then((res) => {
+      setSelectOauth(res[0]);
+    });
+  }, [session?.data.user.sub]);
+
+  useEffect(() => {
+    const changeView = () => {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.changeView(calendarView);
+    };
+
+    changeView();
+  }, [calendarView]);
 
   return (
     <div className="flex flex-col flex-grow">

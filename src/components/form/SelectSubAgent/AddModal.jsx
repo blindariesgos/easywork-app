@@ -37,7 +37,7 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect, watch, name }) => {
       const response = await postSubAgent(addInfo);
       if (response?.hasError) {
         return toast.error(
-          "Se ha producido un error al crear el SubAgente, inténtelo de nuevo más tarde."
+          "Se ha producido un error al crear el Socio, inténtelo de nuevo más tarde."
         );
       }
       mutate();
@@ -46,7 +46,7 @@ const AddModal = ({ isOpen, setIsOpen, handleSelect, watch, name }) => {
         name: "",
         cua: "",
       });
-      toast.success("Sub Agente creado con exito.");
+      toast.success("Socio creado con exito.");
     } catch (error) {
       toast.error(
         "Se ha producido un error al crear el SubAgente, inténtelo de nuevo más tarde."

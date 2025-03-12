@@ -145,13 +145,13 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
           minWidth: minWidthClass ?? "auto",
         }}
       >
-        <div className="flex gap-1">
+        <div className="flex gap-1 justify-between">
           <div className="flex flex-col gap-2 justify-start">
             <p
               className="font-bold cursor-pointer text-sm"
               onClick={() => handleClick(data.id)}
             >
-              {`Siniestro - ${data?.poliza?.name ?? ""}`}
+              {`Siniestro - ${data?.insurance?.name ?? ""} ${data?.poliza?.poliza ?? ""} ${data?.polizaType?.name ?? ""}`}
             </p>
             <p
               className="text-start text-easy-400 cursor-pointer text-sm"

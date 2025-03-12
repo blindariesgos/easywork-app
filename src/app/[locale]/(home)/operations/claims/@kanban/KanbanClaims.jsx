@@ -82,7 +82,7 @@ const KanbanClaims = () => {
       )}
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <div className="overflow-x-auto">
-          <div className="grid grid-cols-7 min-w-full w-max gap-2">
+          <div className="grid grid-cols-6 min-w-full w-max gap-2">
             {items?.map((column) => (
               <Column
                 {...column}

@@ -56,8 +56,6 @@ export const useSidebar = () => {
   // Memorizar la estructura completa del menú (solo se recalcula cuando cambia el idioma)
   const fullMenuStructure = useMemo(() => getFullMenuStructure(t), [t]);
 
-  console.log("session", session?.user);
-
   // Memorizar los permisos expandidos (solo se recalcula cuando cambia la sesión)
   const permissionPaths = useMemo(() => {
     if (!session?.user?.roles?.[0]?.menuPermissions) return [];

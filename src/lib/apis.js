@@ -777,6 +777,23 @@ export const getClaimById = async (claimId) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const getAllClaims = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/operations/claims?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 export const login = async (formdata) => {

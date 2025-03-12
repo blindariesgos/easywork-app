@@ -797,6 +797,7 @@ export const getAllClaims = async ({
 //#endregion
 
 export const login = async (formdata) => {
+  console.log("LOGIN", formdata);
   return await signIn("credentials", formdata);
 };
 

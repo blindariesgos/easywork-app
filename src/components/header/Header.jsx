@@ -27,7 +27,7 @@ export default function Header() {
   const params = new URLSearchParams(url.search);
   const pathname = usePathname();
 
-  params.set("profile", session.user.jti);
+  params.set("profile", session?.user?.jti);
 
   function ifWebmailPath() {
     if (pathname === "/tools/webmail") return true;

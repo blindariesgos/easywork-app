@@ -81,7 +81,7 @@ export default function Signature({
   };
 
   useEffect(() => {
-    getTokenGoogle(session.data.user.sub).then((res) => {
+    getTokenGoogle(session?.data.user.sub).then((res) => {
       setUser(res);
     });
     getSignatures();

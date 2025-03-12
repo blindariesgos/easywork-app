@@ -22,7 +22,7 @@ const HomeChat = () => {
       </div>
       <div className="w-full mt-2 px-3">
         <h1 className="w-3/5 font-bold text-lg text-white leading-tight">
-          Hola {session.data.user.profile.firstName} ¿Cómo podemos ayudarte?
+          Hola {session?.data.user.profile.firstName} ¿Cómo podemos ayudarte?
         </h1>
       </div>
       <div className="px-3 mt-3 w-full">

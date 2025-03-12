@@ -60,7 +60,7 @@ export default function TaskView({ id, task }) {
   };
 
   const isCreator = useMemo(
-    () => task?.createdBy?.id == session.data.user.sub,
+    () => task?.createdBy?.id == session?.data.user.sub,
     [task, session]
   );
 
@@ -70,13 +70,13 @@ export default function TaskView({ id, task }) {
     }
 
     const isResponsible = !!task?.responsible?.find(
-      (responsible) => responsible.id == session.data.user.sub
+      (responsible) => responsible.id == session?.data.user.sub
     );
 
     if (isCreator || isResponsible) return true;
 
     return false;
-  }, [task, session.data.user.sub]);
+  }, [task, session?.data.user.sub]);
 
   const field = {}; // Pasar props adicionales del campo si es necesario
 
@@ -212,7 +212,7 @@ export default function TaskView({ id, task }) {
             {!openEdit?.mode &&
               task?.metadata?.meet &&
               task?.metadata?.developmentManagerId ===
-                session.data.user.sub && (
+                session?.data.user.sub && (
                 <div className="flex gap-2 items-center">
                   <p className="text-xl font-medium">Revisión de GDD</p>
                   <Menu>

@@ -589,6 +589,51 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
   console.log(response);
   return response;
 };
+
+export const getTasks = async (page = 1, limit = 6) => {
+  const response = await axios().get(
+    `/tools/tasks?limit=${limit}&page=${page}`
+  );
+  return response;
+};
+
+export const getTasksUser = async (page = 1, limit = 6) => {
+  const response = await axios().get(
+    `/tools/tasks/user?limit=${limit}&page=${page}`
+  );
+  return response;
+};
+
+export const deleteTask = async (id) => {
+  const response = await axios().delete(`/tools/tasks/${id}`);
+  return response;
+};
+
+export const getTaskId = async (id) => {
+  const response = await axios().get(`/tools/tasks/${id}`);
+  return response;
+};
+
+export const postTask = async (body) => {
+  const response = await axios().post(`/tools/tasks`, body);
+  revalidatePath("/tools/tasks", "page");
+  return response;
+};
+export const putTaskId = async (id, body) => {
+  const response = await axios()
+    .put(`/tools/tasks/${id}`, body)
+    .catch((error) => ({ hasError: true, error }));
+
+  return response;
+};
+
+export const getTaskObjections = async (taskId, page, limit) => {
+  const response = await axios()
+    .get(`/tools/tasks/${taskId}/objection?page=${page}&limit=${limit}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region TIME TRACKING TASKS
@@ -901,47 +946,10 @@ export const getFoldersSaved = async (data) => {
   return response;
 };
 
-export const getTasks = async (page = 1, limit = 6) => {
-  const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`
-  );
-  return response;
-};
-
-export const getTasksUser = async (page = 1, limit = 6) => {
-  const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`
-  );
-  return response;
-};
-
-export const deleteTask = async (id) => {
-  const response = await axios().delete(`/tools/tasks/${id}`);
-  return response;
-};
-
-export const getTaskId = async (id) => {
-  const response = await axios().get(`/tools/tasks/${id}`);
-  return response;
-};
-
-export const postTask = async (body) => {
-  const response = await axios().post(`/tools/tasks`, body);
-  revalidatePath("/tools/tasks", "page");
-  return response;
-};
 export const postMeet = async (body) => {
   const response = await axios()
     .post(`/agent-management/meetings`, body)
     .catch((error) => ({ hasError: true, ...error }));
-  return response;
-};
-export const putTaskId = async (id, body) => {
-  console.log("Updating task");
-  const response = await axios()
-    .put(`/tools/tasks/${id}`, body)
-    .catch((error) => ({ hasError: true, error }));
-
   return response;
 };
 

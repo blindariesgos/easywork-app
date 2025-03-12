@@ -27,12 +27,7 @@ const getQueries = (filters, userId) => {
     .join("&");
 };
 
-export const useTasks = ({
-  filters = {},
-  userId = "",
-  config = {},
-  srcConfig = {},
-}) => {
+export const useTasks = ({ filters = {}, userId = "", config = {} }) => {
   const queries = getQueries(filters, userId);
   const configParams = Object.keys(config)
     .map((key) => `${key}=${config[key]}`)

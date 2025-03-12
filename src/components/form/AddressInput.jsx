@@ -7,7 +7,7 @@ import { VALIDATE_POSTAL_CODE } from "@/src/utils/regularExp";
 import SelectInput from "./SelectInput";
 import { handleFrontError } from "@/src/utils/api/errors";
 import LoaderSpinner from "../LoaderSpinner";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const AddressInput = ({
   label,
@@ -21,6 +21,7 @@ const AddressInput = ({
   isRequired,
   ...props
 }) => {
+  const { t } = useTranslation();
   const [postalCode, setPostalCode] = useState("");
   const [habitations, setHabitations] = useState([]);
   const [habitation, setHabitation] = useState();

@@ -5,7 +5,6 @@ import { LeadsContext } from "..";
 import { useLeads } from "../../lib/api/hooks/leads";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../app";
-import { useCommon } from "@/src/hooks/useCommon";
 import { CancelLeadReasons } from "@/src/utils/constants";
 
 export default function LeadsContextProvider({ children }) {
@@ -14,7 +13,6 @@ export default function LeadsContextProvider({ children }) {
   const [isOpenValidation, setIsOpenValidation] = useState(false);
   const [policyInfo, setPolicyInfo] = useState();
   const [filters, setFilters] = useState({});
-  const { stagesLead, statusLead } = useCommon();
   const [config, setConfig] = useState({
     limit: 5,
     page: 1,
@@ -27,11 +25,10 @@ export default function LeadsContextProvider({ children }) {
   const defaultFilterFields = [
     {
       id: 1,
-      name: t("leads:filters:origin"),
-      type: "select",
-      options: lists?.listContact?.contactSources || [],
+      name: t("contacts:filters:responsible"),
+      type: "select-user",
       check: true,
-      code: "sourceId",
+      code: "assignedById",
     },
     {
       id: 2,
@@ -47,29 +44,6 @@ export default function LeadsContextProvider({ children }) {
         },
       ],
     },
-    {
-      id: 3,
-      name: t("leads:filters:created"),
-      type: "date",
-      check: true,
-      code: "createdAt",
-    },
-
-    {
-      id: 4,
-      name: t("leads:filters:status"),
-      type: "select",
-      check: true,
-      code: "status",
-      options: statusLead,
-    },
-    {
-      id: 5,
-      name: t("contacts:filters:responsible"),
-      type: "select-user",
-      check: true,
-      code: "assignedById",
-    },
   ];
   useEffect(() => {
     handleChangeConfig("page", 1);
@@ -79,11 +53,10 @@ export default function LeadsContextProvider({ children }) {
     setFilterFields([
       {
         id: 1,
-        name: t("leads:filters:origin"),
-        type: "select",
-        options: lists?.listContact?.contactSources || [],
+        name: t("contacts:filters:responsible"),
+        type: "select-user",
         check: true,
-        code: "sourceId",
+        code: "assignedById",
       },
       {
         id: 2,
@@ -100,30 +73,22 @@ export default function LeadsContextProvider({ children }) {
         ],
       },
       {
-        id: 3,
-        name: t("leads:filters:created"),
-        type: "date",
-        check: true,
-        code: "createdAt",
-      },
-
-      {
-        id: 4,
-        name: t("leads:filters:status"),
-        type: "select",
-        check: true,
-        code: "status",
-        options: statusLead,
-      },
-      {
         id: 5,
-        name: t("contacts:filters:responsible"),
-        type: "select-user",
-        check: true,
-        code: "assignedById",
+        name: t("leads:filters:created"),
+        type: "date-short",
+        check: false,
+        code: "createdAt",
       },
       {
         id: 6,
+        name: t("leads:filters:origin"),
+        type: "select",
+        options: lists?.listContact?.contactSources || [],
+        check: false,
+        code: "sourceId",
+      },
+      {
+        id: 7,
         name: t("operations:policies:general:type"),
         type: "select",
         check: false,
@@ -131,7 +96,7 @@ export default function LeadsContextProvider({ children }) {
         options: lists?.policies?.polizaTypes ?? [],
       },
       {
-        id: 7,
+        id: 8,
         name: t("control:portafolio:control:form:currency"),
         type: "select",
         check: false,
@@ -139,35 +104,44 @@ export default function LeadsContextProvider({ children }) {
         options: lists?.receipts?.currencies,
       },
       {
-        id: 8,
+        id: 9,
         name: "Razón de pérdida del prospecto",
         type: "select",
         check: false,
         code: "cancelReasonId",
         options: CancelLeadReasons,
       },
-      // {
-      //   id: 6,
-      //   name: t("contacts:filters:contact-type"),
-      //   type: "select",
-      //   options: lists?.listContact?.contactTypes || [],
-      //   check: false,
-      //   code: "typeContact",
-      // },
-      // {
-      //   id: 7,
-      //   name: t("contacts:filters:cua"),
-      //   type: "input",
-      //   check: false,
-      //   code: "cua",
-      // },
-      // {
-      //   id: 8,
-      //   name: t("contacts:filters:rfc"),
-      //   type: "input",
-      //   check: false,
-      //   code: "rfc",
-      // },
+      {
+        id: 10,
+        name: t("contacts:create:typePerson"),
+        type: "select",
+        check: false,
+        code: "typePerson",
+        options: [
+          {
+            name: "Física",
+            id: "fisica",
+          },
+          {
+            name: "Moral",
+            id: "moral",
+          },
+        ],
+      },
+      {
+        id: 11,
+        name: t("contacts:filters:observer"),
+        type: "select-user",
+        check: false,
+        code: "observerId",
+      },
+      {
+        id: 12,
+        name: t("contacts:create:sub-agent"),
+        type: "select-agent",
+        check: false,
+        code: "subAgentId",
+      },
     ]);
   }, [lists?.listContact]);
 

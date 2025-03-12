@@ -12,8 +12,6 @@ export const useNotify = () => {
     }
   );
 
-  console.log(data);
-
   const notifications = data && Array.isArray(data?.items) ? data.items : [];
 
   const markAsRead = async (id) => {

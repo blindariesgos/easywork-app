@@ -7,8 +7,6 @@ export default function Status({ status }) {
   const { notifications, setIsOpen } = useNotifyContext();
   const { t } = useTranslation();
 
-  console.log(notifications);
-
   // Filtrar las notificaciones leidas
   const unreadNotifications = notifications?.filter(
     (notification) => !notification.readAt

@@ -387,11 +387,16 @@ const FormFilters = () => {
     name: "fields",
   });
 
+  const getFieldValue = (value, type) => {
+    if (type == "date-short") {
+      return moment(value.replace(/-/g, "")).format();
+    }
+    return value;
+  };
+
   const validateFilters = () => {
     let newItems = [];
-    const getDate = (date) => {
-      return moment(date.replace(/-/g, "")).format();
-    };
+
     Object.keys(filters)?.length > 0 &&
       Object.keys(filters)
         .filter((key) => filters[key] !== "")
@@ -399,9 +404,8 @@ const FormFilters = () => {
           const index = fields.findIndex((x) => x.code == key);
           const filterField = filterFields.find((field) => field.code == key);
           if (!filterField) return;
-          const fieldValue = ["date", "date-short"].includes(filterField.type)
-            ? getDate(filters[key])
-            : filters[key];
+          const fieldValue = getFieldValue(filters[key], filterField.type);
+
           if (index == -1) {
             newItems = [
               ...newItems,
@@ -414,14 +418,11 @@ const FormFilters = () => {
             setValue(`fields[${index}].value`, fieldValue);
           }
         });
+    console.log({ newItems, fields });
     if (newItems.length > 0) {
       append(newItems);
     }
   };
-
-  useEffect(() => {
-    validateFilters();
-  }, []);
 
   useEffect(() => {
     validateFilters();

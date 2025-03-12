@@ -39,7 +39,7 @@ export default function TasksContextProvider({ children }) {
       name: t("tools:tasks:filters:fields:responsible"),
       type: "select-user",
       check: false,
-      code: "responsible",
+      code: "responsibleId",
     },
     {
       id: 8,

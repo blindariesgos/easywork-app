@@ -28,18 +28,18 @@ const getQueries = (filters, userId) => {
 
   const userIdQuery = userId ? `userId=${userId}` : "";
 
-  return [filterQueries, userIdQuery].filter(Boolean).join("&"); 
+  return [filterQueries, userIdQuery].filter(Boolean).join("&");
 };
 
 export const useCalendar = ({ filters = {}, page = 1, limit = 15 }) => {
-  const { data: session } = useSession(); 
-  const userId = session?.user?.sub; 
+  const { data: session } = useSession();
+  const userId = session?.user?.sub;
 
-  const queries = getQueries(filters, userId); 
+  const queries = getQueries(filters, userId);
   const url = `/calendar/events?limit=${limit}&page=${page}${
     queries.length > 0 ? `&${queries}` : ""
   }`;
-
+  console.log(url);
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {

@@ -32,6 +32,7 @@ import { activitySectors } from "@/src/utils/constants";
 import RelatedCustomer from "./RelatedCustomer";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import AddressInput from "@/src/components/form/AddressInput";
+import useContactContext from "@/src/context/contacts";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -43,6 +44,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const [type, setType] = useState("fisica");
+  const { mutate: mutateContacts } = useContactContext();
   const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
@@ -288,6 +290,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         }
         toast.success(t("contacts:edit:updated-contact"));
         mutate(`/sales/crm/contacts/${id}`);
+        mutateContacts();
         setIsEdit(false);
       }
       setLoading(false);

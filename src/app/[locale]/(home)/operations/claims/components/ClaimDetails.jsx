@@ -115,29 +115,33 @@ export default function ClaimDetails({ data, id, mutate }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
-                    {t("operations:managements:add:claim:number")}:
+                    {t("control:portafolio:receipt:details:claim-number")}:
                   </p>
                   <p className="text-sm">{data?.claimNumber ?? "N/D"}</p>
                 </div>
                 <div></div>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:sheet")}:
+                  </p>
+                  <p className="text-sm">{data?.folioNumber ?? "N/D"}</p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Menu>
-                  <MenuButton>
-                    <label
-                      className={clsx(
-                        "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
-                      )}
-                      style={{
-                        background: data?.status
-                          ? polizaClaimStatusColor[data?.status]
-                          : polizaClaimStatusColor.captura_documentos,
-                      }}
-                    >
-                      {data?.status
-                        ? polizaClaimStatus[data?.status]
-                        : polizaClaimStatus.captura_documentos}
-                    </label>
+                  <MenuButton
+                    className={
+                      "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
+                    }
+                    style={{
+                      background: data?.status
+                        ? polizaClaimStatusColor[data?.status]
+                        : polizaClaimStatusColor.captura_documentos,
+                    }}
+                  >
+                    {data?.status
+                      ? polizaClaimStatus[data?.status]
+                      : polizaClaimStatus.captura_documentos}
                   </MenuButton>
                   <MenuItems
                     transition

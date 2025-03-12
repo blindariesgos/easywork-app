@@ -177,7 +177,7 @@
           "date": "Fecha de inicio de vigencia",
           "number": "Número de plazos",
           "year": "Año de vigencia",
-          "ot": "Número de OT",
+          "ot": "Número de Siniestro",
           "beneficiary": "Beneficiario",
           "annotations": "Annotaciones"
         }

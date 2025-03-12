@@ -172,7 +172,7 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
               {data?.contact?.fullName}
             </p>
 
-            <p className="text-sm">{`OT: ${data?.ot}`}</p>
+            <p className="text-sm">{`Nro de Siniestro: ${data?.ot}`}</p>
             <p className="text-sm">{`SIGRE: ${data?.sigre}`}</p>
 
             {data?.medicalCondition && (

@@ -9,10 +9,12 @@ export const useNotify = () => {
     {
       initialSize: 1,
       revalidateOnFocus: false,
-    },
+    }
   );
 
-  const notifications = data && Array.isArray(data) ? data.flat() : [];
+  console.log(data);
+
+  const notifications = data && Array.isArray(data?.items) ? data.items : [];
 
   const markAsRead = async (id) => {
     try {

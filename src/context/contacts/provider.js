@@ -31,7 +31,7 @@ export default function ContactsContextProvider({ children }) {
     {
       id: 2,
       name: t("contacts:filters:created"),
-      type: "date-short",
+      type: "date",
       check: true,
       code: "createdAt",
     },
@@ -49,7 +49,7 @@ export default function ContactsContextProvider({ children }) {
       {
         id: 2,
         name: t("contacts:filters:created"),
-        type: "date-short",
+        type: "date",
         check: true,
         code: "createdAt",
       },

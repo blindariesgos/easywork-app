@@ -7,9 +7,10 @@ import parse from "html-react-parser";
 import moment from "moment";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function NotifyList() {
-  const { notifications, markAsRead, loadMore, hasMore, isLoading } =
+  const { notifications, markAsRead, loadMore, hasMore, isLoading, unread } =
     useNotifyContext();
   const { lists } = useAppContext();
   const observerRef = useRef(null);
@@ -45,117 +46,127 @@ export default function NotifyList() {
     }
   };
 
-  useEffect(() => {
-    const loadMoreObserver = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore && !isLoading) {
-        loadMore();
-      }
-    });
+  // useEffect(() => {
+  //   const loadMoreObserver = new IntersectionObserver((entries) => {
+  //     if (entries[0].isIntersecting && hasMore && !isLoading) {
+  //       loadMore();
+  //     }
+  //   });
 
-    if (loadMoreRef.current) {
-      loadMoreObserver.observe(loadMoreRef.current);
-    }
+  //   if (loadMoreRef.current) {
+  //     loadMoreObserver.observe(loadMoreRef.current);
+  //   }
 
-    return () => {
-      if (loadMoreRef.current) {
-        loadMoreObserver.unobserve(loadMoreRef.current);
-      }
-    };
-  }, [hasMore, isLoading, loadMore]);
+  //   return () => {
+  //     if (loadMoreRef.current) {
+  //       loadMoreObserver.unobserve(loadMoreRef.current);
+  //     }
+  //   };
+  // }, [hasMore, isLoading, loadMore]);
 
   return (
-    <ul className="w-full grid grid-cols-1 gap-1 pt-2">
-      {notifications?.map((notification) => (
-        <li
-          key={notification.id}
-          className={clsx(
-            "py-2 px-4 flex flex-col group notification-item bg-gray-100 rounded-xl relative"
-          )}
-          data-id={notification.id}
-          data-read-at={notification.readAt}
-        >
-          {!notification.readAt && (
-            <div className="w-3 h-3 rounded-full bg-red-600 absolute -top-[3px] -right-[3px]" />
-          )}
-          <div className="flex justify-end">
-            <div className=" text-sm text-slate-500 italic data-[read-at]:bg-slate-600">
-              {moment(notification.createdAt).calendar({
-                sameDay: function () {
-                  return (
-                    "[hoy a la" + (this.hours() !== 1 ? "s" : "") + "] hh:mm A"
-                  );
-                },
-                lastDay: function () {
-                  return (
-                    "[ayer a la" + (this.hours() !== 1 ? "s" : "") + "] hh:mm A"
-                  );
-                },
-                lastWeek: function () {
-                  return (
-                    "[el] dddd [pasado a la" +
-                    (this.hours() !== 1 ? "s" : "") +
-                    "] hh:mm A"
-                  );
-                },
-                sameElse: "d MMM YYYY hh:mm A",
-              })}
+    <InfiniteScroll
+      dataLength={notifications.length}
+      next={loadMore}
+      hasMore={hasMore}
+      loader={<h4>Cargando más notificaciones...</h4>}
+      height="85vh"
+    >
+      <ul className="w-full grid grid-cols-1 gap-1 pt-2">
+        {notifications?.map((notification) => (
+          <li
+            key={notification.id}
+            className={clsx(
+              "py-2 px-4 flex flex-col group notification-item  rounded-xl relative",
+              {
+                "bg-easy-100": !notification.readAt,
+                "bg-gray-100": notification.readAt,
+              }
+            )}
+            data-id={notification.id}
+            data-read-at={notification.readAt}
+          >
+            <div className="flex justify-end">
+              <div className=" text-sm text-slate-500 italic data-[read-at]:bg-slate-600">
+                {moment(notification.createdAt).calendar({
+                  sameDay: function () {
+                    return (
+                      "[hoy a la" +
+                      (this.hours() !== 1 ? "s" : "") +
+                      "] hh:mm A"
+                    );
+                  },
+                  lastDay: function () {
+                    return (
+                      "[ayer a la" +
+                      (this.hours() !== 1 ? "s" : "") +
+                      "] hh:mm A"
+                    );
+                  },
+                  lastWeek: function () {
+                    return (
+                      "[el] dddd [pasado a la" +
+                      (this.hours() !== 1 ? "s" : "") +
+                      "] hh:mm A"
+                    );
+                  },
+                  sameElse: "d MMM YYYY hh:mm A",
+                })}
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {notification?.metadata?.commentOwnerId ? (
-              <Image
-                src={
-                  lists?.users?.find(
-                    (x) => x.id == notification.metadata.commentOwnerId
-                  )?.avatar ?? "/img/activities/easy-icon.svg"
-                }
-                className="h-10 w-10 rounded-full object-cover"
-                width={10}
-                height={10}
-                alt="easy icon"
-              />
-            ) : (
-              <div
-                className={clsx(
-                  "bg-gray-200 h-10 w-10 rounded-full flex items-center justify-center"
-                )}
-              >
+            <div className="flex items-center gap-2">
+              {notification?.metadata?.commentOwnerId ? (
                 <Image
-                  src="/img/activities/easy-icon.svg"
-                  className="h-5 w-5"
+                  src={
+                    lists?.users?.find(
+                      (x) => x.id == notification.metadata.commentOwnerId
+                    )?.avatar ?? "/img/activities/easy-icon.svg"
+                  }
+                  className="h-10 w-10 rounded-full object-cover"
                   width={10}
                   height={10}
                   alt="easy icon"
                 />
-              </div>
-            )}
-            <div
-              className="text-sm w-10/12"
-              onClickCapture={(event) =>
-                handleReadNotification(notification, event)
-              }
-            >
-              {parse(notification.content)}
-            </div>
-          </div>
-          <div className="flex justify-end">
-            <div
-              className={clsx(
-                "underline text-primary text-xs hidden cursor-pointer",
-                {
-                  "group-hover:block ": !notification?.readAt,
-                }
+              ) : (
+                <div
+                  className={clsx(
+                    "bg-gray-200 h-10 w-10 rounded-full flex items-center justify-center"
+                  )}
+                >
+                  <Image
+                    src="/img/activities/easy-icon.svg"
+                    className="h-5 w-5"
+                    width={10}
+                    height={10}
+                    alt="easy icon"
+                  />
+                </div>
               )}
-              onClick={() => markAsRead(notification?.id)}
-            >
-              Marcar como leido
+              <div
+                className="text-sm w-10/12"
+                onClickCapture={(event) =>
+                  handleReadNotification(notification, event)
+                }
+              >
+                {parse(notification.content)}
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
-      <li ref={loadMoreRef} className="py-2 flex justify-center">
-        {isLoading && hasMore && <span>Cargando más notificaciones...</span>}
-      </li>
-    </ul>
+            <div className="flex justify-end">
+              <div
+                className={clsx(
+                  "underline text-primary text-xs hidden cursor-pointer",
+                  {
+                    "group-hover:block ": !notification?.readAt,
+                  }
+                )}
+                onClick={() => markAsRead(notification?.id)}
+              >
+                Marcar como leido
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </InfiniteScroll>
   );
 }

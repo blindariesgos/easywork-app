@@ -1,10 +1,8 @@
 "use server";
 
 import axios from "./axios";
-// import { cookies } from "next/headers";
 import { auth, signIn, signOut } from "../../auth";
 import { revalidatePath } from "next/cache";
-import { encrypt } from "./helpers/encrypt";
 
 const getQueries = (filters, userId) => {
   const getRepitKeys = (key, arr) => {
@@ -45,6 +43,8 @@ const getCommentPath = (cmrtype) => {
       return "/sales/crm/polizas";
     case "lead":
       return "/sales/crm/leads";
+    case "poliza_claim":
+      return "/operations/claims";
     case "agent":
       return "/agent-management/agents";
     case "receipt":
@@ -82,6 +82,8 @@ const getDeleteCommentPath = (cmrtype) => {
       return "/sales/crm/polizas";
     case "lead":
       return "/sales/crm/leads/comments";
+    case "poliza_claim":
+      return "/operations/claims";
     case "agent":
       return "/agent-management/agents";
     case "receipt":
@@ -268,6 +270,21 @@ export const addReimbursementDocument = async (reimbursementId, body) => {
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
+
+export const addRefund = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/reimbursement`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const putRefund = async (refundId, body) => {
+  const response = await axios()
+    .put(`/operations/reimbursements/${refundId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+
+  return response;
+};
 //#endregion
 
 //#region POLICIES
@@ -331,6 +348,13 @@ export const cancelPolicy = async (polizaId, body) => {
   const response = await axios()
     .put(`/sales/crm/polizas/${polizaId}/cancel`, body)
     .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const addRenovationByPdf = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/renewal/pdf`, body)
+    .catch((error) => ({ error, hasError: true }));
   return response;
 };
 
@@ -565,6 +589,51 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
   console.log(response);
   return response;
 };
+
+export const getTasks = async (page = 1, limit = 6) => {
+  const response = await axios().get(
+    `/tools/tasks?limit=${limit}&page=${page}`
+  );
+  return response;
+};
+
+export const getTasksUser = async (page = 1, limit = 6) => {
+  const response = await axios().get(
+    `/tools/tasks/user?limit=${limit}&page=${page}`
+  );
+  return response;
+};
+
+export const deleteTask = async (id) => {
+  const response = await axios().delete(`/tools/tasks/${id}`);
+  return response;
+};
+
+export const getTaskId = async (id) => {
+  const response = await axios().get(`/tools/tasks/${id}`);
+  return response;
+};
+
+export const postTask = async (body) => {
+  const response = await axios().post(`/tools/tasks`, body);
+  revalidatePath("/tools/tasks", "page");
+  return response;
+};
+export const putTaskId = async (id, body) => {
+  const response = await axios()
+    .put(`/tools/tasks/${id}`, body)
+    .catch((error) => ({ hasError: true, error }));
+
+  return response;
+};
+
+export const getTaskObjections = async (taskId, page, limit) => {
+  const response = await axios()
+    .get(`/tools/tasks/${taskId}/objection?page=${page}&limit=${limit}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region TIME TRACKING TASKS
@@ -716,7 +785,64 @@ export const getAddressByPostalCode = async (postalCode) => {
 };
 //#endregion
 
+//#region CLAIMS
+
+export const addClaim = async (body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/management/claim`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const putClaim = async (claimId, body) => {
+  const response = await axios()
+    .put(`/operations/claims/${claimId}`, body)
+    .catch((error) => ({ hasError: true, ...error }));
+
+  return response;
+};
+
+export const addClaimDocument = async (claimId, category, body) => {
+  const response = await axios({ contentType: "multipart/form-data" })
+    .post(`/operations/claims/upload/${claimId}?category=${category}`, body)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const deleteClaimById = async (id) => {
+  const response = await axios()
+    .delete(`/operations/claims/${id}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getClaimById = async (claimId) => {
+  const response = await axios()
+    .get(`/operations/claims/${claimId}`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getAllClaims = async ({
+  filters = {},
+  userId = "",
+  config = {},
+}) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map((key) => `${key}=${config[key]}`)
+    .join("&");
+  const url = `/operations/claims?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
 export const login = async (formdata) => {
+  console.log("LOGIN", formdata);
   return await signIn("credentials", formdata);
 };
 
@@ -820,47 +946,10 @@ export const getFoldersSaved = async (data) => {
   return response;
 };
 
-export const getTasks = async (page = 1, limit = 6) => {
-  const response = await axios().get(
-    `/tools/tasks?limit=${limit}&page=${page}`
-  );
-  return response;
-};
-
-export const getTasksUser = async (page = 1, limit = 6) => {
-  const response = await axios().get(
-    `/tools/tasks/user?limit=${limit}&page=${page}`
-  );
-  return response;
-};
-
-export const deleteTask = async (id) => {
-  const response = await axios().delete(`/tools/tasks/${id}`);
-  return response;
-};
-
-export const getTaskId = async (id) => {
-  const response = await axios().get(`/tools/tasks/${id}`);
-  return response;
-};
-
-export const postTask = async (body) => {
-  const response = await axios().post(`/tools/tasks`, body);
-  revalidatePath("/tools/tasks", "page");
-  return response;
-};
 export const postMeet = async (body) => {
   const response = await axios()
     .post(`/agent-management/meetings`, body)
     .catch((error) => ({ hasError: true, ...error }));
-  return response;
-};
-export const putTaskId = async (id, body) => {
-  console.log("Updating task");
-  const response = await axios()
-    .put(`/tools/tasks/${id}`, body)
-    .catch((error) => ({ hasError: true, error }));
-
   return response;
 };
 
@@ -1026,14 +1115,6 @@ export const deleteTags = async (id) => {
 export const putSchedule = async (scheduleId, body) => {
   const response = await axios()
     .put(`/operations/schedulings/${scheduleId}`, body)
-    .catch((error) => ({ hasError: true, ...error }));
-
-  return response;
-};
-
-export const putRefund = async (refundId, body) => {
-  const response = await axios()
-    .put(`/operations/reimbursements/${refundId}`, body)
     .catch((error) => ({ hasError: true, ...error }));
 
   return response;
@@ -1248,24 +1329,10 @@ export const addPolicyVersionByContact = async (contactId, body) => {
   return response;
 };
 
-export const addRefund = async (body) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/operations/management/reimbursement`, body)
-    .catch((error) => ({ ...error, hasError: true }));
-  return response;
-};
-
 export const addSchedule = async (body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(`/operations/management/scheduling`, body)
     .catch((error) => ({ ...error, hasError: true }));
-  return response;
-};
-
-export const addRenovationByPdf = async (body) => {
-  const response = await axios({ contentType: "multipart/form-data" })
-    .post(`/operations/management/renewal/pdf`, body)
-    .catch((error) => ({ error, hasError: true }));
   return response;
 };
 

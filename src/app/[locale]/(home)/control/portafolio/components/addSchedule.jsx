@@ -107,6 +107,13 @@ const AddSchedule = ({ isOpen, setIsOpen }) => {
     policy?.company?.id && setValue("insuranceId", policy?.company?.id);
     policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
     policy?.contact?.id && setValue("contact", policy?.contact?.id);
+    policy?.agenteIntermediario?.id &&
+      setValue("agenteIntermediarioId", policy?.agenteIntermediario?.id);
+    policy?.assignedBy?.id && setValue("assignedById", policy?.assignedBy?.id);
+    policy?.subAgente?.id &&
+      setValue("agenteRelacionadoId", policy?.subAgente?.id);
+    policy?.observers?.length > 0 &&
+      setValue("observerId", policy?.observers[0]?.id);
   };
 
   const onSubmit = async (data) => {

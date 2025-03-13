@@ -12,8 +12,13 @@ import React, { useState, Fragment } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deleteReceiptById, putPoliza, putRefund } from "@/src/lib/apis";
-import { handleApiError } from "@/src/utils/api/errors";
+import {
+  deleteReceiptById,
+  deleteRefundById,
+  putPoliza,
+  putRefund,
+} from "@/src/lib/apis";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useRefundTable } from "../../../../../../hooks/useCommon";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
@@ -63,13 +68,9 @@ export default function Table() {
   const deleteRefund = async (id) => {
     try {
       setLoading(true);
-      const response = await deleteReceiptById(id);
+      const response = await deleteRefundById(id);
       if (response.hasError) {
-        let message = response.message;
-        if (Array.isArray(response.message)) {
-          message = response.message.join(", ");
-        }
-        toast.error(message);
+        handleFrontError(response);
         setLoading(false);
         return;
       }
@@ -86,7 +87,7 @@ export default function Table() {
   const deleteRefunds = async () => {
     setLoading(true);
     const response = await Promise.allSettled(
-      selectedContacts.map((refundId) => deleteRefund(refundId))
+      selectedContacts.map((refundId) => deleteRefundById(refundId))
     );
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
@@ -145,7 +146,7 @@ export default function Table() {
       assignedById: responsible.id,
     };
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => putPoliza(policyId, body))
+      selectedContacts.map((policyId) => putRefund(policyId, body))
     );
     if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
       toast.success(

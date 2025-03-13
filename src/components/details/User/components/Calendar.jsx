@@ -31,8 +31,8 @@ export function Calendar({ children }) {
     page: 1,
     limit: 5,
     orderBy: "name",
-    order: "DESC"
-  })
+    order: "DESC",
+  });
   useEffect(() => {
     console.log(data);
   }, [data]);
@@ -56,7 +56,7 @@ export function Calendar({ children }) {
   ];
 
   useEffect(() => {
-    getAllOauth(session.data.user.sub, "Google Calendar").then((res) => {
+    getAllOauth(session?.data.user.sub, "Google Calendar").then((res) => {
       setSelectOauth(res[0]);
     });
   }, []);
@@ -80,15 +80,23 @@ export function Calendar({ children }) {
   };
 
   const handleClickEvent = (info) => {
-    router.push(`/tools/calendar/event/${info.event.id}?show=true${selectOauth ? `&oauth=${selectOauth?.id}` : ""}`);
+    router.push(
+      `/tools/calendar/event/${info.event.id}?show=true${selectOauth ? `&oauth=${selectOauth?.id}` : ""}`
+    );
   };
 
   return (
     <div className="flex flex-col flex-grow">
       <CalendarHeader selectOauth={selectOauth} />
       <CalendarConfig selectOauth={selectOauth} />
-      <CalendarConnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
-      <CalendarDisconnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
+      <CalendarConnect
+        selectOauth={selectOauth}
+        setSelectOauth={setSelectOauth}
+      />
+      <CalendarDisconnect
+        selectOauth={selectOauth}
+        setSelectOauth={setSelectOauth}
+      />
       <div className="h-full">
         <div className="flex-none items-center justify-between  py-4 flex">
           <div className="flex gap-2 items-center">
@@ -155,8 +163,7 @@ export function Calendar({ children }) {
             id: item.id,
             start: item.startTime,
             title: item.name,
-          }
-          ))}
+          }))}
           initialView="dayGridMonth"
           nowIndicator={true}
           editable={true}

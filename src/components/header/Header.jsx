@@ -3,7 +3,7 @@ import useAppContext from "../../context/app";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { Bars3Icon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { Fragment } from "react";
 import SearchBox from "../SearchBox";
 import Clock from "./Clock";
@@ -23,11 +23,11 @@ function classNames(...classes) {
 export default function Header() {
   const { data: session } = useSession();
   const router = useRouter();
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
 
-  params.set("profile", session.user.jti);
+  params.set("profile", session?.user?.jti);
 
   function ifWebmailPath() {
     if (pathname === "/tools/webmail") return true;

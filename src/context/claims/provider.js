@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ClaimsContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "../../lib/api/hooks/policies";
+import { useClaims } from "../../lib/api/hooks/claims";
 export default function ClaimsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
@@ -15,12 +15,9 @@ export default function ClaimsContextProvider({ children }) {
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
-  const { data, isLoading, isError, mutate } = usePolicies({
+  const { data, isLoading, isError, mutate } = useClaims({
     config,
-    filters: {
-      ...filters,
-      renewal: "true",
-    },
+    filters,
   });
   const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
@@ -43,9 +40,9 @@ export default function ClaimsContextProvider({ children }) {
     {
       id: 2,
       name: t("operations:policies:table:policy"),
-      type: "input",
+      type: "select-policy",
       check: false,
-      code: "poliza",
+      code: "polizaId",
     },
   ];
   const handleChangeConfig = (key, value) => {
@@ -87,9 +84,9 @@ export default function ClaimsContextProvider({ children }) {
       {
         id: 2,
         name: t("operations:policies:table:policy"),
-        type: "input",
+        type: "select-policy",
         check: false,
-        code: "poliza",
+        code: "polizaId",
       },
       {
         id: 3,
@@ -105,31 +102,6 @@ export default function ClaimsContextProvider({ children }) {
         check: false,
         code: "agenteIntermediarioId",
         options: lists?.policies?.agentesIntermediarios,
-      },
-      {
-        id: 5,
-        name: t("operations:policies:table:state"),
-        type: "select",
-        check: false,
-        code: "status",
-        options: [
-          {
-            id: "activa",
-            name: "Vigente",
-          },
-          {
-            id: "expirada",
-            name: "No vigente",
-          },
-          {
-            id: "cancelada",
-            name: "Cancelada",
-          },
-          {
-            id: "en_proceso",
-            name: "En trámite",
-          },
-        ],
       },
       {
         id: 6,
@@ -161,15 +133,6 @@ export default function ClaimsContextProvider({ children }) {
   useEffect(() => {
     handleChangeConfig("page", 1);
   }, [config.limit]);
-
-  // useEffect(() => {
-  //   if (Object.keys(filters).length == 0 && filterFields) {
-  //     setFilterFields(filterFields?.map(field => ({
-  //       ...field,
-  //       check: field.code === "role"
-  //     })))
-  //   }
-  // }, [filters])
 
   const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)

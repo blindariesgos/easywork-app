@@ -221,7 +221,7 @@ export default function MeetEditor({ edit, copy, type }) {
     if (session) {
       setValue(
         "createdBy",
-        lists?.users.filter((user) => user.id === session.user?.sub)
+        lists?.users.filter((user) => user.id === session?.user?.sub)
       );
     }
   }, [session, lists?.users, setValue]);
@@ -576,7 +576,7 @@ const buildMeetBody = (
   const body = {
     title: data.title,
     description,
-    createdById: session.user?.sub,
+    createdById: session?.user?.sub,
     crm,
     type: data?.type,
   };

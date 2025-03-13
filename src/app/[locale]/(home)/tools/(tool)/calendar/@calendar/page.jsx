@@ -74,7 +74,13 @@ export default function CalendarHome({ children }) {
     { id: 5, name: 'Zoom Personal', online: true },
   ];
 
+<<<<<<< HEAD
   const [formLocalization, setFormLocalization] = useState(eventLocalizations[0]);
+=======
+  const [formLocalization, setFormLocalization] = useState(
+    eventLocalizations[0]
+  );
+>>>>>>> 3ea41d3c53ac70b3452ff931beaed501e43f46b8
 
   const openConnect = () => {
     params.set('connect', true);
@@ -179,10 +185,10 @@ export default function CalendarHome({ children }) {
   }
 
   useEffect(() => {
-    getAllOauth(session.data.user.sub, 'Google Calendar').then(res => {
+    getAllOauth(session?.data.user.sub, "Google Calendar").then((res) => {
       setSelectOauth(res[0]);
     });
-  }, [session.data.user.sub]);
+  }, [session?.data.user.sub]);
 
   useEffect(() => {
     const changeView = () => {

@@ -23,6 +23,7 @@ import Button from "./Button";
 import { useReceipts } from "@/src/lib/api/hooks/receipts";
 import { useSchedules } from "@/src/lib/api/hooks/schedules";
 import { useRefunds } from "@/src/lib/api/hooks/refunds";
+import { useClaims } from "@/src/lib/api/hooks/claims";
 
 const CRMMultipleSelectV2 = ({
   watch,
@@ -48,6 +49,7 @@ const CRMMultipleSelectV2 = ({
     "agent",
     "poliza_scheduling",
     "poliza_reimbursement",
+    "claim",
   ]);
   const { contacts, isLoading: isLoadingContacts } = useContacts({
     filters: { search: query },
@@ -105,6 +107,14 @@ const CRMMultipleSelectV2 = ({
     },
   });
 
+  const { data: claims, isLoading: isLoadingClaims } = useClaims({
+    filters: { ot: query },
+    config: {
+      page: 1,
+      limit: 10,
+    },
+  });
+
   const isLoading = useMemo(() => {
     return (
       isLoadingContacts ||
@@ -114,7 +124,8 @@ const CRMMultipleSelectV2 = ({
       isLoadingRenovations ||
       isLoadingLeads ||
       isLoadingSchedulings ||
-      isLoadingRefunds
+      isLoadingRefunds ||
+      isLoadingClaims
     );
   }, [
     isLoadingContacts,
@@ -125,6 +136,7 @@ const CRMMultipleSelectV2 = ({
     isLoadingLeads,
     isLoadingSchedulings,
     isLoadingRefunds,
+    isLoadingClaims,
   ]);
 
   useEffect(() => {
@@ -152,7 +164,11 @@ const CRMMultipleSelectV2 = ({
       id: option.id,
       name: ["poliza", "renewal"].includes(type)
         ? `${option?.company?.name} ${option?.poliza} ${option?.type?.name}`
-        : option.fullName || option.name || option.ot || option.sigre,
+        : option?.fullName ||
+          option?.name ||
+          option?.claimNumber ||
+          option?.ot ||
+          option?.sigre,
       username: option.username,
       title: option.title,
       type,
@@ -183,6 +199,7 @@ const CRMMultipleSelectV2 = ({
       agent: agents?.items ?? [],
       poliza_scheduling: schedulings?.items ?? [],
       poliza_reimbursement: refunds?.items ?? [],
+      poliza_claim: claims?.items ?? [],
     };
 
     const key = Object.keys(items).filter((key) => !hidden.includes(key))[
@@ -201,6 +218,7 @@ const CRMMultipleSelectV2 = ({
     agents,
     schedulings,
     refunds,
+    claims,
   ]);
 
   return (

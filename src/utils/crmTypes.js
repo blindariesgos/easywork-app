@@ -45,12 +45,29 @@ export const getCrmTypeConfig = (data) => ({
     href: `/operations/programations/programation/${data.crmEntity.id}?show=true`,
     bgClass: "bg-[#B7B7B7] text-[#241F61]",
     labelKey: "Programación",
-    name: data?.crmEntity?.ot || data?.crmEntity?.sigre,
+    name:
+      data?.crmEntity?.claimNumber ||
+      data?.crmEntity?.ot ||
+      data?.crmEntity?.sigre,
   },
   poliza_reimbursement: {
     href: `/operations/refunds/refund/${data.crmEntity.id}?show=true`,
     bgClass: "bg-[#dabea6] text-[#241F61]",
     labelKey: "Reembolso",
-    name: data?.crmEntity?.ot || data?.crmEntity?.sigre,
+    name:
+      data?.crmEntity?.claimNumber ||
+      data?.crmEntity?.ot ||
+      data?.crmEntity?.sigre,
+  },
+  poliza_claim: {
+    href: `/operations/claims/claim/${data.crmEntity.id}?show=true`,
+    bgClass: "bg-[#ffeb04] text-[#241F61]",
+    labelKey: "Siniestro",
+    name: data?.crmEntity?.poliza
+      ? data?.crmEntity?.poliza?.name ||
+        `${data?.crmEntity?.poliza?.company?.name} ${data?.crmEntity?.poliza?.poliza} ${data?.crmEntity?.poliza?.type?.name}`
+      : data?.crmEntity?.claimNumber ||
+        data?.crmEntity?.ot ||
+        data?.crmEntity?.sigre,
   },
 });

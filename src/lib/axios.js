@@ -20,9 +20,9 @@ const createAxiosInstance = (props) => {
         if (
           session?.user?.access_token &&
           (!config.headers.Authorization ||
-            Date.now() > session.user.expires_at * 1000)
+            Date.now() > session?.user?.expires_at * 1000)
         ) {
-          config.headers.Authorization = `Bearer ${session.user.access_token}`;
+          config.headers.Authorization = `Bearer ${session?.user?.access_token}`;
         }
         return config;
       } catch (error) {

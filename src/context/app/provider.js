@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { AppContext } from "..";
-import { contactTypes, driveViews } from "../../lib/common";
+import { driveViews } from "../../lib/common";
 import { useCommon } from "../../hooks/useCommon";
 import {
   getAddListConnections,
@@ -14,151 +14,114 @@ import {
   getPoliciesCanceledReazons,
   getRelatedUsers,
 } from "../../lib/apis";
-import { handleApiError, handleFrontError } from "../../utils/api/errors";
 import { useSession } from "next-auth/react";
 
 export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon();
   const { data: session } = useSession();
+
+  // Estados iniciales agrupados por categoría
+  // UI states
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenDesktop1, setSidebarOpenDesktop1] = useState(true);
   const [sidebarOpenDesktop2, setSidebarOpenDesktop2] = useState(true);
-  const [openModalFolders, setOpenModalFolders] = useState(false);
-  const [userGoogle, setUserGoogle] = useState(null);
-  const [selectedEmails, setSelectedEmails] = useState([]);
   const [sidebarOpenEmail, setSidebarOpenEmail] = useState(false);
+  const [openModalFolders, setOpenModalFolders] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
+  // User data states
+  const [userGoogle, setUserGoogle] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [selectedEmails, setSelectedEmails] = useState([]);
   const [selectOauth, setSelectOauth] = useState(null);
+
+  // App view states
   const [calendarView, setCalendarView] = useState(calendarViews[0]);
   const [driveView, setDriveView] = useState(driveViews[0]);
-  const [openModal, setOpenModal] = useState(false);
-  const [lists, setLists] = useState(null);
   const [filter, setFilter] = useState(null);
-  const [userData, setUserData] = useState(null);
+
+  // Data states
+  const [lists, setLists] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const appList = {};
-    const getLists = async () => {
-      setLoading(true);
-      const users = await getUsers();
-      const listContact = await getListsContact();
-      const roles = await getRoles();
-      const policies = await getListsPolicies();
-      const listLead = await getListsLead();
-      const receipts = await getListsReceipts();
-      const recruitments = await getListsRecruitment();
-      const connections = await getListsConnection();
-      const policyCanceledReazons = await getPolicyCancelReazon();
+  // Función para manejar errores de API de manera consistente
+  const handleApiResponse = (response, errorSource) => {
+    if (response.hasError) {
+      console.error(errorSource);
+      return [];
+    }
+    return response.items ? response.items : response;
+  };
 
-      appList.listContact = listContact;
-      appList.users = users;
-      appList.roles = roles;
-      appList.policies = {
-        ...policies,
-        canceledReazons: policyCanceledReazons,
-      };
-      appList.listLead = listLead;
-      appList.receipts = receipts;
-      appList.recruitments = recruitments;
-      appList.connections = connections;
-      setLists(appList);
-      setLoading(false);
+  // Funciones de fetching de datos refactorizadas
+  const fetchData = async (apiFunction, errorSource) => {
+    try {
+      const response = await apiFunction();
+      return handleApiResponse(response, errorSource);
+    } catch (error) {
+      console.error(`Error in ${errorSource}:`, error);
+      return [];
+    }
+  };
+
+  // Efecto para cargar todos los datos necesarios
+  useEffect(() => {
+    const fetchAllData = async () => {
+      // Solo cargamos datos si existe la sesión, no hay error y no hay datos ya cargados
+      if (!session?.user?.access_token || session?.error || lists) return;
+
+      setLoading(true);
+
+      try {
+        const [
+          users,
+          listContact,
+          roles,
+          policies,
+          listLead,
+          receipts,
+          recruitments,
+          connections,
+          policyCanceledReazons,
+        ] = await Promise.all([
+          fetchData(getRelatedUsers, "getRelatedUsers"),
+          fetchData(getAddListContacts, "getAddListContacts"),
+          fetchData(getAllRoles, "getAllRoles"),
+          fetchData(getAddListPolicies, "getAddListPolicies"),
+          fetchData(getAddListLeads, "getAddListLeads"),
+          fetchData(getAddListReceipts, "getAddListReceipts"),
+          fetchData(getAddListRecruitments, "getAddListRecruitments"),
+          fetchData(getAddListConnections, "getAddListConnections"),
+          fetchData(getPoliciesCanceledReazons, "getPoliciesCanceledReazons"),
+        ]);
+
+        setLists({
+          users,
+          listContact,
+          roles,
+          policies: {
+            ...policies,
+            canceledReazons: policyCanceledReazons,
+          },
+          listLead,
+          receipts,
+          recruitments,
+          connections,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    if (session?.user?.access_token && !lists) getLists();
+
+    fetchAllData();
   }, [session, lists]);
 
-  const getUsers = async () => {
-    const response = await getRelatedUsers();
-    if (response.hasError) {
-      console.error("getRelatedUsers");
-      handleFrontError(response);
-      return [];
-    }
-    return response?.items ?? [];
-  };
-
-  const getListsContact = async () => {
-    const response = await getAddListContacts();
-    if (response.hasError) {
-      console.error("getAddListContacts");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
-  const getListsLead = async () => {
-    const response = await getAddListLeads();
-    if (response.hasError) {
-      console.error("getAddListLeads");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
-  const getListsReceipts = async () => {
-    const response = await getAddListReceipts();
-    if (response.hasError) {
-      console.error("getAddListReceipts");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
-  const getRoles = async () => {
-    const response = await getAllRoles();
-    if (response.hasError) {
-      console.error("getAllRoles");
-      handleFrontError(response);
-      return [];
-    }
-    return response.items;
-  };
-
-  const getListsPolicies = async () => {
-    const response = await getAddListPolicies();
-    if (response.hasError) {
-      console.error("getAddListPolicies");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
-  const getPolicyCancelReazon = async () => {
-    const response = await getPoliciesCanceledReazons();
-    if (response.hasError) {
-      console.error("getPolicyCancelReazon");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
-  const getListsRecruitment = async () => {
-    const response = await getAddListRecruitments();
-    if (response.hasError) {
-      console.error("getAddListRecruitments");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
-  const getListsConnection = async () => {
-    const response = await getAddListConnections();
-    if (response.hasError) {
-      console.error("getAddListConnections");
-      handleFrontError(response);
-      return [];
-    }
-    return response;
-  };
-
+  // Memoizamos el valor del contexto para evitar re-renders innecesarios
   const values = useMemo(
     () => ({
+      // UI states
       sidebarOpen,
       setSidebarOpen,
       sidebarOpenDesktop1,
@@ -167,43 +130,49 @@ export default function AppContextProvider({ children }) {
       setSidebarOpenDesktop2,
       sidebarOpenEmail,
       setSidebarOpenEmail,
-      setSelectOauth,
+      openModalFolders,
+      setOpenModalFolders,
+      openModal,
+      setOpenModal,
+
+      // User data states
+      userGoogle,
+      setUserGoogle,
+      userData,
+      setUserData,
+      selectedEmails,
+      setSelectedEmails,
       selectOauth,
+      setSelectOauth,
+
+      // App view states
       calendarView,
       setCalendarView,
       driveView,
       setDriveView,
-      openModal,
-      setOpenModal,
-      setLists,
-      lists,
-      setOpenModalFolders,
-      openModalFolders,
-      setUserGoogle,
-      userGoogle,
-      setFilter,
       filter,
-      setSelectedEmails,
-      selectedEmails,
-      setUserData,
-      userData,
+      setFilter,
+
+      // Data states
+      lists,
+      setLists,
       loading,
     }),
     [
       sidebarOpen,
-      calendarView,
-      driveView,
-      openModal,
-      sidebarOpenEmail,
-      lists,
       sidebarOpenDesktop1,
       sidebarOpenDesktop2,
+      sidebarOpenEmail,
       openModalFolders,
+      openModal,
       userGoogle,
-      filter,
-      selectOauth,
-      selectedEmails,
       userData,
+      selectedEmails,
+      selectOauth,
+      calendarView,
+      driveView,
+      filter,
+      lists,
       loading,
     ]
   );

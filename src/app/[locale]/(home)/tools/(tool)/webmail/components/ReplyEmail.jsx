@@ -55,7 +55,7 @@ export default function ReplyEmail({
   });
 
   useEffect(() => {
-    getTokenGoogle(session.data.user.sub).then((res) => {
+    getTokenGoogle(session?.data.user.sub).then((res) => {
       setUser(res);
     });
   }, [params.get("reply")]);
@@ -90,7 +90,7 @@ export default function ReplyEmail({
         return;
       }
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session.data.user.sub}/${selectOauth.id}`,
+        `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/send/${session?.data.user.sub}/${selectOauth.id}`,
         data
       );
       toast.success("Correo enviado");

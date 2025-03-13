@@ -33,7 +33,7 @@ const ButtonAdd = () => {
       onclick: () => setIsOpenFundRescue(true),
       disabled: true,
     },
-    { name: "Siniestro", onclick: () => setIsOpenClaim(true), disabled: true },
+    { name: "Siniestro", onclick: () => setIsOpenClaim(true) },
     { name: "Versión", onclick: () => setIsOpenVersion(true) },
     { name: "Carga manual", onclick: () => setIsOpenManual(true) },
   ];

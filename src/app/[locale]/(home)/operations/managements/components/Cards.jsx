@@ -41,20 +41,6 @@ const Cards = () => {
         url: "/operations/policies",
       },
       {
-        name: t("operations:programations:title"),
-        id: 7,
-        color: "#FFEB04",
-        value: response.programaciones,
-        url: "/operations/programations",
-      },
-      {
-        name: `${t("operations:refunds:title")}`,
-        id: 1,
-        color: "#86BEDF",
-        value: response.reembolsos,
-        url: "/operations/refunds",
-      },
-      {
         name: t("operations:renovations:title"),
         id: 4,
         color: "#ACEA4B",
@@ -73,6 +59,21 @@ const Cards = () => {
         value: "0",
         url: "/operations/fundrecoveries",
       },
+      {
+        name: t("operations:programations:title"),
+        id: 7,
+        color: "#FFEB04",
+        value: response.programaciones,
+        url: "/operations/programations",
+      },
+      {
+        name: `${t("operations:refunds:title")}`,
+        id: 1,
+        color: "#86BEDF",
+        value: response.reembolsos,
+        url: "/operations/refunds",
+      },
+
       {
         name: `${t("operations:claims:title")}`,
         id: 3,
@@ -94,7 +95,7 @@ const Cards = () => {
     // by="name"
     // value={cardSelected}
     // onChange={setCardSelected}
-    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-2">
+    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-6  md:gap-4 gap-2">
       {isLoading && <LoaderSpinner />}
       {cards.map((card) => (
         <div

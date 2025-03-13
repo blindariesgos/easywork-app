@@ -22,8 +22,13 @@ import React, {
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { deletePolicyById, putPoliza } from "@/src/lib/apis";
-import { handleApiError } from "@/src/utils/api/errors";
+import {
+  deleteClaimById,
+  deletePolicyById,
+  putClaim,
+  putPoliza,
+} from "@/src/lib/apis";
+import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useClaimTable } from "../../../../../../hooks/useCommon";
 import AddColumnsTable from "@/src/components/AddColumnsTable";
@@ -45,6 +50,11 @@ import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
 import TableHeader from "@/src/components/Table";
+import {
+  polizaClaimStatus,
+  polizaClaimStatusColor,
+} from "@/src/utils/constants";
+import moment from "moment";
 
 export default function Table() {
   const {
@@ -60,9 +70,6 @@ export default function Table() {
   } = useClaimContext();
   const { lists } = useAppContext();
   const { t } = useTranslation();
-  const checkbox = useRef();
-  const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
   const router = useRouter();
   const { selectedContacts, setSelectedContacts } = useCrmContext();
   const { columnTable } = useClaimTable();
@@ -74,17 +81,15 @@ export default function Table() {
   const [isOpenDeleteMasive, setIsOpenDeleteMasive] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
 
-  const policyStatus = {
-    activa: "Vigente",
-    expirada: "No vigente",
-    cancelada: "Cancelada",
-    en_proceso: "En trámite",
-  };
-
-  const deletePolicy = async (id) => {
+  const deleteClaim = async (id) => {
     try {
       setLoading(true);
-      const response = await deletePolicyById(id);
+      const response = await deleteClaimById(id);
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
       toast.success(t("common:alert:delete-success"));
       mutate();
       setLoading(false);
@@ -95,10 +100,10 @@ export default function Table() {
     }
   };
 
-  const deletePolicies = async () => {
+  const deleteClaims = async () => {
     setLoading(true);
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => deletePolicyById(policyId))
+      selectedContacts.map((claimId) => deleteClaimById(claimId))
     );
     if (response.some((x) => x.status === "fulfilled")) {
       toast.success(
@@ -118,13 +123,13 @@ export default function Table() {
     setIsOpenDeleteMasive(false);
   };
 
-  const changeStatusPolicies = async (status) => {
+  const changeStatusClaims = async (status) => {
     setLoading(true);
     const body = {
       status: status.id,
     };
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => putPoliza(policyId, body))
+      selectedContacts.map((claimId) => putClaim(claimId, body))
     );
     if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
       toast.success(
@@ -157,7 +162,7 @@ export default function Table() {
       assignedById: responsible.id,
     };
     const response = await Promise.allSettled(
-      selectedContacts.map((policyId) => putPoliza(policyId, body))
+      selectedContacts.map((policyId) => putClaim(policyId, body))
     );
 
     if (response.some((x) => x.status === "fulfilled" && !x?.value?.hasError)) {
@@ -188,16 +193,6 @@ export default function Table() {
 
   const masiveActions = [
     {
-      id: 1,
-      name: "Asignar agente relacionado - subagente",
-      disabled: true,
-    },
-    {
-      id: 1,
-      name: "Asignar observador",
-      disabled: true,
-    },
-    {
       id: 3,
       name: "Cambiar Responsable",
       onclick: changeResponsible,
@@ -206,25 +201,11 @@ export default function Table() {
     {
       id: 2,
       name: t("common:table:checkbox:change-status"),
-      onclick: changeStatusPolicies,
-      selectOptions: [
-        {
-          id: "activa",
-          name: "Activa",
-        },
-        {
-          id: "expirada",
-          name: "Expirada",
-        },
-        {
-          id: "cancelada",
-          name: "Cancelada",
-        },
-        {
-          id: "en_proceso",
-          name: "En proceso",
-        },
-      ],
+      onclick: changeStatusClaims,
+      selectOptions: Object.keys(polizaClaimStatus).map((key) => ({
+        id: key,
+        name: polizaClaimStatus[key],
+      })),
     },
     {
       id: 1,
@@ -235,7 +216,6 @@ export default function Table() {
       id: 1,
       name: t("common:buttons:delete"),
       onclick: () => setIsOpenDeleteMasive(true),
-      disabled: true,
     },
   ];
 
@@ -243,14 +223,12 @@ export default function Table() {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/operations/renovations/renovation/${id}?show=true`),
+        router.push(`/operations/claims/claim/${id}?show=true`),
     },
     {
       name: "Editar",
       handleClick: (id) =>
-        router.push(
-          `/operations/renovations/renovation/${id}?show=true&edit=true`
-        ),
+        router.push(`/operations/claims/claim/${id}?show=true&edit=true`),
     },
     {
       name: "Eliminar",
@@ -258,22 +236,23 @@ export default function Table() {
         setDeleteId(id);
         setIsOpenDelete(true);
       },
-      disabled: true,
     },
     {
       name: "Planificar",
       options: [
         {
           name: "Tarea",
-          handleClickContact: (id) =>
+          handleClick: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=renovations&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=poliza_claim&prev_id=${id}`
             ),
-          disabled: true,
         },
         {
           name: "Cita",
-          disabled: true,
+          handleClick: (id) =>
+            router.push(
+              `/tools/calendar/addEvent?show=true&prev=poliza_claim&prev_id=${id}`
+            ),
         },
         {
           name: "Comentario",
@@ -287,32 +266,32 @@ export default function Table() {
     },
   ];
 
-  if (data?.items && data?.items.length === 0) {
+  const renderStage = (status) => {
+    const color =
+      polizaClaimStatusColor?.[status] ??
+      polizaClaimStatusColor?.captura_documentos;
+
+    const stageIndex = status
+      ? Object.keys(polizaClaimStatus).findIndex((x) => x == status)
+      : 0;
+
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-          </div>
-          <p className="text-lg font-medium text-gray-400">
-            {t("operations:policies:table:not-data")}
-          </p>
+      <div className="flex flex-col gap-1 items-center">
+        <div className={`flex justify-center bg-gray-200`}>
+          {Object.keys(polizaClaimStatus).map((_, index) => (
+            <div
+              key={index}
+              className={`w-4 h-4 border-t border-b border-l last:border-r border-gray-400`}
+              style={{ background: index <= stageIndex ? color : "" }}
+            />
+          ))}
         </div>
+        <p className="text-sm text-center">
+          {polizaClaimStatus?.[status] ?? polizaClaimStatus?.captura_documentos}
+        </p>
       </div>
     );
-  }
+  };
 
   return (
     <Fragment>
@@ -334,34 +313,33 @@ export default function Table() {
         columnTable={columnTable}
       >
         {selectedColumns.length > 0 &&
-          // data?.items &&
-          // data?.items
-          [].map((policy, index) => {
+          data?.items &&
+          data?.items.map((claim, index) => {
             return (
               <tr
                 key={index}
                 className={clsx(
-                  selectedContacts.includes(policy.id)
+                  selectedContacts.includes(claim.id)
                     ? "bg-gray-200"
                     : undefined,
                   "hover:bg-indigo-100/40 cursor-default"
                 )}
               >
                 <td className="pr-7 pl-4 sm:w-12 relative">
-                  {selectedContacts.includes(policy.id) && (
+                  {selectedContacts.includes(claim.id) && (
                     <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
                   )}
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                      value={policy.id}
-                      checked={selectedContacts.includes(policy.id)}
+                      value={claim.id}
+                      checked={selectedContacts.includes(claim.id)}
                       onChange={(e) =>
                         setSelectedContacts(
                           e.target.checked
-                            ? [...selectedContacts, policy.id]
-                            : selectedContacts.filter((p) => p !== policy.id)
+                            ? [...selectedContacts, claim.id]
+                            : selectedContacts.filter((p) => p !== claim.id)
                         )
                       }
                     />
@@ -369,9 +347,9 @@ export default function Table() {
                       as="div"
                       className="relative hover:bg-slate-50/30 w-10 md:w-auto py-2 px-1 rounded-lg"
                     >
-                      <MenuButton className="-m-1.5 flex items-center p-1.5">
+                      <MenuButton className="flex items-center">
                         <Bars3Icon
-                          className="ml-3 h-5 w-5 text-gray-400"
+                          className="h-5 w-5 text-gray-400"
                           aria-hidden="true"
                         />
                       </MenuButton>
@@ -386,7 +364,7 @@ export default function Table() {
                       >
                         <MenuItems
                           anchor="right start"
-                          className=" z-50 mt-2.5  rounded-md bg-white py-2 shadow-lg focus:outline-none"
+                          className=" z-50 rounded-md bg-white py-2 shadow-lg focus:outline-none"
                         >
                           {itemActions.map((item) =>
                             !item.options ? (
@@ -395,15 +373,10 @@ export default function Table() {
                                 disabled={item.disabled}
                                 onClick={() => {
                                   item.handleClick &&
-                                    item.handleClick(policy.id);
-                                  item.handleClickContact &&
-                                    item.handleClickContact(
-                                      policy?.contact?.id
-                                    );
+                                    item.handleClick(claim.id);
                                 }}
                               >
                                 <div
-                                  // onClick={item.onClick}
                                   className={
                                     "block data-[focus]:bg-gray-50 px-3 data-[disabled]:opacity-50 py-1 text-sm leading-6 text-black cursor-pointer"
                                   }
@@ -441,11 +414,7 @@ export default function Table() {
                                         disabled={option.disabled}
                                         onClick={() => {
                                           option.handleClick &&
-                                            option.handleClick(policy.id);
-                                          option.handleClickContact &&
-                                            option.handleClickContact(
-                                              policy?.contact?.id
-                                            );
+                                            option.handleClick(claim.id);
                                         }}
                                       >
                                         <div
@@ -472,23 +441,16 @@ export default function Table() {
                     <td className="ml-4 py-4" key={index}>
                       <div
                         className={clsx(
-                          "font-medium text-sm  text-black hover:text-primary",
-                          {
-                            "text-center": [
-                              "vigenciaDesde",
-                              "poliza",
-                              "source",
-                              "status",
-                            ].includes(column.row),
-                            "text-right": ["importePagar"].includes(column.row),
-                          }
+                          "font-medium text-sm  text-black hover:text-primary"
                         )}
                       >
                         {column.row == "name" ? (
                           <Link
-                            href={`/operations/policies/policy/${policy.id}?show=true`}
+                            href={`/operations/claims/claim/${claim.id}?show=true`}
                           >
-                            <p>{`${policy?.company?.name ?? ""} ${policy?.poliza} ${policy?.type?.name}`}</p>
+                            <p>{`${
+                              claim?.insurance?.name ?? ""
+                            } ${claim?.poliza?.poliza ?? ""} ${claim?.polizaType?.name ?? ""}`}</p>
                           </Link>
                         ) : column.row == "activities" ? (
                           <div className="flex justify-center gap-2">
@@ -529,14 +491,30 @@ export default function Table() {
                               />
                             </button>
                           </div>
-                        ) : column.row === "vigenciaDesde" ? (
-                          (formatDate(policy[column.row], "dd/MM/yyyy") ?? null)
-                        ) : column.row === "importePagar" ? (
-                          `${lists?.policies?.currencies?.find((x) => x.id == policy?.currency?.id)?.symbol ?? ""} ${formatToCurrency(policy[column.row])}`
+                        ) : column.row === "poliza" ? (
+                          <Link
+                            href={`/operations/policies/policy/${claim?.poliza?.id}?show=true`}
+                          >
+                            <p className="text-center">
+                              {claim?.poliza?.poliza}
+                            </p>
+                          </Link>
+                        ) : column.row === "contact" ? (
+                          <Link
+                            href={`/sales/crm/contacts/contact/${claim?.poliza?.contact?.id}?show=true`}
+                          >
+                            <p className="text-center">
+                              {claim?.poliza?.contact?.fullName}
+                            </p>
+                          </Link>
+                        ) : column.row === "createdAt" ? (
+                          <p className="text-center">
+                            {moment(claim?.createdAt).format("DD/MM/YYYY")}
+                          </p>
                         ) : column.row === "status" ? (
-                          policyStatus[policy[column.row]]
+                          renderStage(claim?.status)
                         ) : (
-                          policy[column.row] || "-"
+                          claim[column.row] || "-"
                         )}
                       </div>
                     </td>
@@ -559,13 +537,13 @@ export default function Table() {
       <DeleteItemModal
         isOpen={isOpenDelete}
         setIsOpen={setIsOpenDelete}
-        handleClick={() => deletePolicy(deleteId)}
+        handleClick={() => deleteClaim(deleteId)}
         loading={loading}
       />
       <DeleteItemModal
         isOpen={isOpenDeleteMasive}
         setIsOpen={setIsOpenDeleteMasive}
-        handleClick={() => deletePolicies()}
+        handleClick={() => deleteClaims()}
         loading={loading}
       />
     </Fragment>

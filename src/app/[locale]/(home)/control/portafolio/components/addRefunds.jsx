@@ -21,6 +21,7 @@ import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import { MAX_FILE_SIZE } from "@/src/utils/constants";
+import { handleFrontError } from "@/src/utils/api/errors";
 
 const AddRefunds = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
@@ -106,6 +107,13 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
     policy?.company?.id && setValue("insuranceId", policy?.company?.id);
     policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
     policy?.contact?.id && setValue("contact", policy?.contact?.id);
+    policy?.agenteIntermediario?.id &&
+      setValue("agenteIntermediarioId", policy?.agenteIntermediario?.id);
+    policy?.assignedBy?.id && setValue("assignedById", policy?.assignedBy?.id);
+    policy?.subAgente?.id &&
+      setValue("agenteRelacionadoId", policy?.subAgente?.id);
+    policy?.observers?.length > 0 &&
+      setValue("observerId", policy?.observers[0]?.id);
   };
 
   const onSubmit = async (data) => {
@@ -120,13 +128,9 @@ const AddRefunds = ({ isOpen, setIsOpen }) => {
 
     const formData = getFormData(body);
     const response = await addRefund(formData);
-    console.log({ response, body });
+
     if (response.hasError) {
-      let message = response.message;
-      if (response.errors) {
-        message = response.errors.join(", ");
-      }
-      toast.error(message);
+      handleFrontError(response);
       return;
     }
 

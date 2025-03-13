@@ -1,5 +1,4 @@
 "use client";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
@@ -7,16 +6,26 @@ import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon } from "@heroicons/react/24/solid";
 import { useCommon } from "@/src/hooks/useCommon";
 import General from "./tabs/General";
-import Receipts from "./tabs/Receipts";
-import Vehicle from "./tabs/Vehicle";
-import { formatDate } from "@/src/utils/getFormatDate";
 import Link from "next/link";
+import moment from "moment";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { putClaim, putRefund } from "@/src/lib/apis";
+import clsx from "clsx";
+import { toast } from "react-toastify";
+import {
+  polizaClaimStatus,
+  polizaClaimStatusColor,
+} from "@/src/utils/constants";
+import AddDocumentButton from "./AddDocumentButton";
+import useClaimContext from "@/src/context/claims";
+import { handleFrontError } from "@/src/utils/api/errors";
 
-export default function RenovationDetails({ data, id, mutate }) {
+export default function ClaimDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
-  const headerRef = useRef();
+  const { mutate: mutateClaim } = useClaimContext();
+
   // Función para extraer el código de cliente basado en el id de la compañía
   const getClientCode = () => {
     const companyId = data?.company?.id; // ID de la compañía de la póliza
@@ -24,100 +33,72 @@ export default function RenovationDetails({ data, id, mutate }) {
 
     // Buscar el código de cliente asociado a la compañía
     const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insurance?.id === companyId
+      (codigo) => codigo?.insuranceId === companyId
     );
 
     return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
   };
 
-  const tabs = [
-    {
-      name: t("control:portafolio:receipt:details:consult"),
-    },
-    {
-      name:
-        data?.type?.name === "GMM"
-          ? "Asegurados"
-          : data?.type?.name === "VIDA"
-            ? "Beneficiarios"
-            : "Vehiculos",
-      disabled: data?.type?.name != "AUTOS",
-    },
-    {
-      name: "Pagos/Recibos",
-    },
-    {
-      name: "Renovaciones",
-      disabled: true,
-    },
-    {
-      name: "Siniestros",
-      disabled: true,
-    },
-    {
-      name: "Reembolsos",
-      disabled: true,
-    },
-    {
-      name: "Facturas",
-      disabled: true,
-    },
-    {
-      name: "Versiones",
-      disabled: true,
-    },
-    {
-      name: "Comisiones",
-      disabled: true,
-    },
-    {
-      name: "Cotizaciones",
-      disabled: true,
-    },
-    {
-      name: "Programaciones",
-      disabled: true,
-    },
-    {
-      name: "Rescate de fondos",
-      disabled: true,
-    },
-  ];
+  const updateStatus = async (status) => {
+    setLoading(true);
+    const body = {
+      status,
+    };
+    try {
+      const response = await putClaim(data.id, body);
+
+      if (response.hasError) {
+        handleFrontError(response);
+        setLoading(false);
+        return;
+      }
+      mutate();
+      mutateClaim();
+      toast.success("Actualizado correctamente.");
+    } catch (error) {
+      console.log({ error });
+      toast.error(
+        "Se ha producido un error al actualizar el siniestro, inténtelo de nuevo."
+      );
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="flex flex-col h-screen relative w-full">
       {/* Formulario Principal */}
       {loading && <LoaderSpinner />}
       <div className="flex flex-col flex-1 bg-gray-200 shadow-xl text-black overflow-y-auto md:overflow-hidden rounded-tl-[35px] rounded-bl-[35px]">
-        <TabGroup className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
+        <div className="flex flex-col flex-1 gap-2 text-black md:overflow-hidden rounded-t-2xl rounded-bl-2xl relative">
           {/* Encabezado del Formulario */}
           <div
             id="policy-header"
-            className="pt-6 pb-4 px-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
-            ref={headerRef}
+            className="pt-6 px-2 pb-2 md:px-4 sticky top-0 z-10 bg-gray-200 grid grid-cols-1 gap-2"
           >
             <div className="flex justify-between pb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-2 gap-y-2 md:gap-x-4 xl:gap-x-6 pl-4">
                 <p className="text-lg md:text-xl 2xl:text-2xl font-semibold">
-                  {`${data?.company?.name ?? ""} ${data?.poliza ?? ""} ${data?.type?.name ?? ""}`}
+                  {`${data?.insurance?.name ?? ""} ${data?.poliza?.poliza ?? ""} ${data?.polizaType?.name ?? ""}`}
                 </p>
 
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
-                    {t("control:portafolio:receipt:details:date")}:
+                    {t("control:portafolio:receipt:details:fechaEmision")}:
                   </p>
                   <p className="text-sm">
-                    {formatDate(data?.vigenciaDesde, "dd/MM/yyyy")}
+                    {moment(
+                      data?.poliza?.fechaEmision ?? data?.poliza?.vigenciaDesde
+                    ).format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-sm">{data?.category?.name ?? "S/N"}</p>
+                  <p className="text-sm">{data?.category?.name ?? "N/D"}</p>
                 </div>
                 <Link
-                  className="hover:text-easy-600 text-sm"
+                  className="hover:underline text-easy-600 text-sm"
                   href={`/sales/crm/contacts/contact/${data?.contact?.id}?show=true`}
                 >
                   {data?.contact?.fullName}
@@ -126,46 +107,87 @@ export default function RenovationDetails({ data, id, mutate }) {
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
-                  <p className="text-sm">{getClientCode()}</p>
+                  <p className="text-sm">
+                    {data?.contact?.codigos?.length > 0
+                      ? getClientCode()
+                      : (data?.contact?.codigo ?? "N/D")}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:claim-number")}:
+                  </p>
+                  <p className="text-sm">{data?.claimNumber ?? "N/D"}</p>
+                </div>
+                <div></div>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:sheet")}:
+                  </p>
+                  <p className="text-sm">{data?.folioNumber ?? "N/D"}</p>
                 </div>
               </div>
-              <IconDropdown
-                icon={
-                  <Cog8ToothIcon
-                    className="h-8 w-8 text-primary"
-                    aria-hidden="true"
-                  />
-                }
-                options={settingsPolicy}
-                width="w-[140px]"
-              />
+              <div className="flex items-center gap-2">
+                <Menu>
+                  <MenuButton
+                    className={
+                      "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
+                    }
+                    style={{
+                      background: data?.status
+                        ? polizaClaimStatusColor[data?.status]
+                        : polizaClaimStatusColor.captura_documentos,
+                    }}
+                  >
+                    {data?.status
+                      ? polizaClaimStatus[data?.status]
+                      : polizaClaimStatus.captura_documentos}
+                  </MenuButton>
+                  <MenuItems
+                    transition
+                    anchor="bottom end"
+                    className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
+                  >
+                    {data &&
+                      Object?.keys(polizaClaimStatus)
+                        ?.filter((key) => key !== data?.status)
+                        .map((key, index) => (
+                          <MenuItem
+                            key={index}
+                            as="div"
+                            onClick={() => updateStatus(key)}
+                            className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
+                          >
+                            {polizaClaimStatus[key]}
+                          </MenuItem>
+                        ))}
+                  </MenuItems>
+                </Menu>
+                <IconDropdown
+                  icon={
+                    <Cog8ToothIcon
+                      className="h-8 w-8 text-primary"
+                      aria-hidden="true"
+                    />
+                  }
+                  options={settingsPolicy}
+                  width="w-[140px]"
+                />
+              </div>
             </div>
-            <TabList className="flex items-center gap-2 bg-gray-100 rounded-lg py-2 px-4 w-full flex-wrap">
-              {tabs.map((tab) => (
-                <Tab
-                  key={tab.name}
-                  disabled={tab.disabled}
-                  className="data-[selected]:bg-blue-100 disabled:opacity-60 data-[hover]:bg-blue-400 outline-none text-xs uppercase focus:outline-none data-[selected]:text-white data-[hover]:text-white rounded-md p-2.5"
-                >
-                  {tab.name}
-                </Tab>
-              ))}
-            </TabList>
+            <div className="flex items-center gap-4  bg-gray-100 rounded-lg p-2 w-full">
+              <div className="px-4">
+                <p className="px-3 text-gray-400 text-sm">
+                  {t("control:portafolio:receipt:details:consult")}
+                </p>
+              </div>
+              <AddDocumentButton id={id} />
+            </div>
           </div>
-          <TabPanels className="w-full">
-            <TabPanel className={"w-full md:px-4"}>
-              <General data={data} id={id} mutate={mutate} headerHeight={200} />
-            </TabPanel>
-            <TabPanel className="w-full md:px-4">
-              {data?.type?.name === "AUTOS" && (
-                <Vehicle vehicles={data.vehicles} />
-              )}
-            </TabPanel>
-            <TabPanel className="w-full">
-              <Receipts policyId={data?.id} />
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
+          <div className="px-4">
+            <General data={data} id={id} mutate={mutate} />
+          </div>
+        </div>
       </div>
     </div>
   );

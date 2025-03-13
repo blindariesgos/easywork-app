@@ -9,8 +9,8 @@ export default async function Layout({ children, table, kanban }) {
   const tabs = [
     {
       name: "Kanban",
-      // component: kanban,
-      disabled: true,
+      component: kanban,
+      // disabled: true,
     },
     {
       name: "Lista",

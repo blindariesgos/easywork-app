@@ -63,7 +63,7 @@ export default function Schedules({ polizaId }) {
                 className="py-3.5 pr-3 text-sm font-medium text-gray-400 cursor-pointer "
               >
                 <div className="group flex items-center pl-4">
-                  <p>OT</p>
+                  <p>Nro de Siniestro</p>
                 </div>
               </th>
               <th

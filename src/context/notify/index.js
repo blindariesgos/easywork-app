@@ -15,6 +15,7 @@ export function NotifyContextProvider({ children }) {
     loadMore,
     hasMore,
     unread,
+    mutate,
   } = useNotify();
 
   const value = useMemo(
@@ -29,6 +30,7 @@ export function NotifyContextProvider({ children }) {
       loadMore,
       hasMore,
       unread,
+      update: mutate,
     }),
     [
       isOpen,
@@ -40,6 +42,7 @@ export function NotifyContextProvider({ children }) {
       loadMore,
       hasMore,
       unread,
+      mutate,
     ]
   );
 

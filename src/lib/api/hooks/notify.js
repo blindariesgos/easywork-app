@@ -1,7 +1,6 @@
 "use client";
 import useSWRInfinite from "swr/infinite";
 import fetcher from "../fetcher";
-import { useEffect } from "react";
 
 export const useNotify = () => {
   const { data, error, isLoading, mutate, size, setSize } = useSWRInfinite(
@@ -12,10 +11,6 @@ export const useNotify = () => {
       revalidateOnFocus: false,
     }
   );
-
-  useEffect(() => {
-    console.log({ data });
-  }, [data]);
 
   const notifications =
     data && Array.isArray(data)
@@ -48,6 +43,7 @@ export const useNotify = () => {
     isError: error,
     markAsRead,
     loadMore,
+    mutate,
     hasMore: data && data[data.length - 1]?.items?.length > 0, // Si la última página tiene datos
   };
 };

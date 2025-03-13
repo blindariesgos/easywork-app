@@ -130,7 +130,7 @@ export default function NotifyList() {
                 />
               </div>
             )}
-            <div className="flex justify-end">
+            {/* <div className="flex justify-end">
               <div
                 className={clsx(
                   "underline text-primary text-xs hidden cursor-pointer",
@@ -142,7 +142,7 @@ export default function NotifyList() {
               >
                 Marcar como leido
               </div>
-            </div>
+            </div> */}
           </li>
         ))}
       </ul>

@@ -1,6 +1,7 @@
 "use client";
 import useSWRInfinite from "swr/infinite";
 import fetcher from "../fetcher";
+import { useEffect } from "react";
 
 export const useNotify = () => {
   const { data, error, isLoading, mutate, size, setSize } = useSWRInfinite(

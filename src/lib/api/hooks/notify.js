@@ -13,10 +13,6 @@ export const useNotify = () => {
     }
   );
 
-  useEffect(() => {
-    console.log({ data });
-  }, [data]);
-
   const notifications =
     data && Array.isArray(data)
       ? data.reduce(
@@ -48,6 +44,7 @@ export const useNotify = () => {
     isError: error,
     markAsRead,
     loadMore,
+    mutate,
     hasMore: data && data[data.length - 1]?.items?.length > 0, // Si la última página tiene datos
   };
 };

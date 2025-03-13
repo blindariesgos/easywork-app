@@ -255,5 +255,6 @@
     "enter": "Introduzca código postal",
     "habitation": "Asentamiento",
     "select": "Seleccionar {{selection}}"
-  }
+  },
+  "see-import-result": "Ver resultado de importación"
 }

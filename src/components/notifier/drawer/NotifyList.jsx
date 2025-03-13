@@ -10,59 +10,14 @@ import { useEffect, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function NotifyList() {
-  const { notifications, markAsRead, loadMore, hasMore, isLoading, unread } =
-    useNotifyContext();
+  const { notifications, markAsRead, loadMore, hasMore } = useNotifyContext();
   const { lists } = useAppContext();
-  const observerRef = useRef(null);
-  const loadMoreRef = useRef(null);
-
-  // useEffect(() => {
-  //   if (!observerRef) return;
-  //   observerRef.current = new IntersectionObserver((entries) => {
-  //     entries.forEach((entry) => {
-  //       if (entry.isIntersecting) {
-  //         const notificationId = entry.target.getAttribute("data-id");
-  //         const readAt = entry.target.getAttribute("data-read-at");
-
-  //         if (!readAt) {
-  //           markAsRead(notificationId);
-  //         }
-  //       }
-  //     });
-  //   });
-
-  //   const elements = document?.querySelectorAll(".notification-item");
-  //   if (elements)
-  //     elements?.forEach((element) => observerRef.current.observe(element));
-
-  //   return () => {
-  //     observerRef.current.disconnect();
-  //   };
-  // }, [notifications, markAsRead]);
 
   const handleReadNotification = async (notification, event) => {
     if (!notification.readAt) {
       await markAsRead(notification.id);
     }
   };
-
-  // useEffect(() => {
-  //   const loadMoreObserver = new IntersectionObserver((entries) => {
-  //     if (entries[0].isIntersecting && hasMore && !isLoading) {
-  //       loadMore();
-  //     }
-  //   });
-
-  //   if (loadMoreRef.current) {
-  //     loadMoreObserver.observe(loadMoreRef.current);
-  //   }
-
-  //   return () => {
-  //     if (loadMoreRef.current) {
-  //       loadMoreObserver.unobserve(loadMoreRef.current);
-  //     }
-  //   };
-  // }, [hasMore, isLoading, loadMore]);
 
   return (
     <InfiniteScroll
@@ -83,8 +38,9 @@ export default function NotifyList() {
                 "bg-gray-100": notification.readAt,
               }
             )}
-            data-id={notification.id}
-            data-read-at={notification.readAt}
+            onMouseEnter={() =>
+              !notification.readAt && markAsRead(notification.id)
+            }
           >
             <div className="flex justify-end">
               <div className=" text-sm text-slate-500 italic data-[read-at]:bg-slate-600">

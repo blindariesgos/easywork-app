@@ -18,7 +18,7 @@ import UserProfile from "./Info";
 const General = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const url = new URL(window.location.href);
+
   const params = new URLSearchParams(searchParams);
   const { setIsOpen } = useNotifyContext();
   const [showProfile, setShowProfile] = useState(false);
@@ -26,7 +26,9 @@ const General = () => {
   const handleOpenProfile = () => {
     params.set("infoP", "true");
     params.set("show", "true");
-    router.push(`${url.origin}${url.pathname}?${params.toString()}`);
+    router.push(
+      `${window.location.origin}${window.location.pathname}?${params.toString()}`
+    );
   };
 
   useEffect(() => {

@@ -406,6 +406,16 @@ export const getManagementReport = async ({ filters = {} }) => {
 
 //#endregion
 
+//#region NOTIFICATIONS
+export const markAllNotificationsRead = async () => {
+  const response = await axios()
+    .post(`/notify/user/read-all`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
 //#region SCHEDULES
 export const deleteScheduleById = async (id) => {
   const response = await axios()

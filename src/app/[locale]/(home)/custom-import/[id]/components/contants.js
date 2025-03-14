@@ -5,7 +5,6 @@ export const contactImportKeys = [
   "fullName",
   "rfc",
   "cua",
-  "codigo",
   "address",
   "cargo",
   "birthday",

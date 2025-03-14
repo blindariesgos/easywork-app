@@ -5,11 +5,9 @@ import SliderOverShord from "@/src/components/SliderOverShort";
 import Button from "@/src/components/form/Button";
 import Tag from "@/src/components/Tag";
 import SelectInput from "@/src/components/form/SelectInput";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
-import useAppContext from "@/src/context/app";
-import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import TextInput from "@/src/components/form/TextInput";
 import InputDate from "@/src/components/form/InputDate";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
@@ -26,17 +24,15 @@ import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsy
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import { getFormatFormData } from "@/src/utils/formatters";
-import ContactSelectAsync from "@/src/components/form/ContactSelectAsync";
-import { addClaim, addRefund } from "@/src/lib/apis";
+import { addClaim } from "@/src/lib/apis";
 import { handleFrontError } from "@/src/utils/api/errors";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
+import PolicySelectorValues from "./PolicySelectorValues";
 
 const AddClaim = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
-  const { lists } = useAppContext();
-  const [documentType, setDocumentType] = useState("policy");
   const [isLoading, setIsLoading] = useState(false);
 
   const schema = yup.object().shape({
@@ -94,21 +90,6 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleChangePolicy = (policy) => {
-    console.log({ policy });
-    policy?.id && setValue("polizaId", policy?.id);
-    policy?.type?.id && setValue("polizaTypeId", policy?.type?.id);
-    policy?.company?.id && setValue("insuranceId", policy?.company?.id);
-    policy?.contact?.id && setValue("contactId", policy?.contact?.id);
-    policy?.agenteIntermediario?.id &&
-      setValue("agenteIntermediarioId", policy?.agenteIntermediario?.id);
-    policy?.assignedBy?.id && setValue("assignedById", policy?.assignedBy?.id);
-    policy?.subAgente?.id &&
-      setValue("agenteRelacionadoId", policy?.subAgente?.id);
-    policy?.observers?.length > 0 &&
-      setValue("observerId", policy?.observers[0]?.id);
-  };
-
   const onSubmit = async (data) => {
     setIsLoading(true);
     const { captureDate, ...otherData } = data;
@@ -123,7 +104,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
 
     const formData = getFormatFormData(body);
     const response = await addClaim(formData);
-    console.log({ response, body });
+
     if (response.hasError) {
       handleFrontError(response);
       setIsLoading(false);
@@ -161,52 +142,11 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                 <p>{t("operations:managements:add:claim:subtitle")}</p>
               </div>
               <div className="px-8 pt-4 grid grid-cols-1 gap-4">
-                <SelectInput
-                  label={"Seleccionar tipo de documento"}
-                  name="type"
-                  options={[
-                    {
-                      name: "Póliza nueva",
-                      id: "policy",
-                    },
-                    {
-                      name: "Renovacion",
-                      id: "renewal",
-                    },
-                  ]}
-                  setSelectedOption={(e) => setDocumentType(e.id)}
-                />
-                <PolicySelectAsync
-                  label={t("operations:managements:add:claim:poliza")}
-                  name={"policyId"}
-                  setSelectedOption={handleChangePolicy}
-                  error={errors?.policyId}
-                  isRenewal={documentType == "renewal"}
-                />
-                <SelectInput
-                  label={t("operations:managements:add:claim:company")}
-                  options={lists?.policies?.polizaCompanies}
-                  name="insuranceId"
-                  setValue={setValue}
-                  watch={watch}
+                <PolicySelectorValues
                   register={register}
-                  disabled
-                />
-                <SelectInput
-                  label={t("operations:managements:add:claim:branch")}
-                  options={lists?.policies?.polizaTypes}
-                  name="polizaTypeId"
                   setValue={setValue}
+                  errors={errors}
                   watch={watch}
-                  register={register}
-                  disabled
-                />
-                <ContactSelectAsync
-                  label={t("operations:managements:add:schedule:client")}
-                  watch={watch}
-                  error={errors?.contactId}
-                  name="contactId"
-                  disabled
                 />
                 <SelectInput
                   label={t("operations:managements:add:claim:type")}

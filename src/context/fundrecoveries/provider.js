@@ -4,7 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { FundRecoveriesContext } from "..";
 import useAppContext from "../app";
 import { useTranslation } from "react-i18next";
-import { usePolicies } from "../../lib/api/hooks/policies";
+import { useFundRecoveries } from "../../lib/api/hooks/fundRecoveries";
+
 export default function FundRecoveriesContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
@@ -15,12 +16,9 @@ export default function FundRecoveriesContextProvider({ children }) {
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
-  const { data, isLoading, isError, mutate } = usePolicies({
+  const { data, isLoading, isError, mutate } = useFundRecoveries({
     config,
-    filters: {
-      ...filters,
-      renewal: "true",
-    },
+    filters,
   });
   const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);

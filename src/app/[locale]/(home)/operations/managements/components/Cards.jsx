@@ -21,7 +21,7 @@ const Cards = () => {
   const getManagementInfo = async () => {
     setIsLoading(true);
     const response = await getManagementReport({ filters });
-
+    console.log({ response });
     if (response.hasError) {
       handleFrontError(response);
       setIsLoading(false);

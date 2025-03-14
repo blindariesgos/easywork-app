@@ -55,7 +55,7 @@ const Configurations = ({ handleNext, type }) => {
 
     const header = excel[0];
     const body = excel.slice(1);
-    if (header.length !== 24) {
+    if (header.length !== 23) {
       toast.error(
         "El archivo cargado no tiene la cantidad de columnas requeridas"
       );

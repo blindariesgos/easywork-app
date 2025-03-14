@@ -1850,22 +1850,12 @@ export const useFundRecoveriesTable = () => {
       id: 3,
       name: t("operations:fundrecovery:table:state"),
       row: "status",
-      order: "status",
       check: true,
-      photo: true,
     },
     {
       id: 7,
       name: t("operations:fundrecovery:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
-      check: true,
-    },
-    {
-      id: 7,
-      name: t("operations:fundrecovery:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
       check: true,
     },
     {

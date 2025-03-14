@@ -287,7 +287,7 @@ export default function Table() {
       <TableHeader
         selectedRows={selectedContacts}
         setSelectedRows={setSelectedContacts}
-        data={[]}
+        data={data?.items ?? []}
         order={order}
         orderBy={orderBy}
         setOrderBy={setOrderBy}
@@ -433,7 +433,7 @@ export default function Table() {
                           <Link
                             href={`/operations/fundrecoveries/fundrecovery/${fundrecovery.id}?show=true`}
                           >
-                            <p>{`${fundrecovery?.insurance?.name ?? ""} ${fundrecovery?.poliza} ${fundrecovery?.polizaType?.name}`}</p>
+                            <p>{`${fundrecovery?.insurance?.name ?? ""} ${fundrecovery?.poliza?.poliza} ${fundrecovery?.polizaType?.name}`}</p>
                           </Link>
                         ) : column.row == "activities" ? (
                           <div className="flex justify-center gap-2">
@@ -476,18 +476,18 @@ export default function Table() {
                           </div>
                         ) : column.row === "poliza" ? (
                           <Link
-                            href={`/operations/policies/policy/${claim?.poliza?.id}?show=true`}
+                            href={`/operations/policies/policy/${fundrecovery?.poliza?.id}?show=true`}
                           >
                             <p className="text-center">
-                              {claim?.poliza?.poliza}
+                              {fundrecovery?.poliza?.poliza}
                             </p>
                           </Link>
                         ) : column.row === "contact" ? (
                           <Link
-                            href={`/sales/crm/contacts/contact/${claim?.poliza?.contact?.id}?show=true`}
+                            href={`/sales/crm/contacts/contact/${fundrecovery?.poliza?.contact?.id}?show=true`}
                           >
                             <p className="text-center">
-                              {claim?.poliza?.contact?.fullName}
+                              {fundrecovery?.poliza?.contact?.fullName}
                             </p>
                           </Link>
                         ) : column.row === "status" ? (

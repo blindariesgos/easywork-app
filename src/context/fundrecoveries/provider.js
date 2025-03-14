@@ -20,7 +20,36 @@ export default function FundRecoveriesContextProvider({ children }) {
     config,
     filters,
   });
-  const [filterFields, setFilterFields] = useState();
+  const [filterFields, setFilterFields] = useState([
+    {
+      id: 0,
+      name: t("control:portafolio:receipt:filters:responsible"),
+      type: "select-user",
+      check: true,
+      code: "assignedById",
+    },
+    {
+      id: 2,
+      name: t("operations:policies:table:policy"),
+      type: "select-policy",
+      check: false,
+      code: "poliza",
+    },
+    {
+      id: 3,
+      name: t("control:portafolio:receipt:filters:client"),
+      type: "select-contact",
+      check: false,
+      code: "client",
+    },
+    {
+      id: 4,
+      name: t("operations:policies:general:intermediary"),
+      type: "select-user",
+      check: false,
+      code: "agenteIntermediarioId",
+    },
+  ]);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({});
   const defaultFilterFields = [
@@ -32,16 +61,9 @@ export default function FundRecoveriesContextProvider({ children }) {
       code: "assignedById",
     },
     {
-      id: 1,
-      name: t("control:portafolio:receipt:filters:expiration-date"),
-      type: "date",
-      check: true,
-      code: "vigenciaHasta",
-    },
-    {
       id: 2,
       name: t("operations:policies:table:policy"),
-      type: "input",
+      type: "select-policy",
       check: false,
       code: "poliza",
     },
@@ -65,96 +87,6 @@ export default function FundRecoveriesContextProvider({ children }) {
 
     setConfig(newConfig);
   };
-
-  useEffect(() => {
-    setFilterFields([
-      {
-        id: 0,
-        name: t("control:portafolio:receipt:filters:responsible"),
-        type: "select-user",
-        check: true,
-        code: "assignedById",
-      },
-      {
-        id: 1,
-        name: t("control:portafolio:receipt:filters:expiration-date"),
-        type: "date",
-        check: true,
-        code: "vigenciaHasta",
-      },
-      {
-        id: 2,
-        name: t("operations:policies:table:policy"),
-        type: "input",
-        check: false,
-        code: "poliza",
-      },
-      {
-        id: 3,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "select-user",
-        check: false,
-        code: "client",
-      },
-      {
-        id: 4,
-        name: t("operations:policies:general:intermediary"),
-        type: "select",
-        check: false,
-        code: "agenteIntermediarioId",
-        options: lists?.policies?.agentesIntermediarios,
-      },
-      {
-        id: 5,
-        name: t("operations:policies:table:state"),
-        type: "select",
-        check: false,
-        code: "status",
-        options: [
-          {
-            id: "activa",
-            name: "Vigente",
-          },
-          {
-            id: "expirada",
-            name: "No vigente",
-          },
-          {
-            id: "cancelada",
-            name: "Cancelada",
-          },
-          {
-            id: "en_proceso",
-            name: "En trámite",
-          },
-        ],
-      },
-      {
-        id: 6,
-        name: t("operations:policies:general:type"),
-        type: "select",
-        check: false,
-        code: "typeId",
-        options: lists?.policies?.polizaTypes,
-      },
-      {
-        id: 7,
-        name: t("operations:policies:general:payment-frequency"),
-        type: "select",
-        check: false,
-        code: "frecuenciaCobroId",
-        options: lists?.policies?.polizaFrecuenciasPago,
-      },
-      {
-        id: 8,
-        name: t("operations:policies:general:payment-method"),
-        type: "select",
-        check: false,
-        code: "formaCobroId",
-        options: lists?.policies?.polizaFormasCobro,
-      },
-    ]);
-  }, [lists?.listContact, lists?.policies]);
 
   useEffect(() => {
     handleChangeConfig("page", 1);

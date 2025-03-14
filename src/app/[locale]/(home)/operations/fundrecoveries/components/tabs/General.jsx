@@ -1,39 +1,36 @@
 "use client";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextInput from "@/src/components/form/TextInput";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import ActivityPanel from "@/src/components/activities/ActivityPanel";
 import clsx from "clsx";
-import { formatToCurrency } from "@/src/utils/formatters";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import useAppContext from "@/src/context/app";
 import SelectInput from "@/src/components/form/SelectInput";
-import SelectDropdown from "@/src/components/form/SelectDropdown";
-import InputDate from "@/src/components/form/InputDate";
-import InputCurrency from "@/src/components/form/InputCurrency";
 import Button from "@/src/components/form/Button";
-import { postComment, putPoliza } from "@/src/lib/apis";
+import { putFundRecovery } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSWRConfig } from "swr";
+import moment from "moment";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import { fundrescueTypes } from "@/src/utils/constants";
+import { handleFrontError } from "@/src/utils/api/errors";
+import CheckboxInput from "@/src/components/form/CheckboxInput";
 
-export default function PolicyDetails({
+export default function FundrecoveryGeneralTab({
   data,
   id,
-  mutate: updatePolicy,
-  headerHeight,
+  mutate: updateFund,
 }) {
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
-  const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
@@ -41,23 +38,11 @@ export default function PolicyDetails({
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),
     assignedById: Yup.string(),
-    rfc: Yup.string(),
-    vigenciaDesde: Yup.string(),
-    vigenciaHasta: Yup.string(),
-    address: Yup.string(),
     status: Yup.string(),
+    type: Yup.string(),
     subramoId: Yup.string(),
-    cobertura: Yup.string(),
-    frecuenciaCobroId: Yup.string(),
-    paymentTerm: Yup.string(),
-    primaNeta: Yup.string(),
-    recargoFraccionado: Yup.string(),
-    derechoPoliza: Yup.string(),
-    iva: Yup.string(),
-    importePagar: Yup.string(),
-    plazoPago: Yup.string(),
-    formaCobroId: Yup.string(),
-    currencyId: Yup.string(),
+    claimNumber: Yup.string(),
+    type: Yup.string(),
   });
 
   const {
@@ -79,65 +64,54 @@ export default function PolicyDetails({
   }, [params.get("edit")]);
 
   useEffect(() => {
-    if (data?.vigenciaDesde)
-      setValue("vigenciaDesde", data?.vigenciaDesde ?? "");
-    if (data?.vigenciaHasta)
-      setValue("vigenciaHasta", data?.vigenciaHasta ?? "");
+    if (!data) return;
+
+    if (data?.claimNumber) setValue("claimNumber", data?.claimNumber);
+    if (data?.type) setValue("type", data?.type);
+    if (data?.folioNumber) setValue("folioNumber", data?.folioNumber);
+    if (data?.folioSubsequent)
+      setValue("folioSubsequent", data?.folioSubsequent);
+    if (data?.methodPayment) setValue("methodPayment", data?.methodPayment);
+    if (data?.ot) setValue("ot", data?.ot);
+    if (data?.sigre) setValue("sigre", data?.sigre);
     if (data?.status) setValue("status", data?.status);
-    if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
-    if (data?.cobertura) setValue("cobertura", data?.cobertura);
-    if (data?.paymentMethod) setValue("paymentMethod", data?.paymentMethod);
-    if (data?.paymentFrequency)
-      setValue("paymentFrequency", data?.paymentFrequency);
-    if (data?.paymentTerm) setValue("paymentTerm", data?.paymentTerm);
-    if (data?.formaCobro?.name) setValue("formaCobroId", data?.formaCobro?.id);
-    if (data?.frecuenciaCobro?.name)
-      setValue("frecuenciaCobroId", data?.frecuenciaCobro?.id);
+    if (data?.subRamo?.name) setValue("subRamoId", data?.subRamo?.id);
+    if (data?.polizaType?.id) setValue("polizaTypeId", data?.polizaType?.id);
+    if (data?.type) setValue("type", data?.type);
+    if (data?.medicalCondition)
+      setValue("medicalCondition", data?.medicalCondition);
     if (data?.agenteIntermediario?.name)
       setValue("agenteIntermediarioId", data?.agenteIntermediario?.id);
     if (data?.observations) setValue("observations", data?.observations);
-    if (data?.currency?.name) setValue("currencyId", data?.currency?.id);
-    if (data?.plazoPago) setValue("plazoPago", data?.plazoPago);
     if (data?.assignedBy) setValue("assignedById", data?.assignedBy?.id);
-    if (data?.contact?.address) setValue("address", data?.contact?.address);
-    if (data?.contact?.rfc) setValue("rcf", data?.contact?.rfc);
-    if (data?.type?.id) setValue("typeId", data?.type?.id);
+    if (data?.agenteRelacionado)
+      setValue("agenteRelacionadoId", data?.agenteRelacionado?.id);
+    if (data?.observer) setValue("observerId", data?.observer?.id);
+    if (data?.requireReimbursementSubsequent)
+      setValue(
+        "requireReimbursementSubsequent",
+        data?.requireReimbursementSubsequent
+      );
   }, [data]);
 
   const handleFormSubmit = async (data) => {
-    const {
-      primaNeta,
-      recargoFraccionado,
-      derechoPoliza,
-      iva,
-      importePagar,
-      ...otherData
-    } = data;
-
     const body = {
-      ...otherData,
-      primaNeta: +primaNeta,
-      recargoFraccionado: +recargoFraccionado,
-      derechoPoliza: +derechoPoliza,
-      iva: +iva,
-      importePagar: +importePagar,
+      ...data,
     };
+
     try {
-      const response = await putPoliza(id, body);
+      console.log("fund", body);
+      const response = await putFundRecovery(id, body);
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         return;
       }
       setIsEdit(false);
-      router.back();
-      updatePolicy();
-      toast.success("Poliza actualizada correctamente.");
-      mutate("/sales/crm/polizas?page=1&limit=5&orderBy=name&order=DESC");
+      updateFund();
+      toast.success("Rescate de fondos actualizado correctamente.");
     } catch (error) {
       toast.error(
-        "Se ha producido un error al actualizar la poliza, inténtelo de nuevo."
+        "Se ha producido un error al actualizar el siniestro, inténtelo de nuevo."
       );
     }
   };
@@ -147,15 +121,12 @@ export default function PolicyDetails({
       onSubmit={handleSubmit(handleFormSubmit)}
       className={clsx(
         `grid grid-cols-1 lg:grid-cols-12 lg:overflow-y-auto md:overflow-hidden bg-gray-100 rounded-lg py-4 px-4 w-full lg:h-[calc(100vh_-_220px)]`
-        // {
-        //   [`h-[calc(100vh_-_${headerHeight}px)]`]: headerHeight,
-        // }
       )}
     >
       {/* Menu Derecha */}
       <div className="h-auto rounded-lg overflow-y-auto pr-2 lg:col-span-5">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-          {t("operations:policies:general:title")}
+          {t("operations:fundrecovery:general:title")}
           {data && (
             <button
               type="button"
@@ -167,252 +138,136 @@ export default function PolicyDetails({
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-          <SelectInput
-            label={t("operations:policies:general:type")}
-            name="typeId"
-            options={lists?.policies?.polizaTypes ?? []}
-            disabled
+          {isEdit && (
+            <Fragment>
+              <TextInput
+                type="text"
+                label={t("operations:fundrecovery:general:fundRecoveryNumber")}
+                name="fundRecoveryNumber"
+                register={register}
+                disabled={!isEdit}
+              />
+              <TextInput
+                type="text"
+                label={t("operations:programations:general:sheet-number")}
+                name="folioNumber"
+                register={register}
+                disabled={!isEdit}
+              />
+            </Fragment>
+          )}
+
+          {/* <TextInput
+            type="text"
+            label={t(
+              "operations:programations:general:sheet-number-subsecuent"
+            )}
+            name="folioSubsequent"
+            disabled={!isEdit}
             register={register}
+          /> */}
+          <TextInput
+            type="text"
+            label={"SIGRE"}
+            name="sigre"
+            register={register}
+            disabled={!isEdit}
+          />
+          <TextInput
+            type="text"
+            label={"Nro de Siniestro"}
+            name="ot"
+            register={register}
+            disabled={!isEdit}
+          />
+          <SelectInput
+            label={t("operations:fundrecovery:general:type")}
+            options={fundrescueTypes}
+            name="type"
+            error={errors?.type}
+            disabled={!isEdit}
             setValue={setValue}
             watch={watch}
           />
-          {data?.type?.name === "GMM" && (
-            <SelectInput
-              label={t("operations:policies:general:coverage")}
-              options={[
-                {
-                  id: "Nacional",
-                  name: "Nacional",
-                },
-                {
-                  id: "Internacional",
-                  name: "Internacional",
-                },
-              ]}
-              name="cobertura"
-              register={register}
-              setValue={setValue}
-              disabled
-              watch={watch}
-            />
-          )}
-
+          <SelectInput
+            label={t("operations:policies:general:type")}
+            name="polizaTypeId"
+            options={lists?.policies?.polizaTypes ?? []}
+            disabled
+            setValue={setValue}
+            watch={watch}
+          />
           {data?.type?.name === "VIDA" && (
             <SelectInput
               label={t("operations:policies:general:subbranch")}
               name="subramoId"
               options={lists?.policies?.polizaSubRamo ?? []}
-              disabled={!isEdit}
+              disabled
               register={register}
               setValue={setValue}
               watch={watch}
             />
           )}
-          <SelectInput
-            label={t("control:portafolio:receipt:details:form:status")}
-            options={[
-              {
-                id: "activa",
-                name: "Vigente",
-              },
-              {
-                id: "expirada",
-                name: "No vigente",
-              },
-              {
-                id: "cancelada",
-                name: "Cancelada",
-              },
-              {
-                id: "en_proceso",
-                name: "En trámite",
-              },
-            ]}
-            name="status"
-            register={register}
-            setValue={setValue}
-            disabled={!isEdit}
-            watch={watch}
-          />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:rfc")}
-            name="rfc"
-            disabled
-          />
-          <TextInput
-            type="text"
-            label={t("operations:policies:general:address")}
-            register={register}
-            name="address"
-            disabled
-            multiple
-            rows={2}
-          />
 
-          <Controller
-            render={({ field: { value, onChange, ref, onBlur } }) => {
-              return (
-                <InputDate
-                  label={t("operations:policies:general:init-date")}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors.vigenciaDesde}
-                  disabled
-                />
-              );
-            }}
-            name="vigenciaDesde"
-            control={control}
-            defaultValue=""
-          />
-          <Controller
-            render={({ field: { value, onChange, ref, onBlur } }) => {
-              return (
-                <InputDate
-                  label={t("operations:policies:general:expiration")}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  error={errors.vigenciaHasta}
-                  disabled
-                />
-              );
-            }}
-            name="vigenciaHasta"
-            control={control}
-            defaultValue=""
-          />
-
-          <SelectInput
-            label={t("operations:policies:general:payment-method")}
-            name="formaCobroId"
-            options={lists?.policies?.polizaFormasCobro ?? []}
+          {/* <TextInput
+            type="text"
+            label={t("operations:programations:general:diagnosis")}
+            name="medicalCondition"
             disabled={!isEdit}
             register={register}
-            setValue={setValue}
-            watch={watch}
-          />
-          <SelectInput
-            label={t("operations:policies:general:payment-frequency")}
-            name="frecuenciaCobroId"
-            options={lists?.policies?.polizaFrecuenciasPago ?? []}
+          /> */}
+          <UserSelectAsync
+            label={t("operations:programations:general:responsible")}
+            name="assignedById"
             disabled={!isEdit}
-            register={register}
             setValue={setValue}
             watch={watch}
-          />
-          <SelectInput
-            label={t("operations:policies:general:payment-term")}
-            options={[
-              {
-                id: "15",
-                name: "15 días",
-              },
-              {
-                id: "30",
-                name: "30 días",
-              },
-            ]}
-            name="plazoPago"
-            register={register}
-            setValue={setValue}
-            disabled={!isEdit}
-            watch={watch}
-          />
-          <SelectInput
-            label={"Moneda"}
-            options={lists?.policies?.currencies ?? []}
-            name="currencyId"
-            register={register}
-            setValue={setValue}
-            disabled
-            watch={watch}
-          />
-
-          <InputCurrency
-            type="text"
-            label={t("operations:policies:general:primaNeta")}
-            setValue={setValue}
-            name="primaNeta"
-            disabled
-            defaultValue={data?.primaNeta?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={t("operations:policies:general:recargoFraccionado")}
-            setValue={setValue}
-            name="recargoFraccionado"
-            disabled
-            defaultValue={data?.recargoFraccionado?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={t("operations:policies:general:derechoPoliza")}
-            setValue={setValue}
-            name="derechoPoliza"
-            disabled
-            defaultValue={data?.derechoPoliza?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={t("operations:policies:general:iva")}
-            setValue={setValue}
-            name="iva"
-            disabled
-            defaultValue={data?.iva?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
-          />
-          <InputCurrency
-            type="text"
-            label={t("operations:policies:general:importePagar")}
-            setValue={setValue}
-            name="importePagar"
-            disabled
-            defaultValue={data?.importePagar?.toFixed(2) ?? null}
-            prefix={
-              lists?.policies?.currencies?.find(
-                (x) => x.id == watch("currencyId")
-              )?.symbol ?? ""
-            }
+            error={errors.assignedById}
           />
           <IntermediarySelectAsync
-            label={t("operations:policies:general:intermediary")}
+            label={t("operations:programations:general:intermediary")}
             name="agenteIntermediarioId"
             disabled={!isEdit}
             setValue={setValue}
             watch={watch}
+            error={errors.agenteIntermediarioId}
           />
-          <UserSelectAsync
-            label={t("operations:policies:general:responsible")}
-            name="assignedById"
-            options={lists?.users}
-            register={register}
+
+          <AgentSelectAsync
+            label={t("operations:programations:general:sub-agent")}
+            name="agenteRelacionadoId"
             disabled={!isEdit}
-            error={errors.assignedById}
+            error={errors.agenteRelacionadoId}
             setValue={setValue}
             watch={watch}
           />
+          <UserSelectAsync
+            label={t("operations:programations:general:observer")}
+            name="observerId"
+            disabled={!isEdit}
+            setValue={setValue}
+            watch={watch}
+            error={errors.observerId}
+          />
+          {/* <div
+            className={clsx(
+              "rounded-md px-3 py-2 bg-white mt-2 grid grid-cols-1 gap-2",
+              {
+                "drop-shadow-md": isEdit,
+              }
+            )}
+          >
+            <p className={clsx("text-xs leading-6 text-gray-900 ")}>
+              MARCAR EN CASO DE REQUERIR UN REEMBOLSO SUBSECUENTE
+            </p>
+            <CheckboxInput
+              name="requireReimbursementSubsequent"
+              setValue={setValue}
+              label={"Requiere reembolso sub-secuente"}
+              disabled={!isEdit}
+              defaultValue={data?.requireReimbursementSubsequent}
+            />
+          </div> */}
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}
@@ -423,61 +278,13 @@ export default function PolicyDetails({
             multiple
           />
         </div>
-        {/* {data?.type?.name === "AUTOS" &&
-          data?.vehicles.map((vehicle) => (
-            <Fragment key={vehicle.id}>
-              <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-                {"Datos del vehiculo asegurado"}
-              </div>
-              <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5  pb-9">
-                <TextInput
-                  type="text"
-                  label={"Descripción"}
-                  value={vehicle?.description ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Serie"}
-                  value={vehicle?.serial ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Placa"}
-                  value={vehicle?.plates ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Modelo"}
-                  value={vehicle?.model ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Motor"}
-                  value={vehicle?.motor ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Uso"}
-                  value={vehicle?.usage ?? "S/N"}
-                  disabled
-                />
-                <TextInput
-                  type="text"
-                  label={"Circula en"}
-                  value={vehicle?.circulatesIn ?? "S/N"}
-                  disabled
-                />
-              </div>
-            </Fragment>
-          ))} */}
       </div>
       {/* Menu Izquierda */}
-      <ActivityPanel entityId={id} crmType="policy" className="lg:col-span-7" />
+      <ActivityPanel
+        entityId={id}
+        crmType="poliza_fund_recovery"
+        className="lg:col-span-7"
+      />
       {isEdit && (
         <div
           className={clsx(
@@ -492,7 +299,6 @@ export default function PolicyDetails({
             disabled={loading}
             buttonStyle="primary"
             className="px-3 py-2"
-            // onclick={() => handleSubmit(handleFormSubmit)}
           />
           <Button
             type="button"

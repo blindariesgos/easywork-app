@@ -61,6 +61,8 @@ const getActivityPath = (cmrtype) => {
       return "/sales/crm/leads";
     case "poliza_claim":
       return "/operations/claims";
+    case "poliza_fund_recovery":
+      return "/operations/fund-recoveries";
     case "agent":
       return "/agent-management/agents";
     case "receipt":

@@ -45,6 +45,8 @@ const getCommentPath = (cmrtype) => {
       return "/sales/crm/leads";
     case "poliza_claim":
       return "/operations/claims";
+    case "poliza_fund_recovery":
+      return "/operations/fund-recoveries";
     case "agent":
       return "/agent-management/agents";
     case "receipt":
@@ -84,6 +86,8 @@ const getDeleteCommentPath = (cmrtype) => {
       return "/sales/crm/leads/comments";
     case "poliza_claim":
       return "/operations/claims";
+    case "poliza_fund_recovery":
+      return "/operations/fund-recoveries";
     case "agent":
       return "/agent-management/agents";
     case "receipt":
@@ -921,10 +925,10 @@ export const putFundRecovery = async (claimId, body) => {
   return response;
 };
 
-export const addFundRecoveryDocument = async (claimId, category, body) => {
+export const addFundRecoveryDocument = async (fundId, category, body) => {
   const response = await axios({ contentType: "multipart/form-data" })
     .post(
-      `/operations/fund-recoveries/upload/${claimId}?category=${category}`,
+      `/operations/fund-recoveries/upload/${fundId}?category=${category}`,
       body
     )
     .catch((error) => ({ ...error, hasError: true }));

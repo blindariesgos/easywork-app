@@ -270,8 +270,8 @@
             "schedule": {
                 "title": "Agregar Programación",
                 "subtitle": "Datos de la Programación",
-                "poliza": "Nro de póliza",
-                "ot": "Nro de Siniestro",
+                "poliza": "Número de póliza",
+                "ot": "Número de Siniestro",
                 "folio-sigre": "Folio SIGRE",
                 "procedure": "Tipo de procedimiento",
                 "branch": "Ramo",
@@ -283,8 +283,8 @@
             "refund": {
                 "title": "Agregar Reembolso",
                 "subtitle": "Datos del Reembolso",
-                "poliza": "Nro de póliza",
-                "ot": "Nro de Siniestro",
+                "poliza": "Número de póliza",
+                "ot": "Número de Siniestro",
                 "folio-sigre": "Folio SIGRE",
                 "procedure": "Tipo de procedimiento",
                 "branch": "Ramo",
@@ -296,8 +296,8 @@
             "fundrescue": {
                 "title": "Agregar Rescate de Fondos",
                 "subtitle": "Datos del Rescate",
-                "poliza": "Nro de póliza",
-                "ot": "Nro de Siniestro",
+                "poliza": "Número de póliza",
+                "ot": "Número de Siniestro",
                 "folio-sigre": "Folio SIGRE",
                 "button": "añadir documento",
                 "type": "Tipo de rescate"
@@ -305,8 +305,8 @@
             "claim": {
                 "title": "Agregar Siniestro",
                 "subtitle": "Datos del Siniestro",
-                "poliza": "Nro de póliza",
-                "ot": "Nro de Siniestro",
+                "poliza": "Número de póliza",
+                "ot": "Número de Siniestro",
                 "folio-sigre": "Folio SIGRE",
                 "type": "Tipo de siniestro",
                 "branch": "Ramo",
@@ -315,13 +315,13 @@
                 "affeccion": "Afección médica",
                 "date": "Fecha de captura",
                 "paymentForm": "Forma de pago",
-                "number": "Número de Siniestro"
+                "number": "Número de reclamación"
             },
             "renovation": {
                 "title": "Agregar Renovación",
                 "subtitle": "Datos de la Renovación",
-                "poliza": "Nro de póliza",
-                "ot": "Nro de Siniestro",
+                "poliza": "Número de póliza",
+                "ot": "Número de Siniestro",
                 "rfc": "RFC",
                 "version": "Versión",
                 "folio-sigre": "Folio SIGRE",

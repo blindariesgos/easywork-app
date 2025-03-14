@@ -37,11 +37,8 @@ export default function PolicyDetails({
   const [isEdit, setIsEdit] = useState(!!edit);
   const [loading, setLoading] = useState(false);
   const { lists } = useAppContext();
-  const { mutate } = useSWRConfig();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const pathname = usePathname();
-  const router = useRouter();
   const utcOffset = moment().utcOffset();
   const schema = Yup.object().shape({
     agenteIntermediarioId: Yup.string(),

@@ -40,7 +40,8 @@ function PolicySelectAsync({
     limit: 5,
     filters: {
       ...filters,
-      ...(isRenewal ? { renewal: "true" } : {}),
+      searchAll: "true",
+      isLatest: "true",
     },
   });
   const handleSearch = useDebouncedCallback(() => {

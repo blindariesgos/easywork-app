@@ -28,8 +28,8 @@ export default async function HomeLayout({ children }) {
     <SessionProvider session={session}>
       <LoggedInProvider>
         <AppContextProvider>
-          <SocketProvider>
-            <NotifyContextProvider>
+          <NotifyContextProvider>
+            <SocketProvider>
               <FirebaseMessaging />
               <NotifyDrawer />
               <div className="flex h-screen">
@@ -42,8 +42,8 @@ export default async function HomeLayout({ children }) {
                 <OtherSettings colorTag="bg-easywork-main" />
                 <CrmDetailsModals />
               </div>
-            </NotifyContextProvider>
-          </SocketProvider>
+            </SocketProvider>
+          </NotifyContextProvider>
         </AppContextProvider>
       </LoggedInProvider>
     </SessionProvider>

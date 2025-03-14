@@ -188,6 +188,34 @@ export const startBulkImportLeads = async (body) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
+
+export const postLead = async (body) => {
+  const response = await axios().post(`/sales/crm/leads`, body);
+  return response;
+};
+export const putLead = async (body) => {
+  const response = await axios().put(`/sales/crm/leads/${id}`, body);
+  return response;
+};
+
+export const getLeadById = async (id) => {
+  const response = await axios().get(`/sales/crm/leads/${id}`);
+  return response;
+};
+
+export const deleteLeadById = async (id) => {
+  const response = await axios().delete(`/sales/crm/leads/${id}`);
+  revalidatePath("/sales/crm/leads", "page");
+  return response;
+};
+
+export const getBulkImportLeadsStatus = async (jobId) => {
+  const response = await axios()
+    .get(`/sales/crm/leads/batch/${jobId}/status`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
 //#endregion
 
 //#region CONTACTS
@@ -229,7 +257,12 @@ export const startBulkImportContacts = async (body) => {
     .catch((error) => ({ ...error, hasError: true }));
   return response;
 };
-
+export const getBulkImportContactsStatus = async (jobId) => {
+  const response = await axios()
+    .get(`/sales/crm/contacts/batch/${jobId}/status`)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
 //#endregion
 
 //#region REFUNDS
@@ -367,6 +400,16 @@ export const getManagementReport = async ({ filters = {} }) => {
   const url = `/operations/management${queries.length > 0 ? `?${queries}` : ""}`;
   const response = await axios()
     .get(url)
+    .catch((error) => ({ hasError: true, ...error }));
+  return response;
+};
+
+//#endregion
+
+//#region NOTIFICATIONS
+export const markAllNotificationsRead = async () => {
+  const response = await axios()
+    .post(`/notify/user/read-all`)
     .catch((error) => ({ hasError: true, ...error }));
   return response;
 };
@@ -1127,30 +1170,10 @@ export const putReceipt = async (receiptId, body) => {
   return response;
 };
 
-export const getLeadById = async (id) => {
-  const response = await axios().get(`/sales/crm/leads/${id}`);
-  return response;
-};
-
 export const getReceiptById = async (receiptId) => {
   const response = await axios().get(
     `/sales/crm/polizas/receipts/${receiptId}`
   );
-  return response;
-};
-
-export const postLead = async (body) => {
-  const response = await axios().post(`/sales/crm/leads`, body);
-  return response;
-};
-export const putLead = async (body) => {
-  const response = await axios().put(`/sales/crm/leads/${id}`, body);
-  return response;
-};
-
-export const deleteLeadById = async (id) => {
-  const response = await axios().delete(`/sales/crm/leads/${id}`);
-  revalidatePath("/sales/crm/leads", "page");
   return response;
 };
 

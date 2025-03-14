@@ -187,7 +187,10 @@
     },
     "profile": "Tu perfil",
     "signout": "Cerrar sesión",
-    "placeholder-search": "Buscar personas, documentos y más"
+    "placeholder-search": "Buscar personas, documentos y más",
+    "notification": "Notificaciones",
+    "mark-all-read": "Marcar todo como leído",
+    "mark-all-read-success": "Todas las notificaciones se han marcado como leídas correctamente."
   },
   "file": {
     "pdf": "PDF adjunto:",
@@ -255,5 +258,6 @@
     "enter": "Introduzca código postal",
     "habitation": "Asentamiento",
     "select": "Seleccionar {{selection}}"
-  }
+  },
+  "see-import-result": "Ver resultado de importación"
 }

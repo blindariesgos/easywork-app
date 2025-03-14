@@ -76,7 +76,6 @@ const Fields = ({ handleNext, handleBack }) => {
         address: fields[data.fields.address],
         birthday: fields[data.fields.birthday],
         cargo: fields[data.fields.cargo],
-        codigo: fields[data.fields.codigo],
         cua: fields[data.fields.cua],
         curp: fields[data.fields.curp],
         disabled: fields[data.fields.disabled],

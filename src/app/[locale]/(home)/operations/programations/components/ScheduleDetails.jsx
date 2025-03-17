@@ -25,19 +25,6 @@ export default function ScheduleDetails({ data, id, mutate }) {
   const [loading, setLoading] = useState(false);
   const { mutate: mutateSchedule } = useProgramationContext();
 
-  // Función para extraer el código de cliente basado en el id de la compañía
-  const getClientCode = () => {
-    const companyId = data?.company?.id; // ID de la compañía de la póliza
-    const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
-
-    // Buscar el código de cliente asociado a la compañía
-    const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insuranceId === companyId
-    );
-
-    return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
-  };
-
   const updateStatus = async (status) => {
     setLoading(true);
     const body = {
@@ -110,9 +97,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
                   <p className="text-sm">
-                    {data?.contact?.codigos?.length > 0
-                      ? getClientCode()
-                      : (data?.contact?.codigo ?? "N/D")}
+                    {data?.poliza?.clientCode ?? "No disponible"}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

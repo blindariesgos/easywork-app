@@ -10,7 +10,7 @@ export default function ClaimsContextProvider({ children }) {
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
-    orderBy: "name",
+    orderBy: "title",
     order: "DESC",
   });
   const { lists } = useAppContext();

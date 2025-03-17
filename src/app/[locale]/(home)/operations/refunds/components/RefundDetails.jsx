@@ -92,7 +92,9 @@ export default function RefundDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:fechaEmision")}:
                   </p>
                   <p className="text-sm">
-                    {moment(data?.poliza?.fechaEmision).format("DD/MM/YYYY")}
+                    {moment(
+                      data?.poliza?.fechaEmision ?? data?.poliza?.vigenciaDesde
+                    ).format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

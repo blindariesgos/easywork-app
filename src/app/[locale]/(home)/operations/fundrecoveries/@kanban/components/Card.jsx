@@ -25,13 +25,14 @@ import useCrmContext from "@/src/context/crm";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import useClaimContext from "@/src/context/claims";
+import useFundRecoveriesContext from "@/src/context/fundrecoveries";
 
 const Card = ({ data, minWidthClass, stageId, updateList }) => {
   const { t } = useTranslation();
   const [deleteId, setDeleteId] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
-  const { mutate } = useClaimContext();
+  const { mutate } = useFundRecoveriesContext();
   const router = useRouter();
 
   const { selectedContacts: selectedReceipts } = useCrmContext();
@@ -47,10 +48,10 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
       }
     : undefined;
 
-  const deleteClaim = async (id) => {
+  const deleteRefund = async (id) => {
     try {
       setLoading(true);
-      const response = await deleteClaimById(id);
+      const response = await deleteRefundById(id);
       if (response.hasError) {
         handleFrontError(response);
         setLoading(false);
@@ -70,12 +71,14 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
     {
       name: "Ver",
       handleClick: (id) =>
-        router.push(`/operations/claims/claim/${id}?show=true`),
+        router.push(`/operations/fundrecoveries/fundrecovery/${id}?show=true`),
     },
     {
       name: "Editar",
       handleClick: (id) =>
-        router.push(`/operations/claims/claim/${id}?show=true&edit=true`),
+        router.push(
+          `/operations/fundrecoveries/fundrecovery/${id}?show=true&edit=true`
+        ),
     },
     {
       name: "Eliminar",
@@ -91,14 +94,14 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
           name: "Tarea",
           handleClick: (id) =>
             router.push(
-              `/tools/tasks/task?show=true&prev=poliza_claim&prev_id=${id}`
+              `/tools/tasks/task?show=true&prev=poliza_fund_recovery&prev_id=${id}`
             ),
         },
         {
           name: "Cita",
           handleClick: (id) =>
             router.push(
-              `/tools/calendar/addEvent?show=true&prev=poliza_claim&prev_id=${id}`
+              `/tools/calendar/addEvent?show=true&prev=poliza_fund_recovery&prev_id=${id}`
             ),
         },
         {
@@ -114,7 +117,7 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
   ];
 
   const handleClick = (id) =>
-    router.push(`/operations/claims/claim/${id}?show=true`);
+    router.push(`/operations/fundrecoveries/fundrecovery/${id}?show=true`);
 
   const handleClickContact = (id) =>
     router.push(`/sales/crm/contacts/contact/${id}?show=true`);
@@ -151,7 +154,7 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
               className="font-bold cursor-pointer text-sm"
               onClick={() => handleClick(data.id)}
             >
-              {`Siniestro - ${data?.insurance?.name ?? ""} ${data?.poliza?.poliza ?? ""} ${data?.polizaType?.name ?? ""}`}
+              {`Rescate - ${data?.insurance?.name ?? ""} ${data?.poliza?.poliza ?? ""} ${data?.polizaType?.name ?? ""}`}
             </p>
             <p
               className="text-start text-easy-400 cursor-pointer text-sm"
@@ -310,7 +313,7 @@ const Card = ({ data, minWidthClass, stageId, updateList }) => {
       <DeleteModal
         isOpen={isOpenDelete}
         setIsOpen={setIsOpenDelete}
-        handleClick={() => deleteClaim(deleteId)}
+        handleClick={() => deleteRefund(deleteId)}
         loading={loading}
       />
     </div>

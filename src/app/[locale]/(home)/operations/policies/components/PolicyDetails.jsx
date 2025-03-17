@@ -12,6 +12,8 @@ import Schedules from "./tabs/Schedules";
 import { useSWRConfig } from "swr";
 import ReceiptEmpty from "./ReceiptEmpty";
 import Versions from "./tabs/Versions";
+import Claims from "./tabs/Claims";
+import FundRecoveries from "./tabs/FundRecoveries";
 import AddDocuments from "@/src/components/AddDocuments";
 import PolicyDetailsHeader from "./PolicyDetailsHeader";
 
@@ -162,7 +164,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               <ReceiptEmpty type="Renovaciones registradas" />
             </TabPanel>
             <TabPanel className="w-full">
-              <ReceiptEmpty type="Siniestros registrados" />
+              <Claims policyId={data?.id} />
             </TabPanel>
             <TabPanel className="w-full">
               <Refunds polizaId={data?.id} />
@@ -177,7 +179,7 @@ export default function PolicyDetails({ data, id, mutate, edit }) {
               <Schedules polizaId={data?.id} />
             </TabPanel>
             <TabPanel className="w-full">
-              <ReceiptEmpty type="Rescate de fondos registrados" />
+              <FundRecoveries polizaId={data?.id} />
             </TabPanel>
           </TabPanels>
         </TabGroup>

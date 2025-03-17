@@ -4,15 +4,18 @@ import { toast } from "react-toastify";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Card from "./components/Card";
-import { putClaim, putRefund } from "@/src/lib/apis";
+import { putClaim, putFundRecovery, putRefund } from "@/src/lib/apis";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import {
   polizaClaimStatus,
   polizaClaimStatusColor,
+  polizaFundRecoveryStatus,
+  polizaFundRecoveryStatusColor,
 } from "@/src/utils/constants";
 import useClaimContext from "@/src/context/claims";
+import useFundRecoveriesContext from "@/src/context/fundrecoveries";
 
 const KanbanClaims = () => {
   const { t } = useTranslation();
@@ -22,7 +25,7 @@ const KanbanClaims = () => {
   const [itemDrag, setItemDrag] = useState();
   const [updateStages, setUpdateStages] = useState([]);
   const { selectedContacts: selectedReceipts } = useCrmContext();
-  const { mutate } = useClaimContext();
+  const { mutate } = useFundRecoveriesContext();
 
   const handleDragEnd = async (result) => {
     setActiveId(null);
@@ -35,7 +38,7 @@ const KanbanClaims = () => {
     };
 
     try {
-      const response = await putClaim(result?.active?.id, body);
+      const response = await putFundRecovery(result?.active?.id, body);
       if (response.hasError) {
         toast.error(
           "Se ha producido un error al actualizar, inténtelo de nuevo."
@@ -63,13 +66,13 @@ const KanbanClaims = () => {
     setIsDragging(true);
   }
 
-  const items = Object.keys(polizaClaimStatus).map((key) => ({
+  const items = Object.keys(polizaFundRecoveryStatus).map((key) => ({
     id: key,
     filter: {
       status: key,
     },
-    title: polizaClaimStatus[key],
-    primary: polizaClaimStatusColor[key],
+    title: polizaFundRecoveryStatus[key],
+    primary: polizaFundRecoveryStatusColor[key],
   }));
 
   return (
@@ -82,7 +85,7 @@ const KanbanClaims = () => {
       )}
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <div className="overflow-x-auto">
-          <div className="grid grid-cols-6 min-w-full w-max gap-2">
+          <div className="grid grid-cols-4 min-w-full w-max gap-2">
             {items?.map((column) => (
               <Column
                 {...column}

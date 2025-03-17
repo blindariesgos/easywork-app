@@ -1,10 +1,10 @@
 "use client";
-import KanbanClaims from "./KanbanClaims";
+import KanbanRecoveries from "./KanbanRecoveries";
 
 export default function Page() {
   return (
     <div className="flow-root relative h-full">
-      <KanbanClaims />
+      <KanbanRecoveries />
     </div>
   );
 }

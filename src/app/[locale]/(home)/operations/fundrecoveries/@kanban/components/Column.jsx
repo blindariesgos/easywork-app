@@ -8,11 +8,12 @@ import {
 } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import clsx from "clsx";
-import { getAllClaims } from "@/src/lib/apis";
+import { getAllClaims, getAllFundRecoveries } from "@/src/lib/apis";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useCrmContext from "@/src/context/crm";
 import useClaimContext from "@/src/context/claims";
 import { handleFrontError } from "@/src/utils/api/errors";
+import useFundRecoveriesContext from "@/src/context/fundrecoveries";
 
 const Column = ({
   id,
@@ -30,7 +31,7 @@ const Column = ({
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [totalItems, setTotalItems] = useState();
-  const { filters } = useClaimContext();
+  const { filters } = useFundRecoveriesContext();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const checkbox = useRef();
@@ -39,7 +40,7 @@ const Column = ({
     setSelectedContacts: setSelectedReceipts,
   } = useCrmContext();
 
-  const getClaims = async (defaultPage) => {
+  const getRefunds = async (defaultPage) => {
     try {
       const params = {
         filters: {
@@ -53,7 +54,7 @@ const Column = ({
           order: "ASC",
         },
       };
-      const response = await getAllClaims(params);
+      const response = await getAllFundRecoveries(params);
 
       if (response?.hasError) {
         handleFrontError(response);
@@ -79,17 +80,17 @@ const Column = ({
   };
 
   useEffect(() => {
-    getClaims();
+    getRefunds();
   }, []);
 
   useEffect(() => {
     if (updateStages.includes(id)) {
-      getClaims(0);
+      getRefunds(0);
     }
   }, [updateStages]);
 
   useEffect(() => {
-    getClaims(0);
+    getRefunds(0);
   }, [filters]);
 
   useEffect(() => {
@@ -124,7 +125,7 @@ const Column = ({
   return (
     <div
       ref={setNodeRef}
-      className={clsx("w-[250px] p-1 rounded-md")}
+      className={clsx("w-full p-1 rounded-md")}
       style={{
         background: isOver ? "#DCDAF1" : "",
       }}
@@ -148,7 +149,7 @@ const Column = ({
       </div>
       <InfiniteScroll
         dataLength={items.length}
-        next={getClaims}
+        next={getRefunds}
         hasMore={hasMore}
         loader={<h4>Cargando...</h4>}
         height="60vh"
@@ -160,7 +161,7 @@ const Column = ({
               index={index}
               key={schedule.id}
               stageId={id}
-              updateList={() => getClaims(0)}
+              updateList={() => getRefunds(0)}
             />
           ))}
         </div>

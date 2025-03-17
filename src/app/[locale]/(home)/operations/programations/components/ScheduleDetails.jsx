@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -9,8 +9,6 @@ import General from "./tabs/General";
 import Link from "next/link";
 import moment from "moment";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import Button from "@/src/components/form/Button";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { putSchedule } from "@/src/lib/apis";
 import clsx from "clsx";
 import { toast } from "react-toastify";
@@ -90,7 +88,9 @@ export default function ScheduleDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:fechaEmision")}:
                   </p>
                   <p className="text-sm">
-                    {moment(data?.poliza?.fechaEmision).format("DD/MM/YYYY")}
+                    {moment(
+                      data?.poliza?.fechaEmision ?? data?.poliza?.vigenciaDesde
+                    ).format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

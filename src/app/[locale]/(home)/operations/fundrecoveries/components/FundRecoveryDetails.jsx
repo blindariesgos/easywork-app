@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -9,17 +9,13 @@ import General from "./tabs/General";
 import Link from "next/link";
 import moment from "moment";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { putClaim, putFundRecovery, putRefund } from "@/src/lib/apis";
-import clsx from "clsx";
+import { putFundRecovery } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import {
-  polizaClaimStatus,
-  polizaClaimStatusColor,
   polizaFundRecoveryStatus,
   polizaFundRecoveryStatusColor,
 } from "@/src/utils/constants";
 import AddDocumentButton from "./AddDocumentButton";
-import useClaimContext from "@/src/context/claims";
 import { handleFrontError } from "@/src/utils/api/errors";
 import useFundRecoveriesContext from "@/src/context/fundrecoveries";
 

@@ -17,18 +17,6 @@ export default function RenovationDetails({ data, id, mutate }) {
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
   const headerRef = useRef();
-  // Función para extraer el código de cliente basado en el id de la compañía
-  const getClientCode = () => {
-    const companyId = data?.company?.id; // ID de la compañía de la póliza
-    const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
-
-    // Buscar el código de cliente asociado a la compañía
-    const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insurance?.id === companyId
-    );
-
-    return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
-  };
 
   const tabs = [
     {
@@ -126,7 +114,9 @@ export default function RenovationDetails({ data, id, mutate }) {
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
-                  <p className="text-sm">{getClientCode()}</p>
+                  <p className="text-sm">
+                    {data?.poliza?.clientCode ?? "No disponible"}
+                  </p>
                 </div>
               </div>
               <IconDropdown

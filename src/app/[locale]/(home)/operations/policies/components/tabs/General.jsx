@@ -98,6 +98,7 @@ export default function PolicyDetails({
           : ""
       );
     if (data?.status) setValue("status", data?.status);
+    if (data?.clientCode) setValue("clientCode", data?.clientCode);
     if (data?.subramo?.name) setValue("subramoId", data?.subramo?.id);
     if (data?.cobertura) setValue("cobertura", data?.cobertura);
     if (data?.paymentMethod) setValue("paymentMethod", data?.paymentMethod);
@@ -266,6 +267,13 @@ export default function PolicyDetails({
           )}
         </div>
         <div className="grid grid-cols-1 pt-8 rounded-lg w-full gap-y-3 px-5 pb-20">
+          <TextInput
+            type="text"
+            label={t("control:portafolio:receipt:details:client-code")}
+            name="clientCode"
+            register={register}
+            className={clsx({ hidden: !isEdit })}
+          />
           <SelectInput
             label={t("control:portafolio:receipt:details:product")}
             name="categoryId"

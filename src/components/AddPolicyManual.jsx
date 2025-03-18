@@ -528,6 +528,13 @@ const AddPolicyManual = ({
 
                 <TextInput
                   type="text"
+                  label={t("contacts:edit:policies:consult:code")}
+                  name="clientCode"
+                  register={register}
+                  isRequired
+                />
+                <TextInput
+                  type="text"
                   label={"Número de póliza"}
                   name="poliza"
                   register={register}

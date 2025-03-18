@@ -254,6 +254,7 @@ const AddPolicyWithReader = ({
     setValue("renewal", !!response?.renewal);
     setValue("metadata", response?.metadata);
     setValue("categoryId", response?.category?.id);
+    setValue("clientCode", response?.clientCode);
 
     if (response?.relatedContacts && response?.relatedContacts.length > 0) {
       setValue(
@@ -556,6 +557,12 @@ const AddPolicyWithReader = ({
                       </TabPanels>
                     </TabGroup>
                   </div>
+                  <TextInput
+                    type="text"
+                    label={t("contacts:edit:policies:consult:code")}
+                    name="clientCode"
+                    register={register}
+                  />
                   <TextInput
                     type="text"
                     label={"Número de póliza"}

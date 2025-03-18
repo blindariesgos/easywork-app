@@ -289,6 +289,7 @@ export default function PolicyDetails({
             name="version"
             register={register}
             disabled={!isEdit}
+            className={clsx({ hidden: !isEdit })}
           />
           <SelectInput
             label={t("operations:policies:general:type")}

@@ -236,6 +236,12 @@ export default function RenovationDetails({ data, id, mutate }) {
                     {data?.clientCode ?? "No disponible"}
                   </p>
                 </div>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("operations:renovations:general:version")}:
+                  </p>
+                  <p className="text-sm">{data?.version ?? "0"}</p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex flex-col gap-2 items-end">

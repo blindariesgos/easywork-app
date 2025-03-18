@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
 
 const ExcelInput = ({
@@ -17,10 +18,28 @@ const ExcelInput = ({
     }
 
     const currentFile = Array.from(files)[0];
-    readXlsxFile(currentFile).then((rows) => {
-      onChangeCustom && onChangeCustom(rows);
-      setValue && setValue(name, rows);
-    });
+    const response = await readXlsxFile(currentFile)
+      .then((rows) => ({ rows }))
+      .catch((error) => ({ hasError: true, error }));
+    console.log(response);
+
+    if (response?.hasError) {
+      toast.error(
+        "Se ha producido un error al leer el archivo, compruebe que el formato es correcto."
+      );
+      return;
+    }
+
+    if (response?.rows?.[0]?.length !== 23) {
+      toast.error(
+        "El archivo cargado no tiene la cantidad de columnas requeridas"
+      );
+      return;
+    }
+
+    onChangeCustom && onChangeCustom(response.rows);
+    setValue && setValue(name, response.rows);
+
     const reader = new FileReader();
 
     reader.onloadend = () => {

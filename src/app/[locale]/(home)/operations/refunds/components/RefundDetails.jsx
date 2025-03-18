@@ -89,7 +89,9 @@ export default function RefundDetails({ data, id, mutate }) {
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-sm">{data?.category?.name ?? "N/D"}</p>
+                  <p className="text-sm">
+                    {data?.poliza?.category?.name ?? "N/D"}
+                  </p>
                 </div>
                 <Link
                   className="hover:underline text-easy-600 text-sm"

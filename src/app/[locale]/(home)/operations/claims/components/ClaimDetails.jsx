@@ -75,14 +75,18 @@ export default function ClaimDetails({ data, id, mutate }) {
                   <p className="text-sm">
                     {moment(
                       data?.poliza?.fechaEmision ?? data?.poliza?.vigenciaDesde
-                    ).format("DD/MM/YYYY")}
+                    )
+                      .utc()
+                      .format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-sm">{data?.category?.name ?? "N/D"}</p>
+                  <p className="text-sm">
+                    {data?.poliza?.category?.name ?? "N/D"}
+                  </p>
                 </div>
                 <Link
                   className="hover:underline text-easy-600 text-sm"

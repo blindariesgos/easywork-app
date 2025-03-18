@@ -3,7 +3,10 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import PolizasEmpty from "./PolizasEmpty";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { usePoliciesByContactId } from "../../../../../../../../../lib/api/hooks/policies";
+import {
+  usePolicies,
+  usePoliciesByContactId,
+} from "../../../../../../../../../lib/api/hooks/policies";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import moment from "moment";
 import FooterTable from "@/src/components/FooterTable";
@@ -18,8 +21,12 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
     orderBy: "poliza",
     order: "DESC",
   });
-  const { data, isLoading } = usePoliciesByContactId({
-    contactId,
+  const { data, isLoading } = usePolicies({
+    filters: {
+      contactId,
+      searchAll: "true",
+      isLatest: "true",
+    },
     config: {
       ...fieldClicked,
       page,
@@ -75,6 +82,14 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                   >
                     <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
                   </span>
+                </div>
+              </th>
+              <th
+                scope="col"
+                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer "
+              >
+                <div className="group flex items-center justify-center">
+                  <p>Versión</p>
                 </div>
               </th>
               <th
@@ -228,18 +243,10 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
               </th>
               <th
                 scope="col"
-                className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer"
-              >
-                <div className="group flex items-center justify-center">
-                  <p>Ruta de carga</p>
-                </div>
-              </th>
-              <th
-                scope="col"
                 className="py-3.5 text-sm font-medium text-gray-400 cursor-pointer rounded-e-xl"
               >
                 <div className="group flex items-center justify-center">
-                  <p>Versión</p>
+                  <p>Ruta de carga</p>
                 </div>
               </th>
             </tr>
@@ -257,6 +264,9 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                     >
                       {poliza.poliza}
                     </div>
+                  </td>
+                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
+                    <p>{poliza.version ?? 0}</p>
                   </td>
                   <td className="whitespace-nowrap  py-4 text-sm text-gray-400 uppercase text-center">
                     <p>{poliza?.category?.name ?? "S/N"}</p>
@@ -291,9 +301,6 @@ export default function ContactPolizaTable({ base = 0, contactId }) {
                           ? `Renovación - ${poliza.renovacion ?? 0}`
                           : "Póliza"}
                     </p>
-                  </td>
-                  <td className="whitespace-nowrap py-4 text-sm text-gray-400 text-center">
-                    <p>{poliza.version ?? 0}</p>
                   </td>
                 </tr>
               ))}

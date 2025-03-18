@@ -64,19 +64,22 @@ export default function TaskView({ id, task }) {
     [task, session]
   );
 
+  const isResponsible = useMemo(
+    () =>
+      !!task?.responsible?.find(
+        (responsible) => responsible.id == session?.data.user.sub
+      ),
+    [task, session]
+  );
+
   const canEdit = useMemo(() => {
     if (!task) {
       return true;
     }
-
-    const isResponsible = !!task?.responsible?.find(
-      (responsible) => responsible.id == session?.data.user.sub
-    );
-
     if (isCreator || isResponsible) return true;
 
     return false;
-  }, [task, session?.data.user.sub]);
+  }, [isCreator, isResponsible, task]);
 
   const field = {}; // Pasar props adicionales del campo si es necesario
 
@@ -370,7 +373,8 @@ export default function TaskView({ id, task }) {
                     {plannedTime && (
                       <p className="text-easy-400 text-sm">{plannedTime}</p>
                     )}
-                    {!task.isCompleted &&
+                    {isResponsible &&
+                      !task.isCompleted &&
                       task.timeTrackingEnabled &&
                       !task.currentTrackingStartTime && (
                         <Button
@@ -381,16 +385,19 @@ export default function TaskView({ id, task }) {
                           onclick={handleInitTracking}
                         />
                       )}
-                    {!task.isCompleted && !task.timeTrackingEnabled && (
-                      <Button
-                        label={t("tools:tasks:edit:init")}
-                        buttonStyle="green"
-                        className="px-3 py-2"
-                        fontSize="text-xs"
-                        onclick={() => {}}
-                      />
-                    )}
-                    {!task.isCompleted &&
+                    {isResponsible &&
+                      !task.isCompleted &&
+                      !task.timeTrackingEnabled && (
+                        <Button
+                          label={t("tools:tasks:edit:init")}
+                          buttonStyle="green"
+                          className="px-3 py-2"
+                          fontSize="text-xs"
+                          onclick={() => {}}
+                        />
+                      )}
+                    {isResponsible &&
+                      !task.isCompleted &&
                       task.timeTrackingEnabled &&
                       task.currentTrackingStartTime && (
                         <Button

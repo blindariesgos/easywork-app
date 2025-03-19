@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
@@ -9,8 +9,6 @@ import General from "./tabs/General";
 import Link from "next/link";
 import moment from "moment";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import Button from "@/src/components/form/Button";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { putSchedule } from "@/src/lib/apis";
 import clsx from "clsx";
 import { toast } from "react-toastify";
@@ -26,19 +24,6 @@ export default function ScheduleDetails({ data, id, mutate }) {
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
   const { mutate: mutateSchedule } = useProgramationContext();
-
-  // Función para extraer el código de cliente basado en el id de la compañía
-  const getClientCode = () => {
-    const companyId = data?.company?.id; // ID de la compañía de la póliza
-    const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
-
-    // Buscar el código de cliente asociado a la compañía
-    const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insuranceId === companyId
-    );
-
-    return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
-  };
 
   const updateStatus = async (status) => {
     setLoading(true);
@@ -90,14 +75,18 @@ export default function ScheduleDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:fechaEmision")}:
                   </p>
                   <p className="text-sm">
-                    {moment(data?.poliza?.fechaEmision).format("DD/MM/YYYY")}
+                    {moment(
+                      data?.poliza?.fechaEmision ?? data?.poliza?.vigenciaDesde
+                    ).format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-sm">{data?.category?.name ?? "N/D"}</p>
+                  <p className="text-sm">
+                    {data?.poliza?.category?.name ?? "N/D"}
+                  </p>
                 </div>
                 <Link
                   className="hover:underline text-easy-600 text-sm"
@@ -110,9 +99,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
                   <p className="text-sm">
-                    {data?.contact?.codigos?.length > 0
-                      ? getClientCode()
-                      : (data?.contact?.codigo ?? "N/D")}
+                    {data?.poliza?.clientCode ?? "No disponible"}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

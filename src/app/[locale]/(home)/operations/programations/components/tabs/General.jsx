@@ -212,14 +212,14 @@ export default function ScheduleDetails({ data, id, mutate: updateSchedule }) {
           />
           <TextInput
             type="text"
-            label={"SIGRE"}
+            label={"SIPRE"}
             name="sigre"
             register={register}
             disabled={!isEdit}
           />
           <TextInput
             type="text"
-            label={"OT"}
+            label={"Nro de Siniestro"}
             name="ot"
             register={register}
             disabled={!isEdit}

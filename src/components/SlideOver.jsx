@@ -90,6 +90,9 @@ export default function SlideOver({
       case "schedules":
         setLabel(t("contacts:edit:policies:consult:schedules"));
         break;
+      case "fundrecovery":
+        setLabel(t("common:slide:fundrecovery"));
+        break;
       case "renovations":
         setLabel(t("common:slide:renovations"));
         break;

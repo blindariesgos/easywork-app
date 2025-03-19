@@ -28,7 +28,8 @@ export const useContacts = ({ page = 1, limit = 15, filters = {} }) => {
   const queries = getQueries(filters);
 
   const url = `/sales/crm/contacts?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ""}`;
-  // console.log({ url });
+
+  console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     contacts: data,
@@ -60,6 +61,8 @@ const getActivityPath = (cmrtype) => {
       return "/sales/crm/leads";
     case "poliza_claim":
       return "/operations/claims";
+    case "poliza_fund_recovery":
+      return "/operations/fund-recoveries";
     case "agent":
       return "/agent-management/agents";
     case "receipt":

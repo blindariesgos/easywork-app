@@ -13,6 +13,7 @@ import {
   getRefundById,
   getUserById,
   getClaimById,
+  getFundRecoveryById,
 } from "@/src/lib/apis";
 
 export default function CrmValidator({
@@ -263,10 +264,24 @@ export default function CrmValidator({
       {
         id: claimId,
         type: "poliza_claim",
-        name: response?.claimNumber ?? response?.ot ?? response?.sigre,
+        name: response?.ot ?? response?.sigre,
       },
     ]);
     setValue("name", "CRM - Siniestro: ");
+    setLoading(false);
+  };
+
+  const setCrmFundRecovery = async (fundrecoveryId) => {
+    const response = await getFundRecoveryById(fundrecoveryId);
+    if (response.hasError) return;
+    setValue("crm", [
+      {
+        id: fundrecoveryId,
+        type: "poliza_fund_recovery",
+        name: response?.ot ?? response?.sigre,
+      },
+    ]);
+    setValue("name", "CRM - Rescate de fondos: ");
     setLoading(false);
   };
 
@@ -276,6 +291,12 @@ export default function CrmValidator({
     if (params.get("prev") === "contact") {
       setLoading(true);
       setCrmContact(prevId);
+      return;
+    }
+
+    if (params.get("prev") === "poliza_fund_recovery") {
+      setLoading(true);
+      setCrmFundRecovery(prevId);
       return;
     }
 
@@ -352,32 +373,3 @@ export default function CrmValidator({
     />
   );
 }
-
-// Función actualizada
-const getCmrInfo = (cmr) => {
-  if (!cmr || !cmr.type || !cmr.crmEntity) return null;
-
-  const { id } = cmr.crmEntity;
-  const { type } = cmr;
-
-  let name = cmr.crmEntity.name;
-
-  if (type === "contact" || type === "lead" || type === "agent") {
-    name = cmr.crmEntity.fullName || cmr.crmEntity.name;
-  }
-
-  if (type === "poliza") {
-    name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
-  }
-
-  if (type === "receipt") {
-    name = cmr?.crmEntity?.title;
-  }
-
-  return { id, type, name };
-};
-
-const formatCrmData = (crmData) => {
-  if (!crmData) return [];
-  return crmData.map((item) => getCmrInfo(item));
-};

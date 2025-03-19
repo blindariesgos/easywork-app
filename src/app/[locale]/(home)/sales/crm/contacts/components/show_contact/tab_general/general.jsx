@@ -32,6 +32,7 @@ import { activitySectors } from "@/src/utils/constants";
 import RelatedCustomer from "./RelatedCustomer";
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import AddressInput from "@/src/components/form/AddressInput";
+import useContactContext from "@/src/context/contacts";
 
 export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
@@ -43,6 +44,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const [type, setType] = useState("fisica");
+  const { mutate: mutateContacts } = useContactContext();
   const params = new URLSearchParams(searchParams);
 
   useEffect(() => {
@@ -121,12 +123,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         relation: Yup.string(),
       })
     ),
-    codigos_dto: Yup.array().of(
-      Yup.object().shape({
-        codigo: Yup.string(),
-        insuranceId: Yup.string(),
-      })
-    ),
   });
 
   const {
@@ -161,17 +157,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
             {
               number: "",
               relation: "",
-            },
-          ],
-      codigos_dto: contact?.codigos?.length
-        ? contact?.codigos?.map((e) => ({
-            codigo: e?.codigo ?? "",
-            insuranceId: e?.insurance?.id ?? "",
-          }))
-        : [
-            {
-              codigo: "",
-              insuranceId: "",
             },
           ],
     },
@@ -288,6 +273,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         }
         toast.success(t("contacts:edit:updated-contact"));
         mutate(`/sales/crm/contacts/${id}`);
+        mutateContacts();
         setIsEdit(false);
       }
       setLoading(false);
@@ -410,16 +396,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 errors={errors.emails_dto}
                 register={register}
                 name="emails_dto"
-                disabled={!isEdit}
-                control={control}
-                watch={watch}
-                setValue={setValue}
-              />
-              <MultipleClientCodeByInsuranceInput
-                label={t("contacts:create:codigo")}
-                errors={errors.codigos_dto}
-                register={register}
-                name="codigos_dto"
                 disabled={!isEdit}
                 control={control}
                 watch={watch}

@@ -7,8 +7,16 @@ const NotifyContext = createContext(undefined);
 export function NotifyContextProvider({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const { notifications, isLoading, isError, markAsRead, loadMore, hasMore } =
-    useNotify();
+  const {
+    notifications,
+    isLoading,
+    isError,
+    markAsRead,
+    loadMore,
+    hasMore,
+    unread,
+    mutate,
+  } = useNotify();
 
   const value = useMemo(
     () => ({
@@ -21,6 +29,8 @@ export function NotifyContextProvider({ children }) {
       markAsRead,
       loadMore,
       hasMore,
+      unread,
+      update: mutate,
     }),
     [
       isOpen,
@@ -31,7 +41,9 @@ export function NotifyContextProvider({ children }) {
       markAsRead,
       loadMore,
       hasMore,
-    ],
+      unread,
+      mutate,
+    ]
   );
 
   return (

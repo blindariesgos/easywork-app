@@ -264,7 +264,7 @@ function IntermediarySelectAsync({
           {/* The actual dialog panel  */}
           <DialogPanel className="max-w-lg w-full space-y-4 bg-white p-4 rounded-xl">
             <DialogTitle className="font-bold">
-              Agregar agente intermediario
+              Agregar intermediario
             </DialogTitle>
             <form onSubmit={handleSubmit(handleAdd)}>
               <Description>

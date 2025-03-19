@@ -5,26 +5,30 @@ import SliderOverShord from "@/src/components/SliderOverShort";
 import Button from "@/src/components/form/Button";
 import Tag from "@/src/components/Tag";
 import SelectInput from "@/src/components/form/SelectInput";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { toast } from "react-toastify";
 import { FiFileText } from "react-icons/fi";
-import useAppContext from "@/src/context/app";
-import SelectSubAgent from "@/src/components/form/SelectSubAgent/SelectSubAgent";
-import PolicySelectAsync from "@/src/components/form/PolicySelectAsync";
 import TextInput from "@/src/components/form/TextInput";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { VALIDATE_ALPHANUMERIC_REGEX } from "@/src/utils/regularExp";
-import { MAX_FILE_SIZE } from "@/src/utils/constants";
+import { fundrescueTypes, MAX_FILE_SIZE } from "@/src/utils/constants";
+import PolicySelectorValues from "./PolicySelectorValues";
+import UserSelectAsync from "@/src/components/form/UserSelectAsync";
+import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
+import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
+import { getFormatFormData } from "@/src/utils/formatters";
+import { addFundRescue } from "@/src/lib/apis";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 
 const AddFundRescue = ({ isOpen, setIsOpen }) => {
   const { t } = useTranslation();
   const [file, setFile] = useState();
-  const { lists } = useAppContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   const schema = yup.object().shape({
-    policyId: yup.string().required(t("common:validations:required")),
+    polizaId: yup.string().required(t("common:validations:required")),
     ot: yup
       .string()
       .matches(
@@ -33,16 +37,13 @@ const AddFundRescue = ({ isOpen, setIsOpen }) => {
       )
       .required(t("common:validations:required")),
     sigre: yup.string().required(t("common:validations:required")),
-    procedure: yup.string().required(t("common:validations:required")),
   });
 
   const {
     register,
     handleSubmit,
-    control,
     reset,
     setValue,
-    getValues,
     formState: { errors },
     watch,
   } = useForm({
@@ -78,133 +79,154 @@ const AddFundRescue = ({ isOpen, setIsOpen }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleChangePolicy = (policy) => {
-    policy?.company?.id && setValue("company", policy?.company?.id);
-    policy?.type?.id && setValue("branch", policy?.type?.id);
-  };
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const body = {
+      ...data,
+      file: file.file,
+      status: "captura_documentos",
+    };
 
-  const onSubmit = (data) => {
+    const formData = getFormatFormData(body);
+    const response = await addFundRescue(formData);
+
+    if (response.hasError) {
+      handleFrontError(response);
+      setIsLoading(false);
+      return;
+    }
+
+    toast.success("Rescate de fondo agregado con éxito");
     setIsOpen(false);
+    setIsLoading(false);
   };
 
   const handleReset = () => {
-    reset({
-      ot: "",
-      policyId: "",
-      sigre: "",
-      type: "",
-      company: "",
-      branch: "",
-    });
+    reset();
+    setFile();
   };
 
   return (
-    <SliderOverShord openModal={isOpen}>
-      <Tag
-        onclick={() => {
-          handleReset();
-          setIsOpen(false);
-        }}
-        className="bg-easywork-main"
-      />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
-          <div className="bg-gray-100 rounded-md p-2">
-            <h4 className="text-2xl pb-4">
-              {t("operations:managements:add:fundrescue:title")}
-            </h4>
-            <div className="bg-white rounded-md p-4 flex justify-between items-center">
-              <p>{t("operations:managements:add:fundrescue:subtitle")}</p>
-            </div>
-            <div className="px-8 pt-4 grid grid-cols-1 gap-4">
-              <PolicySelectAsync
-                label={t("operations:managements:add:fundrescue:poliza")}
-                name={"policyId"}
-                setValue={setValue}
-                watch={watch}
-                setSelectedOption={handleChangePolicy}
-                error={errors?.policyId}
-                register={register}
-              />
-              <SelectInput
-                label={t("operations:managements:add:fundrescue:type")}
-                options={[
-                  {
-                    id: "Liquidación plan de inversión",
-                    name: "Liquidación plan de inversión",
-                  },
-                  {
-                    id: "Cancelación total",
-                    name: "Cancelación total",
-                  },
-                  {
-                    id: "Muerte o fallecimiento",
-                    name: "Muerte o fallecimiento",
-                  },
-                ]}
-                name="type"
-                error={errors?.type}
-                register={register}
-              />
-              <TextInput
-                label={t("operations:managements:add:fundrescue:ot")}
-                name="ot"
-                error={errors?.ot}
-                register={register}
-              />
-              <TextInput
-                label={t("operations:managements:add:fundrescue:folio-sigre")}
-                name="sigre"
-                register={register}
-                error={errors?.sigre}
-              />
-
-              <div className="w-full">
-                <label
-                  htmlFor="policy-file"
-                  className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
-                >
-                  <p>{t("operations:managements:add:fundrescue:button")}</p>
-                  {file && (
-                    <div className="flex flex-col gap-2 justify-center items-center pt-2">
-                      <div className="p-10 bg-easy-500 rounded-md">
-                        <FiFileText className="w-10 h-10 text-white" />
-                      </div>
-                      <p className="text-center text-white">{file.name}</p>
-                    </div>
-                  )}
-                </label>
-                <input
-                  type="file"
-                  name="policy-file"
-                  id="policy-file"
-                  className="hidden"
-                  accept=".pdf"
-                  onChange={handleChangeFile}
-                />
+    <Fragment>
+      {isLoading && <LoaderSpinner />}
+      <SliderOverShord openModal={isOpen}>
+        <Tag
+          onclick={() => {
+            handleReset();
+            setIsOpen(false);
+          }}
+          className="bg-easywork-main"
+        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className=" bg-gray-600 px-6 py-8 h-screen rounded-l-[35px] w-[567px] shadow-[-3px_1px_15px_4px_#0000003d]">
+            <div className="bg-gray-100 rounded-md p-2 overflow-y-auto max-h-[calc(100vh_-_4rem)]">
+              <h4 className="text-2xl pb-4">
+                {t("operations:managements:add:fundrescue:title")}
+              </h4>
+              <div className="bg-white rounded-md p-4 flex justify-between items-center">
+                <p>{t("operations:managements:add:fundrescue:subtitle")}</p>
               </div>
-              <div className="w-full flex justify-center gap-4 py-4">
-                <Button
-                  className="px-4 py-2"
-                  buttonStyle="primary"
-                  label="Guardar"
-                  type="submit"
+              <div className="px-8 pt-4 grid grid-cols-1 gap-4">
+                <PolicySelectorValues
+                  register={register}
+                  setValue={setValue}
+                  errors={errors}
+                  watch={watch}
                 />
-                <Button
-                  className="px-4 py-2"
-                  buttonStyle="secondary"
-                  label="Cancelar"
-                  onclick={() => {
-                    handleReset();
-                    setIsOpen(false);
-                  }}
+                <SelectInput
+                  label={t("operations:managements:add:fundrescue:type")}
+                  options={fundrescueTypes}
+                  name="type"
+                  error={errors?.type}
+                  register={register}
                 />
+                <TextInput
+                  label={t("operations:managements:add:fundrescue:ot")}
+                  name="ot"
+                  error={errors?.ot}
+                  register={register}
+                />
+                <TextInput
+                  label={t("operations:managements:add:fundrescue:folio-sigre")}
+                  name="sigre"
+                  register={register}
+                  error={errors?.sigre}
+                />
+                <UserSelectAsync
+                  label={t("operations:programations:general:responsible")}
+                  name="assignedById"
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors.assignedById}
+                />
+                <IntermediarySelectAsync
+                  label={t("operations:programations:general:intermediary")}
+                  name="agenteIntermediarioId"
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors.agenteIntermediarioId}
+                />
+                <AgentSelectAsync
+                  label={t("operations:programations:general:sub-agent")}
+                  name="agenteRelacionadoId"
+                  error={errors.agenteRelacionadoId}
+                  setValue={setValue}
+                  watch={watch}
+                />
+                <UserSelectAsync
+                  label={t("operations:programations:general:observer")}
+                  name="observerId"
+                  setValue={setValue}
+                  watch={watch}
+                  error={errors.observerId}
+                />
+                <div className="w-full">
+                  <label
+                    htmlFor="policy-file"
+                    className="bg-primary rounded-md cursor-pointer w-full p-2 mt-1 text-white block text-center hover:bg-easy-500 shadow-sm text-sm"
+                  >
+                    <p>{t("operations:managements:add:fundrescue:button")}</p>
+                    {file && (
+                      <div className="flex flex-col gap-2 justify-center items-center pt-2">
+                        <div className="p-10 bg-easy-500 rounded-md">
+                          <FiFileText className="w-10 h-10 text-white" />
+                        </div>
+                        <p className="text-center text-white">{file.name}</p>
+                      </div>
+                    )}
+                  </label>
+                  <input
+                    type="file"
+                    name="policy-file"
+                    id="policy-file"
+                    className="hidden"
+                    accept=".pdf"
+                    onChange={handleChangeFile}
+                  />
+                </div>
+                <div className="w-full flex justify-center gap-4 py-4">
+                  <Button
+                    className="px-4 py-2"
+                    buttonStyle="primary"
+                    label="Guardar"
+                    type="submit"
+                  />
+                  <Button
+                    className="px-4 py-2"
+                    buttonStyle="secondary"
+                    label="Cancelar"
+                    onclick={() => {
+                      handleReset();
+                      setIsOpen(false);
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </form>
-    </SliderOverShord>
+        </form>
+      </SliderOverShord>
+    </Fragment>
   );
 };
 

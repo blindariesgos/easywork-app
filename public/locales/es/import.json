@@ -115,11 +115,12 @@
         },
         "import": {
             "title": "Importar resultado",
-            "subtitle1": "Los contactos se importaron exitosamente:",
+            "subtitle1": "Los clientes se importaron exitosamente:",
             "subtitle2": "Duplicados procesados:",
             "subtitle3": "Se ha iniciado el proceso de importación de contactos, este se realizará en segundo plano, una vez finalizado el proceso se le notificará el resultado del mismo.",
             "other": "Importar otro archivo"
-        }
+        },
+        "result": "Resultado de importación masiva de clientes"
     },
     "leads": {
         "title": "Importar Prospectos",
@@ -128,6 +129,12 @@
             "subtitle2": "Duplicados procesados:",
             "subtitle3": "Se ha iniciado el proceso de importación de prospectos, este se realizará en segundo plano, una vez finalizado el proceso se le notificará el resultado del mismo.",
             "other": "Importar otro archivo"
-        }
-    }
+        },
+        "result": "Resultado de importación masiva de prospectos"
+    },
+    "processed": "Cantidad de elementos procesados",
+    "skipped": "Cantidad de elementos omitidos",
+    "errors": "Cantidad de elementos erroneos",
+    "created": "Cantidad de elementos importandos",
+    "updated": "Cantidad de elementos actualizados"
 }

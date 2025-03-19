@@ -14,6 +14,7 @@ import {
   addAgentDocument,
   addClaimDocument,
   addContactDocument,
+  addFundRecoveryDocument,
   addLeadPolicy,
   addPolicyDocument,
   addReceiptDocument,
@@ -61,6 +62,7 @@ const AddDocumentDialog = ({
 
   const endpoints = {
     claim: (data) => addClaimDocument(id, documentType, data),
+    fundrecovery: (data) => addFundRecoveryDocument(id, documentType, data),
     receipt: (data) => addReceiptDocument(id, documentType, data),
     lead: (data) => addLeadDocument(id, documentType, data),
     contact: (data) => addContactDocument(id, documentType, data),

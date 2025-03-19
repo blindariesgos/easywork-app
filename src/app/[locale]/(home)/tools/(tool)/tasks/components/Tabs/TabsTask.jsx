@@ -10,6 +10,7 @@ import { useTaskComments } from "@/src/lib/api/hooks/tasks";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { calculateElapsedTime } from "@/src/components/Timer";
 import moment from "moment";
+import { getTaskObjections } from "@/src/lib/apis";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -17,9 +18,32 @@ function classNames(...classes) {
 
 export default function TabsTask({ data }) {
   const { comments, isLoading, isError } = useTaskComments(data.id);
-
+  const [objections, setObjections] = useState([]);
+  const [page, setPage] = useState(1);
+  const limit = 10;
   const { t } = useTranslation();
-  let [categories, setCategories] = useState(null);
+  const [categories, setCategories] = useState(null);
+  const [totalObjections, setTotalObjections] = useState(0);
+
+  const getObjections = async (page) => {
+    const response = await getTaskObjections(data.id, page, limit);
+    console.log({ response });
+
+    if (response.hasError) {
+      handleFrontError(response);
+      return;
+    }
+
+    setObjections(page == 1 ? response.items : [...objections, response.items]);
+
+    if (page == 1) {
+      setTotalObjections(response?.meta?.totalItems ?? 0);
+    }
+  };
+
+  useEffect(() => {
+    getObjections(1);
+  }, []);
 
   useEffect(() => {
     const timer = calculateElapsedTime(
@@ -30,13 +54,12 @@ export default function TabsTask({ data }) {
       comments: {
         name: t("tools:tasks:edit:comments"),
         qty: comments?.length || 0,
-        pings: 9,
         component: TabComment,
+        props: {},
       },
       history: {
         name: t("tools:tasks:edit:history"),
         qty: "1",
-        pings: 9,
         component: TabTableHistory,
         data: [
           {
@@ -74,53 +97,30 @@ export default function TabsTask({ data }) {
         ],
         isLoading: false,
         isError: false,
+        props: {},
       },
       time: {
         name: t("tools:tasks:edit:time"),
         qty: `${timer.hours}:${timer.minutes}:${timer.seconds}`,
-        pings: 9,
         component: TabTableTime,
-        data: [
-          {
-            id: 1,
-            date: "12/12/2023 15:08:40",
-            created: "Yamile Rayme",
-            time: "09:00:00",
-            comment: "hola",
-          },
-          {
-            id: 2,
-            date: "5/29/2024 19:41:00",
-            created: "Yamile Rayme",
-            time: "09:00:00",
-            comment: "",
-          },
-        ],
         isLoading: false,
         isError: false,
+        props: {},
       },
       objections: {
         name: t("tools:tasks:edit:objections"),
-        qty: "1",
-        pings: 9,
+        qty: totalObjections,
+        props: {
+          total: totalObjections,
+          objections,
+          getMore: getObjections,
+          page,
+          setPage,
+        },
         component: TabTableObjections,
-        data: [
-          {
-            id: 1,
-            date: "12/12/2023 15:08:40",
-            created: "Yamile Rayme",
-          },
-          {
-            id: 2,
-            date: "5/29/2024 19:41:00",
-            created: "Yamile Rayme",
-          },
-        ],
-        isLoading: false,
-        isError: false,
       },
     });
-  }, [data, t, comments]);
+  }, [data, t, comments, objections]);
 
   if (isLoading) return <LoaderSpinner />;
   if (isError) return <p>Error</p>;
@@ -160,7 +160,7 @@ export default function TabsTask({ data }) {
                   "focus:outline-none focus:ring-0"
                 )}
               >
-                <categ.component info={data} />
+                <categ.component info={data} {...categ?.props} />
               </TabPanel>
             ))}
         </TabPanels>

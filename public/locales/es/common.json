@@ -187,7 +187,10 @@
     },
     "profile": "Tu perfil",
     "signout": "Cerrar sesión",
-    "placeholder-search": "Buscar personas, documentos y más"
+    "placeholder-search": "Buscar personas, documentos y más",
+    "notification": "Notificaciones",
+    "mark-all-read": "Marcar todo como leído",
+    "mark-all-read-success": "Todas las notificaciones se han marcado como leídas correctamente."
   },
   "file": {
     "pdf": "PDF adjunto:",
@@ -225,7 +228,8 @@
   "slide": {
     "renovations": "Renovaciones",
     "recruitment": "Reclutamiento",
-    "conexion": "Conexión"
+    "conexion": "Conexión",
+    "fundrecovery": "Rescate"
   },
   "activities": {
     "event": "Reunión"
@@ -238,7 +242,9 @@
     "renewal": "Renovaciones",
     "agent": "Agentes",
     "poliza_scheduling": "Programaciones",
-    "poliza_reimbursement": "Reembolsos"
+    "poliza_reimbursement": "Reembolsos",
+    "poliza_claim": "Siniestros",
+    "poliza_fund_recovery": "Rescate de Fondos"
   },
   "crmType": {
     "contact": "Cliente",
@@ -249,11 +255,13 @@
     "agent": "Agente",
     "poliza_scheduling": "Programación",
     "poliza_reimbursement": "Reembolso",
-    "poliza_claim": "Siniestro"
+    "poliza_claim": "Siniestro",
+    "poliza_fund_recovery": "Rescate de Fondos"
   },
   "address": {
     "enter": "Introduzca código postal",
     "habitation": "Asentamiento",
     "select": "Seleccionar {{selection}}"
-  }
+  },
+  "see-import-result": "Ver resultado de importación"
 }

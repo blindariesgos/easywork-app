@@ -51,8 +51,8 @@ function classNames(...classes) {
 export default function WebmailLayout({ children }) {
   const session = useSession();
   const router = useRouter();
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const {
     setSidebarOpenEmail,
     selectOauth,

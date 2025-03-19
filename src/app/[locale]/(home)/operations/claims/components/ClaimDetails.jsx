@@ -26,19 +26,6 @@ export default function ClaimDetails({ data, id, mutate }) {
   const [loading, setLoading] = useState(false);
   const { mutate: mutateClaim } = useClaimContext();
 
-  // Función para extraer el código de cliente basado en el id de la compañía
-  const getClientCode = () => {
-    const companyId = data?.company?.id; // ID de la compañía de la póliza
-    const codigos = data?.contact?.codigos || []; // Obtener los códigos del contacto
-
-    // Buscar el código de cliente asociado a la compañía
-    const matchingCodigo = codigos.find(
-      (codigo) => codigo?.insuranceId === companyId
-    );
-
-    return matchingCodigo ? matchingCodigo.codigo : "N/D"; // Devolver el código o "N/D" si no hay coincidencia
-  };
-
   const updateStatus = async (status) => {
     setLoading(true);
     const body = {
@@ -88,14 +75,18 @@ export default function ClaimDetails({ data, id, mutate }) {
                   <p className="text-sm">
                     {moment(
                       data?.poliza?.fechaEmision ?? data?.poliza?.vigenciaDesde
-                    ).format("DD/MM/YYYY")}
+                    )
+                      .utc()
+                      .format("DD/MM/YYYY")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
                     {t("control:portafolio:receipt:details:product")}:
                   </p>
-                  <p className="text-sm">{data?.category?.name ?? "N/D"}</p>
+                  <p className="text-sm">
+                    {data?.poliza?.category?.name ?? "N/D"}
+                  </p>
                 </div>
                 <Link
                   className="hover:underline text-easy-600 text-sm"
@@ -108,36 +99,38 @@ export default function ClaimDetails({ data, id, mutate }) {
                     {t("control:portafolio:receipt:details:client-code")}:
                   </p>
                   <p className="text-sm">
-                    {data?.contact?.codigos?.length > 0
-                      ? getClientCode()
-                      : (data?.contact?.codigo ?? "N/D")}
+                    {data?.poliza?.clientCode ?? "No disponible"}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
-                    {t("operations:managements:add:claim:number")}:
+                    {t("control:portafolio:receipt:details:claim-number")}:
                   </p>
                   <p className="text-sm">{data?.claimNumber ?? "N/D"}</p>
                 </div>
                 <div></div>
+                <div className="flex items-center gap-2">
+                  <p className="uppercase text-sm">
+                    {t("control:portafolio:receipt:details:sheet")}:
+                  </p>
+                  <p className="text-sm">{data?.folioNumber ?? "N/D"}</p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Menu>
-                  <MenuButton>
-                    <label
-                      className={clsx(
-                        "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
-                      )}
-                      style={{
-                        background: data?.status
-                          ? polizaClaimStatusColor[data?.status]
-                          : polizaClaimStatusColor.captura_documentos,
-                      }}
-                    >
-                      {data?.status
-                        ? polizaClaimStatus[data?.status]
-                        : polizaClaimStatus.captura_documentos}
-                    </label>
+                  <MenuButton
+                    className={
+                      "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
+                    }
+                    style={{
+                      background: data?.status
+                        ? polizaClaimStatusColor[data?.status]
+                        : polizaClaimStatusColor.captura_documentos,
+                    }}
+                  >
+                    {data?.status
+                      ? polizaClaimStatus[data?.status]
+                      : polizaClaimStatus.captura_documentos}
                   </MenuButton>
                   <MenuItems
                     transition

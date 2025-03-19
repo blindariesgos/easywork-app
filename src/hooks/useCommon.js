@@ -56,8 +56,6 @@ export const useSidebar = () => {
   // Memorizar la estructura completa del menú (solo se recalcula cuando cambia el idioma)
   const fullMenuStructure = useMemo(() => getFullMenuStructure(t), [t]);
 
-  console.log("session", session?.user);
-
   // Memorizar los permisos expandidos (solo se recalcula cuando cambia la sesión)
   const permissionPaths = useMemo(() => {
     if (!session?.user?.roles?.[0]?.menuPermissions) return [];
@@ -1852,22 +1850,12 @@ export const useFundRecoveriesTable = () => {
       id: 3,
       name: t("operations:fundrecovery:table:state"),
       row: "status",
-      order: "status",
       check: true,
-      photo: true,
     },
     {
       id: 7,
       name: t("operations:fundrecovery:table:contact"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
-      check: true,
-    },
-    {
-      id: 7,
-      name: t("operations:fundrecovery:table:created-in"),
-      row: "vigenciaDesde",
-      order: "vigenciaDesde",
+      row: "contact",
       check: true,
     },
     {

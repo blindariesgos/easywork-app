@@ -31,7 +31,6 @@ const ButtonAdd = () => {
     {
       name: "Rescate de fondos",
       onclick: () => setIsOpenFundRescue(true),
-      disabled: true,
     },
     { name: "Siniestro", onclick: () => setIsOpenClaim(true) },
     { name: "Versión", onclick: () => setIsOpenVersion(true) },

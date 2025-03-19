@@ -21,6 +21,7 @@ import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsy
 import UserSelectAsync from "@/src/components/form/UserSelectAsync";
 import { claimTypes, methodPayments } from "@/src/utils/constants";
 import { handleFrontError } from "@/src/utils/api/errors";
+import CheckboxInput from "@/src/components/form/CheckboxInput";
 
 export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
   const { t } = useTranslation();
@@ -147,20 +148,21 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
             <Fragment>
               <TextInput
                 type="text"
-                label={t("operations:managements:add:claim:number")}
+                label={t("control:portafolio:receipt:details:claim-number")}
                 name="claimNumber"
                 register={register}
                 disabled={!isEdit}
               />
-              {/* <TextInput
+              <TextInput
                 type="text"
                 label={t("operations:programations:general:sheet-number")}
                 name="folioNumber"
                 register={register}
                 disabled={!isEdit}
-              /> */}
+              />
             </Fragment>
           )}
+
           <Controller
             render={({ field: { value, onChange } }) => {
               return (
@@ -176,7 +178,7 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
             name="captureDate"
             control={control}
           />
-          {/* <TextInput
+          <TextInput
             type="text"
             label={t(
               "operations:programations:general:sheet-number-subsecuent"
@@ -184,7 +186,7 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
             name="folioSubsequent"
             disabled={!isEdit}
             register={register}
-          /> */}
+          />
           <TextInput
             type="text"
             label={"SIGRE"}
@@ -194,7 +196,7 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
           />
           <TextInput
             type="text"
-            label={"OT"}
+            label={"Nro de Siniestro"}
             name="ot"
             register={register}
             disabled={!isEdit}
@@ -237,13 +239,13 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
             />
           )}
 
-          {/* <TextInput
+          <TextInput
             type="text"
             label={t("operations:programations:general:diagnosis")}
             name="medicalCondition"
             disabled={!isEdit}
             register={register}
-          /> */}
+          />
           <UserSelectAsync
             label={t("operations:programations:general:responsible")}
             name="assignedById"
@@ -277,7 +279,7 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
             watch={watch}
             error={errors.observerId}
           />
-          {/* <div
+          <div
             className={clsx(
               "rounded-md px-3 py-2 bg-white mt-2 grid grid-cols-1 gap-2",
               {
@@ -295,7 +297,7 @@ export default function ClaimGeneralTab({ data, id, mutate: updateClaim }) {
               disabled={!isEdit}
               defaultValue={data?.requireReimbursementSubsequent}
             />
-          </div> */}
+          </div>
           <TextInput
             type="text"
             label={t("control:portafolio:receipt:details:form:comments")}

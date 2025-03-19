@@ -136,7 +136,7 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
       {/* Menu Derecha */}
       <div className="h-auto rounded-lg overflow-y-auto pr-2 lg:col-span-5">
         <div className="flex justify-between py-4 px-3 rounded-lg bg-white">
-          {t("operations:programations:general:title")}
+          {t("operations:refunds:general:title")}
           {data && (
             <button
               type="button"
@@ -201,7 +201,7 @@ export default function RefundGeneralTab({ data, id, mutate: updateRefund }) {
           />
           <TextInput
             type="text"
-            label={"OT"}
+            label={"Nro de Siniestro"}
             name="ot"
             register={register}
             disabled={!isEdit}

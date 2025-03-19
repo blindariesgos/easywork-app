@@ -4,10 +4,11 @@ import { useSocketConnection } from "@/src/socket";
 import { toast } from "react-toastify";
 import parse from "html-react-parser";
 import { useSWRConfig } from "swr";
+import { useNotifyContext } from "@/src/context/notify";
 
 export default function SocketProvider({ children }) {
   const socket = useSocketConnection();
-  const { mutate } = useSWRConfig();
+  const { update } = useNotifyContext();
 
   useEffect(() => {
     if (!socket) return;
@@ -29,11 +30,8 @@ export default function SocketProvider({ children }) {
 
     socket.on("notification", (data) => {
       try {
-        console.log("Notification received", data);
-
-        mutate("/notify/");
-
         toast.info(<>{parse(data)}</>);
+        update();
       } catch (error) {
         console.error("Error parsing notification", error);
       }

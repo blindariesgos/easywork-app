@@ -715,6 +715,19 @@ export const getTaskObjections = async (taskId, page, limit) => {
   return response;
 };
 
+export const approveTask = async (taskId) => {
+  const response = await axios()
+    .put(`/tools/tasks/${taskId}/approve`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const declineTask = async (taskId) => {
+  const response = await axios()
+    .put(`/tools/tasks/${taskId}/reject`)
+    .catch((error) => ({ ...error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region TIME TRACKING TASKS

@@ -3,7 +3,7 @@ import LoaderSpinner from "@/src/components/LoaderSpinner";
 import IconDropdown from "@/src/components/SettingsButton";
 import { Cog8ToothIcon, FireIcon, LinkIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import OptionsTask from "../../components/OptionsTask";
 import ButtonMore from "../../components/ButtonMore";
@@ -11,6 +11,8 @@ import TabsTask from "../../components/Tabs/TabsTask";
 import moment from "moment";
 import TaskEditor from "../TaskEditor";
 import {
+  approveTask,
+  declineTask,
   initTaskTracking,
   putTaskCompleted,
   putTaskId,
@@ -161,6 +163,32 @@ export default function TaskView({ id, task }) {
       return;
     }
     toast.success("Seguimiento de Tarea Iniciado");
+    mutate(`/tools/tasks/${task?.id}`);
+    setLoading(false);
+  };
+
+  const handleAcceptComplete = async () => {
+    setLoading(true);
+    const response = await approveTask(task?.id);
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+    toast.success(t("tools:tasks:edit:approved"));
+    mutate(`/tools/tasks/${task?.id}`);
+    setLoading(false);
+  };
+
+  const handleAcceptDeclined = async () => {
+    setLoading(true);
+    const response = await declineTask(task?.id);
+    if (response.hasError) {
+      handleFrontError(response);
+      setLoading(false);
+      return;
+    }
+    toast.success(t("tools:tasks:edit:declined"));
     mutate(`/tools/tasks/${task?.id}`);
     setLoading(false);
   };
@@ -396,6 +424,24 @@ export default function TaskView({ id, task }) {
                           onclick={() => {}}
                         />
                       )}
+                    {isCreator && task.status == "pending_review" && (
+                      <Fragment>
+                        <Button
+                          label={t("tools:tasks:edit:accept-as-completed")}
+                          buttonStyle="green"
+                          className="px-3 py-2"
+                          fontSize="text-xs"
+                          onclick={handleAcceptComplete}
+                        />
+                        <Button
+                          label={t("tools:tasks:edit:accept-as-declined")}
+                          buttonStyle="error"
+                          className="px-3 py-2"
+                          fontSize="text-xs"
+                          onclick={handleAcceptDeclined}
+                        />
+                      </Fragment>
+                    )}
                     {isResponsible &&
                       !task.isCompleted &&
                       task.timeTrackingEnabled &&

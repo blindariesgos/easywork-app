@@ -4,7 +4,7 @@ import { isValidToken } from "/src/lib/helpers";
 import { getLogin } from "@/src/lib/api/hooks/auths";
 
 // Constantes para tipos de errores
-const ERROR_TYPES = {
+export const ERROR_TYPES = {
   INVALID_CREDENTIALS: "Credenciales inválidas",
   AUTH_ERROR: "Error de autenticación",
   REFRESH_TOKEN_ERROR: "RefreshTokenError",

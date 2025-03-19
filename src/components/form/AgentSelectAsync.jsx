@@ -33,16 +33,22 @@ function AgentSelectAsync({
   const [selected, setSelected] = useState();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState({});
-  const { data: options, isLoading } = useAgents({
-    page: 1,
-    limit: 10,
+  const {
+    data: options,
+    isLoading,
+    isError,
+  } = useAgents({
+    config: {
+      page: 1,
+      limit: 10,
+    },
     filters,
   });
 
   const handleSearch = useDebouncedCallback(() => {
     if (query.length > 0) {
       setFilters({
-        name: query,
+        search: query,
       });
     } else {
       setFilters({});
@@ -52,6 +58,10 @@ function AgentSelectAsync({
   useEffect(() => {
     handleSearch();
   }, [query]);
+
+  useEffect(() => {
+    console.log({ options, isLoading, isError });
+  }, [options, isLoading, isError]);
 
   useEffect(() => {
     if (selectedOption) {

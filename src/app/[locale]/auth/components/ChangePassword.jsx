@@ -1,28 +1,28 @@
-"use client";
-import React, { useCallback, useState } from "react";
-import Image from "next/image";
-import { DialogSuccess } from "./DialogSuccess";
-import { LockClosedIcon } from "@heroicons/react/24/solid";
-import { useDataContext } from "../context";
-import { toast } from "react-toastify";
-import { changePassword } from "@/src/lib/api/hooks/auths";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+'use client';
+import React, { useCallback, useState } from 'react';
+import Image from 'next/image';
+import { DialogSuccess } from './DialogSuccess';
+import { LockClosedIcon } from '@heroicons/react/24/solid';
+import { useDataContext } from '../context';
+import { toast } from 'react-toastify';
+import { changePassword } from '@/src/lib/api/hooks/auths';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 // Esquema de validación para las contraseñas
 const schema = yup.object().shape({
   newPassword: yup
     .string()
-    .min(7, "La contraseña debe tener al menos 7 caracteres")
-    .matches(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula")
-    .matches(/[!@#$%^&*]/, "La contraseña debe contener al menos un carácter especial (!@#$%^&*)")
-    .required("La nueva contraseña es obligatoria"),
+    .min(7, 'La contraseña debe tener al menos 7 caracteres')
+    .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
+    .matches(/[!@#$%^&*]/, 'La contraseña debe contener al menos un carácter especial (!@#$%^&*)')
+    .required('La nueva contraseña es obligatoria'),
   repeatPassword: yup
     .string()
-    .oneOf([yup.ref("newPassword"), null], "Las contraseñas no coinciden")
-    .required("Debes repetir la contraseña"),
+    .oneOf([yup.ref('newPassword'), null], 'Las contraseñas no coinciden')
+    .required('Debes repetir la contraseña'),
 });
 
 export default function ChangePassword() {
@@ -42,26 +42,26 @@ export default function ChangePassword() {
   });
 
   const onSubmit = useCallback(
-    async (data) => {
+    async data => {
       setIsLoading(true);
       setError(null);
       setIsOpen(false);
 
       try {
-        console.log("Token: ", otpToken);
+        // console.log("Token: ", otpToken);
         await changePassword({
           token: otpToken,
           password: data.newPassword,
           confirmPassword: data.repeatPassword,
         });
 
-        toast.success("Contraseña cambiada exitosamente");
+        toast.success('Contraseña cambiada exitosamente');
 
         setOtpToken(null);
         setIsOpen(true);
       } catch (err) {
         console.log(err);
-        setError("Error al cambiar la contraseña");
+        setError('Error al cambiar la contraseña');
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +73,7 @@ export default function ChangePassword() {
     <div className="flex flex-col items-center justify-center">
       {/* Logo */}
       <div className="mb-2">
-        <Image width={156.75} height={118.84} src={"/img/logo.svg"} alt="img" />
+        <Image width={156.75} height={118.84} src={'/img/logo.svg'} alt="img" />
       </div>
       <div className="mb-4">
         <h1>Cambiar contraseña</h1>
@@ -84,16 +84,8 @@ export default function ChangePassword() {
           <span className="absolute inset-y-0 left-0 flex items-center pl-2">
             <LockClosedIcon className="h-5 w-5 text-easywork-main" />
           </span>
-          <input
-            type="password"
-            {...register("newPassword")}
-            className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
-            placeholder="Contraseña nueva"
-            autoComplete="off"
-          />
-          {errors.newPassword && (
-            <p className="text-red-500 text-xs mt-1">{errors.newPassword.message}</p>
-          )}
+          <input type="password" {...register('newPassword')} className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600" placeholder="Contraseña nueva" autoComplete="off" />
+          {errors.newPassword && <p className="text-red-500 text-xs mt-1">{errors.newPassword.message}</p>}
         </div>
 
         {/* Repetir contraseña */}
@@ -103,25 +95,18 @@ export default function ChangePassword() {
           </span>
           <input
             type="password"
-            {...register("repeatPassword")}
+            {...register('repeatPassword')}
             className="py-2 text-sm rounded-md pl-10 focus:text-gray-900 placeholder-slate-600"
             placeholder="Repetir contraseña"
             autoComplete="off"
           />
-          {errors.repeatPassword && (
-            <p className="text-red-500 text-xs mt-1">{errors.repeatPassword.message}</p>
-          )}
+          {errors.repeatPassword && <p className="text-red-500 text-xs mt-1">{errors.repeatPassword.message}</p>}
         </div>
 
         {/* Botón para enviar */}
         <div className="my-4">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-            style={{ backgroundColor: "#262261" }}
-          >
-            {isLoading ? "Cargando..." : "Restablecer mi contraseña"}
+          <button type="submit" disabled={isLoading} className="hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md" style={{ backgroundColor: '#262261' }}>
+            {isLoading ? 'Cargando...' : 'Restablecer mi contraseña'}
           </button>
         </div>
       </form>

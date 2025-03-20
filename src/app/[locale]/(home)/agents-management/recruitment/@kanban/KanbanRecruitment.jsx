@@ -1,18 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import Column from "./components/Column";
-import {
-  getLeadCancelReazon,
-  putLeadStage,
-  putPoliza,
-  updateAgentRecruitment,
-  updateLead,
-} from "@/src/lib/apis";
-import { toast } from "react-toastify";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
-import Card from "./components/Card";
-import useAppContext from "@/src/context/app";
-import { recruitmentStages } from "@/src/utils/constants";
+import { useEffect, useMemo, useState } from 'react';
+import Column from './components/Column';
+import { getLeadCancelReazon, putLeadStage, putPoliza, updateAgentRecruitment, updateLead } from '@/src/lib/apis';
+import { toast } from 'react-toastify';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+import Card from './components/Card';
+import useAppContext from '@/src/context/app';
+import { recruitmentStages } from '@/src/utils/constants';
 
 const KanbanLeads = () => {
   const [isLoading, setLoading] = useState(false);
@@ -22,7 +16,7 @@ const KanbanLeads = () => {
   const [itemDrag, setItemDrag] = useState();
   const [updateStages, setUpdateStages] = useState([]);
 
-  const handleDragEnd = async (result) => {
+  const handleDragEnd = async result => {
     setActiveId(null);
     setIsDragging(false);
     setLoading(true);
@@ -31,23 +25,19 @@ const KanbanLeads = () => {
       agentRecruitmentStageId: result?.over?.id,
     };
 
-    console.log(result?.active);
+    // console.log(result?.active);
 
     const response = await updateAgentRecruitment(body, result?.active?.id);
 
     if (response.hasError) {
-      const message = Array.isArray(response.message)
-        ? response.message?.join(", ")
-        : response.message;
-      toast.error(
-        message ?? "Se ha producido un error al actualizar, inténtelo de nuevo."
-      );
+      const message = Array.isArray(response.message) ? response.message?.join(', ') : response.message;
+      toast.error(message ?? 'Se ha producido un error al actualizar, inténtelo de nuevo.');
       setLoading(false);
       return;
     }
 
     setLoading(false);
-    toast.success("Agente actualizado correctamente.");
+    toast.success('Agente actualizado correctamente.');
 
     setUpdateStages([result?.active?.data?.current?.stageId, result?.over?.id]);
 
@@ -65,24 +55,12 @@ const KanbanLeads = () => {
       <div className="overflow-x-auto">
         <div className="flex gap-2 pt-2 w-max min-h-[60vh]">
           {recruitmentStages &&
-            recruitmentStages.map((column) => (
-              <Column
-                key={column.id}
-                {...column}
-                isDragging={isDragging}
-                activeId={activeId}
-                setItemDrag={setItemDrag}
-                updateStages={updateStages}
-                setUpdateStages={setUpdateStages}
-              />
+            recruitmentStages.map(column => (
+              <Column key={column.id} {...column} isDragging={isDragging} activeId={activeId} setItemDrag={setItemDrag} updateStages={updateStages} setUpdateStages={setUpdateStages} />
             ))}
         </div>
       </div>
-      <DragOverlay>
-        {activeId && itemDrag ? (
-          <Card data={itemDrag} minWidthClass="240px" />
-        ) : null}
-      </DragOverlay>
+      <DragOverlay>{activeId && itemDrag ? <Card data={itemDrag} minWidthClass="240px" /> : null}</DragOverlay>
     </DndContext>
   );
 };

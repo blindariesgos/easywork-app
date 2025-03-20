@@ -12,10 +12,10 @@ import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RadioGroup, Label, Radio } from '@headlessui/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCalendarContext from '../../../../../../../context/calendar';
-import { getAllOauth } from '../../../../../../../lib/apis';
+import { getGoogleCalendarStatus } from '../../../../../../../lib/apis';
 import { timezones } from '../../../../../../../lib/timezones';
 import { useRouter, useSearchParams } from 'next/navigation';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -47,6 +47,8 @@ export default function CalendarHome({ children }) {
   const [allDay, setAllDay] = useState(false);
   const [timezone, setTimezone] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [googleCalendarStatus, setGoogleCalendarStatus] = useState({ connected: false });
+
   const calendarViews = [
     {
       name: t('tools:calendar:day'),
@@ -178,11 +180,22 @@ export default function CalendarHome({ children }) {
     setIsOpen(false);
   }
 
+  const fetchGoogleCalendarStatus = useCallback(async () => {
+    try {
+      const response = await getGoogleCalendarStatus();
+      setGoogleCalendarStatus(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   useEffect(() => {
-    getAllOauth(session?.data.user.sub, 'Google Calendar').then(res => {
+    getGoogleCalendarStatus(session?.data.user.sub, 'Google Calendar').then(res => {
       setSelectOauth(res[0]);
     });
-  }, [session?.data.user.sub]);
+
+    fetchGoogleCalendarStatus();
+  }, [session?.data.user.sub, fetchGoogleCalendarStatus]);
 
   useEffect(() => {
     const changeView = () => {
@@ -197,7 +210,7 @@ export default function CalendarHome({ children }) {
     <div className="flex flex-col flex-grow">
       <CalendarHeader selectOauth={selectOauth} />
       <CalendarConfig selectOauth={selectOauth} />
-      <CalendarConnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
+      <CalendarConnect googleCalendarStatus={googleCalendarStatus} selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
       <CalendarDisconnect selectOauth={selectOauth} setSelectOauth={setSelectOauth} />
       <div className="h-full">
         <div className="flex-none items-center justify-between  py-4 flex">

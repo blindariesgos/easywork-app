@@ -56,7 +56,7 @@ export default function TaskView({ id, task }) {
   const params = new URLSearchParams(searchParams);
 
   const handleDateChange = (date) => {
-    console.log("Nueva fecha:", date);
+    // console.log("Nueva fecha:", date);
   };
 
   const isCreator = useMemo(
@@ -84,7 +84,7 @@ export default function TaskView({ id, task }) {
     try {
       setLoading(true);
       const response = await putTaskCompleted(task.id);
-      console.log({ response });
+      // console.log({ response });
       if (response.hasError) {
         handleFrontError(response);
         setLoading(false);

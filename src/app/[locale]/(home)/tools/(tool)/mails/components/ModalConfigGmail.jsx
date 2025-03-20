@@ -139,7 +139,7 @@ export default function ModalConfigGmail({ fetchUserData }) {
     }
     if (params.get("isEdit") === "true") {
       getEmailConfig(selectOauth?.email).then((res) => {
-        console.log(res);
+        // console.log(res);
         let data = res;
         if (data.countExtractMessagesDays) {
           setCountExtractMessagesDays(true);

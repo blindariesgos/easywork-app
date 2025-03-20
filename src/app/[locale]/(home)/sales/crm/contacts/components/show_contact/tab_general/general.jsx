@@ -282,7 +282,7 @@ export default function ContactGeneral({ contact, id, refPrint }) {
         router.back();
       } else {
         const response = await updateContact(formData, id);
-        console.log({ response });
+        // console.log({ response });
         if (response.hasError) {
           handleFrontError(response);
           setLoading(false);

@@ -1,24 +1,17 @@
-import { FireIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useState } from "react";
-import { useDraggable } from "@dnd-kit/core";
-import DeleteModal from "@/src/components/modals/DeleteItem";
-import { toast } from "react-toastify";
-import "moment/locale/es.js";
-import useCrmContext from "@/src/context/crm";
-import clsx from "clsx";
-import { deleteTask as apiDeleteTask } from "@/src/lib/apis"; // Ajusta el path según sea necesario
-import { IoCheckmarkCircleOutline } from "react-icons/io5";
-import {
-  getTaskOverdueTimeDelta,
-  isDateOverdue,
-  isDateTomorrowOverdue,
-  isDateTodayOverdue,
-  isDateMoreFiveDayOverdue,
-  isDateMoreTenDayOverdue,
-} from "@/src/utils/getFormatDate";
-import { useTranslation } from "react-i18next";
+import { FireIcon } from '@heroicons/react/20/solid';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useDraggable } from '@dnd-kit/core';
+import DeleteModal from '@/src/components/modals/DeleteItem';
+import { toast } from 'react-toastify';
+import 'moment/locale/es.js';
+import useCrmContext from '@/src/context/crm';
+import clsx from 'clsx';
+import { deleteTask as apiDeleteTask } from '@/src/lib/apis'; // Ajusta el path según sea necesario
+import { IoCheckmarkCircleOutline } from 'react-icons/io5';
+import { getTaskOverdueTimeDelta, isDateOverdue, isDateTomorrowOverdue, isDateTodayOverdue, isDateMoreFiveDayOverdue, isDateMoreTenDayOverdue } from '@/src/utils/getFormatDate';
+import { useTranslation } from 'react-i18next';
 
 const Card = ({ task, minWidthClass, stageId }) => {
   const { t } = useTranslation();
@@ -27,10 +20,7 @@ const Card = ({ task, minWidthClass, stageId }) => {
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const router = useRouter();
 
-  const {
-    selectedContacts: selectedReceipts,
-    setSelectedContacts: setSelectedReceipts,
-  } = useCrmContext();
+  const { selectedContacts: selectedReceipts, setSelectedContacts: setSelectedReceipts } = useCrmContext();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
     data: {
@@ -43,50 +33,40 @@ const Card = ({ task, minWidthClass, stageId }) => {
       }
     : undefined;
 
-  const handleDeleteTask = async (id) => {
+  const handleDeleteTask = async id => {
     try {
       setLoading(true);
       await apiDeleteTask(id);
-      toast.success(t("tools:tasks:table:delete-msg"));
+      toast.success(t('tools:tasks:table:delete-msg'));
     } catch {
-      toast.error(t("tools:tasks:table:delete-error"));
+      toast.error(t('tools:tasks:table:delete-error'));
     }
     setLoading(false);
   };
 
   const actions = [
     {
-      name: "Ver",
-      handleClick: (id) => router.push(`/tools/tasks/task/${id}?show=true`),
+      name: 'Ver',
+      handleClick: id => router.push(`/tools/tasks/task/${id}?show=true`),
     },
     {
-      name: "Editar",
-      handleClick: (id) =>
-        router.push(`/tools/tasks/task/${id}?show=true&action=edit`),
+      name: 'Editar',
+      handleClick: id => router.push(`/tools/tasks/task/${id}?show=true&action=edit`),
     },
     {
-      name: "Copiar",
-      handleClick: (id) =>
-        router.push(`/tools/tasks/task/${id}?show=true&action=copy`),
+      name: 'Copiar',
+      handleClick: id => router.push(`/tools/tasks/task/${id}?show=true&action=copy`),
     },
-    { name: "Eliminar", handleClick: (id) => handleDeleteTask(id) },
+    { name: 'Eliminar', handleClick: id => handleDeleteTask(id) },
   ];
 
-  const handleClickTask = (id) =>
-    router.push(`/tools/tasks/task/${id}?show=true`);
+  const handleClickTask = id => router.push(`/tools/tasks/task/${id}?show=true`);
 
   const getDescription = () => {
     if (!task.description) return;
 
-    const parseHTML = new DOMParser().parseFromString(
-      task.description,
-      "text/html"
-    );
-    return (
-      <p className="text-ellipsis overflow-hidden max-h-[60px] text-sm text-gray-50">
-        {parseHTML.body.textContent || ""}
-      </p>
-    );
+    const parseHTML = new DOMParser().parseFromString(task.description, 'text/html');
+    return <p className="text-ellipsis overflow-hidden max-h-[60px] text-sm text-gray-50">{parseHTML.body.textContent || ''}</p>;
   };
 
   const { role, ...otherAttributes } = attributes;
@@ -97,8 +77,8 @@ const Card = ({ task, minWidthClass, stageId }) => {
       ref={setNodeRef}
       style={style}
       {...otherAttributes}
-      onPointerDown={(event) => {
-        console.log({ event });
+      onPointerDown={event => {
+        // console.log({ event });
         if (event?.target?.onclick) {
           event?.target?.onclick(event);
           return;
@@ -107,24 +87,19 @@ const Card = ({ task, minWidthClass, stageId }) => {
       }}
     >
       <div
-        className={clsx("bg-white rounded-md p-3 grid grid-cols-12 border ", {
-          "shadow-md border-[0.5px] border-primary": selectedReceipts.includes(
-            task.id
-          ),
+        className={clsx('bg-white rounded-md p-3 grid grid-cols-12 border ', {
+          'shadow-md border-[0.5px] border-primary': selectedReceipts.includes(task.id),
         })}
         style={{
-          minWidth: minWidthClass ?? "auto",
+          minWidth: minWidthClass ?? 'auto',
         }}
       >
         <div className="col-span-12 flex flex-col gap-2 justify-start">
-          <p
-            className="font-bold cursor-pointer text-sm"
-            onClick={() => handleClickTask(task.id)}
-          >
-            {task?.name}{" "}
+          <p className="font-bold cursor-pointer text-sm" onClick={() => handleClickTask(task.id)}>
+            {task?.name}{' '}
             <FireIcon
-              className={clsx("h-4 w-4 inline", {
-                "text-red-500": task.important,
+              className={clsx('h-4 w-4 inline', {
+                'text-red-500': task.important,
                 hidden: !task.important,
               })}
             />
@@ -144,7 +119,7 @@ const Card = ({ task, minWidthClass, stageId }) => {
             <div className="flex justify-start">
               <div className="flex items-center gap-1 p-1 rounded-md border">
                 <IoCheckmarkCircleOutline className="w-4 h-4" />
-                <p className="text-sm">{`${task?.listField?.reduce((acc, list) => [...acc, ...list.child], []).filter((list) => list.completed)?.length ?? 0}/${task?.listField?.reduce((acc, list) => [...acc, ...list.child], [])?.length}`}</p>
+                <p className="text-sm">{`${task?.listField?.reduce((acc, list) => [...acc, ...list.child], []).filter(list => list.completed)?.length ?? 0}/${task?.listField?.reduce((acc, list) => [...acc, ...list.child], [])?.length}`}</p>
               </div>
             </div>
           )}
@@ -152,21 +127,13 @@ const Card = ({ task, minWidthClass, stageId }) => {
           {task.deadline ? (
             <div className="flex">
               <span
-                className={clsx("p-1 px-2 rounded-full text-sm w-auto", {
-                  "bg-red-200 text-red-900":
-                    isDateOverdue(task.deadline) && !task.completedTime,
-                  "bg-green-200 text-green-900":
-                    isDateTomorrowOverdue(task.deadline) && !task.completedTime,
-                  "bg-orange-300 text-orange-900":
-                    isDateTodayOverdue(task.deadline) && !task.completedTime,
-                  "bg-blue-300 text-blue-900":
-                    isDateMoreFiveDayOverdue(task.deadline) &&
-                    !task.completedTime,
-                  "text-gray-800/45 line-through": task.isCompleted,
-                  "bg-gray-300":
-                    !task.deadline ||
-                    (isDateMoreTenDayOverdue(task.deadline) &&
-                      !task.completedTime),
+                className={clsx('p-1 px-2 rounded-full text-sm w-auto', {
+                  'bg-red-200 text-red-900': isDateOverdue(task.deadline) && !task.completedTime,
+                  'bg-green-200 text-green-900': isDateTomorrowOverdue(task.deadline) && !task.completedTime,
+                  'bg-orange-300 text-orange-900': isDateTodayOverdue(task.deadline) && !task.completedTime,
+                  'bg-blue-300 text-blue-900': isDateMoreFiveDayOverdue(task.deadline) && !task.completedTime,
+                  'text-gray-800/45 line-through': task.isCompleted,
+                  'bg-gray-300': !task.deadline || (isDateMoreTenDayOverdue(task.deadline) && !task.completedTime),
                 })}
               >
                 {getTaskOverdueTimeDelta(task)}
@@ -175,35 +142,20 @@ const Card = ({ task, minWidthClass, stageId }) => {
           ) : (
             <div className="flex">
               <span
-                className={clsx("p-1 px-2  rounded-full text-sm w-auto", {
-                  "bg-gray-300": !task.completedTime,
-                  "line-through text-gray-800/45": task.completedTime,
+                className={clsx('p-1 px-2  rounded-full text-sm w-auto', {
+                  'bg-gray-300': !task.completedTime,
+                  'line-through text-gray-800/45': task.completedTime,
                 })}
               >
-                {t("tools:tasks:table:no-deadline")}
+                {t('tools:tasks:table:no-deadline')}
               </span>
             </div>
           )}
           <div className="flex items-center gap-2 pt-6">
-            {[
-              task?.createdBy,
-              ...task?.responsible,
-              ...task.observers,
-              ...task.participants,
-            ]
-              .filter(
-                (user, index, arr) =>
-                  arr.findLastIndex((x) => x.id == user.id) == index
-              )
-              .map((user) => (
-                <Image
-                  key={user.id}
-                  className="h-6 w-6 rounded-full bg-zinc-200"
-                  width={30}
-                  height={30}
-                  src={user.avatar || "/img/avatar.svg"}
-                  alt=""
-                />
+            {[task?.createdBy, ...task?.responsible, ...task.observers, ...task.participants]
+              .filter((user, index, arr) => arr.findLastIndex(x => x.id == user.id) == index)
+              .map(user => (
+                <Image key={user.id} className="h-6 w-6 rounded-full bg-zinc-200" width={30} height={30} src={user.avatar || '/img/avatar.svg'} alt="" />
               ))}
             {/* {task?.responsible?.length > 0 &&
               task?.responsible?.map((user) => (
@@ -385,12 +337,7 @@ const Card = ({ task, minWidthClass, stageId }) => {
           </p>
         </div> */}
       </div>
-      <DeleteModal
-        isOpen={isOpenDelete}
-        setIsOpen={setIsOpenDelete}
-        handleClick={() => deletePolicy(deleteId)}
-        loading={loading}
-      />
+      <DeleteModal isOpen={isOpenDelete} setIsOpen={setIsOpenDelete} handleClick={() => deletePolicy(deleteId)} loading={loading} />
     </div>
   );
 };

@@ -15,6 +15,7 @@ import {
   getRelatedUsers,
 } from "../../lib/apis";
 import { useSession } from "next-auth/react";
+import { encodeToModal } from "@/src/utils/formatters";
 
 export default function AppContextProvider({ children }) {
   const { calendarViews } = useCommon();
@@ -62,6 +63,12 @@ export default function AppContextProvider({ children }) {
       console.error(`Error in ${errorSource}:`, error);
       return [];
     }
+  };
+
+  //Apertura de modales de detalles o submodulos
+  const openGlobalModal = (data) => {
+    const token = encodeToModal(data);
+    console.log({ token });
   };
 
   // Efecto para cargar todos los datos necesarios
@@ -134,6 +141,7 @@ export default function AppContextProvider({ children }) {
       setOpenModalFolders,
       openModal,
       setOpenModal,
+      openGlobalModal,
 
       // User data states
       userGoogle,

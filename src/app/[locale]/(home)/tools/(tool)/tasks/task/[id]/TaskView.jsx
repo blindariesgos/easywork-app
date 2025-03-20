@@ -465,7 +465,7 @@ export default function TaskView({ id, task }) {
                           onclick={() => {}}
                         />
                       )} */}
-                    {!task.isCompleted && (
+                    {!["pending_review", "completed"].includes(task.status) && (
                       <button
                         type="button"
                         className="rounded-md disabled:cursor-not-allowed disabled:bg-zinc-200 bg-green-primary hover:bg-green-100 px-3 py-2 text-xs font-medium text-primary shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

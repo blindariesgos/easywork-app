@@ -1,3 +1,5 @@
+import LZString from "lz-string";
+
 export const formatToCurrency = (amount) => {
   // Asegurarse de que el valor sea un número
   if (isNaN(amount)) {
@@ -49,4 +51,10 @@ export const getFormatFormData = (body) => {
     }
   }
   return formData;
+};
+
+export const encodeToModal = (data) => {
+  const string = JSON.stringify(data);
+  const compress = LZString.compress(string);
+  return btoa(compress);
 };

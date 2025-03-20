@@ -41,6 +41,8 @@ const getCommentPath = cmrtype => {
       return '/sales/crm/leads';
     case 'poliza_claim':
       return '/operations/claims';
+    case 'poliza_fund_recovery':
+      return '/operations/fund-recoveries';
     case 'agent':
       return '/agent-management/agents';
     case 'receipt':
@@ -80,6 +82,8 @@ const getDeleteCommentPath = cmrtype => {
       return '/sales/crm/leads/comments';
     case 'poliza_claim':
       return '/operations/claims';
+    case 'poliza_fund_recovery':
+      return '/operations/fund-recoveries';
     case 'agent':
       return '/agent-management/agents';
     case 'receipt':
@@ -294,13 +298,6 @@ export const addReimbursementDocument = async (reimbursementId, body) => {
   return response;
 };
 
-export const addRefund = async body => {
-  const response = await axios({ contentType: 'multipart/form-data' })
-    .post(`/operations/management/reimbursement`, body)
-    .catch(error => ({ ...error, hasError: true }));
-  return response;
-};
-
 export const putRefund = async (refundId, body) => {
   const response = await axios()
     .put(`/operations/reimbursements/${refundId}`, body)
@@ -320,28 +317,6 @@ export const deletePolicyById = async id => {
 export const getPolicyById = async id => {
   const url = `/sales/crm/polizas/${id}`;
   const response = await axios().get(url);
-  return response;
-};
-
-export const addPolicyByPdf = async (body, category = 'nueva') => {
-  const response = await axios()
-    .post(`/operations/management/poliza/new?category=${category}`, body)
-    .catch(error => ({ ...error, hasError: true }));
-  return response;
-};
-
-export const addManualPolicy = async (body, category) => {
-  const url = `/operations/management/manual/poliza?category=${category}`;
-
-  const response = await axios()
-    .post(url, body)
-    .catch(error => ({ hasError: true, ...error }));
-  return response;
-};
-export const uploadTemporalFile = async body => {
-  const response = await axios({ contentType: 'multipart/form-data' })
-    .post(`/operations/management/upload/temp`, body)
-    .catch(error => ({ hasError: true, ...error }));
   return response;
 };
 
@@ -374,10 +349,10 @@ export const cancelPolicy = async (polizaId, body) => {
   return response;
 };
 
-export const addRenovationByPdf = async body => {
-  const response = await axios({ contentType: 'multipart/form-data' })
-    .post(`/operations/management/renewal/pdf`, body)
-    .catch(error => ({ error, hasError: true }));
+export const linkPolicyToContact = async (polizaId, clientId) => {
+  const response = await axios()
+    .put(`/sales/crm/polizas/assign-poliza/${polizaId}/client/${clientId}`)
+    .catch(error => ({ ...error, hasError: true }));
   return response;
 };
 
@@ -394,6 +369,69 @@ export const getManagementReport = async ({ filters = {} }) => {
   return response;
 };
 
+export const addClaim = async body => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/claim`, body)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addFundRescue = async body => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/fund-recovery`, body)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addSchedule = async body => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/scheduling`, body)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const getMetadataOfPdf = async (category, body) => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/metadata/pdf?category=${category}`, body)
+    .catch(error => ({ error, hasError: true }));
+  return response;
+};
+
+export const addRefund = async body => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/reimbursement`, body)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addPolicyByPdf = async (body, category = 'nueva') => {
+  const response = await axios()
+    .post(`/operations/management/poliza/new?category=${category}`, body)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const addManualPolicy = async (body, category) => {
+  const url = `/operations/management/manual/poliza?category=${category}`;
+  console.log({ url });
+  const response = await axios()
+    .post(url, body)
+    .catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+export const uploadTemporalFile = async body => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/upload/temp`, body)
+    .catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const addRenovationByPdf = async body => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/management/renewal/pdf`, body)
+    .catch(error => ({ error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region NOTIFICATIONS
@@ -653,6 +691,19 @@ export const getTaskObjections = async (taskId, page, limit) => {
   return response;
 };
 
+export const approveTask = async taskId => {
+  const response = await axios()
+    .put(`/tools/tasks/${taskId}/approve`)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const declineTask = async taskId => {
+  const response = await axios()
+    .put(`/tools/tasks/${taskId}/reject`)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
 //#endregion
 
 //#region TIME TRACKING TASKS
@@ -793,13 +844,6 @@ export const getAddressByPostalCode = async postalCode => {
 
 //#region CLAIMS
 
-export const addClaim = async body => {
-  const response = await axios({ contentType: 'multipart/form-data' })
-    .post(`/operations/management/claim`, body)
-    .catch(error => ({ ...error, hasError: true }));
-  return response;
-};
-
 export const putClaim = async (claimId, body) => {
   const response = await axios()
     .put(`/operations/claims/${claimId}`, body)
@@ -843,7 +887,53 @@ export const getAllClaims = async ({ filters = {}, userId = '', config = {} }) =
 };
 //#endregion
 
+//#region FUND RECOVERY
+
+export const putFundRecovery = async (claimId, body) => {
+  const response = await axios()
+    .put(`/operations/fund-recoveries/${claimId}`, body)
+    .catch(error => ({ hasError: true, ...error }));
+
+  return response;
+};
+
+export const addFundRecoveryDocument = async (fundId, category, body) => {
+  const response = await axios({ contentType: 'multipart/form-data' })
+    .post(`/operations/fund-recoveries/upload/${fundId}?category=${category}`, body)
+    .catch(error => ({ ...error, hasError: true }));
+  return response;
+};
+
+export const deleteFundRecoveryById = async id => {
+  const response = await axios()
+    .delete(`/operations/fund-recoveries/${id}`)
+    .catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getFundRecoveryById = async claimId => {
+  const response = await axios()
+    .get(`/operations/fund-recoveries/${claimId}`)
+    .catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+
+export const getAllFundRecoveries = async ({ filters = {}, userId = '', config = {} }) => {
+  const queries = getQueries(filters, userId);
+  const configParams = Object.keys(config)
+    .map(key => `${key}=${config[key]}`)
+    .join('&');
+  const url = `/operations/fund-recoveries?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
+  console.log(url);
+  const response = await axios()
+    .get(url)
+    .catch(error => ({ hasError: true, ...error }));
+  return response;
+};
+//#endregion
+
 export const login = async formdata => {
+  console.log('LOGIN', formdata);
   return await signIn('credentials', formdata);
 };
 
@@ -1279,25 +1369,10 @@ export const addPolicyVersionByContact = async (contactId, body) => {
   return response;
 };
 
-export const addSchedule = async body => {
-  const response = await axios({ contentType: 'multipart/form-data' })
-    .post(`/operations/management/scheduling`, body)
-    .catch(error => ({ ...error, hasError: true }));
-  return response;
-};
-
-export const getMetadataOfPdf = async (category, body) => {
-  const response = await axios({ contentType: 'multipart/form-data' })
-    .post(`/operations/management/metadata/pdf?category=${category}`, body)
-    .catch(error => ({ error, hasError: true }));
-  return response;
-};
-
 export const getMetadataOfPdfVersion = async (body, contactId) => {
   const response = await axios({ contentType: 'multipart/form-data' })
     .post(`/sales/crm/contacts/poliza/metadata/contact/${contactId}`, body)
     .catch(error => ({ error, hasError: true }));
-
   return response;
 };
 

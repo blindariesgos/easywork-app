@@ -15,7 +15,6 @@ const urlImports = {
 
 const Import = ({ handleNext, type }) => {
   const { t } = useTranslation();
-  const { lists } = useAppContext();
   const router = useRouter();
   const { info } = useCustomImportContext();
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +43,9 @@ const Import = ({ handleNext, type }) => {
   };
 
   useEffect(() => {
-    startImportation();
+    if (isLoading) {
+      startImportation();
+    }
   }, []);
 
   return (

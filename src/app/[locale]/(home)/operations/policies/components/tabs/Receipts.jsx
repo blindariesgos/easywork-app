@@ -8,7 +8,7 @@ import moment from "moment";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
-export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
+export default function ReceiptsByPolicyId({ policyId }) {
   const { data, isLoading } = useReceiptsByPolicyId(policyId);
   const [selectedPolizas, setSelectedPolizas] = useState([]);
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function ReceiptsByPolicyId({ policyId, base = 0 }) {
   }
 
   if (!data || data?.items?.length === 0) {
-    return <ReceiptEmpty />;
+    return <ReceiptEmpty type="Recibos registrados" />;
   }
 
   return (

@@ -117,7 +117,7 @@ const Control = () => {
                 <Radio
                   key={card.id}
                   value={card}
-                  className="group px-2 pb-2 pt-4 relative opacity-20 select-none flex flex-col w-full justify-between gap-6 data-[checked]:opacity-100 hover:opacity-100 cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
+                  className="group px-2 pb-2 pt-4 relative select-none flex flex-col w-full justify-between gap-6 data-[checked]:shadow-lg data-[checked]:border-2 data-[checked]:bg-easywork-main data-[checked]:text-white hover:shadow-lg hover:border-2 hover:bg-easywork-main hover:text-white cursor-pointer transition focus:outline-none rounded-lg overflow-hidden border-[0.5px] border-primary"
                 >
                   <div
                     className={`absolute w-full h-[7px] top-0 left-0`}

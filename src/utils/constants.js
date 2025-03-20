@@ -40,6 +40,20 @@ export const polizaClaimStatusColor = {
   no_cumple_condiciones: "#FFC2C2",
 };
 
+export const polizaFundRecoveryStatus = {
+  captura_documentos: "Captura de documentos",
+  en_proceso: "En proceso",
+  validacion_documentos: "Validación de documentos",
+  aprobado: "Aprobado",
+};
+
+export const polizaFundRecoveryStatusColor = {
+  captura_documentos: "#EFD864",
+  en_proceso: "#DFC2FF",
+  validacion_documentos: "#FFF9C2",
+  aprobado: "#C2FFCF",
+};
+
 export const renovationStages = [
   {
     name: "Seguimiento de renovación",
@@ -316,6 +330,21 @@ export const claimTypes = [
   {
     id: "funerarios",
     name: "Funerarios",
+  },
+];
+
+export const fundrescueTypes = [
+  {
+    id: "liquidacion_plan_inversion",
+    name: "Liquidación plan de inversión",
+  },
+  {
+    id: "cancelacion_total",
+    name: "Cancelación total",
+  },
+  {
+    id: "muerte_fallecimiento",
+    name: "Muerte o fallecimiento",
   },
 ];
 

@@ -228,7 +228,8 @@
   "slide": {
     "renovations": "Renovaciones",
     "recruitment": "Reclutamiento",
-    "conexion": "Conexión"
+    "conexion": "Conexión",
+    "fundrecovery": "Rescate"
   },
   "activities": {
     "event": "Reunión"
@@ -241,7 +242,9 @@
     "renewal": "Renovaciones",
     "agent": "Agentes",
     "poliza_scheduling": "Programaciones",
-    "poliza_reimbursement": "Reembolsos"
+    "poliza_reimbursement": "Reembolsos",
+    "poliza_claim": "Siniestros",
+    "poliza_fund_recovery": "Rescate de Fondos"
   },
   "crmType": {
     "contact": "Cliente",
@@ -252,7 +255,8 @@
     "agent": "Agente",
     "poliza_scheduling": "Programación",
     "poliza_reimbursement": "Reembolso",
-    "poliza_claim": "Siniestro"
+    "poliza_claim": "Siniestro",
+    "poliza_fund_recovery": "Rescate de Fondos"
   },
   "address": {
     "enter": "Introduzca código postal",

@@ -180,6 +180,7 @@ const AddClaim = ({ isOpen, setIsOpen }) => {
                   options={lists?.policies?.polizaTypes}
                   name="polizaTypeId"
                   setValue={setValue}
+                  errors={errors}
                   watch={watch}
                   register={register}
                   disabled

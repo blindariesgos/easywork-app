@@ -695,12 +695,25 @@ const getCmrInfo = (cmr) => {
 
   let name = cmr.crmEntity.name;
 
-  if (type === "contact" || type === "lead" || type === "agent") {
+  if (["contact", "lead", "agent"].includes(type)) {
     name = cmr.crmEntity.fullName || cmr.crmEntity.name;
   }
 
-  if (type === "poliza") {
-    name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
+  if (
+    [
+      "poliza",
+      "poliza_scheduling",
+      "renewal",
+      "poliza_reimbursement",
+      "poliza_claim",
+      "poliza_fund_recovery",
+    ].includes(type)
+  ) {
+    name = cmr?.crmEntity?.poliza
+      ? `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`
+      : cmr?.crmEntity?.ot ||
+        cmr?.crmEntity?.sigre ||
+        cmr?.crmEntity?.claimNumber;
   }
 
   if (type === "receipt") {

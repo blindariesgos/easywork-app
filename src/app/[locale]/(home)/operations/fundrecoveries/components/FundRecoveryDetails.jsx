@@ -9,21 +9,21 @@ import General from "./tabs/General";
 import Link from "next/link";
 import moment from "moment";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { putSchedule } from "@/src/lib/apis";
-import clsx from "clsx";
+import { putFundRecovery } from "@/src/lib/apis";
 import { toast } from "react-toastify";
 import {
-  polizaReimbursementStatus,
-  polizaReimbursementStatusColor,
+  polizaFundRecoveryStatus,
+  polizaFundRecoveryStatusColor,
 } from "@/src/utils/constants";
-import useProgramationContext from "@/src/context/programations";
 import AddDocumentButton from "./AddDocumentButton";
+import { handleFrontError } from "@/src/utils/api/errors";
+import useFundRecoveriesContext from "@/src/context/fundrecoveries";
 
-export default function ScheduleDetails({ data, id, mutate }) {
+export default function FundRecoveryDetails({ data, id, mutate }) {
   const { t } = useTranslation();
   const { settingsPolicy } = useCommon();
   const [loading, setLoading] = useState(false);
-  const { mutate: mutateSchedule } = useProgramationContext();
+  const { mutate: mutateFunds } = useFundRecoveriesContext();
 
   const updateStatus = async (status) => {
     setLoading(true);
@@ -31,23 +31,20 @@ export default function ScheduleDetails({ data, id, mutate }) {
       status,
     };
     try {
-      const response = await putSchedule(data.id, body);
+      const response = await putFundRecovery(data.id, body);
 
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar, inténtelo de nuevo."
-        );
+        handleFrontError(response);
         setLoading(false);
-
         return;
       }
       mutate();
-      mutateSchedule();
-      toast.success("Actualizada correctamente.");
+      mutateFunds();
+      toast.success("Actualizado correctamente.");
     } catch (error) {
       console.log({ error });
       toast.error(
-        "Se ha producido un error al actualizar, inténtelo de nuevo."
+        "Se ha producido un error al actualizar el siniestro, inténtelo de nuevo."
       );
     }
     setLoading(false);
@@ -104,9 +101,9 @@ export default function ScheduleDetails({ data, id, mutate }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="uppercase text-sm">
-                    {t("control:portafolio:receipt:details:claim-number")}:
+                    {t("operations:fundrecovery:general:fundRecoveryNumber")}:
                   </p>
-                  <p className="text-sm">{data?.claimNumber ?? "N/D"}</p>
+                  <p className="text-sm">{data?.fundRecoveryNumber ?? "N/D"}</p>
                 </div>
                 <div></div>
                 <div className="flex items-center gap-2">
@@ -118,21 +115,19 @@ export default function ScheduleDetails({ data, id, mutate }) {
               </div>
               <div className="flex items-center gap-2">
                 <Menu>
-                  <MenuButton>
-                    <label
-                      className={clsx(
-                        "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
-                      )}
-                      style={{
-                        background: data?.status
-                          ? polizaReimbursementStatusColor[data?.status]
-                          : polizaReimbursementStatusColor.captura_documentos,
-                      }}
-                    >
-                      {data?.status
-                        ? polizaReimbursementStatus[data?.status]
-                        : polizaReimbursementStatus.captura_documentos}
-                    </label>
+                  <MenuButton
+                    className={
+                      "py-2 px-3 rounded-lg text-sm cursor-pointer max-w-[195px]"
+                    }
+                    style={{
+                      background: data?.status
+                        ? polizaFundRecoveryStatusColor[data?.status]
+                        : polizaFundRecoveryStatusColor.captura_documentos,
+                    }}
+                  >
+                    {data?.status
+                      ? polizaFundRecoveryStatus[data?.status]
+                      : polizaFundRecoveryStatus.captura_documentos}
                   </MenuButton>
                   <MenuItems
                     transition
@@ -140,7 +135,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                     className="rounded-md mt-2 bg-blue-50 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 grid grid-cols-1 gap-2 p-2 "
                   >
                     {data &&
-                      Object?.keys(polizaReimbursementStatus)
+                      Object?.keys(polizaFundRecoveryStatus)
                         ?.filter((key) => key !== data?.status)
                         .map((key, index) => (
                           <MenuItem
@@ -149,7 +144,7 @@ export default function ScheduleDetails({ data, id, mutate }) {
                             onClick={() => updateStatus(key)}
                             className="px-2 py-1 hover:[&:not(data-[disabled])]:bg-gray-100 rounded-md text-sm cursor-pointer data-[disabled]:cursor-auto data-[disabled]:text-gray-50"
                           >
-                            {polizaReimbursementStatus[key]}
+                            {polizaFundRecoveryStatus[key]}
                           </MenuItem>
                         ))}
                   </MenuItems>

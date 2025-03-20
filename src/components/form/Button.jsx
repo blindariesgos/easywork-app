@@ -19,7 +19,7 @@ export default function Button({
       case "secondary":
         return "text-primary bg-zinc-200 shadow-xs text-sm hover:text-white";
       case "error":
-        return "text-white bg-[#CE0000] shadow-xs text-sm hover:bg-primary";
+        return `text-white bg-[#CE0000] text-sm hover:bg-primary ${fontSize}`;
       case "text":
         return `text-gray-400 bg-transparent underline ${fontSize} `;
       case "outlined":

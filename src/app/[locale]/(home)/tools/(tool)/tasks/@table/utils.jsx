@@ -73,13 +73,18 @@ export const renderCellContent = (
                 isDateTodayOverdue(taskValue) && !task.completedTime,
               "bg-blue-300 text-blue-900":
                 isDateMoreFiveDayOverdue(taskValue) && !task.completedTime,
-              "text-gray-800/45 line-through": task.isCompleted,
+              "text-gray-800/45 line-through":
+                task.isCompleted && task.status == "completed",
               "bg-gray-300":
                 !taskValue ||
                 (isDateMoreTenDayOverdue(taskValue) && !task.completedTime),
+              "border-gray-300 border-2":
+                task.isCompleted && task.status == "pending_review",
             })}
           >
-            {getTaskOverdueTimeDelta(task)}
+            {task.isCompleted && task.status == "pending_review"
+              ? t("tools:tasks:pending_review")
+              : getTaskOverdueTimeDelta(task)}
           </span>
         </div>
       ) : (
@@ -201,7 +206,7 @@ export const renderCellContent = (
           <Link
             className={clsx("text-black", {
               "text-gray-800/45 line-through":
-                task.status === "pending_review" || task.isCompleted,
+                task.isCompleted && task.status == "completed",
             })}
             href={`/tools/tasks/task/${task.id}?show=true`}
           >

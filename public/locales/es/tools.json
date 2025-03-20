@@ -50,13 +50,15 @@
     "status": {
       "pending": "Pendiente",
       "pending_review": "Pendiente por revisión",
-      "overdue": "Atrasada"
+      "overdue": "Atrasada",
+      "completed": "Completada"
     },
     "gdd-status": {
       "pending": "Pendiente",
       "completed": "Hecho",
       "not-completed": "No realizado"
     },
+    "pending_review": "Revisión pendiente",
     "delegate-to": "Delegar a:",
     "delegate": "Delegar",
     "delegating": "Delegando...",
@@ -210,6 +212,10 @@
       "lead": "Prospecto",
       "init": "Iniciar",
       "init-time-tracking": "Iniciar seguimiento de tiempo",
+      "accept-as-completed": "Aceptar como completada",
+      "accept-as-declined": "Devolver para revisión",
+      "approved": "Tarea aprobada",
+      "declined": "Tarea devuelta",
       "pause": "Pausar",
       "pause-time-tracking": "Pausar seguimiento de tiempo",
       "end": "Terminar",

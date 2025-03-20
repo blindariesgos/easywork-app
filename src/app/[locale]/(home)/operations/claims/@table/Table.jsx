@@ -5,35 +5,18 @@ import {
   EnvelopeIcon,
   PhoneIcon,
   Bars3Icon,
-  CheckIcon,
-  ChevronDoubleDownIcon,
 } from "@heroicons/react/20/solid";
 import { FaWhatsapp } from "react-icons/fa6";
 import clsx from "clsx";
-import Image from "next/image";
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  Fragment,
-  useCallback,
-} from "react";
+import React, { useState, Fragment } from "react";
 import useCrmContext from "@/src/context/crm";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import {
-  deleteClaimById,
-  deletePolicyById,
-  putClaim,
-  putPoliza,
-} from "@/src/lib/apis";
+import { deleteClaimById, putClaim } from "@/src/lib/apis";
 import { handleApiError, handleFrontError } from "@/src/utils/api/errors";
 import { toast } from "react-toastify";
 import { useClaimTable } from "../../../../../../hooks/useCommon";
-import AddColumnsTable from "@/src/components/AddColumnsTable";
 import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import { useAlertContext } from "@/src/context/common/AlertContext";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import {
   Menu,
@@ -42,10 +25,8 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { formatDate } from "@/src/utils/getFormatDate";
 import useClaimContext from "@/src/context/claims";
 import { useRouter } from "next/navigation";
-import { formatToCurrency } from "@/src/utils/formatters";
 import useAppContext from "@/src/context/app";
 import FooterTable from "@/src/components/FooterTable";
 import DeleteItemModal from "@/src/components/modals/DeleteItem";
@@ -68,7 +49,6 @@ export default function Table() {
     setPage,
     mutate,
   } = useClaimContext();
-  const { lists } = useAppContext();
   const { t } = useTranslation();
   const router = useRouter();
   const { selectedContacts, setSelectedContacts } = useCrmContext();

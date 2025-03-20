@@ -141,6 +141,7 @@ export default function TabComment({ info, type = 'task' }) {
   };
 
   useEffect(() => {
+    console.log({ comments });
     if (comments.length > 3 && !showMore) {
       return setShowComments(comments.slice(-3));
     }

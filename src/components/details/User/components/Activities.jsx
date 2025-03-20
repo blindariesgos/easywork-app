@@ -40,7 +40,7 @@ export const Activities = ({ userId }) => {
   );
 
   useEffect(() => {
-    console.log({ data });
+    // console.log({ data });
   }, [data]);
 
   const routes = (id) => ({

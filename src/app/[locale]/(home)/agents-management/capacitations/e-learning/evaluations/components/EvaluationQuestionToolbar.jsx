@@ -4,7 +4,6 @@ import { FiCopy, FiTrash } from 'react-icons/fi';
 import Button from '@/src/components/form/Button';
 
 export const EvaluationQuestionToolbar = ({ hasAnswers = true, pointsCount = 0, isRequired, setIsRequired, onDuplicate, onDelete, onCancel }) => {
-  console.log('🚀 ~ EvaluationQuestionToolbar ~ pointsCount:', pointsCount);
   return (
     <>
       <div className={`flex flex-wrap items-center justify-${hasAnswers ? 'between' : 'end gap-4'}`}>

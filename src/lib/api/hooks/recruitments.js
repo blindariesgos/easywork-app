@@ -1,13 +1,12 @@
-"use client";
-import useSWR from "swr";
-import fetcher from "../fetcher";
+'use client';
+import useSWR from 'swr';
+import fetcher from '../fetcher';
 
-const getQueries = (filters) => {
-  const getRepitKeys = (key, arr) =>
-    arr.map((item) => `${key}=${item.id}`).join("&");
-  if (Object.keys(filters).length == 0) return "";
+const getQueries = filters => {
+  const getRepitKeys = (key, arr) => arr.map(item => `${key}=${item.id}`).join('&');
+  if (Object.keys(filters).length == 0) return '';
 
-  const getValue = (key) => {
+  const getValue = key => {
     switch (key) {
       default:
         return `${key}=${filters[key]}`;
@@ -15,21 +14,17 @@ const getQueries = (filters) => {
   };
 
   return Object.keys(filters)
-    .map((key) =>
-      Array.isArray(filters[key])
-        ? getRepitKeys(key, filters[key])
-        : getValue(key)
-    )
-    .join("&");
+    .map(key => (Array.isArray(filters[key]) ? getRepitKeys(key, filters[key]) : getValue(key)))
+    .join('&');
 };
 
 export const useRecruitments = ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/agent-management/agent-recruitments?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
+    .map(key => `${key}=${config[key]}`)
+    .join('&');
+  const url = `/agent-management/agent-recruitments?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
+  // console.log({ url });
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     data,
@@ -39,11 +34,8 @@ export const useRecruitments = ({ config = {}, filters = {} }) => {
   };
 };
 
-export const useRecruitment = (agentId) => {
-  const { data, error, isLoading } = useSWR(
-    `/agent-management/agents/${agentId}`,
-    fetcher
-  );
+export const useRecruitment = agentId => {
+  const { data, error, isLoading } = useSWR(`/agent-management/agents/${agentId}`, fetcher);
 
   return {
     data,

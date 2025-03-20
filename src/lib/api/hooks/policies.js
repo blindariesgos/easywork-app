@@ -44,9 +44,9 @@ export const usePortfolioControl = ({ filters = {}, config = {}, groupKey }) => 
     .map(key => `${key}=${config[key]}`)
     .join('&');
   const url = `/sales/crm/polizas/receipts/collection_report/${groupKey}?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
-  console.log(url);
+  // console.log(url);
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-  console.log({ data, error, isLoading });
+  // console.log({ data, error, isLoading });
   if (!groupKey) {
     return {
       data: {

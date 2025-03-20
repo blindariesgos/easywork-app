@@ -68,7 +68,7 @@ export default function Table({
         if (array.includes(mail.email.googleId)) {
           if (label === "read") {
             getTokenGoogle(session?.data.user.sub).then((res) => {
-              console.log(res);
+              // console.log(res);
             });
             return {
               ...mail,
@@ -79,7 +79,7 @@ export default function Table({
             };
           } else if (label === "unread") {
             getTokenGoogle(session?.data.user.sub).then((res) => {
-              console.log(res);
+              // console.log(res);
             });
             return {
               ...mail,

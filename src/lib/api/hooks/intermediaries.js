@@ -1,14 +1,13 @@
-"use client";
-import useSWR from "swr";
-import fetcher from "../fetcher";
-import axios from "../../axios";
+'use client';
+import useSWR from 'swr';
+import fetcher from '../fetcher';
+import axios from '../../axios';
 
-const getQueries = (filters) => {
-  const getRepitKeys = (key, arr) =>
-    arr.map((item) => `${key}=${item.id}`).join("&");
-  if (Object.keys(filters).length == 0) return "";
+const getQueries = filters => {
+  const getRepitKeys = (key, arr) => arr.map(item => `${key}=${item.id}`).join('&');
+  if (Object.keys(filters).length == 0) return '';
 
-  const getValue = (key) => {
+  const getValue = key => {
     switch (key) {
       default:
         return `${key}=${filters[key]}`;
@@ -16,21 +15,17 @@ const getQueries = (filters) => {
   };
 
   return Object.keys(filters)
-    .map((key) =>
-      Array.isArray(filters[key])
-        ? getRepitKeys(key, filters[key])
-        : getValue(key)
-    )
-    .join("&");
+    .map(key => (Array.isArray(filters[key]) ? getRepitKeys(key, filters[key]) : getValue(key)))
+    .join('&');
 };
 
 export const useIntermediaries = ({ config = {}, filters = {} }) => {
   const queries = getQueries(filters);
   const configParams = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/agent-management/agente-intermediario?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
+    .map(key => `${key}=${config[key]}`)
+    .join('&');
+  const url = `/agent-management/agente-intermediario?${configParams}${queries.length > 0 ? `&${queries}` : ''}`;
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
   return {
     data,

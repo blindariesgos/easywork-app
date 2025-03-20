@@ -1,80 +1,63 @@
-"use client";
-import React, { useEffect } from "react";
-import useAppContext from "@/src/context/app";
-import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
-import { useSearchParams } from "next/navigation";
-import {
-  getContactId,
-  getLeadById,
-  getPolicyById,
-  getReceiptById,
-  getAgentById,
-  getSchedulingById,
-  getRefundById,
-  getUserById,
-  getClaimById,
-  getFundRecoveryById,
-} from "@/src/lib/apis";
+'use client';
+import React, { useEffect } from 'react';
+import useAppContext from '@/src/context/app';
+import CRMMultipleSelectV2 from '@/src/components/form/CRMMultipleSelectV2';
+import { useSearchParams } from 'next/navigation';
+import { getContactId, getLeadById, getPolicyById, getReceiptById, getAgentById, getSchedulingById, getRefundById, getUserById, getClaimById } from '@/src/lib/apis';
 
-export default function CrmValidator({
-  errors,
-  watch,
-  setValue,
-  setLoading,
-  setIsMeetTask,
-}) {
+export default function CrmValidator({ errors, watch, setValue, setLoading, setIsMeetTask }) {
   const { lists } = useAppContext();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
   //#region Logica conexion crm
-  const setCrmContact = async (contactId) => {
+  const setCrmContact = async contactId => {
     const response = await getContactId(contactId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "contact",
+        type: 'contact',
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Cliente: ");
+    setValue('name', 'CRM - Cliente: ');
     setLoading(false);
   };
-  const setCrmLead = async (leadId) => {
+  const setCrmLead = async leadId => {
     const response = await getLeadById(leadId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "lead",
+        type: 'lead',
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Prospecto: ");
+    setValue('name', 'CRM - Prospecto: ');
     setLoading(false);
   };
-  const setCrmReceipt = async (receiptId) => {
+  const setCrmReceipt = async receiptId => {
     const response = await getReceiptById(receiptId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "receipt",
+        type: 'receipt',
         name: response?.title,
       },
     ]);
-    console.log("receipt", response);
-    setValue("name", "CRM - Recibo: ");
+    // console.log("receipt", response);
+    setValue('name', 'CRM - Recibo: ');
     setLoading(false);
   };
-  const setCrmAgent = async (agentId) => {
+  const setCrmAgent = async agentId => {
     const response = await getAgentById(agentId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "agent",
+        type: 'agent',
         name: response?.name,
       },
     ]);
-    setValue("name", "CRM - Agente: ");
+    setValue('name', 'CRM - Agente: ');
     setLoading(false);
   };
 
@@ -85,17 +68,17 @@ export default function CrmValidator({
       setLoading(false);
       return;
     }
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+        name: `${response?.company?.name ?? ''} ${response?.poliza ?? ''} ${response?.type?.name ?? ''}`,
         type,
       },
     ]);
-    setValue("name", `CRM - ${type == "poliza" ? "Póliza" : "Renovación"}: `);
+    setValue('name', `CRM - ${type == 'poliza' ? 'Póliza' : 'Renovación'}: `);
     setLoading(false);
   };
-  const setCrmMeet = async (agentId) => {
+  const setCrmMeet = async agentId => {
     const response = localStorage.getItem(agentId);
 
     if (!response) {
@@ -112,21 +95,19 @@ export default function CrmValidator({
     setIsMeetTask(true);
     const { userId, ...metadata } = data;
 
-    const user = await getUserById(userId).then((res) =>
-      res.hasError ? null : res
-    );
+    const user = await getUserById(userId).then(res => (res.hasError ? null : res));
 
     setValue(
-      "createdBy",
-      lists?.users.filter((user) => user.id === data.developmentManagerId)
+      'createdBy',
+      lists?.users.filter(user => user.id === data.developmentManagerId)
     );
-    user && setValue("responsible", [user]);
-    setValue("metadata", metadata);
-    setValue("name", "CRM - Junta Individual: ");
+    user && setValue('responsible', [user]);
+    setValue('metadata', metadata);
+    setValue('name', 'CRM - Junta Individual: ');
     setLoading(false);
   };
 
-  const setCrmMeetGroup = async (agentId) => {
+  const setCrmMeetGroup = async agentId => {
     const response = localStorage.getItem(agentId);
 
     if (!response) {
@@ -145,15 +126,15 @@ export default function CrmValidator({
     const { userId, ...metadata } = data;
 
     setValue(
-      "createdBy",
-      lists?.users.filter((user) => user.id === data.developmentManagerId)
+      'createdBy',
+      lists?.users.filter(user => user.id === data.developmentManagerId)
     );
 
-    setValue("metadata", metadata);
-    setValue("name", "CRM - Junta Grupal: ");
+    setValue('metadata', metadata);
+    setValue('name', 'CRM - Junta Grupal: ');
     setLoading(false);
   };
-  const setCourseAssign = async (courseId) => {
+  const setCourseAssign = async courseId => {
     const response = localStorage.getItem(courseId);
 
     if (!response) {
@@ -171,27 +152,25 @@ export default function CrmValidator({
 
     const { name, assignedBy, assignTo } = data;
 
-    setValue("createdBy", [assignedBy?.id]);
-    setValue("name", `Capacitación - Curso asignado: "${name}"`);
+    setValue('createdBy', [assignedBy?.id]);
+    setValue('name', `Capacitación - Curso asignado: "${name}"`);
 
     if (assignTo && assignTo[0]) {
-      setValue("responsible", [
-        { ...assignTo[0].user, name: assignTo[0].name },
-      ]);
-      setValue("crm", [
+      setValue('responsible', [{ ...assignTo[0].user, name: assignTo[0].name }]);
+      setValue('crm', [
         {
           id: assignTo[0].id,
-          type: "agent",
+          type: 'agent',
           name: assignTo[0].name,
         },
       ]);
     }
     setLoading(false);
 
-    setValue("metadata", { courseId, course: data });
+    setValue('metadata', { courseId, course: data });
   };
 
-  const setCoursePageAssign = async (pageId) => {
+  const setCoursePageAssign = async pageId => {
     const response = localStorage.getItem(pageId);
 
     if (!response) {
@@ -209,167 +188,167 @@ export default function CrmValidator({
 
     const { name, assignedBy, courseId, courseName, id, assignTo } = data;
 
-    setValue("createdBy", [assignedBy?.id]);
-    setValue("name", `Capacitación - Evaluación asignada: "${name}"`);
+    setValue('createdBy', [assignedBy?.id]);
+    setValue('name', `Capacitación - Evaluación asignada: "${name}"`);
 
     if (assignTo && assignTo[0]) {
-      setValue("responsible", [
-        { ...assignTo[0].user, name: assignTo[0].name },
-      ]);
-      setValue("crm", [
+      setValue('responsible', [{ ...assignTo[0].user, name: assignTo[0].name }]);
+      setValue('crm', [
         {
           id: assignTo[0].id,
-          type: "agent",
+          type: 'agent',
           name: assignTo[0].name,
         },
       ]);
     }
 
-    setValue("metadata", { courseId, courseName, pageId: id, data });
+    setValue('metadata', { courseId, courseName, pageId: id, data });
     setLoading(false);
   };
 
-  const setCrmScheduling = async (schedulingId) => {
+  const setCrmScheduling = async schedulingId => {
     const response = await getSchedulingById(schedulingId);
     if (response.hasError) return;
-    setValue("crm", [
+    setValue('crm', [
       {
         id: schedulingId,
-        type: "poliza_scheduling",
+        type: 'poliza_scheduling',
         name: response?.ot ?? response?.sigre,
       },
     ]);
-    setValue("name", "CRM - Programación: ");
+    setValue('name', 'CRM - Programación: ');
     setLoading(false);
   };
 
-  const setCrmRefund = async (refundId) => {
+  const setCrmRefund = async refundId => {
     const response = await getRefundById(refundId);
     if (response.hasError) return;
-    setValue("crm", [
+    setValue('crm', [
       {
         id: refundId,
-        type: "poliza_reimbursement",
+        type: 'poliza_reimbursement',
         name: response?.ot ?? response?.sigre,
       },
     ]);
-    setValue("name", "CRM - Reembolso: ");
+    setValue('name', 'CRM - Reembolso: ');
     setLoading(false);
   };
 
-  const setCrmClaim = async (claimId) => {
+  const setCrmClaim = async claimId => {
     const response = await getClaimById(claimId);
     if (response.hasError) return;
-    setValue("crm", [
+    setValue('crm', [
       {
         id: claimId,
-        type: "poliza_claim",
-        name: response?.ot ?? response?.sigre,
+        type: 'poliza_claim',
+        name: response?.claimNumber ?? response?.ot ?? response?.sigre,
       },
     ]);
-    setValue("name", "CRM - Siniestro: ");
-    setLoading(false);
-  };
-
-  const setCrmFundRecovery = async (fundrecoveryId) => {
-    const response = await getFundRecoveryById(fundrecoveryId);
-    if (response.hasError) return;
-    setValue("crm", [
-      {
-        id: fundrecoveryId,
-        type: "poliza_fund_recovery",
-        name: response?.ot ?? response?.sigre,
-      },
-    ]);
-    setValue("name", "CRM - Rescate de fondos: ");
+    setValue('name', 'CRM - Siniestro: ');
     setLoading(false);
   };
 
   useEffect(() => {
-    const prevId = params.get("prev_id");
+    const prevId = params.get('prev_id');
 
-    if (params.get("prev") === "contact") {
+    if (params.get('prev') === 'contact') {
       setLoading(true);
       setCrmContact(prevId);
       return;
     }
 
-    if (params.get("prev") === "poliza_fund_recovery") {
-      setLoading(true);
-      setCrmFundRecovery(prevId);
-      return;
-    }
-
-    if (params.get("prev") === "lead") {
+    if (params.get('prev') === 'lead') {
       setLoading(true);
       setCrmLead(prevId);
       return;
     }
 
-    if (params.get("prev") === "poliza_claim") {
+    if (params.get('prev') === 'poliza_claim') {
       setLoading(true);
       setCrmClaim(prevId);
       return;
     }
 
-    if (["poliza", "renewal"].includes(params.get("prev"))) {
+    if (['poliza', 'renewal'].includes(params.get('prev'))) {
       setLoading(true);
-      setCrmPolicy(prevId, params.get("prev"));
+      setCrmPolicy(prevId, params.get('prev'));
       return;
     }
 
-    if (params.get("prev") === "receipt") {
+    if (params.get('prev') === 'receipt') {
       setLoading(true);
       setCrmReceipt(prevId);
       return;
     }
 
-    if (params.get("prev") === "agent") {
+    if (params.get('prev') === 'agent') {
       setLoading(true);
       setCrmAgent(prevId);
       return;
     }
 
-    if (params.get("prev") === "meet-individual") {
+    if (params.get('prev') === 'meet-individual') {
       setLoading(true);
       setCrmMeet(prevId);
       return;
     }
-    if (params.get("prev") === "meet-group") {
+    if (params.get('prev') === 'meet-group') {
       setLoading(true);
       setCrmMeetGroup(prevId);
       return;
     }
-    if (params.get("prev") === "poliza_scheduling") {
+    if (params.get('prev') === 'poliza_scheduling') {
       setLoading(true);
       setCrmScheduling(prevId);
       return;
     }
-    if (params.get("prev") === "poliza_reimbursement") {
+    if (params.get('prev') === 'poliza_reimbursement') {
       setLoading(true);
       setCrmRefund(prevId);
       return;
     }
-    if (params.get("prev") === "course-assign") {
-      const agentId = params.get("agent");
+    if (params.get('prev') === 'course-assign') {
+      const agentId = params.get('agent');
       setLoading(true);
       setCourseAssign(prevId);
       return;
     }
-    if (params.get("prev") === "course-page-assign") {
+    if (params.get('prev') === 'course-page-assign') {
       setLoading(true);
       setCoursePageAssign(prevId);
       return;
     }
-  }, [params.get("prev")]);
+  }, [params.get('prev')]);
   //#endregion
 
-  return (
-    <CRMMultipleSelectV2
-      watch={watch}
-      setValue={setValue}
-      name="crm"
-      error={errors.crm}
-    />
-  );
+  return <CRMMultipleSelectV2 watch={watch} setValue={setValue} name="crm" error={errors.crm} />;
 }
+
+// Función actualizada
+const getCmrInfo = cmr => {
+  if (!cmr || !cmr.type || !cmr.crmEntity) return null;
+
+  const { id } = cmr.crmEntity;
+  const { type } = cmr;
+
+  let name = cmr.crmEntity.name;
+
+  if (type === 'contact' || type === 'lead' || type === 'agent') {
+    name = cmr.crmEntity.fullName || cmr.crmEntity.name;
+  }
+
+  if (type === 'poliza') {
+    name = `${cmr?.crmEntity?.company?.name} ${cmr?.crmEntity?.poliza} ${cmr?.crmEntity?.type?.name}`;
+  }
+
+  if (type === 'receipt') {
+    name = cmr?.crmEntity?.title;
+  }
+
+  return { id, type, name };
+};
+
+const formatCrmData = crmData => {
+  if (!crmData) return [];
+  return crmData.map(item => getCmrInfo(item));
+};

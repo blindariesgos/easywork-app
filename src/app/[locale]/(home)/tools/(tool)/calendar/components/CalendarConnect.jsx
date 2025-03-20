@@ -33,7 +33,6 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
 
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session?.data.user.sub}&service=calendar`);
-      console.log(response.data.url);
       const oauthWindow = window.open(response.data.url, '_blank', 'width=500, height=500');
 
       const checkWindowClosed = setInterval(async function () {
@@ -57,7 +56,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   async function getDataNewGoogleUser() {
     try {
       const res = await getAllOauth(session?.data.user.sub, 'Google Calendar');
-      console.log(res);
+      // console.log(res);
       setSelectOauth(res.slice(-1).pop());
     } catch (error) {
       console.log(error);

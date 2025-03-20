@@ -146,7 +146,7 @@ const AddPolicyManual = ({
 
     if (Object.keys(endpointsTemporalFileByModule).includes(module)) {
       const response = await endpointsTemporalFileByModule[module](body);
-      console.log({ response });
+      // console.log({  response });
       if (response.hasError) {
         handleFrontError(response);
         setLoading(false);
@@ -215,7 +215,7 @@ const AddPolicyManual = ({
     ) {
       body.beneficiaries = beneficiaries;
     }
-    console.log({ body });
+    // console.log({ body });
 
     try {
       if (Object.keys(endpointsByModule).includes(module)) {
@@ -224,7 +224,7 @@ const AddPolicyManual = ({
           documentType,
           id
         );
-        console.log({ response });
+        // console.log({ response });
         if (response?.hasError) {
           handleFrontError(response);
           setLoading(false);
@@ -269,7 +269,7 @@ const AddPolicyManual = ({
   };
 
   const handleChangeOldPolicy = (policy) => {
-    console.log({ policy });
+    // console.log({ policy });
     policy.agenteIntermediario &&
       setValue("agenteIntermediarioId", policy.agenteIntermediario.id);
     policy.assignedBy && setValue("assignedById", policy.assignedBy.id);
@@ -310,16 +310,16 @@ const AddPolicyManual = ({
   };
 
   const handleChangeType = (policyType) => {
-    console.log({ policyType });
+    // console.log({ policyType });
     if (!policyType?.id) return;
-    console.log("paosssss");
+    // console.log("paosssss");
     if (
       [
         "01072927-e48a-4fd0-9b06-5288ff7bc23d", //GMM
         "e1794ba3-892d-4c51-ad62-32dcf836873b", //VIDA
       ].includes(policyType?.id)
     ) {
-      console.log("paosssssvid");
+      // console.log("paosssssvid");
 
       setValue("beneficiaries", [
         {
@@ -343,7 +343,7 @@ const AddPolicyManual = ({
       ]);
     }
     if (policyType?.id == "e4e2f26f-8199-4e82-97f0-bdf1a6b6701c") {
-      console.log("paosssssveh");
+      // console.log("paosssssveh");
 
       setValue("vehicles", [
         {

@@ -56,5 +56,6 @@ export const getFormatFormData = (body) => {
 export const encodeToModal = (data) => {
   const string = JSON.stringify(data);
   const compress = LZString.compress(string);
-  return btoa(compress);
+  // return btoa(compress);
+  return compress;
 };

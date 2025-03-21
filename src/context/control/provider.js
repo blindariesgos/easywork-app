@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { ControlContext } from '..';
-import { usePortfolioControl } from '../../lib/api/hooks/policies';
-import { useTasksConfigs } from '@/src/hooks/useCommon';
-import { useTranslation } from 'react-i18next';
-import useAppContext from '../app';
-import { useSession } from 'next-auth/react';
-import { getAddListContacts, getPortafolioControlResume } from '@/src/lib/apis';
+import React, { useEffect, useMemo, useState } from "react";
+import { ControlContext } from "..";
+import { usePortfolioControl } from "../../lib/api/hooks/policies";
+import { useTasksConfigs } from "@/src/hooks/useCommon";
+import { useTranslation } from "react-i18next";
+import useAppContext from "../app";
+import { useSession } from "next-auth/react";
+import { getAddListContacts, getPortafolioControlResume } from "@/src/lib/apis";
 
 export default function ControlContextProvider({ children }) {
   const session = useSession();
@@ -17,7 +17,7 @@ export default function ControlContextProvider({ children }) {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  const [groupKey, setGroupKey] = useState('urgente_30');
+  const [groupKey, setGroupKey] = useState("urgente_30");
   const [totalsByStage, setTotalByStage] = useState({
     urgente_30: 0,
     urgente_15: 0,
@@ -33,6 +33,8 @@ export default function ControlContextProvider({ children }) {
     config: {
       page,
       limit,
+      orderBy: "title",
+      order: "DESC",
     },
     groupKey,
   });
@@ -41,38 +43,22 @@ export default function ControlContextProvider({ children }) {
   const defaultFilterFields = [
     {
       id: 1,
-      name: t('control:portafolio:control:form:agent'),
-      type: 'select-user',
+      name: t("control:portafolio:control:form:agent"),
+      type: "select-user",
       check: true,
-      code: 'responsibleId',
+      code: "responsibleId",
     },
     {
       id: 2,
-      name: t('control:portafolio:control:form:currency'),
-      type: 'select',
+      name: t("control:portafolio:control:form:currency"),
+      type: "select",
       check: false,
-      code: 'currencyId',
+      code: "currencyId",
       options: lists?.receipts?.currencies,
     },
   ];
   useEffect(() => {
-    setFilterFields([
-      {
-        id: 1,
-        name: t('control:portafolio:control:form:agent'),
-        type: 'select-user',
-        check: true,
-        code: 'responsibleId',
-      },
-      {
-        id: 2,
-        name: t('control:portafolio:control:form:currency'),
-        type: 'select',
-        check: true,
-        code: 'currencyId',
-        options: lists?.receipts?.currencies,
-      },
-    ]);
+    setFilterFields(defaultFilterFields);
   }, [lists]);
 
   useEffect(() => {
@@ -80,12 +66,14 @@ export default function ControlContextProvider({ children }) {
   }, [limit]);
 
   const getTotalsByState = async () => {
-    const response = await getPortafolioControlResume({ filters }).catch(error => ({
-      hasError: true,
-      error,
-    }));
+    const response = await getPortafolioControlResume({ filters }).catch(
+      (error) => ({
+        hasError: true,
+        error,
+      })
+    );
     if (response.hasError) {
-      console.log('🚀 ~ getTotalsByState ~ response:', response);
+      console.log("🚀 ~ getTotalsByState ~ response:", response);
       return;
     }
     setTotalByStage(
@@ -110,14 +98,16 @@ export default function ControlContextProvider({ children }) {
     getTotalsByState();
   }, [filters]);
 
-  const removeFilter = filterName => {
+  const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
-      .filter(key => key !== filterName)
+      .filter((key) => key !== filterName)
       .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
     setFilters(newFilters);
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName));
-    const newFilterFields = filterFields.map(field => {
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
       return filterName !== field.code ? field : { ...field, check: false };
     });
     setFilterFields(newFilterFields);
@@ -145,9 +135,24 @@ export default function ControlContextProvider({ children }) {
       setGroupKey,
       totalsByStage,
       defaultFilterFields,
+      searchParam: "title",
     }),
-    [selectedTasks, data, isLoading, isError, mutate, page, limit, filters, filterFields, displayFilters, totalsByStage]
+    [
+      selectedTasks,
+      data,
+      isLoading,
+      isError,
+      mutate,
+      page,
+      limit,
+      filters,
+      filterFields,
+      displayFilters,
+      totalsByStage,
+    ]
   );
 
-  return <ControlContext.Provider value={values}>{children}</ControlContext.Provider>;
+  return (
+    <ControlContext.Provider value={values}>{children}</ControlContext.Provider>
+  );
 }

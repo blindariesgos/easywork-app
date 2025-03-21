@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
-
+import { FaCircleXmark } from "react-icons/fa6";
 function ProfileImageInput({
   selectedProfileImage,
   onChange,
@@ -11,13 +11,15 @@ function ProfileImageInput({
 }) {
   const { t } = useTranslation();
   return (
-    <div className="text-center">
-      <label
-        htmlFor="profilePhoto"
-        type="button"
-        className="cursor-pointer text-sm text-black"
-      >
-        <div className="col-span-full flex items-center gap-x-4 mt-8 bg-white rounded-lg p-3">
+    <div className="text-center ">
+      <div className="col-span-full flex items-center gap-x-4 mt-8 bg-white rounded-lg p-3 ">
+        <div className="relative group">
+          {selectedProfileImage?.base64 && (
+            <FaCircleXmark
+              className="text-red-600 w-6 h-6 absolute hidden group-hover:block cursor-pointer -top-3 -right-3"
+              onClick={() => onChange(null)}
+            />
+          )}
           <Image
             width={96}
             height={96}
@@ -26,6 +28,12 @@ function ProfileImageInput({
             className="h-16 w-16 flex-none rounded-full text-white fill-white bg-zinc-200 object-cover items-center justify-center"
             objectFit="fill"
           />
+        </div>
+        <label
+          htmlFor="profilePhoto"
+          type="button"
+          className="cursor-pointer text-sm text-black"
+        >
           <div className="relative flex">
             <input
               id="profilePhoto"
@@ -38,11 +46,11 @@ function ProfileImageInput({
             />
             <p>{"Seleccionar"}</p>
           </div>
-        </div>
-        <p className="mt-1 text-xs leading-5 text-black">
-          {label || t("contacts:create:jpg")}
-        </p>
-      </label>
+        </label>
+      </div>
+      <p className="mt-1 text-xs leading-5 text-black">
+        {label || t("contacts:create:jpg")}
+      </p>
     </div>
   );
 }

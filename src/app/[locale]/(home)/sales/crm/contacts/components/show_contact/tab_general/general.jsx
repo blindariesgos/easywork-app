@@ -214,6 +214,11 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   }, [lists?.listContact?.contactTypes]);
 
   const handleProfileImageChange = useCallback((event) => {
+    if (!event) {
+      setSelectedProfileImage();
+      return;
+    }
+
     const file = event.target.files[0];
 
     if (file) {

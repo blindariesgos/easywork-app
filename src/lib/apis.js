@@ -1277,10 +1277,51 @@ export const getAllOauth = async (idUser, service) => {
   return response;
 };
 
+// Nuevos servicios de Google
+
 export const getGoogleCalendarStatus = async () => {
   const response = await axios().get(`/calendar/google`);
   return response;
 };
+
+export const getGoogleAuthUrl = async () => {
+  const response = await axios().get(`/calendar/google/sync`);
+  return response;
+};
+
+export const revokeGoogleCredentials = async () => {
+  const response = await axios().get(`/calendar/google/revoke`);
+  return response;
+};
+
+export const synchronizeGoogleCalendarList = async () => {
+  const response = await axios().post(`/calendar/google/calendar-list/sync`);
+  return response;
+};
+
+export const getGoogleCalendarList = async () => {
+  const response = await axios().get(`/calendar/google/calendar-list`);
+  return response;
+};
+
+export const toggleGoogleCalendarItem = async data => {
+  if (!data) throw new Error('No data provided');
+
+  const response = await axios().post(`/calendar/google/calendar-list/toggle`, data);
+  return response;
+};
+
+// ***************************************************************************
+
+// Nuevos servicios de Calendario
+
+export const getCalendarEvents = async params => {
+  console.log('🚀 ~ params:', params);
+  const response = await axios().get(`/calendar/events`, { params });
+  return response;
+};
+
+// ***************************************************************************
 
 export const deleteMails = async idUser => {
   const response = await axios().delete(`/oauth/email/delete${idUser}`);

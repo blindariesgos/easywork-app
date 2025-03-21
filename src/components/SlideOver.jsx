@@ -22,6 +22,7 @@ export default function SlideOver({
   remove,
   maxWidthClass,
   openModal,
+  onclose,
 }) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -134,6 +135,7 @@ export default function SlideOver({
 
   const closeModal = () => {
     setShow(false);
+    onclose && onclose();
     if (remove) {
       setTimeout(() => {
         params.delete("show");
@@ -148,6 +150,7 @@ export default function SlideOver({
       show={show}
       as={Fragment}
       afterLeave={() => {
+        onclose && onclose();
         if (!remove) router.back();
         // if (taskId) {
         //   router.replace(`/tools/tasks/task/${taskId}?show=true`, undefined, { shallow: true });

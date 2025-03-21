@@ -10,20 +10,20 @@ export default function Button({
   buttonStyle,
   disabled,
   className,
-  fontSize = "text-xs",
+  fontSize = "text-sm",
 }) {
   const ButtonStyleFC = (ButtonStyleType) => {
     switch (ButtonStyleType) {
       case "primary":
-        return "bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm text-sm";
+        return `bg-primary hover:bg-easy-500 text-white disabled:opacity-50 hover:bg-easy-500 shadow-sm ${fontSize}`;
       case "secondary":
-        return "text-primary bg-zinc-200 shadow-xs text-sm hover:text-white";
+        return `text-primary bg-zinc-200 shadow-xs hover:text-white ${fontSize}`;
       case "error":
-        return `text-white bg-[#CE0000] text-sm hover:bg-primary ${fontSize}`;
+        return `text-white bg-[#CE0000] hover:bg-primary ${fontSize}`;
       case "text":
         return `text-gray-400 bg-transparent underline ${fontSize} `;
       case "outlined":
-        return "text-primary border border-primary";
+        return `text-primary border border-primary ${fontSize}`;
       case "green":
         return `text-black bg-green-primary hover:bg-green-100 ${fontSize}`;
       default:

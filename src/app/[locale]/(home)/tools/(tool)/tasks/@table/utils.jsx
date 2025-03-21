@@ -78,11 +78,10 @@ export const renderCellContent = (
               "bg-gray-300":
                 !taskValue ||
                 (isDateMoreTenDayOverdue(taskValue) && !task.completedTime),
-              "border-gray-300 border-2":
-                task.isCompleted && task.status == "pending_review",
+              "border-gray-300 border-2": task.status == "pending_review",
             })}
           >
-            {task.isCompleted && task.status == "pending_review"
+            {task.status == "pending_review"
               ? t("tools:tasks:pending_review")
               : getTaskOverdueTimeDelta(task)}
           </span>

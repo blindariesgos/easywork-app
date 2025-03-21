@@ -6,12 +6,13 @@ import { useTranslation } from "react-i18next";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import FiltersContact from "./filters/FiltersContact";
 import { useCommon } from "../../../../../../../hooks/useCommon";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import IconDropdown from "../../../../../../../components/SettingsButton";
 import useCrmContext from "../../../../../../../context/crm";
 import useContactContext from "@/src/context/contacts";
 import ActiveFiltersDrawer from "@/src/components/ActiveFiltersDrawer";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import ContactActions from "./ContactActions";
 
 export default function ContactsHeader() {
   const { t } = useTranslation();
@@ -79,16 +80,7 @@ export default function ContactsHeader() {
             />
           )}
 
-          <IconDropdown
-            icon={
-              <Cog8ToothIcon
-                className="h-8 w-8 text-primary"
-                aria-hidden="true"
-              />
-            }
-            options={settings}
-            width="w-[340px]"
-          />
+          <ContactActions />
         </div>
         <ActiveFiltersDrawer
           displayFilters={displayFilters}

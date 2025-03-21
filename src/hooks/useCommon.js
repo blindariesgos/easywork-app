@@ -1,31 +1,8 @@
 "use client";
 import {
   ArrowDownTrayIcon,
-  ChevronRightIcon,
   DocumentTextIcon,
   XMarkIcon,
-  ArrowDownCircleIcon,
-  SquaresPlusIcon,
-  ArchiveBoxIcon,
-  BookOpenIcon,
-  InboxArrowDownIcon,
-  CalendarDaysIcon,
-  TagIcon,
-  NewspaperIcon,
-  PresentationChartBarIcon,
-  WalletIcon,
-  PuzzlePieceIcon,
-  GlobeAltIcon,
-  FunnelIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  ShieldCheckIcon,
-  AcademicCapIcon,
-  IdentificationIcon,
-  UserPlusIcon,
-  ArrowPathIcon,
-  BuildingOfficeIcon,
-  SparklesIcon,
-  HomeIcon,
 } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
 
@@ -41,7 +18,7 @@ import { handleApiError } from "../utils/api/errors";
 import { useSWRConfig } from "swr";
 import { useMemo, useEffect } from "react";
 import { getFullMenuStructure } from "../config/menuStructure";
-
+import { encodeToModal } from "../utils/formatters";
 import {
   codesToPaths,
   inferParentPermissions,
@@ -302,8 +279,13 @@ export const useCommon = () => {
     {
       value: 9,
       name: t("contacts:header:settings:control"),
-      onclick: () => {},
-      disabled: true,
+      onClick: () => {
+        const a = encodeToModal({
+          type: "contact-duplicate",
+          id: "131212414144141414",
+        });
+        console.log({ a });
+      },
     },
     {
       value: 10,

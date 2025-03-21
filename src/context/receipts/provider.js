@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { ReceiptsContext } from '..';
-import useAppContext from '../app';
-import { useTranslation } from 'react-i18next';
-import { useReceipts } from '../../lib/api/hooks/receipts';
-import { BsListStars } from 'react-icons/bs';
+import React, { useEffect, useMemo, useState } from "react";
+import { ReceiptsContext } from "..";
+import useAppContext from "../app";
+import { useTranslation } from "react-i18next";
+import { useReceipts } from "../../lib/api/hooks/receipts";
+import { BsListStars } from "react-icons/bs";
 
 export default function ReceiptsContextProvider({ children }) {
   const { t } = useTranslation();
   const [config, setConfig] = useState({
     page: 1,
     limit: 5,
-    orderBy: 'name',
-    order: 'DESC',
+    orderBy: "title",
+    order: "DESC",
   });
   const { lists } = useAppContext();
   const [filters, setFilters] = useState({});
@@ -24,24 +24,24 @@ export default function ReceiptsContextProvider({ children }) {
   const defaultFilterFields = [
     {
       id: 2,
-      name: t('control:portafolio:receipt:filters:expiration-date'),
-      type: 'date',
+      name: t("control:portafolio:receipt:filters:expiration-date"),
+      type: "date",
       check: true,
-      code: 'dueDate',
+      code: "dueDate",
     },
     {
       id: 3,
-      name: t('control:portafolio:receipt:filters:client'),
-      type: 'select-contact',
+      name: t("control:portafolio:receipt:filters:client"),
+      type: "select-contact",
       check: true,
-      code: 'polizaContactId',
+      code: "polizaContactId",
     },
     {
       id: 8,
-      name: t('control:portafolio:receipt:filters:type'),
-      type: 'select',
+      name: t("control:portafolio:receipt:filters:type"),
+      type: "select",
       check: true,
-      code: 'polizaTypeId',
+      code: "polizaTypeId",
       options: lists?.policies?.polizaTypes,
     },
   ];
@@ -53,7 +53,12 @@ export default function ReceiptsContextProvider({ children }) {
     if (value == config.orderBy) {
       newConfig = {
         ...newConfig,
-        order: value != config.orderBy ? 'DESC' : config.order === 'ASC' ? 'DESC' : 'ASC',
+        order:
+          value != config.orderBy
+            ? "DESC"
+            : config.order === "ASC"
+              ? "DESC"
+              : "ASC",
       };
     }
 
@@ -64,38 +69,38 @@ export default function ReceiptsContextProvider({ children }) {
     setFilterFields([
       {
         id: 2,
-        name: t('control:portafolio:receipt:filters:expiration-date'),
-        type: 'date',
+        name: t("control:portafolio:receipt:filters:expiration-date"),
+        type: "date",
         check: true,
-        code: 'dueDate',
+        code: "dueDate",
       },
       {
         id: 3,
-        name: t('control:portafolio:receipt:filters:client'),
-        type: 'select-contact',
+        name: t("control:portafolio:receipt:filters:client"),
+        type: "select-contact",
         check: true,
-        code: 'polizaContactId',
+        code: "polizaContactId",
       },
       {
         id: 8,
-        name: t('control:portafolio:receipt:filters:type'),
-        type: 'select',
+        name: t("control:portafolio:receipt:filters:type"),
+        type: "select",
         check: true,
-        code: 'polizaTypeId',
+        code: "polizaTypeId",
         options: lists?.policies?.polizaTypes,
       },
       {
         id: 1,
-        name: t('control:portafolio:receipt:filters:responsible'),
-        type: 'select-user',
+        name: t("control:portafolio:receipt:filters:responsible"),
+        type: "select-user",
         check: true,
-        code: 'responsible',
+        code: "responsible",
       },
     ]);
   }, [lists]);
 
   useEffect(() => {
-    handleChangeConfig('page', 1);
+    handleChangeConfig("page", 1);
   }, [config.limit, filters]);
 
   // useEffect(() => {
@@ -107,14 +112,16 @@ export default function ReceiptsContextProvider({ children }) {
   //   }
   // }, [filters])
 
-  const removeFilter = filterName => {
+  const removeFilter = (filterName) => {
     const newFilters = Object.keys(filters)
-      .filter(key => key !== filterName)
+      .filter((key) => key !== filterName)
       .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
     setFilters(newFilters);
-    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName));
-    const newFilterFields = filterFields.map(field => {
+    setDisplayFilters(
+      displayFilters.filter((filter) => filter.code !== filterName)
+    );
+    const newFilterFields = filterFields.map((field) => {
       return filterName !== field.code ? field : { ...field, check: false };
     });
     setFilterFields(newFilterFields);
@@ -130,13 +137,13 @@ export default function ReceiptsContextProvider({ children }) {
       isLoading,
       isError,
       mutate,
-      searchParam: 'title',
+      searchParam: "title",
       page: config.page,
-      setPage: value => handleChangeConfig('page', value),
+      setPage: (value) => handleChangeConfig("page", value),
       limit: config.limit,
-      setLimit: value => handleChangeConfig('limit', value),
+      setLimit: (value) => handleChangeConfig("limit", value),
       orderBy: config.orderBy,
-      setOrderBy: value => handleChangeConfig('orderBy', value),
+      setOrderBy: (value) => handleChangeConfig("orderBy", value),
       order: config.order,
       removeFilter,
       selectedContacts,
@@ -149,8 +156,22 @@ export default function ReceiptsContextProvider({ children }) {
       setFilters,
       defaultFilterFields,
     }),
-    [data, isLoading, isError, config, selectedContacts, displayFilters, filterFields, filters, defaultFilterFields]
+    [
+      data,
+      isLoading,
+      isError,
+      config,
+      selectedContacts,
+      displayFilters,
+      filterFields,
+      filters,
+      defaultFilterFields,
+    ]
   );
 
-  return <ReceiptsContext.Provider value={values}>{children}</ReceiptsContext.Provider>;
+  return (
+    <ReceiptsContext.Provider value={values}>
+      {children}
+    </ReceiptsContext.Provider>
+  );
 }

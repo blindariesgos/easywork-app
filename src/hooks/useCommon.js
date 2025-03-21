@@ -1172,7 +1172,7 @@ export const useReceiptTable = () => {
       id: 1,
       name: t("control:portafolio:receipt:table:receipt"),
       row: "title",
-      order: "receipt",
+      order: "title",
       check: true,
       permanent: true,
     },

@@ -1,23 +1,18 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
-import Column from "./components/Column";
-import { toast } from "react-toastify";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
-import Card from "./components/Card";
-import { createPortal } from "react-dom";
-import useAppContext from "@/src/context/app";
-import { putReceipt } from "@/src/lib/apis";
-import moment from "moment";
-import SelectedOptionsTable from "@/src/components/SelectedOptionsTable";
-import useCrmContext from "@/src/context/crm";
-import {
-  deleteTask as apiDeleteTask,
-  putTaskCompleted,
-  putTaskId,
-  putTaskIdRelations,
-} from "@/src/lib/apis";
-import { useTranslation } from "react-i18next";
-import { useTasks } from "@/src/lib/api/hooks/tasks";
+import { Fragment, useEffect, useMemo, useState } from 'react';
+import Column from './components/Column';
+import { toast } from 'react-toastify';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+import Card from './components/Card';
+import { createPortal } from 'react-dom';
+import useAppContext from '@/src/context/app';
+import { putReceipt } from '@/src/lib/apis';
+import moment from 'moment';
+import SelectedOptionsTable from '@/src/components/SelectedOptionsTable';
+import useCrmContext from '@/src/context/crm';
+import { deleteTask as apiDeleteTask, putTaskCompleted, putTaskId, putTaskIdRelations } from '@/src/lib/apis';
+import { useTranslation } from 'react-i18next';
+import { useTasks } from '@/src/lib/api/hooks/tasks';
 
 const KanbanTasks = () => {
   const { t } = useTranslation();
@@ -30,25 +25,20 @@ const KanbanTasks = () => {
   const { selectedContacts: selectedReceipts } = useCrmContext();
   const utcOffset = moment().utcOffset();
   const newDeadlineTask = {
-    deadline: moment().subtract(1, "day").format(),
+    deadline: moment().subtract(1, 'day').format(),
     today: moment().hour(17).second(0).format(),
-    thisweek: moment().endOf("week").hour(17).second(0).format(),
-    nextweek: moment().endOf("week").add(7, "days").hour(17).second(0).format(),
-    notdate: "undefined",
-    nextsecondweek: moment()
-      .endOf("week")
-      .add(29, "days")
-      .hour(17)
-      .second(0)
-      .format(),
+    thisweek: moment().endOf('week').hour(17).second(0).format(),
+    nextweek: moment().endOf('week').add(7, 'days').hour(17).second(0).format(),
+    notdate: 'undefined',
+    nextsecondweek: moment().endOf('week').add(29, 'days').hour(17).second(0).format(),
   };
 
-  const handleDragEnd = async (result) => {
+  const handleDragEnd = async result => {
     setActiveId(null);
     setIsDragging(false);
     setLoading(true);
     setItemDrag(null);
-    console.log({ result, newDeadlineTask });
+    // console.log({ result, newDeadlineTask });
 
     const body = {
       deadline: newDeadlineTask[result?.over?.id],
@@ -56,24 +46,17 @@ const KanbanTasks = () => {
 
     try {
       const response = await putTaskId(result?.active?.id, body);
-      console.log({ response });
+      // console.log({ response });
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al actualizar la tarea, inténtelo de nuevo."
-        );
+        toast.error('Se ha producido un error al actualizar la tarea, inténtelo de nuevo.');
         setLoading(false);
         return;
       }
-      toast.success(t("tools:tasks:update-msg"));
-      setUpdateStages([
-        result?.active?.data?.current?.stageId,
-        result?.over?.id,
-      ]);
+      toast.success(t('tools:tasks:update-msg'));
+      setUpdateStages([result?.active?.data?.current?.stageId, result?.over?.id]);
     } catch (error) {
       console.log({ error });
-      toast.error(
-        "Se ha producido un error al actualizar la tarea, inténtelo de nuevo."
-      );
+      toast.error('Se ha producido un error al actualizar la tarea, inténtelo de nuevo.');
     }
     setLoading(false);
   };
@@ -85,105 +68,65 @@ const KanbanTasks = () => {
 
   const items = [
     {
-      id: "deadline",
-      primary: "#E96200",
-      secondary: "#FFEEE2",
+      id: 'deadline',
+      primary: '#E96200',
+      secondary: '#FFEEE2',
       // primary: "#241F61",
       // secondary: "#EDECFF",
       filter: {
-        status: "overdue",
+        status: 'overdue',
         isCompleted: false,
       },
     },
     {
-      id: "today",
-      primary: "#70B900",
-      secondary: "#F7FFEB",
+      id: 'today',
+      primary: '#70B900',
+      secondary: '#F7FFEB',
       filter: {
         deadline: [
-          moment()
-            .utc()
-            .startOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          moment()
-            .utc()
-            .endOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment().utc().startOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
+          moment().utc().endOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
         ],
       },
     },
     {
-      id: "thisweek",
-      primary: "#86bedf",
-      secondary: "#e3f7ff",
+      id: 'thisweek',
+      primary: '#86bedf',
+      secondary: '#e3f7ff',
       filter: {
         deadline: [
-          moment()
-            .utc()
-            .add(1, "days")
-            .startOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          moment()
-            .utc()
-            .endOf("week")
-            .endOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment().utc().add(1, 'days').startOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
+          moment().utc().endOf('week').endOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
         ],
       },
     },
     {
-      id: "nextweek",
-      primary: "#0F8BBF",
-      secondary: "#E3F7FF",
+      id: 'nextweek',
+      primary: '#0F8BBF',
+      secondary: '#E3F7FF',
       filter: {
         deadline: [
-          moment()
-            .endOf("week")
-            .add(1, "days")
-            .startOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          moment()
-            .endOf("week")
-            .add(7, "days")
-            .endOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment().endOf('week').add(1, 'days').startOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
+          moment().endOf('week').add(7, 'days').endOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
         ],
       },
     },
     {
-      id: "notdate",
-      primary: "#A3A3A3",
-      secondary: "#FFFFFF",
+      id: 'notdate',
+      primary: '#A3A3A3',
+      secondary: '#FFFFFF',
       filter: {
-        deadline: "",
+        deadline: '',
       },
     },
     {
-      id: "nextsecondweek",
-      primary: "#5bc9c2",
-      secondary: "#dbfaf8",
+      id: 'nextsecondweek',
+      primary: '#5bc9c2',
+      secondary: '#dbfaf8',
       filter: {
         deadline: [
-          moment()
-            .utc()
-            .endOf("week")
-            .add(8, "days")
-            .startOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          moment()
-            .utc()
-            .endOf("week")
-            .add(70, "days")
-            .endOf("day")
-            .subtract(utcOffset, "minutes")
-            .format("YYYY-MM-DDTHH:mm:ss"),
+          moment().utc().endOf('week').add(8, 'days').startOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
+          moment().utc().endOf('week').add(70, 'days').endOf('day').subtract(utcOffset, 'minutes').format('YYYY-MM-DDTHH:mm:ss'),
         ],
       },
     },
@@ -196,12 +139,12 @@ const KanbanTasks = () => {
       if (selectedTasks.length === 1) {
         await apiDeleteTask(selectedTasks[0]);
       } else if (selectedTasks.length > 1) {
-        await Promise.all(selectedTasks.map((task) => apiDeleteTask(task)));
+        await Promise.all(selectedTasks.map(task => apiDeleteTask(task)));
       }
-      toast.success(t("tools:tasks:table:delete-msg"));
+      toast.success(t('tools:tasks:table:delete-msg'));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error(t("tools:tasks:table:delete-error"));
+      toast.error(t('tools:tasks:table:delete-error'));
     } finally {
       setLoading(false);
       onCloseAlertDialog();
@@ -212,13 +155,11 @@ const KanbanTasks = () => {
   const completedTasks = async () => {
     try {
       setLoading(true);
-      await Promise.all(
-        selectedTasks.map((taskId) => putTaskCompleted(taskId))
-      );
-      toast.success(t("tools:tasks:table:completed-msg"));
+      await Promise.all(selectedTasks.map(taskId => putTaskCompleted(taskId)));
+      toast.success(t('tools:tasks:table:completed-msg'));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error(t("tools:tasks:table:completed-error"));
+      toast.error(t('tools:tasks:table:completed-error'));
     } finally {
       setLoading(false);
       onCloseAlertDialog();
@@ -234,56 +175,54 @@ const KanbanTasks = () => {
         relation,
       };
 
-      await Promise.all(
-        selectedTasks.map((taskId) => putTaskIdRelations(taskId, body))
-      );
-      toast.success(t("tools:tasks:table:responsible-msg"));
+      await Promise.all(selectedTasks.map(taskId => putTaskIdRelations(taskId, body)));
+      toast.success(t('tools:tasks:table:responsible-msg'));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error(t("tools:tasks:table:responsible-error"));
+      toast.error(t('tools:tasks:table:responsible-error'));
     } finally {
       setLoading(false);
       mutateTasks && mutateTasks();
     }
   };
 
-  const changeResponsibleTasks = async (responsible) => {
+  const changeResponsibleTasks = async responsible => {
     try {
       setLoading(true);
       const body = {
         responsibleIds: [responsible.id],
       };
 
-      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
-      toast.success(t("tools:tasks:table:responsible-msg"));
+      await Promise.all(selectedTasks.map(taskId => putTaskId(taskId, body)));
+      toast.success(t('tools:tasks:table:responsible-msg'));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error(t("tools:tasks:table:responsible-error"));
+      toast.error(t('tools:tasks:table:responsible-error'));
     } finally {
       setLoading(false);
       mutateTasks && mutateTasks();
     }
   };
 
-  const changeCreatorTasks = async (creator) => {
+  const changeCreatorTasks = async creator => {
     try {
       setLoading(true);
       const body = {
         createdById: creator.id,
       };
 
-      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
-      toast.success(t("tools:tasks:table:responsible-msg"));
+      await Promise.all(selectedTasks.map(taskId => putTaskId(taskId, body)));
+      toast.success(t('tools:tasks:table:responsible-msg'));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error(t("tools:tasks:table:responsible-error"));
+      toast.error(t('tools:tasks:table:responsible-error'));
     } finally {
       setLoading(false);
       mutateTasks && mutateTasks();
     }
   };
 
-  const changeDeadlineTasks = async (deadline) => {
+  const changeDeadlineTasks = async deadline => {
     try {
       setLoading(true);
 
@@ -291,11 +230,11 @@ const KanbanTasks = () => {
         deadline: getFormatDate(deadline),
       };
 
-      await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
-      toast.success(t("tools:tasks:table:responsible-msg"));
+      await Promise.all(selectedTasks.map(taskId => putTaskId(taskId, body)));
+      toast.success(t('tools:tasks:table:responsible-msg'));
       setSelectedTasks([]);
     } catch (error) {
-      toast.error(t("tools:tasks:table:responsible-error"));
+      toast.error(t('tools:tasks:table:responsible-error'));
     } finally {
       setLoading(false);
       mutateTasks && mutateTasks();
@@ -305,42 +244,42 @@ const KanbanTasks = () => {
   const masiveActions = [
     {
       id: 1,
-      name: t("common:table:checkbox:complete"),
+      name: t('common:table:checkbox:complete'),
       onclick: () => completedTasks(),
     },
     {
       id: 2,
-      name: t("common:table:checkbox:add-observer"),
+      name: t('common:table:checkbox:add-observer'),
       selectUser: true,
-      onclick: (e) => addRelationTasks(e, "observadores"),
+      onclick: e => addRelationTasks(e, 'observadores'),
     },
     {
       id: 3,
-      name: t("common:table:checkbox:add-participant"),
+      name: t('common:table:checkbox:add-participant'),
       selectUser: true,
-      onclick: (e) => addRelationTasks(e, "participantes"),
+      onclick: e => addRelationTasks(e, 'participantes'),
     },
     {
       id: 4,
-      name: t("common:table:checkbox:change-creator"),
+      name: t('common:table:checkbox:change-creator'),
       selectUser: true,
-      onclick: (e) => changeCreatorTasks(e),
+      onclick: e => changeCreatorTasks(e),
     },
     {
       id: 5,
-      name: t("common:table:checkbox:change-deadline"),
+      name: t('common:table:checkbox:change-deadline'),
       selectDate: true,
-      onclick: (e) => changeDeadlineTasks(e),
+      onclick: e => changeDeadlineTasks(e),
     },
     {
       id: 2,
-      name: t("common:table:checkbox:change-responsible"),
+      name: t('common:table:checkbox:change-responsible'),
       selectUser: true,
-      onclick: (e) => changeResponsibleTasks(e),
+      onclick: e => changeResponsibleTasks(e),
     },
     {
       id: 6,
-      name: t("common:table:checkbox:delete"),
+      name: t('common:table:checkbox:delete'),
       onclick: () => deleteTasks(),
     },
   ];
@@ -358,7 +297,7 @@ const KanbanTasks = () => {
       <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
         <div className="overflow-x-auto">
           <div className="grid grid-cols-6 min-w-full w-max gap-2">
-            {items?.map((column) => (
+            {items?.map(column => (
               <Column
                 key={column.id}
                 id={column.id}
@@ -374,11 +313,7 @@ const KanbanTasks = () => {
           </div>
         </div>
 
-        <DragOverlay>
-          {activeId && itemDrag ? (
-            <Card task={itemDrag} minWidthClass="240px" />
-          ) : null}
-        </DragOverlay>
+        <DragOverlay>{activeId && itemDrag ? <Card task={itemDrag} minWidthClass="240px" /> : null}</DragOverlay>
       </DndContext>
     </Fragment>
   );

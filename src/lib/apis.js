@@ -61,7 +61,7 @@ const getCommentPath = (cmrtype) => {
 };
 export const addContactComment = async (body, cmrType) => {
   const url = `${getCommentPath(cmrType)}/comments`;
-  console.log(url, body);
+
   const response = await axios()
     .post(url, body)
     .catch((error) => ({ hasError: true, error }));
@@ -70,7 +70,7 @@ export const addContactComment = async (body, cmrType) => {
 
 export const updateComment = async (body, cmrType, commentId) => {
   const url = `${getCommentPath(cmrType)}/comments/${commentId}`;
-  console.log(url, body);
+
   const response = await axios()
     .put(url, body)
     .catch((error) => ({ hasError: true, ...error }));
@@ -142,7 +142,7 @@ export const getKanbanLeads = async ({ config = {}, filters = {} }) => {
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/sales/crm/leads/kanban?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log({ url });
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -166,7 +166,7 @@ export const uploadLeadTemporalFile = async (body) => {
 };
 export const addManualPolicyToLead = async (body, leadId) => {
   const url = `/sales/crm/leads/poliza/manual/generate/lead/${leadId}`;
-  console.log({ url });
+
   const response = await axios()
     .post(url, body)
     .catch((error) => ({ hasError: true, ...error }));
@@ -294,7 +294,7 @@ export const getAllRefunds = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/reimbursements?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -478,7 +478,7 @@ export const getAllSchedules = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/schedulings?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -558,7 +558,7 @@ export const deleteMeetCommentAttach = async (commentId, data) => {
       data,
     })
     .catch((error) => ({ ...error, hasError: true }));
-  console.log(response);
+
   return response;
 };
 
@@ -590,7 +590,7 @@ export const getPortafolioControlResume = async ({ filters }) => {
 export const getReceiptKanbanByStateId = async (params) => {
   const queries = getQueries(params);
   const url = `/sales/crm/polizas/receipts/kanban?${queries}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, ...error }));
@@ -667,7 +667,7 @@ export const deleteTaskCommentAttach = async (taskCommentId, data) => {
       data,
     })
     .catch((error) => ({ ...error, hasError: true }));
-  console.log(response);
+
   return response;
 };
 
@@ -795,7 +795,7 @@ export const getAllRecruitments = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/agent-management/agent-recruitments?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -814,7 +814,7 @@ export const getAllConnections = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/agent-management/agent-connections?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -825,7 +825,7 @@ export const getAllConnections = async ({
 //#region INTERMEDIARIES
 export const getIntermediaries = async () => {
   const url = `/agent-management/agente-intermediario`;
-  console.log({ url });
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, ...error }));
@@ -920,7 +920,7 @@ export const getAllClaims = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/operations/claims?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, ...error }));
@@ -1093,7 +1093,6 @@ export const postMeet = async (body) => {
 };
 
 export const putMeetById = async (meetingId, body) => {
-  console.log("Updating meet");
   const response = await axios()
     .put(`/agent-management/meetings/${meetingId}`, body)
     .catch((error) => ({ hasError: true, error }));
@@ -1101,7 +1100,6 @@ export const putMeetById = async (meetingId, body) => {
 };
 
 export const deleteFileTaskById = async (taskId, body) => {
-  console.log("Deleting task file", taskId, body);
   const response = await axios()
     .delete(`/tools/tasks/${taskId}/attachments`, { data: body })
     .catch((error) => ({ hasError: true, error }));
@@ -1112,7 +1110,6 @@ export const deleteFileTaskById = async (taskId, body) => {
 };
 
 export const deleteFileMeetById = async (meetingId, body) => {
-  console.log("Deleting meet file", meetingId, body);
   const response = await axios()
     .delete(`/agent-management/meetings/${meetingId}/attachments`, {
       data: body,
@@ -1126,7 +1123,6 @@ export const deleteFileMeetById = async (meetingId, body) => {
 };
 
 export const putTaskIdRelations = async (taskId, body) => {
-  console.log("Updating task relations");
   const response = await axios().put(
     `/tools/tasks/${taskId}/update_relations`,
     body
@@ -1361,6 +1357,11 @@ export const getAllOauth = async (idUser, service) => {
   return response;
 };
 
+export const getGoogleCalendarStatus = async () => {
+  const response = await axios().get(`/calendar/google`);
+  return response;
+};
+
 export const deleteMails = async (idUser) => {
   const response = await axios().delete(`/oauth/email/delete${idUser}`);
   return response;
@@ -1431,7 +1432,7 @@ export const getContactsNeedAttention = async () => {
 
 export const getPoliciesNeedAttention = async () => {
   const response = await axios().get(`/tools/tasks/home/lists/polizas`);
-  console.log(response);
+
   return response;
 };
 
@@ -1499,7 +1500,7 @@ export const getAllTasks = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/tools/tasks/user?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));
@@ -1516,7 +1517,7 @@ export const getAllPolicies = async ({
     .map((key) => `${key}=${config[key]}`)
     .join("&");
   const url = `/sales/crm/polizas?${configParams}${queries.length > 0 ? `&${queries}` : ""}`;
-  console.log(url);
+
   const response = await axios()
     .get(url)
     .catch((error) => ({ hasError: true, error }));

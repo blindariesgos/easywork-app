@@ -1,30 +1,21 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { MenuButton, MenuItem, MenuItems, Menu } from "@headlessui/react";
-import { toast } from "react-toastify";
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import axios from "axios";
-import SliderOverShort from "../../../../../../../components/SliderOverShort";
-import useAppContext from "../../../../../../../context/app/index";
-import {
-  updateLabelId,
-  getAllOauth,
-  deleteTokenGoogle,
-  updateLabelIdRules,
-} from "../../../../../../../lib/apis";
-import Tag from "../../../../../../../components/Tag";
+'use client';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { MenuButton, MenuItem, MenuItems, Menu } from '@headlessui/react';
+import { toast } from 'react-toastify';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import axios from 'axios';
+import SliderOverShort from '../../../../../../../components/SliderOverShort';
+import useAppContext from '../../../../../../../context/app/index';
+import { updateLabelId, getAllOauth, deleteTokenGoogle, updateLabelIdRules } from '../../../../../../../lib/apis';
+import Tag from '../../../../../../../components/Tag';
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
-export default function ModalAddFolders({
-  fetchUserData,
-  fetchData,
-  allOauthPromise,
-}) {
+export default function ModalAddFolders({ fetchUserData, fetchData, allOauthPromise }) {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
@@ -32,15 +23,15 @@ export default function ModalAddFolders({
   const { selectOauth, userData } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectFirst, setSelectFirst] = useState({
-    label: "not specified",
+    label: 'not specified',
     value: null,
   });
   const [selectSecond, setSelectSecond] = useState({
-    label: "not specified",
+    label: 'not specified',
     value: null,
   });
   const [selectThree, setSelectThree] = useState({
-    label: "not specified",
+    label: 'not specified',
     value: null,
   });
 
@@ -48,89 +39,66 @@ export default function ModalAddFolders({
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (params.get("configlabelid") && selectOauth) {
+    if (params.get('configlabelid') && selectOauth) {
       axios
-        .get(
-          `${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/labelId/${session?.data.user.sub}/${selectOauth.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${selectOauth?.access_token}`,
-            },
-          }
-        )
-        .then((labels) => {
-          console.log(labels);
+        .get(`${process.env.NEXT_PUBLIC_API_THIRDPARTY}/gmail/labelId/${session?.data.user.sub}/${selectOauth.id}`, {
+          headers: {
+            Authorization: `Bearer ${selectOauth?.access_token}`,
+          },
+        })
+        .then(labels => {
+          // console.log(labels);
           let updatedLabels = labels.data;
-          if (!params.get("isEdit")) {
-            updatedLabels = labels.data.map((label) => ({
+          if (!params.get('isEdit')) {
+            updatedLabels = labels.data.map(label => ({
               ...label,
-              state: label.type === "system" ? true : false,
+              state: label.type === 'system' ? true : false,
             }));
           } else {
-            updatedLabels = labels.data.map((label) => ({
+            updatedLabels = labels.data.map(label => ({
               ...label,
-              state: userData.labelId.some(
-                (folder) => JSON.parse(folder).mailboxName === label.name
-              ),
+              state: userData.labelId.some(folder => JSON.parse(folder).mailboxName === label.name),
             }));
           }
           setFolderData(updatedLabels);
         });
     }
     setSelectFirst(
-      params.get("isEdit")
+      params.get('isEdit')
         ? {
-            label: folderList.find(
-              (folder) =>
-                folder.value === userData?.labelIdRules?.saveSentFolder
-            )?.label,
-            value: folderList.find(
-              (folder) =>
-                folder.value === userData?.labelIdRules?.saveSentFolder
-            )?.value,
+            label: folderList.find(folder => folder.value === userData?.labelIdRules?.saveSentFolder)?.label,
+            value: folderList.find(folder => folder.value === userData?.labelIdRules?.saveSentFolder)?.value,
           }
         : selectFirst
     );
     setSelectSecond(
-      params.get("isEdit")
+      params.get('isEdit')
         ? {
-            label: folderList.find(
-              (folder) =>
-                folder.value === userData?.labelIdRules?.moveDeletedFolder
-            )?.label,
-            value: folderList.find(
-              (folder) =>
-                folder.value === userData?.labelIdRules?.moveDeletedFolder
-            )?.value,
+            label: folderList.find(folder => folder.value === userData?.labelIdRules?.moveDeletedFolder)?.label,
+            value: folderList.find(folder => folder.value === userData?.labelIdRules?.moveDeletedFolder)?.value,
           }
         : selectSecond
     );
     setSelectThree(
-      params.get("isEdit")
+      params.get('isEdit')
         ? {
-            label: folderList.find(
-              (folder) =>
-                folder.value === userData?.labelIdRules?.moveSpamFolder
-            )?.label,
-            value: folderList.find(
-              (folder) =>
-                folder.value === userData?.labelIdRules?.moveSpamFolder
-            )?.value,
+            label: folderList.find(folder => folder.value === userData?.labelIdRules?.moveSpamFolder)?.label,
+            value: folderList.find(folder => folder.value === userData?.labelIdRules?.moveSpamFolder)?.value,
           }
         : selectThree
     );
-  }, [params.get("configlabelid"), selectOauth, userData]);
+  }, [params.get('configlabelid'), selectOauth, userData]);
 
   async function deleteOauth() {
     try {
       await deleteTokenGoogle(session?.data.user.sub, selectOauth.id, null);
-      router.push("/tools/mails?userdeleted=true");
+      router.push('/tools/mails?userdeleted=true');
     } catch (error) {}
   }
 
   async function saveFoldersData() {
     const folders = [];
-    folderData?.forEach((element) => {
+    folderData?.forEach(element => {
       if (element.state) {
         folders.push({
           imapFolderId: element.id,
@@ -146,108 +114,108 @@ export default function ModalAddFolders({
     };
     await updateLabelId(selectOauth?.usergoogle_id, folders);
     await updateLabelIdRules(selectOauth?.usergoogle_id, labelIdRules);
-    if (!params.get("isEdit")) {
-      toast.success("Conexión con éxito");
-      router.push("/tools/webmail?configlabelid=false");
+    if (!params.get('isEdit')) {
+      toast.success('Conexión con éxito');
+      router.push('/tools/webmail?configlabelid=false');
       fetchData(true);
       allOauthPromise();
     } else {
       fetchUserData();
-      toast.success("Carpetas actualizadas");
+      toast.success('Carpetas actualizadas');
     }
   }
 
   const folderList = [
     {
-      value: "INBOX",
-      label: "Recibidos",
+      value: 'INBOX',
+      label: 'Recibidos',
     },
     {
-      value: "CHAT",
-      label: "Chats",
+      value: 'CHAT',
+      label: 'Chats',
     },
     {
-      value: "ALL",
-      label: "Todos",
+      value: 'ALL',
+      label: 'Todos',
     },
     {
-      value: "SENT",
-      label: "Enviados",
+      value: 'SENT',
+      label: 'Enviados',
     },
     {
-      value: "SAVED",
-      label: "Guardados",
+      value: 'SAVED',
+      label: 'Guardados',
     },
     {
-      value: "SPAM",
-      label: "Spam",
+      value: 'SPAM',
+      label: 'Spam',
     },
     {
-      value: "TRASH",
-      label: "Papelera",
+      value: 'TRASH',
+      label: 'Papelera',
     },
     {
-      value: "DRAFT",
-      label: "Borradores",
+      value: 'DRAFT',
+      label: 'Borradores',
     },
     {
-      value: "CATEGORY_FORUMS",
-      label: "Foros",
+      value: 'CATEGORY_FORUMS',
+      label: 'Foros',
     },
     {
-      value: "CATEGORY_UPDATES",
-      label: "Actualizaciones",
+      value: 'CATEGORY_UPDATES',
+      label: 'Actualizaciones',
     },
     {
-      value: "CATEGORY_PERSONAL",
-      label: "Personal",
+      value: 'CATEGORY_PERSONAL',
+      label: 'Personal',
     },
     {
-      value: "CATEGORY_PROMOTIONS",
-      label: "Promociones",
+      value: 'CATEGORY_PROMOTIONS',
+      label: 'Promociones',
     },
     {
-      value: "CATEGORY_SOCIAL",
-      label: "Social",
+      value: 'CATEGORY_SOCIAL',
+      label: 'Social',
     },
     {
-      value: "STARRED",
-      label: "Destacados",
+      value: 'STARRED',
+      label: 'Destacados',
     },
     {
-      value: "IMPORTANT",
-      label: "Importantes",
+      value: 'IMPORTANT',
+      label: 'Importantes',
     },
     {
-      value: "UNREAD",
-      label: "No leído",
+      value: 'UNREAD',
+      label: 'No leído',
     },
   ];
 
   const folderListShort = [
     {
-      value: "INBOX",
-      label: "Recibidos",
+      value: 'INBOX',
+      label: 'Recibidos',
     },
     {
-      value: "ALL",
-      label: "Todos",
+      value: 'ALL',
+      label: 'Todos',
     },
     {
-      value: "SENT",
-      label: "Enviados",
+      value: 'SENT',
+      label: 'Enviados',
     },
     {
-      value: "TRASH",
-      label: "Papelera",
+      value: 'TRASH',
+      label: 'Papelera',
     },
     {
-      value: "SPAM",
-      label: "Spam",
+      value: 'SPAM',
+      label: 'Spam',
     },
     {
-      value: "IMPORTANT",
-      label: "Importantes",
+      value: 'IMPORTANT',
+      label: 'Importantes',
     },
   ];
 
@@ -256,7 +224,7 @@ export default function ModalAddFolders({
   };
 
   return (
-    <SliderOverShort openModal={params.get("configlabelid") === "true"}>
+    <SliderOverShort openModal={params.get('configlabelid') === 'true'}>
       <Tag onclick={() => closeModal()} className="bg-easywork-main" />
       <div className="bg-gray-300 max-md:w-screen w-96 rounded-l-2xl overflow-y-auto h-screen">
         <div className="m-3 pl-5 font-medium text-lg">
@@ -274,17 +242,16 @@ export default function ModalAddFolders({
                     <div className="flex mt-4 ml-2" key={index}>
                       <input
                         type="checkbox"
-                        disabled={item.mailboxName === "INBOX"}
+                        disabled={item.mailboxName === 'INBOX'}
                         checked={item.state}
                         style={
                           item.state
                             ? {
-                                backgroundColor:
-                                  "rgb(38 34 97 / var(--tw-bg-opacity))",
+                                backgroundColor: 'rgb(38 34 97 / var(--tw-bg-opacity))',
                               }
-                            : { backgroundColor: "white" }
+                            : { backgroundColor: 'white' }
                         }
-                        onChange={(e) => {
+                        onChange={e => {
                           const newFolderData = [...folderData];
                           newFolderData[index] = {
                             ...newFolderData[index],
@@ -293,50 +260,25 @@ export default function ModalAddFolders({
                           setFolderData(newFolderData);
                         }}
                       />
-                      <p className="ml-1">
-                        {item.name &&
-                        folderList.find((folder) => folder.value === item.name)
-                          ?.label
-                          ? folderList.find(
-                              (folder) => folder.value === item.name
-                            )?.label
-                          : item.name}
-                      </p>
+                      <p className="ml-1">{item.name && folderList.find(folder => folder.value === item.name)?.label ? folderList.find(folder => folder.value === item.name)?.label : item.name}</p>
                     </div>
                   );
                 })}
               </div>
               <div className="m-3 text-xs my-4 w-80">
-                <h1 className="font-medium text-lg border-b-4 border-black pb-1">
-                  Reglas de carpeta
-                </h1>
+                <h1 className="font-medium text-lg border-b-4 border-black pb-1">Reglas de carpeta</h1>
                 <Menu as="div" className="flex items-center relative">
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
-                      Save sent emails to folder{" "}
-                      <span className="text-cyan-500">
-                        {selectFirst.label
-                          ? selectFirst.label
-                          : "not specified"}
-                      </span>
+                      Save sent emails to folder <span className="text-cyan-500">{selectFirst.label ? selectFirst.label : 'not specified'}</span>
                     </p>
                   </MenuButton>
-                  <MenuItems
-                    transition
-                    anchor="bottom end"
-                    className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                  >
+                  <MenuItems transition anchor="bottom end" className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {folderListShort?.map((item, index) => {
                       return (
                         <MenuItem key={index}>
                           {({ active }) => (
-                            <div
-                              onClick={() => setSelectFirst(item)}
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                              )}
-                            >
+                            <div onClick={() => setSelectFirst(item)} className={classNames(active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-black cursor-pointer')}>
                               {item.label}
                             </div>
                           )}
@@ -348,30 +290,15 @@ export default function ModalAddFolders({
                 <Menu as="div" className="flex items-center relative">
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
-                      Move deleted emails to folder{" "}
-                      <span className="text-cyan-500">
-                        {selectSecond.label
-                          ? selectSecond.label
-                          : "not specified"}
-                      </span>
+                      Move deleted emails to folder <span className="text-cyan-500">{selectSecond.label ? selectSecond.label : 'not specified'}</span>
                     </p>
                   </MenuButton>
-                  <MenuItems
-                    transition
-                    anchor="bottom end"
-                    className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                  >
+                  <MenuItems transition anchor="bottom end" className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {folderListShort?.map((item, index) => {
                       return (
                         <MenuItem key={index}>
                           {({ active }) => (
-                            <div
-                              onClick={() => setSelectSecond(item)}
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                              )}
-                            >
+                            <div onClick={() => setSelectSecond(item)} className={classNames(active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-black cursor-pointer')}>
                               {item.label}
                             </div>
                           )}
@@ -383,30 +310,15 @@ export default function ModalAddFolders({
                 <Menu as="div" className="flex items-center relative">
                   <MenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <p className="p-2">
-                      Move spam to folder{" "}
-                      <span className="text-cyan-500">
-                        {selectThree.label
-                          ? selectThree.label
-                          : "not specified"}
-                      </span>
+                      Move spam to folder <span className="text-cyan-500">{selectThree.label ? selectThree.label : 'not specified'}</span>
                     </p>
                   </MenuButton>
-                  <MenuItems
-                    transition
-                    anchor="bottom end"
-                    className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none"
-                  >
+                  <MenuItems transition anchor="bottom end" className="z-50 w-64 rounded-md bg-white py-2 shadow-lg focus:outline-none">
                     {folderListShort?.map((item, index) => {
                       return (
                         <MenuItem key={index}>
                           {({ active }) => (
-                            <div
-                              onClick={() => setSelectThree(item)}
-                              className={classNames(
-                                active ? "bg-gray-50" : "",
-                                "block px-3 py-1 text-sm leading-6 text-black cursor-pointer"
-                              )}
-                            >
+                            <div onClick={() => setSelectThree(item)} className={classNames(active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-black cursor-pointer')}>
                               {item.label}
                             </div>
                           )}
@@ -417,41 +329,21 @@ export default function ModalAddFolders({
                 </Menu>
               </div>
               <div className="flex justify-end">
-                <button
-                  type="button"
-                  className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
-                  onClick={() => closeModal()}
-                >
+                <button type="button" className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => closeModal()}>
                   Cancelar
                 </button>
-                <button
-                  type="button"
-                  className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md mx-2"
-                  onClick={() => saveFoldersData()}
-                >
+                <button type="button" className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md mx-2" onClick={() => saveFoldersData()}>
                   Guardar
                 </button>
-                <Dialog
-                  open={isOpen}
-                  onClose={() => setIsOpen(false)}
-                  className="relative z-50"
-                >
+                <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
                   <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
                     <DialogPanel className="max-w-lg space-y-4 rounded-md flex flex-col items-center bg-white p-8 w-full">
-                      <DialogTitle className="font-bold">
-                        ¿Desea deshabilitar email de su cuenta Easywork?
-                      </DialogTitle>
+                      <DialogTitle className="font-bold">¿Desea deshabilitar email de su cuenta Easywork?</DialogTitle>
                       <div className="w-full flex justify-center">
-                        <button
-                          onClick={() => setIsOpen(false)}
-                          className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md"
-                        >
+                        <button onClick={() => setIsOpen(false)} className="hover:bg-gray-800 bg-gray-700 text-white font-bold py-2 px-4 rounded-md">
                           Cancel
                         </button>
-                        <button
-                          onClick={() => deleteOauth(true)}
-                          className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md ml-2"
-                        >
+                        <button onClick={() => deleteOauth(true)} className="hover:bg-primaryhover bg-primary text-white font-bold py-2 px-4 rounded-md ml-2">
                           Inhabilitar
                         </button>
                       </div>

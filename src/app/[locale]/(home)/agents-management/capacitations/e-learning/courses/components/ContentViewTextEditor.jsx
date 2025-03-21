@@ -224,8 +224,6 @@ const ContentViewTextEditor = forwardRef(({ value, onChange, className, onChange
     setInternalImages(imagesWithUrls);
   };
 
-  console.log(value);
-
   return (
     <div className="relative">
       <ReactQuill

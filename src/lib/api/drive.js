@@ -1,49 +1,49 @@
-"use server";
-import axios from "../axios";
+'use server';
+import axios from '../axios';
 
 export const getExplorer = async (config, filters, id) => {
   const filterQueries = Object.keys(filters)
-    .filter((key) => filters[key].length > 0)
-    .map((key) => `${key}=${filters[key]}`)
-    .join("&");
+    .filter(key => filters[key].length > 0)
+    .map(key => `${key}=${filters[key]}`)
+    .join('&');
   const queries = Object.keys(config)
-    .map((key) => `${key}=${config[key]}`)
-    .join("&");
-  const url = `/folders/explorer?${queries}${id ? `&fid=${id}` : ""}${filterQueries.length > 0 ? `&${filterQueries}` : ""}`;
+    .map(key => `${key}=${config[key]}`)
+    .join('&');
+  const url = `/folders/explorer?${queries}${id ? `&fid=${id}` : ''}${filterQueries.length > 0 ? `&${filterQueries}` : ''}`;
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .get(url)
-    .catch((error) => ({ hasError: true, ...error }));
-  console.log("Response", response);
-  console.log(process.env.NEXT_PUBLIC_API_DRIVE_HOST);
+    .catch(error => ({ hasError: true, ...error }));
+  // console.log('Response', response);
+  // console.log(process.env.NEXT_PUBLIC_API_DRIVE_HOST);
   return response;
 };
 
-export const getFolder = async (id) => {
+export const getFolder = async id => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .get(`/folders/${id}`)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
-export const getFoldersByContact = async (id) => {
+export const getFoldersByContact = async id => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .get(`/folders/by-contact/${id}`)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
-export const createFolder = async (data) => {
+export const createFolder = async data => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .post(`/folders`, data)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -52,7 +52,7 @@ export const updateFolder = async (id, data) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(`/folders/${id}`, data)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -61,27 +61,27 @@ export const renameFolder = async (id, data) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(`/folders/${id}/rename`, data)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
 export const copyItem = async (itemType, id, data, destinationId) => {
-  const url = `/${itemType}/${id}/copy${destinationId ? `?destinationId=${destinationId}` : ""}`;
+  const url = `/${itemType}/${id}/copy${destinationId ? `?destinationId=${destinationId}` : ''}`;
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(url, data)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
 export const moveItem = async (itemType, id, destinationId) => {
-  const url = `/${itemType}/${id}/move${destinationId ? `?destinationId=${destinationId}` : ""}`;
+  const url = `/${itemType}/${id}/move${destinationId ? `?destinationId=${destinationId}` : ''}`;
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(url)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -90,17 +90,17 @@ export const renameFile = async (id, data) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(`/files/${id}/rename`, data)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
 export const uploadFiles = async (folderId, data) => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-    contentType: "multipart/form-data",
+    contentType: 'multipart/form-data',
   })
     .post(`/files/upload?folderId=${folderId}`, data)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -110,7 +110,7 @@ export const deleteItem = async (type, id) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .delete(url)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -120,7 +120,7 @@ export const assignCRMContact = async (folderId, contactId) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(url)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -129,27 +129,27 @@ export const getUserSignatures = async () => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .get(`/files/signatures?limit=15&page=1`)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
-export const deleteUserSignatures = async (id) => {
+export const deleteUserSignatures = async id => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .delete(`/files/signatures/${id}`)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
-export const postUserSignatures = async (formData) => {
-  console.log(formData);
+export const postUserSignatures = async formData => {
+  // console.log(formData);
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-    contentType: "multipart/form-data",
+    contentType: 'multipart/form-data',
   })
     .post(`/files/signatures`, formData)
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
@@ -158,27 +158,27 @@ export const putUserSignatures = async (metadata, edit) => {
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .put(`/files/signatures/${edit}/metadata`, { metadata })
-    .catch((error) => error);
+    .catch(error => error);
   return response;
 };
 
-export const getUserSignature = async (edit) => {
-  console.log(edit);
+export const getUserSignature = async edit => {
+  // console.log(edit);
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
   })
     .get(`/files/signatures/${edit}`)
-    .catch((error) => error);
-  console.log(response);
+    .catch(error => error);
+  // console.log(response);
   return response;
 };
 
-export const uploadTemporalFile = async (data) => {
+export const uploadTemporalFile = async data => {
   const response = await axios({
     baseURL: process.env.NEXT_PUBLIC_API_DRIVE_HOST,
-    contentType: "multipart/form-data",
+    contentType: 'multipart/form-data',
   })
     .post(`/files/temp`, data)
-    .catch((error) => ({ hasError: true, error }));
+    .catch(error => ({ hasError: true, error }));
   return response;
 };

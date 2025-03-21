@@ -97,7 +97,7 @@ export const OnboardingForm = ({ token, linkId, requestEmail }) => {
   };
 
   const saveUser = async data => {
-    console.log('🚀 ~ OnboardingForm ~ data:', { ...data, token, linkId });
+    // console.log('🚀 ~ OnboardingForm ~ data:', { ...data, token, linkId });
     setIsSubmitting(true);
 
     try {

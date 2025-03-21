@@ -6,7 +6,6 @@ export const useCourseFolders = () => {
 
   const createCourseFolder = useCallback(
     async (data, options = {}) => {
-      console.log(data);
       return await request(`/course-folders`, { data, method: 'POST', ...options });
     },
     [request]

@@ -155,7 +155,7 @@ const AddPolicyWithReader = ({
     const response = await getMetadataUrl[type](formData, contactId).catch(
       (error) => console.log({ error })
     );
-    console.log(response);
+    // console.log(response);
 
     if (response?.hasError) {
       if (Array.isArray(response?.error?.message)) {
@@ -329,11 +329,11 @@ const AddPolicyWithReader = ({
     ) {
       body.beneficiaries = beneficiaries;
     }
-    console.log({ body });
+    // console.log({ body });
 
     try {
       const response = await addPolicyUrl[type](body, contactId);
-      console.log({ response });
+      // console.log({ response });
       if (response?.hasError) {
         handleFrontError(response);
         setLoading(false);
@@ -413,7 +413,6 @@ const AddPolicyWithReader = ({
                       <IoMdCloseCircleOutline
                         className="w-6 h-6 hidden absolute top-0 left-[calc(50%_+_20px)] group-hover:block cursor-pointer"
                         onClick={() => {
-                          console.log("aqu");
                           handleReset();
                         }}
                       />

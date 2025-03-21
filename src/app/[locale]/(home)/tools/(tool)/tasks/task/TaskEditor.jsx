@@ -185,7 +185,7 @@ export default function TaskEditor({ edit, copy, subtask }) {
       listField,
       t
     );
-    console.log({ body });
+    // console.log({ body });
     try {
       setLoading(true);
       if (edit) {
@@ -809,9 +809,9 @@ const buildTaskBody = (
   body.deadline = getFormatDate(data.limitDate ?? data.endDate) ?? null;
   body.startTime = getFormatDate(data.startDate) ?? null;
 
-  console.log("body", body);
-  console.log(data.limitDate);
-  console.log(data.endDate);
+  // console.log("body", body);
+  // console.log(data.limitDate);
+  // console.log(data.endDate);
 
   return body;
 };

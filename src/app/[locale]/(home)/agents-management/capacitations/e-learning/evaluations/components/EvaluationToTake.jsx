@@ -67,7 +67,6 @@ export const EvaluationToTake = ({ evaluationId }) => {
 
     try {
       const result = await finalizeEvaluation(evaluationAttempt.id, evaluationAttempt);
-      console.log('🚀 ~ onFinishEvaluation ~ result:', result);
       setEvaluationAttempt({ ...result });
     } catch (error) {
     } finally {

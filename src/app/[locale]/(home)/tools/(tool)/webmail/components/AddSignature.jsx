@@ -1,33 +1,25 @@
-"use client";
-import { Fragment, useRef, useState, useEffect } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { Range, getTrackBackground } from "react-range";
-import { useSession } from "next-auth/react";
-import { useTranslation } from "react-i18next";
-import Tag from "../../../../../../../components/Tag";
-import { useRouter, useSearchParams } from "next/navigation";
-import { getTokenGoogle, getAllOauth } from "../../../../../../../lib/apis";
-import { toast } from "react-toastify";
-import { CameraIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import {
-  postUserSignatures,
-  putUserSignatures,
-  getUserSignature,
-} from "@/src/lib/api/drive";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
-import "./styles.css";
+'use client';
+import { Fragment, useRef, useState, useEffect } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { Range, getTrackBackground } from 'react-range';
+import { useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
+import Tag from '../../../../../../../components/Tag';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getTokenGoogle, getAllOauth } from '../../../../../../../lib/apis';
+import { toast } from 'react-toastify';
+import { CameraIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { postUserSignatures, putUserSignatures, getUserSignature } from '@/src/lib/api/drive';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+import './styles.css';
 
-export default function AddSignature({
-  previousModalPadding,
-  subLabelTag,
-  userData,
-}) {
+export default function AddSignature({ previousModalPadding, subLabelTag, userData }) {
   const { t } = useTranslation();
   const session = useSession();
   const router = useRouter();
-  const [label, setLabel] = useState("");
-  const [subLabel, setSubLabel] = useState("");
-  const [user, setUser] = useState("");
+  const [label, setLabel] = useState('');
+  const [subLabel, setSubLabel] = useState('');
+  const [user, setUser] = useState('');
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const fileInputRef = useRef(null);
@@ -47,16 +39,14 @@ export default function AddSignature({
   };
 
   function allOauthPromise() {
-    getAllOauth(session?.data.user.sub, "Gmail").then((res) => {
+    getAllOauth(session?.data.user.sub, 'Gmail').then(res => {
       let newArray = [];
-      res.forEach((element) => {
+      res.forEach(element => {
         newArray.push({ email: element.email, state: false });
       });
       if (isEdit) {
-        newArray.forEach((element) => {
-          const foundItem = isEdit.metadata.senders.find(
-            (item) => item.email === element.email
-          );
+        newArray.forEach(element => {
+          const foundItem = isEdit.metadata.senders.find(item => item.email === element.email);
           if (foundItem) {
             element.state = foundItem.state;
           }
@@ -67,13 +57,13 @@ export default function AddSignature({
   }
 
   useEffect(() => {
-    console.log(params.get("addsignature"));
-    if (params.get("addsignature") == "true") allOauthPromise();
-  }, [params.get("addsignature"), isEdit]);
+    // console.log(params.get("addsignature"));
+    if (params.get('addsignature') == 'true') allOauthPromise();
+  }, [params.get('addsignature'), isEdit]);
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = async event => {
     const file = event.target.files[0];
-    const blob = new Blob([file], { type: "text/plain" });
+    const blob = new Blob([file], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     setArchive({ blob: url, file });
   };
@@ -85,19 +75,19 @@ export default function AddSignature({
       size: values[0],
     };
     const formData = new FormData();
-    formData.append("file", archive.file);
-    formData.append("metadata", JSON.stringify(metadata));
-    formData.append("size", values);
+    formData.append('file', archive.file);
+    formData.append('metadata', JSON.stringify(metadata));
+    formData.append('size', values);
 
     try {
       const response = await postUserSignatures(formData);
       if (response) {
-        toast.success("Firma cargada");
+        toast.success('Firma cargada');
         back();
       }
       return response;
     } catch (error) {
-      console.error("Error uploading signature:", error);
+      console.error('Error uploading signature:', error);
     }
   };
 
@@ -109,7 +99,7 @@ export default function AddSignature({
     };
 
     try {
-      const response = await putUserSignatures(metadata, params.get("isEdit"));
+      const response = await putUserSignatures(metadata, params.get('isEdit'));
       if (response) {
         back();
       }
@@ -122,7 +112,7 @@ export default function AddSignature({
   const getSignature = async () => {
     setLoading(true);
     try {
-      const response = await getUserSignature(params.get("isEdit"));
+      const response = await getUserSignature(params.get('isEdit'));
       if (response) {
         setIsEdit(response);
         setValues([response.metadata.size]);
@@ -134,11 +124,11 @@ export default function AddSignature({
   };
 
   useEffect(() => {
-    getTokenGoogle(session?.data.user.sub).then((res) => {
+    getTokenGoogle(session?.data.user.sub).then(res => {
       setUser(res);
     });
-    if (params.get("isEdit")) getSignature();
-  }, [params.get("addsignature")]);
+    if (params.get('isEdit')) getSignature();
+  }, [params.get('addsignature')]);
 
   const back = () => {
     router.back();
@@ -147,7 +137,7 @@ export default function AddSignature({
   };
 
   return (
-    <Transition.Root show={params.get("addsignature")} as={Fragment}>
+    <Transition.Root show={params.get('addsignature')} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>
         <div className="fixed inset-0" />
         <div className="fixed inset-0 overflow-hidden">
@@ -163,29 +153,14 @@ export default function AddSignature({
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel
-                  className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}
-                >
+                <Dialog.Panel className={`pointer-events-auto w-screen drop-shadow-lg ${previousModalPadding}`}>
                   <div className="flex justify-end h-screen">
                     <div className={`flex flex-col`}>
-                      <Tag
-                        title={label}
-                        onclick={() => back()}
-                        className="bg-easywork-main"
-                      />
-                      {subLabelTag && (
-                        <Tag
-                          title={subLabel}
-                          className="bg-easywork-main pl-2"
-                          closeIcon
-                          second
-                        />
-                      )}
+                      <Tag title={label} onclick={() => back()} className="bg-easywork-main" />
+                      {subLabelTag && <Tag title={subLabel} className="bg-easywork-main pl-2" closeIcon second />}
                     </div>
                     <div className="bg-gray-300 max-md:w-screen rounded-l-2xl overflow-y-auto h-screen p-7 md:w-3/4 lg:w-4/6">
-                      <h1 className="text-lg inline-block align-middle ml-5">
-                        {isEdit ? "Editar" : "Agregar"} Firma
-                      </h1>
+                      <h1 className="text-lg inline-block align-middle ml-5">{isEdit ? 'Editar' : 'Agregar'} Firma</h1>
                       <div className="mb-3 mt-3">
                         {archive?.blob || isEdit ? (
                           <>
@@ -195,32 +170,32 @@ export default function AddSignature({
                               min={MIN}
                               max={MAX}
                               rtl={rtl}
-                              onChange={(values) => setValues(values)}
+                              onChange={values => setValues(values)}
                               renderTrack={({ props, children }) => (
                                 <div
                                   onMouseDown={props.onMouseDown}
                                   onTouchStart={props.onTouchStart}
                                   style={{
                                     ...props.style,
-                                    height: "36px",
-                                    display: "flex",
-                                    width: "100%",
+                                    height: '36px',
+                                    display: 'flex',
+                                    width: '100%',
                                   }}
                                 >
                                   <div
                                     ref={props.ref}
                                     style={{
-                                      height: "5px",
-                                      width: "100%",
-                                      borderRadius: "4px",
+                                      height: '5px',
+                                      width: '100%',
+                                      borderRadius: '4px',
                                       background: getTrackBackground({
                                         values,
-                                        colors: ["#262261", "#ccc"],
+                                        colors: ['#262261', '#ccc'],
                                         min: MIN,
                                         max: MAX,
                                         rtl,
                                       }),
-                                      alignSelf: "center",
+                                      alignSelf: 'center',
                                     }}
                                   >
                                     {children}
@@ -233,23 +208,21 @@ export default function AddSignature({
                                   key={props.key}
                                   style={{
                                     ...props.style,
-                                    height: "42px",
-                                    width: "42px",
-                                    borderRadius: "4px",
-                                    backgroundColor: "#FFF",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    boxShadow: "0px 2px 6px #AAA",
+                                    height: '42px',
+                                    width: '42px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#FFF',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    boxShadow: '0px 2px 6px #AAA',
                                   }}
                                 >
                                   <div
                                     style={{
-                                      height: "16px",
-                                      width: "5px",
-                                      backgroundColor: isDragged
-                                        ? "#262261"
-                                        : "#CCC",
+                                      height: '16px',
+                                      width: '5px',
+                                      backgroundColor: isDragged ? '#262261' : '#CCC',
                                     }}
                                   />
                                 </div>
@@ -257,19 +230,9 @@ export default function AddSignature({
                             />
                             <p className="w-full text-center">{values} px</p>
                             <div className="relative">
-                              <img
-                                className={`max-w-full my-3 relative`}
-                                style={{ width: Number(values) }}
-                                src={isEdit ? isEdit.url : archive?.blob}
-                                alt="add image"
-                              />
+                              <img className={`max-w-full my-3 relative`} style={{ width: Number(values) }} src={isEdit ? isEdit.url : archive?.blob} alt="add image" />
                               {!isEdit && (
-                                <button
-                                  className="bg-easywork-main text-white p-1 rounded-full cursor-pointer absolute -top-2 -left-2"
-                                  onClick={() =>
-                                    setArchive({ blob: null, file: null })
-                                  }
-                                >
+                                <button className="bg-easywork-main text-white p-1 rounded-full cursor-pointer absolute -top-2 -left-2" onClick={() => setArchive({ blob: null, file: null })}>
                                   <XMarkIcon className="w-5 h-5" />
                                 </button>
                               )}
@@ -278,24 +241,13 @@ export default function AddSignature({
                         ) : (
                           <div className="flex justify-between mb-3">
                             <div className="w-full pr-10">
-                              <div
-                                className="bg-gray-50 opacity-50 hover:bg-gray-60 rounded-md ml-3 w-full h-64 flex justify-center items-center cursor-pointer"
-                                onClick={handleFileClick}
-                              >
+                              <div className="bg-gray-50 opacity-50 hover:bg-gray-60 rounded-md ml-3 w-full h-64 flex justify-center items-center cursor-pointer" onClick={handleFileClick}>
                                 <div>
                                   <CameraIcon className="w-15 h-15" />
-                                  <p className="ml-1 text-center font-semibold">
-                                    Subir archivo
-                                  </p>
+                                  <p className="ml-1 text-center font-semibold">Subir archivo</p>
                                 </div>
                               </div>
-                              <input
-                                type="file"
-                                ref={fileInputRef}
-                                style={{ display: "none" }}
-                                onChange={handleFileChange}
-                                accept="image/jpeg, image/png"
-                              />
+                              <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept="image/jpeg, image/png" />
                             </div>
                           </div>
                         )}
@@ -304,32 +256,26 @@ export default function AddSignature({
                             <input
                               type="checkbox"
                               checked={item.state}
-                              onChange={(e) => {
-                                const updatedAllOauth = allOauth.map(
-                                  (existingItem, i) => {
-                                    if (i === index) {
-                                      return {
-                                        ...existingItem,
-                                        state: e.target.checked,
-                                      };
-                                    }
-                                    return existingItem;
+                              onChange={e => {
+                                const updatedAllOauth = allOauth.map((existingItem, i) => {
+                                  if (i === index) {
+                                    return {
+                                      ...existingItem,
+                                      state: e.target.checked,
+                                    };
                                   }
-                                );
+                                  return existingItem;
+                                });
                                 setAllOauth(updatedAllOauth);
                               }}
                             />
-                            <p className="ml-2">
-                              Enlace a remitente {item.email}
-                            </p>
+                            <p className="ml-2">Enlace a remitente {item.email}</p>
                           </div>
                         ))}
                         <button
-                          className={`${archive?.blob || isEdit ? "bg-easywork-main hover:bg-easywork-mainhover" : "bg-gray-50"} text-white px-3 mt-2 py-1 rounded-md ml-3 w-44 cursor-pointer`}
+                          className={`${archive?.blob || isEdit ? 'bg-easywork-main hover:bg-easywork-mainhover' : 'bg-gray-50'} text-white px-3 mt-2 py-1 rounded-md ml-3 w-44 cursor-pointer`}
                           onClick={() => {
-                            archive?.blob
-                              ? uploadSignature()
-                              : updateSignature();
+                            archive?.blob ? uploadSignature() : updateSignature();
                           }}
                         >
                           <p className="ml-1 text-center">Guardar</p>

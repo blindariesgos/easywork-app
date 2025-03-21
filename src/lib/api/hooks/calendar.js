@@ -1,17 +1,16 @@
-"use client";
-import useSWR from "swr";
-import fetcher from "../fetcher";
-import { useSession } from "next-auth/react";
+'use client';
+import useSWR from 'swr';
+import fetcher from '../fetcher';
+import { useSession } from 'next-auth/react';
 
 const getQueries = (filters, userId) => {
-  const getRepitKeys = (key, arr) =>
-    arr.map((item) => `${key}=${item?.id ?? item}`).join("&");
+  const getRepitKeys = (key, arr) => arr.map(item => `${key}=${item?.id ?? item}`).join('&');
 
-  if (Object.keys(filters).length === 0 && !userId) return "";
+  if (Object.keys(filters).length === 0 && !userId) return '';
 
   const getValue = (key, userId) => {
     switch (key) {
-      case "role":
+      case 'role':
         return `${filters[key]}=${userId}`;
       default:
         return `${key}=${filters[key]}`;
@@ -19,16 +18,12 @@ const getQueries = (filters, userId) => {
   };
 
   const filterQueries = Object.keys(filters)
-    .map((key) =>
-      Array.isArray(filters[key])
-        ? getRepitKeys(key, filters[key])
-        : getValue(key, userId)
-    )
-    .join("&");
+    .map(key => (Array.isArray(filters[key]) ? getRepitKeys(key, filters[key]) : getValue(key, userId)))
+    .join('&');
 
-  const userIdQuery = userId ? `userId=${userId}` : "";
+  const userIdQuery = userId ? `userId=${userId}` : '';
 
-  return [filterQueries, userIdQuery].filter(Boolean).join("&");
+  return [filterQueries, userIdQuery].filter(Boolean).join('&');
 };
 
 export const useCalendar = ({ filters = {}, page = 1, limit = 15 }) => {
@@ -36,10 +31,8 @@ export const useCalendar = ({ filters = {}, page = 1, limit = 15 }) => {
   const userId = session?.user?.sub;
 
   const queries = getQueries(filters, userId);
-  const url = `/calendar/events?limit=${limit}&page=${page}${
-    queries.length > 0 ? `&${queries}` : ""
-  }`;
-  console.log(url);
+  const url = `/calendar/events?limit=${limit}&page=${page}${queries.length > 0 ? `&${queries}` : ''}`;
+
   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
 
   return {
@@ -50,11 +43,11 @@ export const useCalendar = ({ filters = {}, page = 1, limit = 15 }) => {
   };
 };
 
-export const useEvent = (id) => {
+export const useEvent = id => {
   const { data: session } = useSession();
   const userId = session?.user?.sub;
 
-  const url = `/calendar/events/${id}?${userId ? `userId=${userId}` : ""}`;
+  const url = `/calendar/events/${id}?${userId ? `userId=${userId}` : ''}`;
   const { data, error, isLoading } = useSWR(url, fetcher);
 
   return {

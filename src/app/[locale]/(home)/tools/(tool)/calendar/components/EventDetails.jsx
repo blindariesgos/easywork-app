@@ -234,7 +234,7 @@ export default function EventDetails({ data, id }) {
       name,
       crm: crm?.map((item) => ({ id: item.id, type: item.type })) || [],
     };
-    console.log(body);
+    // console.log(body);
     if (params.get("oauth")) body.oauth = params.get("oauth");
     body.user = session?.data?.user?.sub;
     try {
@@ -251,7 +251,7 @@ export default function EventDetails({ data, id }) {
         }
       } else {
         const response = await addCalendarEvent(body);
-        console.log(response);
+        // console.log(response);
         if (response.hasError) {
           toast.error(
             "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
@@ -271,11 +271,11 @@ export default function EventDetails({ data, id }) {
   useEffect(() => {
     const subscription = watch((data, { name }) => {
       if (name === "startTime") {
-        console.log(
-          data.startTime,
-          addHours(data.startTime, 1),
-          format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm")
-        );
+        // console.log(
+        //   data.startTime,
+        //   addHours(data.startTime, 1),
+        //   format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm")
+        // );
         setValue(
           "endTime",
           allDay
@@ -289,7 +289,7 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    console.log(watch("reminder"));
+    // console.log(watch("reminder"));
   }, [watch("reminder")]);
 
   useEffect(() => {
@@ -299,7 +299,7 @@ export default function EventDetails({ data, id }) {
       const timezoneValue = timezones.find(
         (timezone) => timezone.value === detectedTimezone
       );
-      console.log(timezoneValue);
+      // console.log(timezoneValue);
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
@@ -333,7 +333,7 @@ export default function EventDetails({ data, id }) {
       );
       setFormLocalization(selectedLocalization);
     }
-    console.log(watch("localization"));
+    // console.log(watch("localization"));
     if (data?.color) setValue("color", data?.color);
     if (data?.important) setValue("important", data?.important);
     if (data?.private) setValue("isPrivate", data?.private);

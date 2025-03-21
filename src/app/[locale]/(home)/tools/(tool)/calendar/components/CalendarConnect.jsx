@@ -36,21 +36,12 @@ export default function CalendarConnect({ googleCalendarStatus, refetchGoogleCal
 
       toast.info('Conectando con Google Calendar...');
       const authUrl = await getGoogleAuthUrl();
-      // const response = await axios.get(`${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session?.data.user.sub}&service=calendar`);
       const oauthWindow = window.open(authUrl, '_blank', 'width=768, height=1024');
 
       const checkWindowClosed = setInterval(async function () {
         if (oauthWindow.closed && params.get('connect')) {
           clearInterval(checkWindowClosed);
 
-          // if (localStorage.getItem('service')) localStorage.removeItem('service');
-
-          // if (localStorage.getItem('connectBuzon')) {
-          //   toast.error('Este email ya está conectado');
-          //   localStorage.removeItem('connectBuzon');
-          // } else {
-          //   getDataNewGoogleUser();
-          // }
           refetchGoogleCalendarStatus();
         }
       }, 1000);
@@ -59,16 +50,6 @@ export default function CalendarConnect({ googleCalendarStatus, refetchGoogleCal
       toast.error('Ha ocurrido un error al intentar conectar el calendario. Por favor intente más tarde');
     }
   }
-
-  // async function getDataNewGoogleUser() {
-  //   try {
-  //     const res = await getAllOauth(session?.data.user.sub, 'Google Calendar');
-  //     // console.log(res);
-  //     setSelectOauth(res.slice(-1).pop());
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   return (
     <SliderOverShort openModal={params.get('connect')}>

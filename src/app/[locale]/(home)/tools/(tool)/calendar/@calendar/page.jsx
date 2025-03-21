@@ -162,7 +162,6 @@ export default function CalendarHome({ children }) {
     <div className="flex flex-col flex-grow">
       <CalendarHeader selectOauth={selectOauth} />
       <CalendarConfig selectOauth={selectOauth} />
-
       <div className="h-full">
         <CalendarToolbar calendarViews={calendarViews} selectedCalendarView={calendarView} onChangeCalendarView={setCalendarView} onConnectRequested={openConnect} />
 

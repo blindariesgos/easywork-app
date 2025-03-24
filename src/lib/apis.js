@@ -1358,6 +1358,11 @@ export const updateUser = async (id, body) => {
   return response;
 };
 
+export const toggleActiveUser = async (id, body) => {
+  const response = await axios().put(`/users/toggle-active/${id}`, body);
+  return response;
+};
+
 export const getUserById = async id => {
   const response = await axios()
     .get(`/users/${id}`)

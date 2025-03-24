@@ -1,23 +1,30 @@
-"use client";
+'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
-import { CalendarContext } from "..";
-import useAppContext from "../app";
-import { useTranslation } from "react-i18next";
-import { useCalendar } from "../../lib/api/hooks/calendar";
-import { policies } from "./mockups";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { CalendarContext } from '..';
+
+import useAppContext from '../app';
+import { useCalendar } from '@/src/lib/api/hooks/calendar';
 
 export default function CalendarContextProvider({ children }) {
   const { t } = useTranslation();
+  const { lists } = useAppContext();
+
+  const [filters, setFilters] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
   const [config, setConfig] = useState({
     page: 1,
     limit: 20,
-    orderBy: "name",
-    order: "DESC",
+    orderBy: 'name',
+    order: 'DESC',
   });
-  const { lists } = useAppContext();
-  const [filters, setFilters] = useState({});
+
   const { data, isLoading, isError, mutate } = useCalendar({ config, filters });
+
   const [filterFields, setFilterFields] = useState();
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [displayFilters, setDisplayFilters] = useState({});
@@ -26,17 +33,17 @@ export default function CalendarContextProvider({ children }) {
   const defaultFilterFields = [
     {
       id: 0,
-      name: t("control:portafolio:receipt:filters:responsible"),
-      type: "select-user",
+      name: t('control:portafolio:receipt:filters:responsible'),
+      type: 'select-user',
       check: true,
-      code: "responsible",
+      code: 'responsible',
     },
     {
       id: 1,
-      name: t("control:portafolio:receipt:filters:expiration-date"),
-      type: "date",
+      name: t('control:portafolio:receipt:filters:expiration-date'),
+      type: 'date',
       check: true,
-      code: "createdAt",
+      code: 'createdAt',
     },
   ];
 
@@ -48,24 +55,18 @@ export default function CalendarContextProvider({ children }) {
     if (value === config.orderBy) {
       newConfig = {
         ...newConfig,
-        order:
-          value !== config.orderBy
-            ? "DESC"
-            : config.order === "ASC"
-              ? "DESC"
-              : "ASC",
+        order: value !== config.orderBy ? 'DESC' : config.order === 'ASC' ? 'DESC' : 'ASC',
       };
     }
     setConfig(newConfig);
   };
 
   useEffect(() => {
-    console.log(data);
     setEvents(
       (data &&
         data.items &&
         data.items.length > 0 &&
-        data.items.map((event) => ({
+        data.items.map(event => ({
           title: event.name,
           start: event.startTime,
           end: event.endTime,
@@ -80,49 +81,47 @@ export default function CalendarContextProvider({ children }) {
     setFilterFields([
       {
         id: 0,
-        name: t("control:portafolio:receipt:filters:responsible"),
-        type: "select-user",
+        name: t('control:portafolio:receipt:filters:responsible'),
+        type: 'select-user',
         check: true,
-        code: "responsible",
+        code: 'responsible',
       },
       {
         id: 1,
-        name: t("control:portafolio:receipt:filters:expiration-date"),
-        type: "date",
+        name: t('control:portafolio:receipt:filters:expiration-date'),
+        type: 'date',
         check: true,
-        code: "createdAt",
+        code: 'createdAt',
       },
       {
         id: 2,
-        name: t("control:portafolio:receipt:filters:client"),
-        type: "select-user",
+        name: t('control:portafolio:receipt:filters:client'),
+        type: 'select-user',
         check: false,
-        code: "client",
+        code: 'client',
       },
       {
         id: 3,
-        name: t("control:portafolio:receipt:filters:rfc"),
-        type: "input",
+        name: t('control:portafolio:receipt:filters:rfc'),
+        type: 'input',
         check: false,
-        code: "rfc",
+        code: 'rfc',
       },
     ]);
   }, [lists?.listContact]);
 
   useEffect(() => {
-    handleChangeConfig("page", 1);
+    handleChangeConfig('page', 1);
   }, [config.limit]);
 
-  const removeFilter = (filterName) => {
+  const removeFilter = filterName => {
     const newFilters = Object.keys(filters)
-      .filter((key) => key !== filterName)
+      .filter(key => key !== filterName)
       .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {});
 
     setFilters(newFilters);
-    setDisplayFilters(
-      displayFilters.filter((filter) => filter.code !== filterName)
-    );
-    const newFilterFields = filterFields.map((field) => {
+    setDisplayFilters(displayFilters.filter(filter => filter.code !== filterName));
+    const newFilterFields = filterFields.map(field => {
       return filterName !== field.code ? field : { ...field, check: false };
     });
     setFilterFields(newFilterFields);
@@ -135,11 +134,11 @@ export default function CalendarContextProvider({ children }) {
       isError,
       mutate,
       page: config.page, // Usa la configuración de la paginación
-      setPage: (value) => handleChangeConfig("page", value),
+      setPage: value => handleChangeConfig('page', value),
       limit: config.limit, // Usa la configuración del límite
-      setLimit: (value) => handleChangeConfig("limit", value),
+      setLimit: value => handleChangeConfig('limit', value),
       orderBy: config.orderBy,
-      setOrderBy: (value) => handleChangeConfig("orderBy", value),
+      setOrderBy: value => handleChangeConfig('orderBy', value),
       order: config.order,
       removeFilter,
       selectedContacts,
@@ -153,23 +152,8 @@ export default function CalendarContextProvider({ children }) {
       defaultFilterFields,
       events,
     }),
-    [
-      data,
-      isLoading,
-      isError,
-      config,
-      selectedContacts,
-      displayFilters,
-      filterFields,
-      filters,
-      defaultFilterFields,
-      events,
-    ]
+    [data, isLoading, isError, config, selectedContacts, displayFilters, filterFields, filters, defaultFilterFields, events]
   );
 
-  return (
-    <CalendarContext.Provider value={values}>
-      {children}
-    </CalendarContext.Provider>
-  );
+  return <CalendarContext.Provider value={values}>{children}</CalendarContext.Provider>;
 }

@@ -1,135 +1,116 @@
-"use client";
-import useAppContext from "../../../../../../../context/app";
-import {
-  DialogTitle,
-  Disclosure,
-  Transition,
-  DisclosureButton,
-  DisclosurePanel,
-} from "@headlessui/react";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  FireIcon,
-} from "@heroicons/react/20/solid";
-import Image from "next/image";
-import { PencilIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-import ComboBox, { ComboBoxWithElement } from "./ComboBox";
-import { timezones } from "../../../../../../../lib/timezones";
-import SelectMenu from "./SelectMenu";
-import { useTranslation } from "react-i18next";
-import * as yup from "yup";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { add, addHours, format, formatISO, parseISO } from "date-fns";
-import ComboBoxMultiSelect from "@/src/components/form/ComboBoxMultiSelect";
-import SelectInput from "@/src/components/form/SelectInput";
-import TextEditor from "@/src/components/TextEditor";
-import CRMMultipleSelectV2 from "@/src/components/form/CRMMultipleSelectV2";
-import RadioGroupColors from "./RadioGroupColors";
-import {
-  getContactId,
-  getLeadById,
-  getPolicyById,
-  getReceiptById,
-  addCalendarEvent,
-  updateCalendarEvent,
-  deleteCalendarEvent,
-  getAgentById,
-} from "@/src/lib/apis";
-import { toast } from "react-toastify";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
-import useCalendarContext from "@/src/context/calendar";
-import { useSession } from "next-auth/react";
+'use client';
+import useAppContext from '../../../../../../../context/app';
+import { DialogTitle, Disclosure, Transition, DisclosureButton, DisclosurePanel } from '@headlessui/react';
+import { ChevronDownIcon, ChevronUpIcon, FireIcon } from '@heroicons/react/20/solid';
+import Image from 'next/image';
+import { PencilIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import ComboBox, { ComboBoxWithElement } from './ComboBox';
+import { timezones } from '../../../../../../../lib/timezones';
+import SelectMenu from './SelectMenu';
+import { useTranslation } from 'react-i18next';
+import * as yup from 'yup';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { add, addHours, format, formatISO, parseISO } from 'date-fns';
+import ComboBoxMultiSelect from '@/src/components/form/ComboBoxMultiSelect';
+import SelectInput from '@/src/components/form/SelectInput';
+import TextEditor from '@/src/components/TextEditor';
+import CRMMultipleSelectV2 from '@/src/components/form/CRMMultipleSelectV2';
+import RadioGroupColors from './RadioGroupColors';
+import { getContactId, getLeadById, getPolicyById, getReceiptById, addCalendarEvent, updateCalendarEvent, deleteCalendarEvent, getAgentById } from '@/src/lib/apis';
+import { toast } from 'react-toastify';
+import LoaderSpinner from '@/src/components/LoaderSpinner';
+// import useCalendarContext from "@/src/context/calendar";
+import { useSession } from 'next-auth/react';
 
-const calendarios = [{ name: "Mi calendario", value: 1 }];
+const calendarios = [{ name: 'Mi calendario', value: 1 }];
 
 const eventLocalizations = [
-  { id: 1, name: "Ninguna", online: true },
-  { id: 2, name: "Casa del cliente", online: true },
-  { id: 3, name: "Central Meeting Room", online: false },
-  { id: 4, name: "East Meeting Room", online: false },
-  { id: 5, name: "Zoom Personal", online: true },
+  { id: 1, name: 'Ninguna', online: true },
+  { id: 2, name: 'Casa del cliente', online: true },
+  { id: 3, name: 'Central Meeting Room', online: false },
+  { id: 4, name: 'East Meeting Room', online: false },
+  { id: 5, name: 'Zoom Personal', online: true },
 ];
 
 export default function EventDetails({ data, id }) {
   const { t } = useTranslation();
   const { lists } = useAppContext();
-  const { mutate } = useCalendarContext();
+  // const { mutate } = useCalendarContext();
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [reminder, setReminder] = useState({
-    name: t("tools:calendar:reminder-options:now"),
+    name: t('tools:calendar:reminder-options:now'),
     id: 1,
     value: 1 * 60000,
   });
-  const [value, setValueText] = useState("<p></p>");
+  const [value, setValueText] = useState('<p></p>');
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const session = useSession();
   const moreRef = useRef();
 
   const repeatOptions = [
-    { name: "No repetir", value: 1, id: "none" },
-    { name: "Diario", value: 2, id: "diario" },
-    { name: "Semanal", value: 3, id: "semanal" },
-    { name: "Mensual", value: 4, id: "mensual" },
-    { name: "Anual", value: 5, id: "anual" },
+    { name: 'No repetir', value: 1, id: 'none' },
+    { name: 'Diario', value: 2, id: 'diario' },
+    { name: 'Semanal', value: 3, id: 'semanal' },
+    { name: 'Mensual', value: 4, id: 'mensual' },
+    { name: 'Anual', value: 5, id: 'anual' },
   ];
 
   const availabilityOptions = [
-    { name: "Ocupado", value: 1, id: "Ocupado" },
-    { name: "Inseguro", value: 2, id: "inseguro" },
-    { name: "Disponible", value: 3, id: "semanal" },
-    { name: "Fuera (Agregar al grafico de ausencias)", value: 4, id: "fuera" },
+    { name: 'Ocupado', value: 1, id: 'Ocupado' },
+    { name: 'Inseguro', value: 2, id: 'inseguro' },
+    { name: 'Disponible', value: 3, id: 'semanal' },
+    { name: 'Fuera (Agregar al grafico de ausencias)', value: 4, id: 'fuera' },
   ];
 
   const reminderOptions = [
     {
-      name: t("tools:calendar:reminder-options:now"),
+      name: t('tools:calendar:reminder-options:now'),
       id: 1,
       value: 1 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:5m"),
+      name: t('tools:calendar:reminder-options:5m'),
       id: 2,
       value: 5 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:10m"),
+      name: t('tools:calendar:reminder-options:10m'),
       id: 3,
       value: 10 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:15m"),
+      name: t('tools:calendar:reminder-options:15m'),
       id: 4,
       value: 15 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:20m"),
+      name: t('tools:calendar:reminder-options:20m'),
       id: 5,
       value: 20 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:30m"),
+      name: t('tools:calendar:reminder-options:30m'),
       id: 6,
       value: 30 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:1h"),
+      name: t('tools:calendar:reminder-options:1h'),
       id: 7,
       value: 60 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:2h"),
+      name: t('tools:calendar:reminder-options:2h'),
       id: 8,
       value: 120 * 60000,
     },
     {
-      name: t("tools:calendar:reminder-options:1d"),
+      name: t('tools:calendar:reminder-options:1d'),
       id: 9,
       value: 1440 * 60000,
     },
@@ -139,7 +120,7 @@ export default function EventDetails({ data, id }) {
     //   value: { days: -1 },
     // },
     {
-      name: t("tools:calendar:reminder-options:-2d"),
+      name: t('tools:calendar:reminder-options:-2d'),
       id: 11,
       value: 2880 * 60000,
     },
@@ -155,9 +136,7 @@ export default function EventDetails({ data, id }) {
   const [timezone, setTimezone] = useState(null);
   const [fromTimezone, setFromTimezone] = useState(false);
   const [calendary, setCalendary] = useState(calendarios[0]);
-  const [formLocalization, setFormLocalization] = useState(
-    eventLocalizations[0]
-  );
+  const [formLocalization, setFormLocalization] = useState(eventLocalizations[0]);
   const [allDay, setAllDay] = useState(false);
   const router = useRouter();
 
@@ -166,13 +145,7 @@ export default function EventDetails({ data, id }) {
     important: yup.boolean(),
     isPrivate: yup.boolean(),
     startTime: yup.date().required(),
-    endTime: yup
-      .date()
-      .required()
-      .min(
-        yup.ref("startTime"),
-        "La fecha de fin debe ser mayor que la fecha de inicio"
-      ),
+    endTime: yup.date().required().min(yup.ref('startTime'), 'La fecha de fin debe ser mayor que la fecha de inicio'),
     participants: yup.array().of(yup.object().shape({})),
     description: yup.string(),
     reminder: yup.object().shape({}),
@@ -191,11 +164,11 @@ export default function EventDetails({ data, id }) {
     watch,
     formState: { isValid, errors },
   } = useForm({
-    mode: "onChange",
+    mode: 'onChange',
     resolver: yupResolver(schema),
   });
 
-  const handleSubmitForm = async (data) => {
+  const handleSubmitForm = async data => {
     setLoading(true);
     const {
       participants,
@@ -213,75 +186,64 @@ export default function EventDetails({ data, id }) {
     } = data;
     let reminderValue;
     if (reminder && reminder?.value) {
-      reminderValue = formatISO(
-        new Date(startTime.getTime()) - reminder?.value
-      );
+      reminderValue = formatISO(new Date(startTime.getTime()) - reminder?.value);
     }
 
     const body = {
-      participantsIds: participants?.map((participant) => participant.id) ?? [],
+      participantsIds: participants?.map(participant => participant.id) ?? [],
       reminder: reminderValue,
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
       timeZone: timezone.value,
       localization: formLocalization.name,
       availability: availability ? availability : availabilityOptions[0].id,
-      description: value ?? "<p></p>",
-      color: color ?? "#141052",
+      description: value ?? '<p></p>',
+      color: color ?? '#141052',
       important: !!important,
       private: !!isPrivate,
-      repeat: repeat ?? "none",
+      repeat: repeat ?? 'none',
       name,
-      crm: crm?.map((item) => ({ id: item.id, type: item.type })) || [],
+      crm: crm?.map(item => ({ id: item.id, type: item.type })) || [],
     };
     // console.log(body);
-    if (params.get("oauth")) body.oauth = params.get("oauth");
+    if (params.get('oauth')) body.oauth = params.get('oauth');
     body.user = session?.data?.user?.sub;
     try {
       if (id) {
         const response = await updateCalendarEvent(body, id);
         if (response.hasError) {
-          toast.error(
-            "Se ha producido un error al editar el evento, inténtelo de nuevo más tarde."
-          );
+          toast.error('Se ha producido un error al editar el evento, inténtelo de nuevo más tarde.');
         } else {
-          toast.success("Evento editado con éxito.");
-          mutate();
+          toast.success('Evento editado con éxito.');
+          // mutate();
           router.back();
         }
       } else {
         const response = await addCalendarEvent(body);
         // console.log(response);
         if (response.hasError) {
-          toast.error(
-            "Se ha producido un error al crear el evento, inténtelo de nuevo más tarde."
-          );
+          toast.error('Se ha producido un error al crear el evento, inténtelo de nuevo más tarde.');
         } else {
-          toast.success("Evento creado con éxito.");
-          mutate();
+          toast.success('Evento creado con éxito.');
+          // mutate();
           router.back();
         }
       }
     } catch {
-      toast.error("Se ha producido un error, inténtelo de nuevo más tarde.");
+      toast.error('Se ha producido un error, inténtelo de nuevo más tarde.');
     }
     setLoading(false);
   };
 
   useEffect(() => {
     const subscription = watch((data, { name }) => {
-      if (name === "startTime") {
+      if (name === 'startTime') {
         // console.log(
         //   data.startTime,
         //   addHours(data.startTime, 1),
         //   format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm")
         // );
-        setValue(
-          "endTime",
-          allDay
-            ? format(data.startTime, "yyyy-MM-dd")
-            : format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm")
-        );
+        setValue('endTime', allDay ? format(data.startTime, 'yyyy-MM-dd') : format(addHours(data.startTime, 1), "yyyy-MM-dd'T'HH:mm"));
       }
     });
 
@@ -290,30 +252,24 @@ export default function EventDetails({ data, id }) {
 
   useEffect(() => {
     // console.log(watch("reminder"));
-  }, [watch("reminder")]);
+  }, [watch('reminder')]);
 
   useEffect(() => {
     if (!data) {
       setIsEdit(true);
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const timezoneValue = timezones.find(
-        (timezone) => timezone.value === detectedTimezone
-      );
+      const timezoneValue = timezones.find(timezone => timezone.value === detectedTimezone);
       // console.log(timezoneValue);
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
       return;
     }
-    if (data?.name) setValue("name", data?.name);
-    if (data?.startTime)
-      setValue("startTime", format(data?.startTime, "yyyy-MM-dd'T'HH:mm"));
-    if (data?.endTime)
-      setValue("endTime", format(data?.endTime, "yyyy-MM-dd'T'HH:mm"));
+    if (data?.name) setValue('name', data?.name);
+    if (data?.startTime) setValue('startTime', format(data?.startTime, "yyyy-MM-dd'T'HH:mm"));
+    if (data?.endTime) setValue('endTime', format(data?.endTime, "yyyy-MM-dd'T'HH:mm"));
     if (data?.timeZone) {
-      const selectedTimeZone = timezones.find(
-        (timezone) => timezone.value === data.timeZone
-      );
+      const selectedTimeZone = timezones.find(timezone => timezone.value === data.timeZone);
       setTimezone(selectedTimeZone);
       setFromTimezone(true);
     }
@@ -321,44 +277,37 @@ export default function EventDetails({ data, id }) {
       const startTime = new Date(data?.startTime);
       const reminderTime = new Date(data.reminder);
       const differenceInMilliseconds = Math.abs(reminderTime - startTime);
-      const reminderOption = reminderOptions.find(
-        (reminderOption) => reminderOption.value === differenceInMilliseconds
-      );
+      const reminderOption = reminderOptions.find(reminderOption => reminderOption.value === differenceInMilliseconds);
       setReminder(reminderOption);
     }
 
     if (data?.localization) {
-      const selectedLocalization = eventLocalizations.find(
-        (eventLocalization) => eventLocalization.name === data.localization
-      );
+      const selectedLocalization = eventLocalizations.find(eventLocalization => eventLocalization.name === data.localization);
       setFormLocalization(selectedLocalization);
     }
     // console.log(watch("localization"));
-    if (data?.color) setValue("color", data?.color);
-    if (data?.important) setValue("important", data?.important);
-    if (data?.private) setValue("isPrivate", data?.private);
+    if (data?.color) setValue('color', data?.color);
+    if (data?.important) setValue('important', data?.important);
+    if (data?.private) setValue('isPrivate', data?.private);
     if (data?.crm)
       setValue(
-        "crm",
+        'crm',
         data?.crm
-          ? data?.crm.map((item) => ({
+          ? data?.crm.map(item => ({
               id: item.id,
-              name: item.crmEntity.name
-                ? item.crmEntity.name
-                : item.crmEntity.fullName,
+              name: item.crmEntity.name ? item.crmEntity.name : item.crmEntity.fullName,
               type: item.type,
               title: item.crmEntity.title ? item.crmEntity.title : undefined,
               username: undefined,
             }))
           : []
       );
-    if (data?.description)
-      setValueText(data?.description ? data?.description : "<p></p>");
+    if (data?.description) setValueText(data?.description ? data?.description : '<p></p>');
     if (data?.participants)
       setValue(
-        "participants",
+        'participants',
         data?.participants
-          ? data?.participants.map((participant) => ({
+          ? data?.participants.map(participant => ({
               avatar: participant.avatar,
               bio: participant.bio,
               email: participant.email,
@@ -379,57 +328,57 @@ export default function EventDetails({ data, id }) {
   }, [data]);
 
   //#region Logica conexion crm
-  const setCrmContact = async (contactId) => {
+  const setCrmContact = async contactId => {
     const response = await getContactId(contactId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "contact",
+        type: 'contact',
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Cliente: ");
+    setValue('name', 'CRM - Cliente: ');
     moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
 
-  const setCrmLead = async (leadId) => {
+  const setCrmLead = async leadId => {
     const response = await getLeadById(leadId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "lead",
+        type: 'lead',
         name: response?.fullName || response?.name,
       },
     ]);
-    setValue("name", "CRM - Prospecto: ");
+    setValue('name', 'CRM - Prospecto: ');
     moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
 
-  const setCrmReceipt = async (receiptId) => {
+  const setCrmReceipt = async receiptId => {
     const response = await getReceiptById(receiptId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "receipt",
+        type: 'receipt',
         name: response?.title,
       },
     ]);
-    setValue("name", "CRM - Recibo: ");
+    setValue('name', 'CRM - Recibo: ');
     moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
-  const setCrmAgent = async (agentId) => {
+  const setCrmAgent = async agentId => {
     const response = await getAgentById(agentId);
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        type: "agent",
+        type: 'agent',
         name: response?.name,
       },
     ]);
-    setValue("name", "CRM - Agente: ");
+    setValue('name', 'CRM - Agente: ');
     moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
@@ -439,67 +388,61 @@ export default function EventDetails({ data, id }) {
       setLoading(false);
       return;
     }
-    setValue("crm", [
+    setValue('crm', [
       {
         id: response?.id,
-        name: `${response?.company?.name ?? ""} ${response?.poliza ?? ""} ${response?.type?.name ?? ""}`,
+        name: `${response?.company?.name ?? ''} ${response?.poliza ?? ''} ${response?.type?.name ?? ''}`,
         type,
       },
     ]);
-    setValue("name", `CRM - ${type == "policy" ? "Póliza" : "Renovación"}: `);
+    setValue('name', `CRM - ${type == 'policy' ? 'Póliza' : 'Renovación'}: `);
     moreRef?.current?.onclick && moreRef?.current?.onclick();
     setLoading(false);
   };
 
   useEffect(() => {
-    const prevId = params.get("prev_id");
+    const prevId = params.get('prev_id');
 
-    if (params.get("prev") === "contact") {
+    if (params.get('prev') === 'contact') {
       setLoading(true);
       setCrmContact(prevId);
       return;
     }
 
-    if (params.get("prev") === "lead") {
+    if (params.get('prev') === 'lead') {
       setLoading(true);
       setCrmLead(prevId);
       return;
     }
 
-    if (["policy", "renewal"].includes(params.get("prev"))) {
+    if (['policy', 'renewal'].includes(params.get('prev'))) {
       setLoading(true);
-      setCrmPolicy(prevId, params.get("prev"));
+      setCrmPolicy(prevId, params.get('prev'));
       return;
     }
 
-    if (params.get("prev") === "receipt") {
+    if (params.get('prev') === 'receipt') {
       setLoading(true);
       setCrmReceipt(prevId);
       return;
     }
 
-    if (params.get("prev") === "agent") {
+    if (params.get('prev') === 'agent') {
       setLoading(true);
       setCrmAgent(prevId);
       return;
     }
-  }, [params.get("prev")]);
+  }, [params.get('prev')]);
   //#endregion
 
   const deleteEvent = async () => {
     try {
-      const response = await deleteCalendarEvent(
-        id,
-        session?.data?.user?.sub,
-        params.get("oauth")
-      );
+      const response = await deleteCalendarEvent(id, session?.data?.user?.sub, params.get('oauth'));
       if (response.hasError) {
-        toast.error(
-          "Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde."
-        );
+        toast.error('Se ha producido un error al eliminar el evento, inténtelo de nuevo más tarde.');
       } else {
-        toast.success("Evento eliminado.");
-        mutate();
+        toast.success('Evento eliminado.');
+        // mutate();
         router.back();
       }
     } catch (error) {
@@ -508,50 +451,36 @@ export default function EventDetails({ data, id }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(handleSubmitForm)}
-      className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] w-full flex-end"
-    >
+    <form onSubmit={handleSubmit(handleSubmitForm)} className="flex h-full flex-col bg-zinc-100 opacity-100 shadow-xl rounded-tl-[35px] rounded-bl-[35px] w-full flex-end">
       {loading && <LoaderSpinner />}
       <div
-        className={clsx("flex-1 min-h-0 flex-col overflow-y-scroll px-6", {
-          "pb-4": !isEdit,
+        className={clsx('flex-1 min-h-0 flex-col overflow-y-scroll px-6', {
+          'pb-4': !isEdit,
         })}
       >
         {/* Header */}
         <div className="bg-transparent py-6 sticky top-0 bg-zinc-100 z-20">
           <div className="flex items-start justify-between gap-x-3">
-            <DialogTitle className="text-2xl font-medium leading-6 text-gray-900">
-              {data
-                ? t("tools:calendar:event")
-                : t("tools:calendar:new-event:new")}
-            </DialogTitle>
+            <DialogTitle className="text-2xl font-medium leading-6 text-gray-900">{data ? t('tools:calendar:event') : t('tools:calendar:new-event:new')}</DialogTitle>
           </div>
         </div>
         {/* Divider container */}
         <div className="gap-y-6 py-1 sm:gap-y-0 sm:divide-y sm:divide-gray-200 sm:py-0 bg-white rounded-xl grid grid-cols-1 ">
           {/* Event name */}
           <div className="flex flex-col sm:flex-row sm:items-center w-full bg-transparent sm:pr-6">
-            <label
-              htmlFor="event-name"
-              className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5 sr-only"
-            >
-              {t("tools:calendar:new-event:name")}
+            <label htmlFor="event-name" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5 sr-only">
+              {t('tools:calendar:new-event:name')}
             </label>
             <div className="sm:col-span-2 flex-grow rounded-t-xl">
               <input
                 type="text"
                 name="name"
                 id="event-name"
-                placeholder={t("tools:calendar:new-event:name")}
-                className={clsx(
-                  "block w-full sm:py-4 border-0 px-2 sm:px-6 text-gray-900 rounded-xl focus:ring-0 placeholder:text-gray-400 sm:text-xl sm:leading-6",
-                  {
-                    "placeholder:text-red-600":
-                      errors?.name && errors?.name?.message,
-                  }
-                )}
-                {...register("name")}
+                placeholder={t('tools:calendar:new-event:name')}
+                className={clsx('block w-full sm:py-4 border-0 px-2 sm:px-6 text-gray-900 rounded-xl focus:ring-0 placeholder:text-gray-400 sm:text-xl sm:leading-6', {
+                  'placeholder:text-red-600': errors?.name && errors?.name?.message,
+                })}
+                {...register('name')}
                 autoComplete="false"
                 disabled={!isEdit}
               />
@@ -574,22 +503,14 @@ export default function EventDetails({ data, id }) {
                   name="important"
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  {...register("important")}
+                  {...register('important')}
                   disabled={!isEdit}
                 />
               </div>
               <div className="ml-3 text-sm leading-6">
-                <label
-                  htmlFor="important"
-                  className="font-light text-gray-900 flex items-center space-x-1.5"
-                >
-                  {t("tools:calendar:new-event:important")}
-                  <FireIcon
-                    className={clsx(
-                      watch("important") ? "text-orange-600" : "text-gray-400",
-                      "h-5 w-5 "
-                    )}
-                  />
+                <label htmlFor="important" className="font-light text-gray-900 flex items-center space-x-1.5">
+                  {t('tools:calendar:new-event:important')}
+                  <FireIcon className={clsx(watch('important') ? 'text-orange-600' : 'text-gray-400', 'h-5 w-5 ')} />
                 </label>
               </div>
             </div>
@@ -598,62 +519,45 @@ export default function EventDetails({ data, id }) {
           {/* Event Time */}
           <div className="gap-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:gap-y-0 sm:px-6 sm:py-5 transition-all duration-500">
             <div className="my-auto">
-              <label
-                htmlFor="project-description"
-                className="block text-sm font-medium leading-6 text-gray-900 my-auto"
-              >
-                {t("tools:calendar:new-event:hour")}
+              <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 my-auto">
+                {t('tools:calendar:new-event:hour')}
               </label>
             </div>
             <div className="sm:col-span-2 flex flex-col">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="w-full">
-                  <label
-                    htmlFor="startTime"
-                    className="block text-xs font-light leading-6 text-gray-900"
-                  >
-                    {t("tools:calendar:new-event:date")}
+                  <label htmlFor="startTime" className="block text-xs font-light leading-6 text-gray-900">
+                    {t('tools:calendar:new-event:date')}
                   </label>
                   <input
-                    type={allDay ? "date" : "datetime-local"}
+                    type={allDay ? 'date' : 'datetime-local'}
                     name="startTime"
                     id="startTime"
                     className={clsx(
-                      "block rounded-md border py-1.5 text-gray-900 w-full shadow-sm border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      { "border-red-600": errors && errors.startTime }
+                      'block rounded-md border py-1.5 text-gray-900 w-full shadow-sm border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                      { 'border-red-600': errors && errors.startTime }
                     )}
-                    {...register("startTime")}
+                    {...register('startTime')}
                     disabled={!isEdit}
                   />
-                  {errors && errors?.startTime && (
-                    <p className="mt-1 text-xs text-red-600">
-                      {errors?.startTime?.message}
-                    </p>
-                  )}
+                  {errors && errors?.startTime && <p className="mt-1 text-xs text-red-600">{errors?.startTime?.message}</p>}
                 </div>
                 <div className="w-full">
-                  <label
-                    htmlFor="endTime"
-                    className="block text-xs font-light leading-6 text-gray-900"
-                  >
-                    {t("tools:calendar:new-event:date-end")}
+                  <label htmlFor="endTime" className="block text-xs font-light leading-6 text-gray-900">
+                    {t('tools:calendar:new-event:date-end')}
                   </label>
                   <input
-                    type={allDay ? "date" : "datetime-local"}
+                    type={allDay ? 'date' : 'datetime-local'}
                     name="endTime"
                     id="endTime"
                     className={clsx(
-                      "block rounded-md border py-1.5 text-gray-900 w-full shadow-sm border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                      { "border-red-600": errors && errors.endTime }
+                      'block rounded-md border py-1.5 text-gray-900 w-full shadow-sm border-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                      { 'border-red-600': errors && errors.endTime }
                     )}
-                    {...register("endTime")}
+                    {...register('endTime')}
                     disabled={!isEdit}
                   />
-                  {errors && errors?.endTime && (
-                    <p className="mt-1 text-xs text-red-600">
-                      {errors?.endTime?.message}
-                    </p>
-                  )}
+                  {errors && errors?.endTime && <p className="mt-1 text-xs text-red-600">{errors?.endTime?.message}</p>}
                 </div>
                 <div className="relative flex items-start mt-2 sm:mt-6 w-full">
                   <div className="flex items-center gap-2 pt-1">
@@ -667,22 +571,16 @@ export default function EventDetails({ data, id }) {
                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                       disabled={!isEdit}
                     />
-                    <label
-                      htmlFor="all-day"
-                      className="font-light text-gray-900 text-sm leading-6"
-                    >
-                      {t("tools:calendar:new-event:all-day")}
+                    <label htmlFor="all-day" className="font-light text-gray-900 text-sm leading-6">
+                      {t('tools:calendar:new-event:all-day')}
                     </label>
                   </div>
                 </div>
               </div>
               <div>
                 <Disclosure>
-                  <DisclosureButton
-                    onClick={() => setFromTimezone(!fromTimezone)}
-                    className="py-2 text-primary underline decoration-dashed underline-offset-4 text-xs hover:decoration-solid"
-                  >
-                    {t("tools:calendar:new-event:time-zone")}
+                  <DisclosureButton onClick={() => setFromTimezone(!fromTimezone)} className="py-2 text-primary underline decoration-dashed underline-offset-4 text-xs hover:decoration-solid">
+                    {t('tools:calendar:new-event:time-zone')}
                   </DisclosureButton>
                   <Transition
                     show={fromTimezone}
@@ -694,12 +592,7 @@ export default function EventDetails({ data, id }) {
                     leaveTo="opacity-0"
                   >
                     <DisclosurePanel className="text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <ComboBox
-                        data={timezones}
-                        selected={timezone}
-                        setSelected={setTimezone}
-                        disabled={!isEdit}
-                      />
+                      <ComboBox data={timezones} selected={timezone} setSelected={setTimezone} disabled={!isEdit} />
                     </DisclosurePanel>
                   </Transition>
                 </Disclosure>
@@ -710,31 +603,20 @@ export default function EventDetails({ data, id }) {
           {/* Event calendario */}
           <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
             <div>
-              <label
-                htmlFor="project-description"
-                className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-              >
-                {t("tools:calendar:name")}
+              <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                {t('tools:calendar:name')}
               </label>
             </div>
             <div className="sm:col-span-2 flex">
-              <ComboBoxWithElement
-                data={calendarios}
-                selected={calendary}
-                setSelected={setCalendary}
-                disabled={!isEdit}
-              />
+              <ComboBoxWithElement data={calendarios} selected={calendary} setSelected={setCalendary} disabled={!isEdit} />
             </div>
           </div>
 
           {/* Event Repeat */}
           <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
             <div>
-              <label
-                htmlFor="project-description"
-                className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-              >
-                {t("tools:calendar:new-event:repeat")}
+              <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                {t('tools:calendar:new-event:repeat')}
               </label>
             </div>
             <div className="sm:col-span-2 flex  sm:divide-y sm:divide-gray-200 justify-start">
@@ -784,18 +666,11 @@ export default function EventDetails({ data, id }) {
           {/* Event localization */}
           <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
             <div>
-              <h3 className="text-sm font-medium leading-6 text-gray-900">
-                {t("tools:calendar:new-event:ubication")}
-              </h3>
+              <h3 className="text-sm font-medium leading-6 text-gray-900">{t('tools:calendar:new-event:ubication')}</h3>
             </div>
             <div className="sm:col-span-2">
               <div className="flex space-x-2">
-                <SelectMenu
-                  data={eventLocalizations}
-                  value={formLocalization}
-                  setValue={setFormLocalization}
-                  disabled={!isEdit}
-                />
+                <SelectMenu data={eventLocalizations} value={formLocalization} setValue={setFormLocalization} disabled={!isEdit} />
               </div>
             </div>
           </div>
@@ -803,25 +678,14 @@ export default function EventDetails({ data, id }) {
           {/* Event Asistants. */}
           <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:items-center sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
             <div>
-              <h3 className="text-sm font-medium leading-6 text-gray-900">
-                {t("tools:calendar:new-event:wizards")}
-              </h3>
+              <h3 className="text-sm font-medium leading-6 text-gray-900">{t('tools:calendar:new-event:wizards')}</h3>
             </div>
             <div className="sm:col-span-2 flex items-center">
               {data && (
                 <div className="flex-shrink-0 max-w-48 hover:opacity-75 inline-flex gap-x-0.5 items-center bg-indigo-100 py-1 px-2 rounded-sm font-medium text-indigo-800">
-                  {data?.createdBy?.avatar && (
-                    <Image
-                      width={32}
-                      height={32}
-                      className="inline-block h-5 w-5 rounded-full"
-                      src={data?.createdBy?.avatar || "/img/avatar.svg"}
-                      alt={"avatar"}
-                    />
-                  )}
+                  {data?.createdBy?.avatar && <Image width={32} height={32} className="inline-block h-5 w-5 rounded-full" src={data?.createdBy?.avatar || '/img/avatar.svg'} alt={'avatar'} />}
                   <p className="text-xs text-zinc-700 ml-1 truncate">
-                    {data?.createdBy?.profile?.firstName}{" "}
-                    {data?.createdBy?.profile?.lastName}
+                    {data?.createdBy?.profile?.firstName} {data?.createdBy?.profile?.lastName}
                   </p>
                 </div>
               )}
@@ -850,67 +714,28 @@ export default function EventDetails({ data, id }) {
         <Disclosure defaultOpen={!!data}>
           {({ open }) => (
             <>
-              <DisclosureButton
-                className="py-2 text-zinc-700 flex items-center text-sm font-medium gap-0.5"
-                ref={moreRef}
-              >
-                {open ? (
-                  <ChevronUpIcon className="h-5 w-5" aria-hidden="true" />
-                ) : (
-                  <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
-                )}
-                <p>{t("tools:calendar:new-event:more")}</p>
+              <DisclosureButton className="py-2 text-zinc-700 flex items-center text-sm font-medium gap-0.5" ref={moreRef}>
+                {open ? <ChevronUpIcon className="h-5 w-5" aria-hidden="true" /> : <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />}
+                <p>{t('tools:calendar:new-event:more')}</p>
                 <p className="font-light ml-2">
-                  (
-                  <span className="hover:underline">
-                    {t("tools:calendar:new-event:description")}
-                  </span>
-                  ,{" "}
-                  <span className="hover:underline">
-                    {t("tools:tasks:new:crm")}
-                  </span>
-                  ,{" "}
-                  <span className="hover:underline">
-                    {t("tools:calendar:new-event:reminder")}
-                  </span>
-                  ,{" "}
-                  <span className="hover:underline">
-                    {t("tools:calendar:new-event:event-color")}
-                  </span>
-                  ,{" "}
-                  <span className="hover:underline">
-                    {t("tools:calendar:new-event:availability")}
-                  </span>
-                  ,{" "}
-                  <span className="hover:underline">
-                    {t("tools:calendar:new-event:private")}
-                  </span>
-                  )
+                  (<span className="hover:underline">{t('tools:calendar:new-event:description')}</span>, <span className="hover:underline">{t('tools:tasks:new:crm')}</span>,{' '}
+                  <span className="hover:underline">{t('tools:calendar:new-event:reminder')}</span>, <span className="hover:underline">{t('tools:calendar:new-event:event-color')}</span>,{' '}
+                  <span className="hover:underline">{t('tools:calendar:new-event:availability')}</span>, <span className="hover:underline">{t('tools:calendar:new-event:private')}</span>)
                 </p>
               </DisclosureButton>
-              <Transition
-                enter="transition-opacity duration-500"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="transition-opacity duration-150"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
+              <Transition enter="transition-opacity duration-500" enterFrom="opacity-0" enterTo="opacity-100" leave="transition-opacity duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
                 <DisclosurePanel className="grid grid-cols-1 gap-2  gap-y-6 py-1 sm:gap-y-0 sm:divide-y sm:divide-gray-200 sm:py-0 bg-white rounded-xl">
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                     <div>
-                      <label
-                        htmlFor="project-description"
-                        className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-                      >
-                        {t("tools:calendar:description")}
+                      <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                        {t('tools:calendar:description')}
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex border rounded-md bg-white">
                       <TextEditor
                         quillRef={quillRef}
                         className="w-full"
-                        setValue={(e) => {
+                        setValue={e => {
                           setValueText(e);
                         }}
                         value={value}
@@ -919,63 +744,35 @@ export default function EventDetails({ data, id }) {
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
-                    <p className="text-sm text-left w-full md:w-36">
-                      {t("tools:tasks:new:crm")}
-                    </p>
+                    <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:crm')}</p>
                     <div className="w-full">
-                      <CRMMultipleSelectV2
-                        watch={watch}
-                        getValues={getValues}
-                        setValue={setValue}
-                        name="crm"
-                        error={errors.crm}
-                        border
-                      />
+                      <CRMMultipleSelectV2 watch={watch} getValues={getValues} setValue={setValue} name="crm" error={errors.crm} border />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                     <div>
-                      <label
-                        htmlFor="project-description"
-                        className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-                      >
-                        {t("tools:calendar:reminder")}
+                      <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                        {t('tools:calendar:reminder')}
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex bg-white justify-start">
-                      <ComboBox
-                        disabled={!isEdit}
-                        data={reminderOptions}
-                        selected={reminder}
-                        setSelected={setReminder}
-                      />
+                      <ComboBox disabled={!isEdit} data={reminderOptions} selected={reminder} setSelected={setReminder} />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                     <div>
-                      <label
-                        htmlFor="project-description"
-                        className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-                      >
-                        {t("tools:calendar:new-event:event-color")}
+                      <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                        {t('tools:calendar:new-event:event-color')}
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex bg-white">
-                      <RadioGroupColors
-                        setValue={setValue}
-                        name="color"
-                        watch={watch}
-                        disabled={!isEdit}
-                      />
+                      <RadioGroupColors setValue={setValue} name="color" watch={watch} disabled={!isEdit} />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                     <div>
-                      <label
-                        htmlFor="project-description"
-                        className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-                      >
-                        {t("tools:calendar:new-event:availability")}
+                      <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                        {t('tools:calendar:new-event:availability')}
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex  bg-white justify-start">
@@ -1000,11 +797,8 @@ export default function EventDetails({ data, id }) {
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
-                    <label
-                      htmlFor="project-description"
-                      className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5"
-                    >
-                      {t("tools:calendar:new-event:private")}
+                    <label htmlFor="project-description" className="block text-sm font-medium leading-6 text-gray-900 sm:mt-1.5">
+                      {t('tools:calendar:new-event:private')}
                     </label>
                     <div className="sm:col-span-2 flex flex-col pb-4  bg-white justify-start">
                       <div className="relative flex items-start px-2 sm:px-0">
@@ -1015,20 +809,17 @@ export default function EventDetails({ data, id }) {
                             name="isPrivate"
                             type="checkbox"
                             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                            {...register("isPrivate")}
+                            {...register('isPrivate')}
                             disabled={!isEdit}
                           />
                         </div>
                         <div className="ml-3 text-sm leading-6">
-                          <label
-                            htmlFor="isPrivate"
-                            className="font-light flex items-center space-x-1.5"
-                          >
-                            {t("tools:calendar:new-event:private-label")}
+                          <label htmlFor="isPrivate" className="font-light flex items-center space-x-1.5">
+                            {t('tools:calendar:new-event:private-label')}
                           </label>
                         </div>
                       </div>
-                      {t("tools:calendar:new-event:private-label-2")}
+                      {t('tools:calendar:new-event:private-label-2')}
                     </div>
                   </div>
                 </DisclosurePanel>
@@ -1047,14 +838,14 @@ export default function EventDetails({ data, id }) {
               type="submit"
               className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
-              {t("common:buttons:save")}
+              {t('common:buttons:save')}
             </button>
             <button
               type="button"
               className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
               onClick={() => (data ? setIsEdit(false) : router.back())}
             >
-              {t("common:buttons:cancel")}
+              {t('common:buttons:cancel')}
             </button>
           </>
         )}

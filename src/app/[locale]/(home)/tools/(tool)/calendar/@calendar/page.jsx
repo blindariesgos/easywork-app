@@ -12,7 +12,7 @@ import listPlugin from '@fullcalendar/list';
 
 // Components
 import CalendarHeader from '../components/CalendarHeader';
-import CalendarConfig from '../components/CalendarConfig';
+// import CalendarConfig from '../components/CalendarConfig';
 import CalendarConnect from '../components/CalendarConnect';
 import { CalendarDisconnect } from '../components/CalendarDisconnect';
 import { NewEventModal } from '../components/NewEventModal';
@@ -161,7 +161,7 @@ export default function CalendarHome({ children }) {
   return (
     <div className="flex flex-col flex-grow">
       <CalendarHeader selectOauth={selectOauth} />
-      <CalendarConfig selectOauth={selectOauth} />
+
       <div className="h-full">
         <CalendarToolbar calendarViews={calendarViews} selectedCalendarView={calendarView} onChangeCalendarView={setCalendarView} onConnectRequested={openConnect} />
 
@@ -196,7 +196,7 @@ export default function CalendarHome({ children }) {
 
       {/* Dialogs and modals */}
       <CalendarConnect googleCalendarStatus={googleCalendarStatus} refetchGoogleCalendarStatus={fetchGoogleCalendarStatus} />
-      <CalendarDisconnect />
+      <CalendarDisconnect refetch={fetchCalendarEvents} />
 
       <NewEventModal open={isNewEventModalOpen} onClose={closeNewEventModal} selectedDate={selectedDate} defaultTimezone={timezone} />
     </div>

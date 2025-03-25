@@ -1,16 +1,16 @@
 'use client';
+
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { CalendarDaysIcon, CheckCircleIcon, Cog6ToothIcon } from '@heroicons/react/20/solid';
-import SliderOverShort from '../../../../../../../components/SliderOverShort';
-import Tag from '../../../../../../../components/Tag';
-import { getAllOauth } from '../../../../../../../lib/apis';
 
-export default function CalendarConnect({ selectOauth, setSelectOauth }) {
+import SliderOverShort from '@/src/components/SliderOverShort';
+import Tag from '@/src/components/Tag';
+import { getGoogleAuthUrl } from '@/src/lib/apis';
+
+export default function CalendarConnect({ googleCalendarStatus, refetchGoogleCalendarStatus }) {
   const router = useRouter();
   const session = useSession();
   const searchParams = useSearchParams();
@@ -29,37 +29,25 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
   };
 
   async function openWindowOauth() {
-    localStorage.setItem('service', 'Google Calendar');
+    // localStorage.setItem('service', 'Google Calendar');
 
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_THIRDPARTY}/google?idUser=${session?.data.user.sub}&service=calendar`);
-      const oauthWindow = window.open(response.data.url, '_blank', 'width=500, height=500');
+      if (googleCalendarStatus.connected) toast.info('Su correo ya se encuentra conectado');
+
+      toast.info('Conectando con Google Calendar...');
+      const authUrl = await getGoogleAuthUrl();
+      const oauthWindow = window.open(authUrl, '_blank', 'width=768, height=1024');
 
       const checkWindowClosed = setInterval(async function () {
         if (oauthWindow.closed && params.get('connect')) {
           clearInterval(checkWindowClosed);
-          if (localStorage.getItem('service')) localStorage.removeItem('service');
-          if (localStorage.getItem('connectBuzon')) {
-            toast.error('Este email ya está conectado');
-            localStorage.removeItem('connectBuzon');
-          } else {
-            getDataNewGoogleUser();
-          }
+
+          refetchGoogleCalendarStatus();
         }
       }, 1000);
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
-    }
-  }
-
-  async function getDataNewGoogleUser() {
-    try {
-      const res = await getAllOauth(session?.data.user.sub, 'Google Calendar');
-      // console.log(res);
-      setSelectOauth(res.slice(-1).pop());
-    } catch (error) {
-      console.log(error);
+      toast.error('Ha ocurrido un error al intentar conectar el calendario. Por favor intente más tarde');
     }
   }
 
@@ -83,11 +71,11 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
               <div className="flex items-center">
                 <div className="mb-3 p-1">
                   <h1 className="text-sm">Calendario de Google</h1>
-                  <p className="text-xs">{selectOauth?.email}</p>
+                  {googleCalendarStatus.connected && <p className="text-xs">{googleCalendarStatus.email || session.data.user?.email}</p>}
                 </div>
               </div>
             </div>
-            {!selectOauth ? (
+            {!googleCalendarStatus.connected ? (
               <div className="flex items-center justify-end">
                 <button
                   onClick={() => openWindowOauth()}
@@ -100,7 +88,7 @@ export default function CalendarConnect({ selectOauth, setSelectOauth }) {
             ) : (
               <div className="flex items-center justify-end">
                 <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                <p className="text-xs ml-2">Contectado</p>
+                <p className="text-xs ml-2">Conectado</p>
                 <Cog6ToothIcon
                   className="ml-2 h-4 w-4 text-gray-50 cursor-pointer"
                   onClick={() => {

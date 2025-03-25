@@ -8,7 +8,7 @@ import Button from "@/src/components/form/Button";
 import TextInput from "@/src/components/form/TextInput";
 import MultipleEmailsInput from "@/src/components/form/MultipleEmailsInput";
 import MultiplePhonesInput from "@/src/components/form/MultiplePhonesInput";
-import MultipleClientCodeByInsuranceInput from "@/src/components/form/MultipleClientCodeByInsuranceInput";
+import ClientContactNotFound from "../../ClientContactNotFound";
 import SelectInput from "@/src/components/form/SelectInput";
 import IntermediarySelectAsync from "@/src/components/form/IntermediarySelectAsync";
 import AgentSelectAsync from "@/src/components/form/AgentSelectAsync";
@@ -38,6 +38,8 @@ export default function ContactGeneral({ contact, id, refPrint }) {
   const { lists } = useAppContext();
   const { t } = useTranslation();
   const [isEdit, setIsEdit] = useState(false);
+  const [isOpenContactClienteNotFound, setIsOpenContactClienteNotFound] =
+    useState(false);
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
@@ -572,24 +574,14 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                   setValue={setValue}
                   watch={watch}
                   error={errors?.contact}
-                  notFoundHelperText={() => (
-                    <div>
-                      <p className="px-4 py-2 text-gray-700 text-xs">
+                  notFoundHelperText={() => {
+                    setIsOpenContactClienteNotFound(true);
+                    return (
+                      <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
                         {t("common:not-found")}
-                        {". "}
-                        <span
-                          className="text-primary underline cursor-pointer"
-                          onClick={() =>
-                            router.push(
-                              "/sales/crm/contacts/contact?show=true&type=fisica"
-                            )
-                          }
-                        >
-                          {"Crear el cliente contacto"}
-                        </span>
-                      </p>
-                    </div>
-                  )}
+                      </div>
+                    );
+                  }}
                 />
               )}
               <TextInput
@@ -637,7 +629,6 @@ export default function ContactGeneral({ contact, id, refPrint }) {
                 disabled={loading}
                 buttonStyle="primary"
                 className="px-3 py-2"
-                // onclick={() => handleSubmit(handleFormSubmit)}
               />
               <Button
                 type="button"
@@ -651,6 +642,10 @@ export default function ContactGeneral({ contact, id, refPrint }) {
           )}
         </form>
       </div>
+      <ClientContactNotFound
+        isOpen={isOpenContactClienteNotFound}
+        setIsOpen={setIsOpenContactClienteNotFound}
+      />
     </Fragment>
   );
 }

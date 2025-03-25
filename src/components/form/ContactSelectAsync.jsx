@@ -84,6 +84,15 @@ function ContactSelectAsync({
     getContact(watch(name));
   }, [watch && watch(name)]);
 
+  const handleNotFound = () =>
+    notFoundHelperText ? (
+      notFoundHelperText()
+    ) : (
+      <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
+        {t("common:not-found")}
+      </div>
+    );
+
   return (
     <div className="w-full">
       <Combobox
@@ -158,50 +167,42 @@ function ContactSelectAsync({
                 <LoadingSpinnerSmall />
               </div>
             )}
-            {options?.items?.length === 0 && query !== "" && !isLoading ? (
-              notFoundHelperText ? (
-                notFoundHelperText()
-              ) : (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 text-xs">
-                  {t("common:not-found")}
-                </div>
-              )
-            ) : (
-              options?.items &&
-              options?.items?.map((option) => (
-                <ComboboxOption
-                  key={option.id}
-                  className={({ active }) =>
-                    `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 ${
-                      active ? "bg-primary text-white" : "text-gray-900"
-                    }`
-                  }
-                  value={option}
-                  disabled={option.disabled}
-                >
-                  {({ selected, active }) => (
-                    <>
-                      <span
-                        className={`block truncate pl-6 ${
-                          selected ? "font-medium" : "font-normal"
-                        }`}
-                      >
-                        {option.fullName}
-                      </span>
-                      {selected ? (
+            {options?.items?.length === 0 && query !== "" && !isLoading
+              ? handleNotFound()
+              : options?.items &&
+                options?.items?.map((option) => (
+                  <ComboboxOption
+                    key={option.id}
+                    className={({ active }) =>
+                      `relative cursor-default select-none py-2 px-2 data-[disabled]:opacity-50 ${
+                        active ? "bg-primary text-white" : "text-gray-900"
+                      }`
+                    }
+                    value={option}
+                    disabled={option.disabled}
+                  >
+                    {({ selected, active }) => (
+                      <>
                         <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-2 ${
-                            active ? "text-white" : "text-primary"
+                          className={`block truncate pl-6 ${
+                            selected ? "font-medium" : "font-normal"
                           }`}
                         >
-                          <CheckIcon className="h-4 w-4" aria-hidden="true" />
+                          {option.fullName}
                         </span>
-                      ) : null}
-                    </>
-                  )}
-                </ComboboxOption>
-              ))
-            )}
+                        {selected ? (
+                          <span
+                            className={`absolute inset-y-0 left-0 flex items-center pl-2 ${
+                              active ? "text-white" : "text-primary"
+                            }`}
+                          >
+                            <CheckIcon className="h-4 w-4" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </ComboboxOption>
+                ))}
           </ComboboxOptions>
         </div>
         {error && <p className="mt-1 text-xs text-red-600">{error.message}</p>}

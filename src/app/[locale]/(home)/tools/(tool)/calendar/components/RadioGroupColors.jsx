@@ -14,7 +14,7 @@ const colors = [
   "#FF007A",
 ];
 
-export default function RadioGroupColors({ setValue, name, watch }) {
+export default function RadioGroupColors({ setValue, name, watch, disabled }) {
   const [selected, setSelected] = useState();
 
   useEffect(() => {
@@ -35,6 +35,7 @@ export default function RadioGroupColors({ setValue, name, watch }) {
       value={selected}
       onChange={handleChange}
       className="gap-4 flex flex-wrap"
+      disabled={disabled}
     >
       {colors.map((color) => (
         <Radio

@@ -113,7 +113,7 @@ function SelectInput({
                   border,
                 "border-none focus:ring-0 ": !border,
                 // "bg-gray-100": disabled,
-                "drop-shadow-md": !disabled,
+                "drop-shadow-md": !disabled && !border,
                 "text-xs": small,
                 "text-sm": !small,
                 "py-1.5": small,

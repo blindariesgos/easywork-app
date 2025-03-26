@@ -279,20 +279,16 @@ const CRMMultipleSelectV2 = ({
                   </div>
                 </div>
               ))}
-            <div
-              className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold"
-              onClick={handleToggle}
-            >
-              <PlusIcon className="h-3 w-3" />
-              <p className="text-xs">{t("common:buttons:add")}</p>
-            </div>
+            {!disabled && (
+              <div
+                className="flex gap-1 border-b border-dashed ml-2 text-primary font-semibold"
+                onClick={handleToggle}
+              >
+                <PlusIcon className="h-3 w-3" />
+                <p className="text-xs">{t("common:buttons:add")}</p>
+              </div>
+            )}
           </span>
-          <div
-            className="absolute top-0 right-1 mt-2.5 flex items-center pr-2 pointer-events-none"
-            onClick={handleToggle}
-          >
-            <ChevronDownIcon className="h-4 w-4" />
-          </div>
         </button>
         <Dialog
           open={isOpen}

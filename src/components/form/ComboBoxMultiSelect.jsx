@@ -95,34 +95,38 @@ const ComboBoxMultiSelect = ({
                     <p className="text-xs text-zinc-700 ml-1 truncate">
                       {selected.name}
                     </p>
-                    <button
-                      type="button"
-                      className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-primary/20"
-                      onClick={() => handleRemove(selected.id)}
-                    >
-                      <span className="sr-only">
-                        {t("tools:calendar:new-event:remove")}
-                      </span>
-                      <svg
-                        viewBox="0 0 14 14"
-                        className="h-3.5 w-3.5 stroke-indigo-700/50 group-hover:stroke-indigo-700/75"
+                    {!disabled && (
+                      <button
+                        type="button"
+                        className="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-primary/20"
+                        onClick={() => handleRemove(selected.id)}
                       >
-                        <path d="M4 4l6 6m0-6l-6 6" />
-                      </svg>
-                      <span className="absolute -inset-1" />
-                    </button>
+                        <span className="sr-only">
+                          {t("tools:calendar:new-event:remove")}
+                        </span>
+                        <svg
+                          viewBox="0 0 14 14"
+                          className="h-3.5 w-3.5 stroke-indigo-700/50 group-hover:stroke-indigo-700/75"
+                        >
+                          <path d="M4 4l6 6m0-6l-6 6" />
+                        </svg>
+                        <span className="absolute -inset-1" />
+                      </button>
+                    )}
                   </div>
                 ))}
-              <MenuButton
-                onClick={handleClick}
-                className="relative inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none"
-              >
-                <span className="absolute -inset-2" />
-                <span className="sr-only">
-                  {t("tools:calendar:new-event:add-team")}
-                </span>
-                <PlusIcon className="h-5 w-5" aria-hidden="true" />
-              </MenuButton>
+              {!disabled && (
+                <MenuButton
+                  onClick={handleClick}
+                  className="relative inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none"
+                >
+                  <span className="absolute -inset-2" />
+                  <span className="sr-only">
+                    {t("tools:calendar:new-event:add-team")}
+                  </span>
+                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                </MenuButton>
+              )}
             </div>
           </div>
           <MenuItems

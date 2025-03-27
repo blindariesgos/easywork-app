@@ -1,16 +1,7 @@
 "use client";
-import clsx from "clsx";
 
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  Fragment,
-  useCallback,
-} from "react";
+import React from "react";
 
-import LoaderSpinner from "@/src/components/LoaderSpinner";
 import Button from "@/src/components/form/Button";
 import {
   Dialog,
@@ -46,14 +37,14 @@ export default function DeleteModal({
             <Button
               label={loading ? "Eliminando..." : "Eliminar"}
               buttonStyle="error"
-              className="px-4 py-2 text-xl"
+              className="px-4 py-2"
               onclick={handleClick}
               disabled={loading}
             />
             <Button
               label="Cancelar"
               buttonStyle="secondary"
-              className="px-4 py-2 text-xl"
+              className="px-4 py-2"
               onclick={() => setIsOpen(false)}
               disabled={loading}
             />

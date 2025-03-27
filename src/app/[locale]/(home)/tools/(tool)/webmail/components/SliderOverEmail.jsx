@@ -1,20 +1,20 @@
 "use client";
 import useAppContext from "../../../../../../../context/app";
 import { Fragment } from "react";
-import { Transition } from "@headlessui/react";
+import { Transition, TransitionChild } from "@headlessui/react";
 import { useTranslation } from "react-i18next";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-export default function SliderOverEmail({ openModal, setOpenModal, children }) {
+export default function SliderOverEmail({ children }) {
   const { t } = useTranslation();
   const { sidebarOpenEmail, setSidebarOpenEmail } = useAppContext();
   return (
-    <Transition.Root show={sidebarOpenEmail} as={Fragment}>
+    <Transition show={sidebarOpenEmail} as={Fragment}>
       <div className="relative z-50">
         {window.innerWidth > 1023 ? (
           ""
         ) : (
-          <Transition.Child
+          <TransitionChild
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
             enterFrom="opacity-0"
@@ -33,10 +33,10 @@ export default function SliderOverEmail({ openModal, setOpenModal, children }) {
                 <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
               </button>
             </div>
-          </Transition.Child>
+          </TransitionChild>
         )}
 
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="transform transition ease-in-out duration-500 sm:duration-700"
           enterFrom="-translate-x-80"
@@ -47,12 +47,12 @@ export default function SliderOverEmail({ openModal, setOpenModal, children }) {
         >
           <div
             className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-easy-1000 to-primary pb-4 rounded-tr-[50px] rounded-br-[50px] 
-                          fixed inset-y-0 bg-white left-0 w-80"
+                          fixed inset-y-0 bg-white left-0 lg:w-72"
           >
             <div className="pointer-events-auto w-auto">{children}</div>
           </div>
-        </Transition.Child>
+        </TransitionChild>
       </div>
-    </Transition.Root>
+    </Transition>
   );
 }

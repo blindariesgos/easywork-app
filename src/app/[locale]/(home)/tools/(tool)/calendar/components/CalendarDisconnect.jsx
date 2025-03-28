@@ -9,7 +9,7 @@ import Tag from '@/src/components/Tag';
 import SliderOverShort from '@/src/components/SliderOverShort';
 import { getGoogleCalendarList, revokeGoogleCredentials, toggleGoogleCalendarItem } from '@/src/lib/apis';
 
-export const CalendarDisconnect = () => {
+export const CalendarDisconnect = ({ refetch }) => {
   // Hooks
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,6 +17,7 @@ export const CalendarDisconnect = () => {
   // States
   const [googleCalendarsList, setGoogleCalendarsList] = useState([]);
   const [revoking, setRevoking] = useState(false);
+  const [isSelectingCalendar, setIsSelectingCalendar] = useState(false);
 
   // Definitions
   const params = useMemo(() => new URLSearchParams(searchParams), [searchParams]);
@@ -46,12 +47,16 @@ export const CalendarDisconnect = () => {
 
   const onSelectGoogleCalendar = async (event, calendarId) => {
     const { checked } = event.target;
+    setIsSelectingCalendar(true);
 
     try {
       await toggleGoogleCalendarItem({ id: calendarId, selected: checked });
       await fetchGoogleCalendarList();
+      await refetch();
     } catch (error) {
       toast.error('Ha ocurrido un error al marcar el calendario como seleccionado. Por favor intente más tarde');
+    } finally {
+      setIsSelectingCalendar(false);
     }
   };
 
@@ -105,8 +110,8 @@ export const CalendarDisconnect = () => {
             <div className="text-sm">
               {googleCalendarsList.map(item => (
                 <div className="flex items-center gap-2 mt-1" key={item.id}>
-                  <input type="checkbox" defaultChecked={item.selected} onChange={event => onSelectGoogleCalendar(event, item.id)} />
-                  <p className="ml-1 text-xs">{item.summary}</p>
+                  <input type="checkbox" defaultChecked={item.selected} onChange={event => onSelectGoogleCalendar(event, item.id)} disabled={isSelectingCalendar} />
+                  <p className={`ml-1 text-xs ${isSelectingCalendar && 'opacity-70'}`}>{item.summary}</p>
                 </div>
               ))}
             </div>

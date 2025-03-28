@@ -55,6 +55,7 @@ export default function CalendarHome({ children }) {
       currentPage: 0,
     },
   });
+  console.log('🚀 ~ CalendarHome ~ events:', events);
 
   // Definitions
   const params = new URLSearchParams(searchParams);

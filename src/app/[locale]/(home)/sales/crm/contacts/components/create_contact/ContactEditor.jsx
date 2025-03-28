@@ -11,7 +11,6 @@ import { clsx } from "clsx";
 import ContactGeneral from "../show_contact/tab_general/general";
 
 import { TabGroup, TabPanel, TabPanels } from "@headlessui/react";
-import ContactRelationsTable from "../../components/show_contact/tab_relations/ContactRelationsTable";
 import ContactPolizaTable from "../show_contact/tab_polizas/ContactPolizaTable";
 import { LinkIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";

@@ -152,11 +152,12 @@ export default function TableTask() {
       await Promise.all(selectedTasks.map((taskId) => putTaskId(taskId, body)));
       toast.success(t("tools:tasks:table:responsible-msg"));
       setSelectedTasks([]);
+      mutateTasks && mutateTasks();
+      setIsOpenDeleteMasive(false);
     } catch (error) {
       toast.error(t("tools:tasks:table:responsible-error"));
     } finally {
       setLoading(false);
-      mutateTasks && mutateTasks();
     }
   };
 
@@ -209,6 +210,7 @@ export default function TableTask() {
       await apiDeleteTask(id);
       toast.success(t("tools:tasks:table:delete-msg"));
       mutateTasks && mutateTasks();
+      setIsOpenDelete(false);
     } catch {
       toast.error(t("tools:tasks:table:delete-error"));
     }

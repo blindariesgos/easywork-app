@@ -104,7 +104,7 @@ const ColumnTable = ({
           />
           <Menu
             as="div"
-            className="relative hover:bg-slate-50/30 py-2  rounded-lg"
+            className="relative hover:bg-slate-50/30 py-2 rounded-lg"
           >
             <MenuButton className="flex items-center">
               <Bars3Icon className="h-5 w-5 text-gray-400" aria-hidden="true" />

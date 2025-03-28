@@ -16,7 +16,6 @@ import {
   getAgentIntermediaryById,
   getIntermediaries,
 } from "@/src/lib/apis";
-import { useDebouncedCallback } from "use-debounce";
 import TextInput from "./TextInput";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -52,24 +51,9 @@ function IntermediarySelectAsync({
   const [loading, setLoading] = useState(false);
   const [intermediaries, setIntermediaries] = useState([]);
 
-  // const handleSearch = useDebouncedCallback(() => {
-  //   if (query.length > 0) {
-  //     setFilters({
-  //       name: query,
-  //     });
-  //   } else {
-  //     setFilters({});
-  //   }
-  // }, 500);
-
-  // useEffect(() => {
-  //   handleSearch();
-  // }, [query]);
-
   const getOptions = async () => {
     setLoading(true);
     const response = await getIntermediaries();
-    console.log({ response });
     if (!response.hasError) {
       setIntermediaries(response);
     }

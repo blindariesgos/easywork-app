@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ComboBox, { ComboBoxWithElement } from './ComboBox';
 import { timezones } from '../../../../../../../lib/timezones';
 import SelectMenu from './SelectMenu';
@@ -23,8 +23,10 @@ import RadioGroupColors from './RadioGroupColors';
 import { getContactId, getLeadById, getPolicyById, getReceiptById, addCalendarEvent, updateCalendarEvent, deleteCalendarEvent, getAgentById } from '@/src/lib/apis';
 import { toast } from 'react-toastify';
 import LoaderSpinner from '@/src/components/LoaderSpinner';
-// import useCalendarContext from "@/src/context/calendar";
+import useCalendarContext from '@/src/context/calendar';
 import { useSession } from 'next-auth/react';
+import Button from '@/src/components/form/Button';
+import { handleFrontError } from '@/src/utils/api/errors';
 
 const calendarios = [{ name: 'Mi calendario', value: 1 }];
 
@@ -131,6 +133,7 @@ export default function EventDetails({ data, id }) {
     // },
   ];
 
+  const quillRefDisabled = useRef(null);
   const quillRef = useRef(null);
 
   const [timezone, setTimezone] = useState(null);
@@ -170,32 +173,19 @@ export default function EventDetails({ data, id }) {
 
   const handleSubmitForm = async data => {
     setLoading(true);
-    const {
-      participants,
-      // reminder,
-      startTime,
-      endTime,
-      reminderCustom,
-      availability,
-      color,
-      important,
-      isPrivate,
-      repeat,
-      name,
-      crm,
-    } = data;
+    const { participants, startTime, endTime, color, important, isPrivate, repeat, name, crm, availability } = data;
     let reminderValue;
     if (reminder && reminder?.value) {
       reminderValue = formatISO(new Date(startTime.getTime()) - reminder?.value);
     }
-
+    console.log({ timezone });
     const body = {
       participantsIds: participants?.map(participant => participant.id) ?? [],
       reminder: reminderValue,
       startTime: formatISO(startTime),
       endTime: formatISO(endTime),
-      timeZone: timezone.value,
-      localization: formLocalization.name,
+      timeZone: timezone ? timezone?.value : null,
+      localization: formLocalization ? formLocalization?.name : null,
       availability: availability ? availability : availabilityOptions[0].id,
       description: value ?? '<p></p>',
       color: color ?? '#141052',
@@ -205,14 +195,14 @@ export default function EventDetails({ data, id }) {
       name,
       crm: crm?.map(item => ({ id: item.id, type: item.type })) || [],
     };
-    // console.log(body);
+
     if (params.get('oauth')) body.oauth = params.get('oauth');
     body.user = session?.data?.user?.sub;
     try {
       if (id) {
         const response = await updateCalendarEvent(body, id);
         if (response.hasError) {
-          toast.error('Se ha producido un error al editar el evento, inténtelo de nuevo más tarde.');
+          handleFrontError(response);
         } else {
           toast.success('Evento editado con éxito.');
           // mutate();
@@ -251,20 +241,22 @@ export default function EventDetails({ data, id }) {
   }, [watch]);
 
   useEffect(() => {
-    // console.log(watch("reminder"));
-  }, [watch('reminder')]);
+    if (params.get('edit') === 'true') {
+      setIsEdit(true);
+    }
+  }, [params.get('edit')]);
 
   useEffect(() => {
-    if (!data) {
-      setIsEdit(true);
+    if (!id) {
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const timezoneValue = timezones.find(timezone => timezone.value === detectedTimezone);
-      // console.log(timezoneValue);
       if (timezoneValue) {
         setTimezone(timezoneValue);
       }
+      setIsEdit(true);
       return;
     }
+
     if (data?.name) setValue('name', data?.name);
     if (data?.startTime) setValue('startTime', format(data?.startTime, "yyyy-MM-dd'T'HH:mm"));
     if (data?.endTime) setValue('endTime', format(data?.endTime, "yyyy-MM-dd'T'HH:mm"));
@@ -318,13 +310,6 @@ export default function EventDetails({ data, id }) {
             }))
           : []
       );
-    // setTimezone();
-
-    // const subscription = watch((data, { name }) => {
-    //   setIsEdit(true);
-    // });
-
-    // return () => subscription.unsubscribe();
   }, [data]);
 
   //#region Logica conexion crm
@@ -485,15 +470,6 @@ export default function EventDetails({ data, id }) {
                 disabled={!isEdit}
               />
             </div>
-            {/* {data && (
-              <button
-                type="button"
-                onClick={() => setIsEdit(!isEdit)}
-                title="Editar"
-              >
-                <PencilIcon className="h-6 w-6 text-primary" />
-              </button>
-            )} */}
 
             <div className="relative flex items-start px-2 ml-2 sm:px-0">
               <div className="flex h-6 items-center">
@@ -592,7 +568,7 @@ export default function EventDetails({ data, id }) {
                     leaveTo="opacity-0"
                   >
                     <DisclosurePanel className="text-gray-500 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <ComboBox data={timezones} selected={timezone} setSelected={setTimezone} disabled={!isEdit} />
+                      <SelectInput options={timezones} setSelectedOption={setTimezone} selectedOption={timezone} disabled={!isEdit} border />
                     </DisclosurePanel>
                   </Transition>
                 </Disclosure>
@@ -670,7 +646,7 @@ export default function EventDetails({ data, id }) {
             </div>
             <div className="sm:col-span-2">
               <div className="flex space-x-2">
-                <SelectMenu data={eventLocalizations} value={formLocalization} setValue={setFormLocalization} disabled={!isEdit} />
+                <ComboBoxWithElement data={eventLocalizations} selected={formLocalization} setSelected={setFormLocalization} disabled={!isEdit} />
               </div>
             </div>
           </div>
@@ -681,14 +657,6 @@ export default function EventDetails({ data, id }) {
               <h3 className="text-sm font-medium leading-6 text-gray-900">{t('tools:calendar:new-event:wizards')}</h3>
             </div>
             <div className="sm:col-span-2 flex items-center">
-              {data && (
-                <div className="flex-shrink-0 max-w-48 hover:opacity-75 inline-flex gap-x-0.5 items-center bg-indigo-100 py-1 px-2 rounded-sm font-medium text-indigo-800">
-                  {data?.createdBy?.avatar && <Image width={32} height={32} className="inline-block h-5 w-5 rounded-full" src={data?.createdBy?.avatar || '/img/avatar.svg'} alt={'avatar'} />}
-                  <p className="text-xs text-zinc-700 ml-1 truncate">
-                    {data?.createdBy?.profile?.firstName} {data?.createdBy?.profile?.lastName}
-                  </p>
-                </div>
-              )}
               <div className="flex flex-col gap-x-2">
                 <Controller
                   name="participants"
@@ -732,21 +700,42 @@ export default function EventDetails({ data, id }) {
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex border rounded-md bg-white">
-                      <TextEditor
-                        quillRef={quillRef}
-                        className="w-full"
-                        setValue={e => {
-                          setValueText(e);
-                        }}
-                        value={value}
-                        // disabled={!isEdit}
-                      />
+                      <div
+                        className={clsx({
+                          hidden: !isEdit,
+                        })}
+                      >
+                        <TextEditor
+                          ref={quillRef}
+                          className="w-full"
+                          setValue={e => {
+                            setValueText(e);
+                          }}
+                          value={value}
+                          prueba={'prueba'}
+                        />
+                      </div>
+                      <div
+                        className={clsx({
+                          hidden: isEdit,
+                        })}
+                      >
+                        <TextEditor
+                          ref={quillRefDisabled}
+                          className="w-full"
+                          setValue={e => {
+                            setValueText(e);
+                          }}
+                          value={value}
+                          disabled
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                     <p className="text-sm text-left w-full md:w-36">{t('tools:tasks:new:crm')}</p>
                     <div className="w-full">
-                      <CRMMultipleSelectV2 watch={watch} getValues={getValues} setValue={setValue} name="crm" error={errors.crm} border />
+                      <CRMMultipleSelectV2 watch={watch} getValues={getValues} setValue={setValue} name="crm" error={errors.crm} border disabled={!isEdit} />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
@@ -756,7 +745,7 @@ export default function EventDetails({ data, id }) {
                       </label>
                     </div>
                     <div className="sm:col-span-2 flex bg-white justify-start">
-                      <ComboBox disabled={!isEdit} data={reminderOptions} selected={reminder} setSelected={setReminder} />
+                      <SelectInput options={reminderOptions} setSelectedOption={setReminder} selectedOption={reminder} disabled={!isEdit} border />
                     </div>
                   </div>
                   <div className="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
@@ -831,43 +820,19 @@ export default function EventDetails({ data, id }) {
 
       {/* Action buttons */}
       <div className="flex flex-shrink-0 justify-start px-8 py-4">
-        {/* Mostrar botones de "Guardar" y "Cancelar" solo si hay data o se está en modo editar */}
-        {(data || isEdit) && isEdit && (
-          <>
-            <button
-              type="submit"
-              className="inline-flex justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-            >
-              {t('common:buttons:save')}
-            </button>
-            <button
-              type="button"
-              className="ml-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400"
-              onClick={() => (data ? setIsEdit(false) : router.back())}
-            >
-              {t('common:buttons:cancel')}
-            </button>
-          </>
+        {isEdit && (
+          <div className="flex gap-4">
+            <Button buttonStyle="secondary" label={t('common:buttons:cancel')} onclick={() => (data ? setIsEdit(false) : router.back())} className="px-3 py-2" type="button" />
+            <Button buttonStyle="primary" label={t('common:buttons:save')} onclick={() => setIsEdit(true)} className="px-3 py-2" type="submit" />
+          </div>
         )}
 
         {/* Mostrar botones de "Editar" y "Eliminar" solo si hay data y NO se está en modo editar */}
-        {data && !isEdit && (
-          <>
-            <button
-              type="button"
-              className="inline-flex ml-4 justify-center rounded-md bg-easywork-main px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-easywork-mainhover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              onClick={() => setIsEdit(true)}
-            >
-              Editar
-            </button>
-            <button
-              type="button"
-              className="inline-flex ml-4 justify-center rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              onClick={() => deleteEvent()}
-            >
-              Eliminar
-            </button>
-          </>
+        {!isEdit && (
+          <div className="flex gap-4">
+            <Button buttonStyle="secondary" label={t('common:buttons:delete')} onclick={deleteEvent} className="px-3 py-2" type="button" />
+            <Button buttonStyle="primary" label={t('common:buttons:edit')} onclick={() => setIsEdit(true)} className="px-3 py-2" type="button" />
+          </div>
         )}
 
         {/* <button type="button" onClick={() => setIsEdit(!isEdit)} title="Editar">

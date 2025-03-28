@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { updateAgent, updateAgentState } from "@/src/lib/apis";
+import { updateAgentState } from "@/src/lib/apis";
 import LoaderSpinner from "@/src/components/LoaderSpinner";
 import { toast } from "react-toastify";
 import useAccompanimentContext from "@/src/context/accompaniments";
